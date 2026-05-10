@@ -58,7 +58,10 @@ impl std::fmt::Debug for Renderable<'_> {
         match self {
             Self::Text(s) => f.debug_tuple("Text").field(s).finish(),
             Self::Joined(j) => f.debug_tuple("Joined").field(j).finish(),
-            Self::Transport(_) => f.debug_tuple("Transport").field(&"<dyn RenderableTransport>").finish(),
+            Self::Transport(_) => f
+                .debug_tuple("Transport")
+                .field(&"<dyn RenderableTransport>")
+                .finish(),
         }
     }
 }
@@ -128,7 +131,12 @@ impl<'a> Joined<'a> {
         leading: bool,
         trailing: bool,
     ) -> Self {
-        Self { items, separator, leading, trailing }
+        Self {
+            items,
+            separator,
+            leading,
+            trailing,
+        }
     }
 }
 
@@ -165,18 +173,21 @@ impl ::askama::FastWritable for Joined<'_> {
             return Ok(());
         }
         if self.leading {
-            dest.write_str(self.separator).map_err(::askama::Error::from)?;
+            dest.write_str(self.separator)
+                .map_err(::askama::Error::from)?;
         }
         let mut first = true;
         for item in self.items {
             if !first {
-                dest.write_str(self.separator).map_err(::askama::Error::from)?;
+                dest.write_str(self.separator)
+                    .map_err(::askama::Error::from)?;
             }
             item.write_into(dest, values)?;
             first = false;
         }
         if self.trailing {
-            dest.write_str(self.separator).map_err(::askama::Error::from)?;
+            dest.write_str(self.separator)
+                .map_err(::askama::Error::from)?;
         }
         Ok(())
     }
@@ -236,7 +247,9 @@ impl<'a> IntoIterator for &'a ListNonterminalView<'a> {
     type Item = &'a Renderable<'a>;
     type IntoIter = ListNonterminalViewIter<'a>;
     fn into_iter(self) -> Self::IntoIter {
-        ListNonterminalViewIter { inner: self.items.iter() }
+        ListNonterminalViewIter {
+            inner: self.items.iter(),
+        }
     }
 }
 

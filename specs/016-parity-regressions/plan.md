@@ -12,7 +12,7 @@ Lift the corpus-validator pass counts above the baseline measured at `b4ccc6cc` 
 **Language/Version**: TypeScript 6.0.2 (ESM, `.ts` extensions in imports), Rust 1.82+ for native render path (already shipped on 012).
 **Primary Dependencies**: `@sittir/codegen` (walker / emitter / link / assemble / evaluate pipeline), `@sittir/core` (render, readNode, edit), `@sittir/types` (NodeData, ConfigOf, FromInput type projections), per-grammar packages (`@sittir/{rust,typescript,python}`), per-grammar napi crates (`sittir-{rust,typescript,python}-napi` for native render). Vitest for the test suite that defines the baseline.
 **Storage**: File system — `specs/016-parity-regressions/baselines/{ts,native}.json` is the durable contract; generated TS/templates under `packages/{lang}/src/` and `packages/{lang}/templates/*.jinja` are codegen output (never hand-edited).
-**Testing**: vitest (baseline truth), oxlint --deny-warnings on `packages/{lang}/src` (phase-0 invariant), tsgo strict-build (phase-0 invariant), `scripts/check-jinja-templates.ts` (header check), `npx tsx packages/codegen/src/scripts/probe-kind.ts --engine both` for engine-vs-engine render diffing.
+**Testing**: vitest (baseline truth), oxlint --deny-warnings on `packages/{lang}/src` (phase-0 invariant), tsgo strict-build (phase-0 invariant), `packages/tools/src/validate/jinja.ts` (header check), `npx tsx packages/codegen/src/scripts/probe-kind.ts --engine both` for engine-vs-engine render diffing.
 **Target Platform**: Local dev + CI (GitHub Actions, Node 20.x and 24.x matrix, x86_64 linux).
 **Project Type**: Internal codegen pipeline — pure transformation over in-memory parse trees + on-disk grammar files, no runtime persistence layer.
 **Performance Goals**: Baseline collection completes in under 30s on a warm checkout; regression-checker CI step adds under 1 min total. Cluster cadence guidance (in quickstart.md, not a hard SC): roughly 4 hours of focused work per cluster commit; clusters that exceed it are split or deferred per the spec's scope-drift edge case.
@@ -119,7 +119,7 @@ packages/
 └── ci.yml                                  # NEW step: regression-checker job
 
 scripts/
-└── check-jinja-templates.ts                # phase-0 invariant; untouched
+└── packages/tools/src/validate/jinja.ts    # phase-0 invariant; moved into @sittir/tools
 ```
 
 **Structure Decision**: This is the existing pnpm workspace layout — no new packages, no new directories at the top level. Cluster fixes touch `packages/codegen/src/{emitters,compiler,dsl,validate}/*.ts` (the codegen pipeline) and `packages/{rust,python}/overrides.ts` (where grammar-specific knowledge lives). The new script `packages/codegen/src/scripts/collect-baseline.ts` joins the existing diagnostic-script family. The new CI step is a job in `.github/workflows/ci.yml`. No restructuring required — this feature is a contract layered over the existing tree.

@@ -91,7 +91,10 @@ fn top_level_keys_match_allowed_set() {
     let obj = value.as_object().expect("object");
 
     let actual: HashSet<&str> = obj.keys().map(String::as_str).collect();
-    let unexpected: Vec<&&str> = actual.iter().filter(|key| !is_allowed_node_key(key)).collect();
+    let unexpected: Vec<&&str> = actual
+        .iter()
+        .filter(|key| !is_allowed_node_key(key))
+        .collect();
     assert!(
         unexpected.is_empty(),
         "NodeData wire shape leaked unexpected top-level keys: {unexpected:?}"
@@ -131,7 +134,10 @@ fn walk_assert(v: &serde_json::Value) {
             obj.contains_key("$type") && obj.contains_key("$source") && obj.contains_key("$named");
         if is_node {
             let actual: HashSet<&str> = obj.keys().map(String::as_str).collect();
-            let unexpected: Vec<&&str> = actual.iter().filter(|key| !is_allowed_node_key(key)).collect();
+            let unexpected: Vec<&&str> = actual
+                .iter()
+                .filter(|key| !is_allowed_node_key(key))
+                .collect();
             assert!(
                 unexpected.is_empty(),
                 "nested NodeData leaked keys {unexpected:?} (kind = {:?})",

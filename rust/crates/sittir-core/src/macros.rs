@@ -132,10 +132,7 @@ mod trivia_macro_tests {
     fn trivia_macro_multiple_leading() {
         let t = MockTransport {
             transport_trivia_data: Some(TransportTrivia {
-                leading: Some(vec![
-                    "// line 1".to_string(),
-                    "// line 2".to_string(),
-                ]),
+                leading: Some(vec!["// line 1".to_string(), "// line 2".to_string()]),
                 trailing: None,
             }),
         };
@@ -151,10 +148,7 @@ mod trivia_macro_tests {
         let t = MockTransport {
             transport_trivia_data: Some(TransportTrivia {
                 leading: None,
-                trailing: Some(vec![
-                    "// end 1".to_string(),
-                    "// end 2".to_string(),
-                ]),
+                trailing: Some(vec!["// end 1".to_string(), "// end 2".to_string()]),
             }),
         };
         let mut buf = String::new();

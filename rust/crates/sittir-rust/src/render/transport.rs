@@ -11,7 +11,7 @@ use ::sittir_core::filters::{
     OptionalNonterminalView,
 };
 use ::sittir_core::types::{
-    NodeData, FieldValue, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,
+    NodeData, FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,
 };
 
 #[cfg(feature = "napi-bindings")]
@@ -5034,11 +5034,11 @@ pub struct ArrayExpressionListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Vec<AttributeItemTransport>,
+    pub attributes: OneOrMany<AttributeItemTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
-    pub elements: Vec<ExpressionTransport>,
+    pub elements: OneOrMany<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<AttributeItemTransport>,
+    pub children: OneOrMany<AttributeItemTransport>,
 }
 
 impl RenderableTransport for ArrayExpressionListTransport {
@@ -5068,7 +5068,7 @@ pub struct ArrayExpressionSemiTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Vec<AttributeItemTransport>,
+    pub attributes: OneOrMany<AttributeItemTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_length"))]
@@ -5214,7 +5214,7 @@ pub struct _ClosureExpressionExprTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: ExpressionTransport,
+    pub body: Box<AnyTransport>,
 }
 
 impl RenderableTransport for _ClosureExpressionExprTransport {
@@ -5410,7 +5410,7 @@ pub struct _DelimTokenTreeBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<DelimTokensTransport>,
+    pub children: OneOrMany<DelimTokensTransport>,
 }
 
 impl RenderableTransport for _DelimTokenTreeBraceTransport {
@@ -5440,7 +5440,7 @@ pub struct _DelimTokenTreeBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<DelimTokensTransport>,
+    pub children: OneOrMany<DelimTokensTransport>,
 }
 
 impl RenderableTransport for _DelimTokenTreeBracketTransport {
@@ -5470,7 +5470,7 @@ pub struct _DelimTokenTreeParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<DelimTokensTransport>,
+    pub children: OneOrMany<DelimTokensTransport>,
 }
 
 impl RenderableTransport for _DelimTokenTreeParenTransport {
@@ -7114,7 +7114,7 @@ pub struct _MacroDefinitionBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<Vec<MacroRuleTransport>>,
+    pub children: Option<OneOrMany<MacroRuleTransport>>,
 }
 
 impl RenderableTransport for _MacroDefinitionBraceTransport {
@@ -7144,7 +7144,7 @@ pub struct _MacroDefinitionBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<Vec<MacroRuleTransport>>,
+    pub children: Option<OneOrMany<MacroRuleTransport>>,
 }
 
 impl RenderableTransport for _MacroDefinitionBracketTransport {
@@ -7174,7 +7174,7 @@ pub struct _MacroDefinitionParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<Vec<MacroRuleTransport>>,
+    pub children: Option<OneOrMany<MacroRuleTransport>>,
 }
 
 impl RenderableTransport for _MacroDefinitionParenTransport {
@@ -7534,7 +7534,7 @@ pub struct NonSpecialTokenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<NonSpecialTokenChildTransport>,
+    pub children: OneOrMany<NonSpecialTokenChildTransport>,
 }
 
 impl RenderableTransport for NonSpecialTokenTransport {
@@ -8748,7 +8748,7 @@ pub struct _TokenTreeBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokensTransport>,
+    pub children: OneOrMany<TokensTransport>,
 }
 
 impl RenderableTransport for _TokenTreeBraceTransport {
@@ -8778,7 +8778,7 @@ pub struct _TokenTreeBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokensTransport>,
+    pub children: OneOrMany<TokensTransport>,
 }
 
 impl RenderableTransport for _TokenTreeBracketTransport {
@@ -8808,7 +8808,7 @@ pub struct _TokenTreeParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokensTransport>,
+    pub children: OneOrMany<TokensTransport>,
 }
 
 impl RenderableTransport for _TokenTreeParenTransport {
@@ -8838,7 +8838,7 @@ pub struct _TokenTreePatternBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokenPatternTransport>,
+    pub children: OneOrMany<TokenPatternTransport>,
 }
 
 impl RenderableTransport for _TokenTreePatternBraceTransport {
@@ -8868,7 +8868,7 @@ pub struct _TokenTreePatternBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokenPatternTransport>,
+    pub children: OneOrMany<TokenPatternTransport>,
 }
 
 impl RenderableTransport for _TokenTreePatternBracketTransport {
@@ -8898,7 +8898,7 @@ pub struct _TokenTreePatternParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokenPatternTransport>,
+    pub children: OneOrMany<TokenPatternTransport>,
 }
 
 impl RenderableTransport for _TokenTreePatternParenTransport {
@@ -9302,7 +9302,7 @@ pub struct ArgumentsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Vec<AnyTransport>,
+    pub attributes: OneOrMany<AnyTransport>,
 }
 
 impl RenderableTransport for ArgumentsTransport {
@@ -9723,7 +9723,7 @@ pub struct BlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_expression"))]
     pub trailing_expression: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<StatementTransport>,
+    pub children: OneOrMany<StatementTransport>,
 }
 
 impl RenderableTransport for BlockTransport {
@@ -10077,7 +10077,7 @@ pub struct ClosureExpressionExprTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: ExpressionTransport,
+    pub body: Box<AnyTransport>,
 }
 
 impl RenderableTransport for ClosureExpressionExprTransport {
@@ -10222,7 +10222,7 @@ pub struct ClosureParametersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<ClosureParametersChildTransport>,
+    pub children: OneOrMany<ClosureParametersChildTransport>,
 }
 
 impl RenderableTransport for ClosureParametersTransport {
@@ -10526,7 +10526,7 @@ pub struct DeclarationListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<DeclarationStatementTransport>,
+    pub children: OneOrMany<DeclarationStatementTransport>,
 }
 
 impl RenderableTransport for DeclarationListTransport {
@@ -10556,7 +10556,7 @@ pub struct DelimTokenTreeParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<DelimTokensTransport>,
+    pub children: OneOrMany<DelimTokensTransport>,
 }
 
 impl RenderableTransport for DelimTokenTreeParenTransport {
@@ -10586,7 +10586,7 @@ pub struct DelimTokenTreeBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<DelimTokensTransport>,
+    pub children: OneOrMany<DelimTokensTransport>,
 }
 
 impl RenderableTransport for DelimTokenTreeBracketTransport {
@@ -10616,7 +10616,7 @@ pub struct DelimTokenTreeBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<DelimTokensTransport>,
+    pub children: OneOrMany<DelimTokensTransport>,
 }
 
 impl RenderableTransport for DelimTokenTreeBraceTransport {
@@ -10993,7 +10993,7 @@ pub struct EnumVariantListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<EnumVariantListChildTransport>,
+    pub children: OneOrMany<EnumVariantListChildTransport>,
 }
 
 impl RenderableTransport for EnumVariantListTransport {
@@ -11362,7 +11362,7 @@ pub struct FieldDeclarationListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<FieldDeclarationListChildTransport>,
+    pub children: OneOrMany<FieldDeclarationListChildTransport>,
 }
 
 impl RenderableTransport for FieldDeclarationListTransport {
@@ -11428,7 +11428,7 @@ pub struct FieldInitializerTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<AttributeItemTransport>,
+    pub children: OneOrMany<AttributeItemTransport>,
 }
 
 impl RenderableTransport for FieldInitializerTransport {
@@ -11458,7 +11458,7 @@ pub struct FieldInitializerListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<FieldInitializerListChildTransport>,
+    pub children: OneOrMany<FieldInitializerListChildTransport>,
 }
 
 impl RenderableTransport for FieldInitializerListTransport {
@@ -11661,7 +11661,7 @@ pub struct ForLifetimesTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<LifetimeTransport>,
+    pub children: OneOrMany<LifetimeTransport>,
 }
 
 impl RenderableTransport for ForLifetimesTransport {
@@ -11978,7 +11978,7 @@ pub struct FunctionModifiersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_modifier"))]
-    pub modifier: Vec<ExternModifierTransport>,
+    pub modifier: OneOrMany<AnyTransport>,
 }
 
 impl RenderableTransport for FunctionModifiersTransport {
@@ -12723,7 +12723,7 @@ pub struct LastMatchArmTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<DeclarationStatementTransport>,
+    pub children: OneOrMany<DeclarationStatementTransport>,
 }
 
 impl RenderableTransport for LastMatchArmTransport {
@@ -13050,7 +13050,7 @@ pub struct MacroDefinitionParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<Vec<MacroRuleTransport>>,
+    pub children: Option<OneOrMany<MacroRuleTransport>>,
 }
 
 impl RenderableTransport for MacroDefinitionParenTransport {
@@ -13080,7 +13080,7 @@ pub struct MacroDefinitionBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<Vec<MacroRuleTransport>>,
+    pub children: Option<OneOrMany<MacroRuleTransport>>,
 }
 
 impl RenderableTransport for MacroDefinitionBracketTransport {
@@ -13110,7 +13110,7 @@ pub struct MacroDefinitionBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<Vec<MacroRuleTransport>>,
+    pub children: Option<OneOrMany<MacroRuleTransport>>,
 }
 
 impl RenderableTransport for MacroDefinitionBraceTransport {
@@ -13412,7 +13412,7 @@ pub struct MatchArmUFormWithCommaTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Vec<DeclarationStatementTransport>,
+    pub attributes: OneOrMany<DeclarationStatementTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: MatchPatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -13446,7 +13446,7 @@ pub struct MatchArmUFormBlockEndingTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Vec<DeclarationStatementTransport>,
+    pub attributes: OneOrMany<DeclarationStatementTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: MatchPatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -13480,7 +13480,7 @@ pub struct MatchBlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<Vec<MatchBlockChildTransport>>,
+    pub children: Option<OneOrMany<MatchBlockChildTransport>>,
 }
 
 impl RenderableTransport for MatchBlockTransport {
@@ -14112,9 +14112,9 @@ pub struct OrderedFieldDeclarationListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Vec<_TypeTransport>,
+    pub type_: OneOrMany<_TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<OrderedFieldDeclarationListChildTransport>,
+    pub children: OneOrMany<OrderedFieldDeclarationListChildTransport>,
 }
 
 impl RenderableTransport for OrderedFieldDeclarationListTransport {
@@ -14178,7 +14178,7 @@ pub struct ParametersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<ParametersChildTransport>,
+    pub children: OneOrMany<ParametersChildTransport>,
 }
 
 impl RenderableTransport for ParametersTransport {
@@ -15363,7 +15363,7 @@ pub struct ShorthandFieldInitializerTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Vec<AttributeItemTransport>,
+    pub attributes: OneOrMany<AttributeItemTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
     pub identifier: IdentifierTransport,
 }
@@ -15395,7 +15395,7 @@ pub struct SlicePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<PatternTransport>,
+    pub children: OneOrMany<PatternTransport>,
 }
 
 impl RenderableTransport for SlicePatternTransport {
@@ -15427,7 +15427,7 @@ pub struct SourceFileTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_shebang"))]
     pub shebang: Option<ShebangTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
-    pub statements: Vec<StatementTransport>,
+    pub statements: OneOrMany<StatementTransport>,
 }
 
 impl RenderableTransport for SourceFileTransport {
@@ -15495,7 +15495,7 @@ pub struct StringLiteralTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<StringLiteralChildTransport>,
+    pub children: OneOrMany<StringLiteralChildTransport>,
 }
 
 impl RenderableTransport for StringLiteralTransport {
@@ -15710,7 +15710,7 @@ pub struct StructPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<StructPatternChildTransport>,
+    pub children: OneOrMany<StructPatternChildTransport>,
 }
 
 impl RenderableTransport for StructPatternTransport {
@@ -15852,7 +15852,7 @@ pub struct TokenRepetitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokensTransport>,
+    pub children: OneOrMany<TokensTransport>,
 }
 
 impl RenderableTransport for TokenRepetitionTransport {
@@ -15882,7 +15882,7 @@ pub struct TokenRepetitionPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokenPatternTransport>,
+    pub children: OneOrMany<TokenPatternTransport>,
 }
 
 impl RenderableTransport for TokenRepetitionPatternTransport {
@@ -15912,7 +15912,7 @@ pub struct TokenTreeParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokensTransport>,
+    pub children: OneOrMany<TokensTransport>,
 }
 
 impl RenderableTransport for TokenTreeParenTransport {
@@ -15942,7 +15942,7 @@ pub struct TokenTreeBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokensTransport>,
+    pub children: OneOrMany<TokensTransport>,
 }
 
 impl RenderableTransport for TokenTreeBracketTransport {
@@ -15972,7 +15972,7 @@ pub struct TokenTreeBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokensTransport>,
+    pub children: OneOrMany<TokensTransport>,
 }
 
 impl RenderableTransport for TokenTreeBraceTransport {
@@ -16135,7 +16135,7 @@ pub struct TokenTreePatternParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokenPatternTransport>,
+    pub children: OneOrMany<TokenPatternTransport>,
 }
 
 impl RenderableTransport for TokenTreePatternParenTransport {
@@ -16165,7 +16165,7 @@ pub struct TokenTreePatternBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokenPatternTransport>,
+    pub children: OneOrMany<TokenPatternTransport>,
 }
 
 impl RenderableTransport for TokenTreePatternBracketTransport {
@@ -16195,7 +16195,7 @@ pub struct TokenTreePatternBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TokenPatternTransport>,
+    pub children: OneOrMany<TokenPatternTransport>,
 }
 
 impl RenderableTransport for TokenTreePatternBraceTransport {
@@ -16358,7 +16358,7 @@ pub struct TraitBoundsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TraitBoundsChildTransport>,
+    pub children: OneOrMany<TraitBoundsChildTransport>,
 }
 
 impl RenderableTransport for TraitBoundsTransport {
@@ -16490,9 +16490,9 @@ pub struct TupleExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Vec<AttributeItemTransport>,
+    pub attributes: OneOrMany<AttributeItemTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
-    pub elements: Option<Vec<ExpressionTransport>>,
+    pub elements: Option<OneOrMany<ExpressionTransport>>,
 }
 
 impl RenderableTransport for TupleExpressionTransport {
@@ -16522,7 +16522,7 @@ pub struct TuplePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<AnyTransport>,
+    pub children: OneOrMany<AnyTransport>,
 }
 
 impl RenderableTransport for TuplePatternTransport {
@@ -16554,7 +16554,7 @@ pub struct TupleStructPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<PatternTransport>,
+    pub children: OneOrMany<PatternTransport>,
 }
 
 impl RenderableTransport for TupleStructPatternTransport {
@@ -16584,7 +16584,7 @@ pub struct TupleTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<_TypeTransport>,
+    pub children: OneOrMany<_TypeTransport>,
 }
 
 impl RenderableTransport for TupleTypeTransport {
@@ -16614,7 +16614,7 @@ pub struct TypeArgumentsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TypeArgumentsChildTransport>,
+    pub children: OneOrMany<TypeArgumentsChildTransport>,
 }
 
 impl RenderableTransport for TypeArgumentsTransport {
@@ -16784,7 +16784,7 @@ pub struct TypeParametersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Vec<AnyTransport>,
+    pub attributes: OneOrMany<AnyTransport>,
 }
 
 impl RenderableTransport for TypeParametersTransport {
@@ -17106,7 +17106,7 @@ pub struct UseBoundsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<UseBoundsChildTransport>,
+    pub children: OneOrMany<UseBoundsChildTransport>,
 }
 
 impl RenderableTransport for UseBoundsTransport {
@@ -17168,7 +17168,7 @@ pub struct UseListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<UseClauseTransport>,
+    pub children: OneOrMany<UseClauseTransport>,
 }
 
 impl RenderableTransport for UseListTransport {
@@ -17423,7 +17423,7 @@ pub struct WhereClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<WherePredicateTransport>,
+    pub children: OneOrMany<WherePredicateTransport>,
 }
 
 impl RenderableTransport for WhereClauseTransport {
@@ -23951,7 +23951,7 @@ fn render_closure_expression_block(node: &ClosureExpressionBlockTransport, dest:
 
 fn render__closure_expression_expr(node: &_ClosureExpressionExprTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = _ClosureExpressionExprTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.body.as_ref())),
     };
     template.render_into(dest)
 }
@@ -24872,7 +24872,7 @@ fn render_char_literal(t: &CharLiteralTransport, dest: &mut dyn ::std::fmt::Writ
 
 fn render_closure_expression_expr(node: &ClosureExpressionExprTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ClosureExpressionExprTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.body.as_ref())),
     };
     template.render_into(dest)
 }
@@ -29097,7 +29097,7 @@ fn transport_to_node_closure_expression_block(transport: ClosureExpressionBlockT
 
 fn transport_to_node__closure_expression_expr(transport: _ClosureExpressionExprTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
+    fields.insert("body".to_string(), transport_field_value(*transport.body)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -30627,7 +30627,7 @@ fn transport_to_node_abstract_type(transport: AbstractTypeTransport) -> Result<T
 
 fn transport_to_node_arguments(transport: ArgumentsTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("attributes".to_string(), transport_field_values(transport.attributes)?);
+    fields.insert("attributes".to_string(), transport_field_values(transport.attributes.into_iter().collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -31099,7 +31099,7 @@ fn transport_to_node_char_literal(transport: CharLiteralTransport) -> Result<Tra
 
 fn transport_to_node_closure_expression_expr(transport: ClosureExpressionExprTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
+    fields.insert("body".to_string(), transport_field_value(*transport.body)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -32171,7 +32171,7 @@ fn transport_to_node_function_item(transport: FunctionItemTransport) -> Result<T
 
 fn transport_to_node_function_modifiers(transport: FunctionModifiersTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("modifier".to_string(), transport_field_values(transport.modifier.into_iter().map(|v| AnyTransport::ExternModifier(v)).collect::<Vec<_>>())?);
+    fields.insert("modifier".to_string(), transport_field_values(transport.modifier.into_iter().collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -34774,7 +34774,7 @@ fn transport_to_node_tuple_expression(transport: TupleExpressionTransport) -> Re
 fn transport_to_node_tuple_pattern(transport: TuplePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(296) /* "tuple_pattern" */,
@@ -34962,7 +34962,7 @@ fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result
 
 fn transport_to_node_type_parameters(transport: TypeParametersTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("attributes".to_string(), transport_field_values(transport.attributes)?);
+    fields.insert("attributes".to_string(), transport_field_values(transport.attributes.into_iter().collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());

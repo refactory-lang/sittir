@@ -2,15 +2,15 @@
 /**
  * Grammar-specific engine factory for @sittir/python.
  *
- * Thin wrapper — all engine logic lives in createGrammarEngine from
- * @sittir/core/engine. Grammar-specific wiring (KIND_NAMES,
- * toNativeRenderTransport, getActiveBackend) is passed via GrammarEngineConfig.
+ * Thin wrapper — native binding stays in @sittir/common/engine while the
+ * JS backend implementation comes from @sittir/core/engine.
  */
+import { createJsEngine } from '@sittir/core/engine';
 import {
-	createGrammarEngine,
+	createNativeEngine,
 	type SittirEngineLike,
 	type EngineOptions
-} from '@sittir/core/engine';
+} from '@sittir/common/engine';
 import { KIND_NAMES } from './types.js';
 import { toNativeRenderTransport } from './utils.js';
 import { getActiveBackend } from './backend.js';
@@ -25,19 +25,26 @@ export type { EngineOptions };
  * Create a grammar-specific engine instance.
  *
  * Attempts to use the native backend if available; falls back to the JS
- * engine (Nunjucks renderer) otherwise.
+ * engine otherwise.
  *
  * @param options - Engine configuration (format, etc.)
  * @returns An engine implementing SittirEngineLike.
  */
 export function createEngine(options?: EngineOptions): SittirEngineLike {
-	return createGrammarEngine(
-		{
+	return (
+		createNativeEngine(
+			{
+				templatesPath: join(__dirname, '..', 'templates'),
+				kindNames: KIND_NAMES,
+				toNativeRenderTransport,
+				getActiveBackend,
+			},
+			options
+		) ??
+		createJsEngine({
 			templatesPath: join(__dirname, '..', 'templates'),
+			format: options?.format,
 			kindNames: KIND_NAMES,
-			toNativeRenderTransport,
-			getActiveBackend,
-		},
-		options
+		})
 	);
 }

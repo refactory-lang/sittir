@@ -40,6 +40,13 @@
  *                   inputAstShapeEqual, summary }` — quick verdict on
  *                 whether the two pipelines agreed.
  *
+ * With `--trace`:
+ *   - emits a richer matrix for the selected target:
+ *     `typescript.shallow`, `typescript.deep`, `native.shallow`, `native.deep`
+ *   - each lane shows the boundary payload passed to that renderer and the
+ *     rendered output / error, so drill-in and transport projection can be
+ *     compared side-by-side.
+ *
  * ## Why this exists
  *
  * Debugging RT failures repeatedly required writing one-off `/tmp/probe-X.ts`
@@ -58,6 +65,7 @@
 import { parseArgs } from 'node:util';
 import {
 	loadLanguageForGrammar,
+	loadKindIdFromName,
 	loadWebTreeSitter,
 	treeHandle,
 	adaptNode,
@@ -65,14 +73,16 @@ import {
 } from '../validate/common.ts';
 import { loadReadTreeNode } from '../validate/common.ts';
 import type * as TS from 'web-tree-sitter';
-import type { AnyTreeNode, NodeId } from '@sittir/types';
+import type { AnyNodeData, AnyTreeNode, NodeId } from '@sittir/types';
+import type { TreeHandle } from '@sittir/common';
 
 // ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
 
-async function main(): Promise<void> {
+async function main(argv: string[]): Promise<number> {
 	const { values } = parseArgs({
+		args: argv,
 		options: {
 			grammar: { type: 'string', short: 'g' },
 			source: { type: 'string', short: 's' },
@@ -125,24 +135,26 @@ async function main(): Promise<void> {
 			//   - both:       runs both, emits a `compareEngines`
 			//                 block with rendered-equal verdict.
 			engine: { type: 'string' }
+			,
+			trace: { type: 'boolean', default: false }
 		}
 	});
 	if (!values.grammar) {
-		console.error('probe-kind: --grammar <rust|typescript|python> required');
-		process.exit(2);
+		process.stderr.write('probe-kind: --grammar <rust|typescript|python> required\n');
+		return 2;
 	}
 	const grammar = values.grammar as string;
 	const source = values.stdin ? await readStdin() : (values.source as string | undefined);
 	if (source === undefined) {
-		console.error('probe-kind: --source <text> or --stdin required');
-		process.exit(2);
+		process.stderr.write('probe-kind: --source <text> or --stdin required\n');
+		return 2;
 	}
 
 	const parsedRange = values.range ? parseRange(values.range as string) : undefined;
 	const engineRaw = (values.engine as string | undefined) ?? 'typescript';
 	if (!['typescript', 'native', 'both'].includes(engineRaw)) {
-		console.error(`probe-kind: --engine must be 'typescript' | 'native' | 'both' (got '${engineRaw}')`);
-		process.exit(2);
+		process.stderr.write(`probe-kind: --engine must be 'typescript' | 'native' | 'both' (got '${engineRaw}')\n`);
+		return 2;
 	}
 	const opts = {
 		noRender: values['no-render'] === true,
@@ -152,6 +164,11 @@ async function main(): Promise<void> {
 		reparse: values.reparse === true,
 		engine: (engineRaw === 'both' ? 'typescript' : engineRaw) as 'typescript' | 'native'
 	};
+	if (values.trace === true) {
+		const trace = await probeTrace(grammar, source, opts);
+		process.stdout.write(JSON.stringify(trace, null, values.pretty ? 2 : undefined) + '\n');
+		return 0;
+	}
 	const report = await probe(grammar, source, opts);
 	let baselineReport: ProbeReport | undefined;
 	let compare: ProbeCompare | undefined;
@@ -186,6 +203,7 @@ async function main(): Promise<void> {
 		out.compareEngines = compareEngines;
 	}
 	process.stdout.write(JSON.stringify(out, null, indent) + '\n');
+	return 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -214,6 +232,33 @@ export interface ProbeReport {
 		reparsedShape: string;
 	};
 	diff: { sourceLen: number; renderedLen?: number; sameText?: boolean };
+}
+
+export interface ProbeTraceLane {
+	readMode: 'shallow' | 'deep';
+	engine: 'typescript' | 'native';
+	nodeData: unknown;
+	rendererInput?: unknown;
+	nativeTransport?: unknown;
+	rendered?: string;
+	renderError?: string;
+}
+
+export interface ProbeTraceReport {
+	grammar: string;
+	source: string;
+	probeRange?: { start: number; end: number; kind?: string; text: string };
+	cst: CstNode;
+	trace: {
+		typescript: {
+			shallow: ProbeTraceLane;
+			deep: ProbeTraceLane;
+		};
+		native: {
+			shallow: ProbeTraceLane;
+			deep: ProbeTraceLane;
+		};
+	};
 }
 
 export interface CstNode {
@@ -395,6 +440,69 @@ export async function probe(
 	};
 }
 
+export async function probeTrace(
+	grammar: string,
+	source: string,
+	opts: {
+		kind?: string;
+		range?: { start: number; end: number };
+		reparse?: boolean;
+		noWrap?: boolean;
+		baselineDir?: string;
+		useBaselineParser?: boolean;
+		engine?: 'typescript' | 'native';
+	} = {}
+): Promise<ProbeTraceReport> {
+	const { Parser, lang } =
+		opts.baselineDir && opts.useBaselineParser
+			? await loadLanguageFromPath(resolveBaselinePath(opts.baselineDir, '.sittir/parser.wasm'))
+			: await loadLanguageForGrammar(grammar);
+	const parser = new Parser();
+	parser.setLanguage(lang);
+	const tree = parser.parse(source);
+	if (!tree) throw new Error('probe-kind: parse returned null');
+
+	let targetNode: any = tree.rootNode;
+	let isRoot = true;
+	let probeRange: ProbeTraceReport['probeRange'] | undefined;
+	if (opts.range) {
+		targetNode = findNodeCoveringRange(tree.rootNode, opts.range.start, opts.range.end);
+		if (!targetNode) throw new Error(`probe-kind: no node covers range ${opts.range.start}–${opts.range.end}`);
+		isRoot = false;
+	} else if (opts.kind) {
+		targetNode = findFirstByKind(tree.rootNode, opts.kind);
+		if (!targetNode) throw new Error(`probe-kind: no node of kind '${opts.kind}' found`);
+		isRoot = false;
+	}
+	if (!isRoot) {
+		probeRange = {
+			start: targetNode.startIndex,
+			end: targetNode.endIndex,
+			kind: targetNode.type,
+			text: targetNode.text
+		};
+	}
+	const cst = dumpCst(targetNode, null);
+	const tsRead = await readProbeNodeData(grammar, source, tree, targetNode, isRoot, 'typescript');
+	const nativeRead = await readProbeNodeData(grammar, source, tree, targetNode, isRoot, 'native');
+	return {
+		grammar,
+		source,
+		probeRange,
+		cst,
+		trace: {
+			typescript: {
+				shallow: await buildTraceLane(grammar, tsRead.shallow, 'typescript', 'shallow'),
+				deep: await buildTraceLane(grammar, tsRead.deep, 'typescript', 'deep')
+			},
+			native: {
+				shallow: await buildTraceLane(grammar, nativeRead.shallow, 'native', 'shallow'),
+				deep: await buildTraceLane(grammar, nativeRead.deep, 'native', 'deep')
+			}
+		}
+	};
+}
+
 // ---------------------------------------------------------------------------
 // Internals
 // ---------------------------------------------------------------------------
@@ -420,8 +528,178 @@ function dumpCst(node: any, fieldName: string | null): CstNode {
 }
 
 async function fallbackReadNode(handle: ReturnType<typeof treeHandle>, nodeId?: NodeId): Promise<unknown> {
-	const { readNode } = await import('@sittir/core');
+	const { readNode } = await import('@sittir/common');
 	return readNode(handle, nodeId);
+}
+
+async function deepReadProbeNode(
+	handle: TreeHandle,
+	nodeHandle: number | undefined,
+	childIndex: number | undefined,
+): Promise<unknown> {
+	const { readNode } = await import('@sittir/common');
+	const data = readNode(handle, nodeHandle, childIndex);
+	const isNodeData = (value: unknown): value is AnyNodeData => typeof value === 'object' && value !== null && '$type' in value;
+	const shouldDrill = (entry: unknown): entry is AnyNodeData & { $nodeHandle: number; $childIndex: number } =>
+		isNodeData(entry) &&
+		entry.$named === true &&
+		typeof entry.$nodeHandle === 'number' &&
+		typeof entry.$childIndex === 'number' &&
+		typeof entry.$type === 'number';
+	if (data.$children) {
+		(data as { $children?: unknown[] }).$children = await Promise.all(
+			data.$children.map(async (entry) => {
+				if (!shouldDrill(entry)) return entry;
+				return deepReadProbeNode(handle, entry.$nodeHandle, entry.$childIndex);
+			}),
+		);
+	}
+	const record = data as unknown as Record<string, unknown>;
+	for (const rawKey of Object.keys(record).filter((key) => key.startsWith('_'))) {
+		const value = record[rawKey];
+		if (Array.isArray(value)) {
+			record[rawKey] = await Promise.all(value.map(async (entry) =>
+				shouldDrill(entry) ? deepReadProbeNode(handle, entry.$nodeHandle, entry.$childIndex) : entry
+			));
+		} else if (shouldDrill(value)) {
+			record[rawKey] = await deepReadProbeNode(handle, value.$nodeHandle, value.$childIndex);
+		}
+	}
+	return data;
+}
+
+async function readProbeNodeData(
+	grammar: string,
+	source: string,
+	tree: TS.Tree,
+	targetNode: any,
+	isRoot: boolean,
+	engine: 'typescript' | 'native'
+): Promise<{ shallow: unknown; deep: unknown }> {
+	if (engine === 'native') {
+		const nativeEngine = await loadNativeEngine(grammar);
+		const handle = nativeTreeHandle(nativeEngine, source);
+		if (isRoot) {
+			const shallow = stripBigInts(handle.read?.());
+			const deep = await deepReadProbeNode(handle, undefined, undefined);
+			return { shallow, deep };
+		}
+		const root = await deepReadProbeNode(handle, undefined, undefined);
+		const target = findInNodeDataByRange(root, targetNode.startIndex, targetNode.endIndex);
+		if (!target) throw new Error('probe-kind: no native node match in NodeData tree');
+		const targetHandle = getTargetHandle(target);
+		const shallow = targetHandle ? handle.read?.(targetHandle.handle, targetHandle.childIndex) : target;
+		const deep = targetHandle ? await deepReadProbeNode(handle, targetHandle.handle, targetHandle.childIndex) : target;
+		return { shallow, deep };
+	}
+	const rawKindIdFromName = await loadKindIdFromName(grammar);
+	const kindIdFromName = rawKindIdFromName
+		? (name: string): number | undefined => {
+				try {
+					return rawKindIdFromName(name);
+				} catch {
+					return undefined;
+				}
+			}
+		: undefined;
+	const handle = treeHandle(tree, source, kindIdFromName);
+	const shallow = isRoot ? await fallbackReadNode(handle) : await readSelectedNode(handle, targetNode);
+	const deep = await deepReadSelectedNode(grammar, handle, targetNode, isRoot, shallow);
+	return { shallow, deep };
+}
+
+async function readSelectedNode(
+	handle: ReturnType<typeof treeHandle>,
+	targetNode: TS.Node
+): Promise<unknown> {
+	const prev = handle.rootNode;
+	(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(targetNode);
+	try {
+		return await fallbackReadNode(handle);
+	} finally {
+		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
+	}
+}
+
+async function deepReadSelectedNode(
+	grammar: string,
+	handle: ReturnType<typeof treeHandle>,
+	targetNode: TS.Node,
+	isRoot: boolean,
+	fallback: unknown
+): Promise<unknown> {
+	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	if (!readTreeNodeFn) return fallback;
+	if (isRoot) return readTreeNodeFn(handle);
+	const prev = handle.rootNode;
+	(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(targetNode);
+	try {
+		return readTreeNodeFn(handle);
+	} finally {
+		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
+	}
+}
+
+function getTargetHandle(target: unknown): { handle: number; childIndex: number } | null {
+	if (!target || typeof target !== 'object') return null;
+	const record = target as Record<string, unknown>;
+	return typeof record.$nodeHandle === 'number' && typeof record.$childIndex === 'number'
+		? { handle: record.$nodeHandle, childIndex: record.$childIndex }
+		: null;
+}
+
+async function buildTraceLane(
+	grammar: string,
+	nodeData: unknown,
+	engine: 'typescript' | 'native',
+	readMode: 'shallow' | 'deep'
+): Promise<ProbeTraceLane> {
+	const cleanedNodeData = stripBigInts(nodeData);
+	if (engine === 'typescript') {
+		try {
+			const rendered = await renderNodeData(grammar, cleanedNodeData);
+			return {
+				engine,
+				readMode,
+				nodeData: cleanedNodeData,
+				rendererInput: cleanedNodeData,
+				rendered
+			};
+		} catch (error) {
+			return {
+				engine,
+				readMode,
+				nodeData: cleanedNodeData,
+				rendererInput: cleanedNodeData,
+				renderError: error instanceof Error ? error.message : String(error)
+			};
+		}
+	}
+	try {
+		const nativeTransport = await nativeRenderPayload(grammar, cleanedNodeData);
+		const rendered = await renderNodeDataNative(grammar, cleanedNodeData);
+		return {
+			engine,
+			readMode,
+			nodeData: cleanedNodeData,
+			nativeTransport,
+			rendered
+		};
+	} catch (error) {
+		let nativeTransport: unknown;
+		try {
+			nativeTransport = await nativeRenderPayload(grammar, cleanedNodeData);
+		} catch {
+			nativeTransport = undefined;
+		}
+		return {
+			engine,
+			readMode,
+			nodeData: cleanedNodeData,
+			nativeTransport,
+			renderError: error instanceof Error ? error.message : String(error)
+		};
+	}
 }
 
 /** Find the first descendant (inclusive) of kind `kind`, pre-order. */
@@ -723,6 +1001,11 @@ async function readStdin(): Promise<string> {
 	return Buffer.concat(chunks).toString('utf-8');
 }
 
+/** Run the probe-kind CLI with the given argv (excluding node/script path). */
+export async function run(argv: string[]): Promise<number> {
+	return main(argv);
+}
+
 // silence unused warnings on adaptNode / AnyTreeNode (used indirectly in treeHandle path)
 void adaptNode;
 type _AnyTreeNode = AnyTreeNode;
@@ -733,8 +1016,8 @@ type _AnyTreeNode = AnyTreeNode;
 
 const isMain = import.meta.url === `file://${process.argv[1]}`;
 if (isMain) {
-	main().catch((err) => {
-		console.error('probe-kind:', err instanceof Error ? err.message : err);
+	run(process.argv.slice(2)).then(process.exit).catch((err) => {
+		process.stderr.write(`probe-kind: ${err instanceof Error ? err.stack ?? err.message : err}\n`);
 		process.exit(1);
 	});
 }

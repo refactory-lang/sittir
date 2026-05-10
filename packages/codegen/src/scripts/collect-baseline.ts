@@ -482,7 +482,7 @@ const isCli = (() => {
 	}
 })();
 
-if (isCli) {
+export async function run(_argv: string[]): Promise<number> {
 	const metricsBackend: 'ts' | 'native' = process.env.SITTIR_BACKEND === 'native' ? 'native' : 'ts';
 	const baseline = await collectBaseline(process.env.SITTIR_BACKEND);
 	process.stdout.write(serialiseBaseline(baseline));
@@ -490,7 +490,12 @@ if (isCli) {
 	// Emit metrics file when SITTIR_METRICS=1 is set. The import is
 	// deferred so the hot path stays free of the `os` module load.
 	if (process.env['SITTIR_METRICS'] === '1') {
-		const { dumpMetrics } = await import('@sittir/core');
+		const { dumpMetrics } = await import('@sittir/common');
 		dumpMetrics(metricsBackend);
 	}
+	return 0;
+}
+
+if (isCli) {
+	process.exit(await run(process.argv.slice(2)));
 }

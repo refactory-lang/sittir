@@ -37,3 +37,4 @@ Cargo.lock
 rust/crates/sittir-*/*.node
 .claude/worktrees/
 tmp-scripts/
+graphify-out/cache/**

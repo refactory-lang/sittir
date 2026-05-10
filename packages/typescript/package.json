@@ -28,6 +28,10 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},
+		"./utils": {
+			"types": "./dist/utils.d.ts",
+			"import": "./dist/utils.js"
+		},
 		"./tsx": {
 			"types": "./dist/tsx/index.d.ts",
 			"import": "./dist/tsx/index.js"
@@ -46,7 +50,8 @@
 	},
 	"dependencies": {
 		"@sittir/core": "workspace:*",
-		"@sittir/types": "workspace:*"
+		"@sittir/types": "workspace:*",
+		"@sittir/common": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/node": "^25.6.0",

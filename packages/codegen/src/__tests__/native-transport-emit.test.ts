@@ -16,23 +16,9 @@ import type { NodeMap } from '../compiler/types.ts';
 import { emitClientUtils } from '../emitters/client-utils.ts';
 import { emitRenderModule } from '../emitters/render-module.ts';
 import { emitTypes } from '../emitters/types.ts';
+import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
 
-function nodeMapWith(nodes: Map<string, AssembledNode>, polymorphFormKinds: ReadonlySet<string> = new Set()): NodeMap {
-	return {
-		name: 'rust',
-		nodes,
-		signatures: { signatures: new Map() },
-		derivations: {
-			inferredFields: [],
-			promotedRules: [],
-			repeatedShapes: []
-		},
-		rules: {},
-		externals: new Set(),
-		word: undefined,
-		polymorphFormKinds
-	} satisfies NodeMap;
-}
+const nodeMapWith = makeNodeMapWith;
 
 function makeMinimalNodeMap(): NodeMap {
 	const callRule: SeqRule = {

@@ -29,6 +29,31 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
+		},
+		"./validate/from": {
+			"types": "./src/validate/from.ts",
+			"import": "./dist/validate/from.js",
+			"default": "./dist/validate/from.js"
+		},
+		"./validate/factory-render-parse": {
+			"types": "./src/validate/factory-render-parse.ts",
+			"import": "./dist/validate/factory-render-parse.js",
+			"default": "./dist/validate/factory-render-parse.js"
+		},
+		"./validate/read-render-parse": {
+			"types": "./src/validate/read-render-parse.ts",
+			"import": "./dist/validate/read-render-parse.js",
+			"default": "./dist/validate/read-render-parse.js"
+		},
+		"./scripts/probe-kind": {
+			"types": "./src/scripts/probe-kind.ts",
+			"import": "./dist/scripts/probe-kind.js",
+			"default": "./dist/scripts/probe-kind.js"
+		},
+		"./validate/template-coverage": {
+			"types": "./src/validate/template-coverage.ts",
+			"import": "./dist/validate/template-coverage.js",
+			"default": "./dist/validate/template-coverage.js"
 		}
 	},
 	"scripts": {
@@ -45,7 +70,8 @@
 	},
 	"dependencies": {
 		"@sittir/core": "workspace:*",
-		"@sittir/types": "workspace:*"
+		"@sittir/types": "workspace:*",
+		"@sittir/common": "workspace:*"
 	},
 	"devDependencies": {
 		"@ast-grep/wasm": "^0.42.1",

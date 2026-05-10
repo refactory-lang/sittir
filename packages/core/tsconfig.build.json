@@ -5,6 +5,15 @@
 		"outDir": "./dist",
 		"tsBuildInfoFile": "./tsconfig.build.tsbuildinfo"
 	},
-	"include": ["src"],
+	"include": [
+		"src/index.ts",
+		"src/engine-boundary.ts",
+		"src/engine.ts",
+		"src/loader.ts",
+		"src/render.ts",
+		"src/types.ts",
+		"src/validate.ts",
+		"src/templates/**/*.ts"
+	],
 	"exclude": ["node_modules", "dist"]
 }

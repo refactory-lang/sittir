@@ -40,10 +40,7 @@ use std::collections::HashMap;
 /// `KindId` is a transparent newtype so `serde` decodes JSON numeric
 /// `$type` directly into it without an enum variant table — per-
 /// grammar `AnyTransport` enums dispatch on the inner u16.
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Hash,
-    ::serde::Serialize, ::serde::Deserialize,
-)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, ::serde::Serialize, ::serde::Deserialize)]
 #[serde(transparent)]
 #[repr(transparent)]
 pub struct KindId(pub u16);
@@ -108,18 +105,21 @@ impl TransportTrivia {
     /// Convert to `NodeTrivia` by wrapping each text string in a minimal
     /// `NodeData` with `type_: KindId(0)` (trivia items render as raw text).
     fn trivia_texts_to_nodes(texts: Vec<String>) -> Vec<NodeData> {
-        texts.into_iter().map(|text| NodeData {
-            type_: KindId(0),
-            source: Source::Factory,
-            named: false,
-            fields: None,
-            children: None,
-            text: Some(text),
-            span: None,
-            node_handle: None,
-            child_index: None,
-            trivia_data: None,
-        }).collect()
+        texts
+            .into_iter()
+            .map(|text| NodeData {
+                type_: KindId(0),
+                source: Source::Factory,
+                named: false,
+                fields: None,
+                children: None,
+                text: Some(text),
+                span: None,
+                node_handle: None,
+                child_index: None,
+                trivia_data: None,
+            })
+            .collect()
     }
 
     /// Convert this transport trivia into the engine's `NodeTrivia` type.
@@ -134,7 +134,10 @@ impl TransportTrivia {
 /// Read an array of JS objects, extracting the `$text` string from each.
 /// Returns `None` if the array is absent or empty.
 #[cfg(feature = "napi-bindings")]
-fn read_trivia_texts(obj: &::napi::bindgen_prelude::Object, key: &str) -> ::napi::Result<Option<Vec<String>>> {
+fn read_trivia_texts(
+    obj: &::napi::bindgen_prelude::Object,
+    key: &str,
+) -> ::napi::Result<Option<Vec<String>>> {
     let arr: Option<Vec<::napi::bindgen_prelude::Object>> = obj.get(key)?;
     match arr {
         None => Ok(None),
@@ -260,11 +263,23 @@ struct NodeDataSer<'a> {
     text: &'a Option<String>,
     #[serde(rename = "$span", default, skip_serializing_if = "Option::is_none")]
     span: &'a Option<Span>,
-    #[serde(rename = "$nodeHandle", default, skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "$nodeHandle",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
     node_handle: &'a Option<u32>,
-    #[serde(rename = "$childIndex", default, skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "$childIndex",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
     child_index: &'a Option<u16>,
-    #[serde(rename = "$triviaData", default, skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "$triviaData",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
     trivia_data: &'a Option<NodeTrivia>,
 }
 
@@ -310,7 +325,9 @@ where
     map.end()
 }
 
-fn deserialize_slot_fields<'de, D>(deserializer: D) -> Result<Option<HashMap<String, FieldValue>>, D::Error>
+fn deserialize_slot_fields<'de, D>(
+    deserializer: D,
+) -> Result<Option<HashMap<String, FieldValue>>, D::Error>
 where
     D: Deserializer<'de>,
 {
@@ -362,7 +379,11 @@ impl<'de> Deserialize<'de> for NodeData {
                 )));
             }
         }
-        let fields = if fields.is_empty() { None } else { Some(fields) };
+        let fields = if fields.is_empty() {
+            None
+        } else {
+            Some(fields)
+        };
         Ok(Self {
             type_: wire.type_,
             source: wire.source,
@@ -464,6 +485,88 @@ pub enum FieldValue {
     Text(String),
 }
 
+/// A transport field that accepts either a single value or an array of values
+/// from JS.
+///
+/// The JS `readNode` path stores single-element `multiple:true` fields as
+/// scalars rather than length-1 arrays. Using `Vec<T>` for such fields causes
+/// napi-rs to fail with "Given napi value is not an array". `OneOrMany<T>`
+/// accepts both shapes in its `FromNapiValue` impl and always presents a
+/// `&[T]` slice to Rust callers (via `Deref`), so generated `render_*`
+/// functions can call `.iter()` uniformly.
+#[derive(Debug, Clone)]
+pub struct OneOrMany<T>(pub Vec<T>);
+
+impl<T> std::ops::Deref for OneOrMany<T> {
+    type Target = [T];
+    fn deref(&self) -> &[T] {
+        &self.0
+    }
+}
+
+impl<T> IntoIterator for OneOrMany<T> {
+    type Item = T;
+    type IntoIter = std::vec::IntoIter<T>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
+    }
+}
+
+impl<T> From<OneOrMany<T>> for Vec<T> {
+    fn from(v: OneOrMany<T>) -> Vec<T> {
+        v.0
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: napi::bindgen_prelude::FromNapiValue> napi::bindgen_prelude::FromNapiValue
+    for OneOrMany<T>
+{
+    unsafe fn from_napi_value(
+        env: napi::sys::napi_env,
+        napi_val: napi::sys::napi_value,
+    ) -> napi::Result<Self> {
+        let mut is_arr = false;
+        // SAFETY: env and napi_val are valid napi handles provided by the runtime.
+        unsafe { napi::sys::napi_is_array(env, napi_val, &mut is_arr) };
+        if is_arr {
+            let v = Vec::<T>::from_napi_value(env, napi_val)?;
+            Ok(OneOrMany(v))
+        } else {
+            let single = T::from_napi_value(env, napi_val)?;
+            Ok(OneOrMany(vec![single]))
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: napi::bindgen_prelude::ToNapiValue> napi::bindgen_prelude::ToNapiValue
+    for OneOrMany<T>
+{
+    unsafe fn to_napi_value(
+        env: napi::sys::napi_env,
+        val: Self,
+    ) -> napi::Result<napi::sys::napi_value> {
+        Vec::<T>::to_napi_value(env, val.0)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: napi::bindgen_prelude::FromNapiValue> napi::bindgen_prelude::ValidateNapiValue
+    for OneOrMany<T>
+{
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T> napi::bindgen_prelude::TypeName for OneOrMany<T> {
+    fn type_name() -> &'static str {
+        "OneOrMany"
+    }
+    fn value_type() -> napi::ValueType {
+        napi::ValueType::Object
+    }
+}
+
 /// Byte-range for a `NodeData` within its source string. `start`/`end`
 /// are UTF-8 byte offsets (ast-grep / tree-sitter convention).
 /// `#[napi(object)]` (gated on napi-bindings feature) adds
@@ -510,10 +613,7 @@ pub struct Edit {
 /// `Renderable::Transport(&node.field as &dyn RenderableTransport)`.
 pub trait RenderableTransport {
     /// Render this transport value into `dest`.
-    fn render_into(
-        &self,
-        dest: &mut dyn std::fmt::Write,
-    ) -> Result<(), ::askama::Error>;
+    fn render_into(&self, dest: &mut dyn std::fmt::Write) -> Result<(), ::askama::Error>;
 
     /// Convenience: render to a fresh `String`. Calls `render_into` once.
     fn render_to_string(&self) -> Result<String, ::askama::Error> {

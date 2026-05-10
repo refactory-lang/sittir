@@ -4,24 +4,28 @@
 // AnyTransport enum + FromNapiValue impls + per-kind transport structs +
 // typed dispatch (render_transport_dispatch) + transport bridge helpers.
 
-#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
+#![allow(
+    dead_code,
+    unused_imports,
+    non_snake_case,
+    non_camel_case_types,
+    unused_mut,
+    unused_variables
+)]
 
-use ::sittir_core::filters::{
-    SingleNonterminalView, ListNonterminalView,
-    OptionalNonterminalView,
-};
+use ::sittir_core::filters::{ListNonterminalView, OptionalNonterminalView, SingleNonterminalView};
 use ::sittir_core::types::{
-    NodeData, FieldValue, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,
+    FieldValue, NodeData, NodeTrivia, RenderableTransport, Source, Span, TransportTrivia,
 };
 
 #[cfg(feature = "napi-bindings")]
 use ::napi_derive::napi;
 
-use ::sittir_core::render_with_trivia;
-use ::askama::Template as _AskamaTemplate;
 use super::bridge::*;
 use super::dispatch::render_dispatch;
 use super::templates::*;
+use ::askama::Template as _AskamaTemplate;
+use ::sittir_core::render_with_trivia;
 
 #[derive(Debug, Clone)]
 pub enum AnyTransport {
@@ -258,813 +262,814 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
         // struct decoders reuse the same napi_val, each reading their
         // own properties directly from the same JS object.
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
+        let kind_id: u16 = obj
+            .get("$type")?
             .ok_or_else(|| ::napi::Error::from_reason("$type property missing in AnyTransport"))?;
         match kind_id {
             // kind: _as_pattern (_AS_PATTERN)
             165 => Ok(AnyTransport::_AsPattern(
-                _AsPatternTransport::from_napi_value(env, napi_val)?
+                _AsPatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _assignment_eq (_ASSIGNMENT_EQ)
             240 => Ok(AnyTransport::AssignmentEq(
-                AssignmentEqTransport::from_napi_value(env, napi_val)?
+                AssignmentEqTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _assignment_type (_ASSIGNMENT_TYPE)
             241 => Ok(AnyTransport::AssignmentType(
-                AssignmentTypeTransport::from_napi_value(env, napi_val)?
+                AssignmentTypeTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _assignment_typed (_ASSIGNMENT_TYPED)
             242 => Ok(AnyTransport::AssignmentTyped(
-                AssignmentTypedTransport::from_napi_value(env, napi_val)?
+                AssignmentTypedTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _comprehension_clauses (_COMPREHENSION_CLAUSES)
             224 => Ok(AnyTransport::ComprehensionClauses(
-                ComprehensionClausesTransport::from_napi_value(env, napi_val)?
+                ComprehensionClausesTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _import_list (_IMPORT_LIST)
             116 => Ok(AnyTransport::ImportList(
-                ImportListTransport::from_napi_value(env, napi_val)?
+                ImportListTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _is_not (_IS_NOT)
-            194 => Ok(AnyTransport::IsNot(
-                IsNotTransport::from_napi_value(env, napi_val)?
-            )),
+            194 => Ok(AnyTransport::IsNot(IsNotTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: _key_value_pattern (_KEY_VALUE_PATTERN)
             170 => Ok(AnyTransport::KeyValuePattern(
-                KeyValuePatternTransport::from_napi_value(env, napi_val)?
+                KeyValuePatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _kw_async_marker (_KW_ASYNC_MARKER)
             250 => Ok(AnyTransport::KwAsyncMarker(
-                KwAsyncMarkerTransport::from_napi_value(env, napi_val)?
+                KwAsyncMarkerTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _kw_type (_KW_TYPE)
-            251 => Ok(AnyTransport::KwType(
-                KwTypeTransport::from_napi_value(env, napi_val)?
-            )),
+            251 => Ok(AnyTransport::KwType(KwTypeTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: _list_pattern (_LIST_PATTERN)
             167 => Ok(AnyTransport::_ListPattern(
-                _ListPatternTransport::from_napi_value(env, napi_val)?
+                _ListPatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _match_block (_MATCH_BLOCK)
             135 => Ok(AnyTransport::MatchBlock(
-                MatchBlockTransport::from_napi_value(env, napi_val)?
+                MatchBlockTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _match_block_block (_MATCH_BLOCK_BLOCK)
             246 => Ok(AnyTransport::MatchBlockBlock(
-                MatchBlockBlockTransport::from_napi_value(env, napi_val)?
+                MatchBlockBlockTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _not_escape_sequence (_NOT_ESCAPE_SEQUENCE)
             235 => Ok(AnyTransport::NotEscapeSequence(
-                NotEscapeSequenceTransport::from_napi_value(env, napi_val)?
+                NotEscapeSequenceTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _not_in (_NOT_IN)
-            193 => Ok(AnyTransport::NotIn(
-                NotInTransport::from_napi_value(env, napi_val)?
-            )),
+            193 => Ok(AnyTransport::NotIn(NotInTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: _simple_pattern_negative (_SIMPLE_PATTERN_NEGATIVE)
             248 => Ok(AnyTransport::SimplePatternNegative(
-                SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
+                SimplePatternNegativeTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _simple_statements (_SIMPLE_STATEMENTS)
             110 => Ok(AnyTransport::SimpleStatements(
-                SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                SimpleStatementsTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _tuple_pattern (_TUPLE_PATTERN)
             168 => Ok(AnyTransport::_TuplePattern(
-                _TuplePatternTransport::from_napi_value(env, napi_val)?
+                _TuplePatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _with_clause_paren (_WITH_CLAUSE_PAREN)
             245 => Ok(AnyTransport::_WithClauseParen(
-                _WithClauseParenTransport::from_napi_value(env, napi_val)?
+                _WithClauseParenTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: aliased_import (ALIASED_IMPORT)
             117 => Ok(AnyTransport::AliasedImport(
-                AliasedImportTransport::from_napi_value(env, napi_val)?
+                AliasedImportTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: argument_list (ARGUMENT_LIST)
             157 => Ok(AnyTransport::ArgumentList(
-                ArgumentListTransport::from_napi_value(env, napi_val)?
+                ArgumentListTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: as_pattern (AS_PATTERN)
             185 => Ok(AnyTransport::AsPattern(
-                AsPatternTransport::from_napi_value(env, napi_val)?
+                AsPatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: assert_statement (ASSERT_STATEMENT)
             121 => Ok(AnyTransport::AssertStatement(
-                AssertStatementTransport::from_napi_value(env, napi_val)?
+                AssertStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: assignment (ASSIGNMENT)
             198 => Ok(AnyTransport::Assignment(
-                AssignmentTransport::from_napi_value(env, napi_val)?
+                AssignmentTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: attribute (ATTRIBUTE)
             203 => Ok(AnyTransport::Attribute(
-                AttributeTransport::from_napi_value(env, napi_val)?
+                AttributeTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: augmented_assignment (AUGMENTED_ASSIGNMENT)
             199 => Ok(AnyTransport::AugmentedAssignment(
-                AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
+                AugmentedAssignmentTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: await (AWAIT)
-            237 => Ok(AnyTransport::Await(
-                AwaitTransport::from_napi_value(env, napi_val)?
-            )),
+            237 => Ok(AnyTransport::Await(AwaitTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: binary_operator (BINARY_OPERATOR)
             191 => Ok(AnyTransport::BinaryOperator(
-                BinaryOperatorTransport::from_napi_value(env, napi_val)?
+                BinaryOperatorTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: block (BLOCK)
-            160 => Ok(AnyTransport::Block(
-                BlockTransport::from_napi_value(env, napi_val)?
-            )),
+            160 => Ok(AnyTransport::Block(BlockTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: boolean_operator (BOOLEAN_OPERATOR)
             190 => Ok(AnyTransport::BooleanOperator(
-                BooleanOperatorTransport::from_napi_value(env, napi_val)?
+                BooleanOperatorTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: break_statement (BREAK_STATEMENT)
             129 => Ok(AnyTransport::BreakStatement(
-                BreakStatementTransport::from_napi_value(env, napi_val)?
+                BreakStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: call (CALL)
-            206 => Ok(AnyTransport::Call(
-                CallTransport::from_napi_value(env, napi_val)?
-            )),
+            206 => Ok(AnyTransport::Call(CallTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: case_clause (CASE_CLAUSE)
             136 => Ok(AnyTransport::CaseClause(
-                CaseClauseTransport::from_napi_value(env, napi_val)?
+                CaseClauseTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: case_pattern (CASE_PATTERN)
             163 => Ok(AnyTransport::CasePattern(
-                CasePatternTransport::from_napi_value(env, napi_val)?
+                CasePatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: chevron (CHEVRON)
-            120 => Ok(AnyTransport::Chevron(
-                ChevronTransport::from_napi_value(env, napi_val)?
-            )),
+            120 => Ok(AnyTransport::Chevron(ChevronTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: class_definition (CLASS_DEFINITION)
             154 => Ok(AnyTransport::ClassDefinition(
-                ClassDefinitionTransport::from_napi_value(env, napi_val)?
+                ClassDefinitionTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: class_pattern (CLASS_PATTERN)
             173 => Ok(AnyTransport::ClassPattern(
-                ClassPatternTransport::from_napi_value(env, napi_val)?
+                ClassPatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: comment (COMMENT)
-            99 => Ok(AnyTransport::Comment(
-                CommentTransport::from_napi_value(env, napi_val)?
-            )),
+            99 => Ok(AnyTransport::Comment(CommentTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: comparison_operator (COMPARISON_OPERATOR)
             195 => Ok(AnyTransport::ComparisonOperator(
-                ComparisonOperatorTransport::from_napi_value(env, napi_val)?
+                ComparisonOperatorTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: complex_pattern (COMPLEX_PATTERN)
             174 => Ok(AnyTransport::ComplexPattern(
-                ComplexPatternTransport::from_napi_value(env, napi_val)?
+                ComplexPatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: concatenated_string (CONCATENATED_STRING)
             230 => Ok(AnyTransport::ConcatenatedString(
-                ConcatenatedStringTransport::from_napi_value(env, napi_val)?
+                ConcatenatedStringTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: conditional_expression (CONDITIONAL_EXPRESSION)
             229 => Ok(AnyTransport::ConditionalExpression(
-                ConditionalExpressionTransport::from_napi_value(env, napi_val)?
+                ConditionalExpressionTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: constrained_type (CONSTRAINED_TYPE)
             212 => Ok(AnyTransport::ConstrainedType(
-                ConstrainedTypeTransport::from_napi_value(env, napi_val)?
+                ConstrainedTypeTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: continue_statement (CONTINUE_STATEMENT)
             130 => Ok(AnyTransport::ContinueStatement(
-                ContinueStatementTransport::from_napi_value(env, napi_val)?
+                ContinueStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: decorated_definition (DECORATED_DEFINITION)
             158 => Ok(AnyTransport::DecoratedDefinition(
-                DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
+                DecoratedDefinitionTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: decorator (DECORATOR)
             159 => Ok(AnyTransport::Decorator(
-                DecoratorTransport::from_napi_value(env, napi_val)?
+                DecoratorTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: default_parameter (DEFAULT_PARAMETER)
             181 => Ok(AnyTransport::DefaultParameter(
-                DefaultParameterTransport::from_napi_value(env, napi_val)?
+                DefaultParameterTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: delete_statement (DELETE_STATEMENT)
             126 => Ok(AnyTransport::DeleteStatement(
-                DeleteStatementTransport::from_napi_value(env, napi_val)?
+                DeleteStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: dict_pattern (DICT_PATTERN)
             169 => Ok(AnyTransport::DictPattern(
-                DictPatternTransport::from_napi_value(env, napi_val)?
+                DictPatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: dictionary (DICTIONARY)
             218 => Ok(AnyTransport::Dictionary(
-                DictionaryTransport::from_napi_value(env, napi_val)?
+                DictionaryTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: dictionary_comprehension (DICTIONARY_COMPREHENSION)
             221 => Ok(AnyTransport::DictionaryComprehension(
-                DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
+                DictionaryComprehensionTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: dictionary_splat (DICTIONARY_SPLAT)
             149 => Ok(AnyTransport::DictionarySplat(
-                DictionarySplatTransport::from_napi_value(env, napi_val)?
+                DictionarySplatTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: dictionary_splat_pattern (DICTIONARY_SPLAT_PATTERN)
             184 => Ok(AnyTransport::DictionarySplatPattern(
-                DictionarySplatPatternTransport::from_napi_value(env, napi_val)?
+                DictionarySplatPatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: dotted_name (DOTTED_NAME)
             162 => Ok(AnyTransport::DottedName(
-                DottedNameTransport::from_napi_value(env, napi_val)?
+                DottedNameTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: elif_clause (ELIF_CLAUSE)
             132 => Ok(AnyTransport::ElifClause(
-                ElifClauseTransport::from_napi_value(env, napi_val)?
+                ElifClauseTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: ellipsis (ELLIPSIS2)
             87 => Ok(AnyTransport::Ellipsis2(
-                Ellipsis2Transport::from_napi_value(env, napi_val)?
+                Ellipsis2Transport::from_napi_value(env, napi_val)?,
             )),
             // kind: else_clause (ELSE_CLAUSE)
             133 => Ok(AnyTransport::ElseClause(
-                ElseClauseTransport::from_napi_value(env, napi_val)?
+                ElseClauseTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: escape_sequence (ESCAPE_SEQUENCE)
             89 => Ok(AnyTransport::EscapeSequence(
-                EscapeSequenceTransport::from_napi_value(env, napi_val)?
+                EscapeSequenceTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: except_clause (EXCEPT_CLAUSE)
             140 => Ok(AnyTransport::ExceptClause(
-                ExceptClauseTransport::from_napi_value(env, napi_val)?
+                ExceptClauseTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: exec_statement (EXEC_STATEMENT)
             152 => Ok(AnyTransport::ExecStatement(
-                ExecStatementTransport::from_napi_value(env, napi_val)?
+                ExecStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: expression_list (EXPRESSION_LIST)
             161 => Ok(AnyTransport::ExpressionList(
-                ExpressionListTransport::from_napi_value(env, napi_val)?
+                ExpressionListTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: expression_statement_tuple (EXPRESSION_STATEMENT_TUPLE)
             243 => Ok(AnyTransport::ExpressionStatementTuple(
-                ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?
+                ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: expression_statement (EXPRESSION_STATEMENT)
             122 => Ok(AnyTransport::ExpressionStatement(
-                ExpressionStatementTransport::from_napi_value(env, napi_val)?
+                ExpressionStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: false (FALSE)
-            97 => Ok(AnyTransport::False(
-                FalseTransport::from_napi_value(env, napi_val)?
-            )),
+            97 => Ok(AnyTransport::False(FalseTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: finally_clause (FINALLY_CLAUSE)
             141 => Ok(AnyTransport::FinallyClause(
-                FinallyClauseTransport::from_napi_value(env, napi_val)?
+                FinallyClauseTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: float (FLOAT)
-            94 => Ok(AnyTransport::Float(
-                FloatTransport::from_napi_value(env, napi_val)?
-            )),
+            94 => Ok(AnyTransport::Float(FloatTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: for_in_clause (FOR_IN_CLAUSE)
             227 => Ok(AnyTransport::ForInClause(
-                ForInClauseTransport::from_napi_value(env, napi_val)?
+                ForInClauseTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: for_statement (FOR_STATEMENT)
             137 => Ok(AnyTransport::ForStatement(
-                ForStatementTransport::from_napi_value(env, napi_val)?
+                ForStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: format_specifier (FORMAT_SPECIFIER)
             236 => Ok(AnyTransport::FormatSpecifier(
-                FormatSpecifierTransport::from_napi_value(env, napi_val)?
+                FormatSpecifierTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: function_definition (FUNCTION_DEFINITION)
             145 => Ok(AnyTransport::FunctionDefinition(
-                FunctionDefinitionTransport::from_napi_value(env, napi_val)?
+                FunctionDefinitionTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: future_import_statement (FUTURE_IMPORT_STATEMENT)
             114 => Ok(AnyTransport::FutureImportStatement(
-                FutureImportStatementTransport::from_napi_value(env, napi_val)?
+                FutureImportStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: generator_expression (GENERATOR_EXPRESSION)
             223 => Ok(AnyTransport::GeneratorExpression(
-                GeneratorExpressionTransport::from_napi_value(env, napi_val)?
+                GeneratorExpressionTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: generic_type (GENERIC_TYPE)
             210 => Ok(AnyTransport::GenericType(
-                GenericTypeTransport::from_napi_value(env, napi_val)?
+                GenericTypeTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: global_statement (GLOBAL_STATEMENT)
             150 => Ok(AnyTransport::GlobalStatement(
-                GlobalStatementTransport::from_napi_value(env, napi_val)?
+                GlobalStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: identifier (IDENTIFIER)
             1 => Ok(AnyTransport::Identifier(
-                IdentifierTransport::from_napi_value(env, napi_val)?
+                IdentifierTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: if_clause (IF_CLAUSE)
-            228 => Ok(AnyTransport::IfClause(
-                IfClauseTransport::from_napi_value(env, napi_val)?
-            )),
+            228 => Ok(AnyTransport::IfClause(IfClauseTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: if_statement (IF_STATEMENT)
             131 => Ok(AnyTransport::IfStatement(
-                IfStatementTransport::from_napi_value(env, napi_val)?
+                IfStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: import_from_statement (IMPORT_FROM_STATEMENT)
             115 => Ok(AnyTransport::ImportFromStatement(
-                ImportFromStatementTransport::from_napi_value(env, napi_val)?
+                ImportFromStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: import_prefix (IMPORT_PREFIX)
             112 => Ok(AnyTransport::ImportPrefix(
-                ImportPrefixTransport::from_napi_value(env, napi_val)?
+                ImportPrefixTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: import_statement (IMPORT_STATEMENT)
             111 => Ok(AnyTransport::ImportStatement(
-                ImportStatementTransport::from_napi_value(env, napi_val)?
+                ImportStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: integer (INTEGER)
-            93 => Ok(AnyTransport::Integer(
-                IntegerTransport::from_napi_value(env, napi_val)?
-            )),
+            93 => Ok(AnyTransport::Integer(IntegerTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: interpolation (INTERPOLATION)
             233 => Ok(AnyTransport::Interpolation(
-                InterpolationTransport::from_napi_value(env, napi_val)?
+                InterpolationTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: keyword_argument (KEYWORD_ARGUMENT)
             214 => Ok(AnyTransport::KeywordArgument(
-                KeywordArgumentTransport::from_napi_value(env, napi_val)?
+                KeywordArgumentTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: keyword_pattern (KEYWORD_PATTERN)
             171 => Ok(AnyTransport::KeywordPattern(
-                KeywordPatternTransport::from_napi_value(env, napi_val)?
+                KeywordPatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: keyword_separator (KEYWORD_SEPARATOR)
             239 => Ok(AnyTransport::KeywordSeparator(
-                KeywordSeparatorTransport::from_napi_value(env, napi_val)?
+                KeywordSeparatorTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: lambda (LAMBDA)
-            196 => Ok(AnyTransport::Lambda(
-                LambdaTransport::from_napi_value(env, napi_val)?
-            )),
+            196 => Ok(AnyTransport::Lambda(LambdaTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: lambda_parameters (LAMBDA_PARAMETERS)
             147 => Ok(AnyTransport::LambdaParameters(
-                LambdaParametersTransport::from_napi_value(env, napi_val)?
+                LambdaParametersTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: lambda_within_for_in_clause (LAMBDA_WITHIN_FOR_IN_CLAUSE)
             197 => Ok(AnyTransport::LambdaWithinForInClause(
-                LambdaWithinForInClauseTransport::from_napi_value(env, napi_val)?
+                LambdaWithinForInClauseTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: line_continuation (LINE_CONTINUATION)
             100 => Ok(AnyTransport::LineContinuation(
-                LineContinuationTransport::from_napi_value(env, napi_val)?
+                LineContinuationTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: list (LIST)
-            215 => Ok(AnyTransport::List(
-                ListTransport::from_napi_value(env, napi_val)?
-            )),
+            215 => Ok(AnyTransport::List(ListTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: list_comprehension (LIST_COMPREHENSION)
             220 => Ok(AnyTransport::ListComprehension(
-                ListComprehensionTransport::from_napi_value(env, napi_val)?
+                ListComprehensionTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: list_pattern (LIST_PATTERN)
             180 => Ok(AnyTransport::ListPattern(
-                ListPatternTransport::from_napi_value(env, napi_val)?
+                ListPatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: list_splat (LIST_SPLAT)
             148 => Ok(AnyTransport::ListSplat(
-                ListSplatTransport::from_napi_value(env, napi_val)?
+                ListSplatTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: list_splat_pattern (LIST_SPLAT_PATTERN)
             183 => Ok(AnyTransport::ListSplatPattern(
-                ListSplatPatternTransport::from_napi_value(env, napi_val)?
+                ListSplatPatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: match_statement (MATCH_STATEMENT)
             134 => Ok(AnyTransport::MatchStatement(
-                MatchStatementTransport::from_napi_value(env, napi_val)?
+                MatchStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: member_type (MEMBER_TYPE)
             213 => Ok(AnyTransport::MemberType(
-                MemberTypeTransport::from_napi_value(env, napi_val)?
+                MemberTypeTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: module (MODULE)
-            108 => Ok(AnyTransport::Module(
-                ModuleTransport::from_napi_value(env, napi_val)?
-            )),
+            108 => Ok(AnyTransport::Module(ModuleTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: named_expression (NAMED_EXPRESSION)
             123 => Ok(AnyTransport::NamedExpression(
-                NamedExpressionTransport::from_napi_value(env, napi_val)?
+                NamedExpressionTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: none (NONE)
-            98 => Ok(AnyTransport::None(
-                NoneTransport::from_napi_value(env, napi_val)?
-            )),
+            98 => Ok(AnyTransport::None(NoneTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: nonlocal_statement (NONLOCAL_STATEMENT)
             151 => Ok(AnyTransport::NonlocalStatement(
-                NonlocalStatementTransport::from_napi_value(env, napi_val)?
+                NonlocalStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: not_operator (NOT_OPERATOR)
             189 => Ok(AnyTransport::NotOperator(
-                NotOperatorTransport::from_napi_value(env, napi_val)?
+                NotOperatorTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: pair (PAIR)
-            219 => Ok(AnyTransport::Pair(
-                PairTransport::from_napi_value(env, napi_val)?
-            )),
+            219 => Ok(AnyTransport::Pair(PairTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: parameters (PARAMETERS)
             146 => Ok(AnyTransport::Parameters(
-                ParametersTransport::from_napi_value(env, napi_val)?
+                ParametersTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: parenthesized_expression (PARENTHESIZED_EXPRESSION)
             225 => Ok(AnyTransport::ParenthesizedExpression(
-                ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: parenthesized_list_splat (PARENTHESIZED_LIST_SPLAT)
             156 => Ok(AnyTransport::ParenthesizedListSplat(
-                ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
+                ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: pass_statement (PASS_STATEMENT)
             128 => Ok(AnyTransport::PassStatement(
-                PassStatementTransport::from_napi_value(env, napi_val)?
+                PassStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: pattern_list (PATTERN_LIST)
             200 => Ok(AnyTransport::PatternList(
-                PatternListTransport::from_napi_value(env, napi_val)?
+                PatternListTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: positional_separator (POSITIONAL_SEPARATOR)
             238 => Ok(AnyTransport::PositionalSeparator(
-                PositionalSeparatorTransport::from_napi_value(env, napi_val)?
+                PositionalSeparatorTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: print_statement (PRINT_STATEMENT)
             119 => Ok(AnyTransport::PrintStatement(
-                PrintStatementTransport::from_napi_value(env, napi_val)?
+                PrintStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: raise_statement (RAISE_STATEMENT)
             127 => Ok(AnyTransport::RaiseStatement(
-                RaiseStatementTransport::from_napi_value(env, napi_val)?
+                RaiseStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: relative_import (RELATIVE_IMPORT)
             113 => Ok(AnyTransport::RelativeImport(
-                RelativeImportTransport::from_napi_value(env, napi_val)?
+                RelativeImportTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: return_statement (RETURN_STATEMENT)
             125 => Ok(AnyTransport::ReturnStatement(
-                ReturnStatementTransport::from_napi_value(env, napi_val)?
+                ReturnStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: set (SET)
-            216 => Ok(AnyTransport::Set(
-                SetTransport::from_napi_value(env, napi_val)?
-            )),
+            216 => Ok(AnyTransport::Set(SetTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: set_comprehension (SET_COMPREHENSION)
             222 => Ok(AnyTransport::SetComprehension(
-                SetComprehensionTransport::from_napi_value(env, napi_val)?
+                SetComprehensionTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: slice (SLICE)
-            205 => Ok(AnyTransport::Slice(
-                SliceTransport::from_napi_value(env, napi_val)?
-            )),
+            205 => Ok(AnyTransport::Slice(SliceTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: splat_pattern (SPLAT_PATTERN)
             172 => Ok(AnyTransport::SplatPattern(
-                SplatPatternTransport::from_napi_value(env, napi_val)?
+                SplatPatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: splat_type (SPLAT_TYPE)
             209 => Ok(AnyTransport::SplatType(
-                SplatTypeTransport::from_napi_value(env, napi_val)?
+                SplatTypeTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: string (STRING)
-            231 => Ok(AnyTransport::String(
-                StringTransport::from_napi_value(env, napi_val)?
-            )),
+            231 => Ok(AnyTransport::String(StringTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: string_content (STRING_CONTENT)
             232 => Ok(AnyTransport::StringContent(
-                StringContentTransport::from_napi_value(env, napi_val)?
+                StringContentTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: subscript (SUBSCRIPT)
             204 => Ok(AnyTransport::Subscript(
-                SubscriptTransport::from_napi_value(env, napi_val)?
+                SubscriptTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: true (TRUE)
-            96 => Ok(AnyTransport::True(
-                TrueTransport::from_napi_value(env, napi_val)?
-            )),
+            96 => Ok(AnyTransport::True(TrueTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: try_statement (TRY_STATEMENT)
             139 => Ok(AnyTransport::TryStatement(
-                TryStatementTransport::from_napi_value(env, napi_val)?
+                TryStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: tuple (TUPLE)
-            217 => Ok(AnyTransport::Tuple(
-                TupleTransport::from_napi_value(env, napi_val)?
-            )),
+            217 => Ok(AnyTransport::Tuple(TupleTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: tuple_pattern (TUPLE_PATTERN)
             179 => Ok(AnyTransport::TuplePattern(
-                TuplePatternTransport::from_napi_value(env, napi_val)?
+                TuplePatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: type (TYPE)
-            208 => Ok(AnyTransport::Type(
-                TypeTransport::from_napi_value(env, napi_val)?
-            )),
+            208 => Ok(AnyTransport::Type(TypeTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: type_alias_statement (TYPE_ALIAS_STATEMENT)
             153 => Ok(AnyTransport::TypeAliasStatement(
-                TypeAliasStatementTransport::from_napi_value(env, napi_val)?
+                TypeAliasStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: type_conversion (TYPE_CONVERSION)
             92 => Ok(AnyTransport::TypeConversion(
-                TypeConversionTransport::from_napi_value(env, napi_val)?
+                TypeConversionTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: type_parameter (TYPE_PARAMETER)
             155 => Ok(AnyTransport::TypeParameter(
-                TypeParameterTransport::from_napi_value(env, napi_val)?
+                TypeParameterTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: typed_default_parameter (TYPED_DEFAULT_PARAMETER)
             182 => Ok(AnyTransport::TypedDefaultParameter(
-                TypedDefaultParameterTransport::from_napi_value(env, napi_val)?
+                TypedDefaultParameterTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: typed_parameter (TYPED_PARAMETER)
             207 => Ok(AnyTransport::TypedParameter(
-                TypedParameterTransport::from_napi_value(env, napi_val)?
+                TypedParameterTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: unary_operator (UNARY_OPERATOR)
             192 => Ok(AnyTransport::UnaryOperator(
-                UnaryOperatorTransport::from_napi_value(env, napi_val)?
+                UnaryOperatorTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: union_pattern (UNION_PATTERN)
             166 => Ok(AnyTransport::UnionPattern(
-                UnionPatternTransport::from_napi_value(env, napi_val)?
+                UnionPatternTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: union_type (UNION_TYPE)
             211 => Ok(AnyTransport::UnionType(
-                UnionTypeTransport::from_napi_value(env, napi_val)?
+                UnionTypeTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: while_statement (WHILE_STATEMENT)
             138 => Ok(AnyTransport::WhileStatement(
-                WhileStatementTransport::from_napi_value(env, napi_val)?
+                WhileStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: wildcard_import (WILDCARD_IMPORT)
             118 => Ok(AnyTransport::WildcardImport(
-                WildcardImportTransport::from_napi_value(env, napi_val)?
+                WildcardImportTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: with_clause_bare (WITH_CLAUSE_BARE)
             244 => Ok(AnyTransport::WithClauseBare(
-                WithClauseBareTransport::from_napi_value(env, napi_val)?
+                WithClauseBareTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: with_clause (WITH_CLAUSE)
             143 => Ok(AnyTransport::WithClause(
-                WithClauseTransport::from_napi_value(env, napi_val)?
+                WithClauseTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: with_item (WITH_ITEM)
-            144 => Ok(AnyTransport::WithItem(
-                WithItemTransport::from_napi_value(env, napi_val)?
-            )),
+            144 => Ok(AnyTransport::WithItem(WithItemTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: with_statement (WITH_STATEMENT)
             142 => Ok(AnyTransport::WithStatement(
-                WithStatementTransport::from_napi_value(env, napi_val)?
+                WithStatementTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: yield (YIELD)
-            202 => Ok(AnyTransport::Yield(
-                YieldTransport::from_napi_value(env, napi_val)?
-            )),
+            202 => Ok(AnyTransport::Yield(YieldTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: _newline (_NEWLINE)
-            101 => Ok(AnyTransport::Newline(
-                NewlineTransport::from_napi_value(env, napi_val)?
-            )),
+            101 => Ok(AnyTransport::Newline(NewlineTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: _indent (_INDENT)
-            102 => Ok(AnyTransport::Indent(
-                IndentTransport::from_napi_value(env, napi_val)?
-            )),
+            102 => Ok(AnyTransport::Indent(IndentTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: _dedent (_DEDENT)
-            103 => Ok(AnyTransport::Dedent(
-                DedentTransport::from_napi_value(env, napi_val)?
-            )),
+            103 => Ok(AnyTransport::Dedent(DedentTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: string_start (STRING_START)
             104 => Ok(AnyTransport::StringStart(
-                StringStartTransport::from_napi_value(env, napi_val)?
+                StringStartTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: _string_content (_STRING_CONTENT)
             105 => Ok(AnyTransport::_StringContent(
-                _StringContentTransport::from_napi_value(env, napi_val)?
+                _StringContentTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: escape_interpolation (ESCAPE_INTERPOLATION)
             106 => Ok(AnyTransport::EscapeInterpolation(
-                EscapeInterpolationTransport::from_napi_value(env, napi_val)?
+                EscapeInterpolationTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: string_end (STRING_END)
             107 => Ok(AnyTransport::StringEnd(
-                StringEndTransport::from_napi_value(env, napi_val)?
+                StringEndTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: ] (CLOSE_BRACKET)
             46 => Ok(AnyTransport::CloseBracket(
-                CloseBracketTransport::from_napi_value(env, napi_val)?
+                CloseBracketTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: ) (CLOSE_PAREN)
             8 => Ok(AnyTransport::CloseParen(
-                CloseParenTransport::from_napi_value(env, napi_val)?
+                CloseParenTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: } (CLOSE_BRACE)
             51 => Ok(AnyTransport::CloseBrace(
-                CloseBraceTransport::from_napi_value(env, napi_val)?
+                CloseBraceTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: except (EXCEPT)
-            33 => Ok(AnyTransport::Except(
-                ExceptTransport::from_napi_value(env, napi_val)?
-            )),
+            33 => Ok(AnyTransport::Except(ExceptTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: as (AS)
-            10 => Ok(AnyTransport::As(
-                AsTransport::from_napi_value(env, napi_val)?
-            )),
+            10 => Ok(AnyTransport::As(AsTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: = (EQ)
-            43 => Ok(AnyTransport::Eq(
-                EqTransport::from_napi_value(env, napi_val)?
-            )),
+            43 => Ok(AnyTransport::Eq(EqTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: : (COLON)
-            23 => Ok(AnyTransport::Colon(
-                ColonTransport::from_napi_value(env, napi_val)?
-            )),
+            23 => Ok(AnyTransport::Colon(ColonTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: async (ASYNC)
-            28 => Ok(AnyTransport::Async(
-                AsyncTransport::from_napi_value(env, napi_val)?
-            )),
+            28 => Ok(AnyTransport::Async(AsyncTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: [ (BRACKET)
-            45 => Ok(AnyTransport::Bracket(
-                BracketTransport::from_napi_value(env, napi_val)?
-            )),
+            45 => Ok(AnyTransport::Bracket(BracketTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: \ (TOK_BS)
-            90 => Ok(AnyTransport::TokBs(
-                TokBsTransport::from_napi_value(env, napi_val)?
-            )),
+            90 => Ok(AnyTransport::TokBs(TokBsTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: - (MINUS)
-            53 => Ok(AnyTransport::Minus(
-                MinusTransport::from_napi_value(env, napi_val)?
-            )),
+            53 => Ok(AnyTransport::Minus(MinusTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: ( (PAREN)
-            7 => Ok(AnyTransport::Paren(
-                ParenTransport::from_napi_value(env, napi_val)?
-            )),
+            7 => Ok(AnyTransport::Paren(ParenTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: , (COMMA)
-            9 => Ok(AnyTransport::Comma(
-                CommaTransport::from_napi_value(env, napi_val)?
-            )),
+            9 => Ok(AnyTransport::Comma(CommaTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: assert (ASSERT)
-            14 => Ok(AnyTransport::Assert(
-                AssertTransport::from_napi_value(env, napi_val)?
-            )),
+            14 => Ok(AnyTransport::Assert(AssertTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: . (DOT)
-            4 => Ok(AnyTransport::Dot(
-                DotTransport::from_napi_value(env, napi_val)?
-            )),
+            4 => Ok(AnyTransport::Dot(DotTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: + (PLUS)
-            52 => Ok(AnyTransport::Plus(
-                PlusTransport::from_napi_value(env, napi_val)?
-            )),
+            52 => Ok(AnyTransport::Plus(PlusTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: and (AND)
-            55 => Ok(AnyTransport::And(
-                AndTransport::from_napi_value(env, napi_val)?
-            )),
+            55 => Ok(AnyTransport::And(AndTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: break (BREAK)
-            20 => Ok(AnyTransport::Break(
-                BreakTransport::from_napi_value(env, napi_val)?
-            )),
+            20 => Ok(AnyTransport::Break(BreakTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: case (CASE)
-            27 => Ok(AnyTransport::Case(
-                CaseTransport::from_napi_value(env, napi_val)?
-            )),
+            27 => Ok(AnyTransport::Case(CaseTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: >> (SHR)
-            13 => Ok(AnyTransport::Shr(
-                ShrTransport::from_napi_value(env, napi_val)?
-            )),
+            13 => Ok(AnyTransport::Shr(ShrTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: class (CLASS)
-            44 => Ok(AnyTransport::Class(
-                ClassTransport::from_napi_value(env, napi_val)?
-            )),
+            44 => Ok(AnyTransport::Class(ClassTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: if (IF)
-            22 => Ok(AnyTransport::If(
-                IfTransport::from_napi_value(env, napi_val)?
-            )),
+            22 => Ok(AnyTransport::If(IfTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: else (ELSE)
-            25 => Ok(AnyTransport::Else(
-                ElseTransport::from_napi_value(env, napi_val)?
-            )),
+            25 => Ok(AnyTransport::Else(ElseTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: continue (CONTINUE)
-            21 => Ok(AnyTransport::Continue(
-                ContinueTransport::from_napi_value(env, napi_val)?
-            )),
+            21 => Ok(AnyTransport::Continue(ContinueTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: @ (AT)
-            47 => Ok(AnyTransport::At(
-                AtTransport::from_napi_value(env, napi_val)?
-            )),
+            47 => Ok(AnyTransport::At(AtTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: del (DEL)
-            17 => Ok(AnyTransport::Del(
-                DelTransport::from_napi_value(env, napi_val)?
-            )),
+            17 => Ok(AnyTransport::Del(DelTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: { (BRACE)
-            50 => Ok(AnyTransport::Brace(
-                BraceTransport::from_napi_value(env, napi_val)?
-            )),
+            50 => Ok(AnyTransport::Brace(BraceTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: ** (STARSTAR)
-            39 => Ok(AnyTransport::Starstar(
-                StarstarTransport::from_napi_value(env, napi_val)?
-            )),
+            39 => Ok(AnyTransport::Starstar(StarstarTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: elif (ELIF)
-            24 => Ok(AnyTransport::Elif(
-                ElifTransport::from_napi_value(env, napi_val)?
-            )),
+            24 => Ok(AnyTransport::Elif(ElifTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: * (STAR)
-            11 => Ok(AnyTransport::Star(
-                StarTransport::from_napi_value(env, napi_val)?
-            )),
+            11 => Ok(AnyTransport::Star(StarTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: exec (EXEC)
-            42 => Ok(AnyTransport::Exec(
-                ExecTransport::from_napi_value(env, napi_val)?
-            )),
+            42 => Ok(AnyTransport::Exec(ExecTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: in (IN)
-            30 => Ok(AnyTransport::In(
-                InTransport::from_napi_value(env, napi_val)?
-            )),
+            30 => Ok(AnyTransport::In(InTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: finally (FINALLY)
-            35 => Ok(AnyTransport::Finally(
-                FinallyTransport::from_napi_value(env, napi_val)?
-            )),
+            35 => Ok(AnyTransport::Finally(FinallyTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: for (FOR)
-            29 => Ok(AnyTransport::For(
-                ForTransport::from_napi_value(env, napi_val)?
-            )),
+            29 => Ok(AnyTransport::For(ForTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: def (DEF)
-            37 => Ok(AnyTransport::Def(
-                DefTransport::from_napi_value(env, napi_val)?
-            )),
+            37 => Ok(AnyTransport::Def(DefTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: -> (ARROW)
-            38 => Ok(AnyTransport::Arrow(
-                ArrowTransport::from_napi_value(env, napi_val)?
-            )),
+            38 => Ok(AnyTransport::Arrow(ArrowTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: from (FROM)
-            5 => Ok(AnyTransport::From(
-                FromTransport::from_napi_value(env, napi_val)?
-            )),
+            5 => Ok(AnyTransport::From(FromTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: __future__ (__FUTURE_U)
-            6 => Ok(AnyTransport::FutureU(
-                FutureUTransport::from_napi_value(env, napi_val)?
-            )),
+            6 => Ok(AnyTransport::FutureU(FutureUTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: import (IMPORT)
-            3 => Ok(AnyTransport::Import(
-                ImportTransport::from_napi_value(env, napi_val)?
-            )),
+            3 => Ok(AnyTransport::Import(ImportTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: global (GLOBAL)
-            40 => Ok(AnyTransport::Global(
-                GlobalTransport::from_napi_value(env, napi_val)?
-            )),
+            40 => Ok(AnyTransport::Global(GlobalTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: match (MATCH)
-            26 => Ok(AnyTransport::Match(
-                MatchTransport::from_napi_value(env, napi_val)?
-            )),
+            26 => Ok(AnyTransport::Match(MatchTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: := (COLONEQ)
-            15 => Ok(AnyTransport::Coloneq(
-                ColoneqTransport::from_napi_value(env, napi_val)?
-            )),
+            15 => Ok(AnyTransport::Coloneq(ColoneqTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: nonlocal (NONLOCAL)
-            41 => Ok(AnyTransport::Nonlocal(
-                NonlocalTransport::from_napi_value(env, napi_val)?
-            )),
+            41 => Ok(AnyTransport::Nonlocal(NonlocalTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: not (NOT)
-            54 => Ok(AnyTransport::Not(
-                NotTransport::from_napi_value(env, napi_val)?
-            )),
+            54 => Ok(AnyTransport::Not(NotTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: pass (PASS)
-            19 => Ok(AnyTransport::Pass(
-                PassTransport::from_napi_value(env, napi_val)?
-            )),
+            19 => Ok(AnyTransport::Pass(PassTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: / (SLASH)
-            57 => Ok(AnyTransport::Slash(
-                SlashTransport::from_napi_value(env, napi_val)?
-            )),
+            57 => Ok(AnyTransport::Slash(SlashTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: print (PRINT)
-            12 => Ok(AnyTransport::Print(
-                PrintTransport::from_napi_value(env, napi_val)?
-            )),
+            12 => Ok(AnyTransport::Print(PrintTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: raise (RAISE)
-            18 => Ok(AnyTransport::Raise(
-                RaiseTransport::from_napi_value(env, napi_val)?
-            )),
+            18 => Ok(AnyTransport::Raise(RaiseTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: return (RETURN)
-            16 => Ok(AnyTransport::Return(
-                ReturnTransport::from_napi_value(env, napi_val)?
-            )),
+            16 => Ok(AnyTransport::Return(ReturnTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: _ (_ANONYMOUS)
             48 => Ok(AnyTransport::Anonymous(
-                AnonymousTransport::from_napi_value(env, napi_val)?
+                AnonymousTransport::from_napi_value(env, napi_val)?,
             )),
             // kind: try (TRY)
-            32 => Ok(AnyTransport::Try(
-                TryTransport::from_napi_value(env, napi_val)?
-            )),
+            32 => Ok(AnyTransport::Try(TryTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: | (PIPE)
-            49 => Ok(AnyTransport::Pipe(
-                PipeTransport::from_napi_value(env, napi_val)?
-            )),
+            49 => Ok(AnyTransport::Pipe(PipeTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: while (WHILE)
-            31 => Ok(AnyTransport::While(
-                WhileTransport::from_napi_value(env, napi_val)?
-            )),
+            31 => Ok(AnyTransport::While(WhileTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // kind: with (WITH)
-            36 => Ok(AnyTransport::With(
-                WithTransport::from_napi_value(env, napi_val)?
-            )),
+            36 => Ok(AnyTransport::With(WithTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             // literal kind: < → "<"
             65 => Ok(AnyTransport::Literal0_3c),
             // literal kind: <= → "<="
@@ -1117,8 +1122,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnyTransport> {
     }
 }
 
-
-
 #[derive(Debug, Clone)]
 pub enum CompoundStatementTransport {
     IfStatement(Box<IfStatementTransport>),
@@ -1139,35 +1142,36 @@ impl ::napi::bindgen_prelude::FromNapiValue for CompoundStatementTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in CompoundStatementTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in CompoundStatementTransport")
+        })?;
         match kind_id {
             131 => Ok(Self::IfStatement(Box::new(
-                IfStatementTransport::from_napi_value(env, napi_val)?
+                IfStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             137 => Ok(Self::ForStatement(Box::new(
-                ForStatementTransport::from_napi_value(env, napi_val)?
+                ForStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             138 => Ok(Self::WhileStatement(Box::new(
-                WhileStatementTransport::from_napi_value(env, napi_val)?
+                WhileStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             139 => Ok(Self::TryStatement(Box::new(
-                TryStatementTransport::from_napi_value(env, napi_val)?
+                TryStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             142 => Ok(Self::WithStatement(Box::new(
-                WithStatementTransport::from_napi_value(env, napi_val)?
+                WithStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             145 => Ok(Self::FunctionDefinition(Box::new(
-                FunctionDefinitionTransport::from_napi_value(env, napi_val)?
+                FunctionDefinitionTransport::from_napi_value(env, napi_val)?,
             ))),
             154 => Ok(Self::ClassDefinition(Box::new(
-                ClassDefinitionTransport::from_napi_value(env, napi_val)?
+                ClassDefinitionTransport::from_napi_value(env, napi_val)?,
             ))),
             158 => Ok(Self::DecoratedDefinition(Box::new(
-                DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
+                DecoratedDefinitionTransport::from_napi_value(env, napi_val)?,
             ))),
             134 => Ok(Self::MatchStatement(Box::new(
-                MatchStatementTransport::from_napi_value(env, napi_val)?
+                MatchStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in CompoundStatementTransport",
@@ -1182,7 +1186,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for CompoundStatementTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("CompoundStatementTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "CompoundStatementTransport is receive-only",
+        ))
     }
 }
 
@@ -1193,18 +1199,19 @@ fn compound_statement_transport_to_any(t: CompoundStatementTransport) -> AnyTran
         CompoundStatementTransport::WhileStatement(inner) => AnyTransport::WhileStatement(*inner),
         CompoundStatementTransport::TryStatement(inner) => AnyTransport::TryStatement(*inner),
         CompoundStatementTransport::WithStatement(inner) => AnyTransport::WithStatement(*inner),
-        CompoundStatementTransport::FunctionDefinition(inner) => AnyTransport::FunctionDefinition(*inner),
+        CompoundStatementTransport::FunctionDefinition(inner) => {
+            AnyTransport::FunctionDefinition(*inner)
+        }
         CompoundStatementTransport::ClassDefinition(inner) => AnyTransport::ClassDefinition(*inner),
-        CompoundStatementTransport::DecoratedDefinition(inner) => AnyTransport::DecoratedDefinition(*inner),
+        CompoundStatementTransport::DecoratedDefinition(inner) => {
+            AnyTransport::DecoratedDefinition(*inner)
+        }
         CompoundStatementTransport::MatchStatement(inner) => AnyTransport::MatchStatement(*inner),
     }
 }
 
 impl RenderableTransport for CompoundStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_compound_statement(self, dest)
     }
 }
@@ -1222,14 +1229,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictPatternKvTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in DictPatternKvTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in DictPatternKvTransport")
+        })?;
         match kind_id {
             170 => Ok(Self::KeyValuePattern(Box::new(
-                KeyValuePatternTransport::from_napi_value(env, napi_val)?
+                KeyValuePatternTransport::from_napi_value(env, napi_val)?,
             ))),
             172 => Ok(Self::SplatPattern(Box::new(
-                SplatPatternTransport::from_napi_value(env, napi_val)?
+                SplatPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in DictPatternKvTransport",
@@ -1244,7 +1252,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for DictPatternKvTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("DictPatternKvTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "DictPatternKvTransport is receive-only",
+        ))
     }
 }
 
@@ -1256,10 +1266,7 @@ fn dict_pattern_kv_transport_to_any(t: DictPatternKvTransport) -> AnyTransport {
 }
 
 impl RenderableTransport for DictPatternKvTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_dict_pattern_kv(self, dest)
     }
 }
@@ -1277,107 +1284,110 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionWithinForInClauseTrans
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ExpressionWithinForInClauseTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason(
+                "$type property missing in ExpressionWithinForInClauseTransport",
+            )
+        })?;
         match kind_id {
             195 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             189 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             190 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             196 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             237 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             191 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             1 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             231 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             230 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             93 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             94 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             96 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             97 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             98 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             192 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             203 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             204 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             206 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             215 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             220 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             218 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             221 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             216 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             222 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             217 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             225 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             223 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             87 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             183 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             229 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             123 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             185 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             197 => Ok(Self::LambdaWithinForInClause(Box::new(
-                LambdaWithinForInClauseTransport::from_napi_value(env, napi_val)?
+                LambdaWithinForInClauseTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in ExpressionWithinForInClauseTransport",
@@ -1392,22 +1402,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ExpressionWithinForInClauseTranspo
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExpressionWithinForInClauseTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "ExpressionWithinForInClauseTransport is receive-only",
+        ))
     }
 }
 
-fn expression_within_for_in_clause_transport_to_any(t: ExpressionWithinForInClauseTransport) -> AnyTransport {
+fn expression_within_for_in_clause_transport_to_any(
+    t: ExpressionWithinForInClauseTransport,
+) -> AnyTransport {
     match t {
-        ExpressionWithinForInClauseTransport::Expression(inner) => expression_transport_to_any(*inner),
-        ExpressionWithinForInClauseTransport::LambdaWithinForInClause(inner) => AnyTransport::LambdaWithinForInClause(*inner),
+        ExpressionWithinForInClauseTransport::Expression(inner) => {
+            expression_transport_to_any(*inner)
+        }
+        ExpressionWithinForInClauseTransport::LambdaWithinForInClause(inner) => {
+            AnyTransport::LambdaWithinForInClause(*inner)
+        }
     }
 }
 
 impl RenderableTransport for ExpressionWithinForInClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_expression_within_for_in_clause(self, dest)
     }
 }
@@ -1425,107 +1440,108 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ExpressionsTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in ExpressionsTransport")
+        })?;
         match kind_id {
             195 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             189 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             190 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             196 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             237 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             191 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             1 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             231 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             230 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             93 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             94 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             96 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             97 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             98 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             192 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             203 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             204 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             206 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             215 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             220 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             218 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             221 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             216 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             222 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             217 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             225 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             223 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             87 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             183 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             229 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             123 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             185 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             161 => Ok(Self::ExpressionList(Box::new(
-                ExpressionListTransport::from_napi_value(env, napi_val)?
+                ExpressionListTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in ExpressionsTransport",
@@ -1540,7 +1556,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for ExpressionsTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExpressionsTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "ExpressionsTransport is receive-only",
+        ))
     }
 }
 
@@ -1552,10 +1570,7 @@ fn expressions_transport_to_any(t: ExpressionsTransport) -> AnyTransport {
 }
 
 impl RenderableTransport for ExpressionsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_expressions(self, dest)
     }
 }
@@ -1575,114 +1590,115 @@ impl ::napi::bindgen_prelude::FromNapiValue for FExpressionTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in FExpressionTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in FExpressionTransport")
+        })?;
         match kind_id {
             195 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             189 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             190 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             196 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             237 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             191 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             1 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             231 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             230 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             93 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             94 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             96 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             97 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             98 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             192 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             203 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             204 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             206 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             215 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             220 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             218 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             221 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             216 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             222 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             217 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             225 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             223 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             87 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             183 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             229 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             123 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             185 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             161 => Ok(Self::ExpressionList(Box::new(
-                ExpressionListTransport::from_napi_value(env, napi_val)?
+                ExpressionListTransport::from_napi_value(env, napi_val)?,
             ))),
             200 => Ok(Self::PatternList(Box::new(
-                PatternListTransport::from_napi_value(env, napi_val)?
+                PatternListTransport::from_napi_value(env, napi_val)?,
             ))),
-            202 => Ok(Self::Yield(Box::new(
-                YieldTransport::from_napi_value(env, napi_val)?
-            ))),
+            202 => Ok(Self::Yield(Box::new(YieldTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in FExpressionTransport",
             ))),
@@ -1696,7 +1712,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for FExpressionTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FExpressionTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "FExpressionTransport is receive-only",
+        ))
     }
 }
 
@@ -1710,10 +1728,7 @@ fn fexpression_transport_to_any(t: FExpressionTransport) -> AnyTransport {
 }
 
 impl RenderableTransport for FExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_fexpression(self, dest)
     }
 }
@@ -1731,29 +1746,30 @@ impl ::napi::bindgen_prelude::FromNapiValue for LeftHandSideTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in LeftHandSideTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in LeftHandSideTransport")
+        })?;
         match kind_id {
-            1 => Ok(Self::Pattern(Box::new(
-                PatternTransport::from_napi_value(env, napi_val)?
-            ))),
-            204 => Ok(Self::Pattern(Box::new(
-                PatternTransport::from_napi_value(env, napi_val)?
-            ))),
-            203 => Ok(Self::Pattern(Box::new(
-                PatternTransport::from_napi_value(env, napi_val)?
-            ))),
-            183 => Ok(Self::Pattern(Box::new(
-                PatternTransport::from_napi_value(env, napi_val)?
-            ))),
-            179 => Ok(Self::Pattern(Box::new(
-                PatternTransport::from_napi_value(env, napi_val)?
-            ))),
-            180 => Ok(Self::Pattern(Box::new(
-                PatternTransport::from_napi_value(env, napi_val)?
-            ))),
+            1 => Ok(Self::Pattern(Box::new(PatternTransport::from_napi_value(
+                env, napi_val,
+            )?))),
+            204 => Ok(Self::Pattern(Box::new(PatternTransport::from_napi_value(
+                env, napi_val,
+            )?))),
+            203 => Ok(Self::Pattern(Box::new(PatternTransport::from_napi_value(
+                env, napi_val,
+            )?))),
+            183 => Ok(Self::Pattern(Box::new(PatternTransport::from_napi_value(
+                env, napi_val,
+            )?))),
+            179 => Ok(Self::Pattern(Box::new(PatternTransport::from_napi_value(
+                env, napi_val,
+            )?))),
+            180 => Ok(Self::Pattern(Box::new(PatternTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             200 => Ok(Self::PatternList(Box::new(
-                PatternListTransport::from_napi_value(env, napi_val)?
+                PatternListTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in LeftHandSideTransport",
@@ -1768,7 +1784,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for LeftHandSideTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("LeftHandSideTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "LeftHandSideTransport is receive-only",
+        ))
     }
 }
 
@@ -1780,10 +1798,7 @@ fn left_hand_side_transport_to_any(t: LeftHandSideTransport) -> AnyTransport {
 }
 
 impl RenderableTransport for LeftHandSideTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_left_hand_side(self, dest)
     }
 }
@@ -1801,12 +1816,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamedExpressionLhsTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in NamedExpressionLhsTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in NamedExpressionLhsTransport")
+        })?;
         match kind_id {
-            1 => Ok(Self::Identifier(
-                IdentifierTransport::from_napi_value(env, napi_val)?
-            )),
+            1 => Ok(Self::Identifier(IdentifierTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in NamedExpressionLhsTransport",
             ))),
@@ -1820,22 +1836,23 @@ impl ::napi::bindgen_prelude::ToNapiValue for NamedExpressionLhsTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("NamedExpressionLhsTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "NamedExpressionLhsTransport is receive-only",
+        ))
     }
 }
 
 fn named_expression_lhs_transport_to_any(t: NamedExpressionLhsTransport) -> AnyTransport {
     match t {
         NamedExpressionLhsTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        NamedExpressionLhsTransport::KeywordIdentifier(inner) => keyword_identifier_transport_to_any(*inner),
+        NamedExpressionLhsTransport::KeywordIdentifier(inner) => {
+            keyword_identifier_transport_to_any(*inner)
+        }
     }
 }
 
 impl RenderableTransport for NamedExpressionLhsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_named_expression_lhs(self, dest)
     }
 }
@@ -1857,120 +1874,121 @@ impl ::napi::bindgen_prelude::FromNapiValue for RightHandSideTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in RightHandSideTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in RightHandSideTransport")
+        })?;
         match kind_id {
             195 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             189 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             190 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             196 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             237 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             191 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             1 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             231 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             230 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             93 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             94 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             96 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             97 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             98 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             192 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             203 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             204 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             206 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             215 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             220 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             218 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             221 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             216 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             222 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             217 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             225 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             223 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             87 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             183 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             229 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             123 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             185 => Ok(Self::Expression(Box::new(
-                ExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             161 => Ok(Self::ExpressionList(Box::new(
-                ExpressionListTransport::from_napi_value(env, napi_val)?
+                ExpressionListTransport::from_napi_value(env, napi_val)?,
             ))),
             198 => Ok(Self::Assignment(Box::new(
-                AssignmentTransport::from_napi_value(env, napi_val)?
+                AssignmentTransport::from_napi_value(env, napi_val)?,
             ))),
             199 => Ok(Self::AugmentedAssignment(Box::new(
-                AugmentedAssignmentTransport::from_napi_value(env, napi_val)?
+                AugmentedAssignmentTransport::from_napi_value(env, napi_val)?,
             ))),
             200 => Ok(Self::PatternList(Box::new(
-                PatternListTransport::from_napi_value(env, napi_val)?
+                PatternListTransport::from_napi_value(env, napi_val)?,
             ))),
-            202 => Ok(Self::Yield(Box::new(
-                YieldTransport::from_napi_value(env, napi_val)?
-            ))),
+            202 => Ok(Self::Yield(Box::new(YieldTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in RightHandSideTransport",
             ))),
@@ -1984,7 +2002,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for RightHandSideTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("RightHandSideTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "RightHandSideTransport is receive-only",
+        ))
     }
 }
 
@@ -1993,17 +2013,16 @@ fn right_hand_side_transport_to_any(t: RightHandSideTransport) -> AnyTransport {
         RightHandSideTransport::Expression(inner) => expression_transport_to_any(*inner),
         RightHandSideTransport::ExpressionList(inner) => AnyTransport::ExpressionList(*inner),
         RightHandSideTransport::Assignment(inner) => AnyTransport::Assignment(*inner),
-        RightHandSideTransport::AugmentedAssignment(inner) => AnyTransport::AugmentedAssignment(*inner),
+        RightHandSideTransport::AugmentedAssignment(inner) => {
+            AnyTransport::AugmentedAssignment(*inner)
+        }
         RightHandSideTransport::PatternList(inner) => AnyTransport::PatternList(*inner),
         RightHandSideTransport::Yield(inner) => AnyTransport::Yield(*inner),
     }
 }
 
 impl RenderableTransport for RightHandSideTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_right_hand_side(self, dest)
     }
 }
@@ -2033,50 +2052,45 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in SimplePatternTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in SimplePatternTransport")
+        })?;
         match kind_id {
             173 => Ok(Self::ClassPattern(Box::new(
-                ClassPatternTransport::from_napi_value(env, napi_val)?
+                ClassPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             172 => Ok(Self::SplatPattern(Box::new(
-                SplatPatternTransport::from_napi_value(env, napi_val)?
+                SplatPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             166 => Ok(Self::UnionPattern(Box::new(
-                UnionPatternTransport::from_napi_value(env, napi_val)?
+                UnionPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             167 => Ok(Self::_ListPattern(Box::new(
-                _ListPatternTransport::from_napi_value(env, napi_val)?
+                _ListPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             168 => Ok(Self::_TuplePattern(Box::new(
-                _TuplePatternTransport::from_napi_value(env, napi_val)?
+                _TuplePatternTransport::from_napi_value(env, napi_val)?,
             ))),
             169 => Ok(Self::DictPattern(Box::new(
-                DictPatternTransport::from_napi_value(env, napi_val)?
+                DictPatternTransport::from_napi_value(env, napi_val)?,
             ))),
-            231 => Ok(Self::String(Box::new(
-                StringTransport::from_napi_value(env, napi_val)?
-            ))),
+            231 => Ok(Self::String(Box::new(StringTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             230 => Ok(Self::ConcatenatedString(Box::new(
-                ConcatenatedStringTransport::from_napi_value(env, napi_val)?
+                ConcatenatedStringTransport::from_napi_value(env, napi_val)?,
             ))),
-            96 => Ok(Self::True(
-                TrueTransport::from_napi_value(env, napi_val)?
-            )),
-            97 => Ok(Self::False(
-                FalseTransport::from_napi_value(env, napi_val)?
-            )),
-            98 => Ok(Self::None(
-                NoneTransport::from_napi_value(env, napi_val)?
-            )),
+            96 => Ok(Self::True(TrueTransport::from_napi_value(env, napi_val)?)),
+            97 => Ok(Self::False(FalseTransport::from_napi_value(env, napi_val)?)),
+            98 => Ok(Self::None(NoneTransport::from_napi_value(env, napi_val)?)),
             248 => Ok(Self::SimplePatternNegative(Box::new(
-                SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
+                SimplePatternNegativeTransport::from_napi_value(env, napi_val)?,
             ))),
             174 => Ok(Self::ComplexPattern(Box::new(
-                ComplexPatternTransport::from_napi_value(env, napi_val)?
+                ComplexPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             162 => Ok(Self::DottedName(Box::new(
-                DottedNameTransport::from_napi_value(env, napi_val)?
+                DottedNameTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in SimplePatternTransport",
@@ -2091,7 +2105,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for SimplePatternTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SimplePatternTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "SimplePatternTransport is receive-only",
+        ))
     }
 }
 
@@ -2104,21 +2120,22 @@ fn simple_pattern_transport_to_any(t: SimplePatternTransport) -> AnyTransport {
         SimplePatternTransport::_TuplePattern(inner) => AnyTransport::_TuplePattern(*inner),
         SimplePatternTransport::DictPattern(inner) => AnyTransport::DictPattern(*inner),
         SimplePatternTransport::String(inner) => AnyTransport::String(*inner),
-        SimplePatternTransport::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(*inner),
+        SimplePatternTransport::ConcatenatedString(inner) => {
+            AnyTransport::ConcatenatedString(*inner)
+        }
         SimplePatternTransport::True(inner) => AnyTransport::True(inner),
         SimplePatternTransport::False(inner) => AnyTransport::False(inner),
         SimplePatternTransport::None(inner) => AnyTransport::None(inner),
-        SimplePatternTransport::SimplePatternNegative(inner) => AnyTransport::SimplePatternNegative(*inner),
+        SimplePatternTransport::SimplePatternNegative(inner) => {
+            AnyTransport::SimplePatternNegative(*inner)
+        }
         SimplePatternTransport::ComplexPattern(inner) => AnyTransport::ComplexPattern(*inner),
         SimplePatternTransport::DottedName(inner) => AnyTransport::DottedName(*inner),
     }
 }
 
 impl RenderableTransport for SimplePatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_simple_pattern(self, dest)
     }
 }
@@ -2150,56 +2167,57 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimpleStatementTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in SimpleStatementTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in SimpleStatementTransport")
+        })?;
         match kind_id {
             114 => Ok(Self::FutureImportStatement(Box::new(
-                FutureImportStatementTransport::from_napi_value(env, napi_val)?
+                FutureImportStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             111 => Ok(Self::ImportStatement(Box::new(
-                ImportStatementTransport::from_napi_value(env, napi_val)?
+                ImportStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             115 => Ok(Self::ImportFromStatement(Box::new(
-                ImportFromStatementTransport::from_napi_value(env, napi_val)?
+                ImportFromStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             119 => Ok(Self::PrintStatement(Box::new(
-                PrintStatementTransport::from_napi_value(env, napi_val)?
+                PrintStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             121 => Ok(Self::AssertStatement(Box::new(
-                AssertStatementTransport::from_napi_value(env, napi_val)?
+                AssertStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             122 => Ok(Self::ExpressionStatement(Box::new(
-                ExpressionStatementTransport::from_napi_value(env, napi_val)?
+                ExpressionStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             125 => Ok(Self::ReturnStatement(Box::new(
-                ReturnStatementTransport::from_napi_value(env, napi_val)?
+                ReturnStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             126 => Ok(Self::DeleteStatement(Box::new(
-                DeleteStatementTransport::from_napi_value(env, napi_val)?
+                DeleteStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             127 => Ok(Self::RaiseStatement(Box::new(
-                RaiseStatementTransport::from_napi_value(env, napi_val)?
+                RaiseStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             128 => Ok(Self::PassStatement(
-                PassStatementTransport::from_napi_value(env, napi_val)?
+                PassStatementTransport::from_napi_value(env, napi_val)?,
             )),
             129 => Ok(Self::BreakStatement(
-                BreakStatementTransport::from_napi_value(env, napi_val)?
+                BreakStatementTransport::from_napi_value(env, napi_val)?,
             )),
             130 => Ok(Self::ContinueStatement(
-                ContinueStatementTransport::from_napi_value(env, napi_val)?
+                ContinueStatementTransport::from_napi_value(env, napi_val)?,
             )),
             150 => Ok(Self::GlobalStatement(Box::new(
-                GlobalStatementTransport::from_napi_value(env, napi_val)?
+                GlobalStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             151 => Ok(Self::NonlocalStatement(Box::new(
-                NonlocalStatementTransport::from_napi_value(env, napi_val)?
+                NonlocalStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             152 => Ok(Self::ExecStatement(Box::new(
-                ExecStatementTransport::from_napi_value(env, napi_val)?
+                ExecStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             153 => Ok(Self::TypeAliasStatement(Box::new(
-                TypeAliasStatementTransport::from_napi_value(env, napi_val)?
+                TypeAliasStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in SimpleStatementTransport",
@@ -2214,36 +2232,47 @@ impl ::napi::bindgen_prelude::ToNapiValue for SimpleStatementTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SimpleStatementTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "SimpleStatementTransport is receive-only",
+        ))
     }
 }
 
 fn simple_statement_transport_to_any(t: SimpleStatementTransport) -> AnyTransport {
     match t {
-        SimpleStatementTransport::FutureImportStatement(inner) => AnyTransport::FutureImportStatement(*inner),
+        SimpleStatementTransport::FutureImportStatement(inner) => {
+            AnyTransport::FutureImportStatement(*inner)
+        }
         SimpleStatementTransport::ImportStatement(inner) => AnyTransport::ImportStatement(*inner),
-        SimpleStatementTransport::ImportFromStatement(inner) => AnyTransport::ImportFromStatement(*inner),
+        SimpleStatementTransport::ImportFromStatement(inner) => {
+            AnyTransport::ImportFromStatement(*inner)
+        }
         SimpleStatementTransport::PrintStatement(inner) => AnyTransport::PrintStatement(*inner),
         SimpleStatementTransport::AssertStatement(inner) => AnyTransport::AssertStatement(*inner),
-        SimpleStatementTransport::ExpressionStatement(inner) => AnyTransport::ExpressionStatement(*inner),
+        SimpleStatementTransport::ExpressionStatement(inner) => {
+            AnyTransport::ExpressionStatement(*inner)
+        }
         SimpleStatementTransport::ReturnStatement(inner) => AnyTransport::ReturnStatement(*inner),
         SimpleStatementTransport::DeleteStatement(inner) => AnyTransport::DeleteStatement(*inner),
         SimpleStatementTransport::RaiseStatement(inner) => AnyTransport::RaiseStatement(*inner),
         SimpleStatementTransport::PassStatement(inner) => AnyTransport::PassStatement(inner),
         SimpleStatementTransport::BreakStatement(inner) => AnyTransport::BreakStatement(inner),
-        SimpleStatementTransport::ContinueStatement(inner) => AnyTransport::ContinueStatement(inner),
+        SimpleStatementTransport::ContinueStatement(inner) => {
+            AnyTransport::ContinueStatement(inner)
+        }
         SimpleStatementTransport::GlobalStatement(inner) => AnyTransport::GlobalStatement(*inner),
-        SimpleStatementTransport::NonlocalStatement(inner) => AnyTransport::NonlocalStatement(*inner),
+        SimpleStatementTransport::NonlocalStatement(inner) => {
+            AnyTransport::NonlocalStatement(*inner)
+        }
         SimpleStatementTransport::ExecStatement(inner) => AnyTransport::ExecStatement(*inner),
-        SimpleStatementTransport::TypeAliasStatement(inner) => AnyTransport::TypeAliasStatement(*inner),
+        SimpleStatementTransport::TypeAliasStatement(inner) => {
+            AnyTransport::TypeAliasStatement(*inner)
+        }
     }
 }
 
 impl RenderableTransport for SimpleStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_simple_statement(self, dest)
     }
 }
@@ -2269,38 +2298,39 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in StatementTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in StatementTransport")
+        })?;
         match kind_id {
             110 => Ok(Self::SimpleStatements(Box::new(
-                SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                SimpleStatementsTransport::from_napi_value(env, napi_val)?,
             ))),
             131 => Ok(Self::IfStatement(Box::new(
-                IfStatementTransport::from_napi_value(env, napi_val)?
+                IfStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             137 => Ok(Self::ForStatement(Box::new(
-                ForStatementTransport::from_napi_value(env, napi_val)?
+                ForStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             138 => Ok(Self::WhileStatement(Box::new(
-                WhileStatementTransport::from_napi_value(env, napi_val)?
+                WhileStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             139 => Ok(Self::TryStatement(Box::new(
-                TryStatementTransport::from_napi_value(env, napi_val)?
+                TryStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             142 => Ok(Self::WithStatement(Box::new(
-                WithStatementTransport::from_napi_value(env, napi_val)?
+                WithStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             145 => Ok(Self::FunctionDefinition(Box::new(
-                FunctionDefinitionTransport::from_napi_value(env, napi_val)?
+                FunctionDefinitionTransport::from_napi_value(env, napi_val)?,
             ))),
             154 => Ok(Self::ClassDefinition(Box::new(
-                ClassDefinitionTransport::from_napi_value(env, napi_val)?
+                ClassDefinitionTransport::from_napi_value(env, napi_val)?,
             ))),
             158 => Ok(Self::DecoratedDefinition(Box::new(
-                DecoratedDefinitionTransport::from_napi_value(env, napi_val)?
+                DecoratedDefinitionTransport::from_napi_value(env, napi_val)?,
             ))),
             134 => Ok(Self::MatchStatement(Box::new(
-                MatchStatementTransport::from_napi_value(env, napi_val)?
+                MatchStatementTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in StatementTransport",
@@ -2315,7 +2345,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for StatementTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StatementTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "StatementTransport is receive-only",
+        ))
     }
 }
 
@@ -2335,10 +2367,7 @@ fn statement_transport_to_any(t: StatementTransport) -> AnyTransport {
 }
 
 impl RenderableTransport for StatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_statement(self, dest)
     }
 }
@@ -2362,104 +2391,105 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ExpressionTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in ExpressionTransport")
+        })?;
         match kind_id {
             195 => Ok(Self::ComparisonOperator(Box::new(
-                ComparisonOperatorTransport::from_napi_value(env, napi_val)?
+                ComparisonOperatorTransport::from_napi_value(env, napi_val)?,
             ))),
             189 => Ok(Self::NotOperator(Box::new(
-                NotOperatorTransport::from_napi_value(env, napi_val)?
+                NotOperatorTransport::from_napi_value(env, napi_val)?,
             ))),
             190 => Ok(Self::BooleanOperator(Box::new(
-                BooleanOperatorTransport::from_napi_value(env, napi_val)?
+                BooleanOperatorTransport::from_napi_value(env, napi_val)?,
             ))),
-            196 => Ok(Self::Lambda(Box::new(
-                LambdaTransport::from_napi_value(env, napi_val)?
-            ))),
+            196 => Ok(Self::Lambda(Box::new(LambdaTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             237 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             191 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             1 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             231 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             230 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             93 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             94 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             96 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             97 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             98 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             192 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             203 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             204 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             206 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             215 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             220 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             218 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             221 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             216 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             222 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             217 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             225 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             223 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             87 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             183 => Ok(Self::PrimaryExpression(Box::new(
-                PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                PrimaryExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             229 => Ok(Self::ConditionalExpression(Box::new(
-                ConditionalExpressionTransport::from_napi_value(env, napi_val)?
+                ConditionalExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             123 => Ok(Self::NamedExpression(Box::new(
-                NamedExpressionTransport::from_napi_value(env, napi_val)?
+                NamedExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             185 => Ok(Self::AsPattern(Box::new(
-                AsPatternTransport::from_napi_value(env, napi_val)?
+                AsPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in ExpressionTransport",
@@ -2474,7 +2504,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for ExpressionTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExpressionTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "ExpressionTransport is receive-only",
+        ))
     }
 }
 
@@ -2484,18 +2516,19 @@ fn expression_transport_to_any(t: ExpressionTransport) -> AnyTransport {
         ExpressionTransport::NotOperator(inner) => AnyTransport::NotOperator(*inner),
         ExpressionTransport::BooleanOperator(inner) => AnyTransport::BooleanOperator(*inner),
         ExpressionTransport::Lambda(inner) => AnyTransport::Lambda(*inner),
-        ExpressionTransport::PrimaryExpression(inner) => primary_expression_transport_to_any(*inner),
-        ExpressionTransport::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(*inner),
+        ExpressionTransport::PrimaryExpression(inner) => {
+            primary_expression_transport_to_any(*inner)
+        }
+        ExpressionTransport::ConditionalExpression(inner) => {
+            AnyTransport::ConditionalExpression(*inner)
+        }
         ExpressionTransport::NamedExpression(inner) => AnyTransport::NamedExpression(*inner),
         ExpressionTransport::AsPattern(inner) => AnyTransport::AsPattern(*inner),
     }
 }
 
 impl RenderableTransport for ExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_expression(self, dest)
     }
 }
@@ -2512,12 +2545,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordIdentifierTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in KeywordIdentifierTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in KeywordIdentifierTransport")
+        })?;
         match kind_id {
-            1 => Ok(Self::Identifier(
-                IdentifierTransport::from_napi_value(env, napi_val)?
-            )),
+            1 => Ok(Self::Identifier(IdentifierTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in KeywordIdentifierTransport",
             ))),
@@ -2531,7 +2565,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for KeywordIdentifierTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("KeywordIdentifierTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "KeywordIdentifierTransport is receive-only",
+        ))
     }
 }
 
@@ -2542,10 +2578,7 @@ fn keyword_identifier_transport_to_any(t: KeywordIdentifierTransport) -> AnyTran
 }
 
 impl RenderableTransport for KeywordIdentifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_keyword_identifier(self, dest)
     }
 }
@@ -2570,35 +2603,36 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ParameterTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in ParameterTransport")
+        })?;
         match kind_id {
-            1 => Ok(Self::Identifier(
-                IdentifierTransport::from_napi_value(env, napi_val)?
-            )),
+            1 => Ok(Self::Identifier(IdentifierTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             207 => Ok(Self::TypedParameter(Box::new(
-                TypedParameterTransport::from_napi_value(env, napi_val)?
+                TypedParameterTransport::from_napi_value(env, napi_val)?,
             ))),
             181 => Ok(Self::DefaultParameter(Box::new(
-                DefaultParameterTransport::from_napi_value(env, napi_val)?
+                DefaultParameterTransport::from_napi_value(env, napi_val)?,
             ))),
             182 => Ok(Self::TypedDefaultParameter(Box::new(
-                TypedDefaultParameterTransport::from_napi_value(env, napi_val)?
+                TypedDefaultParameterTransport::from_napi_value(env, napi_val)?,
             ))),
             183 => Ok(Self::ListSplatPattern(Box::new(
-                ListSplatPatternTransport::from_napi_value(env, napi_val)?
+                ListSplatPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             179 => Ok(Self::TuplePattern(Box::new(
-                TuplePatternTransport::from_napi_value(env, napi_val)?
+                TuplePatternTransport::from_napi_value(env, napi_val)?,
             ))),
             239 => Ok(Self::KeywordSeparator(
-                KeywordSeparatorTransport::from_napi_value(env, napi_val)?
+                KeywordSeparatorTransport::from_napi_value(env, napi_val)?,
             )),
             238 => Ok(Self::PositionalSeparator(
-                PositionalSeparatorTransport::from_napi_value(env, napi_val)?
+                PositionalSeparatorTransport::from_napi_value(env, napi_val)?,
             )),
             184 => Ok(Self::DictionarySplatPattern(Box::new(
-                DictionarySplatPatternTransport::from_napi_value(env, napi_val)?
+                DictionarySplatPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in ParameterTransport",
@@ -2613,7 +2647,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for ParameterTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ParameterTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "ParameterTransport is receive-only",
+        ))
     }
 }
 
@@ -2622,20 +2658,21 @@ fn parameter_transport_to_any(t: ParameterTransport) -> AnyTransport {
         ParameterTransport::Identifier(inner) => AnyTransport::Identifier(inner),
         ParameterTransport::TypedParameter(inner) => AnyTransport::TypedParameter(*inner),
         ParameterTransport::DefaultParameter(inner) => AnyTransport::DefaultParameter(*inner),
-        ParameterTransport::TypedDefaultParameter(inner) => AnyTransport::TypedDefaultParameter(*inner),
+        ParameterTransport::TypedDefaultParameter(inner) => {
+            AnyTransport::TypedDefaultParameter(*inner)
+        }
         ParameterTransport::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(*inner),
         ParameterTransport::TuplePattern(inner) => AnyTransport::TuplePattern(*inner),
         ParameterTransport::KeywordSeparator(inner) => AnyTransport::KeywordSeparator(inner),
         ParameterTransport::PositionalSeparator(inner) => AnyTransport::PositionalSeparator(inner),
-        ParameterTransport::DictionarySplatPattern(inner) => AnyTransport::DictionarySplatPattern(*inner),
+        ParameterTransport::DictionarySplatPattern(inner) => {
+            AnyTransport::DictionarySplatPattern(*inner)
+        }
     }
 }
 
 impl RenderableTransport for ParameterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_parameter(self, dest)
     }
 }
@@ -2658,26 +2695,27 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in PatternTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in PatternTransport")
+        })?;
         match kind_id {
-            1 => Ok(Self::Identifier(
-                IdentifierTransport::from_napi_value(env, napi_val)?
-            )),
+            1 => Ok(Self::Identifier(IdentifierTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             204 => Ok(Self::Subscript(Box::new(
-                SubscriptTransport::from_napi_value(env, napi_val)?
+                SubscriptTransport::from_napi_value(env, napi_val)?,
             ))),
             203 => Ok(Self::Attribute(Box::new(
-                AttributeTransport::from_napi_value(env, napi_val)?
+                AttributeTransport::from_napi_value(env, napi_val)?,
             ))),
             183 => Ok(Self::ListSplatPattern(Box::new(
-                ListSplatPatternTransport::from_napi_value(env, napi_val)?
+                ListSplatPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             179 => Ok(Self::TuplePattern(Box::new(
-                TuplePatternTransport::from_napi_value(env, napi_val)?
+                TuplePatternTransport::from_napi_value(env, napi_val)?,
             ))),
             180 => Ok(Self::ListPattern(Box::new(
-                ListPatternTransport::from_napi_value(env, napi_val)?
+                ListPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in PatternTransport",
@@ -2692,7 +2730,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for PatternTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PatternTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "PatternTransport is receive-only",
+        ))
     }
 }
 
@@ -2709,10 +2749,7 @@ fn pattern_transport_to_any(t: PatternTransport) -> AnyTransport {
 }
 
 impl RenderableTransport for PatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_pattern(self, dest)
     }
 }
@@ -2754,83 +2791,76 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in PrimaryExpressionTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in PrimaryExpressionTransport")
+        })?;
         match kind_id {
-            237 => Ok(Self::Await(Box::new(
-                AwaitTransport::from_napi_value(env, napi_val)?
-            ))),
+            237 => Ok(Self::Await(Box::new(AwaitTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             191 => Ok(Self::BinaryOperator(Box::new(
-                BinaryOperatorTransport::from_napi_value(env, napi_val)?
+                BinaryOperatorTransport::from_napi_value(env, napi_val)?,
             ))),
-            1 => Ok(Self::Identifier(
-                IdentifierTransport::from_napi_value(env, napi_val)?
-            )),
-            231 => Ok(Self::String(Box::new(
-                StringTransport::from_napi_value(env, napi_val)?
-            ))),
+            1 => Ok(Self::Identifier(IdentifierTransport::from_napi_value(
+                env, napi_val,
+            )?)),
+            231 => Ok(Self::String(Box::new(StringTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             230 => Ok(Self::ConcatenatedString(Box::new(
-                ConcatenatedStringTransport::from_napi_value(env, napi_val)?
+                ConcatenatedStringTransport::from_napi_value(env, napi_val)?,
             ))),
-            93 => Ok(Self::Integer(
-                IntegerTransport::from_napi_value(env, napi_val)?
-            )),
-            94 => Ok(Self::Float(
-                FloatTransport::from_napi_value(env, napi_val)?
-            )),
-            96 => Ok(Self::True(
-                TrueTransport::from_napi_value(env, napi_val)?
-            )),
-            97 => Ok(Self::False(
-                FalseTransport::from_napi_value(env, napi_val)?
-            )),
-            98 => Ok(Self::None(
-                NoneTransport::from_napi_value(env, napi_val)?
-            )),
+            93 => Ok(Self::Integer(IntegerTransport::from_napi_value(
+                env, napi_val,
+            )?)),
+            94 => Ok(Self::Float(FloatTransport::from_napi_value(env, napi_val)?)),
+            96 => Ok(Self::True(TrueTransport::from_napi_value(env, napi_val)?)),
+            97 => Ok(Self::False(FalseTransport::from_napi_value(env, napi_val)?)),
+            98 => Ok(Self::None(NoneTransport::from_napi_value(env, napi_val)?)),
             192 => Ok(Self::UnaryOperator(Box::new(
-                UnaryOperatorTransport::from_napi_value(env, napi_val)?
+                UnaryOperatorTransport::from_napi_value(env, napi_val)?,
             ))),
             203 => Ok(Self::Attribute(Box::new(
-                AttributeTransport::from_napi_value(env, napi_val)?
+                AttributeTransport::from_napi_value(env, napi_val)?,
             ))),
             204 => Ok(Self::Subscript(Box::new(
-                SubscriptTransport::from_napi_value(env, napi_val)?
+                SubscriptTransport::from_napi_value(env, napi_val)?,
             ))),
-            206 => Ok(Self::Call(Box::new(
-                CallTransport::from_napi_value(env, napi_val)?
-            ))),
-            215 => Ok(Self::List(Box::new(
-                ListTransport::from_napi_value(env, napi_val)?
-            ))),
+            206 => Ok(Self::Call(Box::new(CallTransport::from_napi_value(
+                env, napi_val,
+            )?))),
+            215 => Ok(Self::List(Box::new(ListTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             220 => Ok(Self::ListComprehension(Box::new(
-                ListComprehensionTransport::from_napi_value(env, napi_val)?
+                ListComprehensionTransport::from_napi_value(env, napi_val)?,
             ))),
             218 => Ok(Self::Dictionary(Box::new(
-                DictionaryTransport::from_napi_value(env, napi_val)?
+                DictionaryTransport::from_napi_value(env, napi_val)?,
             ))),
             221 => Ok(Self::DictionaryComprehension(Box::new(
-                DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
+                DictionaryComprehensionTransport::from_napi_value(env, napi_val)?,
             ))),
-            216 => Ok(Self::Set(Box::new(
-                SetTransport::from_napi_value(env, napi_val)?
-            ))),
+            216 => Ok(Self::Set(Box::new(SetTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             222 => Ok(Self::SetComprehension(Box::new(
-                SetComprehensionTransport::from_napi_value(env, napi_val)?
+                SetComprehensionTransport::from_napi_value(env, napi_val)?,
             ))),
-            217 => Ok(Self::Tuple(Box::new(
-                TupleTransport::from_napi_value(env, napi_val)?
-            ))),
+            217 => Ok(Self::Tuple(Box::new(TupleTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             225 => Ok(Self::ParenthesizedExpression(Box::new(
-                ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
             223 => Ok(Self::GeneratorExpression(Box::new(
-                GeneratorExpressionTransport::from_napi_value(env, napi_val)?
+                GeneratorExpressionTransport::from_napi_value(env, napi_val)?,
             ))),
-            87 => Ok(Self::Ellipsis2(
-                Ellipsis2Transport::from_napi_value(env, napi_val)?
-            )),
+            87 => Ok(Self::Ellipsis2(Ellipsis2Transport::from_napi_value(
+                env, napi_val,
+            )?)),
             183 => Ok(Self::ListSplatPattern(Box::new(
-                ListSplatPatternTransport::from_napi_value(env, napi_val)?
+                ListSplatPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in PrimaryExpressionTransport",
@@ -2845,7 +2875,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for PrimaryExpressionTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PrimaryExpressionTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "PrimaryExpressionTransport is receive-only",
+        ))
     }
 }
 
@@ -2854,9 +2886,13 @@ fn primary_expression_transport_to_any(t: PrimaryExpressionTransport) -> AnyTran
         PrimaryExpressionTransport::Await(inner) => AnyTransport::Await(*inner),
         PrimaryExpressionTransport::BinaryOperator(inner) => AnyTransport::BinaryOperator(*inner),
         PrimaryExpressionTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        PrimaryExpressionTransport::KeywordIdentifier(inner) => keyword_identifier_transport_to_any(*inner),
+        PrimaryExpressionTransport::KeywordIdentifier(inner) => {
+            keyword_identifier_transport_to_any(*inner)
+        }
         PrimaryExpressionTransport::String(inner) => AnyTransport::String(*inner),
-        PrimaryExpressionTransport::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(*inner),
+        PrimaryExpressionTransport::ConcatenatedString(inner) => {
+            AnyTransport::ConcatenatedString(*inner)
+        }
         PrimaryExpressionTransport::Integer(inner) => AnyTransport::Integer(inner),
         PrimaryExpressionTransport::Float(inner) => AnyTransport::Float(inner),
         PrimaryExpressionTransport::True(inner) => AnyTransport::True(inner),
@@ -2867,28 +2903,36 @@ fn primary_expression_transport_to_any(t: PrimaryExpressionTransport) -> AnyTran
         PrimaryExpressionTransport::Subscript(inner) => AnyTransport::Subscript(*inner),
         PrimaryExpressionTransport::Call(inner) => AnyTransport::Call(*inner),
         PrimaryExpressionTransport::List(inner) => AnyTransport::List(*inner),
-        PrimaryExpressionTransport::ListComprehension(inner) => AnyTransport::ListComprehension(*inner),
+        PrimaryExpressionTransport::ListComprehension(inner) => {
+            AnyTransport::ListComprehension(*inner)
+        }
         PrimaryExpressionTransport::Dictionary(inner) => AnyTransport::Dictionary(*inner),
-        PrimaryExpressionTransport::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(*inner),
+        PrimaryExpressionTransport::DictionaryComprehension(inner) => {
+            AnyTransport::DictionaryComprehension(*inner)
+        }
         PrimaryExpressionTransport::Set(inner) => AnyTransport::Set(*inner),
-        PrimaryExpressionTransport::SetComprehension(inner) => AnyTransport::SetComprehension(*inner),
+        PrimaryExpressionTransport::SetComprehension(inner) => {
+            AnyTransport::SetComprehension(*inner)
+        }
         PrimaryExpressionTransport::Tuple(inner) => AnyTransport::Tuple(*inner),
-        PrimaryExpressionTransport::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(*inner),
-        PrimaryExpressionTransport::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(*inner),
+        PrimaryExpressionTransport::ParenthesizedExpression(inner) => {
+            AnyTransport::ParenthesizedExpression(*inner)
+        }
+        PrimaryExpressionTransport::GeneratorExpression(inner) => {
+            AnyTransport::GeneratorExpression(*inner)
+        }
         PrimaryExpressionTransport::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
-        PrimaryExpressionTransport::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(*inner),
+        PrimaryExpressionTransport::ListSplatPattern(inner) => {
+            AnyTransport::ListSplatPattern(*inner)
+        }
     }
 }
 
 impl RenderableTransport for PrimaryExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_primary_expression(self, dest)
     }
 }
-
 
 #[derive(Debug, Clone)]
 pub enum _AsPatternChildTransport {
@@ -2903,15 +2947,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for _AsPatternChildTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in _AsPatternChildTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in _AsPatternChildTransport")
+        })?;
         match kind_id {
             163 => Ok(Self::CasePattern(Box::new(
-                CasePatternTransport::from_napi_value(env, napi_val)?
+                CasePatternTransport::from_napi_value(env, napi_val)?,
             ))),
-            1 => Ok(Self::Identifier(
-                IdentifierTransport::from_napi_value(env, napi_val)?
-            )),
+            1 => Ok(Self::Identifier(IdentifierTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in _AsPatternChildTransport",
             ))),
@@ -2925,7 +2970,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for _AsPatternChildTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("_AsPatternChildTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "_AsPatternChildTransport is receive-only",
+        ))
     }
 }
 
@@ -2937,12 +2984,11 @@ fn _as_pattern_child_transport_to_any(t: _AsPatternChildTransport) -> AnyTranspo
 }
 
 impl RenderableTransport for _AsPatternChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
-            _AsPatternChildTransport::CasePattern(inner) => render_case_pattern(inner.as_ref(), dest),
+            _AsPatternChildTransport::CasePattern(inner) => {
+                render_case_pattern(inner.as_ref(), dest)
+            }
             _AsPatternChildTransport::Identifier(inner) => render_identifier(inner, dest),
         }
     }
@@ -2961,14 +3007,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComprehensionClausesChildTranspo
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ComprehensionClausesChildTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason(
+                "$type property missing in ComprehensionClausesChildTransport",
+            )
+        })?;
         match kind_id {
             227 => Ok(Self::ForInClause(Box::new(
-                ForInClauseTransport::from_napi_value(env, napi_val)?
+                ForInClauseTransport::from_napi_value(env, napi_val)?,
             ))),
             228 => Ok(Self::IfClause(Box::new(
-                IfClauseTransport::from_napi_value(env, napi_val)?
+                IfClauseTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in ComprehensionClausesChildTransport",
@@ -2983,11 +3032,15 @@ impl ::napi::bindgen_prelude::ToNapiValue for ComprehensionClausesChildTransport
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ComprehensionClausesChildTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "ComprehensionClausesChildTransport is receive-only",
+        ))
     }
 }
 
-fn comprehension_clauses_child_transport_to_any(t: ComprehensionClausesChildTransport) -> AnyTransport {
+fn comprehension_clauses_child_transport_to_any(
+    t: ComprehensionClausesChildTransport,
+) -> AnyTransport {
     match t {
         ComprehensionClausesChildTransport::ForInClause(inner) => AnyTransport::ForInClause(*inner),
         ComprehensionClausesChildTransport::IfClause(inner) => AnyTransport::IfClause(*inner),
@@ -2995,13 +3048,14 @@ fn comprehension_clauses_child_transport_to_any(t: ComprehensionClausesChildTran
 }
 
 impl RenderableTransport for ComprehensionClausesChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
-            ComprehensionClausesChildTransport::ForInClause(inner) => render_for_in_clause(inner.as_ref(), dest),
-            ComprehensionClausesChildTransport::IfClause(inner) => render_if_clause(inner.as_ref(), dest),
+            ComprehensionClausesChildTransport::ForInClause(inner) => {
+                render_for_in_clause(inner.as_ref(), dest)
+            }
+            ComprehensionClausesChildTransport::IfClause(inner) => {
+                render_if_clause(inner.as_ref(), dest)
+            }
         }
     }
 }
@@ -3020,18 +3074,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuiteChildTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in SuiteChildTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in SuiteChildTransport")
+        })?;
         match kind_id {
             110 => Ok(Self::SimpleStatements(Box::new(
-                SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                SimpleStatementsTransport::from_napi_value(env, napi_val)?,
             ))),
-            160 => Ok(Self::Block(Box::new(
-                BlockTransport::from_napi_value(env, napi_val)?
-            ))),
-            101 => Ok(Self::Newline(
-                NewlineTransport::from_napi_value(env, napi_val)?
-            )),
+            160 => Ok(Self::Block(Box::new(BlockTransport::from_napi_value(
+                env, napi_val,
+            )?))),
+            101 => Ok(Self::Newline(NewlineTransport::from_napi_value(
+                env, napi_val,
+            )?)),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in SuiteChildTransport",
             ))),
@@ -3045,7 +3100,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for SuiteChildTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SuiteChildTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "SuiteChildTransport is receive-only",
+        ))
     }
 }
 
@@ -3058,12 +3115,11 @@ fn suite_child_transport_to_any(t: SuiteChildTransport) -> AnyTransport {
 }
 
 impl RenderableTransport for SuiteChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
-            SuiteChildTransport::SimpleStatements(inner) => render_simple_statements(inner.as_ref(), dest),
+            SuiteChildTransport::SimpleStatements(inner) => {
+                render_simple_statements(inner.as_ref(), dest)
+            }
             SuiteChildTransport::Block(inner) => render_block(inner.as_ref(), dest),
             SuiteChildTransport::Newline(inner) => render_newline(inner, dest),
         }
@@ -3085,20 +3141,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListChildTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ArgumentListChildTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in ArgumentListChildTransport")
+        })?;
         match kind_id {
             148 => Ok(Self::ListSplat(Box::new(
-                ListSplatTransport::from_napi_value(env, napi_val)?
+                ListSplatTransport::from_napi_value(env, napi_val)?,
             ))),
             149 => Ok(Self::DictionarySplat(Box::new(
-                DictionarySplatTransport::from_napi_value(env, napi_val)?
+                DictionarySplatTransport::from_napi_value(env, napi_val)?,
             ))),
             156 => Ok(Self::ParenthesizedListSplat(Box::new(
-                ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
+                ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?,
             ))),
             214 => Ok(Self::KeywordArgument(Box::new(
-                KeywordArgumentTransport::from_napi_value(env, napi_val)?
+                KeywordArgumentTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in ArgumentListChildTransport",
@@ -3113,7 +3170,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArgumentListChildTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ArgumentListChildTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "ArgumentListChildTransport is receive-only",
+        ))
     }
 }
 
@@ -3121,21 +3180,26 @@ fn argument_list_child_transport_to_any(t: ArgumentListChildTransport) -> AnyTra
     match t {
         ArgumentListChildTransport::ListSplat(inner) => AnyTransport::ListSplat(*inner),
         ArgumentListChildTransport::DictionarySplat(inner) => AnyTransport::DictionarySplat(*inner),
-        ArgumentListChildTransport::ParenthesizedListSplat(inner) => AnyTransport::ParenthesizedListSplat(*inner),
+        ArgumentListChildTransport::ParenthesizedListSplat(inner) => {
+            AnyTransport::ParenthesizedListSplat(*inner)
+        }
         ArgumentListChildTransport::KeywordArgument(inner) => AnyTransport::KeywordArgument(*inner),
     }
 }
 
 impl RenderableTransport for ArgumentListChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
             ArgumentListChildTransport::ListSplat(inner) => render_list_splat(inner.as_ref(), dest),
-            ArgumentListChildTransport::DictionarySplat(inner) => render_dictionary_splat(inner.as_ref(), dest),
-            ArgumentListChildTransport::ParenthesizedListSplat(inner) => render_parenthesized_list_splat(inner.as_ref(), dest),
-            ArgumentListChildTransport::KeywordArgument(inner) => render_keyword_argument(inner.as_ref(), dest),
+            ArgumentListChildTransport::DictionarySplat(inner) => {
+                render_dictionary_splat(inner.as_ref(), dest)
+            }
+            ArgumentListChildTransport::ParenthesizedListSplat(inner) => {
+                render_parenthesized_list_splat(inner.as_ref(), dest)
+            }
+            ArgumentListChildTransport::KeywordArgument(inner) => {
+                render_keyword_argument(inner.as_ref(), dest)
+            }
         }
     }
 }
@@ -3153,14 +3217,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternChildTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in CasePatternChildTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in CasePatternChildTransport")
+        })?;
         match kind_id {
             165 => Ok(Self::_AsPattern(Box::new(
-                _AsPatternTransport::from_napi_value(env, napi_val)?
+                _AsPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             171 => Ok(Self::KeywordPattern(Box::new(
-                KeywordPatternTransport::from_napi_value(env, napi_val)?
+                KeywordPatternTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in CasePatternChildTransport",
@@ -3175,7 +3240,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for CasePatternChildTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("CasePatternChildTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "CasePatternChildTransport is receive-only",
+        ))
     }
 }
 
@@ -3187,13 +3254,14 @@ fn case_pattern_child_transport_to_any(t: CasePatternChildTransport) -> AnyTrans
 }
 
 impl RenderableTransport for CasePatternChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
-            CasePatternChildTransport::_AsPattern(inner) => render__as_pattern(inner.as_ref(), dest),
-            CasePatternChildTransport::KeywordPattern(inner) => render_keyword_pattern(inner.as_ref(), dest),
+            CasePatternChildTransport::_AsPattern(inner) => {
+                render__as_pattern(inner.as_ref(), dest)
+            }
+            CasePatternChildTransport::KeywordPattern(inner) => {
+                render_keyword_pattern(inner.as_ref(), dest)
+            }
         }
     }
 }
@@ -3211,14 +3279,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictionaryChildTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in DictionaryChildTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in DictionaryChildTransport")
+        })?;
         match kind_id {
-            219 => Ok(Self::Pair(Box::new(
-                PairTransport::from_napi_value(env, napi_val)?
-            ))),
+            219 => Ok(Self::Pair(Box::new(PairTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             149 => Ok(Self::DictionarySplat(Box::new(
-                DictionarySplatTransport::from_napi_value(env, napi_val)?
+                DictionarySplatTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in DictionaryChildTransport",
@@ -3233,7 +3302,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for DictionaryChildTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("DictionaryChildTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "DictionaryChildTransport is receive-only",
+        ))
     }
 }
 
@@ -3245,13 +3316,12 @@ fn dictionary_child_transport_to_any(t: DictionaryChildTransport) -> AnyTranspor
 }
 
 impl RenderableTransport for DictionaryChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
             DictionaryChildTransport::Pair(inner) => render_pair(inner.as_ref(), dest),
-            DictionaryChildTransport::DictionarySplat(inner) => render_dictionary_splat(inner.as_ref(), dest),
+            DictionaryChildTransport::DictionarySplat(inner) => {
+                render_dictionary_splat(inner.as_ref(), dest)
+            }
         }
     }
 }
@@ -3270,17 +3340,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportFromStatementChildTranspor
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ImportFromStatementChildTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason(
+                "$type property missing in ImportFromStatementChildTransport",
+            )
+        })?;
         match kind_id {
             118 => Ok(Self::WildcardImport(
-                WildcardImportTransport::from_napi_value(env, napi_val)?
+                WildcardImportTransport::from_napi_value(env, napi_val)?,
             )),
             162 => Ok(Self::DottedName(Box::new(
-                DottedNameTransport::from_napi_value(env, napi_val)?
+                DottedNameTransport::from_napi_value(env, napi_val)?,
             ))),
             117 => Ok(Self::AliasedImport(Box::new(
-                AliasedImportTransport::from_napi_value(env, napi_val)?
+                AliasedImportTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in ImportFromStatementChildTransport",
@@ -3295,27 +3368,38 @@ impl ::napi::bindgen_prelude::ToNapiValue for ImportFromStatementChildTransport 
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ImportFromStatementChildTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "ImportFromStatementChildTransport is receive-only",
+        ))
     }
 }
 
-fn import_from_statement_child_transport_to_any(t: ImportFromStatementChildTransport) -> AnyTransport {
+fn import_from_statement_child_transport_to_any(
+    t: ImportFromStatementChildTransport,
+) -> AnyTransport {
     match t {
-        ImportFromStatementChildTransport::WildcardImport(inner) => AnyTransport::WildcardImport(inner),
+        ImportFromStatementChildTransport::WildcardImport(inner) => {
+            AnyTransport::WildcardImport(inner)
+        }
         ImportFromStatementChildTransport::DottedName(inner) => AnyTransport::DottedName(*inner),
-        ImportFromStatementChildTransport::AliasedImport(inner) => AnyTransport::AliasedImport(*inner),
+        ImportFromStatementChildTransport::AliasedImport(inner) => {
+            AnyTransport::AliasedImport(*inner)
+        }
     }
 }
 
 impl RenderableTransport for ImportFromStatementChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
-            ImportFromStatementChildTransport::WildcardImport(inner) => render_wildcard_import(inner, dest),
-            ImportFromStatementChildTransport::DottedName(inner) => render_dotted_name(inner.as_ref(), dest),
-            ImportFromStatementChildTransport::AliasedImport(inner) => render_aliased_import(inner.as_ref(), dest),
+            ImportFromStatementChildTransport::WildcardImport(inner) => {
+                render_wildcard_import(inner, dest)
+            }
+            ImportFromStatementChildTransport::DottedName(inner) => {
+                render_dotted_name(inner.as_ref(), dest)
+            }
+            ImportFromStatementChildTransport::AliasedImport(inner) => {
+                render_aliased_import(inner.as_ref(), dest)
+            }
         }
     }
 }
@@ -3334,17 +3418,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for ListChildTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ListChildTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in ListChildTransport")
+        })?;
         match kind_id {
-            202 => Ok(Self::Yield(Box::new(
-                YieldTransport::from_napi_value(env, napi_val)?
-            ))),
+            202 => Ok(Self::Yield(Box::new(YieldTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             148 => Ok(Self::ListSplat(Box::new(
-                ListSplatTransport::from_napi_value(env, napi_val)?
+                ListSplatTransport::from_napi_value(env, napi_val)?,
             ))),
             156 => Ok(Self::ParenthesizedListSplat(Box::new(
-                ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
+                ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in ListChildTransport",
@@ -3359,7 +3444,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for ListChildTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ListChildTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "ListChildTransport is receive-only",
+        ))
     }
 }
 
@@ -3367,19 +3454,20 @@ fn list_child_transport_to_any(t: ListChildTransport) -> AnyTransport {
     match t {
         ListChildTransport::Yield(inner) => AnyTransport::Yield(*inner),
         ListChildTransport::ListSplat(inner) => AnyTransport::ListSplat(*inner),
-        ListChildTransport::ParenthesizedListSplat(inner) => AnyTransport::ParenthesizedListSplat(*inner),
+        ListChildTransport::ParenthesizedListSplat(inner) => {
+            AnyTransport::ParenthesizedListSplat(*inner)
+        }
     }
 }
 
 impl RenderableTransport for ListChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
             ListChildTransport::Yield(inner) => render_yield(inner.as_ref(), dest),
             ListChildTransport::ListSplat(inner) => render_list_splat(inner.as_ref(), dest),
-            ListChildTransport::ParenthesizedListSplat(inner) => render_parenthesized_list_splat(inner.as_ref(), dest),
+            ListChildTransport::ParenthesizedListSplat(inner) => {
+                render_parenthesized_list_splat(inner.as_ref(), dest)
+            }
         }
     }
 }
@@ -3397,14 +3485,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedListSplatChildTrans
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ParenthesizedListSplatChildTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason(
+                "$type property missing in ParenthesizedListSplatChildTransport",
+            )
+        })?;
         match kind_id {
             156 => Ok(Self::ParenthesizedListSplat(Box::new(
-                ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
+                ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?,
             ))),
             148 => Ok(Self::ListSplat(Box::new(
-                ListSplatTransport::from_napi_value(env, napi_val)?
+                ListSplatTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in ParenthesizedListSplatChildTransport",
@@ -3419,25 +3510,32 @@ impl ::napi::bindgen_prelude::ToNapiValue for ParenthesizedListSplatChildTranspo
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ParenthesizedListSplatChildTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "ParenthesizedListSplatChildTransport is receive-only",
+        ))
     }
 }
 
-fn parenthesized_list_splat_child_transport_to_any(t: ParenthesizedListSplatChildTransport) -> AnyTransport {
+fn parenthesized_list_splat_child_transport_to_any(
+    t: ParenthesizedListSplatChildTransport,
+) -> AnyTransport {
     match t {
-        ParenthesizedListSplatChildTransport::ParenthesizedListSplat(inner) => AnyTransport::ParenthesizedListSplat(*inner),
+        ParenthesizedListSplatChildTransport::ParenthesizedListSplat(inner) => {
+            AnyTransport::ParenthesizedListSplat(*inner)
+        }
         ParenthesizedListSplatChildTransport::ListSplat(inner) => AnyTransport::ListSplat(*inner),
     }
 }
 
 impl RenderableTransport for ParenthesizedListSplatChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
-            ParenthesizedListSplatChildTransport::ParenthesizedListSplat(inner) => render_parenthesized_list_splat(inner.as_ref(), dest),
-            ParenthesizedListSplatChildTransport::ListSplat(inner) => render_list_splat(inner.as_ref(), dest),
+            ParenthesizedListSplatChildTransport::ParenthesizedListSplat(inner) => {
+                render_parenthesized_list_splat(inner.as_ref(), dest)
+            }
+            ParenthesizedListSplatChildTransport::ListSplat(inner) => {
+                render_list_splat(inner.as_ref(), dest)
+            }
         }
     }
 }
@@ -3456,17 +3554,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for SetChildTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in SetChildTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in SetChildTransport")
+        })?;
         match kind_id {
-            202 => Ok(Self::Yield(Box::new(
-                YieldTransport::from_napi_value(env, napi_val)?
-            ))),
+            202 => Ok(Self::Yield(Box::new(YieldTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             148 => Ok(Self::ListSplat(Box::new(
-                ListSplatTransport::from_napi_value(env, napi_val)?
+                ListSplatTransport::from_napi_value(env, napi_val)?,
             ))),
             156 => Ok(Self::ParenthesizedListSplat(Box::new(
-                ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
+                ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in SetChildTransport",
@@ -3481,7 +3580,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for SetChildTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SetChildTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "SetChildTransport is receive-only",
+        ))
     }
 }
 
@@ -3489,19 +3590,20 @@ fn set_child_transport_to_any(t: SetChildTransport) -> AnyTransport {
     match t {
         SetChildTransport::Yield(inner) => AnyTransport::Yield(*inner),
         SetChildTransport::ListSplat(inner) => AnyTransport::ListSplat(*inner),
-        SetChildTransport::ParenthesizedListSplat(inner) => AnyTransport::ParenthesizedListSplat(*inner),
+        SetChildTransport::ParenthesizedListSplat(inner) => {
+            AnyTransport::ParenthesizedListSplat(*inner)
+        }
     }
 }
 
 impl RenderableTransport for SetChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
             SetChildTransport::Yield(inner) => render_yield(inner.as_ref(), dest),
             SetChildTransport::ListSplat(inner) => render_list_splat(inner.as_ref(), dest),
-            SetChildTransport::ParenthesizedListSplat(inner) => render_parenthesized_list_splat(inner.as_ref(), dest),
+            SetChildTransport::ParenthesizedListSplat(inner) => {
+                render_parenthesized_list_splat(inner.as_ref(), dest)
+            }
         }
     }
 }
@@ -3521,20 +3623,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentChildTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in StringContentChildTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in StringContentChildTransport")
+        })?;
         match kind_id {
             106 => Ok(Self::EscapeInterpolation(
-                EscapeInterpolationTransport::from_napi_value(env, napi_val)?
+                EscapeInterpolationTransport::from_napi_value(env, napi_val)?,
             )),
             89 => Ok(Self::EscapeSequence(
-                EscapeSequenceTransport::from_napi_value(env, napi_val)?
+                EscapeSequenceTransport::from_napi_value(env, napi_val)?,
             )),
             235 => Ok(Self::NotEscapeSequence(
-                NotEscapeSequenceTransport::from_napi_value(env, napi_val)?
+                NotEscapeSequenceTransport::from_napi_value(env, napi_val)?,
             )),
             105 => Ok(Self::_StringContent(
-                _StringContentTransport::from_napi_value(env, napi_val)?
+                _StringContentTransport::from_napi_value(env, napi_val)?,
             )),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in StringContentChildTransport",
@@ -3549,29 +3652,40 @@ impl ::napi::bindgen_prelude::ToNapiValue for StringContentChildTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("StringContentChildTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "StringContentChildTransport is receive-only",
+        ))
     }
 }
 
 fn string_content_child_transport_to_any(t: StringContentChildTransport) -> AnyTransport {
     match t {
-        StringContentChildTransport::EscapeInterpolation(inner) => AnyTransport::EscapeInterpolation(inner),
+        StringContentChildTransport::EscapeInterpolation(inner) => {
+            AnyTransport::EscapeInterpolation(inner)
+        }
         StringContentChildTransport::EscapeSequence(inner) => AnyTransport::EscapeSequence(inner),
-        StringContentChildTransport::NotEscapeSequence(inner) => AnyTransport::NotEscapeSequence(inner),
+        StringContentChildTransport::NotEscapeSequence(inner) => {
+            AnyTransport::NotEscapeSequence(inner)
+        }
         StringContentChildTransport::_StringContent(inner) => AnyTransport::_StringContent(inner),
     }
 }
 
 impl RenderableTransport for StringContentChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
-            StringContentChildTransport::EscapeInterpolation(inner) => render_escape_interpolation(inner, dest),
-            StringContentChildTransport::EscapeSequence(inner) => render_escape_sequence(inner, dest),
-            StringContentChildTransport::NotEscapeSequence(inner) => render_not_escape_sequence(inner, dest),
-            StringContentChildTransport::_StringContent(inner) => render__string_content(inner, dest),
+            StringContentChildTransport::EscapeInterpolation(inner) => {
+                render_escape_interpolation(inner, dest)
+            }
+            StringContentChildTransport::EscapeSequence(inner) => {
+                render_escape_sequence(inner, dest)
+            }
+            StringContentChildTransport::NotEscapeSequence(inner) => {
+                render_not_escape_sequence(inner, dest)
+            }
+            StringContentChildTransport::_StringContent(inner) => {
+                render__string_content(inner, dest)
+            }
         }
     }
 }
@@ -3590,17 +3704,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleChildTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in TupleChildTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in TupleChildTransport")
+        })?;
         match kind_id {
-            202 => Ok(Self::Yield(Box::new(
-                YieldTransport::from_napi_value(env, napi_val)?
-            ))),
+            202 => Ok(Self::Yield(Box::new(YieldTransport::from_napi_value(
+                env, napi_val,
+            )?))),
             148 => Ok(Self::ListSplat(Box::new(
-                ListSplatTransport::from_napi_value(env, napi_val)?
+                ListSplatTransport::from_napi_value(env, napi_val)?,
             ))),
             156 => Ok(Self::ParenthesizedListSplat(Box::new(
-                ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
+                ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in TupleChildTransport",
@@ -3615,7 +3730,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for TupleChildTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TupleChildTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "TupleChildTransport is receive-only",
+        ))
     }
 }
 
@@ -3623,19 +3740,20 @@ fn tuple_child_transport_to_any(t: TupleChildTransport) -> AnyTransport {
     match t {
         TupleChildTransport::Yield(inner) => AnyTransport::Yield(*inner),
         TupleChildTransport::ListSplat(inner) => AnyTransport::ListSplat(*inner),
-        TupleChildTransport::ParenthesizedListSplat(inner) => AnyTransport::ParenthesizedListSplat(*inner),
+        TupleChildTransport::ParenthesizedListSplat(inner) => {
+            AnyTransport::ParenthesizedListSplat(*inner)
+        }
     }
 }
 
 impl RenderableTransport for TupleChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
             TupleChildTransport::Yield(inner) => render_yield(inner.as_ref(), dest),
             TupleChildTransport::ListSplat(inner) => render_list_splat(inner.as_ref(), dest),
-            TupleChildTransport::ParenthesizedListSplat(inner) => render_parenthesized_list_splat(inner.as_ref(), dest),
+            TupleChildTransport::ParenthesizedListSplat(inner) => {
+                render_parenthesized_list_splat(inner.as_ref(), dest)
+            }
         }
     }
 }
@@ -3656,23 +3774,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeChildTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in TypeChildTransport"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(|| {
+            ::napi::Error::from_reason("$type property missing in TypeChildTransport")
+        })?;
         match kind_id {
             209 => Ok(Self::SplatType(Box::new(
-                SplatTypeTransport::from_napi_value(env, napi_val)?
+                SplatTypeTransport::from_napi_value(env, napi_val)?,
             ))),
             210 => Ok(Self::GenericType(Box::new(
-                GenericTypeTransport::from_napi_value(env, napi_val)?
+                GenericTypeTransport::from_napi_value(env, napi_val)?,
             ))),
             211 => Ok(Self::UnionType(Box::new(
-                UnionTypeTransport::from_napi_value(env, napi_val)?
+                UnionTypeTransport::from_napi_value(env, napi_val)?,
             ))),
             212 => Ok(Self::ConstrainedType(Box::new(
-                ConstrainedTypeTransport::from_napi_value(env, napi_val)?
+                ConstrainedTypeTransport::from_napi_value(env, napi_val)?,
             ))),
             213 => Ok(Self::MemberType(Box::new(
-                MemberTypeTransport::from_napi_value(env, napi_val)?
+                MemberTypeTransport::from_napi_value(env, napi_val)?,
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in TypeChildTransport",
@@ -3687,7 +3806,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for TypeChildTransport {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TypeChildTransport is receive-only"))
+        Err(::napi::Error::from_reason(
+            "TypeChildTransport is receive-only",
+        ))
     }
 }
 
@@ -3702,20 +3823,18 @@ fn type_child_transport_to_any(t: TypeChildTransport) -> AnyTransport {
 }
 
 impl RenderableTransport for TypeChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
             TypeChildTransport::SplatType(inner) => render_splat_type(inner.as_ref(), dest),
             TypeChildTransport::GenericType(inner) => render_generic_type(inner.as_ref(), dest),
             TypeChildTransport::UnionType(inner) => render_union_type(inner.as_ref(), dest),
-            TypeChildTransport::ConstrainedType(inner) => render_constrained_type(inner.as_ref(), dest),
+            TypeChildTransport::ConstrainedType(inner) => {
+                render_constrained_type(inner.as_ref(), dest)
+            }
             TypeChildTransport::MemberType(inner) => render_member_type(inner.as_ref(), dest),
         }
     }
 }
-
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
@@ -3739,10 +3858,7 @@ pub struct _AsPatternTransport {
 }
 
 impl RenderableTransport for _AsPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render__as_pattern(self, dest))
     }
 }
@@ -3769,10 +3885,7 @@ pub struct AssignmentEqTransport {
 }
 
 impl RenderableTransport for AssignmentEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_assignment_eq(self, dest))
     }
 }
@@ -3799,10 +3912,7 @@ pub struct AssignmentTypeTransport {
 }
 
 impl RenderableTransport for AssignmentTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_assignment_type(self, dest))
     }
 }
@@ -3831,10 +3941,7 @@ pub struct AssignmentTypedTransport {
 }
 
 impl RenderableTransport for AssignmentTypedTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_assignment_typed(self, dest))
     }
 }
@@ -3851,11 +3958,12 @@ pub struct AsyncMarkerTransport {
 }
 
 impl RenderableTransport for AsyncMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -3944,19 +4052,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentOperatorEnum 
     ) -> ::napi::Result<Self> {
         let kind_id: u16 = u16::from_napi_value(env, napi_val)?;
         match kind_id {
-            73 => Ok(Self::PlusEq), // "+="
-            74 => Ok(Self::MinusEq), // "-="
-            75 => Ok(Self::StarEq), // "*="
-            76 => Ok(Self::SlashEq), // "/="
-            77 => Ok(Self::V40_3d), // "@="
+            73 => Ok(Self::PlusEq),    // "+="
+            74 => Ok(Self::MinusEq),   // "-="
+            75 => Ok(Self::StarEq),    // "*="
+            76 => Ok(Self::SlashEq),   // "/="
+            77 => Ok(Self::V40_3d),    // "@="
             78 => Ok(Self::V2f_2f_3d), // "//="
             79 => Ok(Self::PercentEq), // "%="
             80 => Ok(Self::V2a_2a_3d), // "**="
-            81 => Ok(Self::GtGtEq), // ">>="
-            82 => Ok(Self::LtLtEq), // "<<="
-            83 => Ok(Self::AmpEq), // "&="
-            84 => Ok(Self::CaretEq), // "^="
-            85 => Ok(Self::PipeEq), // "|="
+            81 => Ok(Self::GtGtEq),    // ">>="
+            82 => Ok(Self::LtLtEq),    // "<<="
+            83 => Ok(Self::AmpEq),     // "&="
+            84 => Ok(Self::CaretEq),   // "^="
+            85 => Ok(Self::PipeEq),    // "|="
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} for AugmentedAssignmentOperatorEnum",
             ))),
@@ -3970,7 +4078,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for AugmentedAssignmentOperatorEnum {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("AugmentedAssignmentOperatorEnum is receive-only"))
+        Err(::napi::Error::from_reason(
+            "AugmentedAssignmentOperatorEnum is receive-only",
+        ))
     }
 }
 
@@ -3995,10 +4105,7 @@ impl ::std::fmt::Display for AugmentedAssignmentOperatorEnum {
 }
 
 impl RenderableTransport for AugmentedAssignmentOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         dest.write_str(match self {
             Self::PlusEq => "+=",
             Self::MinusEq => "-=",
@@ -4013,7 +4120,8 @@ impl RenderableTransport for AugmentedAssignmentOperatorEnum {
             Self::AmpEq => "&=",
             Self::CaretEq => "^=",
             Self::PipeEq => "|=",
-        }).map_err(::askama::Error::from)
+        })
+        .map_err(::askama::Error::from)
     }
 }
 
@@ -4039,10 +4147,7 @@ pub struct ComprehensionClausesTransport {
 }
 
 impl RenderableTransport for ComprehensionClausesTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_comprehension_clauses(self, dest))
     }
 }
@@ -4061,7 +4166,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _IdentifierEnum {
     ) -> ::napi::Result<Self> {
         let kind_id: u16 = u16::from_napi_value(env, napi_val)?;
         match kind_id {
-            11 => Ok(Self::Star), // "*"
+            11 => Ok(Self::Star),   // "*"
             39 => Ok(Self::V2a_2a), // "**"
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} for _IdentifierEnum",
@@ -4076,7 +4181,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for _IdentifierEnum {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("_IdentifierEnum is receive-only"))
+        Err(::napi::Error::from_reason(
+            "_IdentifierEnum is receive-only",
+        ))
     }
 }
 
@@ -4090,14 +4197,12 @@ impl ::std::fmt::Display for _IdentifierEnum {
 }
 
 impl RenderableTransport for _IdentifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         dest.write_str(match self {
             Self::Star => "*",
             Self::V2a_2a => "**",
-        }).map_err(::askama::Error::from)
+        })
+        .map_err(::askama::Error::from)
     }
 }
 
@@ -4123,10 +4228,7 @@ pub struct ImportListTransport {
 }
 
 impl RenderableTransport for ImportListTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_import_list(self, dest))
     }
 }
@@ -4143,11 +4245,12 @@ pub struct IsNotTransport {
 }
 
 impl RenderableTransport for IsNotTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -4235,10 +4338,7 @@ pub struct KeyValuePatternTransport {
 }
 
 impl RenderableTransport for KeyValuePatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_key_value_pattern(self, dest))
     }
 }
@@ -4255,11 +4355,12 @@ pub struct KwAsyncMarkerTransport {
 }
 
 impl RenderableTransport for KwAsyncMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -4335,11 +4436,12 @@ pub struct KwTypeTransport {
 }
 
 impl RenderableTransport for KwTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -4425,10 +4527,7 @@ pub struct _ListPatternTransport {
 }
 
 impl RenderableTransport for _ListPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render__list_pattern(self, dest))
     }
 }
@@ -4455,10 +4554,7 @@ pub struct MatchBlockTransport {
 }
 
 impl RenderableTransport for MatchBlockTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_match_block(self, dest))
     }
 }
@@ -4485,10 +4581,7 @@ pub struct MatchBlockBlockTransport {
 }
 
 impl RenderableTransport for MatchBlockBlockTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_match_block_block(self, dest))
     }
 }
@@ -4505,11 +4598,12 @@ pub struct NotEscapeSequenceTransport {
 }
 
 impl RenderableTransport for NotEscapeSequenceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -4585,11 +4679,12 @@ pub struct NotInTransport {
 }
 
 impl RenderableTransport for NotInTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -4675,10 +4770,7 @@ pub struct SimplePatternNegativeTransport {
 }
 
 impl RenderableTransport for SimplePatternNegativeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_simple_pattern_negative(self, dest))
     }
 }
@@ -4705,10 +4797,7 @@ pub struct SimpleStatementsTransport {
 }
 
 impl RenderableTransport for SimpleStatementsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_simple_statements(self, dest))
     }
 }
@@ -4735,10 +4824,7 @@ pub struct SuiteTransport {
 }
 
 impl RenderableTransport for SuiteTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_suite(self, dest))
     }
 }
@@ -4765,10 +4851,7 @@ pub struct _TuplePatternTransport {
 }
 
 impl RenderableTransport for _TuplePatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render__tuple_pattern(self, dest))
     }
 }
@@ -4788,7 +4871,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnaryOperatorOperatorEnum {
     ) -> ::napi::Result<Self> {
         let kind_id: u16 = u16::from_napi_value(env, napi_val)?;
         match kind_id {
-            52 => Ok(Self::Plus), // "+"
+            52 => Ok(Self::Plus),  // "+"
             53 => Ok(Self::Minus), // "-"
             63 => Ok(Self::Tilde), // "~"
             other => Err(::napi::Error::from_reason(format!(
@@ -4804,7 +4887,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for UnaryOperatorOperatorEnum {
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("UnaryOperatorOperatorEnum is receive-only"))
+        Err(::napi::Error::from_reason(
+            "UnaryOperatorOperatorEnum is receive-only",
+        ))
     }
 }
 
@@ -4819,15 +4904,13 @@ impl ::std::fmt::Display for UnaryOperatorOperatorEnum {
 }
 
 impl RenderableTransport for UnaryOperatorOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         dest.write_str(match self {
             Self::Plus => "+",
             Self::Minus => "-",
             Self::Tilde => "~",
-        }).map_err(::askama::Error::from)
+        })
+        .map_err(::askama::Error::from)
     }
 }
 
@@ -4853,10 +4936,7 @@ pub struct _WithClauseParenTransport {
 }
 
 impl RenderableTransport for _WithClauseParenTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render__with_clause_paren(self, dest))
     }
 }
@@ -4885,10 +4965,7 @@ pub struct AliasedImportTransport {
 }
 
 impl RenderableTransport for AliasedImportTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_aliased_import(self, dest))
     }
 }
@@ -4915,10 +4992,7 @@ pub struct ArgumentListTransport {
 }
 
 impl RenderableTransport for ArgumentListTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_argument_list(self, dest))
     }
 }
@@ -4947,10 +5021,7 @@ pub struct AsPatternTransport {
 }
 
 impl RenderableTransport for AsPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_as_pattern(self, dest))
     }
 }
@@ -4977,10 +5048,7 @@ pub struct AssertStatementTransport {
 }
 
 impl RenderableTransport for AssertStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_assert_statement(self, dest))
     }
 }
@@ -4999,17 +5067,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let variant: String = obj.get("$variant")?
+        let variant: String = obj
+            .get("$variant")?
             .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
         match variant.as_str() {
             "eq" => Ok(Self::AssignmentUFormEq(
-                AssignmentUFormEqTransport::from_napi_value(env, napi_val)?
+                AssignmentUFormEqTransport::from_napi_value(env, napi_val)?,
             )),
             "type" => Ok(Self::AssignmentUFormType(
-                AssignmentUFormTypeTransport::from_napi_value(env, napi_val)?
+                AssignmentUFormTypeTransport::from_napi_value(env, napi_val)?,
             )),
             "typed" => Ok(Self::AssignmentUFormTyped(
-                AssignmentUFormTypedTransport::from_napi_value(env, napi_val)?
+                AssignmentUFormTypedTransport::from_napi_value(env, napi_val)?,
             )),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown $variant {:?} for AssignmentTransport",
@@ -5020,10 +5089,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTransport {
 }
 
 impl RenderableTransport for AssignmentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_assignment(self, dest)
     }
 }
@@ -5052,10 +5118,7 @@ pub struct AssignmentUFormEqTransport {
 }
 
 impl RenderableTransport for AssignmentUFormEqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_assignment_uform_eq(self, dest))
     }
 }
@@ -5084,10 +5147,7 @@ pub struct AssignmentUFormTypeTransport {
 }
 
 impl RenderableTransport for AssignmentUFormTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_assignment_uform_type(self, dest))
     }
 }
@@ -5116,10 +5176,7 @@ pub struct AssignmentUFormTypedTransport {
 }
 
 impl RenderableTransport for AssignmentUFormTypedTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_assignment_uform_typed(self, dest))
     }
 }
@@ -5148,10 +5205,7 @@ pub struct AttributeTransport {
 }
 
 impl RenderableTransport for AttributeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_attribute(self, dest))
     }
 }
@@ -5182,10 +5236,7 @@ pub struct AugmentedAssignmentTransport {
 }
 
 impl RenderableTransport for AugmentedAssignmentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_augmented_assignment(self, dest))
     }
 }
@@ -5212,10 +5263,7 @@ pub struct AwaitTransport {
 }
 
 impl RenderableTransport for AwaitTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_await(self, dest))
     }
 }
@@ -5246,10 +5294,7 @@ pub struct BinaryOperatorTransport {
 }
 
 impl RenderableTransport for BinaryOperatorTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_binary_operator(self, dest))
     }
 }
@@ -5276,10 +5321,7 @@ pub struct BlockTransport {
 }
 
 impl RenderableTransport for BlockTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_block(self, dest))
     }
 }
@@ -5310,10 +5352,7 @@ pub struct BooleanOperatorTransport {
 }
 
 impl RenderableTransport for BooleanOperatorTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_boolean_operator(self, dest))
     }
 }
@@ -5330,11 +5369,12 @@ pub struct BreakStatementTransport {
 }
 
 impl RenderableTransport for BreakStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -5422,10 +5462,7 @@ pub struct CallTransport {
 }
 
 impl RenderableTransport for CallTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_call(self, dest))
     }
 }
@@ -5456,10 +5493,7 @@ pub struct CaseClauseTransport {
 }
 
 impl RenderableTransport for CaseClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_case_clause(self, dest))
     }
 }
@@ -5486,10 +5520,7 @@ pub struct CasePatternTransport {
 }
 
 impl RenderableTransport for CasePatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_case_pattern(self, dest))
     }
 }
@@ -5516,10 +5547,7 @@ pub struct ChevronTransport {
 }
 
 impl RenderableTransport for ChevronTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_chevron(self, dest))
     }
 }
@@ -5552,10 +5580,7 @@ pub struct ClassDefinitionTransport {
 }
 
 impl RenderableTransport for ClassDefinitionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_class_definition(self, dest))
     }
 }
@@ -5584,10 +5609,7 @@ pub struct ClassPatternTransport {
 }
 
 impl RenderableTransport for ClassPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_class_pattern(self, dest))
     }
 }
@@ -5604,11 +5626,12 @@ pub struct CommentTransport {
 }
 
 impl RenderableTransport for CommentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -5698,10 +5721,7 @@ pub struct ComparisonOperatorTransport {
 }
 
 impl RenderableTransport for ComparisonOperatorTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_comparison_operator(self, dest))
     }
 }
@@ -5732,10 +5752,7 @@ pub struct ComplexPatternTransport {
 }
 
 impl RenderableTransport for ComplexPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_complex_pattern(self, dest))
     }
 }
@@ -5762,10 +5779,7 @@ pub struct ConcatenatedStringTransport {
 }
 
 impl RenderableTransport for ConcatenatedStringTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_concatenated_string(self, dest))
     }
 }
@@ -5796,10 +5810,7 @@ pub struct ConditionalExpressionTransport {
 }
 
 impl RenderableTransport for ConditionalExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_conditional_expression(self, dest))
     }
 }
@@ -5828,10 +5839,7 @@ pub struct ConstrainedTypeTransport {
 }
 
 impl RenderableTransport for ConstrainedTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_constrained_type(self, dest))
     }
 }
@@ -5848,11 +5856,12 @@ pub struct ContinueStatementTransport {
 }
 
 impl RenderableTransport for ContinueStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -5940,10 +5949,7 @@ pub struct DecoratedDefinitionTransport {
 }
 
 impl RenderableTransport for DecoratedDefinitionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_decorated_definition(self, dest))
     }
 }
@@ -5972,10 +5978,7 @@ pub struct DecoratorTransport {
 }
 
 impl RenderableTransport for DecoratorTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_decorator(self, dest))
     }
 }
@@ -6004,10 +6007,7 @@ pub struct DefaultParameterTransport {
 }
 
 impl RenderableTransport for DefaultParameterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_default_parameter(self, dest))
     }
 }
@@ -6034,10 +6034,7 @@ pub struct DeleteStatementTransport {
 }
 
 impl RenderableTransport for DeleteStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_delete_statement(self, dest))
     }
 }
@@ -6064,10 +6061,7 @@ pub struct DictPatternTransport {
 }
 
 impl RenderableTransport for DictPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_dict_pattern(self, dest))
     }
 }
@@ -6094,10 +6088,7 @@ pub struct DictionaryTransport {
 }
 
 impl RenderableTransport for DictionaryTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_dictionary(self, dest))
     }
 }
@@ -6126,10 +6117,7 @@ pub struct DictionaryComprehensionTransport {
 }
 
 impl RenderableTransport for DictionaryComprehensionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_dictionary_comprehension(self, dest))
     }
 }
@@ -6156,10 +6144,7 @@ pub struct DictionarySplatTransport {
 }
 
 impl RenderableTransport for DictionarySplatTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_dictionary_splat(self, dest))
     }
 }
@@ -6186,10 +6171,7 @@ pub struct DictionarySplatPatternTransport {
 }
 
 impl RenderableTransport for DictionarySplatPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_dictionary_splat_pattern(self, dest))
     }
 }
@@ -6216,10 +6198,7 @@ pub struct DottedNameTransport {
 }
 
 impl RenderableTransport for DottedNameTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_dotted_name(self, dest))
     }
 }
@@ -6248,10 +6227,7 @@ pub struct ElifClauseTransport {
 }
 
 impl RenderableTransport for ElifClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_elif_clause(self, dest))
     }
 }
@@ -6268,11 +6244,12 @@ pub struct Ellipsis2Transport {
 }
 
 impl RenderableTransport for Ellipsis2Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -6358,10 +6335,7 @@ pub struct ElseClauseTransport {
 }
 
 impl RenderableTransport for ElseClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_else_clause(self, dest))
     }
 }
@@ -6378,11 +6352,12 @@ pub struct EscapeSequenceTransport {
 }
 
 impl RenderableTransport for EscapeSequenceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -6472,10 +6447,7 @@ pub struct ExceptClauseTransport {
 }
 
 impl RenderableTransport for ExceptClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_except_clause(self, dest))
     }
 }
@@ -6504,10 +6476,7 @@ pub struct ExecStatementTransport {
 }
 
 impl RenderableTransport for ExecStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_exec_statement(self, dest))
     }
 }
@@ -6534,10 +6503,7 @@ pub struct ExpressionListTransport {
 }
 
 impl RenderableTransport for ExpressionListTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_expression_list(self, dest))
     }
 }
@@ -6564,10 +6530,7 @@ pub struct ExpressionStatementTupleTransport {
 }
 
 impl RenderableTransport for ExpressionStatementTupleTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_expression_statement_tuple(self, dest))
     }
 }
@@ -6577,7 +6540,9 @@ pub enum ExpressionStatementTransport {
     ExpressionStatementUFormExpression(ExpressionStatementUFormExpressionTransport),
     ExpressionStatementUFormTuple(ExpressionStatementUFormTupleTransport),
     ExpressionStatementUFormAssignment(ExpressionStatementUFormAssignmentTransport),
-    ExpressionStatementUFormAugmentedAssignment(ExpressionStatementUFormAugmentedAssignmentTransport),
+    ExpressionStatementUFormAugmentedAssignment(
+        ExpressionStatementUFormAugmentedAssignmentTransport,
+    ),
     ExpressionStatementUFormYield(ExpressionStatementUFormYieldTransport),
 }
 
@@ -6588,23 +6553,26 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let variant: String = obj.get("$variant")?
+        let variant: String = obj
+            .get("$variant")?
             .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
         match variant.as_str() {
             "expression" => Ok(Self::ExpressionStatementUFormExpression(
-                ExpressionStatementUFormExpressionTransport::from_napi_value(env, napi_val)?
+                ExpressionStatementUFormExpressionTransport::from_napi_value(env, napi_val)?,
             )),
             "tuple" => Ok(Self::ExpressionStatementUFormTuple(
-                ExpressionStatementUFormTupleTransport::from_napi_value(env, napi_val)?
+                ExpressionStatementUFormTupleTransport::from_napi_value(env, napi_val)?,
             )),
             "assignment" => Ok(Self::ExpressionStatementUFormAssignment(
-                ExpressionStatementUFormAssignmentTransport::from_napi_value(env, napi_val)?
+                ExpressionStatementUFormAssignmentTransport::from_napi_value(env, napi_val)?,
             )),
             "augmented_assignment" => Ok(Self::ExpressionStatementUFormAugmentedAssignment(
-                ExpressionStatementUFormAugmentedAssignmentTransport::from_napi_value(env, napi_val)?
+                ExpressionStatementUFormAugmentedAssignmentTransport::from_napi_value(
+                    env, napi_val,
+                )?,
             )),
             "yield" => Ok(Self::ExpressionStatementUFormYield(
-                ExpressionStatementUFormYieldTransport::from_napi_value(env, napi_val)?
+                ExpressionStatementUFormYieldTransport::from_napi_value(env, napi_val)?,
             )),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown $variant {:?} for ExpressionStatementTransport",
@@ -6615,10 +6583,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementTransport {
 }
 
 impl RenderableTransport for ExpressionStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_expression_statement(self, dest)
     }
 }
@@ -6645,11 +6610,12 @@ pub struct ExpressionStatementUFormExpressionTransport {
 }
 
 impl RenderableTransport for ExpressionStatementUFormExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_expression_statement_uform_expression(self, dest))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            render_expression_statement_uform_expression(self, dest)
+        )
     }
 }
 
@@ -6675,11 +6641,12 @@ pub struct ExpressionStatementUFormTupleTransport {
 }
 
 impl RenderableTransport for ExpressionStatementUFormTupleTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_expression_statement_uform_tuple(self, dest))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            render_expression_statement_uform_tuple(self, dest)
+        )
     }
 }
 
@@ -6705,11 +6672,12 @@ pub struct ExpressionStatementUFormAssignmentTransport {
 }
 
 impl RenderableTransport for ExpressionStatementUFormAssignmentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_expression_statement_uform_assignment(self, dest))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            render_expression_statement_uform_assignment(self, dest)
+        )
     }
 }
 
@@ -6735,11 +6703,12 @@ pub struct ExpressionStatementUFormAugmentedAssignmentTransport {
 }
 
 impl RenderableTransport for ExpressionStatementUFormAugmentedAssignmentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_expression_statement_uform_augmented_assignment(self, dest))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            render_expression_statement_uform_augmented_assignment(self, dest)
+        )
     }
 }
 
@@ -6765,11 +6734,12 @@ pub struct ExpressionStatementUFormYieldTransport {
 }
 
 impl RenderableTransport for ExpressionStatementUFormYieldTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_expression_statement_uform_yield(self, dest))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            render_expression_statement_uform_yield(self, dest)
+        )
     }
 }
 
@@ -6785,11 +6755,12 @@ pub struct FalseTransport {
 }
 
 impl RenderableTransport for FalseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -6875,10 +6846,7 @@ pub struct FinallyClauseTransport {
 }
 
 impl RenderableTransport for FinallyClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_finally_clause(self, dest))
     }
 }
@@ -6895,11 +6863,12 @@ pub struct FloatTransport {
 }
 
 impl RenderableTransport for FloatTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -6989,10 +6958,7 @@ pub struct ForInClauseTransport {
 }
 
 impl RenderableTransport for ForInClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_for_in_clause(self, dest))
     }
 }
@@ -7027,10 +6993,7 @@ pub struct ForStatementTransport {
 }
 
 impl RenderableTransport for ForStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_for_statement(self, dest))
     }
 }
@@ -7057,10 +7020,7 @@ pub struct FormatSpecifierTransport {
 }
 
 impl RenderableTransport for FormatSpecifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_format_specifier(self, dest))
     }
 }
@@ -7097,10 +7057,7 @@ pub struct FunctionDefinitionTransport {
 }
 
 impl RenderableTransport for FunctionDefinitionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_function_definition(self, dest))
     }
 }
@@ -7127,10 +7084,7 @@ pub struct FutureImportStatementTransport {
 }
 
 impl RenderableTransport for FutureImportStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_future_import_statement(self, dest))
     }
 }
@@ -7159,10 +7113,7 @@ pub struct GeneratorExpressionTransport {
 }
 
 impl RenderableTransport for GeneratorExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_generator_expression(self, dest))
     }
 }
@@ -7191,10 +7142,7 @@ pub struct GenericTypeTransport {
 }
 
 impl RenderableTransport for GenericTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_generic_type(self, dest))
     }
 }
@@ -7221,10 +7169,7 @@ pub struct GlobalStatementTransport {
 }
 
 impl RenderableTransport for GlobalStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_global_statement(self, dest))
     }
 }
@@ -7241,11 +7186,12 @@ pub struct IdentifierTransport {
 }
 
 impl RenderableTransport for IdentifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -7331,10 +7277,7 @@ pub struct IfClauseTransport {
 }
 
 impl RenderableTransport for IfClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_if_clause(self, dest))
     }
 }
@@ -7365,10 +7308,7 @@ pub struct IfStatementTransport {
 }
 
 impl RenderableTransport for IfStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_if_statement(self, dest))
     }
 }
@@ -7397,10 +7337,7 @@ pub struct ImportFromStatementTransport {
 }
 
 impl RenderableTransport for ImportFromStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_import_from_statement(self, dest))
     }
 }
@@ -7417,11 +7354,12 @@ pub struct ImportPrefixTransport {
 }
 
 impl RenderableTransport for ImportPrefixTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -7507,10 +7445,7 @@ pub struct ImportStatementTransport {
 }
 
 impl RenderableTransport for ImportStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_import_statement(self, dest))
     }
 }
@@ -7527,11 +7462,12 @@ pub struct IntegerTransport {
 }
 
 impl RenderableTransport for IntegerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -7621,10 +7557,7 @@ pub struct InterpolationTransport {
 }
 
 impl RenderableTransport for InterpolationTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_interpolation(self, dest))
     }
 }
@@ -7653,10 +7586,7 @@ pub struct KeywordArgumentTransport {
 }
 
 impl RenderableTransport for KeywordArgumentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_keyword_argument(self, dest))
     }
 }
@@ -7685,10 +7615,7 @@ pub struct KeywordPatternTransport {
 }
 
 impl RenderableTransport for KeywordPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_keyword_pattern(self, dest))
     }
 }
@@ -7705,11 +7632,12 @@ pub struct KeywordSeparatorTransport {
 }
 
 impl RenderableTransport for KeywordSeparatorTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -7797,10 +7725,7 @@ pub struct LambdaTransport {
 }
 
 impl RenderableTransport for LambdaTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_lambda(self, dest))
     }
 }
@@ -7827,10 +7752,7 @@ pub struct LambdaParametersTransport {
 }
 
 impl RenderableTransport for LambdaParametersTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_lambda_parameters(self, dest))
     }
 }
@@ -7859,10 +7781,7 @@ pub struct LambdaWithinForInClauseTransport {
 }
 
 impl RenderableTransport for LambdaWithinForInClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_lambda_within_for_in_clause(self, dest))
     }
 }
@@ -7879,11 +7798,12 @@ pub struct LineContinuationTransport {
 }
 
 impl RenderableTransport for LineContinuationTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -7969,10 +7889,7 @@ pub struct ListTransport {
 }
 
 impl RenderableTransport for ListTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_list(self, dest))
     }
 }
@@ -8001,10 +7918,7 @@ pub struct ListComprehensionTransport {
 }
 
 impl RenderableTransport for ListComprehensionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_list_comprehension(self, dest))
     }
 }
@@ -8031,10 +7945,7 @@ pub struct ListPatternTransport {
 }
 
 impl RenderableTransport for ListPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_list_pattern(self, dest))
     }
 }
@@ -8061,10 +7972,7 @@ pub struct ListSplatTransport {
 }
 
 impl RenderableTransport for ListSplatTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_list_splat(self, dest))
     }
 }
@@ -8091,10 +7999,7 @@ pub struct ListSplatPatternTransport {
 }
 
 impl RenderableTransport for ListSplatPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_list_splat_pattern(self, dest))
     }
 }
@@ -8123,10 +8028,7 @@ pub struct MatchStatementTransport {
 }
 
 impl RenderableTransport for MatchStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_match_statement(self, dest))
     }
 }
@@ -8155,10 +8057,7 @@ pub struct MemberTypeTransport {
 }
 
 impl RenderableTransport for MemberTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_member_type(self, dest))
     }
 }
@@ -8185,10 +8084,7 @@ pub struct ModuleTransport {
 }
 
 impl RenderableTransport for ModuleTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_module(self, dest))
     }
 }
@@ -8217,10 +8113,7 @@ pub struct NamedExpressionTransport {
 }
 
 impl RenderableTransport for NamedExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_named_expression(self, dest))
     }
 }
@@ -8237,11 +8130,12 @@ pub struct NoneTransport {
 }
 
 impl RenderableTransport for NoneTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -8327,10 +8221,7 @@ pub struct NonlocalStatementTransport {
 }
 
 impl RenderableTransport for NonlocalStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_nonlocal_statement(self, dest))
     }
 }
@@ -8357,10 +8248,7 @@ pub struct NotOperatorTransport {
 }
 
 impl RenderableTransport for NotOperatorTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_not_operator(self, dest))
     }
 }
@@ -8389,10 +8277,7 @@ pub struct PairTransport {
 }
 
 impl RenderableTransport for PairTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_pair(self, dest))
     }
 }
@@ -8419,10 +8304,7 @@ pub struct ParametersTransport {
 }
 
 impl RenderableTransport for ParametersTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_parameters(self, dest))
     }
 }
@@ -8449,10 +8331,7 @@ pub struct ParenthesizedExpressionTransport {
 }
 
 impl RenderableTransport for ParenthesizedExpressionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_parenthesized_expression(self, dest))
     }
 }
@@ -8479,10 +8358,7 @@ pub struct ParenthesizedListSplatTransport {
 }
 
 impl RenderableTransport for ParenthesizedListSplatTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_parenthesized_list_splat(self, dest))
     }
 }
@@ -8499,11 +8375,12 @@ pub struct PassStatementTransport {
 }
 
 impl RenderableTransport for PassStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -8589,10 +8466,7 @@ pub struct PatternListTransport {
 }
 
 impl RenderableTransport for PatternListTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_pattern_list(self, dest))
     }
 }
@@ -8609,11 +8483,12 @@ pub struct PositionalSeparatorTransport {
 }
 
 impl RenderableTransport for PositionalSeparatorTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -8701,10 +8576,7 @@ pub struct PrintStatementTransport {
 }
 
 impl RenderableTransport for PrintStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_print_statement(self, dest))
     }
 }
@@ -8733,10 +8605,7 @@ pub struct RaiseStatementTransport {
 }
 
 impl RenderableTransport for RaiseStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_raise_statement(self, dest))
     }
 }
@@ -8765,10 +8634,7 @@ pub struct RelativeImportTransport {
 }
 
 impl RenderableTransport for RelativeImportTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_relative_import(self, dest))
     }
 }
@@ -8795,10 +8661,7 @@ pub struct ReturnStatementTransport {
 }
 
 impl RenderableTransport for ReturnStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_return_statement(self, dest))
     }
 }
@@ -8825,10 +8688,7 @@ pub struct SetTransport {
 }
 
 impl RenderableTransport for SetTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_set(self, dest))
     }
 }
@@ -8857,10 +8717,7 @@ pub struct SetComprehensionTransport {
 }
 
 impl RenderableTransport for SetComprehensionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_set_comprehension(self, dest))
     }
 }
@@ -8891,10 +8748,7 @@ pub struct SliceTransport {
 }
 
 impl RenderableTransport for SliceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_slice(self, dest))
     }
 }
@@ -8921,10 +8775,7 @@ pub struct SplatPatternTransport {
 }
 
 impl RenderableTransport for SplatPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_splat_pattern(self, dest))
     }
 }
@@ -8951,10 +8802,7 @@ pub struct SplatTypeTransport {
 }
 
 impl RenderableTransport for SplatTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_splat_type(self, dest))
     }
 }
@@ -8985,10 +8833,7 @@ pub struct StringTransport {
 }
 
 impl RenderableTransport for StringTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_string(self, dest))
     }
 }
@@ -9015,10 +8860,7 @@ pub struct StringContentTransport {
 }
 
 impl RenderableTransport for StringContentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_string_content(self, dest))
     }
 }
@@ -9047,10 +8889,7 @@ pub struct SubscriptTransport {
 }
 
 impl RenderableTransport for SubscriptTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_subscript(self, dest))
     }
 }
@@ -9067,11 +8906,12 @@ pub struct TrueTransport {
 }
 
 impl RenderableTransport for TrueTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -9163,10 +9003,7 @@ pub struct TryStatementTransport {
 }
 
 impl RenderableTransport for TryStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_try_statement(self, dest))
     }
 }
@@ -9193,10 +9030,7 @@ pub struct TupleTransport {
 }
 
 impl RenderableTransport for TupleTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_tuple(self, dest))
     }
 }
@@ -9223,10 +9057,7 @@ pub struct TuplePatternTransport {
 }
 
 impl RenderableTransport for TuplePatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_tuple_pattern(self, dest))
     }
 }
@@ -9253,10 +9084,7 @@ pub struct TypeTransport {
 }
 
 impl RenderableTransport for TypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_type(self, dest))
     }
 }
@@ -9287,10 +9115,7 @@ pub struct TypeAliasStatementTransport {
 }
 
 impl RenderableTransport for TypeAliasStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_type_alias_statement(self, dest))
     }
 }
@@ -9307,11 +9132,12 @@ pub struct TypeConversionTransport {
 }
 
 impl RenderableTransport for TypeConversionTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -9397,10 +9223,7 @@ pub struct TypeParameterTransport {
 }
 
 impl RenderableTransport for TypeParameterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_type_parameter(self, dest))
     }
 }
@@ -9431,10 +9254,7 @@ pub struct TypedDefaultParameterTransport {
 }
 
 impl RenderableTransport for TypedDefaultParameterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_typed_default_parameter(self, dest))
     }
 }
@@ -9463,10 +9283,7 @@ pub struct TypedParameterTransport {
 }
 
 impl RenderableTransport for TypedParameterTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_typed_parameter(self, dest))
     }
 }
@@ -9495,10 +9312,7 @@ pub struct UnaryOperatorTransport {
 }
 
 impl RenderableTransport for UnaryOperatorTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_unary_operator(self, dest))
     }
 }
@@ -9525,10 +9339,7 @@ pub struct UnionPatternTransport {
 }
 
 impl RenderableTransport for UnionPatternTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_union_pattern(self, dest))
     }
 }
@@ -9557,10 +9368,7 @@ pub struct UnionTypeTransport {
 }
 
 impl RenderableTransport for UnionTypeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_union_type(self, dest))
     }
 }
@@ -9591,10 +9399,7 @@ pub struct WhileStatementTransport {
 }
 
 impl RenderableTransport for WhileStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_while_statement(self, dest))
     }
 }
@@ -9611,11 +9416,12 @@ pub struct WildcardImportTransport {
 }
 
 impl RenderableTransport for WildcardImportTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -9701,10 +9507,7 @@ pub struct WithClauseBareTransport {
 }
 
 impl RenderableTransport for WithClauseBareTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_with_clause_bare(self, dest))
     }
 }
@@ -9731,10 +9534,7 @@ pub struct WithClauseParenTransport {
 }
 
 impl RenderableTransport for WithClauseParenTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_with_clause_paren(self, dest))
     }
 }
@@ -9752,14 +9552,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithClauseTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let variant: String = obj.get("$variant")?
+        let variant: String = obj
+            .get("$variant")?
             .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
         match variant.as_str() {
             "bare" => Ok(Self::WithClauseUFormBare(
-                WithClauseUFormBareTransport::from_napi_value(env, napi_val)?
+                WithClauseUFormBareTransport::from_napi_value(env, napi_val)?,
             )),
             "paren" => Ok(Self::WithClauseUFormParen(
-                WithClauseUFormParenTransport::from_napi_value(env, napi_val)?
+                WithClauseUFormParenTransport::from_napi_value(env, napi_val)?,
             )),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown $variant {:?} for WithClauseTransport",
@@ -9770,10 +9571,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithClauseTransport {
 }
 
 impl RenderableTransport for WithClauseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_clause(self, dest)
     }
 }
@@ -9800,10 +9598,7 @@ pub struct WithClauseUFormBareTransport {
 }
 
 impl RenderableTransport for WithClauseUFormBareTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_with_clause_uform_bare(self, dest))
     }
 }
@@ -9830,10 +9625,7 @@ pub struct WithClauseUFormParenTransport {
 }
 
 impl RenderableTransport for WithClauseUFormParenTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_with_clause_uform_paren(self, dest))
     }
 }
@@ -9860,10 +9652,7 @@ pub struct WithItemTransport {
 }
 
 impl RenderableTransport for WithItemTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_with_item(self, dest))
     }
 }
@@ -9894,10 +9683,7 @@ pub struct WithStatementTransport {
 }
 
 impl RenderableTransport for WithStatementTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_with_statement(self, dest))
     }
 }
@@ -9924,10 +9710,7 @@ pub struct YieldTransport {
 }
 
 impl RenderableTransport for YieldTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_yield(self, dest))
     }
 }
@@ -9944,11 +9727,12 @@ pub struct NewlineTransport {
 }
 
 impl RenderableTransport for NewlineTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -10024,11 +9808,12 @@ pub struct IndentTransport {
 }
 
 impl RenderableTransport for IndentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -10104,11 +9889,12 @@ pub struct DedentTransport {
 }
 
 impl RenderableTransport for DedentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -10184,11 +9970,12 @@ pub struct StringStartTransport {
 }
 
 impl RenderableTransport for StringStartTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -10264,11 +10051,12 @@ pub struct _StringContentTransport {
 }
 
 impl RenderableTransport for _StringContentTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -10344,11 +10132,12 @@ pub struct EscapeInterpolationTransport {
 }
 
 impl RenderableTransport for EscapeInterpolationTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -10424,11 +10213,12 @@ pub struct StringEndTransport {
 }
 
 impl RenderableTransport for StringEndTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -10504,11 +10294,12 @@ pub struct CloseBracketTransport {
 }
 
 impl RenderableTransport for CloseBracketTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -10584,11 +10375,12 @@ pub struct CloseParenTransport {
 }
 
 impl RenderableTransport for CloseParenTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -10664,11 +10456,12 @@ pub struct CloseBraceTransport {
 }
 
 impl RenderableTransport for CloseBraceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -10744,11 +10537,12 @@ pub struct ExceptTransport {
 }
 
 impl RenderableTransport for ExceptTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -10824,11 +10618,12 @@ pub struct AsTransport {
 }
 
 impl RenderableTransport for AsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -10904,11 +10699,12 @@ pub struct EqTransport {
 }
 
 impl RenderableTransport for EqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -10984,11 +10780,12 @@ pub struct ColonTransport {
 }
 
 impl RenderableTransport for ColonTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -11064,11 +10861,12 @@ pub struct AsyncTransport {
 }
 
 impl RenderableTransport for AsyncTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -11144,11 +10942,12 @@ pub struct BracketTransport {
 }
 
 impl RenderableTransport for BracketTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -11224,11 +11023,12 @@ pub struct TokBsTransport {
 }
 
 impl RenderableTransport for TokBsTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -11304,11 +11104,12 @@ pub struct MinusTransport {
 }
 
 impl RenderableTransport for MinusTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -11384,11 +11185,12 @@ pub struct ParenTransport {
 }
 
 impl RenderableTransport for ParenTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -11464,11 +11266,12 @@ pub struct CommaTransport {
 }
 
 impl RenderableTransport for CommaTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -11544,11 +11347,12 @@ pub struct AssertTransport {
 }
 
 impl RenderableTransport for AssertTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -11624,11 +11428,12 @@ pub struct DotTransport {
 }
 
 impl RenderableTransport for DotTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -11704,11 +11509,12 @@ pub struct PlusTransport {
 }
 
 impl RenderableTransport for PlusTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -11784,11 +11590,12 @@ pub struct AndTransport {
 }
 
 impl RenderableTransport for AndTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -11864,11 +11671,12 @@ pub struct BreakTransport {
 }
 
 impl RenderableTransport for BreakTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -11944,11 +11752,12 @@ pub struct CaseTransport {
 }
 
 impl RenderableTransport for CaseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -12024,11 +11833,12 @@ pub struct ShrTransport {
 }
 
 impl RenderableTransport for ShrTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -12104,11 +11914,12 @@ pub struct ClassTransport {
 }
 
 impl RenderableTransport for ClassTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -12184,11 +11995,12 @@ pub struct IfTransport {
 }
 
 impl RenderableTransport for IfTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -12264,11 +12076,12 @@ pub struct ElseTransport {
 }
 
 impl RenderableTransport for ElseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -12344,11 +12157,12 @@ pub struct ContinueTransport {
 }
 
 impl RenderableTransport for ContinueTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -12424,11 +12238,12 @@ pub struct AtTransport {
 }
 
 impl RenderableTransport for AtTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -12504,11 +12319,12 @@ pub struct DelTransport {
 }
 
 impl RenderableTransport for DelTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -12584,11 +12400,12 @@ pub struct BraceTransport {
 }
 
 impl RenderableTransport for BraceTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -12664,11 +12481,12 @@ pub struct StarstarTransport {
 }
 
 impl RenderableTransport for StarstarTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -12744,11 +12562,12 @@ pub struct ElifTransport {
 }
 
 impl RenderableTransport for ElifTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -12824,11 +12643,12 @@ pub struct EllipsisTransport {
 }
 
 impl RenderableTransport for EllipsisTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -12904,11 +12724,12 @@ pub struct StarTransport {
 }
 
 impl RenderableTransport for StarTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -12984,11 +12805,12 @@ pub struct ExecTransport {
 }
 
 impl RenderableTransport for ExecTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -13064,11 +12886,12 @@ pub struct InTransport {
 }
 
 impl RenderableTransport for InTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -13144,11 +12967,12 @@ pub struct False2Transport {
 }
 
 impl RenderableTransport for False2Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -13224,11 +13048,12 @@ pub struct FinallyTransport {
 }
 
 impl RenderableTransport for FinallyTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -13304,11 +13129,12 @@ pub struct ForTransport {
 }
 
 impl RenderableTransport for ForTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -13384,11 +13210,12 @@ pub struct DefTransport {
 }
 
 impl RenderableTransport for DefTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -13464,11 +13291,12 @@ pub struct ArrowTransport {
 }
 
 impl RenderableTransport for ArrowTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -13544,11 +13372,12 @@ pub struct FromTransport {
 }
 
 impl RenderableTransport for FromTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -13624,11 +13453,12 @@ pub struct FutureUTransport {
 }
 
 impl RenderableTransport for FutureUTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -13704,11 +13534,12 @@ pub struct ImportTransport {
 }
 
 impl RenderableTransport for ImportTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -13784,11 +13615,12 @@ pub struct GlobalTransport {
 }
 
 impl RenderableTransport for GlobalTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -13864,11 +13696,12 @@ pub struct MatchTransport {
 }
 
 impl RenderableTransport for MatchTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -13944,11 +13777,12 @@ pub struct ColoneqTransport {
 }
 
 impl RenderableTransport for ColoneqTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -14024,11 +13858,12 @@ pub struct None2Transport {
 }
 
 impl RenderableTransport for None2Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -14104,11 +13939,12 @@ pub struct NonlocalTransport {
 }
 
 impl RenderableTransport for NonlocalTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -14184,11 +14020,12 @@ pub struct NotTransport {
 }
 
 impl RenderableTransport for NotTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -14264,11 +14101,12 @@ pub struct PassTransport {
 }
 
 impl RenderableTransport for PassTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -14344,11 +14182,12 @@ pub struct SlashTransport {
 }
 
 impl RenderableTransport for SlashTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -14424,11 +14263,12 @@ pub struct PrintTransport {
 }
 
 impl RenderableTransport for PrintTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -14504,11 +14344,12 @@ pub struct RaiseTransport {
 }
 
 impl RenderableTransport for RaiseTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -14584,11 +14425,12 @@ pub struct ReturnTransport {
 }
 
 impl RenderableTransport for ReturnTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -14664,11 +14506,12 @@ pub struct AnonymousTransport {
 }
 
 impl RenderableTransport for AnonymousTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -14744,11 +14587,12 @@ pub struct True2Transport {
 }
 
 impl RenderableTransport for True2Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -14824,11 +14668,12 @@ pub struct TryTransport {
 }
 
 impl RenderableTransport for TryTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -14904,11 +14749,12 @@ pub struct PipeTransport {
 }
 
 impl RenderableTransport for PipeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -14984,11 +14830,12 @@ pub struct WhileTransport {
 }
 
 impl RenderableTransport for WhileTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -15064,11 +14911,12 @@ pub struct WithTransport {
 }
 
 impl RenderableTransport for WithTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+        render_with_trivia!(
+            self,
+            dest,
+            dest.write_str(&self.text).map_err(::askama::Error::from)
+        )
     }
 }
 
@@ -15132,7 +14980,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for WithTransport {
     }
 }
 
-
 #[derive(Debug, Clone, Copy)]
 pub enum Renderable<'a> {
     Text(&'a str),
@@ -15161,8 +15008,14 @@ impl ::askama::FastWritable for Renderable<'_> {
     }
 }
 
-fn render__as_pattern(node: &_AsPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render__as_pattern(
+    node: &_AsPatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = _AsPatternTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15174,21 +15027,30 @@ fn render__as_pattern(node: &_AsPatternTransport, dest: &mut dyn ::std::fmt::Wri
     template.render_into(dest)
 }
 
-fn render_assignment_eq(node: &AssignmentEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_assignment_eq(
+    node: &AssignmentEqTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = AssignmentEqTemplate {
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
     template.render_into(dest)
 }
 
-fn render_assignment_type(node: &AssignmentTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_assignment_type(
+    node: &AssignmentTypeTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = AssignmentTypeTemplate {
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
     template.render_into(dest)
 }
 
-fn render_assignment_typed(node: &AssignmentTypedTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_assignment_typed(
+    node: &AssignmentTypedTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = AssignmentTypedTemplate {
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
@@ -15196,16 +15058,28 @@ fn render_assignment_typed(node: &AssignmentTypedTransport, dest: &mut dyn ::std
     template.render_into(dest)
 }
 
-fn render_async_marker(t: &AsyncMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_async_marker(
+    t: &AsyncMarkerTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_augmented_assignment_operator(t: &AugmentedAssignmentOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
+fn render_augmented_assignment_operator(
+    t: &AugmentedAssignmentOperatorEnum,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.to_string())
+        .map_err(::askama::Error::from)
 }
 
-fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_comprehension_clauses(
+    node: &ComprehensionClausesTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ComprehensionClausesTemplate {
@@ -15219,39 +15093,69 @@ fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut
     template.render_into(dest)
 }
 
-fn render__identifier(t: &_IdentifierEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
+fn render__identifier(
+    t: &_IdentifierEnum,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.to_string())
+        .map_err(::askama::Error::from)
 }
 
-fn render_import_list(node: &ImportListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(node.transport_text.as_deref().unwrap_or_default()).map_err(::askama::Error::from)
+fn render_import_list(
+    node: &ImportListTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    dest.write_str(node.transport_text.as_deref().unwrap_or_default())
+        .map_err(::askama::Error::from)
 }
 
-fn render_is_not(t: &IsNotTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_is_not(
+    t: &IsNotTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_key_value_pattern(node: &KeyValuePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(node.transport_text.as_deref().unwrap_or_default()).map_err(::askama::Error::from)
+fn render_key_value_pattern(
+    node: &KeyValuePatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    dest.write_str(node.transport_text.as_deref().unwrap_or_default())
+        .map_err(::askama::Error::from)
 }
 
-fn render_kw_async_marker(t: &KwAsyncMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_kw_async_marker(
+    t: &KwAsyncMarkerTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_kw_type(t: &KwTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_kw_type(
+    t: &KwTypeTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render__list_pattern(node: &_ListPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render__list_pattern(
+    node: &_ListPatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     for child in node.children.iter() {
         render_case_pattern(child, dest)?;
     }
     Ok(())
 }
 
-fn render_match_block(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_match_block(
+    node: &MatchBlockTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = MatchBlockTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15263,8 +15167,13 @@ fn render_match_block(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Wri
     template.render_into(dest)
 }
 
-fn render_match_block_block(node: &MatchBlockBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let alternative_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.alternative.iter()
+fn render_match_block_block(
+    node: &MatchBlockBlockTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let alternative_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .alternative
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = MatchBlockBlockTemplate {
@@ -15278,23 +15187,37 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, dest: &mut dyn ::st
     template.render_into(dest)
 }
 
-fn render_not_escape_sequence(t: &NotEscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_not_escape_sequence(
+    t: &NotEscapeSequenceTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_not_in(t: &NotInTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_not_in(
+    t: &NotInTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_simple_pattern_negative(
+    node: &SimplePatternNegativeTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = SimplePatternNegativeTemplate {
         text: node.transport_text.as_deref().unwrap_or(""),
     };
     template.render_into(dest)
 }
 
-fn render_simple_statements(node: &SimpleStatementsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_simple_statements(
+    node: &SimpleStatementsTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = SimpleStatementsTemplate {
@@ -15308,8 +15231,14 @@ fn render_simple_statements(node: &SimpleStatementsTransport, dest: &mut dyn ::s
     template.render_into(dest)
 }
 
-fn render_suite(node: &SuiteTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_suite(
+    node: &SuiteTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = SuiteTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15321,19 +15250,31 @@ fn render_suite(node: &SuiteTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
     template.render_into(dest)
 }
 
-fn render__tuple_pattern(node: &_TuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render__tuple_pattern(
+    node: &_TuplePatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     for child in node.children.iter() {
         render_case_pattern(child, dest)?;
     }
     Ok(())
 }
 
-fn render_unary_operator_operator(t: &UnaryOperatorOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
+fn render_unary_operator_operator(
+    t: &UnaryOperatorOperatorEnum,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.to_string())
+        .map_err(::askama::Error::from)
 }
 
-fn render__with_clause_paren(node: &_WithClauseParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render__with_clause_paren(
+    node: &_WithClauseParenTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = _WithClauseParenTemplate {
@@ -15347,7 +15288,10 @@ fn render__with_clause_paren(node: &_WithClauseParenTransport, dest: &mut dyn ::
     template.render_into(dest)
 }
 
-fn render_aliased_import(node: &AliasedImportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_aliased_import(
+    node: &AliasedImportTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = AliasedImportTemplate {
         alias: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alias)),
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
@@ -15355,9 +15299,13 @@ fn render_aliased_import(node: &AliasedImportTransport, dest: &mut dyn ::std::fm
     template.render_into(dest)
 }
 
-fn render_argument_list(node: &ArgumentListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_argument_list(
+    node: &ArgumentListTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ArgumentListTemplate {
@@ -15371,16 +15319,28 @@ fn render_argument_list(node: &ArgumentListTransport, dest: &mut dyn ::std::fmt:
     template.render_into(dest)
 }
 
-fn render_as_pattern(node: &AsPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_as_pattern(
+    node: &AsPatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = AsPatternTemplate {
-        alias: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.alias.as_ref())),
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        alias: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            node.alias.as_ref(),
+        )),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.expression,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_assert_statement(node: &AssertStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_assert_statement(
+    node: &AssertStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = AssertStatementTemplate {
@@ -15394,16 +15354,27 @@ fn render_assert_statement(node: &AssertStatementTransport, dest: &mut dyn ::std
     template.render_into(dest)
 }
 
-fn render_assignment(t: &AssignmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_assignment(
+    t: &AssignmentTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
         AssignmentTransport::AssignmentUFormEq(data) => render_assignment_uform_eq(data, dest),
         AssignmentTransport::AssignmentUFormType(data) => render_assignment_uform_type(data, dest),
-        AssignmentTransport::AssignmentUFormTyped(data) => render_assignment_uform_typed(data, dest),
+        AssignmentTransport::AssignmentUFormTyped(data) => {
+            render_assignment_uform_typed(data, dest)
+        }
     }
 }
 
-fn render_assignment_uform_eq(node: &AssignmentUFormEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_assignment_uform_eq(
+    node: &AssignmentUFormEqTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = AssignmentTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15416,8 +15387,14 @@ fn render_assignment_uform_eq(node: &AssignmentUFormEqTransport, dest: &mut dyn 
     template.render_into(dest)
 }
 
-fn render_assignment_uform_type(node: &AssignmentUFormTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_assignment_uform_type(
+    node: &AssignmentUFormTypeTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = AssignmentTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15430,8 +15407,14 @@ fn render_assignment_uform_type(node: &AssignmentUFormTypeTransport, dest: &mut 
     template.render_into(dest)
 }
 
-fn render_assignment_uform_typed(node: &AssignmentUFormTypedTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_assignment_uform_typed(
+    node: &AssignmentUFormTypedTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = AssignmentTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15444,41 +15427,66 @@ fn render_assignment_uform_typed(node: &AssignmentUFormTypedTransport, dest: &mu
     template.render_into(dest)
 }
 
-fn render_attribute(node: &AttributeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_attribute(
+    node: &AttributeTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = AttributeTemplate {
-        attribute: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.attribute)),
+        attribute: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.attribute,
+        )),
         object: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.object)),
     };
     template.render_into(dest)
 }
 
-fn render_augmented_assignment(node: &AugmentedAssignmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_augmented_assignment(
+    node: &AugmentedAssignmentTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = AugmentedAssignmentTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.operator,
+        )),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
     template.render_into(dest)
 }
 
-fn render_await(node: &AwaitTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_await(
+    node: &AwaitTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = AwaitTemplate {
-        primary_expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.primary_expression)),
+        primary_expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.primary_expression,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_binary_operator(node: &BinaryOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_binary_operator(
+    node: &BinaryOperatorTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = BinaryOperatorTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            node.operator.as_ref(),
+        )),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
     template.render_into(dest)
 }
 
-fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_block(
+    node: &BlockTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = BlockTemplate {
@@ -15492,29 +15500,49 @@ fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
     template.render_into(dest)
 }
 
-fn render_boolean_operator(node: &BooleanOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_boolean_operator(
+    node: &BooleanOperatorTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = BooleanOperatorTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            node.operator.as_ref(),
+        )),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
     template.render_into(dest)
 }
 
-fn render_break_statement(t: &BreakStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_break_statement(
+    t: &BreakStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_call(node: &CallTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_call(
+    node: &CallTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = CallTemplate {
-        arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.arguments.as_ref())),
-        function: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.function)),
+        arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            node.arguments.as_ref(),
+        )),
+        function: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.function,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_case_clause(node: &CaseClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_case_clause(
+    node: &CaseClauseTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = CaseClauseTemplate {
@@ -15524,17 +15552,27 @@ fn render_case_clause(node: &CaseClauseTransport, dest: &mut dyn ::std::fmt::Wri
             leading: false,
             trailing: false,
         },
-        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
+        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.consequence,
+        )),
         guard: match &node.guard {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
 }
 
-fn render_case_pattern(node: &CasePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_case_pattern(
+    node: &CasePatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = CasePatternTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15546,31 +15584,48 @@ fn render_case_pattern(node: &CasePatternTransport, dest: &mut dyn ::std::fmt::W
     template.render_into(dest)
 }
 
-fn render_chevron(node: &ChevronTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_chevron(
+    node: &ChevronTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = ChevronTemplate {
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.expression,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_class_definition(node: &ClassDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_class_definition(
+    node: &ClassDefinitionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = ClassDefinitionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         superclasses: match &node.superclasses {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
         type_parameters: match &node.type_parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
 }
 
-fn render_class_pattern(node: &ClassPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let arguments_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.arguments.iter()
+fn render_class_pattern(
+    node: &ClassPatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let arguments_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .arguments
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ClassPatternTemplate {
@@ -15580,20 +15635,32 @@ fn render_class_pattern(node: &ClassPatternTransport, dest: &mut dyn ::std::fmt:
             leading: false,
             trailing: false,
         },
-        dotted_name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.dotted_name)),
+        dotted_name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.dotted_name,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_comment(t: &CommentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_comment(
+    t: &CommentTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_comparison_operator(node: &ComparisonOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_comparison_operator(
+    node: &ComparisonOperatorTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
-    let operators_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.operators.iter()
+    let operators_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .operators
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ComparisonOperatorTemplate {
@@ -15614,8 +15681,14 @@ fn render_comparison_operator(node: &ComparisonOperatorTransport, dest: &mut dyn
     template.render_into(dest)
 }
 
-fn render_complex_pattern(node: &ComplexPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_complex_pattern(
+    node: &ComplexPatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = ComplexPatternTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15623,17 +15696,26 @@ fn render_complex_pattern(node: &ComplexPatternTransport, dest: &mut dyn ::std::
             leading: false,
             trailing: false,
         },
-        imaginary: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.imaginary)),
+        imaginary: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.imaginary,
+        )),
         real: match &node.real {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            Some(v) => OptionalNonterminalView::Present(
+                ::sittir_core::filters::Renderable::Transport(v.as_ref()),
+            ),
             None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
 }
 
-fn render_concatenated_string(node: &ConcatenatedStringTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_concatenated_string(
+    node: &ConcatenatedStringTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ConcatenatedStringTemplate {
@@ -15647,29 +15729,51 @@ fn render_concatenated_string(node: &ConcatenatedStringTransport, dest: &mut dyn
     template.render_into(dest)
 }
 
-fn render_conditional_expression(node: &ConditionalExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_conditional_expression(
+    node: &ConditionalExpressionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = ConditionalExpressionTemplate {
-        alternative: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alternative)),
+        alternative: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.alternative,
+        )),
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
+        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.condition,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_constrained_type(node: &ConstrainedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_constrained_type(
+    node: &ConstrainedTypeTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = ConstrainedTypeTemplate {
-        base_type: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.base_type)),
-        constraint: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.constraint)),
+        base_type: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.base_type,
+        )),
+        constraint: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.constraint,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_continue_statement(t: &ContinueStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_continue_statement(
+    t: &ContinueStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_decorated_definition(node: &DecoratedDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_decorated_definition(
+    node: &DecoratedDefinitionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = DecoratedDefinitionTemplate {
@@ -15679,23 +15783,35 @@ fn render_decorated_definition(node: &DecoratedDefinitionTransport, dest: &mut d
             leading: false,
             trailing: false,
         },
-        definition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.definition)),
+        definition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.definition,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_decorator(node: &DecoratorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_decorator(
+    node: &DecoratorTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = DecoratorTemplate {
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.expression,
+        )),
         newline: match &node.newline {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            Some(v) => OptionalNonterminalView::Present(
+                ::sittir_core::filters::Renderable::Transport(v.as_ref()),
+            ),
             None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
 }
 
-fn render_default_parameter(node: &DefaultParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_default_parameter(
+    node: &DefaultParameterTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = DefaultParameterTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
@@ -15703,8 +15819,14 @@ fn render_default_parameter(node: &DefaultParameterTransport, dest: &mut dyn ::s
     template.render_into(dest)
 }
 
-fn render_delete_statement(node: &DeleteStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_delete_statement(
+    node: &DeleteStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = DeleteStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15716,8 +15838,13 @@ fn render_delete_statement(node: &DeleteStatementTransport, dest: &mut dyn ::std
     template.render_into(dest)
 }
 
-fn render_dict_pattern(node: &DictPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_dict_pattern(
+    node: &DictPatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = DictPatternTemplate {
@@ -15731,8 +15858,13 @@ fn render_dict_pattern(node: &DictPatternTransport, dest: &mut dyn ::std::fmt::W
     template.render_into(dest)
 }
 
-fn render_dictionary(node: &DictionaryTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_dictionary(
+    node: &DictionaryTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = DictionaryTemplate {
@@ -15746,8 +15878,14 @@ fn render_dictionary(node: &DictionaryTransport, dest: &mut dyn ::std::fmt::Writ
     template.render_into(dest)
 }
 
-fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_dictionary_comprehension(
+    node: &DictionaryComprehensionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = DictionaryComprehensionTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15760,15 +15898,26 @@ fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, dest
     template.render_into(dest)
 }
 
-fn render_dictionary_splat(node: &DictionarySplatTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_dictionary_splat(
+    node: &DictionarySplatTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = DictionarySplatTemplate {
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.expression,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_dictionary_splat_pattern(node: &DictionarySplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_dictionary_splat_pattern(
+    node: &DictionarySplatPatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = DictionarySplatPatternTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15780,8 +15929,13 @@ fn render_dictionary_splat_pattern(node: &DictionarySplatPatternTransport, dest:
     template.render_into(dest)
 }
 
-fn render_dotted_name(node: &DottedNameTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_dotted_name(
+    node: &DottedNameTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = DottedNameTemplate {
@@ -15795,33 +15949,56 @@ fn render_dotted_name(node: &DottedNameTransport, dest: &mut dyn ::std::fmt::Wri
     template.render_into(dest)
 }
 
-fn render_elif_clause(node: &ElifClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_elif_clause(
+    node: &ElifClauseTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = ElifClauseTemplate {
-        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
-        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
+        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.condition,
+        )),
+        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.consequence,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_ellipsis2(t: &Ellipsis2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_ellipsis2(
+    t: &Ellipsis2Transport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_else_clause(node: &ElseClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_else_clause(
+    node: &ElseClauseTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = ElseClauseTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
     };
     template.render_into(dest)
 }
 
-fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_escape_sequence(
+    t: &EscapeSequenceTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_except_clause(node: &ExceptClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_except_clause(
+    node: &ExceptClauseTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let value_owned = node.value.as_deref().unwrap_or(&[]);
-    let value_buf: Vec<::sittir_core::filters::Renderable<'_>> = value_owned.iter()
+    let value_buf: Vec<::sittir_core::filters::Renderable<'_>> = value_owned
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ExceptClauseTemplate {
@@ -15832,7 +16009,9 @@ fn render_except_clause(node: &ExceptClauseTransport, dest: &mut dyn ::std::fmt:
             trailing: false,
         },
         alias: match &node.alias {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
         value: ListNonterminalView {
@@ -15845,9 +16024,13 @@ fn render_except_clause(node: &ExceptClauseTransport, dest: &mut dyn ::std::fmt:
     template.render_into(dest)
 }
 
-fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_exec_statement(
+    node: &ExecStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let in_clause_owned = node.in_clause.as_deref().unwrap_or(&[]);
-    let in_clause_buf: Vec<::sittir_core::filters::Renderable<'_>> = in_clause_owned.iter()
+    let in_clause_buf: Vec<::sittir_core::filters::Renderable<'_>> = in_clause_owned
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ExecStatementTemplate {
@@ -15862,8 +16045,13 @@ fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fm
     template.render_into(dest)
 }
 
-fn render_expression_list(node: &ExpressionListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_expression_list(
+    node: &ExpressionListTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ExpressionListTemplate {
@@ -15877,8 +16065,13 @@ fn render_expression_list(node: &ExpressionListTransport, dest: &mut dyn ::std::
     template.render_into(dest)
 }
 
-fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_expression_statement_tuple(
+    node: &ExpressionStatementTupleTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ExpressionStatementTupleTemplate {
@@ -15892,18 +16085,37 @@ fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, d
     template.render_into(dest)
 }
 
-fn render_expression_statement(t: &ExpressionStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_expression_statement(
+    t: &ExpressionStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
-        ExpressionStatementTransport::ExpressionStatementUFormExpression(data) => render_expression_statement_uform_expression(data, dest),
-        ExpressionStatementTransport::ExpressionStatementUFormTuple(data) => render_expression_statement_uform_tuple(data, dest),
-        ExpressionStatementTransport::ExpressionStatementUFormAssignment(data) => render_expression_statement_uform_assignment(data, dest),
-        ExpressionStatementTransport::ExpressionStatementUFormAugmentedAssignment(data) => render_expression_statement_uform_augmented_assignment(data, dest),
-        ExpressionStatementTransport::ExpressionStatementUFormYield(data) => render_expression_statement_uform_yield(data, dest),
+        ExpressionStatementTransport::ExpressionStatementUFormExpression(data) => {
+            render_expression_statement_uform_expression(data, dest)
+        }
+        ExpressionStatementTransport::ExpressionStatementUFormTuple(data) => {
+            render_expression_statement_uform_tuple(data, dest)
+        }
+        ExpressionStatementTransport::ExpressionStatementUFormAssignment(data) => {
+            render_expression_statement_uform_assignment(data, dest)
+        }
+        ExpressionStatementTransport::ExpressionStatementUFormAugmentedAssignment(data) => {
+            render_expression_statement_uform_augmented_assignment(data, dest)
+        }
+        ExpressionStatementTransport::ExpressionStatementUFormYield(data) => {
+            render_expression_statement_uform_yield(data, dest)
+        }
     }
 }
 
-fn render_expression_statement_uform_expression(node: &ExpressionStatementUFormExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_expression_statement_uform_expression(
+    node: &ExpressionStatementUFormExpressionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = ExpressionStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15915,8 +16127,14 @@ fn render_expression_statement_uform_expression(node: &ExpressionStatementUFormE
     template.render_into(dest)
 }
 
-fn render_expression_statement_uform_tuple(node: &ExpressionStatementUFormTupleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(node.children.as_ref())];
+fn render_expression_statement_uform_tuple(
+    node: &ExpressionStatementUFormTupleTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            node.children.as_ref(),
+        )];
     let template = ExpressionStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15928,8 +16146,14 @@ fn render_expression_statement_uform_tuple(node: &ExpressionStatementUFormTupleT
     template.render_into(dest)
 }
 
-fn render_expression_statement_uform_assignment(node: &ExpressionStatementUFormAssignmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(node.children.as_ref())];
+fn render_expression_statement_uform_assignment(
+    node: &ExpressionStatementUFormAssignmentTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            node.children.as_ref(),
+        )];
     let template = ExpressionStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15941,8 +16165,14 @@ fn render_expression_statement_uform_assignment(node: &ExpressionStatementUFormA
     template.render_into(dest)
 }
 
-fn render_expression_statement_uform_augmented_assignment(node: &ExpressionStatementUFormAugmentedAssignmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_expression_statement_uform_augmented_assignment(
+    node: &ExpressionStatementUFormAugmentedAssignmentTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = ExpressionStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15954,8 +16184,14 @@ fn render_expression_statement_uform_augmented_assignment(node: &ExpressionState
     template.render_into(dest)
 }
 
-fn render_expression_statement_uform_yield(node: &ExpressionStatementUFormYieldTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_expression_statement_uform_yield(
+    node: &ExpressionStatementUFormYieldTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = ExpressionStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15967,28 +16203,44 @@ fn render_expression_statement_uform_yield(node: &ExpressionStatementUFormYieldT
     template.render_into(dest)
 }
 
-fn render_false(t: &FalseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_false(
+    t: &FalseTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_finally_clause(node: &FinallyClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_finally_clause(
+    node: &FinallyClauseTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = FinallyClauseTemplate {
         block: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.block)),
     };
     template.render_into(dest)
 }
 
-fn render_float(t: &FloatTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_float(
+    t: &FloatTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_for_in_clause(node: &ForInClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let right_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.right.iter()
+fn render_for_in_clause(
+    node: &ForInClauseTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let right_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .right
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ForInClauseTemplate {
         async_marker: match &node.async_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
@@ -16002,14 +16254,21 @@ fn render_for_in_clause(node: &ForInClauseTransport, dest: &mut dyn ::std::fmt::
     template.render_into(dest)
 }
 
-fn render_for_statement(node: &ForStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_for_statement(
+    node: &ForStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = ForStatementTemplate {
         alternative: match &node.alternative {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
         async_marker: match &node.async_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
@@ -16019,8 +16278,13 @@ fn render_for_statement(node: &ForStatementTransport, dest: &mut dyn ::std::fmt:
     template.render_into(dest)
 }
 
-fn render_format_specifier(node: &FormatSpecifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_format_specifier(
+    node: &FormatSpecifierTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = FormatSpecifierTemplate {
@@ -16034,29 +16298,45 @@ fn render_format_specifier(node: &FormatSpecifierTransport, dest: &mut dyn ::std
     template.render_into(dest)
 }
 
-fn render_function_definition(node: &FunctionDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_function_definition(
+    node: &FunctionDefinitionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = FunctionDefinitionTemplate {
         async_marker: match &node.async_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
+        parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.parameters,
+        )),
         return_type: match &node.return_type {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
         type_parameters: match &node.type_parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
 }
 
-fn render_future_import_statement(node: &FutureImportStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let name_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.name.iter()
+fn render_future_import_statement(
+    node: &FutureImportStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let name_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .name
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = FutureImportStatementTemplate {
@@ -16070,8 +16350,14 @@ fn render_future_import_statement(node: &FutureImportStatementTransport, dest: &
     template.render_into(dest)
 }
 
-fn render_generator_expression(node: &GeneratorExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_generator_expression(
+    node: &GeneratorExpressionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = GeneratorExpressionTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16084,16 +16370,28 @@ fn render_generator_expression(node: &GeneratorExpressionTransport, dest: &mut d
     template.render_into(dest)
 }
 
-fn render_generic_type(node: &GenericTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_generic_type(
+    node: &GenericTypeTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = GenericTypeTemplate {
-        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
-        type_parameter: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_parameter)),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.identifier,
+        )),
+        type_parameter: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.type_parameter,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_global_statement(node: &GlobalStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_global_statement(
+    node: &GlobalStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = GlobalStatementTemplate {
@@ -16107,20 +16405,32 @@ fn render_global_statement(node: &GlobalStatementTransport, dest: &mut dyn ::std
     template.render_into(dest)
 }
 
-fn render_identifier(t: &IdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_identifier(
+    t: &IdentifierTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_if_clause(node: &IfClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_if_clause(
+    node: &IfClauseTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = IfClauseTemplate {
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.expression,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_if_statement(node: &IfStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_if_statement(
+    node: &IfStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let alternative_owned = node.alternative.as_deref().unwrap_or(&[]);
-    let alternative_buf: Vec<::sittir_core::filters::Renderable<'_>> = alternative_owned.iter()
+    let alternative_buf: Vec<::sittir_core::filters::Renderable<'_>> = alternative_owned
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = IfStatementTemplate {
@@ -16130,14 +16440,23 @@ fn render_if_statement(node: &IfStatementTransport, dest: &mut dyn ::std::fmt::W
             leading: false,
             trailing: false,
         },
-        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
-        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
+        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.condition,
+        )),
+        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.consequence,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_import_from_statement(node: &ImportFromStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_import_from_statement(
+    node: &ImportFromStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ImportFromStatementTemplate {
@@ -16147,7 +16466,9 @@ fn render_import_from_statement(node: &ImportFromStatementTransport, dest: &mut 
             leading: false,
             trailing: false,
         },
-        module_name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.module_name.as_ref())),
+        module_name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            node.module_name.as_ref(),
+        )),
         name: ListNonterminalView {
             items: &[],
             separator: ",",
@@ -16158,12 +16479,20 @@ fn render_import_from_statement(node: &ImportFromStatementTransport, dest: &mut 
     template.render_into(dest)
 }
 
-fn render_import_prefix(t: &ImportPrefixTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_import_prefix(
+    t: &ImportPrefixTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_import_statement(node: &ImportStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let name_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.name.iter()
+fn render_import_statement(
+    node: &ImportStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let name_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .name
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ImportStatementTemplate {
@@ -16177,26 +16506,41 @@ fn render_import_statement(node: &ImportStatementTransport, dest: &mut dyn ::std
     template.render_into(dest)
 }
 
-fn render_integer(t: &IntegerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_integer(
+    t: &IntegerTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_interpolation(node: &InterpolationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_interpolation(
+    node: &InterpolationTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = InterpolationTemplate {
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.expression,
+        )),
         format_specifier: match &node.format_specifier {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
         type_conversion: match &node.type_conversion {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
 }
 
-fn render_keyword_argument(node: &KeywordArgumentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_keyword_argument(
+    node: &KeywordArgumentTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = KeywordArgumentTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
@@ -16204,31 +16548,51 @@ fn render_keyword_argument(node: &KeywordArgumentTransport, dest: &mut dyn ::std
     template.render_into(dest)
 }
 
-fn render_keyword_pattern(node: &KeywordPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_keyword_pattern(
+    node: &KeywordPatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = KeywordPatternTemplate {
-        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
-        simple_pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.simple_pattern)),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.identifier,
+        )),
+        simple_pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.simple_pattern,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_keyword_separator(t: &KeywordSeparatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_keyword_separator(
+    t: &KeywordSeparatorTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_lambda(node: &LambdaTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_lambda(
+    node: &LambdaTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = LambdaTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         parameters: match &node.parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
 }
 
-fn render_lambda_parameters(node: &LambdaParametersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_lambda_parameters(
+    node: &LambdaParametersTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = LambdaParametersTemplate {
@@ -16242,23 +16606,36 @@ fn render_lambda_parameters(node: &LambdaParametersTransport, dest: &mut dyn ::s
     template.render_into(dest)
 }
 
-fn render_lambda_within_for_in_clause(node: &LambdaWithinForInClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_lambda_within_for_in_clause(
+    node: &LambdaWithinForInClauseTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = LambdaWithinForInClauseTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         parameters: match &node.parameters {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
 }
 
-fn render_line_continuation(t: &LineContinuationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_line_continuation(
+    t: &LineContinuationTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_list(node: &ListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_list(
+    node: &ListTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ListTemplate {
@@ -16272,8 +16649,14 @@ fn render_list(node: &ListTransport, dest: &mut dyn ::std::fmt::Write) -> Result
     template.render_into(dest)
 }
 
-fn render_list_comprehension(node: &ListComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_list_comprehension(
+    node: &ListComprehensionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = ListComprehensionTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16286,8 +16669,13 @@ fn render_list_comprehension(node: &ListComprehensionTransport, dest: &mut dyn :
     template.render_into(dest)
 }
 
-fn render_list_pattern(node: &ListPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_list_pattern(
+    node: &ListPatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ListPatternTemplate {
@@ -16301,15 +16689,26 @@ fn render_list_pattern(node: &ListPatternTransport, dest: &mut dyn ::std::fmt::W
     template.render_into(dest)
 }
 
-fn render_list_splat(node: &ListSplatTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_list_splat(
+    node: &ListSplatTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = ListSplatTemplate {
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.expression,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_list_splat_pattern(node: &ListSplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_list_splat_pattern(
+    node: &ListSplatPatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = ListSplatPatternTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16321,8 +16720,13 @@ fn render_list_splat_pattern(node: &ListSplatPatternTransport, dest: &mut dyn ::
     template.render_into(dest)
 }
 
-fn render_match_statement(node: &MatchStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let subject_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.subject.iter()
+fn render_match_statement(
+    node: &MatchStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let subject_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .subject
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = MatchStatementTemplate {
@@ -16337,16 +16741,28 @@ fn render_match_statement(node: &MatchStatementTransport, dest: &mut dyn ::std::
     template.render_into(dest)
 }
 
-fn render_member_type(node: &MemberTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_member_type(
+    node: &MemberTypeTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = MemberTypeTemplate {
-        base_type: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.base_type)),
-        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
+        base_type: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.base_type,
+        )),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.identifier,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_module(node: &ModuleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_module(
+    node: &ModuleTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ModuleTemplate {
@@ -16360,7 +16776,10 @@ fn render_module(node: &ModuleTransport, dest: &mut dyn ::std::fmt::Write) -> Re
     template.render_into(dest)
 }
 
-fn render_named_expression(node: &NamedExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_named_expression(
+    node: &NamedExpressionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = NamedExpressionTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
@@ -16372,8 +16791,13 @@ fn render_none(t: &NoneTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_nonlocal_statement(node: &NonlocalStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_nonlocal_statement(
+    node: &NonlocalStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = NonlocalStatementTemplate {
@@ -16387,14 +16811,22 @@ fn render_nonlocal_statement(node: &NonlocalStatementTransport, dest: &mut dyn :
     template.render_into(dest)
 }
 
-fn render_not_operator(node: &NotOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_not_operator(
+    node: &NotOperatorTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = NotOperatorTemplate {
-        argument: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.argument)),
+        argument: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.argument,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_pair(node: &PairTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_pair(
+    node: &PairTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = PairTemplate {
         key: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.key)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
@@ -16402,8 +16834,13 @@ fn render_pair(node: &PairTransport, dest: &mut dyn ::std::fmt::Write) -> Result
     template.render_into(dest)
 }
 
-fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_parameters(
+    node: &ParametersTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ParametersTemplate {
@@ -16417,8 +16854,14 @@ fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Writ
     template.render_into(dest)
 }
 
-fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_parenthesized_expression(
+    node: &ParenthesizedExpressionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = ParenthesizedExpressionTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16430,8 +16873,14 @@ fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, dest
     template.render_into(dest)
 }
 
-fn render_parenthesized_list_splat(node: &ParenthesizedListSplatTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_parenthesized_list_splat(
+    node: &ParenthesizedListSplatTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = ParenthesizedListSplatTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16443,12 +16892,20 @@ fn render_parenthesized_list_splat(node: &ParenthesizedListSplatTransport, dest:
     template.render_into(dest)
 }
 
-fn render_pass_statement(t: &PassStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_pass_statement(
+    t: &PassStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_pattern_list(node: &PatternListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_pattern_list(
+    node: &PatternListTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = PatternListTemplate {
@@ -16462,15 +16919,25 @@ fn render_pattern_list(node: &PatternListTransport, dest: &mut dyn ::std::fmt::W
     template.render_into(dest)
 }
 
-fn render_positional_separator(t: &PositionalSeparatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_positional_separator(
+    t: &PositionalSeparatorTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_print_statement(node: &PrintStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_print_statement(
+    node: &PrintStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
-    let argument_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.argument.iter()
+    let argument_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .argument
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = PrintStatementTemplate {
@@ -16490,8 +16957,13 @@ fn render_print_statement(node: &PrintStatementTransport, dest: &mut dyn ::std::
     template.render_into(dest)
 }
 
-fn render_raise_statement(node: &RaiseStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_raise_statement(
+    node: &RaiseStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = RaiseStatementTemplate {
@@ -16502,26 +16974,40 @@ fn render_raise_statement(node: &RaiseStatementTransport, dest: &mut dyn ::std::
             trailing: false,
         },
         cause: match &node.cause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
 }
 
-fn render_relative_import(node: &RelativeImportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_relative_import(
+    node: &RelativeImportTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = RelativeImportTemplate {
         dotted_name: match &node.dotted_name {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
-        import_prefix: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.import_prefix)),
+        import_prefix: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.import_prefix,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_return_statement(
+    node: &ReturnStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ReturnStatementTemplate {
@@ -16535,8 +17021,13 @@ fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std
     template.render_into(dest)
 }
 
-fn render_set(node: &SetTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_set(
+    node: &SetTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = SetTemplate {
@@ -16550,8 +17041,14 @@ fn render_set(node: &SetTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(
     template.render_into(dest)
 }
 
-fn render_set_comprehension(node: &SetComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_set_comprehension(
+    node: &SetComprehensionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = SetComprehensionTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16564,25 +17061,37 @@ fn render_set_comprehension(node: &SetComprehensionTransport, dest: &mut dyn ::s
     template.render_into(dest)
 }
 
-fn render_slice(node: &SliceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_slice(
+    node: &SliceTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = SliceTemplate {
         start: match &node.start {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
         step: match &node.step {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
         stop: match &node.stop {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
 }
 
-fn render_splat_pattern(node: &SplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_splat_pattern(
+    node: &SplatPatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
     let template = SplatPatternTemplate {
         children: ListNonterminalView {
@@ -16591,27 +17100,42 @@ fn render_splat_pattern(node: &SplatPatternTransport, dest: &mut dyn ::std::fmt:
             leading: false,
             trailing: false,
         },
-        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.identifier.as_ref())),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            node.identifier.as_ref(),
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_splat_type(node: &SplatTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_splat_type(
+    node: &SplatTypeTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = SplatTypeTemplate {
-        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.identifier.as_ref())),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            node.identifier.as_ref(),
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_string(node: &StringTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_string(
+    node: &StringTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = StringTemplate {
         text: node.transport_text.as_deref().unwrap_or(""),
     };
     template.render_into(dest)
 }
 
-fn render_string_content(node: &StringContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_string_content(
+    node: &StringContentTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = StringContentTemplate {
@@ -16625,8 +17149,13 @@ fn render_string_content(node: &StringContentTransport, dest: &mut dyn ::std::fm
     template.render_into(dest)
 }
 
-fn render_subscript(node: &SubscriptTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let subscript_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.subscript.iter()
+fn render_subscript(
+    node: &SubscriptTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let subscript_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .subscript
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = SubscriptTemplate {
@@ -16645,14 +17174,21 @@ fn render_true(t: &TrueTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_try_statement(node: &TryStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let except_clauses_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.except_clauses.iter()
+fn render_try_statement(
+    node: &TryStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let except_clauses_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .except_clauses
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TryStatementTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         else_clause: match &node.else_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
         except_clauses: ListNonterminalView {
@@ -16662,15 +17198,22 @@ fn render_try_statement(node: &TryStatementTransport, dest: &mut dyn ::std::fmt:
             trailing: false,
         },
         finally_clause: match &node.finally_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
 }
 
-fn render_tuple(node: &TupleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_tuple(
+    node: &TupleTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TupleTemplate {
@@ -16684,8 +17227,13 @@ fn render_tuple(node: &TupleTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
     template.render_into(dest)
 }
 
-fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_tuple_pattern(
+    node: &TuplePatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TuplePatternTemplate {
@@ -16699,8 +17247,14 @@ fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt:
     template.render_into(dest)
 }
 
-fn render_type(node: &TypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_type(
+    node: &TypeTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = TypeTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16712,21 +17266,34 @@ fn render_type(node: &TypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result
     template.render_into(dest)
 }
 
-fn render_type_alias_statement(node: &TypeAliasStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_type_alias_statement(
+    node: &TypeAliasStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = TypeAliasStatementTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.type_.as_ref())),
+        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            node.type_.as_ref(),
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_type_conversion(t: &TypeConversionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_type_conversion(
+    t: &TypeConversionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_type_parameter(node: &TypeParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_type_parameter(
+    node: &TypeParameterTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TypeParameterTemplate {
@@ -16740,7 +17307,10 @@ fn render_type_parameter(node: &TypeParameterTransport, dest: &mut dyn ::std::fm
     template.render_into(dest)
 }
 
-fn render_typed_default_parameter(node: &TypedDefaultParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_typed_default_parameter(
+    node: &TypedDefaultParameterTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = TypedDefaultParameterTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
@@ -16749,8 +17319,14 @@ fn render_typed_default_parameter(node: &TypedDefaultParameterTransport, dest: &
     template.render_into(dest)
 }
 
-fn render_typed_parameter(node: &TypedParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_typed_parameter(
+    node: &TypedParameterTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = TypedParameterTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16763,16 +17339,28 @@ fn render_typed_parameter(node: &TypedParameterTransport, dest: &mut dyn ::std::
     template.render_into(dest)
 }
 
-fn render_unary_operator(node: &UnaryOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_unary_operator(
+    node: &UnaryOperatorTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = UnaryOperatorTemplate {
-        argument: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.argument)),
-        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
+        argument: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.argument,
+        )),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.operator,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_union_pattern(node: &UnionPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_union_pattern(
+    node: &UnionPatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = UnionPatternTemplate {
@@ -16786,7 +17374,10 @@ fn render_union_pattern(node: &UnionPatternTransport, dest: &mut dyn ::std::fmt:
     template.render_into(dest)
 }
 
-fn render_union_type(node: &UnionTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_union_type(
+    node: &UnionTypeTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = UnionTypeTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
@@ -16794,24 +17385,39 @@ fn render_union_type(node: &UnionTypeTransport, dest: &mut dyn ::std::fmt::Write
     template.render_into(dest)
 }
 
-fn render_while_statement(node: &WhileStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_while_statement(
+    node: &WhileStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = WhileStatementTemplate {
         alternative: match &node.alternative {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
+        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            &node.condition,
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_wildcard_import(t: &WildcardImportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_wildcard_import(
+    t: &WildcardImportTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_with_clause_bare(node: &WithClauseBareTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_with_clause_bare(
+    node: &WithClauseBareTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = WithClauseBareTemplate {
@@ -16825,8 +17431,13 @@ fn render_with_clause_bare(node: &WithClauseBareTransport, dest: &mut dyn ::std:
     template.render_into(dest)
 }
 
-fn render_with_clause_paren(node: &WithClauseParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_with_clause_paren(
+    node: &WithClauseParenTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = WithClauseParenTemplate {
@@ -16840,15 +17451,26 @@ fn render_with_clause_paren(node: &WithClauseParenTransport, dest: &mut dyn ::st
     template.render_into(dest)
 }
 
-fn render_with_clause(t: &WithClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_with_clause(
+    t: &WithClauseTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
         WithClauseTransport::WithClauseUFormBare(data) => render_with_clause_uform_bare(data, dest),
-        WithClauseTransport::WithClauseUFormParen(data) => render_with_clause_uform_paren(data, dest),
+        WithClauseTransport::WithClauseUFormParen(data) => {
+            render_with_clause_uform_paren(data, dest)
+        }
     }
 }
 
-fn render_with_clause_uform_bare(node: &WithClauseUFormBareTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(node.children.as_ref())];
+fn render_with_clause_uform_bare(
+    node: &WithClauseUFormBareTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            node.children.as_ref(),
+        )];
     let template = WithClauseTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16860,8 +17482,14 @@ fn render_with_clause_uform_bare(node: &WithClauseUFormBareTransport, dest: &mut
     template.render_into(dest)
 }
 
-fn render_with_clause_uform_paren(node: &WithClauseUFormParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+fn render_with_clause_uform_paren(
+    node: &WithClauseUFormParenTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> =
+        vec![::sittir_core::filters::Renderable::Transport(
+            &node.children,
+        )];
     let template = WithClauseTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16873,27 +17501,42 @@ fn render_with_clause_uform_paren(node: &WithClauseUFormParenTransport, dest: &m
     template.render_into(dest)
 }
 
-fn render_with_item(node: &WithItemTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_with_item(
+    node: &WithItemTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = WithItemTemplate {
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
 
-fn render_with_statement(node: &WithStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_with_statement(
+    node: &WithStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let template = WithStatementTemplate {
         async_marker: match &node.async_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => {
+                OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
+            }
             None => OptionalNonterminalView::Missing,
         },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        with_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.with_clause.as_ref())),
+        with_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(
+            node.with_clause.as_ref(),
+        )),
     };
     template.render_into(dest)
 }
 
-fn render_yield(node: &YieldTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+fn render_yield(
+    node: &YieldTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node
+        .children
+        .iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
         .collect();
     let template = YieldTemplate {
@@ -16907,47 +17550,80 @@ fn render_yield(node: &YieldTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
     template.render_into(dest)
 }
 
-fn render_newline(t: &NewlineTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_newline(
+    t: &NewlineTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_indent(t: &IndentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_indent(
+    t: &IndentTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_dedent(t: &DedentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_dedent(
+    t: &DedentTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_string_start(t: &StringStartTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_string_start(
+    t: &StringStartTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render__string_content(t: &_StringContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render__string_content(
+    t: &_StringContentTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_escape_interpolation(t: &EscapeInterpolationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_escape_interpolation(
+    t: &EscapeInterpolationTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_string_end(t: &StringEndTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_string_end(
+    t: &StringEndTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_close_bracket(t: &CloseBracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_close_bracket(
+    t: &CloseBracketTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_close_paren(t: &CloseParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_close_paren(
+    t: &CloseParenTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_close_brace(t: &CloseBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_close_brace(
+    t: &CloseBraceTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_except(t: &ExceptTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_except(
+    t: &ExceptTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -16959,35 +17635,59 @@ fn render_eq(t: &EqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_colon(t: &ColonTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_colon(
+    t: &ColonTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_async(t: &AsyncTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_async(
+    t: &AsyncTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_bracket(t: &BracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_bracket(
+    t: &BracketTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_tok_bs(t: &TokBsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_tok_bs(
+    t: &TokBsTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_minus(t: &MinusTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_minus(
+    t: &MinusTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_paren(t: &ParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_paren(
+    t: &ParenTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_comma(t: &CommaTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_comma(
+    t: &CommaTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_assert(t: &AssertTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_assert(
+    t: &AssertTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -17003,7 +17703,10 @@ fn render_and(t: &AndTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_break(t: &BreakTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_break(
+    t: &BreakTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -17015,7 +17718,10 @@ fn render_shr(t: &ShrTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_class(t: &ClassTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_class(
+    t: &ClassTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -17027,7 +17733,10 @@ fn render_else(t: &ElseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_continue(t: &ContinueTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_continue(
+    t: &ContinueTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -17039,11 +17748,17 @@ fn render_del(t: &DelTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_brace(t: &BraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_brace(
+    t: &BraceTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_starstar(t: &StarstarTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_starstar(
+    t: &StarstarTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -17051,7 +17766,10 @@ fn render_elif(t: &ElifTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_ellipsis(t: &EllipsisTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_ellipsis(
+    t: &EllipsisTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -17067,11 +17785,17 @@ fn render_in(t: &InTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_false2(t: &False2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_false2(
+    t: &False2Transport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_finally(t: &FinallyTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_finally(
+    t: &FinallyTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -17083,7 +17807,10 @@ fn render_def(t: &DefTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_arrow(t: &ArrowTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_arrow(
+    t: &ArrowTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -17091,31 +17818,52 @@ fn render_from(t: &FromTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_future_u(t: &FutureUTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_future_u(
+    t: &FutureUTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_import(t: &ImportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_import(
+    t: &ImportTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_global(t: &GlobalTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_global(
+    t: &GlobalTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_match(t: &MatchTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_match(
+    t: &MatchTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_coloneq(t: &ColoneqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_coloneq(
+    t: &ColoneqTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_none2(t: &None2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_none2(
+    t: &None2Transport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_nonlocal(t: &NonlocalTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_nonlocal(
+    t: &NonlocalTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -17127,27 +17875,45 @@ fn render_pass(t: &PassTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_slash(t: &SlashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_slash(
+    t: &SlashTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_print(t: &PrintTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_print(
+    t: &PrintTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_raise(t: &RaiseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_raise(
+    t: &RaiseTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_return(t: &ReturnTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_return(
+    t: &ReturnTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_anonymous(t: &AnonymousTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_anonymous(
+    t: &AnonymousTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_true2(t: &True2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_true2(
+    t: &True2Transport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -17159,7 +17925,10 @@ fn render_pipe(t: &PipeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_while(t: &WhileTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_while(
+    t: &WhileTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -17167,42 +17936,79 @@ fn render_with(t: &WithTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_compound_statement(t: &CompoundStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_compound_statement(
+    t: &CompoundStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
         CompoundStatementTransport::IfStatement(inner) => render_if_statement(inner.as_ref(), dest),
-        CompoundStatementTransport::ForStatement(inner) => render_for_statement(inner.as_ref(), dest),
-        CompoundStatementTransport::WhileStatement(inner) => render_while_statement(inner.as_ref(), dest),
-        CompoundStatementTransport::TryStatement(inner) => render_try_statement(inner.as_ref(), dest),
-        CompoundStatementTransport::WithStatement(inner) => render_with_statement(inner.as_ref(), dest),
-        CompoundStatementTransport::FunctionDefinition(inner) => render_function_definition(inner.as_ref(), dest),
-        CompoundStatementTransport::ClassDefinition(inner) => render_class_definition(inner.as_ref(), dest),
-        CompoundStatementTransport::DecoratedDefinition(inner) => render_decorated_definition(inner.as_ref(), dest),
-        CompoundStatementTransport::MatchStatement(inner) => render_match_statement(inner.as_ref(), dest),
+        CompoundStatementTransport::ForStatement(inner) => {
+            render_for_statement(inner.as_ref(), dest)
+        }
+        CompoundStatementTransport::WhileStatement(inner) => {
+            render_while_statement(inner.as_ref(), dest)
+        }
+        CompoundStatementTransport::TryStatement(inner) => {
+            render_try_statement(inner.as_ref(), dest)
+        }
+        CompoundStatementTransport::WithStatement(inner) => {
+            render_with_statement(inner.as_ref(), dest)
+        }
+        CompoundStatementTransport::FunctionDefinition(inner) => {
+            render_function_definition(inner.as_ref(), dest)
+        }
+        CompoundStatementTransport::ClassDefinition(inner) => {
+            render_class_definition(inner.as_ref(), dest)
+        }
+        CompoundStatementTransport::DecoratedDefinition(inner) => {
+            render_decorated_definition(inner.as_ref(), dest)
+        }
+        CompoundStatementTransport::MatchStatement(inner) => {
+            render_match_statement(inner.as_ref(), dest)
+        }
     }
 }
 
-fn render_dict_pattern_kv(t: &DictPatternKvTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_dict_pattern_kv(
+    t: &DictPatternKvTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
-        DictPatternKvTransport::KeyValuePattern(inner) => render_key_value_pattern(inner.as_ref(), dest),
+        DictPatternKvTransport::KeyValuePattern(inner) => {
+            render_key_value_pattern(inner.as_ref(), dest)
+        }
         DictPatternKvTransport::SplatPattern(inner) => render_splat_pattern(inner.as_ref(), dest),
     }
 }
 
-fn render_expression_within_for_in_clause(t: &ExpressionWithinForInClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_expression_within_for_in_clause(
+    t: &ExpressionWithinForInClauseTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
-        ExpressionWithinForInClauseTransport::Expression(inner) => render_expression(inner.as_ref(), dest),
-        ExpressionWithinForInClauseTransport::LambdaWithinForInClause(inner) => render_lambda_within_for_in_clause(inner.as_ref(), dest),
+        ExpressionWithinForInClauseTransport::Expression(inner) => {
+            render_expression(inner.as_ref(), dest)
+        }
+        ExpressionWithinForInClauseTransport::LambdaWithinForInClause(inner) => {
+            render_lambda_within_for_in_clause(inner.as_ref(), dest)
+        }
     }
 }
 
-fn render_expressions(t: &ExpressionsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_expressions(
+    t: &ExpressionsTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
         ExpressionsTransport::Expression(inner) => render_expression(inner.as_ref(), dest),
         ExpressionsTransport::ExpressionList(inner) => render_expression_list(inner.as_ref(), dest),
     }
 }
 
-fn render_fexpression(t: &FExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_fexpression(
+    t: &FExpressionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
         FExpressionTransport::Expression(inner) => render_expression(inner.as_ref(), dest),
         FExpressionTransport::ExpressionList(inner) => render_expression_list(inner.as_ref(), dest),
@@ -17211,32 +18017,50 @@ fn render_fexpression(t: &FExpressionTransport, dest: &mut dyn ::std::fmt::Write
     }
 }
 
-fn render_left_hand_side(t: &LeftHandSideTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_left_hand_side(
+    t: &LeftHandSideTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
         LeftHandSideTransport::Pattern(inner) => render_pattern(inner.as_ref(), dest),
         LeftHandSideTransport::PatternList(inner) => render_pattern_list(inner.as_ref(), dest),
     }
 }
 
-fn render_named_expression_lhs(t: &NamedExpressionLhsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_named_expression_lhs(
+    t: &NamedExpressionLhsTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
         NamedExpressionLhsTransport::Identifier(inner) => render_identifier(inner, dest),
-        NamedExpressionLhsTransport::KeywordIdentifier(inner) => render_keyword_identifier(inner.as_ref(), dest),
+        NamedExpressionLhsTransport::KeywordIdentifier(inner) => {
+            render_keyword_identifier(inner.as_ref(), dest)
+        }
     }
 }
 
-fn render_right_hand_side(t: &RightHandSideTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_right_hand_side(
+    t: &RightHandSideTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
         RightHandSideTransport::Expression(inner) => render_expression(inner.as_ref(), dest),
-        RightHandSideTransport::ExpressionList(inner) => render_expression_list(inner.as_ref(), dest),
+        RightHandSideTransport::ExpressionList(inner) => {
+            render_expression_list(inner.as_ref(), dest)
+        }
         RightHandSideTransport::Assignment(inner) => render_assignment(inner.as_ref(), dest),
-        RightHandSideTransport::AugmentedAssignment(inner) => render_augmented_assignment(inner.as_ref(), dest),
+        RightHandSideTransport::AugmentedAssignment(inner) => {
+            render_augmented_assignment(inner.as_ref(), dest)
+        }
         RightHandSideTransport::PatternList(inner) => render_pattern_list(inner.as_ref(), dest),
         RightHandSideTransport::Yield(inner) => render_yield(inner.as_ref(), dest),
     }
 }
 
-fn render_simple_pattern(t: &SimplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_simple_pattern(
+    t: &SimplePatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
         SimplePatternTransport::ClassPattern(inner) => render_class_pattern(inner.as_ref(), dest),
         SimplePatternTransport::SplatPattern(inner) => render_splat_pattern(inner.as_ref(), dest),
@@ -17245,125 +18069,228 @@ fn render_simple_pattern(t: &SimplePatternTransport, dest: &mut dyn ::std::fmt::
         SimplePatternTransport::_TuplePattern(inner) => render__tuple_pattern(inner.as_ref(), dest),
         SimplePatternTransport::DictPattern(inner) => render_dict_pattern(inner.as_ref(), dest),
         SimplePatternTransport::String(inner) => render_string(inner.as_ref(), dest),
-        SimplePatternTransport::ConcatenatedString(inner) => render_concatenated_string(inner.as_ref(), dest),
+        SimplePatternTransport::ConcatenatedString(inner) => {
+            render_concatenated_string(inner.as_ref(), dest)
+        }
         SimplePatternTransport::True(inner) => render_true(inner, dest),
         SimplePatternTransport::False(inner) => render_false(inner, dest),
         SimplePatternTransport::None(inner) => render_none(inner, dest),
-        SimplePatternTransport::SimplePatternNegative(inner) => render_simple_pattern_negative(inner.as_ref(), dest),
-        SimplePatternTransport::ComplexPattern(inner) => render_complex_pattern(inner.as_ref(), dest),
+        SimplePatternTransport::SimplePatternNegative(inner) => {
+            render_simple_pattern_negative(inner.as_ref(), dest)
+        }
+        SimplePatternTransport::ComplexPattern(inner) => {
+            render_complex_pattern(inner.as_ref(), dest)
+        }
         SimplePatternTransport::DottedName(inner) => render_dotted_name(inner.as_ref(), dest),
     }
 }
 
-fn render_simple_statement(t: &SimpleStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_simple_statement(
+    t: &SimpleStatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
-        SimpleStatementTransport::FutureImportStatement(inner) => render_future_import_statement(inner.as_ref(), dest),
-        SimpleStatementTransport::ImportStatement(inner) => render_import_statement(inner.as_ref(), dest),
-        SimpleStatementTransport::ImportFromStatement(inner) => render_import_from_statement(inner.as_ref(), dest),
-        SimpleStatementTransport::PrintStatement(inner) => render_print_statement(inner.as_ref(), dest),
-        SimpleStatementTransport::AssertStatement(inner) => render_assert_statement(inner.as_ref(), dest),
-        SimpleStatementTransport::ExpressionStatement(inner) => render_expression_statement(inner.as_ref(), dest),
-        SimpleStatementTransport::ReturnStatement(inner) => render_return_statement(inner.as_ref(), dest),
-        SimpleStatementTransport::DeleteStatement(inner) => render_delete_statement(inner.as_ref(), dest),
-        SimpleStatementTransport::RaiseStatement(inner) => render_raise_statement(inner.as_ref(), dest),
+        SimpleStatementTransport::FutureImportStatement(inner) => {
+            render_future_import_statement(inner.as_ref(), dest)
+        }
+        SimpleStatementTransport::ImportStatement(inner) => {
+            render_import_statement(inner.as_ref(), dest)
+        }
+        SimpleStatementTransport::ImportFromStatement(inner) => {
+            render_import_from_statement(inner.as_ref(), dest)
+        }
+        SimpleStatementTransport::PrintStatement(inner) => {
+            render_print_statement(inner.as_ref(), dest)
+        }
+        SimpleStatementTransport::AssertStatement(inner) => {
+            render_assert_statement(inner.as_ref(), dest)
+        }
+        SimpleStatementTransport::ExpressionStatement(inner) => {
+            render_expression_statement(inner.as_ref(), dest)
+        }
+        SimpleStatementTransport::ReturnStatement(inner) => {
+            render_return_statement(inner.as_ref(), dest)
+        }
+        SimpleStatementTransport::DeleteStatement(inner) => {
+            render_delete_statement(inner.as_ref(), dest)
+        }
+        SimpleStatementTransport::RaiseStatement(inner) => {
+            render_raise_statement(inner.as_ref(), dest)
+        }
         SimpleStatementTransport::PassStatement(inner) => render_pass_statement(inner, dest),
         SimpleStatementTransport::BreakStatement(inner) => render_break_statement(inner, dest),
-        SimpleStatementTransport::ContinueStatement(inner) => render_continue_statement(inner, dest),
-        SimpleStatementTransport::GlobalStatement(inner) => render_global_statement(inner.as_ref(), dest),
-        SimpleStatementTransport::NonlocalStatement(inner) => render_nonlocal_statement(inner.as_ref(), dest),
-        SimpleStatementTransport::ExecStatement(inner) => render_exec_statement(inner.as_ref(), dest),
-        SimpleStatementTransport::TypeAliasStatement(inner) => render_type_alias_statement(inner.as_ref(), dest),
+        SimpleStatementTransport::ContinueStatement(inner) => {
+            render_continue_statement(inner, dest)
+        }
+        SimpleStatementTransport::GlobalStatement(inner) => {
+            render_global_statement(inner.as_ref(), dest)
+        }
+        SimpleStatementTransport::NonlocalStatement(inner) => {
+            render_nonlocal_statement(inner.as_ref(), dest)
+        }
+        SimpleStatementTransport::ExecStatement(inner) => {
+            render_exec_statement(inner.as_ref(), dest)
+        }
+        SimpleStatementTransport::TypeAliasStatement(inner) => {
+            render_type_alias_statement(inner.as_ref(), dest)
+        }
     }
 }
 
-fn render_statement(t: &StatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_statement(
+    t: &StatementTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
-        StatementTransport::SimpleStatements(inner) => render_simple_statements(inner.as_ref(), dest),
+        StatementTransport::SimpleStatements(inner) => {
+            render_simple_statements(inner.as_ref(), dest)
+        }
         StatementTransport::IfStatement(inner) => render_if_statement(inner.as_ref(), dest),
         StatementTransport::ForStatement(inner) => render_for_statement(inner.as_ref(), dest),
         StatementTransport::WhileStatement(inner) => render_while_statement(inner.as_ref(), dest),
         StatementTransport::TryStatement(inner) => render_try_statement(inner.as_ref(), dest),
         StatementTransport::WithStatement(inner) => render_with_statement(inner.as_ref(), dest),
-        StatementTransport::FunctionDefinition(inner) => render_function_definition(inner.as_ref(), dest),
+        StatementTransport::FunctionDefinition(inner) => {
+            render_function_definition(inner.as_ref(), dest)
+        }
         StatementTransport::ClassDefinition(inner) => render_class_definition(inner.as_ref(), dest),
-        StatementTransport::DecoratedDefinition(inner) => render_decorated_definition(inner.as_ref(), dest),
+        StatementTransport::DecoratedDefinition(inner) => {
+            render_decorated_definition(inner.as_ref(), dest)
+        }
         StatementTransport::MatchStatement(inner) => render_match_statement(inner.as_ref(), dest),
     }
 }
 
-fn render_expression(t: &ExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_expression(
+    t: &ExpressionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
-        ExpressionTransport::ComparisonOperator(inner) => render_comparison_operator(inner.as_ref(), dest),
+        ExpressionTransport::ComparisonOperator(inner) => {
+            render_comparison_operator(inner.as_ref(), dest)
+        }
         ExpressionTransport::NotOperator(inner) => render_not_operator(inner.as_ref(), dest),
-        ExpressionTransport::BooleanOperator(inner) => render_boolean_operator(inner.as_ref(), dest),
+        ExpressionTransport::BooleanOperator(inner) => {
+            render_boolean_operator(inner.as_ref(), dest)
+        }
         ExpressionTransport::Lambda(inner) => render_lambda(inner.as_ref(), dest),
-        ExpressionTransport::PrimaryExpression(inner) => render_primary_expression(inner.as_ref(), dest),
-        ExpressionTransport::ConditionalExpression(inner) => render_conditional_expression(inner.as_ref(), dest),
-        ExpressionTransport::NamedExpression(inner) => render_named_expression(inner.as_ref(), dest),
+        ExpressionTransport::PrimaryExpression(inner) => {
+            render_primary_expression(inner.as_ref(), dest)
+        }
+        ExpressionTransport::ConditionalExpression(inner) => {
+            render_conditional_expression(inner.as_ref(), dest)
+        }
+        ExpressionTransport::NamedExpression(inner) => {
+            render_named_expression(inner.as_ref(), dest)
+        }
         ExpressionTransport::AsPattern(inner) => render_as_pattern(inner.as_ref(), dest),
     }
 }
 
-fn render_keyword_identifier(t: &KeywordIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_keyword_identifier(
+    t: &KeywordIdentifierTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
         KeywordIdentifierTransport::Identifier(inner) => render_identifier(inner, dest),
     }
 }
 
-fn render_parameter(t: &ParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_parameter(
+    t: &ParameterTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
         ParameterTransport::Identifier(inner) => render_identifier(inner, dest),
         ParameterTransport::TypedParameter(inner) => render_typed_parameter(inner.as_ref(), dest),
-        ParameterTransport::DefaultParameter(inner) => render_default_parameter(inner.as_ref(), dest),
-        ParameterTransport::TypedDefaultParameter(inner) => render_typed_default_parameter(inner.as_ref(), dest),
-        ParameterTransport::ListSplatPattern(inner) => render_list_splat_pattern(inner.as_ref(), dest),
+        ParameterTransport::DefaultParameter(inner) => {
+            render_default_parameter(inner.as_ref(), dest)
+        }
+        ParameterTransport::TypedDefaultParameter(inner) => {
+            render_typed_default_parameter(inner.as_ref(), dest)
+        }
+        ParameterTransport::ListSplatPattern(inner) => {
+            render_list_splat_pattern(inner.as_ref(), dest)
+        }
         ParameterTransport::TuplePattern(inner) => render_tuple_pattern(inner.as_ref(), dest),
         ParameterTransport::KeywordSeparator(inner) => render_keyword_separator(inner, dest),
         ParameterTransport::PositionalSeparator(inner) => render_positional_separator(inner, dest),
-        ParameterTransport::DictionarySplatPattern(inner) => render_dictionary_splat_pattern(inner.as_ref(), dest),
+        ParameterTransport::DictionarySplatPattern(inner) => {
+            render_dictionary_splat_pattern(inner.as_ref(), dest)
+        }
     }
 }
 
-fn render_pattern(t: &PatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_pattern(
+    t: &PatternTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
         PatternTransport::Identifier(inner) => render_identifier(inner, dest),
-        PatternTransport::KeywordIdentifier(inner) => render_keyword_identifier(inner.as_ref(), dest),
+        PatternTransport::KeywordIdentifier(inner) => {
+            render_keyword_identifier(inner.as_ref(), dest)
+        }
         PatternTransport::Subscript(inner) => render_subscript(inner.as_ref(), dest),
         PatternTransport::Attribute(inner) => render_attribute(inner.as_ref(), dest),
-        PatternTransport::ListSplatPattern(inner) => render_list_splat_pattern(inner.as_ref(), dest),
+        PatternTransport::ListSplatPattern(inner) => {
+            render_list_splat_pattern(inner.as_ref(), dest)
+        }
         PatternTransport::TuplePattern(inner) => render_tuple_pattern(inner.as_ref(), dest),
         PatternTransport::ListPattern(inner) => render_list_pattern(inner.as_ref(), dest),
     }
 }
 
-fn render_primary_expression(t: &PrimaryExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_primary_expression(
+    t: &PrimaryExpressionTransport,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     match t {
         PrimaryExpressionTransport::Await(inner) => render_await(inner.as_ref(), dest),
-        PrimaryExpressionTransport::BinaryOperator(inner) => render_binary_operator(inner.as_ref(), dest),
+        PrimaryExpressionTransport::BinaryOperator(inner) => {
+            render_binary_operator(inner.as_ref(), dest)
+        }
         PrimaryExpressionTransport::Identifier(inner) => render_identifier(inner, dest),
-        PrimaryExpressionTransport::KeywordIdentifier(inner) => render_keyword_identifier(inner.as_ref(), dest),
+        PrimaryExpressionTransport::KeywordIdentifier(inner) => {
+            render_keyword_identifier(inner.as_ref(), dest)
+        }
         PrimaryExpressionTransport::String(inner) => render_string(inner.as_ref(), dest),
-        PrimaryExpressionTransport::ConcatenatedString(inner) => render_concatenated_string(inner.as_ref(), dest),
+        PrimaryExpressionTransport::ConcatenatedString(inner) => {
+            render_concatenated_string(inner.as_ref(), dest)
+        }
         PrimaryExpressionTransport::Integer(inner) => render_integer(inner, dest),
         PrimaryExpressionTransport::Float(inner) => render_float(inner, dest),
         PrimaryExpressionTransport::True(inner) => render_true(inner, dest),
         PrimaryExpressionTransport::False(inner) => render_false(inner, dest),
         PrimaryExpressionTransport::None(inner) => render_none(inner, dest),
-        PrimaryExpressionTransport::UnaryOperator(inner) => render_unary_operator(inner.as_ref(), dest),
+        PrimaryExpressionTransport::UnaryOperator(inner) => {
+            render_unary_operator(inner.as_ref(), dest)
+        }
         PrimaryExpressionTransport::Attribute(inner) => render_attribute(inner.as_ref(), dest),
         PrimaryExpressionTransport::Subscript(inner) => render_subscript(inner.as_ref(), dest),
         PrimaryExpressionTransport::Call(inner) => render_call(inner.as_ref(), dest),
         PrimaryExpressionTransport::List(inner) => render_list(inner.as_ref(), dest),
-        PrimaryExpressionTransport::ListComprehension(inner) => render_list_comprehension(inner.as_ref(), dest),
+        PrimaryExpressionTransport::ListComprehension(inner) => {
+            render_list_comprehension(inner.as_ref(), dest)
+        }
         PrimaryExpressionTransport::Dictionary(inner) => render_dictionary(inner.as_ref(), dest),
-        PrimaryExpressionTransport::DictionaryComprehension(inner) => render_dictionary_comprehension(inner.as_ref(), dest),
+        PrimaryExpressionTransport::DictionaryComprehension(inner) => {
+            render_dictionary_comprehension(inner.as_ref(), dest)
+        }
         PrimaryExpressionTransport::Set(inner) => render_set(inner.as_ref(), dest),
-        PrimaryExpressionTransport::SetComprehension(inner) => render_set_comprehension(inner.as_ref(), dest),
+        PrimaryExpressionTransport::SetComprehension(inner) => {
+            render_set_comprehension(inner.as_ref(), dest)
+        }
         PrimaryExpressionTransport::Tuple(inner) => render_tuple(inner.as_ref(), dest),
-        PrimaryExpressionTransport::ParenthesizedExpression(inner) => render_parenthesized_expression(inner.as_ref(), dest),
-        PrimaryExpressionTransport::GeneratorExpression(inner) => render_generator_expression(inner.as_ref(), dest),
+        PrimaryExpressionTransport::ParenthesizedExpression(inner) => {
+            render_parenthesized_expression(inner.as_ref(), dest)
+        }
+        PrimaryExpressionTransport::GeneratorExpression(inner) => {
+            render_generator_expression(inner.as_ref(), dest)
+        }
         PrimaryExpressionTransport::Ellipsis2(inner) => render_ellipsis2(inner, dest),
-        PrimaryExpressionTransport::ListSplatPattern(inner) => render_list_splat_pattern(inner.as_ref(), dest),
+        PrimaryExpressionTransport::ListSplatPattern(inner) => {
+            render_list_splat_pattern(inner.as_ref(), dest)
+        }
     }
 }
 
@@ -17374,10 +18301,7 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
 }
 
 impl RenderableTransport for AnyTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
+    fn render_into(&self, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
         match self {
             AnyTransport::_AsPattern(t) => render__as_pattern(t, dest),
             AnyTransport::AssignmentEq(t) => render_assignment_eq(t, dest),
@@ -17597,14 +18521,21 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Literal4_3e_3d => dest.write_str(">=").map_err(::askama::Error::from),
             AnyTransport::Literal5_3e => dest.write_str(">").map_err(::askama::Error::from),
             AnyTransport::Literal6_3c_3e => dest.write_str("<>").map_err(::askama::Error::from),
-            AnyTransport::Literal7_6e_6f_74_20_69_6e => dest.write_str("not in").map_err(::askama::Error::from),
+            AnyTransport::Literal7_6e_6f_74_20_69_6e => {
+                dest.write_str("not in").map_err(::askama::Error::from)
+            }
             AnyTransport::Literal8_69_73 => dest.write_str("is").map_err(::askama::Error::from),
-            AnyTransport::Literal9_69_73_20_6e_6f_74 => dest.write_str("is not").map_err(::askama::Error::from),
+            AnyTransport::Literal9_69_73_20_6e_6f_74 => {
+                dest.write_str("is not").map_err(::askama::Error::from)
+            }
         }
     }
 }
 
-use ::sittir_core::types::{FieldValue as TransportFieldValue, KindId as TransportKindId, NodeData as TransportNodeData, Source as TransportSource};
+use ::sittir_core::types::{
+    FieldValue as TransportFieldValue, KindId as TransportKindId, NodeData as TransportNodeData,
+    Source as TransportSource,
+};
 use ::std::collections::HashMap as TransportHashMap;
 
 fn transport_node_data(
@@ -17644,7 +18575,9 @@ fn transport_field_value(value: AnyTransport) -> Result<TransportFieldValue, ::a
     Ok(TransportFieldValue::Single(Box::new(node)))
 }
 
-fn transport_field_values(values: Vec<AnyTransport>) -> Result<TransportFieldValue, ::askama::Error> {
+fn transport_field_values(
+    values: Vec<AnyTransport>,
+) -> Result<TransportFieldValue, ::askama::Error> {
     let mut nodes = Vec::with_capacity(values.len());
     for value in values {
         nodes.push(transport_to_node(value)?);
@@ -17652,7 +18585,9 @@ fn transport_field_values(values: Vec<AnyTransport>) -> Result<TransportFieldVal
     Ok(TransportFieldValue::Multiple(nodes))
 }
 
-fn transport_children(values: Vec<AnyTransport>) -> Result<Vec<TransportNodeData>, ::askama::Error> {
+fn transport_children(
+    values: Vec<AnyTransport>,
+) -> Result<Vec<TransportNodeData>, ::askama::Error> {
     let mut nodes = Vec::with_capacity(values.len());
     for value in values {
         nodes.push(transport_to_node(value)?);
@@ -17667,7 +18602,9 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::AssignmentType(data) => transport_to_node_assignment_type(data),
         AnyTransport::AssignmentTyped(data) => transport_to_node_assignment_typed(data),
         AnyTransport::AsyncMarker(data) => transport_to_node_async_marker(data),
-        AnyTransport::AugmentedAssignmentOperator(data) => transport_to_node_augmented_assignment_operator(data),
+        AnyTransport::AugmentedAssignmentOperator(data) => {
+            transport_to_node_augmented_assignment_operator(data)
+        }
         AnyTransport::ComprehensionClauses(data) => transport_to_node_comprehension_clauses(data),
         AnyTransport::_Identifier(data) => transport_to_node__identifier(data),
         AnyTransport::ImportList(data) => transport_to_node_import_list(data),
@@ -17680,11 +18617,15 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::MatchBlockBlock(data) => transport_to_node_match_block_block(data),
         AnyTransport::NotEscapeSequence(data) => transport_to_node_not_escape_sequence(data),
         AnyTransport::NotIn(data) => transport_to_node_not_in(data),
-        AnyTransport::SimplePatternNegative(data) => transport_to_node_simple_pattern_negative(data),
+        AnyTransport::SimplePatternNegative(data) => {
+            transport_to_node_simple_pattern_negative(data)
+        }
         AnyTransport::SimpleStatements(data) => transport_to_node_simple_statements(data),
         AnyTransport::Suite(data) => transport_to_node_suite(data),
         AnyTransport::_TuplePattern(data) => transport_to_node__tuple_pattern(data),
-        AnyTransport::UnaryOperatorOperator(data) => transport_to_node_unary_operator_operator(data),
+        AnyTransport::UnaryOperatorOperator(data) => {
+            transport_to_node_unary_operator_operator(data)
+        }
         AnyTransport::_WithClauseParen(data) => transport_to_node__with_clause_paren(data),
         AnyTransport::AliasedImport(data) => transport_to_node_aliased_import(data),
         AnyTransport::ArgumentList(data) => transport_to_node_argument_list(data),
@@ -17717,9 +18658,13 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::DeleteStatement(data) => transport_to_node_delete_statement(data),
         AnyTransport::DictPattern(data) => transport_to_node_dict_pattern(data),
         AnyTransport::Dictionary(data) => transport_to_node_dictionary(data),
-        AnyTransport::DictionaryComprehension(data) => transport_to_node_dictionary_comprehension(data),
+        AnyTransport::DictionaryComprehension(data) => {
+            transport_to_node_dictionary_comprehension(data)
+        }
         AnyTransport::DictionarySplat(data) => transport_to_node_dictionary_splat(data),
-        AnyTransport::DictionarySplatPattern(data) => transport_to_node_dictionary_splat_pattern(data),
+        AnyTransport::DictionarySplatPattern(data) => {
+            transport_to_node_dictionary_splat_pattern(data)
+        }
         AnyTransport::DottedName(data) => transport_to_node_dotted_name(data),
         AnyTransport::ElifClause(data) => transport_to_node_elif_clause(data),
         AnyTransport::Ellipsis2(data) => transport_to_node_ellipsis2(data),
@@ -17728,7 +18673,9 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::ExceptClause(data) => transport_to_node_except_clause(data),
         AnyTransport::ExecStatement(data) => transport_to_node_exec_statement(data),
         AnyTransport::ExpressionList(data) => transport_to_node_expression_list(data),
-        AnyTransport::ExpressionStatementTuple(data) => transport_to_node_expression_statement_tuple(data),
+        AnyTransport::ExpressionStatementTuple(data) => {
+            transport_to_node_expression_statement_tuple(data)
+        }
         AnyTransport::ExpressionStatement(data) => transport_to_node_expression_statement(data),
         AnyTransport::False(data) => transport_to_node_false(data),
         AnyTransport::FinallyClause(data) => transport_to_node_finally_clause(data),
@@ -17737,7 +18684,9 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::ForStatement(data) => transport_to_node_for_statement(data),
         AnyTransport::FormatSpecifier(data) => transport_to_node_format_specifier(data),
         AnyTransport::FunctionDefinition(data) => transport_to_node_function_definition(data),
-        AnyTransport::FutureImportStatement(data) => transport_to_node_future_import_statement(data),
+        AnyTransport::FutureImportStatement(data) => {
+            transport_to_node_future_import_statement(data)
+        }
         AnyTransport::GeneratorExpression(data) => transport_to_node_generator_expression(data),
         AnyTransport::GenericType(data) => transport_to_node_generic_type(data),
         AnyTransport::GlobalStatement(data) => transport_to_node_global_statement(data),
@@ -17754,7 +18703,9 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::KeywordSeparator(data) => transport_to_node_keyword_separator(data),
         AnyTransport::Lambda(data) => transport_to_node_lambda(data),
         AnyTransport::LambdaParameters(data) => transport_to_node_lambda_parameters(data),
-        AnyTransport::LambdaWithinForInClause(data) => transport_to_node_lambda_within_for_in_clause(data),
+        AnyTransport::LambdaWithinForInClause(data) => {
+            transport_to_node_lambda_within_for_in_clause(data)
+        }
         AnyTransport::LineContinuation(data) => transport_to_node_line_continuation(data),
         AnyTransport::List(data) => transport_to_node_list(data),
         AnyTransport::ListComprehension(data) => transport_to_node_list_comprehension(data),
@@ -17770,8 +18721,12 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::NotOperator(data) => transport_to_node_not_operator(data),
         AnyTransport::Pair(data) => transport_to_node_pair(data),
         AnyTransport::Parameters(data) => transport_to_node_parameters(data),
-        AnyTransport::ParenthesizedExpression(data) => transport_to_node_parenthesized_expression(data),
-        AnyTransport::ParenthesizedListSplat(data) => transport_to_node_parenthesized_list_splat(data),
+        AnyTransport::ParenthesizedExpression(data) => {
+            transport_to_node_parenthesized_expression(data)
+        }
+        AnyTransport::ParenthesizedListSplat(data) => {
+            transport_to_node_parenthesized_list_splat(data)
+        }
         AnyTransport::PassStatement(data) => transport_to_node_pass_statement(data),
         AnyTransport::PatternList(data) => transport_to_node_pattern_list(data),
         AnyTransport::PositionalSeparator(data) => transport_to_node_positional_separator(data),
@@ -17795,7 +18750,9 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::TypeAliasStatement(data) => transport_to_node_type_alias_statement(data),
         AnyTransport::TypeConversion(data) => transport_to_node_type_conversion(data),
         AnyTransport::TypeParameter(data) => transport_to_node_type_parameter(data),
-        AnyTransport::TypedDefaultParameter(data) => transport_to_node_typed_default_parameter(data),
+        AnyTransport::TypedDefaultParameter(data) => {
+            transport_to_node_typed_default_parameter(data)
+        }
         AnyTransport::TypedParameter(data) => transport_to_node_typed_parameter(data),
         AnyTransport::UnaryOperator(data) => transport_to_node_unary_operator(data),
         AnyTransport::UnionPattern(data) => transport_to_node_union_pattern(data),
@@ -17873,26 +18830,156 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Pipe(data) => transport_to_node_pipe(data),
         AnyTransport::While(data) => transport_to_node_while(data),
         AnyTransport::With(data) => transport_to_node_with(data),
-        AnyTransport::Literal0_3c => Ok(transport_node_data(TransportKindId(65) /* "<" */, None, None, false, Some("<".to_string()), None, None, None, None, None, None)),
-        AnyTransport::Literal1_3c_3d => Ok(transport_node_data(TransportKindId(66) /* "<=" */, None, None, false, Some("<=".to_string()), None, None, None, None, None, None)),
-        AnyTransport::Literal2_3d_3d => Ok(transport_node_data(TransportKindId(67) /* "==" */, None, None, false, Some("==".to_string()), None, None, None, None, None, None)),
-        AnyTransport::Literal3_21_3d => Ok(transport_node_data(TransportKindId(68) /* "!=" */, None, None, false, Some("!=".to_string()), None, None, None, None, None, None)),
-        AnyTransport::Literal4_3e_3d => Ok(transport_node_data(TransportKindId(69) /* ">=" */, None, None, false, Some(">=".to_string()), None, None, None, None, None, None)),
-        AnyTransport::Literal5_3e => Ok(transport_node_data(TransportKindId(70) /* ">" */, None, None, false, Some(">".to_string()), None, None, None, None, None, None)),
-        AnyTransport::Literal6_3c_3e => Ok(transport_node_data(TransportKindId(71) /* "<>" */, None, None, false, Some("<>".to_string()), None, None, None, None, None, None)),
-        AnyTransport::Literal7_6e_6f_74_20_69_6e => Ok(transport_node_data(TransportKindId(193) /* "not in" */, None, None, false, Some("not in".to_string()), None, None, None, None, None, None)),
-        AnyTransport::Literal8_69_73 => Ok(transport_node_data(TransportKindId(64) /* "is" */, None, None, false, Some("is".to_string()), None, None, None, None, None, None)),
-        AnyTransport::Literal9_69_73_20_6e_6f_74 => Ok(transport_node_data(TransportKindId(194) /* "is not" */, None, None, false, Some("is not".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal0_3c => Ok(transport_node_data(
+            TransportKindId(65), /* "<" */
+            None,
+            None,
+            false,
+            Some("<".to_string()),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        )),
+        AnyTransport::Literal1_3c_3d => Ok(transport_node_data(
+            TransportKindId(66), /* "<=" */
+            None,
+            None,
+            false,
+            Some("<=".to_string()),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        )),
+        AnyTransport::Literal2_3d_3d => Ok(transport_node_data(
+            TransportKindId(67), /* "==" */
+            None,
+            None,
+            false,
+            Some("==".to_string()),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        )),
+        AnyTransport::Literal3_21_3d => Ok(transport_node_data(
+            TransportKindId(68), /* "!=" */
+            None,
+            None,
+            false,
+            Some("!=".to_string()),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        )),
+        AnyTransport::Literal4_3e_3d => Ok(transport_node_data(
+            TransportKindId(69), /* ">=" */
+            None,
+            None,
+            false,
+            Some(">=".to_string()),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        )),
+        AnyTransport::Literal5_3e => Ok(transport_node_data(
+            TransportKindId(70), /* ">" */
+            None,
+            None,
+            false,
+            Some(">".to_string()),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        )),
+        AnyTransport::Literal6_3c_3e => Ok(transport_node_data(
+            TransportKindId(71), /* "<>" */
+            None,
+            None,
+            false,
+            Some("<>".to_string()),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        )),
+        AnyTransport::Literal7_6e_6f_74_20_69_6e => Ok(transport_node_data(
+            TransportKindId(193), /* "not in" */
+            None,
+            None,
+            false,
+            Some("not in".to_string()),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        )),
+        AnyTransport::Literal8_69_73 => Ok(transport_node_data(
+            TransportKindId(64), /* "is" */
+            None,
+            None,
+            false,
+            Some("is".to_string()),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        )),
+        AnyTransport::Literal9_69_73_20_6e_6f_74 => Ok(transport_node_data(
+            TransportKindId(194), /* "is not" */
+            None,
+            None,
+            false,
+            Some("is not".to_string()),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        )),
     }
 }
 
-fn transport_to_node__as_pattern(transport: _AsPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node__as_pattern(
+    transport: _AsPatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![_as_pattern_child_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![
+        _as_pattern_child_transport_to_any(transport.children),
+    ])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(165) /* "_as_pattern" */,
+        TransportKindId(165), /* "_as_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -17906,14 +18993,25 @@ fn transport_to_node__as_pattern(transport: _AsPatternTransport) -> Result<Trans
     ))
 }
 
-fn transport_to_node_assignment_eq(transport: AssignmentEqTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_assignment_eq(
+    transport: AssignmentEqTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("right".to_string(), transport_field_value(right_hand_side_transport_to_any(transport.right))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "right".to_string(),
+        transport_field_value(right_hand_side_transport_to_any(transport.right))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(240) /* "_assignment_eq" */,
+        TransportKindId(240), /* "_assignment_eq" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -17927,14 +19025,25 @@ fn transport_to_node_assignment_eq(transport: AssignmentEqTransport) -> Result<T
     ))
 }
 
-fn transport_to_node_assignment_type(transport: AssignmentTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_assignment_type(
+    transport: AssignmentTypeTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("type".to_string(), transport_field_value(AnyTransport::Type(transport.type_))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "type".to_string(),
+        transport_field_value(AnyTransport::Type(transport.type_))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(241) /* "_assignment_type" */,
+        TransportKindId(241), /* "_assignment_type" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -17948,15 +19057,29 @@ fn transport_to_node_assignment_type(transport: AssignmentTypeTransport) -> Resu
     ))
 }
 
-fn transport_to_node_assignment_typed(transport: AssignmentTypedTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_assignment_typed(
+    transport: AssignmentTypedTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("type".to_string(), transport_field_value(AnyTransport::Type(transport.type_))?);
-    fields.insert("right".to_string(), transport_field_value(right_hand_side_transport_to_any(transport.right))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "type".to_string(),
+        transport_field_value(AnyTransport::Type(transport.type_))?,
+    );
+    fields.insert(
+        "right".to_string(),
+        transport_field_value(right_hand_side_transport_to_any(transport.right))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(242) /* "_assignment_typed" */,
+        TransportKindId(242), /* "_assignment_typed" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -17970,10 +19093,14 @@ fn transport_to_node_assignment_typed(transport: AssignmentTypedTransport) -> Re
     ))
 }
 
-fn transport_to_node_async_marker(transport: AsyncMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_async_marker(
+    transport: AsyncMarkerTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "_async_marker" — no parser symbol */,
+        TransportKindId(0), /* "_async_marker" — no parser symbol */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -17987,9 +19114,11 @@ fn transport_to_node_async_marker(transport: AsyncMarkerTransport) -> Result<Tra
     ))
 }
 
-fn transport_to_node_augmented_assignment_operator(transport: AugmentedAssignmentOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_augmented_assignment_operator(
+    transport: AugmentedAssignmentOperatorEnum,
+) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "_augmented_assignment_operator" — no parser symbol */,
+        TransportKindId(0), /* "_augmented_assignment_operator" — no parser symbol */
         None,
         None,
         true,
@@ -18003,13 +19132,27 @@ fn transport_to_node_augmented_assignment_operator(transport: AugmentedAssignmen
     ))
 }
 
-fn transport_to_node_comprehension_clauses(transport: ComprehensionClausesTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_comprehension_clauses(
+    transport: ComprehensionClausesTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| comprehension_clauses_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| comprehension_clauses_child_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(224) /* "_comprehension_clauses" */,
+        TransportKindId(224), /* "_comprehension_clauses" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18023,9 +19166,11 @@ fn transport_to_node_comprehension_clauses(transport: ComprehensionClausesTransp
     ))
 }
 
-fn transport_to_node__identifier(transport: _IdentifierEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node__identifier(
+    transport: _IdentifierEnum,
+) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "_identifier" — no parser symbol */,
+        TransportKindId(0), /* "_identifier" — no parser symbol */
         None,
         None,
         true,
@@ -18039,14 +19184,22 @@ fn transport_to_node__identifier(transport: _IdentifierEnum) -> Result<Transport
     ))
 }
 
-fn transport_to_node_import_list(transport: ImportListTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_import_list(
+    transport: ImportListTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("name".to_string(), transport_field_values(transport.name)?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(116) /* "_import_list" */,
+        TransportKindId(116), /* "_import_list" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18060,10 +19213,14 @@ fn transport_to_node_import_list(transport: ImportListTransport) -> Result<Trans
     ))
 }
 
-fn transport_to_node_is_not(transport: IsNotTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_is_not(
+    transport: IsNotTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(194) /* "_is_not" */,
+        TransportKindId(194), /* "_is_not" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18077,15 +19234,29 @@ fn transport_to_node_is_not(transport: IsNotTransport) -> Result<TransportNodeDa
     ))
 }
 
-fn transport_to_node_key_value_pattern(transport: KeyValuePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_key_value_pattern(
+    transport: KeyValuePatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("key".to_string(), transport_field_value(simple_pattern_transport_to_any(transport.key))?);
-    fields.insert("value".to_string(), transport_field_value(AnyTransport::CasePattern(transport.value))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "key".to_string(),
+        transport_field_value(simple_pattern_transport_to_any(transport.key))?,
+    );
+    fields.insert(
+        "value".to_string(),
+        transport_field_value(AnyTransport::CasePattern(transport.value))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(170) /* "_key_value_pattern" */,
+        TransportKindId(170), /* "_key_value_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18099,10 +19270,14 @@ fn transport_to_node_key_value_pattern(transport: KeyValuePatternTransport) -> R
     ))
 }
 
-fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_kw_async_marker(
+    transport: KwAsyncMarkerTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(250) /* "_kw_async_marker" */,
+        TransportKindId(250), /* "_kw_async_marker" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18116,10 +19291,14 @@ fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Resul
     ))
 }
 
-fn transport_to_node_kw_type(transport: KwTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_kw_type(
+    transport: KwTypeTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(251) /* "_kw_type" */,
+        TransportKindId(251), /* "_kw_type" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18133,13 +19312,27 @@ fn transport_to_node_kw_type(transport: KwTypeTransport) -> Result<TransportNode
     ))
 }
 
-fn transport_to_node__list_pattern(transport: _ListPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node__list_pattern(
+    transport: _ListPatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::CasePattern(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| AnyTransport::CasePattern(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(167) /* "_list_pattern" */,
+        TransportKindId(167), /* "_list_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18153,13 +19346,23 @@ fn transport_to_node__list_pattern(transport: _ListPatternTransport) -> Result<T
     ))
 }
 
-fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_match_block(
+    transport: MatchBlockTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::MatchBlockBlock(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![AnyTransport::MatchBlockBlock(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(135) /* "_match_block" */,
+        TransportKindId(135), /* "_match_block" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18173,14 +19376,31 @@ fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<Trans
     ))
 }
 
-fn transport_to_node_match_block_block(transport: MatchBlockBlockTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_match_block_block(
+    transport: MatchBlockBlockTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("alternative".to_string(), transport_field_values(transport.alternative.into_iter().map(|v| AnyTransport::CaseClause(v)).collect::<Vec<_>>())?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "alternative".to_string(),
+        transport_field_values(
+            transport
+                .alternative
+                .into_iter()
+                .map(|v| AnyTransport::CaseClause(v))
+                .collect::<Vec<_>>(),
+        )?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(246) /* "_match_block_block" */,
+        TransportKindId(246), /* "_match_block_block" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18194,10 +19414,14 @@ fn transport_to_node_match_block_block(transport: MatchBlockBlockTransport) -> R
     ))
 }
 
-fn transport_to_node_not_escape_sequence(transport: NotEscapeSequenceTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_not_escape_sequence(
+    transport: NotEscapeSequenceTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(235) /* "_not_escape_sequence" */,
+        TransportKindId(235), /* "_not_escape_sequence" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18211,10 +19435,14 @@ fn transport_to_node_not_escape_sequence(transport: NotEscapeSequenceTransport) 
     ))
 }
 
-fn transport_to_node_not_in(transport: NotInTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_not_in(
+    transport: NotInTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(193) /* "_not_in" */,
+        TransportKindId(193), /* "_not_in" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18228,13 +19456,23 @@ fn transport_to_node_not_in(transport: NotInTransport) -> Result<TransportNodeDa
     ))
 }
 
-fn transport_to_node_simple_pattern_negative(transport: SimplePatternNegativeTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_simple_pattern_negative(
+    transport: SimplePatternNegativeTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![primary_expression_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![
+        primary_expression_transport_to_any(transport.children),
+    ])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(248) /* "_simple_pattern_negative" */,
+        TransportKindId(248), /* "_simple_pattern_negative" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18248,13 +19486,27 @@ fn transport_to_node_simple_pattern_negative(transport: SimplePatternNegativeTra
     ))
 }
 
-fn transport_to_node_simple_statements(transport: SimpleStatementsTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_simple_statements(
+    transport: SimpleStatementsTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| simple_statement_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| simple_statement_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(110) /* "_simple_statements" */,
+        TransportKindId(110), /* "_simple_statements" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18268,13 +19520,23 @@ fn transport_to_node_simple_statements(transport: SimpleStatementsTransport) -> 
     ))
 }
 
-fn transport_to_node_suite(transport: SuiteTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_suite(
+    transport: SuiteTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![suite_child_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![suite_child_transport_to_any(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "_suite" — no parser symbol */,
+        TransportKindId(0), /* "_suite" — no parser symbol */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18288,13 +19550,27 @@ fn transport_to_node_suite(transport: SuiteTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node__tuple_pattern(transport: _TuplePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node__tuple_pattern(
+    transport: _TuplePatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::CasePattern(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| AnyTransport::CasePattern(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(168) /* "_tuple_pattern" */,
+        TransportKindId(168), /* "_tuple_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18308,9 +19584,11 @@ fn transport_to_node__tuple_pattern(transport: _TuplePatternTransport) -> Result
     ))
 }
 
-fn transport_to_node_unary_operator_operator(transport: UnaryOperatorOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_unary_operator_operator(
+    transport: UnaryOperatorOperatorEnum,
+) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
-        TransportKindId(0) /* "_unary_operator_operator" — no parser symbol */,
+        TransportKindId(0), /* "_unary_operator_operator" — no parser symbol */
         None,
         None,
         true,
@@ -18324,13 +19602,27 @@ fn transport_to_node_unary_operator_operator(transport: UnaryOperatorOperatorEnu
     ))
 }
 
-fn transport_to_node__with_clause_paren(transport: _WithClauseParenTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node__with_clause_paren(
+    transport: _WithClauseParenTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::WithItem(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| AnyTransport::WithItem(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(245) /* "_with_clause_paren" */,
+        TransportKindId(245), /* "_with_clause_paren" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18344,15 +19636,29 @@ fn transport_to_node__with_clause_paren(transport: _WithClauseParenTransport) ->
     ))
 }
 
-fn transport_to_node_aliased_import(transport: AliasedImportTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_aliased_import(
+    transport: AliasedImportTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(AnyTransport::DottedName(transport.name))?);
-    fields.insert("alias".to_string(), transport_field_value(AnyTransport::Identifier(transport.alias))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "name".to_string(),
+        transport_field_value(AnyTransport::DottedName(transport.name))?,
+    );
+    fields.insert(
+        "alias".to_string(),
+        transport_field_value(AnyTransport::Identifier(transport.alias))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(117) /* "aliased_import" */,
+        TransportKindId(117), /* "aliased_import" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18366,16 +19672,28 @@ fn transport_to_node_aliased_import(transport: AliasedImportTransport) -> Result
     ))
 }
 
-fn transport_to_node_argument_list(transport: ArgumentListTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_argument_list(
+    transport: ArgumentListTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = match transport.children {
-        Some(c) => Some(transport_children(c.into_iter().map(|v| argument_list_child_transport_to_any(v)).collect::<Vec<_>>())?),
+        Some(c) => Some(transport_children(
+            c.into_iter()
+                .map(|v| argument_list_child_transport_to_any(v))
+                .collect::<Vec<_>>(),
+        )?),
         None => None,
     };
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(157) /* "argument_list" */,
+        TransportKindId(157), /* "argument_list" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18389,15 +19707,29 @@ fn transport_to_node_argument_list(transport: ArgumentListTransport) -> Result<T
     ))
 }
 
-fn transport_to_node_as_pattern(transport: AsPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_as_pattern(
+    transport: AsPatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
-    fields.insert("alias".to_string(), transport_field_value(*transport.alias)?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "expression".to_string(),
+        transport_field_value(expression_transport_to_any(transport.expression))?,
+    );
+    fields.insert(
+        "alias".to_string(),
+        transport_field_value(*transport.alias)?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(185) /* "as_pattern" */,
+        TransportKindId(185), /* "as_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18411,13 +19743,27 @@ fn transport_to_node_as_pattern(transport: AsPatternTransport) -> Result<Transpo
     ))
 }
 
-fn transport_to_node_assert_statement(transport: AssertStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_assert_statement(
+    transport: AssertStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| expression_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(121) /* "assert_statement" */,
+        TransportKindId(121), /* "assert_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18431,22 +19777,41 @@ fn transport_to_node_assert_statement(transport: AssertStatementTransport) -> Re
     ))
 }
 
-fn transport_to_node_assignment(transport: AssignmentTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_assignment(
+    transport: AssignmentTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     match transport {
         AssignmentTransport::AssignmentUFormEq(data) => transport_to_node_assignment_uform_eq(data),
-        AssignmentTransport::AssignmentUFormType(data) => transport_to_node_assignment_uform_type(data),
-        AssignmentTransport::AssignmentUFormTyped(data) => transport_to_node_assignment_uform_typed(data),
+        AssignmentTransport::AssignmentUFormType(data) => {
+            transport_to_node_assignment_uform_type(data)
+        }
+        AssignmentTransport::AssignmentUFormTyped(data) => {
+            transport_to_node_assignment_uform_typed(data)
+        }
     }
 }
 
-fn transport_to_node_assignment_uform_eq(transport: AssignmentUFormEqTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_assignment_uform_eq(
+    transport: AssignmentUFormEqTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::AssignmentEq(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    fields.insert(
+        "left".to_string(),
+        transport_field_value(left_hand_side_transport_to_any(transport.left))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![AnyTransport::AssignmentEq(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(198) /* "assignment" */,
+        TransportKindId(198), /* "assignment" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18460,14 +19825,27 @@ fn transport_to_node_assignment_uform_eq(transport: AssignmentUFormEqTransport) 
     ))
 }
 
-fn transport_to_node_assignment_uform_type(transport: AssignmentUFormTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_assignment_uform_type(
+    transport: AssignmentUFormTypeTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::AssignmentType(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    fields.insert(
+        "left".to_string(),
+        transport_field_value(left_hand_side_transport_to_any(transport.left))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![AnyTransport::AssignmentType(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(198) /* "assignment" */,
+        TransportKindId(198), /* "assignment" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18481,14 +19859,27 @@ fn transport_to_node_assignment_uform_type(transport: AssignmentUFormTypeTranspo
     ))
 }
 
-fn transport_to_node_assignment_uform_typed(transport: AssignmentUFormTypedTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_assignment_uform_typed(
+    transport: AssignmentUFormTypedTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::AssignmentTyped(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    fields.insert(
+        "left".to_string(),
+        transport_field_value(left_hand_side_transport_to_any(transport.left))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![AnyTransport::AssignmentTyped(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(198) /* "assignment" */,
+        TransportKindId(198), /* "assignment" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18502,15 +19893,29 @@ fn transport_to_node_assignment_uform_typed(transport: AssignmentUFormTypedTrans
     ))
 }
 
-fn transport_to_node_attribute(transport: AttributeTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_attribute(
+    transport: AttributeTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("object".to_string(), transport_field_value(primary_expression_transport_to_any(transport.object))?);
-    fields.insert("attribute".to_string(), transport_field_value(AnyTransport::Identifier(transport.attribute))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "object".to_string(),
+        transport_field_value(primary_expression_transport_to_any(transport.object))?,
+    );
+    fields.insert(
+        "attribute".to_string(),
+        transport_field_value(AnyTransport::Identifier(transport.attribute))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(203) /* "attribute" */,
+        TransportKindId(203), /* "attribute" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18524,16 +19929,35 @@ fn transport_to_node_attribute(transport: AttributeTransport) -> Result<Transpor
     ))
 }
 
-fn transport_to_node_augmented_assignment(transport: AugmentedAssignmentTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_augmented_assignment(
+    transport: AugmentedAssignmentTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
-    fields.insert("operator".to_string(), transport_field_value(AnyTransport::AugmentedAssignmentOperator(transport.operator))?);
-    fields.insert("right".to_string(), transport_field_value(right_hand_side_transport_to_any(transport.right))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "left".to_string(),
+        transport_field_value(left_hand_side_transport_to_any(transport.left))?,
+    );
+    fields.insert(
+        "operator".to_string(),
+        transport_field_value(AnyTransport::AugmentedAssignmentOperator(
+            transport.operator,
+        ))?,
+    );
+    fields.insert(
+        "right".to_string(),
+        transport_field_value(right_hand_side_transport_to_any(transport.right))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(199) /* "augmented_assignment" */,
+        TransportKindId(199), /* "augmented_assignment" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18547,14 +19971,27 @@ fn transport_to_node_augmented_assignment(transport: AugmentedAssignmentTranspor
     ))
 }
 
-fn transport_to_node_await(transport: AwaitTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_await(
+    transport: AwaitTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("primary_expression".to_string(), transport_field_value(primary_expression_transport_to_any(transport.primary_expression))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "primary_expression".to_string(),
+        transport_field_value(primary_expression_transport_to_any(
+            transport.primary_expression,
+        ))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(237) /* "await" */,
+        TransportKindId(237), /* "await" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18568,16 +20005,33 @@ fn transport_to_node_await(transport: AwaitTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_binary_operator(transport: BinaryOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_binary_operator(
+    transport: BinaryOperatorTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("left".to_string(), transport_field_value(primary_expression_transport_to_any(transport.left))?);
-    fields.insert("operator".to_string(), transport_field_value(*transport.operator)?);
-    fields.insert("right".to_string(), transport_field_value(primary_expression_transport_to_any(transport.right))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "left".to_string(),
+        transport_field_value(primary_expression_transport_to_any(transport.left))?,
+    );
+    fields.insert(
+        "operator".to_string(),
+        transport_field_value(*transport.operator)?,
+    );
+    fields.insert(
+        "right".to_string(),
+        transport_field_value(primary_expression_transport_to_any(transport.right))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(191) /* "binary_operator" */,
+        TransportKindId(191), /* "binary_operator" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18591,13 +20045,27 @@ fn transport_to_node_binary_operator(transport: BinaryOperatorTransport) -> Resu
     ))
 }
 
-fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_block(
+    transport: BlockTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| statement_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| statement_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(160) /* "block" */,
+        TransportKindId(160), /* "block" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18611,16 +20079,33 @@ fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_boolean_operator(transport: BooleanOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_boolean_operator(
+    transport: BooleanOperatorTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("left".to_string(), transport_field_value(expression_transport_to_any(transport.left))?);
-    fields.insert("operator".to_string(), transport_field_value(*transport.operator)?);
-    fields.insert("right".to_string(), transport_field_value(expression_transport_to_any(transport.right))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "left".to_string(),
+        transport_field_value(expression_transport_to_any(transport.left))?,
+    );
+    fields.insert(
+        "operator".to_string(),
+        transport_field_value(*transport.operator)?,
+    );
+    fields.insert(
+        "right".to_string(),
+        transport_field_value(expression_transport_to_any(transport.right))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(190) /* "boolean_operator" */,
+        TransportKindId(190), /* "boolean_operator" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18634,10 +20119,14 @@ fn transport_to_node_boolean_operator(transport: BooleanOperatorTransport) -> Re
     ))
 }
 
-fn transport_to_node_break_statement(transport: BreakStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_break_statement(
+    transport: BreakStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(129) /* "break_statement" */,
+        TransportKindId(129), /* "break_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18653,13 +20142,25 @@ fn transport_to_node_break_statement(transport: BreakStatementTransport) -> Resu
 
 fn transport_to_node_call(transport: CallTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("function".to_string(), transport_field_value(primary_expression_transport_to_any(transport.function))?);
-    fields.insert("arguments".to_string(), transport_field_value(*transport.arguments)?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "function".to_string(),
+        transport_field_value(primary_expression_transport_to_any(transport.function))?,
+    );
+    fields.insert(
+        "arguments".to_string(),
+        transport_field_value(*transport.arguments)?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(206) /* "call" */,
+        TransportKindId(206), /* "call" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18673,17 +20174,37 @@ fn transport_to_node_call(transport: CallTransport) -> Result<TransportNodeData,
     ))
 }
 
-fn transport_to_node_case_clause(transport: CaseClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_case_clause(
+    transport: CaseClauseTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.guard {
-        fields.insert("guard".to_string(), transport_field_value(AnyTransport::IfClause(value))?);
+        fields.insert(
+            "guard".to_string(),
+            transport_field_value(AnyTransport::IfClause(value))?,
+        );
     }
-    fields.insert("consequence".to_string(), transport_field_value(AnyTransport::Suite(transport.consequence))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::CasePattern(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    fields.insert(
+        "consequence".to_string(),
+        transport_field_value(AnyTransport::Suite(transport.consequence))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| AnyTransport::CasePattern(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(136) /* "case_clause" */,
+        TransportKindId(136), /* "case_clause" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18697,13 +20218,23 @@ fn transport_to_node_case_clause(transport: CaseClauseTransport) -> Result<Trans
     ))
 }
 
-fn transport_to_node_case_pattern(transport: CasePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_case_pattern(
+    transport: CasePatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![case_pattern_child_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![
+        case_pattern_child_transport_to_any(transport.children),
+    ])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(163) /* "case_pattern" */,
+        TransportKindId(163), /* "case_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18717,14 +20248,25 @@ fn transport_to_node_case_pattern(transport: CasePatternTransport) -> Result<Tra
     ))
 }
 
-fn transport_to_node_chevron(transport: ChevronTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_chevron(
+    transport: ChevronTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "expression".to_string(),
+        transport_field_value(expression_transport_to_any(transport.expression))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(120) /* "chevron" */,
+        TransportKindId(120), /* "chevron" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18738,21 +20280,41 @@ fn transport_to_node_chevron(transport: ChevronTransport) -> Result<TransportNod
     ))
 }
 
-fn transport_to_node_class_definition(transport: ClassDefinitionTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_class_definition(
+    transport: ClassDefinitionTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(AnyTransport::Identifier(transport.name))?);
+    fields.insert(
+        "name".to_string(),
+        transport_field_value(AnyTransport::Identifier(transport.name))?,
+    );
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(AnyTransport::TypeParameter(value))?);
+        fields.insert(
+            "type_parameters".to_string(),
+            transport_field_value(AnyTransport::TypeParameter(value))?,
+        );
     }
     if let Some(value) = transport.superclasses {
-        fields.insert("superclasses".to_string(), transport_field_value(AnyTransport::ArgumentList(value))?);
+        fields.insert(
+            "superclasses".to_string(),
+            transport_field_value(AnyTransport::ArgumentList(value))?,
+        );
     }
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(AnyTransport::Suite(transport.body))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(154) /* "class_definition" */,
+        TransportKindId(154), /* "class_definition" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18766,15 +20328,35 @@ fn transport_to_node_class_definition(transport: ClassDefinitionTransport) -> Re
     ))
 }
 
-fn transport_to_node_class_pattern(transport: ClassPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_class_pattern(
+    transport: ClassPatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("dotted_name".to_string(), transport_field_value(AnyTransport::DottedName(transport.dotted_name))?);
-    fields.insert("arguments".to_string(), transport_field_values(transport.arguments.into_iter().map(|v| AnyTransport::CasePattern(v)).collect::<Vec<_>>())?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "dotted_name".to_string(),
+        transport_field_value(AnyTransport::DottedName(transport.dotted_name))?,
+    );
+    fields.insert(
+        "arguments".to_string(),
+        transport_field_values(
+            transport
+                .arguments
+                .into_iter()
+                .map(|v| AnyTransport::CasePattern(v))
+                .collect::<Vec<_>>(),
+        )?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(173) /* "class_pattern" */,
+        TransportKindId(173), /* "class_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18788,10 +20370,14 @@ fn transport_to_node_class_pattern(transport: ClassPatternTransport) -> Result<T
     ))
 }
 
-fn transport_to_node_comment(transport: CommentTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_comment(
+    transport: CommentTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(99) /* "comment" */,
+        TransportKindId(99), /* "comment" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18805,15 +20391,35 @@ fn transport_to_node_comment(transport: CommentTransport) -> Result<TransportNod
     ))
 }
 
-fn transport_to_node_comparison_operator(transport: ComparisonOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_comparison_operator(
+    transport: ComparisonOperatorTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("left".to_string(), transport_field_value(primary_expression_transport_to_any(transport.left))?);
-    fields.insert("operators".to_string(), transport_field_values(transport.operators)?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| primary_expression_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    fields.insert(
+        "left".to_string(),
+        transport_field_value(primary_expression_transport_to_any(transport.left))?,
+    );
+    fields.insert(
+        "operators".to_string(),
+        transport_field_values(transport.operators)?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| primary_expression_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(195) /* "comparison_operator" */,
+        TransportKindId(195), /* "comparison_operator" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18827,17 +20433,30 @@ fn transport_to_node_comparison_operator(transport: ComparisonOperatorTransport)
     ))
 }
 
-fn transport_to_node_complex_pattern(transport: ComplexPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_complex_pattern(
+    transport: ComplexPatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.real {
         fields.insert("real".to_string(), transport_field_value(*value)?);
     }
-    fields.insert("imaginary".to_string(), transport_field_value(primary_expression_transport_to_any(transport.imaginary))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![primary_expression_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    fields.insert(
+        "imaginary".to_string(),
+        transport_field_value(primary_expression_transport_to_any(transport.imaginary))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![
+        primary_expression_transport_to_any(transport.children),
+    ])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(174) /* "complex_pattern" */,
+        TransportKindId(174), /* "complex_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18851,13 +20470,27 @@ fn transport_to_node_complex_pattern(transport: ComplexPatternTransport) -> Resu
     ))
 }
 
-fn transport_to_node_concatenated_string(transport: ConcatenatedStringTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_concatenated_string(
+    transport: ConcatenatedStringTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::String(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| AnyTransport::String(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(230) /* "concatenated_string" */,
+        TransportKindId(230), /* "concatenated_string" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18871,16 +20504,33 @@ fn transport_to_node_concatenated_string(transport: ConcatenatedStringTransport)
     ))
 }
 
-fn transport_to_node_conditional_expression(transport: ConditionalExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_conditional_expression(
+    transport: ConditionalExpressionTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
-    fields.insert("condition".to_string(), transport_field_value(expression_transport_to_any(transport.condition))?);
-    fields.insert("alternative".to_string(), transport_field_value(expression_transport_to_any(transport.alternative))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(expression_transport_to_any(transport.body))?,
+    );
+    fields.insert(
+        "condition".to_string(),
+        transport_field_value(expression_transport_to_any(transport.condition))?,
+    );
+    fields.insert(
+        "alternative".to_string(),
+        transport_field_value(expression_transport_to_any(transport.alternative))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(229) /* "conditional_expression" */,
+        TransportKindId(229), /* "conditional_expression" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18894,15 +20544,29 @@ fn transport_to_node_conditional_expression(transport: ConditionalExpressionTran
     ))
 }
 
-fn transport_to_node_constrained_type(transport: ConstrainedTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_constrained_type(
+    transport: ConstrainedTypeTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("base_type".to_string(), transport_field_value(AnyTransport::Type(transport.base_type))?);
-    fields.insert("constraint".to_string(), transport_field_value(AnyTransport::Type(transport.constraint))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "base_type".to_string(),
+        transport_field_value(AnyTransport::Type(transport.base_type))?,
+    );
+    fields.insert(
+        "constraint".to_string(),
+        transport_field_value(AnyTransport::Type(transport.constraint))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(212) /* "constrained_type" */,
+        TransportKindId(212), /* "constrained_type" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18916,10 +20580,14 @@ fn transport_to_node_constrained_type(transport: ConstrainedTypeTransport) -> Re
     ))
 }
 
-fn transport_to_node_continue_statement(transport: ContinueStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_continue_statement(
+    transport: ContinueStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(130) /* "continue_statement" */,
+        TransportKindId(130), /* "continue_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18933,14 +20601,31 @@ fn transport_to_node_continue_statement(transport: ContinueStatementTransport) -
     ))
 }
 
-fn transport_to_node_decorated_definition(transport: DecoratedDefinitionTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_decorated_definition(
+    transport: DecoratedDefinitionTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("definition".to_string(), transport_field_value(compound_statement_transport_to_any(transport.definition))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Decorator(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    fields.insert(
+        "definition".to_string(),
+        transport_field_value(compound_statement_transport_to_any(transport.definition))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| AnyTransport::Decorator(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(158) /* "decorated_definition" */,
+        TransportKindId(158), /* "decorated_definition" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18954,17 +20639,28 @@ fn transport_to_node_decorated_definition(transport: DecoratedDefinitionTranspor
     ))
 }
 
-fn transport_to_node_decorator(transport: DecoratorTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_decorator(
+    transport: DecoratorTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
+    fields.insert(
+        "expression".to_string(),
+        transport_field_value(expression_transport_to_any(transport.expression))?,
+    );
     if let Some(value) = transport.newline {
         fields.insert("newline".to_string(), transport_field_value(*value)?);
     }
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(159) /* "decorator" */,
+        TransportKindId(159), /* "decorator" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -18978,15 +20674,29 @@ fn transport_to_node_decorator(transport: DecoratorTransport) -> Result<Transpor
     ))
 }
 
-fn transport_to_node_default_parameter(transport: DefaultParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_default_parameter(
+    transport: DefaultParameterTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(pattern_transport_to_any(transport.name))?);
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "name".to_string(),
+        transport_field_value(pattern_transport_to_any(transport.name))?,
+    );
+    fields.insert(
+        "value".to_string(),
+        transport_field_value(expression_transport_to_any(transport.value))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(181) /* "default_parameter" */,
+        TransportKindId(181), /* "default_parameter" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19000,13 +20710,23 @@ fn transport_to_node_default_parameter(transport: DefaultParameterTransport) -> 
     ))
 }
 
-fn transport_to_node_delete_statement(transport: DeleteStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_delete_statement(
+    transport: DeleteStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![expressions_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![expressions_transport_to_any(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(126) /* "delete_statement" */,
+        TransportKindId(126), /* "delete_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19020,13 +20740,27 @@ fn transport_to_node_delete_statement(transport: DeleteStatementTransport) -> Re
     ))
 }
 
-fn transport_to_node_dict_pattern(transport: DictPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_dict_pattern(
+    transport: DictPatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| dict_pattern_kv_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| dict_pattern_kv_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(169) /* "dict_pattern" */,
+        TransportKindId(169), /* "dict_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19040,13 +20774,27 @@ fn transport_to_node_dict_pattern(transport: DictPatternTransport) -> Result<Tra
     ))
 }
 
-fn transport_to_node_dictionary(transport: DictionaryTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_dictionary(
+    transport: DictionaryTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| dictionary_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| dictionary_child_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(218) /* "dictionary" */,
+        TransportKindId(218), /* "dictionary" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19060,14 +20808,27 @@ fn transport_to_node_dictionary(transport: DictionaryTransport) -> Result<Transp
     ))
 }
 
-fn transport_to_node_dictionary_comprehension(transport: DictionaryComprehensionTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_dictionary_comprehension(
+    transport: DictionaryComprehensionTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Pair(transport.body))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::ComprehensionClauses(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(AnyTransport::Pair(transport.body))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![
+        AnyTransport::ComprehensionClauses(transport.children),
+    ])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(221) /* "dictionary_comprehension" */,
+        TransportKindId(221), /* "dictionary_comprehension" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19081,14 +20842,25 @@ fn transport_to_node_dictionary_comprehension(transport: DictionaryComprehension
     ))
 }
 
-fn transport_to_node_dictionary_splat(transport: DictionarySplatTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_dictionary_splat(
+    transport: DictionarySplatTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "expression".to_string(),
+        transport_field_value(expression_transport_to_any(transport.expression))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(149) /* "dictionary_splat" */,
+        TransportKindId(149), /* "dictionary_splat" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19102,13 +20874,23 @@ fn transport_to_node_dictionary_splat(transport: DictionarySplatTransport) -> Re
     ))
 }
 
-fn transport_to_node_dictionary_splat_pattern(transport: DictionarySplatPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_dictionary_splat_pattern(
+    transport: DictionarySplatPatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![pattern_transport_to_any(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(184) /* "dictionary_splat_pattern" */,
+        TransportKindId(184), /* "dictionary_splat_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19122,13 +20904,27 @@ fn transport_to_node_dictionary_splat_pattern(transport: DictionarySplatPatternT
     ))
 }
 
-fn transport_to_node_dotted_name(transport: DottedNameTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_dotted_name(
+    transport: DottedNameTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Identifier(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| AnyTransport::Identifier(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(162) /* "dotted_name" */,
+        TransportKindId(162), /* "dotted_name" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19142,15 +20938,29 @@ fn transport_to_node_dotted_name(transport: DottedNameTransport) -> Result<Trans
     ))
 }
 
-fn transport_to_node_elif_clause(transport: ElifClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_elif_clause(
+    transport: ElifClauseTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("condition".to_string(), transport_field_value(expression_transport_to_any(transport.condition))?);
-    fields.insert("consequence".to_string(), transport_field_value(AnyTransport::Suite(transport.consequence))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "condition".to_string(),
+        transport_field_value(expression_transport_to_any(transport.condition))?,
+    );
+    fields.insert(
+        "consequence".to_string(),
+        transport_field_value(AnyTransport::Suite(transport.consequence))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(132) /* "elif_clause" */,
+        TransportKindId(132), /* "elif_clause" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19164,10 +20974,14 @@ fn transport_to_node_elif_clause(transport: ElifClauseTransport) -> Result<Trans
     ))
 }
 
-fn transport_to_node_ellipsis2(transport: Ellipsis2Transport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_ellipsis2(
+    transport: Ellipsis2Transport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(87) /* "ellipsis" */,
+        TransportKindId(87), /* "ellipsis" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19181,14 +20995,25 @@ fn transport_to_node_ellipsis2(transport: Ellipsis2Transport) -> Result<Transpor
     ))
 }
 
-fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_else_clause(
+    transport: ElseClauseTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(AnyTransport::Suite(transport.body))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(133) /* "else_clause" */,
+        TransportKindId(133), /* "else_clause" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19202,10 +21027,14 @@ fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<Trans
     ))
 }
 
-fn transport_to_node_escape_sequence(transport: EscapeSequenceTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_escape_sequence(
+    transport: EscapeSequenceTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(89) /* "escape_sequence" */,
+        TransportKindId(89), /* "escape_sequence" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19219,19 +21048,40 @@ fn transport_to_node_escape_sequence(transport: EscapeSequenceTransport) -> Resu
     ))
 }
 
-fn transport_to_node_except_clause(transport: ExceptClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_except_clause(
+    transport: ExceptClauseTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.value {
-        fields.insert("value".to_string(), transport_field_values(value.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
+        fields.insert(
+            "value".to_string(),
+            transport_field_values(
+                value
+                    .into_iter()
+                    .map(|v| expression_transport_to_any(v))
+                    .collect::<Vec<_>>(),
+            )?,
+        );
     }
     if let Some(value) = transport.alias {
-        fields.insert("alias".to_string(), transport_field_value(expression_transport_to_any(value))?);
+        fields.insert(
+            "alias".to_string(),
+            transport_field_value(expression_transport_to_any(value))?,
+        );
     }
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::Suite(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![AnyTransport::Suite(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(140) /* "except_clause" */,
+        TransportKindId(140), /* "except_clause" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19245,17 +21095,36 @@ fn transport_to_node_except_clause(transport: ExceptClauseTransport) -> Result<T
     ))
 }
 
-fn transport_to_node_exec_statement(transport: ExecStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_exec_statement(
+    transport: ExecStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("code".to_string(), transport_field_value(primary_expression_transport_to_any(transport.code))?);
+    fields.insert(
+        "code".to_string(),
+        transport_field_value(primary_expression_transport_to_any(transport.code))?,
+    );
     if let Some(value) = transport.in_clause {
-        fields.insert("in_clause".to_string(), transport_field_values(value.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
+        fields.insert(
+            "in_clause".to_string(),
+            transport_field_values(
+                value
+                    .into_iter()
+                    .map(|v| expression_transport_to_any(v))
+                    .collect::<Vec<_>>(),
+            )?,
+        );
     }
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(152) /* "exec_statement" */,
+        TransportKindId(152), /* "exec_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19269,13 +21138,27 @@ fn transport_to_node_exec_statement(transport: ExecStatementTransport) -> Result
     ))
 }
 
-fn transport_to_node_expression_list(transport: ExpressionListTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_expression_list(
+    transport: ExpressionListTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| expression_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(161) /* "expression_list" */,
+        TransportKindId(161), /* "expression_list" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19289,13 +21172,27 @@ fn transport_to_node_expression_list(transport: ExpressionListTransport) -> Resu
     ))
 }
 
-fn transport_to_node_expression_statement_tuple(transport: ExpressionStatementTupleTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_expression_statement_tuple(
+    transport: ExpressionStatementTupleTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| expression_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(243) /* "expression_statement_tuple" */,
+        TransportKindId(243), /* "expression_statement_tuple" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19309,23 +21206,45 @@ fn transport_to_node_expression_statement_tuple(transport: ExpressionStatementTu
     ))
 }
 
-fn transport_to_node_expression_statement(transport: ExpressionStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_expression_statement(
+    transport: ExpressionStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     match transport {
-        ExpressionStatementTransport::ExpressionStatementUFormExpression(data) => transport_to_node_expression_statement_uform_expression(data),
-        ExpressionStatementTransport::ExpressionStatementUFormTuple(data) => transport_to_node_expression_statement_uform_tuple(data),
-        ExpressionStatementTransport::ExpressionStatementUFormAssignment(data) => transport_to_node_expression_statement_uform_assignment(data),
-        ExpressionStatementTransport::ExpressionStatementUFormAugmentedAssignment(data) => transport_to_node_expression_statement_uform_augmented_assignment(data),
-        ExpressionStatementTransport::ExpressionStatementUFormYield(data) => transport_to_node_expression_statement_uform_yield(data),
+        ExpressionStatementTransport::ExpressionStatementUFormExpression(data) => {
+            transport_to_node_expression_statement_uform_expression(data)
+        }
+        ExpressionStatementTransport::ExpressionStatementUFormTuple(data) => {
+            transport_to_node_expression_statement_uform_tuple(data)
+        }
+        ExpressionStatementTransport::ExpressionStatementUFormAssignment(data) => {
+            transport_to_node_expression_statement_uform_assignment(data)
+        }
+        ExpressionStatementTransport::ExpressionStatementUFormAugmentedAssignment(data) => {
+            transport_to_node_expression_statement_uform_augmented_assignment(data)
+        }
+        ExpressionStatementTransport::ExpressionStatementUFormYield(data) => {
+            transport_to_node_expression_statement_uform_yield(data)
+        }
     }
 }
 
-fn transport_to_node_expression_statement_uform_expression(transport: ExpressionStatementUFormExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_expression_statement_uform_expression(
+    transport: ExpressionStatementUFormExpressionTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![expression_transport_to_any(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(122) /* "expression_statement" */,
+        TransportKindId(122), /* "expression_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19339,13 +21258,21 @@ fn transport_to_node_expression_statement_uform_expression(transport: Expression
     ))
 }
 
-fn transport_to_node_expression_statement_uform_tuple(transport: ExpressionStatementUFormTupleTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_expression_statement_uform_tuple(
+    transport: ExpressionStatementUFormTupleTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = Some(transport_children(vec![*transport.children])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(122) /* "expression_statement" */,
+        TransportKindId(122), /* "expression_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19359,13 +21286,21 @@ fn transport_to_node_expression_statement_uform_tuple(transport: ExpressionState
     ))
 }
 
-fn transport_to_node_expression_statement_uform_assignment(transport: ExpressionStatementUFormAssignmentTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_expression_statement_uform_assignment(
+    transport: ExpressionStatementUFormAssignmentTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = Some(transport_children(vec![*transport.children])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(122) /* "expression_statement" */,
+        TransportKindId(122), /* "expression_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19379,13 +21314,23 @@ fn transport_to_node_expression_statement_uform_assignment(transport: Expression
     ))
 }
 
-fn transport_to_node_expression_statement_uform_augmented_assignment(transport: ExpressionStatementUFormAugmentedAssignmentTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_expression_statement_uform_augmented_assignment(
+    transport: ExpressionStatementUFormAugmentedAssignmentTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::AugmentedAssignment(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![
+        AnyTransport::AugmentedAssignment(transport.children),
+    ])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(122) /* "expression_statement" */,
+        TransportKindId(122), /* "expression_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19399,13 +21344,23 @@ fn transport_to_node_expression_statement_uform_augmented_assignment(transport: 
     ))
 }
 
-fn transport_to_node_expression_statement_uform_yield(transport: ExpressionStatementUFormYieldTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_expression_statement_uform_yield(
+    transport: ExpressionStatementUFormYieldTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::Yield(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![AnyTransport::Yield(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(122) /* "expression_statement" */,
+        TransportKindId(122), /* "expression_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19419,10 +21374,14 @@ fn transport_to_node_expression_statement_uform_yield(transport: ExpressionState
     ))
 }
 
-fn transport_to_node_false(transport: FalseTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_false(
+    transport: FalseTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(97) /* "false" */,
+        TransportKindId(97), /* "false" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19436,14 +21395,25 @@ fn transport_to_node_false(transport: FalseTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_finally_clause(transport: FinallyClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_finally_clause(
+    transport: FinallyClauseTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("block".to_string(), transport_field_value(AnyTransport::Suite(transport.block))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "block".to_string(),
+        transport_field_value(AnyTransport::Suite(transport.block))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(141) /* "finally_clause" */,
+        TransportKindId(141), /* "finally_clause" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19457,10 +21427,14 @@ fn transport_to_node_finally_clause(transport: FinallyClauseTransport) -> Result
     ))
 }
 
-fn transport_to_node_float(transport: FloatTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_float(
+    transport: FloatTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(94) /* "float" */,
+        TransportKindId(94), /* "float" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19474,18 +21448,41 @@ fn transport_to_node_float(transport: FloatTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_for_in_clause(transport: ForInClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_for_in_clause(
+    transport: ForInClauseTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(AnyTransport::AsyncMarker(value))?);
+        fields.insert(
+            "async_marker".to_string(),
+            transport_field_value(AnyTransport::AsyncMarker(value))?,
+        );
     }
-    fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
-    fields.insert("right".to_string(), transport_field_values(transport.right.into_iter().map(|v| expression_within_for_in_clause_transport_to_any(v)).collect::<Vec<_>>())?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "left".to_string(),
+        transport_field_value(left_hand_side_transport_to_any(transport.left))?,
+    );
+    fields.insert(
+        "right".to_string(),
+        transport_field_values(
+            transport
+                .right
+                .into_iter()
+                .map(|v| expression_within_for_in_clause_transport_to_any(v))
+                .collect::<Vec<_>>(),
+        )?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(227) /* "for_in_clause" */,
+        TransportKindId(227), /* "for_in_clause" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19499,22 +21496,45 @@ fn transport_to_node_for_in_clause(transport: ForInClauseTransport) -> Result<Tr
     ))
 }
 
-fn transport_to_node_for_statement(transport: ForStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_for_statement(
+    transport: ForStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(AnyTransport::AsyncMarker(value))?);
+        fields.insert(
+            "async_marker".to_string(),
+            transport_field_value(AnyTransport::AsyncMarker(value))?,
+        );
     }
-    fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
-    fields.insert("right".to_string(), transport_field_value(expressions_transport_to_any(transport.right))?);
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
+    fields.insert(
+        "left".to_string(),
+        transport_field_value(left_hand_side_transport_to_any(transport.left))?,
+    );
+    fields.insert(
+        "right".to_string(),
+        transport_field_value(expressions_transport_to_any(transport.right))?,
+    );
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(AnyTransport::Suite(transport.body))?,
+    );
     if let Some(value) = transport.alternative {
-        fields.insert("alternative".to_string(), transport_field_value(AnyTransport::ElseClause(value))?);
+        fields.insert(
+            "alternative".to_string(),
+            transport_field_value(AnyTransport::ElseClause(value))?,
+        );
     }
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(137) /* "for_statement" */,
+        TransportKindId(137), /* "for_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19528,13 +21548,27 @@ fn transport_to_node_for_statement(transport: ForStatementTransport) -> Result<T
     ))
 }
 
-fn transport_to_node_format_specifier(transport: FormatSpecifierTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_format_specifier(
+    transport: FormatSpecifierTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Interpolation(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| AnyTransport::Interpolation(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(236) /* "format_specifier" */,
+        TransportKindId(236), /* "format_specifier" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19548,25 +21582,51 @@ fn transport_to_node_format_specifier(transport: FormatSpecifierTransport) -> Re
     ))
 }
 
-fn transport_to_node_function_definition(transport: FunctionDefinitionTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_function_definition(
+    transport: FunctionDefinitionTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(AnyTransport::AsyncMarker(value))?);
+        fields.insert(
+            "async_marker".to_string(),
+            transport_field_value(AnyTransport::AsyncMarker(value))?,
+        );
     }
-    fields.insert("name".to_string(), transport_field_value(AnyTransport::Identifier(transport.name))?);
+    fields.insert(
+        "name".to_string(),
+        transport_field_value(AnyTransport::Identifier(transport.name))?,
+    );
     if let Some(value) = transport.type_parameters {
-        fields.insert("type_parameters".to_string(), transport_field_value(AnyTransport::TypeParameter(value))?);
+        fields.insert(
+            "type_parameters".to_string(),
+            transport_field_value(AnyTransport::TypeParameter(value))?,
+        );
     }
-    fields.insert("parameters".to_string(), transport_field_value(AnyTransport::Parameters(transport.parameters))?);
+    fields.insert(
+        "parameters".to_string(),
+        transport_field_value(AnyTransport::Parameters(transport.parameters))?,
+    );
     if let Some(value) = transport.return_type {
-        fields.insert("return_type".to_string(), transport_field_value(AnyTransport::Type(value))?);
+        fields.insert(
+            "return_type".to_string(),
+            transport_field_value(AnyTransport::Type(value))?,
+        );
     }
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(AnyTransport::Suite(transport.body))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(145) /* "function_definition" */,
+        TransportKindId(145), /* "function_definition" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19580,14 +21640,22 @@ fn transport_to_node_function_definition(transport: FunctionDefinitionTransport)
     ))
 }
 
-fn transport_to_node_future_import_statement(transport: FutureImportStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_future_import_statement(
+    transport: FutureImportStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("name".to_string(), transport_field_values(transport.name)?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(114) /* "future_import_statement" */,
+        TransportKindId(114), /* "future_import_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19601,14 +21669,27 @@ fn transport_to_node_future_import_statement(transport: FutureImportStatementTra
     ))
 }
 
-fn transport_to_node_generator_expression(transport: GeneratorExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_generator_expression(
+    transport: GeneratorExpressionTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::ComprehensionClauses(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(expression_transport_to_any(transport.body))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![
+        AnyTransport::ComprehensionClauses(transport.children),
+    ])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(223) /* "generator_expression" */,
+        TransportKindId(223), /* "generator_expression" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19622,15 +21703,29 @@ fn transport_to_node_generator_expression(transport: GeneratorExpressionTranspor
     ))
 }
 
-fn transport_to_node_generic_type(transport: GenericTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_generic_type(
+    transport: GenericTypeTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("identifier".to_string(), transport_field_value(AnyTransport::Identifier(transport.identifier))?);
-    fields.insert("type_parameter".to_string(), transport_field_value(AnyTransport::TypeParameter(transport.type_parameter))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "identifier".to_string(),
+        transport_field_value(AnyTransport::Identifier(transport.identifier))?,
+    );
+    fields.insert(
+        "type_parameter".to_string(),
+        transport_field_value(AnyTransport::TypeParameter(transport.type_parameter))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(210) /* "generic_type" */,
+        TransportKindId(210), /* "generic_type" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19644,13 +21739,27 @@ fn transport_to_node_generic_type(transport: GenericTypeTransport) -> Result<Tra
     ))
 }
 
-fn transport_to_node_global_statement(transport: GlobalStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_global_statement(
+    transport: GlobalStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Identifier(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| AnyTransport::Identifier(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(150) /* "global_statement" */,
+        TransportKindId(150), /* "global_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19664,10 +21773,14 @@ fn transport_to_node_global_statement(transport: GlobalStatementTransport) -> Re
     ))
 }
 
-fn transport_to_node_identifier(transport: IdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_identifier(
+    transport: IdentifierTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(1) /* "identifier" */,
+        TransportKindId(1), /* "identifier" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19681,14 +21794,25 @@ fn transport_to_node_identifier(transport: IdentifierTransport) -> Result<Transp
     ))
 }
 
-fn transport_to_node_if_clause(transport: IfClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_if_clause(
+    transport: IfClauseTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "expression".to_string(),
+        transport_field_value(expression_transport_to_any(transport.expression))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(228) /* "if_clause" */,
+        TransportKindId(228), /* "if_clause" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19702,18 +21826,32 @@ fn transport_to_node_if_clause(transport: IfClauseTransport) -> Result<Transport
     ))
 }
 
-fn transport_to_node_if_statement(transport: IfStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_if_statement(
+    transport: IfStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("condition".to_string(), transport_field_value(expression_transport_to_any(transport.condition))?);
-    fields.insert("consequence".to_string(), transport_field_value(AnyTransport::Suite(transport.consequence))?);
+    fields.insert(
+        "condition".to_string(),
+        transport_field_value(expression_transport_to_any(transport.condition))?,
+    );
+    fields.insert(
+        "consequence".to_string(),
+        transport_field_value(AnyTransport::Suite(transport.consequence))?,
+    );
     if let Some(value) = transport.alternative {
         fields.insert("alternative".to_string(), transport_field_values(value)?);
     }
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(131) /* "if_statement" */,
+        TransportKindId(131), /* "if_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19727,14 +21865,31 @@ fn transport_to_node_if_statement(transport: IfStatementTransport) -> Result<Tra
     ))
 }
 
-fn transport_to_node_import_from_statement(transport: ImportFromStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_import_from_statement(
+    transport: ImportFromStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("module_name".to_string(), transport_field_value(*transport.module_name)?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| import_from_statement_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    fields.insert(
+        "module_name".to_string(),
+        transport_field_value(*transport.module_name)?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| import_from_statement_child_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(115) /* "import_from_statement" */,
+        TransportKindId(115), /* "import_from_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19748,10 +21903,14 @@ fn transport_to_node_import_from_statement(transport: ImportFromStatementTranspo
     ))
 }
 
-fn transport_to_node_import_prefix(transport: ImportPrefixTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_import_prefix(
+    transport: ImportPrefixTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(112) /* "import_prefix" */,
+        TransportKindId(112), /* "import_prefix" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19765,14 +21924,22 @@ fn transport_to_node_import_prefix(transport: ImportPrefixTransport) -> Result<T
     ))
 }
 
-fn transport_to_node_import_statement(transport: ImportStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_import_statement(
+    transport: ImportStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("name".to_string(), transport_field_values(transport.name)?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(111) /* "import_statement" */,
+        TransportKindId(111), /* "import_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19786,10 +21953,14 @@ fn transport_to_node_import_statement(transport: ImportStatementTransport) -> Re
     ))
 }
 
-fn transport_to_node_integer(transport: IntegerTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_integer(
+    transport: IntegerTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(93) /* "integer" */,
+        TransportKindId(93), /* "integer" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19803,20 +21974,37 @@ fn transport_to_node_integer(transport: IntegerTransport) -> Result<TransportNod
     ))
 }
 
-fn transport_to_node_interpolation(transport: InterpolationTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_interpolation(
+    transport: InterpolationTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("expression".to_string(), transport_field_value(fexpression_transport_to_any(transport.expression))?);
+    fields.insert(
+        "expression".to_string(),
+        transport_field_value(fexpression_transport_to_any(transport.expression))?,
+    );
     if let Some(value) = transport.type_conversion {
-        fields.insert("type_conversion".to_string(), transport_field_value(AnyTransport::TypeConversion(value))?);
+        fields.insert(
+            "type_conversion".to_string(),
+            transport_field_value(AnyTransport::TypeConversion(value))?,
+        );
     }
     if let Some(value) = transport.format_specifier {
-        fields.insert("format_specifier".to_string(), transport_field_value(AnyTransport::FormatSpecifier(value))?);
+        fields.insert(
+            "format_specifier".to_string(),
+            transport_field_value(AnyTransport::FormatSpecifier(value))?,
+        );
     }
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(233) /* "interpolation" */,
+        TransportKindId(233), /* "interpolation" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19830,15 +22018,29 @@ fn transport_to_node_interpolation(transport: InterpolationTransport) -> Result<
     ))
 }
 
-fn transport_to_node_keyword_argument(transport: KeywordArgumentTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_keyword_argument(
+    transport: KeywordArgumentTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(named_expression_lhs_transport_to_any(transport.name))?);
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "name".to_string(),
+        transport_field_value(named_expression_lhs_transport_to_any(transport.name))?,
+    );
+    fields.insert(
+        "value".to_string(),
+        transport_field_value(expression_transport_to_any(transport.value))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(214) /* "keyword_argument" */,
+        TransportKindId(214), /* "keyword_argument" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19852,15 +22054,29 @@ fn transport_to_node_keyword_argument(transport: KeywordArgumentTransport) -> Re
     ))
 }
 
-fn transport_to_node_keyword_pattern(transport: KeywordPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_keyword_pattern(
+    transport: KeywordPatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("identifier".to_string(), transport_field_value(AnyTransport::Identifier(transport.identifier))?);
-    fields.insert("simple_pattern".to_string(), transport_field_value(simple_pattern_transport_to_any(transport.simple_pattern))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "identifier".to_string(),
+        transport_field_value(AnyTransport::Identifier(transport.identifier))?,
+    );
+    fields.insert(
+        "simple_pattern".to_string(),
+        transport_field_value(simple_pattern_transport_to_any(transport.simple_pattern))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(171) /* "keyword_pattern" */,
+        TransportKindId(171), /* "keyword_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19874,10 +22090,14 @@ fn transport_to_node_keyword_pattern(transport: KeywordPatternTransport) -> Resu
     ))
 }
 
-fn transport_to_node_keyword_separator(transport: KeywordSeparatorTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_keyword_separator(
+    transport: KeywordSeparatorTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(239) /* "keyword_separator" */,
+        TransportKindId(239), /* "keyword_separator" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19891,17 +22111,31 @@ fn transport_to_node_keyword_separator(transport: KeywordSeparatorTransport) -> 
     ))
 }
 
-fn transport_to_node_lambda(transport: LambdaTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_lambda(
+    transport: LambdaTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.parameters {
-        fields.insert("parameters".to_string(), transport_field_value(AnyTransport::LambdaParameters(value))?);
+        fields.insert(
+            "parameters".to_string(),
+            transport_field_value(AnyTransport::LambdaParameters(value))?,
+        );
     }
-    fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(expression_transport_to_any(transport.body))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(196) /* "lambda" */,
+        TransportKindId(196), /* "lambda" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19915,13 +22149,27 @@ fn transport_to_node_lambda(transport: LambdaTransport) -> Result<TransportNodeD
     ))
 }
 
-fn transport_to_node_lambda_parameters(transport: LambdaParametersTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_lambda_parameters(
+    transport: LambdaParametersTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| parameter_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| parameter_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(147) /* "lambda_parameters" */,
+        TransportKindId(147), /* "lambda_parameters" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19935,17 +22183,33 @@ fn transport_to_node_lambda_parameters(transport: LambdaParametersTransport) -> 
     ))
 }
 
-fn transport_to_node_lambda_within_for_in_clause(transport: LambdaWithinForInClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_lambda_within_for_in_clause(
+    transport: LambdaWithinForInClauseTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.parameters {
-        fields.insert("parameters".to_string(), transport_field_value(AnyTransport::LambdaParameters(value))?);
+        fields.insert(
+            "parameters".to_string(),
+            transport_field_value(AnyTransport::LambdaParameters(value))?,
+        );
     }
-    fields.insert("body".to_string(), transport_field_value(expression_within_for_in_clause_transport_to_any(transport.body))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(expression_within_for_in_clause_transport_to_any(
+            transport.body,
+        ))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(197) /* "lambda_within_for_in_clause" */,
+        TransportKindId(197), /* "lambda_within_for_in_clause" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19959,10 +22223,14 @@ fn transport_to_node_lambda_within_for_in_clause(transport: LambdaWithinForInCla
     ))
 }
 
-fn transport_to_node_line_continuation(transport: LineContinuationTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_line_continuation(
+    transport: LineContinuationTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(100) /* "line_continuation" */,
+        TransportKindId(100), /* "line_continuation" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19978,11 +22246,23 @@ fn transport_to_node_line_continuation(transport: LineContinuationTransport) -> 
 
 fn transport_to_node_list(transport: ListTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| list_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| list_child_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(215) /* "list" */,
+        TransportKindId(215), /* "list" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -19996,14 +22276,27 @@ fn transport_to_node_list(transport: ListTransport) -> Result<TransportNodeData,
     ))
 }
 
-fn transport_to_node_list_comprehension(transport: ListComprehensionTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_list_comprehension(
+    transport: ListComprehensionTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::ComprehensionClauses(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(expression_transport_to_any(transport.body))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![
+        AnyTransport::ComprehensionClauses(transport.children),
+    ])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(220) /* "list_comprehension" */,
+        TransportKindId(220), /* "list_comprehension" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20017,13 +22310,27 @@ fn transport_to_node_list_comprehension(transport: ListComprehensionTransport) -
     ))
 }
 
-fn transport_to_node_list_pattern(transport: ListPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_list_pattern(
+    transport: ListPatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| pattern_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(180) /* "list_pattern" */,
+        TransportKindId(180), /* "list_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20037,14 +22344,25 @@ fn transport_to_node_list_pattern(transport: ListPatternTransport) -> Result<Tra
     ))
 }
 
-fn transport_to_node_list_splat(transport: ListSplatTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_list_splat(
+    transport: ListSplatTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "expression".to_string(),
+        transport_field_value(expression_transport_to_any(transport.expression))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(148) /* "list_splat" */,
+        TransportKindId(148), /* "list_splat" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20058,13 +22376,23 @@ fn transport_to_node_list_splat(transport: ListSplatTransport) -> Result<Transpo
     ))
 }
 
-fn transport_to_node_list_splat_pattern(transport: ListSplatPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_list_splat_pattern(
+    transport: ListSplatPatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![pattern_transport_to_any(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(183) /* "list_splat_pattern" */,
+        TransportKindId(183), /* "list_splat_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20078,15 +22406,35 @@ fn transport_to_node_list_splat_pattern(transport: ListSplatPatternTransport) ->
     ))
 }
 
-fn transport_to_node_match_statement(transport: MatchStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_match_statement(
+    transport: MatchStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("subject".to_string(), transport_field_values(transport.subject.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::MatchBlock(transport.body))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "subject".to_string(),
+        transport_field_values(
+            transport
+                .subject
+                .into_iter()
+                .map(|v| expression_transport_to_any(v))
+                .collect::<Vec<_>>(),
+        )?,
+    );
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(AnyTransport::MatchBlock(transport.body))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(134) /* "match_statement" */,
+        TransportKindId(134), /* "match_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20100,15 +22448,29 @@ fn transport_to_node_match_statement(transport: MatchStatementTransport) -> Resu
     ))
 }
 
-fn transport_to_node_member_type(transport: MemberTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_member_type(
+    transport: MemberTypeTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("base_type".to_string(), transport_field_value(AnyTransport::Type(transport.base_type))?);
-    fields.insert("identifier".to_string(), transport_field_value(AnyTransport::Identifier(transport.identifier))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "base_type".to_string(),
+        transport_field_value(AnyTransport::Type(transport.base_type))?,
+    );
+    fields.insert(
+        "identifier".to_string(),
+        transport_field_value(AnyTransport::Identifier(transport.identifier))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(213) /* "member_type" */,
+        TransportKindId(213), /* "member_type" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20122,13 +22484,27 @@ fn transport_to_node_member_type(transport: MemberTypeTransport) -> Result<Trans
     ))
 }
 
-fn transport_to_node_module(transport: ModuleTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_module(
+    transport: ModuleTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| statement_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| statement_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(108) /* "module" */,
+        TransportKindId(108), /* "module" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20142,15 +22518,29 @@ fn transport_to_node_module(transport: ModuleTransport) -> Result<TransportNodeD
     ))
 }
 
-fn transport_to_node_named_expression(transport: NamedExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_named_expression(
+    transport: NamedExpressionTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(named_expression_lhs_transport_to_any(transport.name))?);
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "name".to_string(),
+        transport_field_value(named_expression_lhs_transport_to_any(transport.name))?,
+    );
+    fields.insert(
+        "value".to_string(),
+        transport_field_value(expression_transport_to_any(transport.value))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(123) /* "named_expression" */,
+        TransportKindId(123), /* "named_expression" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20165,9 +22555,11 @@ fn transport_to_node_named_expression(transport: NamedExpressionTransport) -> Re
 }
 
 fn transport_to_node_none(transport: NoneTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(98) /* "none" */,
+        TransportKindId(98), /* "none" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20181,13 +22573,27 @@ fn transport_to_node_none(transport: NoneTransport) -> Result<TransportNodeData,
     ))
 }
 
-fn transport_to_node_nonlocal_statement(transport: NonlocalStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_nonlocal_statement(
+    transport: NonlocalStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Identifier(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| AnyTransport::Identifier(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(151) /* "nonlocal_statement" */,
+        TransportKindId(151), /* "nonlocal_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20201,14 +22607,25 @@ fn transport_to_node_nonlocal_statement(transport: NonlocalStatementTransport) -
     ))
 }
 
-fn transport_to_node_not_operator(transport: NotOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_not_operator(
+    transport: NotOperatorTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("argument".to_string(), transport_field_value(expression_transport_to_any(transport.argument))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "argument".to_string(),
+        transport_field_value(expression_transport_to_any(transport.argument))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(189) /* "not_operator" */,
+        TransportKindId(189), /* "not_operator" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20224,13 +22641,25 @@ fn transport_to_node_not_operator(transport: NotOperatorTransport) -> Result<Tra
 
 fn transport_to_node_pair(transport: PairTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("key".to_string(), transport_field_value(expression_transport_to_any(transport.key))?);
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "key".to_string(),
+        transport_field_value(expression_transport_to_any(transport.key))?,
+    );
+    fields.insert(
+        "value".to_string(),
+        transport_field_value(expression_transport_to_any(transport.value))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(219) /* "pair" */,
+        TransportKindId(219), /* "pair" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20244,13 +22673,27 @@ fn transport_to_node_pair(transport: PairTransport) -> Result<TransportNodeData,
     ))
 }
 
-fn transport_to_node_parameters(transport: ParametersTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_parameters(
+    transport: ParametersTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| parameter_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| parameter_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(146) /* "parameters" */,
+        TransportKindId(146), /* "parameters" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20264,13 +22707,23 @@ fn transport_to_node_parameters(transport: ParametersTransport) -> Result<Transp
     ))
 }
 
-fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_parenthesized_expression(
+    transport: ParenthesizedExpressionTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![fexpression_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![fexpression_transport_to_any(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(225) /* "parenthesized_expression" */,
+        TransportKindId(225), /* "parenthesized_expression" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20284,13 +22737,23 @@ fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpression
     ))
 }
 
-fn transport_to_node_parenthesized_list_splat(transport: ParenthesizedListSplatTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_parenthesized_list_splat(
+    transport: ParenthesizedListSplatTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![parenthesized_list_splat_child_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![
+        parenthesized_list_splat_child_transport_to_any(transport.children),
+    ])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(156) /* "parenthesized_list_splat" */,
+        TransportKindId(156), /* "parenthesized_list_splat" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20304,10 +22767,14 @@ fn transport_to_node_parenthesized_list_splat(transport: ParenthesizedListSplatT
     ))
 }
 
-fn transport_to_node_pass_statement(transport: PassStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_pass_statement(
+    transport: PassStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(128) /* "pass_statement" */,
+        TransportKindId(128), /* "pass_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20321,13 +22788,27 @@ fn transport_to_node_pass_statement(transport: PassStatementTransport) -> Result
     ))
 }
 
-fn transport_to_node_pattern_list(transport: PatternListTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_pattern_list(
+    transport: PatternListTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| pattern_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(200) /* "pattern_list" */,
+        TransportKindId(200), /* "pattern_list" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20341,10 +22822,14 @@ fn transport_to_node_pattern_list(transport: PatternListTransport) -> Result<Tra
     ))
 }
 
-fn transport_to_node_positional_separator(transport: PositionalSeparatorTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_positional_separator(
+    transport: PositionalSeparatorTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(238) /* "positional_separator" */,
+        TransportKindId(238), /* "positional_separator" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20358,17 +22843,34 @@ fn transport_to_node_positional_separator(transport: PositionalSeparatorTranspor
     ))
 }
 
-fn transport_to_node_print_statement(transport: PrintStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_print_statement(
+    transport: PrintStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("argument".to_string(), transport_field_values(transport.argument.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "argument".to_string(),
+        transport_field_values(
+            transport
+                .argument
+                .into_iter()
+                .map(|v| expression_transport_to_any(v))
+                .collect::<Vec<_>>(),
+        )?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = match transport.children {
         Some(c) => Some(transport_children(vec![AnyTransport::Chevron(c)])?),
         None => None,
     };
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(119) /* "print_statement" */,
+        TransportKindId(119), /* "print_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20382,19 +22884,30 @@ fn transport_to_node_print_statement(transport: PrintStatementTransport) -> Resu
     ))
 }
 
-fn transport_to_node_raise_statement(transport: RaiseStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_raise_statement(
+    transport: RaiseStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.cause {
-        fields.insert("cause".to_string(), transport_field_value(expression_transport_to_any(value))?);
+        fields.insert(
+            "cause".to_string(),
+            transport_field_value(expression_transport_to_any(value))?,
+        );
     }
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = match transport.children {
         Some(c) => Some(transport_children(vec![expressions_transport_to_any(c)])?),
         None => None,
     };
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(127) /* "raise_statement" */,
+        TransportKindId(127), /* "raise_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20408,17 +22921,31 @@ fn transport_to_node_raise_statement(transport: RaiseStatementTransport) -> Resu
     ))
 }
 
-fn transport_to_node_relative_import(transport: RelativeImportTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_relative_import(
+    transport: RelativeImportTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("import_prefix".to_string(), transport_field_value(AnyTransport::ImportPrefix(transport.import_prefix))?);
+    fields.insert(
+        "import_prefix".to_string(),
+        transport_field_value(AnyTransport::ImportPrefix(transport.import_prefix))?,
+    );
     if let Some(value) = transport.dotted_name {
-        fields.insert("dotted_name".to_string(), transport_field_value(AnyTransport::DottedName(value))?);
+        fields.insert(
+            "dotted_name".to_string(),
+            transport_field_value(AnyTransport::DottedName(value))?,
+        );
     }
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(113) /* "relative_import" */,
+        TransportKindId(113), /* "relative_import" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20432,16 +22959,24 @@ fn transport_to_node_relative_import(transport: RelativeImportTransport) -> Resu
     ))
 }
 
-fn transport_to_node_return_statement(transport: ReturnStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_return_statement(
+    transport: ReturnStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = match transport.children {
         Some(c) => Some(transport_children(vec![expressions_transport_to_any(c)])?),
         None => None,
     };
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(125) /* "return_statement" */,
+        TransportKindId(125), /* "return_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20457,11 +22992,23 @@ fn transport_to_node_return_statement(transport: ReturnStatementTransport) -> Re
 
 fn transport_to_node_set(transport: SetTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| set_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| set_child_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(216) /* "set" */,
+        TransportKindId(216), /* "set" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20475,14 +23022,27 @@ fn transport_to_node_set(transport: SetTransport) -> Result<TransportNodeData, :
     ))
 }
 
-fn transport_to_node_set_comprehension(transport: SetComprehensionTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_set_comprehension(
+    transport: SetComprehensionTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::ComprehensionClauses(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(expression_transport_to_any(transport.body))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![
+        AnyTransport::ComprehensionClauses(transport.children),
+    ])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(222) /* "set_comprehension" */,
+        TransportKindId(222), /* "set_comprehension" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20496,22 +23056,39 @@ fn transport_to_node_set_comprehension(transport: SetComprehensionTransport) -> 
     ))
 }
 
-fn transport_to_node_slice(transport: SliceTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_slice(
+    transport: SliceTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.start {
-        fields.insert("start".to_string(), transport_field_value(expression_transport_to_any(value))?);
+        fields.insert(
+            "start".to_string(),
+            transport_field_value(expression_transport_to_any(value))?,
+        );
     }
     if let Some(value) = transport.stop {
-        fields.insert("stop".to_string(), transport_field_value(expression_transport_to_any(value))?);
+        fields.insert(
+            "stop".to_string(),
+            transport_field_value(expression_transport_to_any(value))?,
+        );
     }
     if let Some(value) = transport.step {
-        fields.insert("step".to_string(), transport_field_value(expression_transport_to_any(value))?);
+        fields.insert(
+            "step".to_string(),
+            transport_field_value(expression_transport_to_any(value))?,
+        );
     }
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(205) /* "slice" */,
+        TransportKindId(205), /* "slice" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20525,14 +23102,25 @@ fn transport_to_node_slice(transport: SliceTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_splat_pattern(transport: SplatPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_splat_pattern(
+    transport: SplatPatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("identifier".to_string(), transport_field_value(*transport.identifier)?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "identifier".to_string(),
+        transport_field_value(*transport.identifier)?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(172) /* "splat_pattern" */,
+        TransportKindId(172), /* "splat_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20546,14 +23134,25 @@ fn transport_to_node_splat_pattern(transport: SplatPatternTransport) -> Result<T
     ))
 }
 
-fn transport_to_node_splat_type(transport: SplatTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_splat_type(
+    transport: SplatTypeTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("identifier".to_string(), transport_field_value(*transport.identifier)?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "identifier".to_string(),
+        transport_field_value(*transport.identifier)?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(209) /* "splat_type" */,
+        TransportKindId(209), /* "splat_type" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20567,16 +23166,33 @@ fn transport_to_node_splat_type(transport: SplatTypeTransport) -> Result<Transpo
     ))
 }
 
-fn transport_to_node_string(transport: StringTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_string(
+    transport: StringTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("string_start".to_string(), transport_field_value(AnyTransport::StringStart(transport.string_start))?);
-    fields.insert("content".to_string(), transport_field_values(transport.content)?);
-    fields.insert("string_end".to_string(), transport_field_value(AnyTransport::StringEnd(transport.string_end))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "string_start".to_string(),
+        transport_field_value(AnyTransport::StringStart(transport.string_start))?,
+    );
+    fields.insert(
+        "content".to_string(),
+        transport_field_values(transport.content)?,
+    );
+    fields.insert(
+        "string_end".to_string(),
+        transport_field_value(AnyTransport::StringEnd(transport.string_end))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(231) /* "string" */,
+        TransportKindId(231), /* "string" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20590,13 +23206,27 @@ fn transport_to_node_string(transport: StringTransport) -> Result<TransportNodeD
     ))
 }
 
-fn transport_to_node_string_content(transport: StringContentTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_string_content(
+    transport: StringContentTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| string_content_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| string_content_child_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(232) /* "string_content" */,
+        TransportKindId(232), /* "string_content" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20610,15 +23240,29 @@ fn transport_to_node_string_content(transport: StringContentTransport) -> Result
     ))
 }
 
-fn transport_to_node_subscript(transport: SubscriptTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_subscript(
+    transport: SubscriptTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("value".to_string(), transport_field_value(primary_expression_transport_to_any(transport.value))?);
-    fields.insert("subscript".to_string(), transport_field_values(transport.subscript)?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "value".to_string(),
+        transport_field_value(primary_expression_transport_to_any(transport.value))?,
+    );
+    fields.insert(
+        "subscript".to_string(),
+        transport_field_values(transport.subscript)?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(204) /* "subscript" */,
+        TransportKindId(204), /* "subscript" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20633,9 +23277,11 @@ fn transport_to_node_subscript(transport: SubscriptTransport) -> Result<Transpor
 }
 
 fn transport_to_node_true(transport: TrueTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(96) /* "true" */,
+        TransportKindId(96), /* "true" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20649,21 +23295,47 @@ fn transport_to_node_true(transport: TrueTransport) -> Result<TransportNodeData,
     ))
 }
 
-fn transport_to_node_try_statement(transport: TryStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_try_statement(
+    transport: TryStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
-    fields.insert("except_clauses".to_string(), transport_field_values(transport.except_clauses.into_iter().map(|v| AnyTransport::ExceptClause(v)).collect::<Vec<_>>())?);
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(AnyTransport::Suite(transport.body))?,
+    );
+    fields.insert(
+        "except_clauses".to_string(),
+        transport_field_values(
+            transport
+                .except_clauses
+                .into_iter()
+                .map(|v| AnyTransport::ExceptClause(v))
+                .collect::<Vec<_>>(),
+        )?,
+    );
     if let Some(value) = transport.else_clause {
-        fields.insert("else_clause".to_string(), transport_field_value(AnyTransport::ElseClause(value))?);
+        fields.insert(
+            "else_clause".to_string(),
+            transport_field_value(AnyTransport::ElseClause(value))?,
+        );
     }
     if let Some(value) = transport.finally_clause {
-        fields.insert("finally_clause".to_string(), transport_field_value(AnyTransport::FinallyClause(value))?);
+        fields.insert(
+            "finally_clause".to_string(),
+            transport_field_value(AnyTransport::FinallyClause(value))?,
+        );
     }
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(139) /* "try_statement" */,
+        TransportKindId(139), /* "try_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20677,13 +23349,27 @@ fn transport_to_node_try_statement(transport: TryStatementTransport) -> Result<T
     ))
 }
 
-fn transport_to_node_tuple(transport: TupleTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_tuple(
+    transport: TupleTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| tuple_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| tuple_child_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(217) /* "tuple" */,
+        TransportKindId(217), /* "tuple" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20697,13 +23383,27 @@ fn transport_to_node_tuple(transport: TupleTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_tuple_pattern(transport: TuplePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_tuple_pattern(
+    transport: TuplePatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| pattern_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(179) /* "tuple_pattern" */,
+        TransportKindId(179), /* "tuple_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20719,11 +23419,19 @@ fn transport_to_node_tuple_pattern(transport: TuplePatternTransport) -> Result<T
 
 fn transport_to_node_type(transport: TypeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![type_child_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![type_child_transport_to_any(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(208) /* "type" */,
+        TransportKindId(208), /* "type" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20737,16 +23445,30 @@ fn transport_to_node_type(transport: TypeTransport) -> Result<TransportNodeData,
     ))
 }
 
-fn transport_to_node_type_alias_statement(transport: TypeAliasStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_type_alias_statement(
+    transport: TypeAliasStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("type".to_string(), transport_field_value(*transport.type_)?);
-    fields.insert("left".to_string(), transport_field_value(AnyTransport::Type(transport.left))?);
-    fields.insert("right".to_string(), transport_field_value(AnyTransport::Type(transport.right))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "left".to_string(),
+        transport_field_value(AnyTransport::Type(transport.left))?,
+    );
+    fields.insert(
+        "right".to_string(),
+        transport_field_value(AnyTransport::Type(transport.right))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(153) /* "type_alias_statement" */,
+        TransportKindId(153), /* "type_alias_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20760,10 +23482,14 @@ fn transport_to_node_type_alias_statement(transport: TypeAliasStatementTransport
     ))
 }
 
-fn transport_to_node_type_conversion(transport: TypeConversionTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_type_conversion(
+    transport: TypeConversionTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(92) /* "type_conversion" */,
+        TransportKindId(92), /* "type_conversion" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20777,13 +23503,27 @@ fn transport_to_node_type_conversion(transport: TypeConversionTransport) -> Resu
     ))
 }
 
-fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_type_parameter(
+    transport: TypeParameterTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Type(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| AnyTransport::Type(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(155) /* "type_parameter" */,
+        TransportKindId(155), /* "type_parameter" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20797,16 +23537,33 @@ fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result
     ))
 }
 
-fn transport_to_node_typed_default_parameter(transport: TypedDefaultParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_typed_default_parameter(
+    transport: TypedDefaultParameterTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(AnyTransport::Identifier(transport.name))?);
-    fields.insert("type".to_string(), transport_field_value(AnyTransport::Type(transport.type_))?);
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "name".to_string(),
+        transport_field_value(AnyTransport::Identifier(transport.name))?,
+    );
+    fields.insert(
+        "type".to_string(),
+        transport_field_value(AnyTransport::Type(transport.type_))?,
+    );
+    fields.insert(
+        "value".to_string(),
+        transport_field_value(expression_transport_to_any(transport.value))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(182) /* "typed_default_parameter" */,
+        TransportKindId(182), /* "typed_default_parameter" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20820,14 +23577,27 @@ fn transport_to_node_typed_default_parameter(transport: TypedDefaultParameterTra
     ))
 }
 
-fn transport_to_node_typed_parameter(transport: TypedParameterTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_typed_parameter(
+    transport: TypedParameterTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("type".to_string(), transport_field_value(AnyTransport::Type(transport.type_))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![parameter_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    fields.insert(
+        "type".to_string(),
+        transport_field_value(AnyTransport::Type(transport.type_))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![parameter_transport_to_any(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(207) /* "typed_parameter" */,
+        TransportKindId(207), /* "typed_parameter" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20841,15 +23611,29 @@ fn transport_to_node_typed_parameter(transport: TypedParameterTransport) -> Resu
     ))
 }
 
-fn transport_to_node_unary_operator(transport: UnaryOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_unary_operator(
+    transport: UnaryOperatorTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("operator".to_string(), transport_field_value(AnyTransport::UnaryOperatorOperator(transport.operator))?);
-    fields.insert("argument".to_string(), transport_field_value(primary_expression_transport_to_any(transport.argument))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "operator".to_string(),
+        transport_field_value(AnyTransport::UnaryOperatorOperator(transport.operator))?,
+    );
+    fields.insert(
+        "argument".to_string(),
+        transport_field_value(primary_expression_transport_to_any(transport.argument))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(192) /* "unary_operator" */,
+        TransportKindId(192), /* "unary_operator" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20863,13 +23647,27 @@ fn transport_to_node_unary_operator(transport: UnaryOperatorTransport) -> Result
     ))
 }
 
-fn transport_to_node_union_pattern(transport: UnionPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_union_pattern(
+    transport: UnionPatternTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| simple_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| simple_pattern_transport_to_any(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(166) /* "union_pattern" */,
+        TransportKindId(166), /* "union_pattern" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20883,15 +23681,29 @@ fn transport_to_node_union_pattern(transport: UnionPatternTransport) -> Result<T
     ))
 }
 
-fn transport_to_node_union_type(transport: UnionTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_union_type(
+    transport: UnionTypeTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("left".to_string(), transport_field_value(AnyTransport::Type(transport.left))?);
-    fields.insert("right".to_string(), transport_field_value(AnyTransport::Type(transport.right))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "left".to_string(),
+        transport_field_value(AnyTransport::Type(transport.left))?,
+    );
+    fields.insert(
+        "right".to_string(),
+        transport_field_value(AnyTransport::Type(transport.right))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(211) /* "union_type" */,
+        TransportKindId(211), /* "union_type" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20905,18 +23717,35 @@ fn transport_to_node_union_type(transport: UnionTypeTransport) -> Result<Transpo
     ))
 }
 
-fn transport_to_node_while_statement(transport: WhileStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_while_statement(
+    transport: WhileStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("condition".to_string(), transport_field_value(expression_transport_to_any(transport.condition))?);
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
+    fields.insert(
+        "condition".to_string(),
+        transport_field_value(expression_transport_to_any(transport.condition))?,
+    );
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(AnyTransport::Suite(transport.body))?,
+    );
     if let Some(value) = transport.alternative {
-        fields.insert("alternative".to_string(), transport_field_value(AnyTransport::ElseClause(value))?);
+        fields.insert(
+            "alternative".to_string(),
+            transport_field_value(AnyTransport::ElseClause(value))?,
+        );
     }
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(138) /* "while_statement" */,
+        TransportKindId(138), /* "while_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20930,10 +23759,14 @@ fn transport_to_node_while_statement(transport: WhileStatementTransport) -> Resu
     ))
 }
 
-fn transport_to_node_wildcard_import(transport: WildcardImportTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_wildcard_import(
+    transport: WildcardImportTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(118) /* "wildcard_import" */,
+        TransportKindId(118), /* "wildcard_import" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20947,13 +23780,27 @@ fn transport_to_node_wildcard_import(transport: WildcardImportTransport) -> Resu
     ))
 }
 
-fn transport_to_node_with_clause_bare(transport: WithClauseBareTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_with_clause_bare(
+    transport: WithClauseBareTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::WithItem(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| AnyTransport::WithItem(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(244) /* "with_clause_bare" */,
+        TransportKindId(244), /* "with_clause_bare" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20967,13 +23814,27 @@ fn transport_to_node_with_clause_bare(transport: WithClauseBareTransport) -> Res
     ))
 }
 
-fn transport_to_node_with_clause_paren(transport: WithClauseParenTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_with_clause_paren(
+    transport: WithClauseParenTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::WithItem(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(
+        transport
+            .children
+            .into_iter()
+            .map(|v| AnyTransport::WithItem(v))
+            .collect::<Vec<_>>(),
+    )?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(245) /* "with_clause_paren" */,
+        TransportKindId(245), /* "with_clause_paren" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -20987,20 +23848,34 @@ fn transport_to_node_with_clause_paren(transport: WithClauseParenTransport) -> R
     ))
 }
 
-fn transport_to_node_with_clause(transport: WithClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_with_clause(
+    transport: WithClauseTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     match transport {
-        WithClauseTransport::WithClauseUFormBare(data) => transport_to_node_with_clause_uform_bare(data),
-        WithClauseTransport::WithClauseUFormParen(data) => transport_to_node_with_clause_uform_paren(data),
+        WithClauseTransport::WithClauseUFormBare(data) => {
+            transport_to_node_with_clause_uform_bare(data)
+        }
+        WithClauseTransport::WithClauseUFormParen(data) => {
+            transport_to_node_with_clause_uform_paren(data)
+        }
     }
 }
 
-fn transport_to_node_with_clause_uform_bare(transport: WithClauseUFormBareTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_with_clause_uform_bare(
+    transport: WithClauseUFormBareTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = Some(transport_children(vec![*transport.children])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(143) /* "with_clause" */,
+        TransportKindId(143), /* "with_clause" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21014,13 +23889,23 @@ fn transport_to_node_with_clause_uform_bare(transport: WithClauseUFormBareTransp
     ))
 }
 
-fn transport_to_node_with_clause_uform_paren(transport: WithClauseUFormParenTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_with_clause_uform_paren(
+    transport: WithClauseUFormParenTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::_WithClauseParen(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
+    let children = Some(transport_children(vec![AnyTransport::_WithClauseParen(
+        transport.children,
+    )])?);
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(143) /* "with_clause" */,
+        TransportKindId(143), /* "with_clause" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21034,14 +23919,25 @@ fn transport_to_node_with_clause_uform_paren(transport: WithClauseUFormParenTran
     ))
 }
 
-fn transport_to_node_with_item(transport: WithItemTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_with_item(
+    transport: WithItemTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "value".to_string(),
+        transport_field_value(expression_transport_to_any(transport.value))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(144) /* "with_item" */,
+        TransportKindId(144), /* "with_item" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21055,18 +23951,35 @@ fn transport_to_node_with_item(transport: WithItemTransport) -> Result<Transport
     ))
 }
 
-fn transport_to_node_with_statement(transport: WithStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_with_statement(
+    transport: WithStatementTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.async_marker {
-        fields.insert("async_marker".to_string(), transport_field_value(AnyTransport::AsyncMarker(value))?);
+        fields.insert(
+            "async_marker".to_string(),
+            transport_field_value(AnyTransport::AsyncMarker(value))?,
+        );
     }
-    fields.insert("with_clause".to_string(), transport_field_value(*transport.with_clause)?);
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    fields.insert(
+        "with_clause".to_string(),
+        transport_field_value(*transport.with_clause)?,
+    );
+    fields.insert(
+        "body".to_string(),
+        transport_field_value(AnyTransport::Suite(transport.body))?,
+    );
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(142) /* "with_statement" */,
+        TransportKindId(142), /* "with_statement" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21080,16 +23993,24 @@ fn transport_to_node_with_statement(transport: WithStatementTransport) -> Result
     ))
 }
 
-fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_yield(
+    transport: YieldTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let fields = if fields.is_empty() {
+        None
+    } else {
+        Some(fields)
+    };
     let children = match transport.children {
         Some(c) => Some(transport_children(vec![*c])?),
         None => None,
     };
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(202) /* "yield" */,
+        TransportKindId(202), /* "yield" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21103,10 +24024,14 @@ fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_newline(transport: NewlineTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_newline(
+    transport: NewlineTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(101) /* "_newline" */,
+        TransportKindId(101), /* "_newline" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21120,10 +24045,14 @@ fn transport_to_node_newline(transport: NewlineTransport) -> Result<TransportNod
     ))
 }
 
-fn transport_to_node_indent(transport: IndentTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_indent(
+    transport: IndentTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(102) /* "_indent" */,
+        TransportKindId(102), /* "_indent" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21137,10 +24066,14 @@ fn transport_to_node_indent(transport: IndentTransport) -> Result<TransportNodeD
     ))
 }
 
-fn transport_to_node_dedent(transport: DedentTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_dedent(
+    transport: DedentTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(103) /* "_dedent" */,
+        TransportKindId(103), /* "_dedent" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21154,10 +24087,14 @@ fn transport_to_node_dedent(transport: DedentTransport) -> Result<TransportNodeD
     ))
 }
 
-fn transport_to_node_string_start(transport: StringStartTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_string_start(
+    transport: StringStartTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(104) /* "string_start" */,
+        TransportKindId(104), /* "string_start" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21171,10 +24108,14 @@ fn transport_to_node_string_start(transport: StringStartTransport) -> Result<Tra
     ))
 }
 
-fn transport_to_node__string_content(transport: _StringContentTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node__string_content(
+    transport: _StringContentTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(105) /* "_string_content" */,
+        TransportKindId(105), /* "_string_content" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21188,10 +24129,14 @@ fn transport_to_node__string_content(transport: _StringContentTransport) -> Resu
     ))
 }
 
-fn transport_to_node_escape_interpolation(transport: EscapeInterpolationTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_escape_interpolation(
+    transport: EscapeInterpolationTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(106) /* "escape_interpolation" */,
+        TransportKindId(106), /* "escape_interpolation" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21205,10 +24150,14 @@ fn transport_to_node_escape_interpolation(transport: EscapeInterpolationTranspor
     ))
 }
 
-fn transport_to_node_string_end(transport: StringEndTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_string_end(
+    transport: StringEndTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(107) /* "string_end" */,
+        TransportKindId(107), /* "string_end" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21222,10 +24171,14 @@ fn transport_to_node_string_end(transport: StringEndTransport) -> Result<Transpo
     ))
 }
 
-fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_close_bracket(
+    transport: CloseBracketTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(46) /* "]" */,
+        TransportKindId(46), /* "]" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21239,10 +24192,14 @@ fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<T
     ))
 }
 
-fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_close_paren(
+    transport: CloseParenTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(8) /* ")" */,
+        TransportKindId(8), /* ")" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21256,10 +24213,14 @@ fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<Trans
     ))
 }
 
-fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_close_brace(
+    transport: CloseBraceTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(51) /* "}" */,
+        TransportKindId(51), /* "}" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21273,10 +24234,14 @@ fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<Trans
     ))
 }
 
-fn transport_to_node_except(transport: ExceptTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_except(
+    transport: ExceptTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(33) /* "except" */,
+        TransportKindId(33), /* "except" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21291,9 +24256,11 @@ fn transport_to_node_except(transport: ExceptTransport) -> Result<TransportNodeD
 }
 
 fn transport_to_node_as(transport: AsTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(10) /* "as" */,
+        TransportKindId(10), /* "as" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21308,9 +24275,11 @@ fn transport_to_node_as(transport: AsTransport) -> Result<TransportNodeData, ::a
 }
 
 fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(43) /* "=" */,
+        TransportKindId(43), /* "=" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21324,10 +24293,14 @@ fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::a
     ))
 }
 
-fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_colon(
+    transport: ColonTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(23) /* ":" */,
+        TransportKindId(23), /* ":" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21341,10 +24314,14 @@ fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_async(
+    transport: AsyncTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(28) /* "async" */,
+        TransportKindId(28), /* "async" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21358,10 +24335,14 @@ fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_bracket(
+    transport: BracketTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(45) /* "[" */,
+        TransportKindId(45), /* "[" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21375,10 +24356,14 @@ fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNod
     ))
 }
 
-fn transport_to_node_tok_bs(transport: TokBsTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_tok_bs(
+    transport: TokBsTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(90) /* "\\" */,
+        TransportKindId(90), /* "\\" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21392,10 +24377,14 @@ fn transport_to_node_tok_bs(transport: TokBsTransport) -> Result<TransportNodeDa
     ))
 }
 
-fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_minus(
+    transport: MinusTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(53) /* "-" */,
+        TransportKindId(53), /* "-" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21409,10 +24398,14 @@ fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_paren(
+    transport: ParenTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(7) /* "(" */,
+        TransportKindId(7), /* "(" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21426,10 +24419,14 @@ fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_comma(
+    transport: CommaTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(9) /* "," */,
+        TransportKindId(9), /* "," */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21443,10 +24440,14 @@ fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_assert(transport: AssertTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_assert(
+    transport: AssertTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(14) /* "assert" */,
+        TransportKindId(14), /* "assert" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21461,9 +24462,11 @@ fn transport_to_node_assert(transport: AssertTransport) -> Result<TransportNodeD
 }
 
 fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(4) /* "." */,
+        TransportKindId(4), /* "." */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21478,9 +24481,11 @@ fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, :
 }
 
 fn transport_to_node_plus(transport: PlusTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(52) /* "+" */,
+        TransportKindId(52), /* "+" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21495,9 +24500,11 @@ fn transport_to_node_plus(transport: PlusTransport) -> Result<TransportNodeData,
 }
 
 fn transport_to_node_and(transport: AndTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(55) /* "and" */,
+        TransportKindId(55), /* "and" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21511,10 +24518,14 @@ fn transport_to_node_and(transport: AndTransport) -> Result<TransportNodeData, :
     ))
 }
 
-fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_break(
+    transport: BreakTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(20) /* "break" */,
+        TransportKindId(20), /* "break" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21529,9 +24540,11 @@ fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_case(transport: CaseTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(27) /* "case" */,
+        TransportKindId(27), /* "case" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21546,9 +24559,11 @@ fn transport_to_node_case(transport: CaseTransport) -> Result<TransportNodeData,
 }
 
 fn transport_to_node_shr(transport: ShrTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(13) /* ">>" */,
+        TransportKindId(13), /* ">>" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21562,10 +24577,14 @@ fn transport_to_node_shr(transport: ShrTransport) -> Result<TransportNodeData, :
     ))
 }
 
-fn transport_to_node_class(transport: ClassTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_class(
+    transport: ClassTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(44) /* "class" */,
+        TransportKindId(44), /* "class" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21580,9 +24599,11 @@ fn transport_to_node_class(transport: ClassTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_if(transport: IfTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(22) /* "if" */,
+        TransportKindId(22), /* "if" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21597,9 +24618,11 @@ fn transport_to_node_if(transport: IfTransport) -> Result<TransportNodeData, ::a
 }
 
 fn transport_to_node_else(transport: ElseTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(25) /* "else" */,
+        TransportKindId(25), /* "else" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21613,10 +24636,14 @@ fn transport_to_node_else(transport: ElseTransport) -> Result<TransportNodeData,
     ))
 }
 
-fn transport_to_node_continue(transport: ContinueTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_continue(
+    transport: ContinueTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(21) /* "continue" */,
+        TransportKindId(21), /* "continue" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21631,9 +24658,11 @@ fn transport_to_node_continue(transport: ContinueTransport) -> Result<TransportN
 }
 
 fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(47) /* "@" */,
+        TransportKindId(47), /* "@" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21648,9 +24677,11 @@ fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::a
 }
 
 fn transport_to_node_del(transport: DelTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(17) /* "del" */,
+        TransportKindId(17), /* "del" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21664,10 +24695,14 @@ fn transport_to_node_del(transport: DelTransport) -> Result<TransportNodeData, :
     ))
 }
 
-fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_brace(
+    transport: BraceTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(50) /* "{" */,
+        TransportKindId(50), /* "{" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21681,10 +24716,14 @@ fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_starstar(transport: StarstarTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_starstar(
+    transport: StarstarTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(39) /* "**" */,
+        TransportKindId(39), /* "**" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21699,9 +24738,11 @@ fn transport_to_node_starstar(transport: StarstarTransport) -> Result<TransportN
 }
 
 fn transport_to_node_elif(transport: ElifTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(24) /* "elif" */,
+        TransportKindId(24), /* "elif" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21715,10 +24756,14 @@ fn transport_to_node_elif(transport: ElifTransport) -> Result<TransportNodeData,
     ))
 }
 
-fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_ellipsis(
+    transport: EllipsisTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "..." — no parser symbol */,
+        TransportKindId(0), /* "..." — no parser symbol */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21733,9 +24778,11 @@ fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportN
 }
 
 fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(11) /* "*" */,
+        TransportKindId(11), /* "*" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21750,9 +24797,11 @@ fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData,
 }
 
 fn transport_to_node_exec(transport: ExecTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(42) /* "exec" */,
+        TransportKindId(42), /* "exec" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21767,9 +24816,11 @@ fn transport_to_node_exec(transport: ExecTransport) -> Result<TransportNodeData,
 }
 
 fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(30) /* "in" */,
+        TransportKindId(30), /* "in" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21783,10 +24834,14 @@ fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::a
     ))
 }
 
-fn transport_to_node_false2(transport: False2Transport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_false2(
+    transport: False2Transport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "False" — no parser symbol */,
+        TransportKindId(0), /* "False" — no parser symbol */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21800,10 +24855,14 @@ fn transport_to_node_false2(transport: False2Transport) -> Result<TransportNodeD
     ))
 }
 
-fn transport_to_node_finally(transport: FinallyTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_finally(
+    transport: FinallyTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(35) /* "finally" */,
+        TransportKindId(35), /* "finally" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21818,9 +24877,11 @@ fn transport_to_node_finally(transport: FinallyTransport) -> Result<TransportNod
 }
 
 fn transport_to_node_for(transport: ForTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(29) /* "for" */,
+        TransportKindId(29), /* "for" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21835,9 +24896,11 @@ fn transport_to_node_for(transport: ForTransport) -> Result<TransportNodeData, :
 }
 
 fn transport_to_node_def(transport: DefTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(37) /* "def" */,
+        TransportKindId(37), /* "def" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21851,10 +24914,14 @@ fn transport_to_node_def(transport: DefTransport) -> Result<TransportNodeData, :
     ))
 }
 
-fn transport_to_node_arrow(transport: ArrowTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_arrow(
+    transport: ArrowTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(38) /* "->" */,
+        TransportKindId(38), /* "->" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21869,9 +24936,11 @@ fn transport_to_node_arrow(transport: ArrowTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_from(transport: FromTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(5) /* "from" */,
+        TransportKindId(5), /* "from" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21885,10 +24954,14 @@ fn transport_to_node_from(transport: FromTransport) -> Result<TransportNodeData,
     ))
 }
 
-fn transport_to_node_future_u(transport: FutureUTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_future_u(
+    transport: FutureUTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(6) /* "__future__" */,
+        TransportKindId(6), /* "__future__" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21902,10 +24975,14 @@ fn transport_to_node_future_u(transport: FutureUTransport) -> Result<TransportNo
     ))
 }
 
-fn transport_to_node_import(transport: ImportTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_import(
+    transport: ImportTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(3) /* "import" */,
+        TransportKindId(3), /* "import" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21919,10 +24996,14 @@ fn transport_to_node_import(transport: ImportTransport) -> Result<TransportNodeD
     ))
 }
 
-fn transport_to_node_global(transport: GlobalTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_global(
+    transport: GlobalTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(40) /* "global" */,
+        TransportKindId(40), /* "global" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21936,10 +25017,14 @@ fn transport_to_node_global(transport: GlobalTransport) -> Result<TransportNodeD
     ))
 }
 
-fn transport_to_node_match(transport: MatchTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_match(
+    transport: MatchTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(26) /* "match" */,
+        TransportKindId(26), /* "match" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21953,10 +25038,14 @@ fn transport_to_node_match(transport: MatchTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_coloneq(transport: ColoneqTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_coloneq(
+    transport: ColoneqTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(15) /* ":=" */,
+        TransportKindId(15), /* ":=" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21970,10 +25059,14 @@ fn transport_to_node_coloneq(transport: ColoneqTransport) -> Result<TransportNod
     ))
 }
 
-fn transport_to_node_none2(transport: None2Transport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_none2(
+    transport: None2Transport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "None" — no parser symbol */,
+        TransportKindId(0), /* "None" — no parser symbol */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -21987,10 +25080,14 @@ fn transport_to_node_none2(transport: None2Transport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_nonlocal(transport: NonlocalTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_nonlocal(
+    transport: NonlocalTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(41) /* "nonlocal" */,
+        TransportKindId(41), /* "nonlocal" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22005,9 +25102,11 @@ fn transport_to_node_nonlocal(transport: NonlocalTransport) -> Result<TransportN
 }
 
 fn transport_to_node_not(transport: NotTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(54) /* "not" */,
+        TransportKindId(54), /* "not" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22022,9 +25121,11 @@ fn transport_to_node_not(transport: NotTransport) -> Result<TransportNodeData, :
 }
 
 fn transport_to_node_pass(transport: PassTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(19) /* "pass" */,
+        TransportKindId(19), /* "pass" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22038,10 +25139,14 @@ fn transport_to_node_pass(transport: PassTransport) -> Result<TransportNodeData,
     ))
 }
 
-fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_slash(
+    transport: SlashTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(57) /* "/" */,
+        TransportKindId(57), /* "/" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22055,10 +25160,14 @@ fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_print(transport: PrintTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_print(
+    transport: PrintTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(12) /* "print" */,
+        TransportKindId(12), /* "print" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22072,10 +25181,14 @@ fn transport_to_node_print(transport: PrintTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_raise(transport: RaiseTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_raise(
+    transport: RaiseTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(18) /* "raise" */,
+        TransportKindId(18), /* "raise" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22089,10 +25202,14 @@ fn transport_to_node_raise(transport: RaiseTransport) -> Result<TransportNodeDat
     ))
 }
 
-fn transport_to_node_return(transport: ReturnTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_return(
+    transport: ReturnTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(16) /* "return" */,
+        TransportKindId(16), /* "return" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22106,10 +25223,14 @@ fn transport_to_node_return(transport: ReturnTransport) -> Result<TransportNodeD
     ))
 }
 
-fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_anonymous(
+    transport: AnonymousTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(48) /* "_" */,
+        TransportKindId(48), /* "_" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22123,10 +25244,14 @@ fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<Transpor
     ))
 }
 
-fn transport_to_node_true2(transport: True2Transport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_true2(
+    transport: True2Transport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "True" — no parser symbol */,
+        TransportKindId(0), /* "True" — no parser symbol */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22141,9 +25266,11 @@ fn transport_to_node_true2(transport: True2Transport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(32) /* "try" */,
+        TransportKindId(32), /* "try" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22158,9 +25285,11 @@ fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, :
 }
 
 fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(49) /* "|" */,
+        TransportKindId(49), /* "|" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22174,10 +25303,14 @@ fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData,
     ))
 }
 
-fn transport_to_node_while(transport: WhileTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_while(
+    transport: WhileTransport,
+) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(31) /* "while" */,
+        TransportKindId(31), /* "while" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22192,9 +25325,11 @@ fn transport_to_node_while(transport: WhileTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_with(transport: WithTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    let trivia_data = transport
+        .transport_trivia_data
+        .map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(36) /* "with" */,
+        TransportKindId(36), /* "with" */
         transport.transport_source,
         transport.transport_named,
         true,
@@ -22208,7 +25343,9 @@ fn transport_to_node_with(transport: WithTransport) -> Result<TransportNodeData,
     ))
 }
 
-pub fn render_transport_parts(transport: AnyTransport) -> Result<(TransportSource, String), ::askama::Error> {
+pub fn render_transport_parts(
+    transport: AnyTransport,
+) -> Result<(TransportSource, String), ::askama::Error> {
     let rendered = render_transport_dispatch(&transport)?;
     let source = transport_source(&transport);
     Ok((source, rendered))

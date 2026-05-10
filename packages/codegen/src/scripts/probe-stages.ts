@@ -64,23 +64,25 @@ import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { emitTypes } from '../emitters/types.ts';
 import { emitJinjaTemplates } from '../emitters/templates.ts';
 
-async function main(): Promise<void> {
+async function main(argv: string[]): Promise<number> {
 	const { values } = parseArgs({
+		args: argv,
 		options: {
 			grammar: { type: 'string', short: 'g' },
 			kind: { type: 'string', short: 'k' },
 			'no-overrides': { type: 'boolean', default: false },
 			compact: { type: 'boolean', default: false },
-			'skip-emit': { type: 'boolean', default: false }
+			'skip-emit': { type: 'boolean', default: false },
+			brief: { type: 'boolean', default: false }
 		}
 	});
 	const grammar = values.grammar as string | undefined;
 	const kind = values.kind as string | undefined;
 	if (!grammar || !kind) {
 		process.stderr.write(
-			'Usage: probe-stages.ts --grammar <name> --kind <kind> [--no-overrides] [--compact] [--skip-emit]\n'
+			'Usage: probe-stages.ts --grammar <name> --kind <kind> [--no-overrides] [--compact] [--skip-emit] [--brief]\n'
 		);
-		process.exit(1);
+		return 1;
 	}
 
 	const repoRoot = resolve(new URL('../../../..', import.meta.url).pathname);
@@ -139,7 +141,18 @@ async function main(): Promise<void> {
 	}
 
 	const indent = values.compact ? undefined : 2;
-	process.stdout.write(JSON.stringify(stages, null, indent) + '\n');
+	if (values.brief) {
+		const brief = { grammar: stages.grammar, kind: stages.kind, simplify: stages.simplify };
+		process.stdout.write(JSON.stringify(brief, null, indent) + '\n');
+	} else {
+		process.stdout.write(JSON.stringify(stages, null, indent) + '\n');
+	}
+	return 0;
+}
+
+/** Run the probe-stages CLI with the given argv (excluding node/script path). */
+export async function run(argv: string[]): Promise<number> {
+	return main(argv);
 }
 
 function resolveGrammarJsPath(grammar: string): string {
@@ -238,7 +251,10 @@ function summarizeValues(v: unknown): unknown {
 	});
 }
 
-main().catch((e) => {
-	process.stderr.write(`probe-stages: ${(e as Error).stack ?? e}\n`);
-	process.exit(1);
-});
+const _isMain = import.meta.url === `file://${process.argv[1]}`;
+if (_isMain) {
+	run(process.argv.slice(2)).then(process.exit).catch((e) => {
+		process.stderr.write(`probe-stages: ${(e as Error).stack ?? e}\n`);
+		process.exit(1);
+	});
+}

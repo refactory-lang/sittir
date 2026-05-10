@@ -8,8 +8,9 @@
  * Requires web-tree-sitter + language WASM files.
  */
 
-import { readNode, createRenderer } from '@sittir/core';
-import type { TreeHandle } from '@sittir/core';
+import { readNode } from '@sittir/common';
+import { createRenderer } from '@sittir/core';
+import type { TreeHandle } from '@sittir/common';
 import type { AnyNodeData } from '@sittir/types';
 import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
@@ -107,6 +108,28 @@ function _deepReadNode(
 		}
 	}
 	return data;
+}
+
+function readValidatorNodeData(
+	handle: TreeHandle,
+	node: TSNode,
+	nativeCoords: ReturnType<typeof findNativeNodeId>,
+	deepReadKinds: KindMembership,
+	recursive: boolean
+): AnyNodeData {
+	if (!recursive) {
+		return readNodeAt(handle, adaptNode(node), nativeCoords);
+	}
+	if (nativeCoords && handle.read) {
+		return _deepReadNode(handle, nativeCoords.handle, nativeCoords.childIndex, deepReadKinds);
+	}
+	const prev = handle.rootNode;
+	(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(node);
+	try {
+		return _deepReadNode(handle, undefined, undefined, deepReadKinds);
+	} finally {
+		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
+	}
 }
 
 /**
@@ -625,6 +648,28 @@ export interface ValidateReadRenderParseOptions {
 	/** When true, deep-read ALL named kinds (not just variant-adopted).
 	 *  Exercises full recursive materialization before render. */
 	recursive?: boolean;
+	/** Optional failure tap for debugging / replay tools. Called with the
+	 *  first available per-candidate failure context before it is
+	 *  collapsed into the public `errors[]` summary. */
+	onFailure?: (failure: ReadRenderParseFailure) => void;
+	/** Stop the validator after the first tapped failure. Intended for
+	 *  replay tooling, not normal summary runs. */
+	stopOnFirstFailure?: boolean;
+}
+
+export interface ReadRenderParseFailure {
+	grammar: string;
+	backend: 'native' | 'typescript';
+	recursive: boolean;
+	entryName: string;
+	entrySource: string;
+	kind: string;
+	renderedKind: string;
+	targetKind: string;
+	range: { start: number; end: number };
+	input?: string;
+	rendered?: string;
+	message: string;
 }
 
 export async function validateReadRenderParse(
@@ -700,8 +745,10 @@ export async function validateReadRenderParse(
 	let astMatchPass = 0;
 	let skip = 0;
 	let total = 0;
+	let shouldStop = false;
 
 	for (const entry of entries) {
+		if (shouldStop) break;
 		total++;
 		try {
 			// Parse original
@@ -733,6 +780,7 @@ export async function validateReadRenderParse(
 			let entryOk = true;
 			let entryAstMatch = true;
 			for (const kind of testableKinds) {
+				if (shouldStop) break;
 				// Canonical-hidden architecture (Option Y): the wrap walker
 				// now reaches every subtree node — pre-fix it missed many
 				// because the wrap-table dispatch was keyed on the hidden
@@ -755,24 +803,12 @@ export async function validateReadRenderParse(
 
 				for (const node1 of candidates) {
 					const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
-					// Shallow read — RT validator relies on the $text
-					// short-circuit: readNode returns a NodeData with
-					// $text=source-span, render() falls through to emit
-					// that $text verbatim, compare succeeds trivially.
-					// This applies uniformly; variant-adopted kinds do
-					// NOT require pre-enriched NodeData here — the ambient
-					// scaffold in their template would re-produce the same
-					// spans on reparse. Deep reads (with recursion into
-					// children/fields) live in the FACTORY round-trip
-					// validator (factory-roundtrip.ts), which needs the
-					// structural data to call factory functions and
-					// reconstruct the tree from scratch.
 					// Native engine handles differ from WASM handles; skip alias-
 					// target kinds the native engine emits under a different
 					// rule name rather than falling back to a mismatched handle.
 					const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
 					if (nativeCoords === null && handle.read) continue;
-					const rawData = readNodeAt(handle, adaptNode(node1), nativeCoords);
+					const rawData = readValidatorNodeData(handle, node1, nativeCoords, deepReadKinds, recursive === true);
 					const { data, renderedKind, targetKind } = applyAliasResolution(
 						rawData,
 						node1.startIndex,
@@ -799,12 +835,28 @@ export async function validateReadRenderParse(
 						// Re-parse
 						const tree2 = parser.parse(wrapped.text) as TSTree;
 						if (tree2.rootNode.hasError) {
-							kindErrors.push({
+							const failure = {
 								name: `${entry.name} [${renderedKind}]`,
 								message: `re-parse error: "${rendered.slice(0, 80)}"`,
 								input: inputSource,
 								rendered
+							};
+							kindErrors.push(failure);
+							reportFailure(options, {
+								grammar,
+								backend: backend ?? 'typescript',
+								recursive: recursive === true,
+								entryName: entry.name,
+								entrySource: entry.source,
+								kind,
+								renderedKind,
+								targetKind,
+								range: { start: node1.startIndex, end: node1.endIndex },
+								input: inputSource,
+								rendered,
+								message: failure.message
 							});
+							shouldStop = options.stopOnFirstFailure === true;
 							continue;
 						}
 
@@ -818,12 +870,28 @@ export async function validateReadRenderParse(
 							findReparsedNodeAtOffset(tree2, targetKind, wrapped) ??
 							(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped) : null);
 						if (!node2) {
-							kindErrors.push({
+							const failure = {
 								name: `${entry.name} [${renderedKind}]`,
 								message: `kind not found at rendered offset ${wrapped.offset}`,
 								input: inputSource,
 								rendered
+							};
+							kindErrors.push(failure);
+							reportFailure(options, {
+								grammar,
+								backend: backend ?? 'typescript',
+								recursive: recursive === true,
+								entryName: entry.name,
+								entrySource: entry.source,
+								kind,
+								renderedKind,
+								targetKind,
+								range: { start: node1.startIndex, end: node1.endIndex },
+								input: inputSource,
+								rendered,
+								message: failure.message
 							});
+							shouldStop = options.stopOnFirstFailure === true;
 							continue;
 						}
 
@@ -865,11 +933,26 @@ export async function validateReadRenderParse(
 							}
 						}
 					} catch (e) {
-						kindErrors.push({
+						const failure = {
 							name: `${entry.name} [${renderedKind}]`,
 							message: `render: ${(e as Error).message.slice(0, 100)}`
+						};
+						kindErrors.push(failure);
+						reportFailure(options, {
+							grammar,
+							backend: backend ?? 'typescript',
+							recursive: recursive === true,
+							entryName: entry.name,
+							entrySource: entry.source,
+							kind,
+							renderedKind,
+							targetKind,
+							range: { start: node1.startIndex, end: node1.endIndex },
+							message: failure.message
 						});
+						shouldStop = options.stopOnFirstFailure === true;
 					}
+					if (shouldStop) break;
 				}
 
 				// Per-kind aggregation: kind passes when ANY candidate
@@ -898,6 +981,7 @@ export async function validateReadRenderParse(
 				name: entry.name,
 				message: `${(e as Error).message.slice(0, 100)}`
 			});
+			if (options.stopOnFirstFailure === true) break;
 		}
 	}
 
@@ -919,6 +1003,13 @@ export async function validateReadRenderParse(
 		errors,
 		astMismatches
 	};
+}
+
+function reportFailure(
+	options: ValidateReadRenderParseOptions,
+	failure: ReadRenderParseFailure
+): void {
+	options.onFailure?.(failure);
 }
 
 export function formatReadRenderParseReport(result: ReadRenderParseResult): string {

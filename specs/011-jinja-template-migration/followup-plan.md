@@ -336,7 +336,7 @@ via Nunjucks without error.
 
 ### T5.5: Filter inventory check (#23)
 
-**File**: `scripts/check-jinja-templates.ts` (extend)
+**File**: `packages/tools/src/validate/jinja.ts` (extend)
 
 - [ ] Add a scan for filter tokens `| filter`. Reject anything outside
       the approved list (`join`, `length`, `default`, `trim`, `upper`,

@@ -1,25 +1,21 @@
-import { snippets, ir } from '@sittir/rust';
+import { ir } from '@sittir/rust';
 
-export function fillImplDisplaySnippet() {
-	return snippets.implDisplay
-		.fill({
-			TYPE: ir.typeItem
-			EXPR: ir.fieldExpression({
-				value: ir.selfExpression(),
-				field: ir.fieldIdentifier('host')
-			})
-		})
-		.render();
+export function renderPublicStruct() {
+	return ir.structItem.unit.from({
+		visibilityModifier: 'pub',
+		name: ir.from.type('Config'),
+	}).$render();
 }
 
-export function fromImplDisplaySnippet() {
-	return snippets.implDisplay
-		.from({
-			TYPE: 'Config',
-			EXPR: ir.fieldExpression({
-				value: ir.selfExpression(),
-				field: ir.fieldIdentifier('host')
-			})
-		})
-		.render();
+export function renderSourceFile() {
+	return ir.sourceFile.from({
+		statements: [
+			ir.functionItem.from({
+				visibilityModifier: 'pub',
+				name: 'main',
+				parameters: ir.parameters.strict(),
+				body: ir.block.strict(),
+			}),
+		],
+	}).$render();
 }

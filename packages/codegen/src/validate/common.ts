@@ -17,12 +17,12 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
-import { readNode as readNodeFn, dumpMetrics, metricsEnabled } from '@sittir/core';
+import { readNode as readNodeFn, dumpMetrics, metricsEnabled } from '@sittir/common';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
 import type { AnyNodeData, AnyTreeNode, NativeParseResult } from '@sittir/types';
-import type { TreeHandle } from '@sittir/core';
+import type { TreeHandle } from '@sittir/common';
 import { assertNever, type PolymorphVariantDescriptor, type PolymorphVariantMap } from '../polymorph-variant.ts';
 import type { FactoryShape } from '../emitters/factory-map.ts';
 
@@ -207,9 +207,7 @@ export function nativeTreeHandle(engine: NativeEngineLike, source: string): Tree
 			if (nodeHandle === undefined) {
 				return rootData as unknown as ReturnType<NonNullable<TreeHandle['read']>>;
 			}
-			return JSON.parse(engine.readNode(nodeHandle, childIndex ?? 0)) as ReturnType<
-				NonNullable<TreeHandle['read']>
-			>;
+			return JSON.parse(engine.readNode(nodeHandle, childIndex ?? 0)) as ReturnType<NonNullable<TreeHandle['read']>>;
 		},
 		...(parseResult.format !== undefined && { format: parseResult.format })
 	};
@@ -961,6 +959,9 @@ export interface NodeToConfigOpts {
 	 *  single plumb-in for readNode-derived data that doesn't carry
 	 *  it natively. */
 	readonly polymorphVariants?: PolymorphVariantMap;
+	/** Validator-supplied CST node-kind fallback for override polymorphs whose
+	 * readNode shape collapsed the discriminating wrapper before factory dispatch. */
+	readonly cstNodeKindHint?: string;
 	/** Validator-supplied CST fallback for override polymorphs whose native
 	 * read collapsed the wrapper child kind before factory dispatch. */
 	readonly firstNamedChildKindHint?: string;
@@ -1192,6 +1193,152 @@ function shouldPromoteOrphanChildren(
 	return noFieldMatched;
 }
 
+function assignPromotedField(out: Record<string, unknown>, rawName: string, value: unknown): void {
+	const camel = rawName.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+	out[camel] = value;
+}
+
+function isAnonymousPromotableField(name: string): boolean {
+	return name === 'semicolon' || name === 'opening' || name === 'closing';
+}
+
+function getMissingDeclaredFields(
+	declaredFields: readonly string[] | undefined,
+	out: Record<string, unknown>
+): string[] {
+	if (!declaredFields) return [];
+	return declaredFields.filter((name) => {
+		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+		return out[camel] === undefined;
+	});
+}
+
+function isAnonymousTokenNode(value: unknown): value is ReadNodeLike {
+	return value != null && typeof value === 'object' && (value as ReadNodeLike).$named === false;
+}
+
+function isOpeningDelimiter(text: string | undefined): boolean {
+	return text === '{' || text === '{|' || text === '[' || text === '(' || text === '<';
+}
+
+function isClosingDelimiter(text: string | undefined): boolean {
+	return text === '}' || text === '|}' || text === ']' || text === ')' || text === '>';
+}
+
+function promoteAnonymousTokenFields(
+	declaredFields: readonly string[] | undefined,
+	namedSlotEntries: readonly [string, unknown][],
+	opts: NodeToConfigOpts,
+	parentKind: string | undefined,
+	out: Record<string, unknown>
+): void {
+	if (!declaredFields || !parentKind) return;
+	const missing = new Set(getMissingDeclaredFields(declaredFields, out));
+	if (missing.size === 0) return;
+	const anonymousEntries = namedSlotEntries.filter(
+		([key, value]) => !isIdentifierShapedFieldKey(key) && isAnonymousTokenNode(value)
+	);
+	const used = new Set<number>();
+	const assign = (fieldName: string, entryIndex: number): void => {
+		const entry = anonymousEntries[entryIndex]?.[1];
+		if (!entry) return;
+		const camel = fieldName.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+		out[camel] = resolveChild(entry, {
+			...opts,
+			_parentKind: parentKind,
+			_fieldName: fieldName,
+			firstNamedChildKindHint: undefined,
+			namedChildKindHints: undefined
+		});
+		missing.delete(fieldName);
+		used.add(entryIndex);
+	};
+
+	if (missing.has('semicolon')) {
+		const semicolonIndex = anonymousEntries.findIndex(([, value]) => (value as ReadNodeLike).$text === ';');
+		if (semicolonIndex >= 0) assign('semicolon', semicolonIndex);
+	}
+	if (missing.has('opening')) {
+		const openingIndex = anonymousEntries.findIndex(
+			([, value], index) => !used.has(index) && isOpeningDelimiter((value as ReadNodeLike).$text)
+		);
+		if (openingIndex >= 0) assign('opening', openingIndex);
+	}
+	if (missing.has('closing')) {
+		const closingIndex = anonymousEntries.findLastIndex(
+			([, value], index) => !used.has(index) && isClosingDelimiter((value as ReadNodeLike).$text)
+		);
+		if (closingIndex >= 0) assign('closing', closingIndex);
+	}
+}
+
+function promoteNamedChildrenToMissingFields(
+	declaredFields: readonly string[] | undefined,
+	parentKind: string | undefined,
+	namedChildren: readonly unknown[],
+	opts: NodeToConfigOpts,
+	out: Record<string, unknown>
+): boolean {
+	if (!declaredFields || !parentKind || namedChildren.length === 0) return false;
+	const missing = getMissingDeclaredFields(declaredFields, out).filter(
+		(name) => name !== 'opening' && name !== 'closing' && name !== 'semicolon'
+	);
+	if (missing.length === 0) return false;
+	if (missing.length === 1) {
+		const name = missing[0]!;
+		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+		out[camel] = namedChildren.map((child) =>
+			resolveChild(child, {
+				...opts,
+				_parentKind: parentKind,
+				_fieldName: name,
+				firstNamedChildKindHint: undefined,
+				namedChildKindHints: undefined
+			})
+		);
+		return true;
+	}
+	if (namedChildren.length > missing.length) return false;
+	namedChildren.forEach((child, index) => {
+		const name = missing[index]!;
+		assignPromotedField(
+			out,
+			name,
+			resolveChild(child, {
+				...opts,
+				_parentKind: parentKind,
+				_fieldName: name,
+				firstNamedChildKindHint: undefined,
+				namedChildKindHints: undefined
+			})
+		);
+	});
+	return true;
+}
+
+function assignPositionPromotedChildren(
+	declaredFields: readonly string[],
+	parentKind: string,
+	namedChildren: readonly unknown[],
+	opts: NodeToConfigOpts,
+	out: Record<string, unknown>
+): void {
+	namedChildren.forEach((child, i) => {
+		const name = declaredFields[i]!;
+		assignPromotedField(
+			out,
+			name,
+			resolveChild(child, {
+				...opts,
+				_parentKind: parentKind,
+				_fieldName: name,
+				firstNamedChildKindHint: undefined,
+				namedChildKindHints: undefined
+			})
+		);
+	});
+}
+
 /**
  * Map `$children` entries directly to `out.children` without alias resolution.
  *
@@ -1221,12 +1368,13 @@ function promoteAnonymousChildrenToMissingFields(
 ): boolean {
 	if (!declaredFields || !parentKind) return false;
 	const anonymousChildren = children.filter(
-		(child): child is ReadNodeLike => child != null && typeof child === 'object' && (child as ReadNodeLike).$named === false
+		(child): child is ReadNodeLike =>
+			child != null && typeof child === 'object' && (child as ReadNodeLike).$named === false
 	);
 	if (anonymousChildren.length === 0) return false;
 	const missingFields = declaredFields.filter((name) => {
 		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
-		return out[camel] === undefined;
+		return out[camel] === undefined && isAnonymousPromotableField(name);
 	});
 	if (missingFields.length === 0) return false;
 	if (anonymousChildren.length !== missingFields.length) return false;
@@ -1276,6 +1424,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 		};
 		out[camelKey] = Array.isArray(v) ? v.map((item) => resolveChild(item, childOpts)) : resolveChild(v, childOpts);
 	}
+	promoteAnonymousTokenFields(parentKind ? opts.factoryFields?.[parentKind] : undefined, namedSlotEntries, opts, parentKind, out);
 	if (data.$children) {
 		const declaredFields = parentKind ? opts.factoryFields?.[parentKind] : undefined;
 		const namedChildren = data.$children.filter(
@@ -1288,29 +1437,12 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 			firstNamedChildKindHint: undefined,
 			namedChildKindHints: undefined
 		};
-		if (shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
+		if (promoteNamedChildrenToMissingFields(declaredFields, parentKind, namedChildren, opts, out)) {
+			// Missing declared fields were recovered from surviving named children.
+		} else if (shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
 			// Assign by position: first N named children → first N declared fields.
-			namedChildren.forEach((child, i) => {
-				const name = declaredFields![i]!;
-				const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
-				const resolveOpts: NodeToConfigOpts = {
-					...opts,
-					_parentKind: parentKind,
-					_fieldName: name,
-					firstNamedChildKindHint: undefined,
-					namedChildKindHints: undefined
-				};
-				out[camel] = resolveChild(child, resolveOpts);
-			});
-		} else if (
-			promoteAnonymousChildrenToMissingFields(
-				declaredFields,
-				parentKind,
-				data.$children,
-				opts,
-				out
-			)
-		) {
+			assignPositionPromotedChildren(declaredFields!, parentKind!, namedChildren, opts, out);
+		} else if (promoteAnonymousChildrenToMissingFields(declaredFields, parentKind, data.$children, opts, out)) {
 			// Ambiguous-free anonymous-token fill completed above.
 		} else {
 			assignChildrenToConfig(data.$children, childOpts, out);
@@ -1329,6 +1461,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 				out,
 				parentKind,
 				opts.kindNameFromId,
+				opts.cstNodeKindHint,
 				opts.firstNamedChildKindHint,
 				opts.namedChildKindHints
 			);
@@ -1356,6 +1489,7 @@ function inferPolymorphVariant(
 	derivedConfig: Record<string, unknown>,
 	parentKind: string,
 	kindNameFromId?: (id: number) => string | undefined,
+	cstNodeKindHint?: string,
 	firstNamedChildKindHint?: string,
 	namedChildKindHints?: readonly string[]
 ): string | undefined {
@@ -1364,8 +1498,10 @@ function inferPolymorphVariant(
 			return inferFromChildKind(
 				desc.childKind,
 				data,
+				derivedConfig,
 				parentKind,
 				kindNameFromId,
+				cstNodeKindHint,
 				firstNamedChildKindHint,
 				namedChildKindHints
 			);
@@ -1384,8 +1520,10 @@ function inferPolymorphVariant(
 function inferFromChildKind(
 	childKind: Readonly<Record<string, string>>,
 	data: ReadNodeLike,
+	derivedConfig: Record<string, unknown>,
 	parentKind: string,
 	kindNameFromId?: (id: number) => string | undefined,
+	cstNodeKindHint?: string,
 	firstNamedChildKindHint?: string,
 	namedChildKindHints?: readonly string[]
 ): string | undefined {
@@ -1444,19 +1582,194 @@ function inferFromChildKind(
 	};
 	const resolved =
 		resolveVariantFromKind(kind) ??
+		resolveVariantFromKind(cstNodeKindHint) ??
 		resolvedFromHints(namedChildKindHints ?? []) ??
-		resolveVariantFromKind(firstNamedChildKindHint);
+		resolveVariantFromKind(firstNamedChildKindHint) ??
+		inferFromStructuralMarkers(
+			childKind,
+			data,
+			derivedConfig,
+			parentKind,
+			kindNameFromId,
+			cstNodeKindHint,
+			firstNamedChildKindHint,
+			namedChildKindHints
+		);
 	if (resolved !== undefined) return resolved;
-	const distinctHints = [...new Set((namedChildKindHints ?? []).filter((candidate) => candidate && candidate !== kind))];
+	const distinctHints = [
+		...new Set(
+			(namedChildKindHints ?? []).filter(
+				(candidate) => candidate && candidate !== kind && candidate !== cstNodeKindHint
+			)
+		)
+	];
 	console.warn(
 		`[nodeToConfig] polymorph '${parentKind}' (source=override): no variant matched first child kind '${kind ?? '<none>'}'. ` +
+			(cstNodeKindHint && cstNodeKindHint !== kind ? `CST node '${cstNodeKindHint}'. ` : '') +
 			(distinctHints.length > 0 ? `CST named children [${distinctHints.join(', ')}]. ` : '') +
-			(firstNamedChildKindHint && firstNamedChildKindHint !== kind
-				? `CST hint '${firstNamedChildKindHint}'. `
-				: '') +
+			(firstNamedChildKindHint && firstNamedChildKindHint !== kind ? `CST hint '${firstNamedChildKindHint}'. ` : '') +
 			`Known: [${Object.keys(childKind).join(', ')}]`
 	);
 	return undefined;
+}
+
+function inferFromStructuralMarkers(
+	childKind: Readonly<Record<string, string>>,
+	data: ReadNodeLike,
+	derivedConfig: Record<string, unknown>,
+	parentKind: string,
+	kindNameFromId?: (id: number) => string | undefined,
+	cstNodeKindHint?: string,
+	firstNamedChildKindHint?: string,
+	namedChildKindHints?: readonly string[]
+): string | undefined {
+	const actualTokens = collectStructuralTokens(
+		data,
+		derivedConfig,
+		kindNameFromId,
+		parentKind,
+		cstNodeKindHint,
+		firstNamedChildKindHint,
+		namedChildKindHints
+	);
+	let best:
+		| {
+				variant: string;
+				score: number;
+				coverage: number;
+		  }
+		| undefined;
+	let ambiguous = false;
+	const variantEntries = Object.entries(childKind).map(([candidateKind, variant]) => ({
+		candidateKind,
+		variant,
+		tokens: collectVariantTokens(parentKind, candidateKind, variant)
+	}));
+	for (const { candidateKind, variant, tokens: variantTokens } of variantEntries) {
+		if (variantTokens.length === 0) continue;
+		const matched = variantTokens.reduce((sum, token) => sum + (actualTokens.get(token) ?? 0), 0);
+		if (matched <= 0) continue;
+		const coverage = matched / variantTokens.length;
+		if (
+			!best ||
+			matched > best.score ||
+			(matched === best.score && coverage > best.coverage)
+		) {
+			best = { variant, score: matched, coverage };
+			ambiguous = false;
+			continue;
+		}
+		if (matched === best.score && coverage === best.coverage && variant !== best.variant) {
+			ambiguous = true;
+		}
+	}
+	if (!ambiguous && best) return best.variant;
+	if (variantEntries.length === 2 && actualTokens.size > 0) {
+		const first = variantEntries[0]!;
+		const second = variantEntries[1]!;
+		const shared = new Set(first.tokens.filter((token) => second.tokens.includes(token)));
+		// Last resort for two-form families whose variants differ only by wrapper
+		// shape and expose disjoint marker vocabularies (e.g. typed vs sequence
+		// parenthesized expressions). Once we have SOME structural evidence but
+		// none of it overlaps either variant's token set, the validator should
+		// still mirror codegen's stable declaration-order fallback instead of
+		// reintroducing high-volume `$variant: undefined` noise.
+		if (shared.size === 0) return first.variant;
+	}
+	return undefined;
+}
+
+function collectStructuralTokens(
+	data: ReadNodeLike,
+	derivedConfig: Record<string, unknown>,
+	kindNameFromId: ((id: number) => string | undefined) | undefined,
+	parentKind: string,
+	cstNodeKindHint?: string,
+	firstNamedChildKindHint?: string,
+	namedChildKindHints?: readonly string[]
+): ReadonlyMap<string, number> {
+	const tokens = new Map<string, number>();
+	const add = (value: string | undefined, weight: number, stripParentPrefix: boolean = false): void => {
+		for (const token of normalizeInferenceTokens(value, stripParentPrefix ? parentKind : undefined)) {
+			tokens.set(token, Math.max(tokens.get(token) ?? 0, weight));
+		}
+	};
+	const addNodeKind = (value: unknown, weight: number): void => {
+		if (value == null || typeof value !== 'object') return;
+		const node = value as ReadNodeLike;
+		if (node.$type === undefined) return;
+		if (typeof node.$type === 'number') {
+			add(kindNameFromId?.(node.$type) ?? String(node.$type), weight, true);
+			return;
+		}
+		add(node.$type, weight, true);
+	};
+
+	add(cstNodeKindHint, 1, true);
+	add(firstNamedChildKindHint, 2, true);
+	for (const hint of namedChildKindHints ?? []) add(hint, 2, true);
+	for (const child of data.$children ?? []) addNodeKind(child, 2);
+
+	const raw = data as unknown as Record<string, unknown>;
+	for (const key of Object.keys(raw)) {
+		if (!key.startsWith('_')) continue;
+		add(key.slice(1), 2);
+		addNodeKind(raw[key], 2);
+	}
+
+	for (const [key, value] of Object.entries(derivedConfig)) {
+		if (key === '$variant') continue;
+		add(key, 1);
+		if (Array.isArray(value)) {
+			value.forEach((item) => addNodeKind(item, 2));
+			continue;
+		}
+		addNodeKind(value, 2);
+	}
+
+	return tokens;
+}
+
+function collectVariantTokens(parentKind: string, candidateKind: string, variant: string): string[] {
+	const seen = new Set<string>();
+	const out: string[] = [];
+	const add = (value: string | undefined, stripParentPrefix: boolean = false): void => {
+		for (const token of normalizeInferenceTokens(value, stripParentPrefix ? parentKind : undefined)) {
+			if (seen.has(token)) continue;
+			seen.add(token);
+			out.push(token);
+		}
+	};
+	add(candidateKind, true);
+	add(variant);
+	return out;
+}
+
+function normalizeInferenceTokens(value: string | undefined, parentKind?: string): string[] {
+	if (!value) return [];
+	const stripped =
+		parentKind && value.startsWith(`${parentKind}_`) ? value.slice(parentKind.length + 1) : value.replace(/^_+/, '');
+	const punctuationAlias =
+		stripped === ';'
+			? 'semi'
+			: stripped === ','
+				? 'comma'
+				: stripped === '='
+					? 'equals'
+					: stripped === '=>'
+						? 'fat_arrow'
+						: stripped === '(' || stripped === ')'
+							? 'paren'
+							: stripped === '[' || stripped === ']'
+								? 'bracket'
+								: stripped === '{' || stripped === '}'
+									? 'brace'
+									: stripped;
+	return punctuationAlias
+		.split(/[^A-Za-z0-9]+/)
+		.flatMap((part) => part.split('_'))
+		.map((part) => part.toLowerCase())
+		.filter(Boolean);
 }
 
 /**

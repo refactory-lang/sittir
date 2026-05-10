@@ -1,19 +1,11 @@
-import { template, ir } from '@sittir/rust';
+import { ir } from '@sittir/rust';
 
-export function renderInlineLetBinding() {
-	const letBinding = template('let $NAME: $TYPE = $VALUE;');
-
-	return letBinding
-		.fill({
-			NAME: ir.identifier('config'),
-			TYPE: ir.identifier('Config'),
-			VALUE: ir.structItem.from({
-				name: 'Config',
-				body: [
-					{ name: 'host', value: '"localhost"' },
-					{ name: 'port', value: '8080' }
-				]
-			})
-		})
-		.render();
+export function renderDirectlyWithoutInlineTemplates() {
+	return ir.functionItem.from({
+		visibilityModifier: 'pub',
+		name: 'render_config',
+		parameters: ir.parameters.strict(),
+		returnType: ir.from.type('String'),
+		body: ir.block.strict(),
+	}).$render();
 }

@@ -1,0 +1,55 @@
+{
+	"name": "@sittir/common",
+	"version": "0.1.0",
+	"description": "Shared backend-neutral runtime contracts and primitives for sittir",
+	"keywords": [
+		"runtime",
+		"render",
+		"tree-sitter",
+		"ast",
+		"internal"
+	],
+	"homepage": "https://github.com/refactory-lang/sittir#readme",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/refactory-lang/sittir.git",
+		"directory": "packages/common"
+	},
+	"files": [
+		"dist"
+	],
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"default": "./dist/index.js"
+		},
+		"./engine": {
+			"types": "./dist/engine-boundary.d.ts",
+			"import": "./dist/engine-boundary.js",
+			"default": "./dist/engine-boundary.js"
+		},
+		"./utils": {
+			"types": "./dist/utils.d.ts",
+			"import": "./dist/utils.js",
+			"default": "./dist/utils.js"
+		}
+	},
+	"scripts": {
+		"build": "tsgo -p tsconfig.build.json",
+		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
+		"dev": "tsgo -p tsconfig.build.json --watch",
+		"type-check": "tsgo --noEmit",
+		"test": "vitest run"
+	},
+	"dependencies": {
+		"@sittir/types": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/node": "^25.6.0"
+	}
+}

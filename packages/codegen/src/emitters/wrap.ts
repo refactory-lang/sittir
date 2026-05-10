@@ -34,6 +34,7 @@ import {
 	collectCatalogKinds,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
+import type { CodegenEmitter } from './emitter.ts';
 
 export interface EmitWrapConfig {
 	grammar: string;
@@ -64,7 +65,7 @@ export interface EmitWrapConfig {
  * CLI callers). Delegates to the emitter protocol (init → loop → finalize).
  */
 export function emitWrap(config: EmitWrapConfig): string {
-	wrapEmitter.init(config);
+	const wrapEmitter = new WrapEmitter(config);
 	for (const [kind, node] of config.nodeMap.nodes) {
 		wrapEmitter.dispatchNode(kind, node);
 	}
@@ -95,28 +96,20 @@ function collectTypeImports(_nodeMap: NodeMap): Set<string> {
 // ---------------------------------------------------------------------------
 
 /**
- * Module-local output buffer — populated by {@link wrap} namespace
- * functions, read by {@link emitWrap} after the dispatch loop.
- */
-let _wrapOutput: string[] = [];
-
-/**
  * Taxonomy-keyed wrap dispatch namespace.
  *
- * Each function pushes into the module-local `_wrapOutput` buffer
- * (populated via `init()`, consumed via `collect()`). The functions are
- * thin wrappers that delegate to the existing internal emit helpers;
- * no emit-function signatures are changed.
+ * Callers provide the output buffer per run so collection state stays
+ * instance-local instead of living in module globals.
  */
 export namespace wrap {
-	/** Reset the output buffer before a new dispatch loop. */
+	/** Back-compat no-op; collection state now lives on emitter instances. */
 	export function init(): void {
-		_wrapOutput = [];
+		// No-op.
 	}
 
-	/** Return the accumulated wrap source blocks. */
+	/** Back-compat stub; callers now own the output buffer directly. */
 	export function collect(): string[] {
-		return _wrapOutput;
+		return [];
 	}
 
 	/**
@@ -124,6 +117,7 @@ export namespace wrap {
 	 * and container shapes; fields is `[]` for the container case).
 	 */
 	export function branch(
+		output: string[],
 		node: Extract<AssembledNode, { modelType: 'branch' }>,
 		kindEntries: readonly KindEnumEntry[] | undefined,
 		nodeMap: NodeMap
@@ -144,7 +138,7 @@ export namespace wrap {
 			kindEntries,
 			nodeMap
 		);
-		_wrapOutput.push(result);
+		output.push(result);
 	}
 
 	/**
@@ -152,6 +146,7 @@ export namespace wrap {
 	 * into a unified superset, then emits a field-carrying wrap.
 	 */
 	export function polymorph(
+		output: string[],
 		node: Extract<AssembledNode, { modelType: 'polymorph' }>,
 		kindEntries: readonly KindEnumEntry[] | undefined,
 		nodeMap: NodeMap
@@ -174,7 +169,7 @@ export namespace wrap {
 			kindEntries,
 			nodeMap
 		);
-		_wrapOutput.push(result);
+		output.push(result);
 	}
 }
 
@@ -384,7 +379,7 @@ function emitFieldCarryingWrap(
 	// $with — calls the corresponding factory for update operations.
 	emitInlineWithProperty(lines, node, fields, children, nodeMap);
 
-	lines.push('  });');
+	lines.push('  }, methodsEngine);');
 	if (hasWithSetters) {
 		lines.push('  return _node;');
 	}
@@ -482,35 +477,16 @@ function emitInlineWithProperty(
 // Emitter protocol — init / dispatchNode / finalize
 // ---------------------------------------------------------------------------
 
-/**
- * Module-level state captured by {@link wrapEmitter.init} and consumed
- * by {@link wrapEmitter.dispatchNode} and {@link wrapEmitter.finalize}.
- */
-let _wrapEmitterNodeMap: NodeMap;
-let _wrapEmitterKindEntries: readonly KindEnumEntry[] | undefined;
-let _wrapEmitterInlineKinds: readonly string[] | undefined;
-let _wrapEmitterSynthesizedKinds: ReadonlySet<string> | undefined;
-let _wrapEmitterTypeImportLine: string | undefined;
+export class WrapEmitter implements CodegenEmitter<string> {
+	readonly #nodeMap: NodeMap;
+	readonly #kindEntries: readonly KindEnumEntry[] | undefined;
+	readonly #inlineKinds: readonly string[] | undefined;
+	readonly #synthesizedKinds: ReadonlySet<string> | undefined;
+	readonly #typeImportLine: string | undefined;
+	readonly #output: string[] = [];
 
-/**
- * Emitter protocol for the single-loop orchestrator in `emit.ts`.
- *
- * `init()` computes kindEntries and captures config state.
- * `dispatchNode()` handles one node from the shared loop — filtering
- * + taxonomy dispatch. `finalize()` assembles the final output:
- * body scan for drill usage → preamble → body → _wrapTable →
- * _aliasTargetToSource → public entry points → join.
- *
- * The existing `emitWrap()` entry point is preserved as a thin wrapper
- * for backwards compatibility (tests, CLI).
- */
-export const wrapEmitter = {
-	/**
-	 * Compute kindEntries and capture config state for the dispatch loop.
-	 */
-	init(config: EmitWrapConfig): void {
+	constructor(config: EmitWrapConfig) {
 		const { nodeMap, generatedIdTables, inlineKinds, synthesizedKinds, kindEntries: providedKindEntries } = config;
-
 		const kindEntries =
 			providedKindEntries ??
 			(generatedIdTables
@@ -518,38 +494,29 @@ export const wrapEmitter = {
 				: undefined);
 
 		const typeImports = collectTypeImports(nodeMap);
-		const typeImportLine =
+		this.#nodeMap = nodeMap;
+		this.#kindEntries = kindEntries;
+		this.#inlineKinds = inlineKinds;
+		this.#synthesizedKinds = synthesizedKinds;
+		this.#typeImportLine =
 			typeImports.size > 0
 				? ['import type {', ...[...typeImports].sort().map((name) => `  ${name},`), "} from './types.js';"].join('\n')
 				: undefined;
-
-		// Capture state for dispatchNode / finalize
-		_wrapEmitterNodeMap = nodeMap;
-		_wrapEmitterKindEntries = kindEntries;
-		_wrapEmitterInlineKinds = inlineKinds;
-		_wrapEmitterSynthesizedKinds = synthesizedKinds;
-		_wrapEmitterTypeImportLine = typeImportLine;
-
-		// Reset the per-node output buffer
-		wrap.init();
-	},
+	}
 
 	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
-		wrap.branch(node, _wrapEmitterKindEntries, _wrapEmitterNodeMap);
-	},
+		wrap.branch(this.#output, node, this.#kindEntries, this.#nodeMap);
+	}
 
 	emitPolymorph(node: Extract<AssembledNode, { modelType: 'polymorph' }>): void {
-		wrap.polymorph(node, _wrapEmitterKindEntries, _wrapEmitterNodeMap);
-	},
+		wrap.polymorph(this.#output, node, this.#kindEntries, this.#nodeMap);
+	}
 
-	/**
-	 * Back-compat wrapper used by standalone `emitWrap()`.
-	 */
 	dispatchNode(kind: string, node: AssembledNode): void {
 		const emission = classifyWrapEmission(kind, node, {
-			kindEntries: _wrapEmitterKindEntries,
-			inlineKinds: _wrapEmitterInlineKinds,
-			synthesizedKinds: _wrapEmitterSynthesizedKinds
+			kindEntries: this.#kindEntries,
+			inlineKinds: this.#inlineKinds,
+			synthesizedKinds: this.#synthesizedKinds
 		});
 		if (
 			emission === 'skip-inline-kind' ||
@@ -569,21 +536,11 @@ export const wrapEmitter = {
 			default:
 				break;
 		}
-	},
+	}
 
-	/**
-	 * Assemble the final output: scan body for drill usage, emit preamble
-	 * with conditionally-included drill helpers, then body, _wrapTable,
-	 * _aliasTargetToSource, and public entry points.
-	 */
 	finalize(): string {
-		const nodeMap = _wrapEmitterNodeMap;
-		const kindEntries = _wrapEmitterKindEntries;
-		const typeImportLine = _wrapEmitterTypeImportLine;
-
-		// Build body from collected wrap functions
 		const bodyLines: string[] = [];
-		for (const source of wrap.collect()) {
+		for (const source of this.#output) {
 			bodyLines.push(source);
 			bodyLines.push('');
 		}
@@ -597,23 +554,23 @@ export const wrapEmitter = {
 		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
 		const utilsImports = [
 			'withMethods',
+			'methodsEngine',
 			...(usesCoerceBoolean ? ['coerceBooleanKeywordStorage'] : []),
 			...(usesCoerceBitflag ? ['coerceBitflagStorage'] : [])
 		];
 
-		// Preamble (depends on body scan results)
 		const lines: string[] = [
 			'// Auto-generated by @sittir/codegen — do not edit',
 			'// Lazy view layer over readNode output — shape A surface.',
 			'',
-			"import { readNode as readNodeJs } from '@sittir/core';",
-			"import type { TreeHandle } from '@sittir/core';",
+			"import { readNode as readNodeJs } from '@sittir/common';",
+			"import type { TreeHandle } from '@sittir/common';",
 			'// Import _NodeData (== AnyNodeData) from @sittir/types',
 			'// instead of re-declaring locally. Single source of truth.',
 			"import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';",
-			...(kindEntries ? ["import { TSKindId } from './types.js';"] : []),
+			...(this.#kindEntries ? ["import { TSKindId } from './types.js';"] : []),
 			"import type * as T from './types.js';",
-			...(typeImportLine ? [typeImportLine] : []),
+			...(this.#typeImportLine ? [this.#typeImportLine] : []),
 			`import { ${utilsImports.join(', ')} } from './utils.js';`,
 			"import * as _factories from './factories.js';",
 			'',
@@ -684,16 +641,18 @@ export const wrapEmitter = {
 
 		// _wrapTable — runtime dispatch by kind
 		lines.push('const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {');
-		for (const [kind, node] of nodeMap.nodes) {
+		for (const [kind, node] of this.#nodeMap.nodes) {
 			if (!node.factoryName) continue;
-			if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
+			if (this.#kindEntries && !hasCatalogEntry(this.#kindEntries, kind)) continue;
 			if (node.modelType === 'branch' || node.modelType === 'polymorph') {
 				lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d as T.${node.typeName}, t),`);
 			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword') {
-				if (kindEntries) {
-					const entry = kindEntries.find((e) => e.kind === kind);
+				if (this.#kindEntries) {
+					const entry = this.#kindEntries.find((e) => e.kind === kind);
 					if (entry) {
-						lines.push(`  '${kind}': (d) => ({ ...d, $type: TSKindId.${kindIdMemberName(nodeMap, kind)} as const }),`);
+						lines.push(
+							`  '${kind}': (d) => ({ ...d, $type: TSKindId.${kindIdMemberName(this.#nodeMap, kind)} as const }),`
+						);
 					} else {
 						lines.push(`  '${kind}': (d) => d,`);
 					}
@@ -706,7 +665,7 @@ export const wrapEmitter = {
 		lines.push('');
 
 		// _aliasTargetToSource — canonical-hidden remap (Option Y)
-		const aliasMap = collectAliasTargetToSourceMap(nodeMap);
+		const aliasMap = collectAliasTargetToSourceMap(this.#nodeMap);
 		lines.push('const _aliasTargetToSource: Record<string, string> = {');
 		for (const [target, source] of [...aliasMap.entries()].sort()) {
 			lines.push(`  '${target}': '${source}',`);
@@ -715,7 +674,7 @@ export const wrapEmitter = {
 		lines.push('');
 
 		// Public entry points
-		if (kindEntries) {
+		if (this.#kindEntries) {
 			lines.push("import { KIND_NAMES } from './types.js';");
 		}
 		lines.push('/** Wrap a NodeData into its lazy read-only view. */');
@@ -724,7 +683,7 @@ export const wrapEmitter = {
 		lines.push('  // (KindId) from Rust; the JS wasm path still returns string $type.');
 		lines.push('  // Resolve to a kind-name string for the string-keyed dispatch tables,');
 		lines.push('  // then per-kind wrap functions stamp the numeric TSKindId.$type on output.');
-		if (kindEntries) {
+		if (this.#kindEntries) {
 			lines.push('  const rawType = typeof data.$type === "number"');
 			lines.push('    ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)');
 			lines.push('    : (data.$type as unknown as string);');
@@ -784,7 +743,7 @@ export const wrapEmitter = {
 		lines.push('  let data = readNode(tree, handle, childIndex);');
 		lines.push('  // asType comparison must handle both string and numeric $type.');
 		lines.push('  // When numeric (native path), convert to kind-name first for comparison.');
-		if (kindEntries) {
+		if (this.#kindEntries) {
 			lines.push('  if (asType) {');
 			lines.push('    const currentType = typeof data.$type === "number"');
 			lines.push('      ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)');
@@ -804,4 +763,4 @@ export const wrapEmitter = {
 
 		return lines.join('\n');
 	}
-};
+}

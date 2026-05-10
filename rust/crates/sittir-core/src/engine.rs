@@ -117,7 +117,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
     }
 
-/// Render a `NodeData` from JSON using the grammar's render dispatch.
+    /// Render a `NodeData` from JSON using the grammar's render dispatch.
     pub fn render(&self, node_json: String) -> Result<String, String> {
         let node: NodeData = serde_json::from_str(&node_json).map_err(|e| {
             let snippet: String = node_json.chars().take(80).collect();
@@ -149,8 +149,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
                         if let Some(ref text) = item.text {
                             buf.push_str(text);
                         } else {
-                            let rendered = self.grammar.render(item)
-                                .unwrap_or_default();
+                            let rendered = self.grammar.render(item).unwrap_or_default();
                             buf.push_str(&rendered);
                         }
                         buf.push('\n');
@@ -166,8 +165,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
                         if let Some(ref text) = item.text {
                             result.push_str(text);
                         } else {
-                            let rendered = self.grammar.render(item)
-                                .unwrap_or_default();
+                            let rendered = self.grammar.render(item).unwrap_or_default();
                             result.push_str(&rendered);
                         }
                     }
@@ -427,7 +425,11 @@ mod tests {
         let tree_fmt = format_record("[", "]");
 
         let rendered = engine
-            .render_canonical_node(&node(Source::Factory), "canonical".to_string(), Some(&tree_fmt))
+            .render_canonical_node(
+                &node(Source::Factory),
+                "canonical".to_string(),
+                Some(&tree_fmt),
+            )
             .unwrap();
 
         assert_eq!(rendered, "canonical");
@@ -435,7 +437,10 @@ mod tests {
 
     // --- Trivia render tests (spec 023 T017) ---
 
-    fn node_with_trivia(leading: Option<Vec<NodeData>>, trailing: Option<Vec<NodeData>>) -> NodeData {
+    fn node_with_trivia(
+        leading: Option<Vec<NodeData>>,
+        trailing: Option<Vec<NodeData>>,
+    ) -> NodeData {
         use crate::types::NodeTrivia;
         NodeData {
             type_: crate::types::KindId(1),
@@ -470,10 +475,7 @@ mod tests {
     fn render_node_data_prepends_leading_trivia() {
         let mut engine = Engine::new(TestGrammar, None).unwrap();
         let tree = engine.parse("fn main() {}".to_string()).unwrap();
-        let n = node_with_trivia(
-            Some(vec![comment_leaf("// hello")]),
-            None,
-        );
+        let n = node_with_trivia(Some(vec![comment_leaf("// hello")]), None);
         let rendered = tree.render_node_data(n).unwrap();
         // The node renders as "rendered:1" (TestGrammar::render), and
         // leading trivia "// hello" is prepended with a newline separator.
@@ -486,10 +488,7 @@ mod tests {
     fn render_node_data_appends_trailing_trivia() {
         let mut engine = Engine::new(TestGrammar, None).unwrap();
         let tree = engine.parse("fn main() {}".to_string()).unwrap();
-        let n = node_with_trivia(
-            None,
-            Some(vec![comment_leaf("// trailing")]),
-        );
+        let n = node_with_trivia(None, Some(vec![comment_leaf("// trailing")]));
         let rendered = tree.render_node_data(n).unwrap();
         assert_eq!(rendered, "rendered:1\n// trailing");
     }
@@ -540,5 +539,4 @@ mod tests {
         let rendered = tree.render_node_data(n).unwrap();
         assert_eq!(rendered, "rendered:1");
     }
-
 }

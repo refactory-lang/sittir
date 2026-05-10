@@ -54,11 +54,7 @@ pub fn read_node(
 }
 
 /// One-level read core — converts a tree-sitter `Node` into `NodeData`.
-fn read_ts_node(
-    node: tree_sitter::Node<'_>,
-    source: &str,
-    node_handle: Option<u32>,
-) -> NodeData {
+fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u32>) -> NodeData {
     // Phase B-inverse: use tree-sitter's numeric kind_id() directly instead
     // of the string kind() so NodeData.type_: KindId flows end-to-end without
     // a heap-allocated String per node.

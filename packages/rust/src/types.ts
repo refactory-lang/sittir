@@ -2633,6 +2633,9 @@ export interface ConstItem {
   readonly _name: Identifier;
   readonly _type: _Type;
   readonly _value?: Expression;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   name(): Identifier;
   type(): _Type;
@@ -2712,6 +2715,9 @@ export interface EnumItem {
   readonly _type_parameters?: TypeParameters;
   readonly _where_clause?: WhereClause;
   readonly _body: EnumVariantList;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   name(): TypeIdentifier;
   typeParameters(): TypeParameters | undefined;
@@ -2725,6 +2731,9 @@ export interface EnumVariant {
   readonly _name: Identifier;
   readonly _body?: FieldDeclarationList | OrderedFieldDeclarationList;
   readonly _value?: Expression;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   name(): Identifier;
   body(): FieldDeclarationList | OrderedFieldDeclarationList | undefined;
@@ -2765,6 +2774,9 @@ export interface ExternCrateDeclaration {
   readonly _crate: AutoStamp<"crate">;
   readonly _name: Identifier;
   readonly _alias?: Identifier;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   crate(): AutoStamp<"crate">;
   name(): Identifier;
@@ -2782,6 +2794,9 @@ export interface FieldDeclaration {
   readonly _visibility_modifier?: VisibilityModifier;
   readonly _name: FieldIdentifier;
   readonly _type: _Type;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   name(): FieldIdentifier;
   type(): _Type;
@@ -2877,6 +2892,9 @@ export interface ForeignModItemUFormSemi {
   readonly $variant: 'semi';
   readonly _visibility_modifier?: VisibilityModifier;
   readonly _extern_modifier: ExternModifier;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   externModifier(): ExternModifier;
 }
@@ -2886,6 +2904,9 @@ export interface ForeignModItemUFormBody {
   readonly $variant: 'body';
   readonly _visibility_modifier?: VisibilityModifier;
   readonly _extern_modifier: ExternModifier;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   externModifier(): ExternModifier;
   readonly $children: readonly [_ForeignModItemBody];
@@ -2902,6 +2923,9 @@ export interface FunctionItem {
   readonly _return_type?: _Type;
   readonly _where_clause?: WhereClause;
   readonly _body: Block;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   functionModifiers(): FunctionModifiers | undefined;
   name(): Identifier | Metavariable;
@@ -2927,6 +2951,9 @@ export interface FunctionSignatureItem {
   readonly _parameters: Parameters;
   readonly _return_type?: _Type;
   readonly _where_clause?: WhereClause;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   functionModifiers(): FunctionModifiers | undefined;
   name(): Identifier | Metavariable;
@@ -3268,6 +3295,9 @@ export interface ModItemUFormExternal {
   readonly $variant: 'external';
   readonly _visibility_modifier?: VisibilityModifier;
   readonly _name: Identifier;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   name(): Identifier;
 }
@@ -3277,6 +3307,9 @@ export interface ModItemUFormInline {
   readonly $variant: 'inline';
   readonly _visibility_modifier?: VisibilityModifier;
   readonly _name: Identifier;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   name(): Identifier;
   readonly $children: readonly [_ModItemInline];
@@ -3553,6 +3586,9 @@ export interface StaticItem {
   readonly _name: Identifier;
   readonly _type: _Type;
   readonly _value?: Expression;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   mutableSpecifier(): "ref" | "mut" | undefined;
   name(): Identifier;
@@ -3579,6 +3615,9 @@ export interface StructItemUFormBrace {
   readonly _visibility_modifier?: VisibilityModifier;
   readonly _name: TypeIdentifier;
   readonly _type_parameters?: TypeParameters;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   name(): TypeIdentifier;
   typeParameters(): TypeParameters | undefined;
@@ -3591,6 +3630,9 @@ export interface StructItemUFormTuple {
   readonly _visibility_modifier?: VisibilityModifier;
   readonly _name: TypeIdentifier;
   readonly _type_parameters?: TypeParameters;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   name(): TypeIdentifier;
   typeParameters(): TypeParameters | undefined;
@@ -3603,6 +3645,9 @@ export interface StructItemUFormUnit {
   readonly _visibility_modifier?: VisibilityModifier;
   readonly _name: TypeIdentifier;
   readonly _type_parameters?: TypeParameters;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   name(): TypeIdentifier;
   typeParameters(): TypeParameters | undefined;
@@ -3720,6 +3765,7 @@ export interface TraitItem {
   readonly _where_clause?: WhereClause;
   readonly _body: DeclarationList;
   readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
     readonly unsafe_marker?: BooleanKeyword<"unsafe">;
   };
   visibilityModifier(): VisibilityModifier | undefined;
@@ -3799,6 +3845,9 @@ export interface TypeItem {
   readonly _where_clause?: WhereClause;
   readonly _type: _Type;
   readonly _trailing_where_clause?: WhereClause;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   name(): TypeIdentifier;
   typeParameters(): TypeParameters | undefined;
@@ -3841,6 +3890,9 @@ export interface UnionItem {
   readonly _type_parameters?: TypeParameters;
   readonly _where_clause?: WhereClause;
   readonly _body: FieldDeclarationList;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   name(): TypeIdentifier;
   typeParameters(): TypeParameters | undefined;
@@ -3871,6 +3923,9 @@ export interface UseDeclaration {
   readonly $type: TSKindId.UseDeclaration;
   readonly _visibility_modifier?: VisibilityModifier;
   readonly _argument: UseClause;
+  readonly __inputHints__?: {
+    readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+  };
   visibilityModifier(): VisibilityModifier | undefined;
   argument(): UseClause;
 }

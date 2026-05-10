@@ -14,7 +14,12 @@
 
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import type { NodeId } from '@sittir/types';
+import type {
+	JsBackendStatusLike,
+	NativeBackendStatusLike,
+	NativeEngineLike as CoreNativeEngineLike,
+	NativeModuleLike
+} from '@sittir/common/engine';
 import { TEMPLATE_BUNDLE_HASH } from './hash.js';
 
 const NATIVE_RENDER_TRANSPORT_ABI = 1;
@@ -24,16 +29,12 @@ export type BackendName = 'native' | 'js';
 /** User-facing backend choices. `auto` is the default policy. */
 export type BackendChoice = 'auto' | 'native' | 'wasm' | 'js';
 
-export type NativeBackendStatus = {
-	readonly name: 'native';
+export type NativeBackendStatus = NativeBackendStatusLike<NativeModule> & {
 	readonly hashMatch: true;
-	readonly native: NativeModule;
 };
 
-export type JsBackendStatus = {
-	readonly name: 'js';
+export type JsBackendStatus = JsBackendStatusLike & {
 	readonly reason: string;
-	readonly hashMatch?: false;
 };
 
 /** Result of a backend selection. Frozen — consumers cannot mutate. */
@@ -45,19 +46,13 @@ export type BackendStatus = NativeBackendStatus | JsBackendStatus;
  * documented surface. Declared locally (not imported) so the package
  * type-checks even when the native package is not installed.
  */
-export interface NativeEngine {
+export interface NativeEngine extends CoreNativeEngineLike<unknown> {
 	readonly templateBundleHash: string;
 	readonly nativeRenderTransportAbi: number;
-	parseAndRead(source: string): string;
 	findAndRead(source: string, pattern: string): string;
-	readNode(nodeId: NodeId): string;
-	render(node: unknown): string;
-	renderToFile?(node: unknown, path: string): void;
-	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
-	dispose(): void;
 }
 
-export interface NativeModule {
+export interface NativeModule extends NativeModuleLike<unknown, NativeEngine> {
 	SittirEngine: new (options?: { format?: string }) => NativeEngine;
 }
 

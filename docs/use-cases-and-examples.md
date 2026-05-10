@@ -1,14 +1,30 @@
 # sittir — Use Cases & Examples
 
-> **Purpose:** Depicts sittir's fully realized API across realistic scenarios. It serves as both a user guide and a development litmus test: when every example compiles and runs correctly, the product is complete.
+> **Purpose:** Mixes **current** public API examples with **target** examples for
+> surfaces that are planned but not fully landed yet. It still serves as a
+> user guide and a development litmus test, but not every snippet below is
+> expected to compile against today's implementation.
 >
 > **Grammars:** Rust (`@sittir/rust`), TypeScript (`@sittir/typescript`), Python (`@sittir/python`).
 >
-> **Status:** These examples document the target public API. Some surfaces are aspirational until the corresponding litmus-test items at the end of this document are checked off.
+> **Status:** The compile-checked current examples live under
+> [`examples/`](../examples/) and currently cover:
+> `01-construct-nodes.ts`, `02-render-round-trip.ts`,
+> `07-read-source.ts`, and `09-type-guards.ts`.
+>
+> The biggest **pending** surfaces called out below are:
+>
+> - `template(...)` and `snippets.*` construction helpers — not shipped yet
+> - `engine.findAndRead(...)` — intended surface, but not wired/implemented yet
+> - older docs that still show `wrap(...)` / `parseAndRead(...)` at the engine
+>   top level instead of the current `wrapNode(...)` / `engine.reader.parseAndRead(...)`
 >
 > **Access conventions:** Factory and wrap output exposes named fields via getter methods (`fn.name()`). Raw storage uses `_storageName` prefix (`fn._name`). `$with` provides immutable updates. All sittir methods use `$`-prefix.
 >
-> **Executable companions:** Source-form TypeScript versions of these examples live under [`examples/`](../examples/). They are written as callable modules so examples can graduate from documentation to compile/run checks as the target API lands.
+> **Executable companions:** Source-form TypeScript versions of these examples
+> live under [`examples/`](../examples/). Stable examples graduate into the
+> compile gate; pending target-surface examples stay documented here until the
+> implementation catches up.
 
 ## 1. Construct nodes with factories
 

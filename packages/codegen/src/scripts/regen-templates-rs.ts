@@ -19,9 +19,7 @@ import { optimize } from '../compiler/optimize.ts';
 import { assemble, hydrateSlotRefs } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
-import { emitJinjaTemplates } from '../emitters/templates.ts';
-import { emitRenderModuleBundle } from '../emitters/render-module.ts';
-import { renderModuleSrcDir } from '../emitters/render-module-paths.ts';
+import { runRenderModuleEmitter } from '../emitters/render-module-runner.ts';
 
 const SUPPORTED_GRAMMARS = ['rust', 'typescript', 'python'] as const;
 type Grammar = (typeof SUPPORTED_GRAMMARS)[number];
@@ -59,10 +57,7 @@ async function regenTemplatesRs(grammar: Grammar): Promise<void> {
 	hydrateSlotRefs(nodeMap);
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 
-	// Emit jinja templates (needed for emitRenderModule)
-	const jinjaTemplates = emitJinjaTemplates({ grammar, nodeMap });
-
-	const renderModule = emitRenderModuleBundle(grammar, jinjaTemplates, nodeMap, generatedIdTables);
+	const renderModule = runRenderModuleEmitter({ grammar, nodeMap, generatedIdTables });
 	const emit = renderModule.emit;
 
 	// Write split render module files

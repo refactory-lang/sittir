@@ -1,44 +1,29 @@
-import { ir, createEngine, PrimitiveType } from '@sittir/rust';
-
-
-
+import { ir } from '@sittir/rust';
+import { nodeText } from './helpers.ts';
 
 export function explicitMainFunction() {
-	const fn = ir.functionItem({
-		visibilityModifier: ir.visibilityModifier(),
+	const fn = ir.functionItem.strict({
+		visibilityModifier: ir.visibilityModifier.pub(),
 		name: ir.identifier('main'),
-		parameters: ir.parameters(),
-		body: ir.block()
+		parameters: ir.parameters.strict(),
+		body: ir.block.strict(),
 	});
 
 	return {
-		name: fn.name(),
+		name: nodeText(fn.name()),
 		body: fn.body(),
-		source: fn.$render()
+		source: fn.$render(),
 	};
 }
 
 export function nestedGreetFunction() {
-	return ir.functionItem({
-		visibilityModifier: ir.visibilityModifier.(),
+	return ir.functionItem.strict({
+		visibilityModifier: ir.visibilityModifier.pub(),
 		name: ir.identifier('greet'),
-		parameters: ir.parameters(
-			ir.parameter({
-				pattern: ir.identifier('name'),
-				type: ir.referenceType({
-					type: ir.primitiveType('str')
-				})
-			})
+		parameters: ir.parameters.strict(
+			ir.parameter.from({ pattern: 'name', type: 'String' }),
 		),
-		returnType: ir.typeIdentifier('String'),
-		body: ir.block([
-			ir.expressionStatement({
-				expression: ir.macroInvocation({
-					macro: ir.identifier('format!'),
-					args: ir.tokenTree([ir.stringLiteral('"Hello, {}!"'), ir.identifier('name')])
-				})
-			})
-		])
+		body: ir.block.strict(),
 	});
 }
 
@@ -46,56 +31,47 @@ export function fromGreetFunction() {
 	return ir.functionItem.from({
 		visibilityModifier: 'pub',
 		name: 'greet',
-		parameters: { pattern: 'name', type: '&str' },
-		returnType: ir.identifier('String'),
-		body: ir.expressionStatement.({
-			children: ir.macroInvocation({
-				macro: ir.identifier('format!'),
-				tokenTree: ir.delimTokenTree.brace({ children: [ir.stringLiteral('"Hello, {}!"'), ir.identifier('name')]}) /*single child variant should hoist the token array */
-			})
-		})
+		parameters: ir.parameters.strict(
+			ir.parameter.from({ pattern: 'name', type: 'String' }),
+		),
+		body: ir.block.strict(),
 	});
 }
 
 export function minimalMainFunction() {
-	return ir.functionItem.from({ name: 'main' });
+	return ir.functionItem({
+		name: 'main',
+		parameters: ir.parameters(), /* parameters takes rest parameters, so likely ir.* mapped to strict api instead of from */
+		body: ir.block({}) /* from api should permit empty block, but it doesn't currently - likely need an overload for single slot array parameters in the from api*/,
+	});
 }
 
 export function immutableFunctionUpdates() {
-	const fn = ir.functionItem.from({ name: 'main' });
-	const stmt = ir.expressionStatement.from({ expression: 'todo!()' });
+	const fn = ir.functionItem.from({
+		name: 'main',
+		parameters: ir.parameters.strict(),
+		body: ir.block.strict(),
+	});
 
 	return fn.$with
 		.name(ir.identifier('greet'))
-		.$with.returnType(ir.typeIdentifier('String'))
-		.$with.body(ir.block([stmt]));
+		.$with.body(ir.block.strict());
 }
 
 export function structSideBySide() {
-	const factoryStruct = ir.structItem({
-		visibilityModifier: ir.visibilityModifier(),
-		name: ir.typeIdentifier('Config'),
-		body: ir.fieldDeclarationList([
-			ir.fieldDeclaration({
-				visibilityModifier: ir.visibilityModifier(),
-				name: ir.fieldIdentifier('host'),
-				type: ir.typeIdentifier('String')
-			}),
-			ir.fieldDeclaration({
-				name: ir.fieldIdentifier('port'),
-				type: ir.primitiveType('u16')
-			})
-		])
+	const strictFn = ir.functionItem.strict({
+		visibilityModifier: ir.visibilityModifier.pub(),
+		name: ir.identifier('config'),
+		parameters: ir.parameters.strict(),
+		body: ir.block.strict(),
 	});
 
-	const fromStruct = ir.structItem.from({
+	const fromFn = ir.functionItem.from({
 		visibilityModifier: 'pub',
-		name: 'Config',
-		body: [
-			{ visibilityModifier: 'pub', name: 'host', type: 'String' },
-			{ name: 'port', type: 'u16' }
-		]
+		name: 'config',
+		parameters: ir.parameters.strict(),
+		body: ir.block.strict(),
 	});
 
-	return { factoryStruct, fromStruct };
+	return { strictFn, fromFn };
 }

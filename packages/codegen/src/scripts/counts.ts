@@ -1,47 +1,60 @@
 /**
- * Per-grammar validator counts — reports raw totals (pass/total) for
- * every validator without the floor-based pass/fail noise. Run after
- * every codegen change when iterating.
+ * Compatibility shim — local wrapper for validator counts.
  *
- * Usage: npx tsx packages/codegen/src/scripts/counts.ts [grammar...]
- * If no grammar args given, runs all three.
+ * Kept inside `@sittir/codegen` so historical script paths continue to work
+ * without importing the separate `packages/validator` package into the codegen
+ * build graph.
  */
-
 import { resolve } from 'node:path';
-import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { validateFrom } from '../validate/from.ts';
-import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
+import { validateReadRenderParse } from '../validate/read-render-parse.ts';
+import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 
-function templatesPath(grammar: string): string {
-	return resolve(new URL('../../../..', import.meta.url).pathname, `packages/${grammar}/templates`);
+type Grammar = 'rust' | 'typescript' | 'python';
+
+const ALL_GRAMMARS: readonly Grammar[] = ['rust', 'typescript', 'python'];
+
+function resolveGrammars(args: readonly string[]): Grammar[] {
+	const valid = args.filter((arg): arg is Grammar => ALL_GRAMMARS.includes(arg as Grammar));
+	return valid.length > 0 ? valid : [...ALL_GRAMMARS];
 }
 
-async function runGrammar(grammar: string): Promise<string> {
-	const tp = templatesPath(grammar);
-	const [from, rt, cov, fac] = await Promise.all([
-		validateFrom(grammar, 'native'),
-		validateReadRenderParse(grammar, tp, { backend: 'native' }),
-		Promise.resolve(validateTemplateCoverage(grammar, tp)),
-		validateFactoryRenderParse(grammar, tp, 'native')
-	]);
-	return [
-		`${grammar}:`,
-		`  fromPass=${from.pass}    fromTotal=${from.total}`,
-		`  covPass=${cov.pass}    covTotal=${cov.total}`,
-		`  rtPass=${rt.pass}    rtTotal=${rt.total}    rtAstMatchPass=${rt.astMatchPass}`,
-		`  factoryPass=${fac.pass}    factoryTotal=${fac.total}    factoryAstMatchPass=${fac.astMatchPass}`
-	].join('\n');
+function defaultTemplatesPath(grammar: Grammar): string {
+	const packagesDir = resolve(fileURLToPath(new URL('../../..', import.meta.url)));
+	return resolve(packagesDir, grammar, 'templates');
 }
 
-const args = process.argv.slice(2);
-const grammars = args.length ? args : ['rust', 'typescript', 'python'];
-
-for (const g of grammars) {
-	try {
-		const report = await runGrammar(g);
-		console.log(report);
-	} catch (e) {
-		console.log(`${g}: ERROR ${(e as Error).message}`);
+export async function run(argv: string[]): Promise<number> {
+	for (const grammar of resolveGrammars(argv)) {
+		const templatesPath = defaultTemplatesPath(grammar);
+		const [from, rt, cov, fac] = await Promise.all([
+			validateFrom(grammar, 'native'),
+			validateReadRenderParse(grammar, templatesPath, { backend: 'native' }),
+			Promise.resolve(validateTemplateCoverage(grammar, templatesPath)),
+			validateFactoryRenderParse(grammar, templatesPath, 'native')
+		]);
+		console.log([
+			`${grammar}:`,
+			`  fromPass=${from.pass}    fromTotal=${from.total}`,
+			`  covPass=${cov.pass}    covTotal=${cov.total}`,
+			`  rtPass=${rt.pass}    rtTotal=${rt.total}    rtAstMatchPass=${rt.astMatchPass}`,
+			`  factoryPass=${fac.pass}    factoryTotal=${fac.total}    factoryAstMatchPass=${fac.astMatchPass}`
+		].join('\n'));
 	}
+	return 0;
+}
+
+const isCli = (() => {
+	if (process.argv[1] == null) return false;
+	try {
+		return pathToFileURL(process.argv[1]).href === import.meta.url;
+	} catch {
+		return false;
+	}
+})();
+
+if (isCli) {
+	await run(process.argv.slice(2));
 }

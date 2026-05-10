@@ -1,22 +1,25 @@
 import { ir } from '@sittir/rust';
-import { constParameter } from '../packages/rust/dist/factories';
 
 export function attachDocComment() {
-	const fn = ir.function
+	const fn = ir.functionItem
 		.from({
-			visibilityModifier: ir.visibilityModifier.pub(),
-			name: ir.identifier('main'),
-			parameters: ir.parameters(),
-			typeParameters: ir.typeParameters(constParameter())
+			visibilityModifier: 'pub',
+			name: 'main',
+			parameters: ir.parameters.strict(),
+			body: ir.block.strict(),
 		})
-		.$trivia(ir.docComment('/// Entry point.'));
+		.$trivia(ir.lineComment.doc({ doc: 'Entry point.' }));
 
 	return fn.$render();
 }
 
-export function attachLeadingAndTrailingTrivia() {
-	return ir.functionItem.from({ visibilityModifier: 'pub', name: 'main' }).$trivia({
-		leading: [ir.lineComment('// @generated'), ir.docComment('/// Main.')],
-		trailing: [ir.lineComment('// end main')]
+export function attachLeadingTrivia() {
+	return ir.functionItem.from({
+		visibilityModifier: 'pub',
+		name: 'main',
+		parameters: ir.parameters.strict(),
+		body: ir.block.strict(),
+	}).$trivia({
+		leading: [ir.lineComment.doc({ doc: 'Main entry point.' })],
 	});
 }

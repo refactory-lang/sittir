@@ -83,7 +83,8 @@ import {
 	referencedKinds,
 	fieldTypeComponents,
 	isValidIdent,
-	resolveFieldStorageInfo
+	resolveFieldStorageInfo,
+	collectPolymorphLiteralDispatchCases
 } from './shared.ts';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
@@ -1470,7 +1471,8 @@ function fieldInputHintTypeExpr(
 	f: AssembledNonterminal,
 	kind: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	typeExpr: string
 ): string | undefined {
 	const storageInfo = resolveFieldStorageInfo(f, nodeMap);
 	if (storageInfo.kind === 'boolean') {
@@ -1484,6 +1486,18 @@ function fieldInputHintTypeExpr(
 	if (storageInfo.kind === 'kindEnum') {
 		return `KindEnum<${stringUnion(storageInfo.texts)}, ${enumStorageDiscriminantExpr(storageInfo, nodeMap, kindEntries)}>`;
 	}
+	if (!isMultiple(f)) {
+		const kinds = slotKindNames(f);
+		if (kinds.length === 1) {
+			const target = nodeMap.nodes.get(kinds[0]!);
+			if (target instanceof AssembledPolymorph) {
+				const literals = collectPolymorphLiteralDispatchCases(target.forms, nodeMap).map((entry) => entry.literal);
+				if (literals.length > 0) {
+					return `${typeExpr} | ${stringUnion(literals)}`;
+				}
+			}
+		}
+	}
 	return undefined;
 }
 
@@ -1496,7 +1510,13 @@ function emitFieldInputHints(
 ): void {
 	const hintLines = fields
 		.map((field) => {
-			const hintType = fieldInputHintTypeExpr(field, kind, nodeMap, kindEntries);
+			const hintType = fieldInputHintTypeExpr(
+				field,
+				kind,
+				nodeMap,
+				kindEntries,
+				fieldTypeExpr(field, nodeMap)
+			);
 			if (!hintType) return undefined;
 			const opt = isRequired(field) ? '' : '?';
 			const storageInfo = resolveFieldStorageInfo(field, nodeMap);
