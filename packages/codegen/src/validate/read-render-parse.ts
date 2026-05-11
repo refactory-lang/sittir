@@ -29,7 +29,6 @@ import {
 	buildKindToSupertypes,
 	wrapForReparse,
 	loadReadTreeNode,
-	loadWrapNode,
 	walkWrappedTree,
 	emitValidatorMetrics,
 	type TSNode,
@@ -116,12 +115,13 @@ function readValidatorNodeData(
 	node: TSNode,
 	nativeCoords: ReturnType<typeof findNativeNodeId>,
 	readTreeNodeFn: ((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null,
-	wrapNodeFn: ((data: AnyNodeData, tree: TreeHandle) => unknown) | null,
 	deepReadKinds: KindMembership,
 	recursive: boolean,
 	backend?: 'native' | 'typescript'
 ): AnyNodeData {
 	void readTreeNodeFn;
+	void recursive;
+	void backend;
 	const deepRead = (): AnyNodeData => {
 		if (nativeCoords && handle.read) {
 			return _deepReadNode(handle, nativeCoords.handle, nativeCoords.childIndex, deepReadKinds);
@@ -134,35 +134,12 @@ function readValidatorNodeData(
 			(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
 		}
 	};
-	if (backend === 'native' && wrapNodeFn) {
-		return deepWrapNodeData(deepRead(), wrapNodeFn, handle) as AnyNodeData;
-	}
 	// Always route through _deepReadNode: when `recursive` is false the
 	// KindMembership gate limits drilling to the caller-selected subset;
 	// when true the membership test returns true for every numeric kind id.
 	// This preserves the shallow default for most nodes while still letting
 	// native RT validation selectively materialize structured descendants.
 	return deepRead();
-}
-
-function isNodeDataLike(value: unknown): value is AnyNodeData {
-	return !!value && typeof value === 'object' && typeof (value as { $type?: unknown }).$type !== 'undefined';
-}
-
-function deepWrapNodeData(
-	value: unknown,
-	wrapNodeFn: (data: AnyNodeData, tree: TreeHandle) => unknown,
-	tree: TreeHandle
-): unknown {
-	if (Array.isArray(value)) return value.map((entry) => deepWrapNodeData(entry, wrapNodeFn, tree));
-	if (!value || typeof value !== 'object') return value;
-	const source = isNodeDataLike(value) ? ((wrapNodeFn(value, tree) as object) ?? value) : value;
-	const out: Record<string, unknown> = {};
-	for (const [key, entry] of Object.entries(source)) {
-		if (typeof entry === 'function' || key === '$with') continue;
-		out[key] = deepWrapNodeData(entry, wrapNodeFn, tree);
-	}
-	return out;
 }
 
 /**
@@ -758,7 +735,6 @@ export async function validateReadRenderParse(
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
-	const wrapNodeFn = await loadWrapNode(grammar);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
 	const nativeStructuredKindNames = backend === 'native' ? loadNativeStructuredKinds(rawEntries) : new Set<string>();
 	const deepReadKindNames = new Set([...adoptedVariantKindNames, ...nativeStructuredKindNames]);
@@ -871,7 +847,6 @@ export async function validateReadRenderParse(
 						node1,
 						nativeCoords,
 						readTreeNodeFn,
-						wrapNodeFn,
 						deepReadKinds,
 						recursive === true,
 						backend

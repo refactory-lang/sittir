@@ -19,6 +19,7 @@ import type {
 	EnumRule,
 	SupertypeRule
 } from './rule.ts';
+import { isLinkSymbol } from './rule.ts';
 import type { OptimizedGrammar, NodeMap, SignaturePool, PolymorphVariant } from './types.ts';
 import { computePolymorphFormKinds } from './types.ts';
 import {
@@ -1198,30 +1199,29 @@ function collectAnonymousNodes(
 	wordMatcher: RegExp | undefined,
 	kindEntries: readonly GeneratedKindEntry[]
 ): void {
-	const seen = new Set<string>();
+	const seen = new Map<string, string>();
 
 	for (const rule of Object.values(rules)) {
 		walkForStrings(rule, seen);
 	}
 
-	for (const value of seen) {
-		if (nodes.has(value)) continue; // Already classified as a named rule
-		if (value === '' || /^\s+$/.test(value)) continue; // Skip whitespace/empty
+	for (const [kindName, literalText] of seen) {
+		if (nodes.has(kindName)) continue; // Already classified as a named rule
+		if (literalText === '' || /^\s+$/.test(literalText)) continue; // Skip whitespace/empty
 
-		const isWordShape = detectKeywordShape(value, wordMatcher);
-		// Synthetic StringRule for anonymous tokens — the kind IS the literal value.
-		const syntheticStringRule: StringRule = { type: 'string', value };
+		const isWordShape = detectKeywordShape(literalText, wordMatcher);
+		const syntheticStringRule: StringRule = { type: 'string', value: literalText };
 
 		if (isWordShape) {
 			// Keyword token (e.g., "if", "class", "pub")
 			// Anonymous keywords from grammar — no factory (hidden: no user construction path)
 			nodes.set(
-				value,
-				new AssembledKeyword(value, syntheticStringRule, { hidden: true, kindEntries })
+				kindName,
+				new AssembledKeyword(kindName, syntheticStringRule, { hidden: true, kindEntries })
 			);
 		} else {
 			// Operator/punctuation token (e.g., "+", "->", "{")
-			nodes.set(value, new AssembledToken(value, syntheticStringRule, { kindEntries }));
+			nodes.set(kindName, new AssembledToken(kindName, syntheticStringRule, { kindEntries }));
 		}
 	}
 }
@@ -1238,10 +1238,15 @@ function collectAnonymousNodes(
  *   node, so collecting the enum member strings as anonymous token kinds would
  *   be incorrect.
  */
-function walkForStrings(rule: Rule, out: Set<string>): void {
+function walkForStrings(rule: Rule, out: Map<string, string>): void {
 	switch (rule.type) {
 		case 'string':
-			out.add(rule.value);
+			out.set(rule.value, rule.value);
+			break;
+		case 'symbol':
+			if (isLinkSymbol(rule) && rule.literal !== undefined) {
+				out.set(rule.name, rule.literal);
+			}
 			break;
 		case 'enum':
 			// Enum values are text content — do NOT descend (see JSDoc).

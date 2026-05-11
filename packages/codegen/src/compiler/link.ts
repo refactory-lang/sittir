@@ -28,6 +28,12 @@ import type {
 	StringRule
 } from './rule.ts';
 import { isField, isSeq, isChoice, isString, normalizeEnumMembers } from './rule.ts';
+import {
+	collectGeneratedKindEntries,
+	findGeneratedKindEntry,
+	type GeneratedIdTables,
+	type GeneratedKindEntry
+} from './generated-metadata.ts';
 import type {
 	RawGrammar,
 	LinkedGrammar,
@@ -47,10 +53,15 @@ import { validateRefineForms } from './link-refine.ts';
 // link() — main entry point
 // ---------------------------------------------------------------------------
 
-export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
+export function link(
+	raw: RawGrammar,
+	include?: IncludeFilter,
+	generatedIdTables?: GeneratedIdTables
+): LinkedGrammar {
 	const supertypes = new Set(raw.supertypes);
 	const externalRoles = buildExternalRolesMap(raw.externalRoles);
 	const references = [...raw.references];
+	const kindEntries = collectGeneratedKindEntries(generatedIdTables);
 
 	// Resolve include defaults: undefined means "include everything".
 	// Explicit empty arrays mean "include nothing of this category".
@@ -98,6 +109,8 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
 		supertypes,
 		externalRoles
 	);
+	canonicalizeCatalogLiteralRefs(rules, kindEntries);
+	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, kindEntries);
 
 	// Validate refine() forms against the linked rule tree.
 	if (raw.refineForms && raw.refineForms.size > 0) {
@@ -180,6 +193,85 @@ function createSyntheticExternalRules(rules: Record<string, Rule>, externals: re
 		if (!rules[ext]) {
 			rules[ext] = { type: 'pattern', value: '' } as Rule;
 		}
+	}
+}
+
+function canonicalizeCatalogLiteralRefs(
+	rules: Record<string, Rule>,
+	kindEntries: readonly GeneratedKindEntry[]
+): void {
+	for (const [name, rule] of Object.entries(rules)) {
+		rules[name] = canonicalizeRuleLiterals(rule, kindEntries, false);
+	}
+}
+
+function canonicalizeCatalogLiteralRefsInMap(
+	rules: Map<string, Rule>,
+	kindEntries: readonly GeneratedKindEntry[]
+): void {
+	for (const [name, rule] of rules.entries()) {
+		rules.set(name, canonicalizeRuleLiterals(rule, kindEntries, false));
+	}
+}
+
+function canonicalizeRuleLiterals(
+	rule: Rule,
+	kindEntries: readonly GeneratedKindEntry[],
+	allowLiteralRewrite: boolean
+): Rule {
+	switch (rule.type) {
+		case 'seq':
+			return {
+				...rule,
+				members: rule.members.map((member) =>
+					canonicalizeRuleLiterals(member, kindEntries, false)
+				)
+			};
+		case 'choice':
+			return {
+				...rule,
+				members: rule.members.map((member) =>
+					canonicalizeRuleLiterals(member, kindEntries, allowLiteralRewrite)
+				)
+			};
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'terminal':
+		case 'token':
+			return {
+				...rule,
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, allowLiteralRewrite)
+			};
+		case 'field':
+			return {
+				...rule,
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, true)
+			};
+		case 'polymorph':
+			return {
+				...rule,
+				forms: rule.forms.map((form) => ({
+					...form,
+					content: canonicalizeRuleLiterals(form.content, kindEntries, true)
+				}))
+			};
+		case 'string': {
+			if (!allowLiteralRewrite) return rule;
+			const entry = findGeneratedKindEntry(kindEntries, rule.value);
+			if (!entry) return rule;
+			return {
+				type: 'symbol',
+				name: entry.kind,
+				source: 'link',
+				literal: rule.value
+			};
+		}
+		default:
+			return rule;
 	}
 }
 

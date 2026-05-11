@@ -136,17 +136,17 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// Phase 1: Evaluate
 	const raw = await evaluate(entryPath);
 	tracePhaseRules('evaluate', raw.rules);
+	const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
 
 	// Phase 2: Link — pass the include filter so derivation passes
 	// know whether to mutate the rule tree or only log to the sidecar.
-	const linked = link(raw, cfg.include);
+	const linked = link(raw, cfg.include, generatedIdTables);
 	tracePhaseRules('link', linked.rules);
 
 	// Phase 3: Optimize
 	const optimized = optimize(linked);
 	tracePhaseRules('optimize', optimized.rules);
 	tracePhaseRules('simplify', optimized.simplifiedRules);
-	const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
 
 	// Phase 4: Assemble
 	const nodeMap = assemble(optimized, generatedIdTables);

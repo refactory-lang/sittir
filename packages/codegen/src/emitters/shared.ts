@@ -871,23 +871,38 @@ function classifyFieldStorageInfo(
 			const rawKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
 			const resolvedKind = resolveAliasedSlotKind(field, rawKind, nodeMap);
 			const node = nodeMap.nodes.get(resolvedKind);
-			if (!(node instanceof AssembledEnum) || node.values.length <= 1) {
-				return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
+			if (node instanceof AssembledEnum) {
+				if (node.values.length <= 1 || node.resolvedKinds.length === 0) {
+					return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
+				}
+				for (const enumKind of node.resolvedKinds) {
+					if (seenKinds.has(enumKind)) continue;
+					seenKinds.add(enumKind);
+					enumKinds.push(enumKind);
+				}
+				for (const text of node.values) {
+					if (seenTexts.has(text)) continue;
+					seenTexts.add(text);
+					texts.push(text);
+				}
+				continue;
 			}
-			if (node.resolvedKinds.length === 0) {
-				return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
+			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
+				const text = node.text;
+				if (node.resolvedKind === undefined || text === undefined) {
+					return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
+				}
+				if (!seenKinds.has(node.resolvedKind)) {
+					seenKinds.add(node.resolvedKind);
+					enumKinds.push(node.resolvedKind);
+				}
+				if (!seenTexts.has(text)) {
+					seenTexts.add(text);
+					texts.push(text);
+				}
+				continue;
 			}
-			for (const enumKind of node.resolvedKinds) {
-				if (seenKinds.has(enumKind)) continue;
-				seenKinds.add(enumKind);
-				enumKinds.push(enumKind);
-			}
-			for (const text of node.values) {
-				if (seenTexts.has(text)) continue;
-				seenTexts.add(text);
-				texts.push(text);
-			}
-			continue;
+			return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
 		}
 		if (!isTerminalValue(value) || value.resolvedKind === undefined) {
 			return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };

@@ -291,6 +291,9 @@ export interface NewlineRule {
 export interface SymbolRule {
 	readonly type: 'symbol';
 	readonly name: string;
+	readonly source?: 'grammar' | 'link';
+	/** Original literal text when Link synthesized this ref from a string token. */
+	readonly literal?: string;
 	readonly hidden?: boolean;
 	readonly supertype?: boolean;
 	/**
@@ -349,6 +352,9 @@ export const isNewline = (r: Rule): r is NewlineRule => r.type === 'newline';
 export const isSymbol = (r: Rule): r is SymbolRule => r.type === 'symbol';
 export const isAlias = (r: Rule): r is AliasRule => r.type === 'alias';
 export const isToken = (r: Rule): r is TokenRule => r.type === 'token';
+export const isLinkSymbol = (r: Rule): r is SymbolRule => r.type === 'symbol' && r.source === 'link';
+export const literalTextOf = (r: Rule): string | undefined =>
+	r.type === 'string' ? r.value : isLinkSymbol(r) ? r.literal : undefined;
 
 // ---------------------------------------------------------------------------
 // Tree walkers — pure Rule-tree projections, no AssembledNode concepts

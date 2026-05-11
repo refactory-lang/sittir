@@ -30,6 +30,7 @@
  */
 
 import type { Rule, ChoiceRule } from './rule.ts';
+import { isLinkSymbol, literalTextOf } from './rule.ts';
 import { isSyntheticFieldWrapper, unwrapStructuralPassthroughs } from './node-map.ts';
 
 /**
@@ -57,11 +58,13 @@ function extractFlankingLiterals(content: Rule): {
 	// A leading literal is only valid if there's at least one non-literal
 	// member after it; same logic for trailing. We don't lift a literal
 	// out of a single-member seq.
-	if (first?.type === 'string' && content.members.length >= 2) {
-		leading = first.value;
+	const firstLiteral = first ? literalTextOf(first) : undefined;
+	const lastLiteral = last ? literalTextOf(last) : undefined;
+	if (firstLiteral !== undefined && content.members.length >= 2) {
+		leading = firstLiteral;
 	}
-	if (last?.type === 'string' && content.members.length >= 2 && last !== first) {
-		trailing = last.value;
+	if (lastLiteral !== undefined && content.members.length >= 2 && last !== first) {
+		trailing = lastLiteral;
 	}
 	return { leading, trailing };
 }
@@ -143,6 +146,10 @@ function fieldContentIsMultiSibling(content: Rule): boolean {
 		}
 		switch (unwrapped.type) {
 			case 'symbol':
+				if (isLinkSymbol(unwrapped)) break;
+				count++;
+				if (count >= 2) return true;
+				break;
 			case 'supertype':
 			case 'alias':
 			case 'field':
@@ -389,7 +396,7 @@ function walkRuleForTemplate(
 				return null;
 			};
 			const unwrapChildTarget = (r: Rule): string | null => {
-				if (r.type === 'symbol') return r.name;
+				if (r.type === 'symbol') return r.source === 'link' ? null : r.name;
 				if (r.type === 'supertype') return r.name;
 				if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group')
 					return unwrapChildTarget(r.content);
@@ -411,8 +418,9 @@ function walkRuleForTemplate(
 				if (inner.type !== 'seq' || inner.members.length !== 2) return null;
 				const fname = unwrapField(inner.members[0]!);
 				const sepMember = inner.members[1]!;
-				if (!fname || sepMember.type !== 'string') return null;
-				return { name: fname, sep: sepMember.value };
+				const sep = literalTextOf(sepMember);
+				if (!fname || sep === undefined) return null;
+				return { name: fname, sep };
 			};
 			const fieldCounts = new Map<string, number>();
 			const fieldSeps = new Map<string, string>();
@@ -449,8 +457,9 @@ function walkRuleForTemplate(
 						}
 						break;
 					}
-					if (seenFirst && m.type === 'string') {
-						joinByField['children'] = m.value;
+					const literal = literalTextOf(m);
+					if (seenFirst && literal !== undefined) {
+						joinByField['children'] = literal;
 						break;
 					}
 				}
@@ -470,11 +479,13 @@ function walkRuleForTemplate(
 			if (joinByField && !('children' in joinByField) && rule.members.length >= 3) {
 				const first = rule.members[0]!;
 				const last = rule.members[rule.members.length - 1]!;
+				const firstLiteral = literalTextOf(first);
+				const lastLiteral = literalTextOf(last);
 				if (
-					first.type === 'string' &&
-					last.type === 'string' &&
-					first.value === last.value &&
-					/^[`"']$/.test(first.value)
+					firstLiteral !== undefined &&
+					lastLiteral !== undefined &&
+					firstLiteral === lastLiteral &&
+					/^[`"']$/.test(firstLiteral)
 				) {
 					joinByField['children'] = '';
 				}
@@ -502,8 +513,9 @@ function walkRuleForTemplate(
 								seenFirst = true;
 								continue;
 							}
-							if (seenFirst && m.type === 'string') {
-								joinByField[fname] = m.value;
+							const literal = literalTextOf(m);
+							if (seenFirst && literal !== undefined) {
+								joinByField[fname] = literal;
 								break;
 							}
 							if (isThisField && seenFirst) break;
@@ -539,7 +551,8 @@ function walkRuleForTemplate(
 			};
 			const out: string[] = [];
 			for (const m of rule.members) {
-				if (m.type === 'string' && skipSeps.has(m.value)) continue;
+				const literal = literalTextOf(m);
+				if (literal !== undefined && skipSeps.has(literal)) continue;
 				const substituted = substituteMember(m);
 				const parts = walkRuleForTemplate(
 					substituted,
@@ -1023,6 +1036,9 @@ function walkRuleForTemplate(
 		}
 
 		case 'symbol': {
+			if (isLinkSymbol(rule)) {
+				return rule.literal !== undefined ? [rule.literal] : [];
+			}
 			// Hidden helper rules (e.g. python's `_import_list`) are
 			// inlined by tree-sitter at parse time — their fields get
 			// promoted onto the parent node. To render correctly we
@@ -1210,6 +1226,8 @@ function extractSingleKeywordString(rule: Rule): string | null {
 	switch (rule.type) {
 		case 'string':
 			return rule.value;
+		case 'symbol':
+			return isLinkSymbol(rule) ? rule.literal ?? null : null;
 		case 'token':
 		case 'terminal':
 		case 'group':
@@ -1295,9 +1313,10 @@ function extractClauseBranch(rule: Rule): { fieldName: string; leading: string; 
 			fieldName = stripped.name;
 			continue;
 		}
-		if (stripped.type === 'string') {
-			if (fieldName === null) leading += stripped.value;
-			else trailing += stripped.value;
+		const literal = literalTextOf(stripped);
+		if (literal !== undefined) {
+			if (fieldName === null) leading += literal;
+			else trailing += literal;
 			continue;
 		}
 		return null; // other shapes bail out
@@ -1319,8 +1338,9 @@ function containsOnlyPunctuation(rule: Rule): boolean {
 		case 'dedent':
 		case 'newline':
 			return true;
-		case 'field':
 		case 'symbol':
+			return isLinkSymbol(rule);
+		case 'field':
 		case 'supertype':
 		case 'enum':
 			return false;
@@ -1678,6 +1698,11 @@ function resolveRuleEdgeChar(
 			return chars.size === 1 ? [...chars][0] : undefined;
 		}
 		case 'symbol': {
+			if (rule.source === 'link') {
+				const literal = rule.literal;
+				if (!literal) return undefined;
+				return edge === 'first' ? literal[0] : literal[literal.length - 1];
+			}
 			if (!rules) return undefined;
 			if (seen.has(rule.name)) return undefined;
 			const target = rules[rule.name];
