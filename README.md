@@ -1,289 +1,501 @@
 # sittir
 
-Generate typed factory functions and render templates from [tree-sitter](https://tree-sitter.github.io/) grammars.
+Take any [tree-sitter](https://tree-sitter.github.io/) grammar; emit a typed,
+tree-shakeable IR — factories, render templates, parse-tree readers, type
+guards, and per-kind tests — that can build, render, read, and edit source in
+the original language with zero hand-authored per-kind code.
 
-> **Alpha software:** sittir is usable for experimentation and internal codemod workflows, but the public API is still changing. Generated package shapes, render fidelity, native backend behavior, and grammar override conventions may shift between minor releases. Pin versions, expect rough edges, and review generated edits before applying them broadly.
+> **Alpha.** Public APIs, generated package shapes, override conventions, and
+> native render fidelity are still moving. Pin versions and review generated
+> edits before applying them at scale.
 
-Given any tree-sitter grammar, sittir generates:
+## Why
 
-- **Typed factories** — one per node kind, producing `NodeData` plain objects with fluent getters/setters
-- **Jinja render templates** — one `.jinja` template per renderable kind, with separator metadata and polymorph variants
-- **`.from()` resolution** — ergonomic input with string/number/object coercion, fully tree-shakeable
-- **`readNode()` round-trip** — reads tree-sitter parse trees into `NodeData` for codemod editing
-- **Const enums + navigation types** — `SyntaxKind`, operator/keyword maps, supertype unions
-- **Generated tests** — per-kind factory + render + round-trip validation
+Cross-language source manipulation is split across three kinds of tooling
+that don't compose:
 
-## Key Features
+- **Parsers and CST libraries** (tree-sitter, the various per-language
+  parser crates) give you a syntax tree, but the tree is untyped at the
+  application layer — you check `node.type === 'function_item'` against
+  string constants and reach into anonymous children by index. There is no
+  construction API and no canonical way back to source text.
+- **Pattern engines** (ast-grep, semgrep, comby) find and rewrite by
+  syntactic pattern. They are excellent for matching, but their rewrites
+  are template strings with metavariables, not typed node manipulation;
+  anything that needs to *compose* AST fragments — let alone construct one
+  from scratch — falls out of the model.
+- **Typed AST libraries** (Babel for JavaScript, libcst for Python,
+  syn/quote for Rust, Roslyn for C#) give you the construction and
+  rendering surface, but each one is a per-language, hand-authored project
+  with its own conventions, lifecycle, and ergonomics. Anything that wants
+  to touch more than one language ends up gluing three of them together.
 
-- **Grammar-agnostic pipeline** — works with any tree-sitter grammar without modification. All language-specific knowledge flows through override configuration.
-- **Five-phase compiler** — Evaluate → Link → Optimize → Assemble → Emit. Each phase has a single responsibility and produces a well-defined intermediate representation.
-- **Override DSL** — `transform()`, `enrich()`, `role()` primitives let grammar maintainers patch field labels, add mechanical promotions, and declare structural roles without rewriting rules.
-- **Small runtime surface** — generated packages depend on `@sittir/common` (shared contracts) and `@sittir/types`, with an optional JS backend via `@sittir/core` and optional native render packages when installed.
-- **Deterministic output** — same grammar version produces byte-identical generated code. No timestamps, random identifiers, or order-dependent iteration.
+A codemod that reads Rust, edits a TypeScript declaration, and emits a
+Python equivalent currently means hand-stitching three separate AST
+libraries with three separate mental models — and accepting that two of
+them probably can't render back to source faithfully.
 
-For a complete target-API walkthrough across factories, `.from()`, rendering, templates, codemods, lazy reads, and cross-language migrations, see [Use Cases & Examples](docs/use-cases-and-examples.md). Source-form TypeScript companions live in [`examples/`](examples/).
+### Why tree-sitter and ast-grep as the base
 
-## Packages
+tree-sitter is the only widely adopted parsing layer with grammars for
+essentially every mainstream language, error-recovering parses (a hard
+requirement for codemods that touch real-world, sometimes-broken source),
+incremental reparse, and a uniform CST shape with field labels. Building
+on top of it means inheriting the entire grammar ecosystem instead of
+reinventing it.
 
-| Package                                     | Description                                                                          |
-| ------------------------------------------- | ------------------------------------------------------------------------------------ |
-| [`@sittir/common`](packages/common)         | Shared backend-neutral runtime contracts and primitives (`readNode`, `NodeData`, `Edit`) |
-| [`@sittir/core`](packages/core)             | JS backend implementation — render engine, CST, Edit creation (wraps `@sittir/common`) |
-| [`@sittir/types`](packages/types)           | Pure TypeScript types (zero runtime) — `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>` |
-| [`@sittir/codegen`](packages/codegen)       | Five-phase compiler: reads grammar.json + node-types.json, emits everything          |
-| [`@sittir/tools`](packages/tools)           | Developer diagnostics and exercise CLI tools (`probe-*`, `counts`, `walk`, `exercise`) |
-| [`@sittir/validator`](packages/validator)   | Canonical validation facade: `counts`, `probe-factory`, `history` CLI + run APIs     |
-| [`@sittir/rust`](packages/rust)             | 210 generated Rust node kinds                                                        |
-| [`@sittir/typescript`](packages/typescript) | 269 generated TypeScript node kinds                                                  |
-| [`@sittir/python`](packages/python)         | 176 generated Python node kinds                                                      |
+ast-grep sits one step above tree-sitter as the matching layer — typed
+patterns with metavariables (`$NAME`, `$$$ARGS`), language-aware queries,
+and a stable selection model. sittir doesn't replace ast-grep; it
+complements it. ast-grep finds the nodes, sittir reads the matches into
+typed `NodeData`, the typed factories let you compose replacements
+without string-mashing, and the render pipeline puts the result back into
+source text.
 
-## Quick Start
+### What this unlocks
 
-### Factory API
+**A single typed platform for source manipulation.** TypeScript + ast-grep
++ sittir is one toolchain covering the whole lifecycle — parse, query,
+read into typed `NodeData`, construct or modify with typed factories,
+render back to source, emit byte-range edits — under one set of types
+and one mental model. The same `is.functionItem` guard narrows both an
+ast-grep match and a constructed node, and the same `wrapNode` produces
+a typed accessor surface for either. There is no glue layer between
+three separately-evolving AST libraries.
+
+**Type-intelligent use of tree-sitter and ast-grep.** Both projects are
+already powerful, but at the application layer their outputs are
+string-typed: `node.type === 'function_item'`, `match.kind() === 'block'`,
+metavariable bindings handed back as opaque `SgNode` references.
+sittir's generated package types each kind exhaustively from the
+grammar — so a tree-sitter parse becomes a discriminated `NodeData`
+union, an ast-grep match wraps into a `wrapNode(match, tree)` accessor
+with field-typed getters, and a metavariable replacement composes
+through typed factories instead of template-string concatenation.
+Every check the grammar already makes implicitly is reflected in the
+type system explicitly.
+
+**Syntactic validity by construction — no reparse step.** Most
+code-generation tools emit text and then leave validation to whoever
+re-parses the output. sittir collapses the two:
+
+- *Structurally, at compile time.* Each kind's slot signature is
+  derived from its grammar rule. The TypeScript type system enforces
+  that every required field is supplied, every named field gets a node
+  of the right kind (or a `.from()`-coercible value resolving to one),
+  and every list slot honors the rule's multiplicity (`optional`,
+  `repeat`, `repeat1`). Trees that don't typecheck are trees the parser
+  would reject.
+- *Literally, at runtime.* Terminal-text inputs to leaf factories
+  (identifier names, integer/string literals, etc.) are validated
+  against the same regex / enum / keyword definition the grammar uses.
+  An invalid identifier fails at construction, before render.
+
+Because validity is enforced where the tree is built, you don't need to
+parse the rendered output to know it's well-formed. The render pipeline
+also doesn't need to re-tokenize — it walks an already-validated tree
+and emits text directly through the grammar-derived templates.
+
+### Natural extensions
+
+The shape of the runtime makes a few additions almost free; we haven't
+shipped them yet but they are in scope:
+
+- **Construction templates.** Authoring replacement source as a
+  template string with metavariable slots — `pub fn $NAME($...PARAMS)
+  -> $RET { $BODY }` — and filling it with typed `NodeData` to produce
+  either another `NodeData` or rendered text. The same override
+  pipeline that produces the production parser also produces a
+  template-mode parser per grammar (a tiny patch injects a metavariable
+  rule and merges it into the relevant nominal rules), so templates
+  parse cleanly without preprocessing or `ERROR` nodes. Slot types are
+  derived at codegen time by walking the template parse tree and
+  reading each metavariable's parent-field storage type — the same
+  storage type the factory's `Config` already uses, so factory
+  construction and template filling stay in sync by construction.
+  Stubbed in `examples/04-precompiled-templates.ts` and
+  `examples/05-inline-templates.ts`.
+- **Type-aware structural query API.** Pattern matching directly over
+  `NodeData` trees with the same kind/field types the rest of the
+  surface uses, so the same tree you constructed (or modified, or read)
+  can be queried without re-rendering and handing it back to ast-grep.
+- **Typed node traversal.** Parent / child / sibling / ancestor walks
+  with TypeScript narrowing on the result. ast-grep already covers
+  traversal over parse trees; the gap is over `NodeData` trees that
+  exist only in memory (constructed factories, modified copies after
+  `$with`).
+- **More grammars.** Adding a language is a workspace package, a
+  `tree-sitter-<lang>` dependency, and an `overrides.ts`. Go, Java, C,
+  SQL, and others have mature tree-sitter grammars and are candidates
+  whenever a use case appears.
+
+## Goals
+
+- **One pipeline, many languages.** All language-specific knowledge enters
+  through `grammar.json`, `node-types.json`, and a per-grammar
+  `overrides.ts`. The compiler is grammar-agnostic; the same emitters
+  produce Rust, TypeScript, and Python packages today and accept any other
+  tree-sitter grammar without code changes.
+- **Render fidelity, then ergonomics.** A round-trip
+  `read(source) → render` must be byte-identical for well-formed input on
+  each grammar before any ergonomic surface is layered on top. Render lives
+  on the canonical rule tree; `.from()` coercion, `$with` immutability,
+  fluent getters, and `.$trivia()` are projections over the same
+  `NodeData`.
+- **Two backends, one contract.** A Nunjucks-based JS engine and an
+  Askama-based native engine sit behind one engine interface. Native is
+  preferred when the platform binary is loadable and its baked
+  template-bundle hash matches the JS-side bundle; otherwise JS handles the
+  same call. Consumers don't branch on backend.
+- **Determinism.** Same grammar version, same overrides, byte-identical
+  generated output. No timestamps, no Map iteration order, no PRNG.
+- **DRY as a correctness rule.** Every fact (a field name, a separator, a
+  kind classification) has one source and one derivation. Drift between
+  the rule tree and the generated client is treated as a codegen bug, not
+  a patchable mismatch.
+
+## Architecture
+
+### Codegen pipeline
+
+A full regeneration runs in two stages. First, an auto-chain pushes the
+override DSL into the actual parser:
+
+```
+overrides.ts ──▶ transpile ──▶ .sittir/grammar.js ──▶ tree-sitter generate
+                                                          │
+                                                          ├─▶ grammar.json
+                                                          ├─▶ node-types.json
+                                                          └─▶ compile-parser ─▶ parser.wasm
+```
+
+Both `enrich(base)` and the per-rule overrides (`transform()`, `role()`,
+`variant()`) participate in this transpile, so the grammar tree-sitter
+parses with — and the type information sittir reads downstream — see the
+same enriched shape. There is no second authoring layer; one source
+patches both surfaces.
+
+The compiler proper then runs in seven ordered phases over the parser
+artifacts. Each phase has a single responsibility and produces a
+well-defined intermediate representation; later phases never revisit
+decisions earlier ones made. Detailed per-function semantics live in
+[`docs/compiler-phase-glossary.md`](docs/compiler-phase-glossary.md); the
+summary below is the contract a reader needs to navigate the source.
+
+| Phase                | Source                       | Input                           | Output                              | Responsibility                                                                                                                                                                                            |
+| -------------------- | ---------------------------- | ------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **0. Enrich**        | `dsl/enrich.ts`              | `GrammarResult`                 | Enriched `GrammarResult` + `_kw_*`  | Mechanical grammar pre-pass invoked from `overrides.ts` as `grammar(enrich(base), {...})`. Promotes bare symbols to `field()`, lifts `optional(literal)` keywords into hidden `_kw_*` rules. Because enrich runs inside the override-DSL transpile, its rewrites end up in `.sittir/grammar.js` — the parser and the downstream codegen see identical rules. |
+| **1. Evaluate**      | `compiler/evaluate.ts`       | `grammar.js` / `overrides.ts`   | `RawGrammar`                        | Executes the tree-sitter DSL with sittir extensions (`role()`, `variant()`, `transform()`). Normalizes seq/choice/optional/repeat, lifts `commaSep` patterns, synthesizes hidden enum rules from inline `field(name, choice('a','b','c'))`. |
+| **2. Link**          | `compiler/link.ts`           | `RawGrammar`, `node-types.json` | `LinkedGrammar`                     | Resolves what each node *is*. Strips `alias` and `token` wrappers, classifies hidden rules (enum / supertype / group), detects clauses, infers field names from the symbol-reference graph, classifies polymorphs (both heuristic and `variant()`-sourced), annotates block-bearer fields. Shape-preserving — no restructuring. |
+| **3. Optimize**      | `compiler/optimize.ts`       | `LinkedGrammar`                 | `OptimizedGrammar`                  | Non-lossy structural simplification. Collapses degenerate wrappers, fans out `seq(a, choice(b, c))`, factors common prefix/suffix, dedupes adjacent members, inlines single-use hidden rules. Does not rename fields or reclassify nodes. |
+| **3.5. Simplify**    | `compiler/simplify.ts`       | `OptimizedGrammar`              | `simplifiedRules` map               | Derivation-only view. Strips anonymous delimiters, hoists fields out of single-content wrappers, merges position-equivalent choice branches. Used to derive each kind's field/child slots — *not* used by template emission, which keeps the raw rule so delimiters survive. |
+| **4. Assemble**      | `compiler/assemble.ts`       | `OptimizedGrammar`              | `NodeMap`                           | First materialization of nodes. Classifies each rule into a model type (branch / polymorph / supertype / group / enum / pattern / keyword / token), hydrates slot refs, marks parameterless kinds (kinds whose required slots auto-stamp from a single literal or a single parameterless ref), resolves colliding names, assigns short `ir.*` keys. |
+| **5. Emit**          | `emitters/*`                 | `NodeMap`                       | `.ts` + `.jinja` files              | Renders types, factories, `.from()` resolvers, `wrap.ts`, type guards, the `ir.ts` namespace, consts, render rules, Jinja templates, JoinBy metadata, the native render bundle, and per-kind tests. |
+
+Three commitments worth flagging:
+
+- **Single source of truth for shape.** The rule tree is canonical. Every
+  derived artifact — types, factories, render templates, field
+  projections, supertype unions — is computed from it. There is no sidecar
+  config that restates the same fact.
+- **Mechanical only.** No phase makes heuristic judgments based on
+  thresholds or frequency counts. Anything that would ask "is this common
+  enough?" stays out of the automated path; grammar maintainers express it
+  explicitly via `transform()`, `role()`, or `variant()` in the override
+  DSL.
+- **Same pipeline runs every grammar.** Rust, TypeScript, and Python share
+  one compiler. New grammars enter through a workspace package and a
+  `packages/<lang>/overrides.ts`; no compiler fork.
+
+### Runtime
+
+The runtime is split into a backend-neutral contract layer and two
+interchangeable engine implementations.
+
+```
+                 ┌──────────────────────────────────┐
+                 │  @sittir/<grammar>                │  generated, per-grammar
+                 │   ir, from, wrap, is, types,      │
+                 │   ConfigOf<T>, TreeNodeOf<T>,     │
+                 │   templates/*.jinja               │
+                 │   createEngine() ──┐              │
+                 └────────────────────┼──────────────┘
+                                      │  picks first available
+                       ┌──────────────┴───────────────┐
+                       ▼                              ▼
+        ┌──────────────────────────┐    ┌────────────────────────────────┐
+        │  @sittir/core            │    │  @sittir/<grammar>-native       │
+        │  JS engine (Nunjucks)    │    │  N-API binding (Askama crate)   │
+        │  createJsEngine()        │    │  rust/crates/sittir-<grammar>/  │
+        └──────────┬───────────────┘    └──────────────┬─────────────────┘
+                   │   both implement SittirEngineLike │
+                   └──────────────────┬────────────────┘
+                                      ▼
+                          ┌────────────────────────────┐
+                          │  @sittir/common             │
+                          │  readNode, applyEdits,      │
+                          │  freezeNodeData, NodeData,  │
+                          │  TreeHandle, native boundary│
+                          └─────────────────────────────┘
+                                      │
+                                      ▼
+                          ┌────────────────────────────┐
+                          │  @sittir/types              │
+                          │  AnyNodeData, ConfigOf<T>,  │
+                          │  TreeNodeOf<T>, Edit, ...   │
+                          │  (zero runtime)             │
+                          └─────────────────────────────┘
+```
+
+- **`@sittir/types`** — pure TypeScript types. Zero runtime. Owns
+  `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`, `Edit`,
+  `ByteRange`, `RenderContext`.
+- **`@sittir/common`** — backend-neutral runtime. Implements
+  `readNode(tree, handle?, childIndex?)` (parse-tree → `NodeData`),
+  `applyEdits(source, edits)`, `freezeNodeData()`, the native boundary
+  invariants (`assertNativeNodeData`, `normalizeNativeReadNode`), and the
+  engine and tree-handle interfaces both backends implement.
+- **`@sittir/core`** — the Nunjucks-based JS render engine and reference
+  implementation.
+- **Generated `@sittir/<grammar>` packages** — per-grammar surface. Each
+  one exposes `createEngine()`, an `ir.*` namespace, `.from()` coercion,
+  `wrapNode`, `readTreeNode`, the `is.*` / `assert.*` guards, kind
+  constants, and the native template-bundle hash.
+
+#### NodeData shape
+
+`NodeData` is plain frozen data — not an ES class. Every node carries
+`$type` (numeric `TSKindId`), `$source` (`0=ts`, `1=sg`, `2=factory`),
+`$named`, plus either `_<field>` storage and `$children` (branch) or
+`$text` (leaf). Field storage is enumerable and lower-cased
+(`_visibilityModifier`, not `_visibility_modifier`). Arrays in storage are
+themselves frozen.
+
+#### Construction surface
+
+Each kind ships in three forms with the same output type:
+
+```ts
+ir.functionItem.strict({ /* every field explicit, no coercion */ })
+ir.functionItem.from({   /* loose input — strings / arrays / plain objects */ })
+ir.functionItem({         /* alias for .from() */ })
+```
+
+`.from()` coercion is closed-form: it walks the expected slot type and
+never guesses. The slot taxonomy splits cleanly into:
+
+- **Single-slot kinds** (one unnamed `$children` slot, no named fields):
+  the factory takes the child(ren) directly — singular for one slot,
+  variadic for arrays, non-empty variadic when the rule requires `repeat1`.
+- **Multi-slot kinds** (named fields, with or without `$children`): the
+  factory takes a config object whose keys map to field names.
+
+Strings only resolve when the slot expects a single concrete kind with a
+no-arg factory. Arrays auto-wrap when the slot is a `$children`
+container. Plain objects resolve recursively against the slot type.
+Required slots whose type has a parameterless factory default to the
+empty form when omitted.
+
+#### Cursor / value duality
+
+The generated surface separates the cursor (a handle into the rule tree)
+from the resolved value (the underlying NodeData):
+
+```ts
+fn.name        // cursor — handle into the tree, lazy
+fn.name()      // value  — resolved NodeData (or hoisted leaf text)
+fn.$with.name(ir.identifier('greet'))     // returns a new frozen node
+fn.$with.body(ir.block.strict())           // chainable, immutable
+```
+
+Accessor functions (`fn.name()`) are non-enumerable; they don't appear in
+`Object.keys` or JSON serialization. Storage (`fn._name`) is enumerable
+and represents the canonical persisted state. `$with` is the immutable
+update namespace; for kinds with a single unnamed slot it exposes
+`$with.$child(v)` and `$with.$children([...])` instead of named keys.
+
+#### Render pipeline
+
+```
+NodeData ──▶ render rule ──▶ Jinja template ──▶ source text
+              (raw rule)      (per kind)
+```
+
+Render reads `_<field>` and `$children` directly off `NodeData`. Templates
+are emitted from the *raw* post-Optimize rule, deliberately ahead of
+Simplify, so anonymous delimiters and separator placement survive.
+Field/child derivation reads the simplified rule; templates and derivation
+are two views of the same tree.
+
+`createEngine()` returns an engine that delegates to the native binding
+when its `templateBundleHash` matches the JS-side hash, and to
+`@sittir/core` otherwise. The native FFI path is N-API direct — no
+`serde_json` round-trip on either side — and streams `Renderable::Transport`
+references through Askama templates rather than materializing
+per-field intermediate strings. The fallback to JS is silent (no throw,
+no log) unless `SITTIR_BACKEND_DEBUG=1` is set; force a backend with
+`SITTIR_BACKEND=native` or `SITTIR_BACKEND=js`. Inspect the resolved
+engine with `getActiveBackend()`.
+
+#### Read pipeline
+
+```
+source ──▶ tree-sitter parse ──▶ TreeHandle ──▶ readNode(tree) ──▶ NodeData
+                                                                       │
+                                                              wrapNode(node, tree)
+                                                                       ▼
+                                                       NodeData + fluent getters
+                                                       + lazy drill-in via $nodeHandle
+```
+
+`readNode` is the shared parse-tree reader: it maps field children into
+`_<field>` slots and unfielded children into `$children`, recurses to a
+configurable depth, and produces the same `NodeData` shape whether the
+parse tree came from `web-tree-sitter` or `@ast-grep/napi`. `wrapNode`
+attaches the typed accessor surface and resolves lazy `$nodeHandle`
+references back through the engine's reader on demand.
+
+#### Edit pipeline
+
+```
+TreeNode + replacement NodeData ──▶ replace(target, replacement) ──▶ Edit { startPos, endPos, insertedText }
+[Edit] + source ──▶ engine.applyEdits(source, edits) ──▶ new source
+```
+
+Edits are byte-range patches keyed off the original tree's spans.
+Multiple edits on disjoint ranges are sorted and applied right-to-left so
+positions stay valid; overlapping edits throw. `replace`, `replaceField`,
+and `bindRange` live in `@sittir/common`; `engine.applyEdits` is the
+boundary used by codemods.
+
+### Generated package layout
+
+Every `@sittir/<grammar>` package is regenerated as a unit. Hand edits to
+generated files are reverted on the next run; language-specific knowledge
+lives in `packages/<lang>/overrides.ts`.
+
+| File                                          | Contents                                                                                       |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `types.ts`                                    | Per-kind interfaces, `TSKindId` const enum, `KIND_NAMES`, `ConfigFor<K>`, `NamespaceMap`, supertype unions |
+| `factories.ts`                                | One factory per kind: `kind.strict(config)` and `kind.from(input)` with shared output          |
+| `from.ts`                                     | Closed-form `.from()` resolver — no runtime inference                                          |
+| `wrap.ts`                                     | `wrapNode(node, tree)` / `readTreeNode(node)` — typed accessors with lazy drill-in             |
+| `ir.ts`                                       | `ir.*` namespace + grouped supertype namespaces (`expression`, `statement`, ...)               |
+| `is.ts`                                       | Type guards (`is.*`, `isNode`, `isTree`, `assert.*`)                                           |
+| `consts.ts`                                   | Discoverable arrays/maps: kind names, keywords, operators                                      |
+| `utils.ts`                                    | Per-grammar resolution helpers and transport coercion                                          |
+| `engine.ts`                                   | `createEngine()` — native first, JS fallback                                                   |
+| `backend.ts` / `boundary.ts` / `hash.ts`      | Backend selection, dispatching shims, baked template-bundle hash                               |
+| `grammar.ts`, `node-model.json5`              | Grammar literal type and a debug snapshot of the assembled model                               |
+| `templates/*.jinja`                           | One render template per renderable kind                                                        |
+
+## Quickstart
+
+The compile-checked examples live under [`examples/`](examples/) and are
+type-checked by `pnpm run type-check:examples`. The four below are the
+ones backed by the current public API; the rest of the directory documents
+target surfaces in flight.
+
+### Construct and render
 
 ```ts
 import { ir } from '@sittir/rust';
 
-const node = ir.functionItem({
-	name: ir.identifier('main'), // leaf factory takes text directly
-	parameters: ir.parameters(), // variadic child container
-	body: ir.block({ children: [] })
+// Strict construction — every slot explicit.
+const fn = ir.functionItem.strict({
+  visibilityModifier: ir.visibilityModifier.pub(),
+  name: ir.identifier('main'),
+  parameters: ir.parameters.strict(),
+  body: ir.block.strict()
 });
 
-console.log(node.$type); // "function_item"
-console.log(node.name().$text); // "main" (no arg = getter)
-console.log(node.render()); // "fn main () {  }"
-
-const renamed = node.name(ir.identifier('run')); // with arg = immutable setter
-console.log(renamed.name().$text); // "run"
+fn.$render();      // "pub fn main () {}"
+fn.name();         // typed value — leaf-hoisted to its $text
+fn.body();         // returns the Block NodeData
 ```
 
-### `.from()` API
-
-`.from()` accepts looser inputs and resolves them into the same `NodeData` shape. Strings become the expected leaf nodes when the grammar gives sittir enough type information.
-
 ```ts
-import { ir } from '@sittir/typescript';
+// .from() coercion — strings, arrays, and plain objects resolve to their
+// expected slot kind.
+import { ir } from '@sittir/rust';
 
-const fn = ir.functionDeclaration.from({
-	name: 'greet', // string → identifier leaf node
-	parameters: ir.formalParameters.from(),
-	body: ir.statementBlock.from({
-		statements: [
-			ir.statement.return_.from({
-				children: [
-					ir.call.call.from({
-						function: 'formatGreeting',
-						arguments: ir.arguments.from('name')
-					})
-				]
-			})
-		]
-	})
-});
-
-console.log(fn.render().trim());
-// function greet () { return formatGreeting (name)  }
-```
-
-Grouped namespaces expose the same factories in a grammar-aware shape:
-
-```ts
-import { expression, ir } from '@sittir/rust';
-
-const call = ir.expression.call.from({
-	function: 'println',
-	arguments: ir.arguments.from('value')
-});
-
-const alsoCall = expression.call.from({
-	function: 'dbg',
-	arguments: ir.arguments.from('value')
+const fn = ir.functionItem.from({
+  visibilityModifier: 'pub',                                       // string → VisibilityModifier
+  name: 'greet',                                                   // string → Identifier
+  parameters: ir.parameters.strict(
+    ir.parameter.from({ pattern: 'name', type: 'String' })         // nested .from()
+  ),
+  body: ir.block.strict()
 });
 ```
 
-### Codemod with ast-grep
-
-Find nodes with ast-grep, read into typed NodeData, modify with fluent setters, emit a text edit:
+### Read source into NodeData
 
 ```ts
-import { parse, Lang } from '@ast-grep/napi';
-import { ir, readTreeNode } from '@sittir/rust';
+import { createEngine, ir, is, wrapNode } from '@sittir/rust';
 
-// 1. Find all function items using ast-grep
-const root = parse(Lang.Rust, source).root();
-const matches = root.findAll({ rule: { kind: 'function_item' } });
+const engine = createEngine();
+const { root, tree } = engine.reader!.parseAndRead(source);
 
-for (const match of matches) {
-	// 2. Read the parse tree node into typed NodeData
-	const fn = readTreeNode(match) as ReturnType<typeof ir.functionItem>;
-
-	// 3. Modify — fluent setter returns a new node (immutable)
-	const updated = fn
-		.visibilityModifier(ir.visibilityModifier({ children: [] }))
-		.body(fn.body());
-
-	// 4. replace() renders through the active package backend and pairs
-	// the result with the target's byte range.
-	const edit = updated.replace(match);
-	// edit = { startPos, endPos, insertedText }
+for (const stmt of root.$children ?? []) {
+  if (is.functionItem(stmt)) {
+    const fn = wrapNode(stmt, tree) as ReturnType<typeof ir.functionItem>;
+    console.log(fn.name(), fn.body());
+  }
 }
 ```
 
-## Architecture
+`engine.reader` is `undefined` for render-only backends; guard before
+calling `parseAndRead`.
 
-```
-                    ┌──────────────────────────────────────────────┐
-                    │              @sittir/codegen                  │
-                    │                                              │
-  grammar.json ───▶ │  Evaluate → Link → Optimize → Assemble → Emit│
-  node-types.json ─▶ │                                              │
-  overrides.ts ────▶ │  DSL: transform() / enrich() / role()        │
-                    └──────────────┬───────────────────────────────┘
-                                   │
-              ┌────────────────────┼────────────────────┐
-              ▼                    ▼                     ▼
-       @sittir/rust         @sittir/typescript     @sittir/python
-       ├── types.ts         ├── types.ts           ├── types.ts
-       ├── factories.ts     ├── factories.ts       ├── factories.ts
-       ├── from.ts          ├── from.ts            ├── from.ts
-       ├── wrap.ts          ├── wrap.ts            ├── wrap.ts
-       ├── templates/*.jinja ├── templates/*.jinja ├── templates/*.jinja
-       ├── ir.ts            ├── ir.ts              ├── ir.ts
-       ├── consts.ts        ├── consts.ts          ├── consts.ts
-       └── utils.ts         └── utils.ts           └── utils.ts
-
-  @sittir/common ─ readNode(), NodeData contracts, Edit, ByteRange (backend-neutral)
-  @sittir/core ─── render(), edit(), CST (JS backend implementation)
-  @sittir/tools ── developer diagnostics, profiling, discovery, and exercise CLIs
-  @sittir/types ── AnyNodeData, ConfigOf<T>, TreeNodeOf<T>, ByteRange, Edit
-  @sittir/validator ─ counts / history / probe-factory facade + run APIs
-```
-
-### Compiler Pipeline
-
-| Phase        | Input                           | Output                            | Purpose                                                              |
-| ------------ | ------------------------------- | --------------------------------- | -------------------------------------------------------------------- |
-| **Evaluate** | `grammar.json` + `overrides.ts` | Raw grammar with resolved rules   | Parse grammar, apply DSL transforms, collect roles                   |
-| **Link**     | Raw grammar + `node-types.json` | Linked `NodeMap` with field specs | Resolve symbols, classify kinds, detect polymorphs                   |
-| **Optimize** | Linked NodeMap                  | Optimized NodeMap                 | Merge variants, collapse repeated shapes                             |
-| **Assemble** | Optimized NodeMap               | Assembly with render templates    | Walk rules → Jinja templates with field substitutions and separators |
-| **Emit**     | Assembly                        | Generated `.ts` + `.jinja` files  | Produce types, factories, from, wrap, templates, consts              |
-
-### Data Flow
-
-```
-Factory input (Config, camelCase) ──▶ Factory output (NodeData + fluent getters/setters)
-From input (strings, numbers) ──────▶ Factory (via resolution) ──▶ NodeData
-SgNode/TreeNode ──▶ readNode() ──▶ NodeData ──▶ readTreeNode() ──▶ NodeData + routing + lazy getters
-NodeData + target ──▶ node.replace(target) / toEdit(...) ──▶ Edit { startPos, endPos, insertedText }
-Render input (AnyNodeData) ─────────▶ Source text (Jinja template expansion)
-```
-
-- `readNode()` (common) maps parse tree fields to raw `NodeData` — shared across JS and native backends.
-- `readTreeNode()` (generated, per-grammar) adds override routing and lazy getters — the client entry point.
-- `node.replace(target)` renders the replacement through the generated package backend and pairs it with the target's byte range — one call to go from NodeData to a text edit.
-
-## Override DSL
-
-Grammar maintainers author `packages/<lang>/overrides.ts` to patch field labels and declare structural roles:
+### Round-trip
 
 ```ts
-// packages/python/overrides.ts
-import base from 'tree-sitter-python/grammar.js';
-import { transform, role, enrich, field } from '../codegen/src/dsl/index.ts';
+import { createEngine, wrapNode } from '@sittir/rust';
 
-export default grammar(enrich(base), {
-	name: 'python',
-	rules: {
-		_indent: ($) => role($._indent, 'indent'),
-		_dedent: ($) => role($._dedent, 'dedent'),
-
-		conditional_expression: ($, original) =>
-			transform(original, {
-				0: field('body'),
-				2: field('condition'),
-				4: field('alternative')
-			})
-	}
-});
+const engine = createEngine();
+const { root, tree } = engine.reader!.parseAndRead(source);
+(wrapNode(root, tree) as { $render(): string }).$render() === source;
+// true for well-formed input
 ```
+
+For the broader target surface — `.$trivia()`, construction templates,
+find-and-edit codemods, cross-language migration — see
+[`docs/use-cases-and-examples.md`](docs/use-cases-and-examples.md). Each
+section there is annotated with whether it tracks shipped behavior or a
+target API in flight.
+
+## Packages
+
+| Package                                     | Purpose                                                                              |
+| ------------------------------------------- | ------------------------------------------------------------------------------------ |
+| [`@sittir/types`](packages/types)           | Pure TypeScript types — zero runtime                                                 |
+| [`@sittir/common`](packages/common)         | Backend-neutral runtime: `readNode`, `applyEdits`, native boundary, engine interface |
+| [`@sittir/core`](packages/core)             | JS render engine (Nunjucks); reference implementation                                |
+| [`@sittir/codegen`](packages/codegen)       | Seven-phase compiler, emitters, and CLI                                              |
+| [`@sittir/tools`](packages/tools)           | Diagnostic CLIs: `probe-*`, `counts`, `walk`, `exercise`, `inspect-*`                |
+| [`@sittir/validator`](packages/validator)   | Validation facade: `counts`, `probe-factory`, `history` (CLI + run APIs)             |
+| [`@sittir/rust`](packages/rust)             | Generated Rust package                                                               |
+| [`@sittir/typescript`](packages/typescript) | Generated TypeScript package                                                         |
+| [`@sittir/python`](packages/python)         | Generated Python package                                                             |
 
 ## Development
 
 ```bash
-pnpm install                 # install dependencies
-pnpm test                    # run all tests
-pnpm -r run type-check       # type-check all packages
+pnpm install                  # install workspace
+pnpm test                     # run all vitest suites
+pnpm -r run type-check        # type-check every package
+pnpm run type-check:examples  # type-check the example modules
+pnpm run validate:all         # cross-backend validator counts (native + JS, recursive)
 
-# Generate a language package
-npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
-npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
+# Regenerate one grammar package
+pnpm --filter @sittir/rust run regenerate
+
+# Or invoke the codegen CLI directly
+npx tsx packages/codegen/src/cli.ts --grammar rust       --all --output packages/rust/src
 npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
+npx tsx packages/codegen/src/cli.ts --grammar python     --all --output packages/python/src
 ```
-
-## Native backend
-
-The `@sittir/{rust,typescript,python}` packages ship with a native
-Rust render engine (spec 012). When the platform-specific
-`@sittir/<grammar>-native` package is installed and its template
-bundle hash matches the JS-side bundle, the public APIs (`render`,
-`readNode`, `applyEdits`) transparently delegate to the Rust engine.
-Otherwise they fall back silently to the TypeScript engine — every
-public API works on every platform regardless of native availability.
-
-Authored templates remain canonical under `packages/{lang}/templates/`.
-The checked-in native Askama crates are generated companions under
-`rust/crates/sittir-{lang}/src/render/`, refreshed by the same
-`--all` codegen workflow as the TypeScript package outputs. The
-grammar-owned N-API entrypoints live under
-`rust/crates/sittir-{lang}/` and delegate shared engine state to
-`sittir-core`.
-
-### Selecting a backend at runtime
-
-`getActiveBackend()` reports which engine the package resolved on
-first import. The result is cached per process — call it any time
-after the first `import` of the package.
-
-```ts
-import { getActiveBackend } from '@sittir/rust';
-
-console.log(getActiveBackend());
-// { name: 'native', hashMatch: true, native: ... }
-// or
-// { name: 'js', reason: 'native package not installed', hashMatch: false }
-```
-
-### Environment variables
-
-| Variable                 | Effect                                                                                          |
-| ------------------------ | ----------------------------------------------------------------------------------------------- |
-| `SITTIR_BACKEND=native`  | Force the native backend; throw if it can't load. Useful for CI parity diffing.                 |
-| `SITTIR_BACKEND=js`      | Skip the native load entirely; always use the JS engine. Useful for capturing reference output. |
-| `SITTIR_BACKEND_DEBUG=1` | Emit a single `stderr` line per package indicating which backend resolved and why.              |
-
-### Silent-fallback semantics
-
-The TS layer never throws when the native backend is unavailable —
-it only logs (when `SITTIR_BACKEND_DEBUG=1`) and falls through to
-the TS engine. The fallback fires on:
-
-- the platform-specific `@sittir/<grammar>-native` package not being
-  installed,
-- the bundled native binary failing to load (linking error,
-  unsupported architecture),
-- the native engine's baked template-bundle hash not matching the
-  JS-side `TEMPLATE_BUNDLE_HASH` (codegen drift).
-
-For the contracts and code paths see
-[`specs/012-rust-core-port/quickstart.md`](specs/012-rust-core-port/quickstart.md).
-
-## Planned Work
-
-- **Override-compiled parser** (spec 007) — compile override grammars to WASM parsers so parse trees carry all field labels natively, eliminating runtime field-promotion heuristics
-- **Nested-alias polymorphs** — express polymorphic rules as nested aliases via `transform()`, enabling parse-tree-level variant discrimination
-- **Link cleanup** — delete `inferFieldNames` mutation and `promotePolymorph` from Link once the override-compiled parser carries all field information
 
 ## License
 
