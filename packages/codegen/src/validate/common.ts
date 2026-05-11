@@ -736,11 +736,11 @@ export const WASM_PATHS: Record<string, string> = {
 	python: 'tree-sitter-python/tree-sitter-python.wasm'
 };
 
-/** Relative path from codegen/src/validators to language package wrap.ts */
+/** Relative path from codegen/src/validators to built language package wrap.js */
 export const WRAP_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/src/wrap.ts',
-	typescript: '../../../typescript/src/wrap.ts',
-	python: '../../../python/src/wrap.ts'
+	rust: '../../../rust/dist/wrap.js',
+	typescript: '../../../typescript/dist/wrap.js',
+	python: '../../../python/dist/wrap.js'
 };
 
 /**
@@ -757,6 +757,20 @@ export async function loadReadTreeNode(
 	try {
 		const mod = await import(new URL(p, import.meta.url).pathname);
 		return mod.readTreeNode ?? null;
+	} catch (e) {
+		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
+		return null;
+	}
+}
+
+export async function loadWrapNode(
+	grammar: string
+): Promise<((data: AnyNodeData, tree: TreeHandle) => unknown) | null> {
+	const p = WRAP_MODULE_PATHS[grammar];
+	if (!p) return null;
+	try {
+		const mod = await import(new URL(p, import.meta.url).pathname);
+		return mod.wrapNode ?? null;
 	} catch (e) {
 		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
 		return null;

@@ -185,7 +185,7 @@ function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	return out;
 }
 
-function expandRuntimeDiscriminatorKinds(
+export function expandRuntimeDiscriminatorKinds(
 	discriminatorKinds: readonly string[],
 	nodeMap: NodeMap
 ): string[] {

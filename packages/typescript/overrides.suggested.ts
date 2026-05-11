@@ -112,19 +112,19 @@ export const suggestedRules = {
   _jsx_attribute: $ => choice($.jsx_attribute, $.jsx_expression),
 
   // [applied] promoted supertype
-  _jsx_attribute_name: $ => choice($.jsx_identifier, $.identifier, $.jsx_namespace_name),
+  _jsx_attribute_name: $ => choice($._jsx_identifier, $.jsx_identifier, $.identifier, $.jsx_namespace_name),
 
   // [applied] promoted supertype
-  _jsx_attribute_value: $ => choice($._jsx_string, $.jsx_expression, $.jsx_element, $.jsx_self_closing_element),
+  _jsx_attribute_value: $ => choice($._jsx_string, $.jsx_expression, $._jsx_element, $.jsx_element, $.jsx_self_closing_element),
 
   // [applied] promoted supertype
-  _jsx_child: $ => choice($.jsx_text, $.html_character_reference, $.jsx_element, $.jsx_self_closing_element, $.jsx_expression),
+  _jsx_child: $ => choice($.jsx_text, $.html_character_reference, $._jsx_element, $.jsx_element, $.jsx_self_closing_element, $.jsx_expression),
 
   // [applied] promoted supertype
   _jsx_element: $ => choice($.jsx_element, $.jsx_self_closing_element),
 
   // [applied] promoted supertype
-  _jsx_element_name: $ => choice($.jsx_identifier, $.identifier, $.nested_identifier, $.jsx_namespace_name),
+  _jsx_element_name: $ => choice($._jsx_identifier, $.jsx_identifier, $.identifier, $.nested_identifier, $.jsx_namespace_name),
 
   // [applied] promoted supertype
   _jsx_identifier: $ => choice($.jsx_identifier, $.identifier),
@@ -136,10 +136,10 @@ export const suggestedRules = {
   _property_identifier: $ => choice($.identifier, $._reserved_identifier),
 
   // [applied] promoted supertype
-  _property_name: $ => choice($.identifier, $.private_property_identifier, $.string, $.number, $.computed_property_name),
+  _property_name: $ => choice($._property_identifier, $.identifier, $.private_property_identifier, $.string, $.number, $.computed_property_name),
 
   // [applied] promoted supertype
-  _semicolon: $ => choice($._automatic_semicolon),
+  _semicolon: $ => choice($._automatic_semicolon, $.;),
 
   // [applied] promoted supertype
   _shorthand_property_identifier: $ => choice($.identifier, $._reserved_identifier),
@@ -154,7 +154,7 @@ export const suggestedRules = {
   _tuple_type_member: $ => choice($.tuple_parameter, $.optional_tuple_parameter, $.optional_type, $.rest_type, $.type),
 
   // [applied] promoted supertype
-  declaration: $ => choice($.function_signature, $.abstract_class_declaration, $.module, $.internal_module, $.type_alias_declaration, $.enum_declaration, $.interface_declaration, $.import_alias, $.ambient_declaration),
+  declaration: $ => choice($.function_declaration, $.generator_function_declaration, $.class_declaration, $.lexical_declaration, $.variable_declaration, $.function_signature, $.abstract_class_declaration, $.module, $.internal_module, $.type_alias_declaration, $.enum_declaration, $.interface_declaration, $.import_alias, $.ambient_declaration),
 
   // [applied] promoted supertype
   expression: $ => choice($.as_expression, $.satisfies_expression, $.instantiation_expression, $.internal_module, $.type_assertion, $.primary_expression, $.assignment_expression, $.augmented_assignment_expression, $.await_expression, $.unary_expression, $.binary_expression, $.ternary_expression, $.update_expression, $.new_expression, $.yield_expression),
@@ -163,10 +163,10 @@ export const suggestedRules = {
   pattern: $ => choice($.member_expression, $.subscript_expression, $.undefined, $.identifier, $.object_pattern, $.array_pattern, $.non_null_expression, $.rest_pattern),
 
   // [applied] promoted supertype
-  primary_expression: $ => choice($.non_null_expression),
+  primary_expression: $ => choice($.subscript_expression, $.member_expression, $.parenthesized_expression, $._identifier, $.undefined, $.identifier, $._reserved_identifier, $.this, $.super, $.number, $.string, $.template_string, $.regex, $.true, $.false, $.null, $.object, $.array, $.function_expression, $.arrow_function, $.generator_function, $.class, $.meta_property, $.call_expression, $.non_null_expression),
 
   // [applied] promoted supertype
-  primary_type: $ => choice($.parenthesized_type, $.predefined_type, $.identifier, $.nested_type_identifier, $.generic_type, $.object_type, $.array_type, $.tuple_type, $.flow_maybe_type, $.type_query, $.index_type_query, $.this, $.existential_type, $.literal_type, $.lookup_type, $.conditional_type, $.template_literal_type, $.intersection_type, $.union_type),
+  primary_type: $ => choice($.parenthesized_type, $.predefined_type, $._type_identifier, $.nested_type_identifier, $.generic_type, $.object_type, $.array_type, $.tuple_type, $.flow_maybe_type, $.type_query, $.index_type_query, $.this, $.existential_type, $.literal_type, $.lookup_type, $.conditional_type, $.template_literal_type, $.intersection_type, $.union_type),
 
   // [applied] promoted supertype
   statement: $ => choice($.export_statement, $.import_statement, $.debugger_statement, $.expression_statement, $.declaration, $.statement_block, $.if_statement, $.switch_statement, $.for_statement, $.for_in_statement, $.while_statement, $.do_statement, $.try_statement, $.with_statement, $.break_statement, $.continue_statement, $.return_statement, $.throw_statement, $.empty_statement, $.labeled_statement),

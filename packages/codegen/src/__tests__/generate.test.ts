@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('../compiler/generated-metadata.ts', async () => {
@@ -6,7 +7,16 @@ vi.mock('../compiler/generated-metadata.ts', async () => {
 	);
 	return {
 		...actual,
-		loadGeneratedIdTables: vi.fn(async () => undefined)
+		loadGeneratedIdTables: vi.fn(async (grammar: string) => {
+			const parserCUrl = new URL(
+				`../../../../packages/${grammar}/.sittir/src/parser.c`,
+				import.meta.url
+			);
+			return actual.deriveGeneratedIdTablesFromParserCSource(
+				readFileSync(parserCUrl, 'utf8'),
+				`packages/${grammar}/.sittir/src/parser.c`
+			);
+		})
 	};
 });
 
@@ -23,7 +33,6 @@ describe('generate — new pipeline end-to-end', () => {
 		expect(result.grammar.length).toBeGreaterThan(0);
 		expect(result.types.length).toBeGreaterThan(0);
 		expect(result.types).toContain('readonly $type: "');
-		expect(result.types).not.toContain('export const enum TSKindId {');
 		expect(result.factories.length).toBeGreaterThan(0);
 		expect(result.consts.length).toBeGreaterThan(0);
 		expect(result.index.length).toBeGreaterThan(0);
@@ -40,6 +49,12 @@ describe('generate — new pipeline end-to-end', () => {
 
 		expect(result.grammar.length).toBeGreaterThan(0);
 		expect(result.types.length).toBeGreaterThan(0);
+		expect(result.types).toContain('TokSq = "\'"');
+		expect(result.types).toContain('export interface BinaryExpression {');
+		expect(result.types).toContain('readonly _operator: number;');
+		expect(result.types).toContain(
+			'readonly operator: KindEnum<"&&" | "||" | "&" | "|" | "^" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | "+" | "-" | "*" | "/" | "%",'
+		);
 		expect(result.factories.length).toBeGreaterThan(0);
 		expect(result.nodeMap.nodes.size).toBeGreaterThan(100);
 	}, 30000);
@@ -52,6 +67,10 @@ describe('generate — new pipeline end-to-end', () => {
 
 		expect(result.grammar.length).toBeGreaterThan(0);
 		expect(result.types.length).toBeGreaterThan(0);
+		expect(result.types).toContain('export interface BinaryExpression {');
+		expect(result.types).toContain(
+			'readonly operator: KindEnum<"&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in",'
+		);
 		expect(result.factories.length).toBeGreaterThan(0);
 		expect(result.nodeMap.nodes.size).toBeGreaterThan(100);
 	}, 30000);

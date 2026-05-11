@@ -187,7 +187,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 				const member = subNode?.typeName ?? toPascal(sub);
 				if (seenSubMembers.has(member)) continue;
 				seenSubMembers.add(member);
-				lines.push(`  ${member} = '${sub}',`);
+				lines.push(`  ${member} = ${JSON.stringify(sub)},`);
 			}
 			lines.push('}');
 			lines.push('');
@@ -571,7 +571,7 @@ function emitSyntaxKindEnum(lines: string[], allKinds: readonly string[], nodeMa
 		const member = node?.typeName ?? toPascal(kind);
 		if (seenEnumMembers.has(member)) continue;
 		seenEnumMembers.add(member);
-		lines.push(`  ${member} = '${kind}',`);
+		lines.push(`  ${member} = ${JSON.stringify(kind)},`);
 	}
 	lines.push('}');
 	lines.push('');
@@ -1077,9 +1077,9 @@ function emitInterface(
 		// Storage keys: `readonly _name?: T` (enumerable, serializable)
 		for (const f of fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
-			const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			const opt = isRequired(f) ? '' : '?';
-			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr);
+			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				emitFieldArrayDeclaration(lines, `_${f.name}`, opt, storageType, isNonEmpty(f));
 			} else {
@@ -1091,9 +1091,9 @@ function emitInterface(
 		// declared here for type-safety so consumers can call node.name()).
 		for (const f of fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
-			const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			const propName = f.propertyName;
-			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr);
+			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			const opt = isRequired(f) ? '' : '?';
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				// Multiple accessor returns the array type (same as storage type).
@@ -1255,8 +1255,8 @@ function emitFormInterface(
 		for (const f of form.fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const opt = isRequired(f) ? '' : '?';
-			const storageInfo = resolveFieldStorageInfo(f, nodeMap);
-			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr);
+			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				lines.push(`  readonly _${f.name}${opt}: readonly (${storageType})[];`);
 			} else {
@@ -1268,8 +1268,8 @@ function emitFormInterface(
 		for (const f of form.fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const propName = f.propertyName;
-			const storageInfo = resolveFieldStorageInfo(f, nodeMap);
-			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr);
+			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			const opt = isRequired(f) ? '' : '?';
 			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				lines.push(`  ${propName}(): readonly (${storageType})[];`);
@@ -1438,12 +1438,18 @@ function enumStorageDiscriminantExpr(
 	if (!kindEntries) return 'number';
 	const members = new Set<string>();
 	for (const enumKind of storageInfo.enumKinds) {
+		const entry = findKindEntry(kindEntries, enumKind);
+		if (entry) members.add(`TSKindId.${entry.member}`);
 		const node = nodeMap.nodes.get(enumKind);
 		if (!(node instanceof AssembledEnum)) continue;
 		for (const value of node.values) {
-			const entry = findKindEntry(kindEntries, value);
-			if (entry) members.add(`TSKindId.${entry.member}`);
+			const valueEntry = findKindEntry(kindEntries, value);
+			if (valueEntry) members.add(`TSKindId.${valueEntry.member}`);
 		}
+	}
+	for (const text of storageInfo.texts) {
+		const entry = findKindEntry(kindEntries, text);
+		if (entry) members.add(`TSKindId.${entry.member}`);
 	}
 	return members.size === 0 ? 'number' : [...members].join(' | ');
 }
@@ -1451,9 +1457,10 @@ function enumStorageDiscriminantExpr(
 function storageFieldTypeExpr(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
-	typeExpr: string
+	typeExpr: string,
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
-	const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	if (storageInfo.kind === 'boolean') {
 		return 'boolean';
 	}
@@ -1474,7 +1481,7 @@ function fieldInputHintTypeExpr(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	typeExpr: string
 ): string | undefined {
-	const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	if (storageInfo.kind === 'boolean') {
 		return `BooleanKeyword<${stringUnion(storageInfo.texts)}>`;
 	}
@@ -1519,7 +1526,7 @@ function emitFieldInputHints(
 			);
 			if (!hintType) return undefined;
 			const opt = isRequired(field) ? '' : '?';
-			const storageInfo = resolveFieldStorageInfo(field, nodeMap);
+			const storageInfo = resolveFieldStorageInfo(field, nodeMap, kindEntries);
 			if (isMultiple(field) && !storageInfo.collapsesMultiplicity) {
 				const arrType = isNonEmpty(field) ? `NonEmptyArray<${hintType}>` : `readonly (${hintType})[]`;
 				return `    readonly ${quoteKey(field.name)}${opt}: ${arrType};`;

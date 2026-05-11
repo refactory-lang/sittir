@@ -30,6 +30,7 @@ export type LeafStringMap = {
   async: "async";
   assert: "assert";
   and: "and";
+  or: "or";
   break: "break";
   case: "case";
   class: "class";
@@ -64,193 +65,194 @@ export type LeafStringMap = {
 };
 
 export const enum SyntaxKind {
-  _AsPattern = '_as_pattern',
-  AssignmentEq = '_assignment_eq',
-  AssignmentType = '_assignment_type',
-  AssignmentTyped = '_assignment_typed',
-  ComprehensionClauses = '_comprehension_clauses',
-  ImportList = '_import_list',
-  KeyValuePattern = '_key_value_pattern',
-  _ListPattern = '_list_pattern',
-  MatchBlock = '_match_block',
-  MatchBlockBlock = '_match_block_block',
-  SimplePatternNegative = '_simple_pattern_negative',
-  SimpleStatements = '_simple_statements',
-  Suite = '_suite',
-  _TuplePattern = '_tuple_pattern',
-  _WithClauseParen = '_with_clause_paren',
-  AliasedImport = 'aliased_import',
-  ArgumentList = 'argument_list',
-  AsPattern = 'as_pattern',
-  AssertStatement = 'assert_statement',
-  Assignment = 'assignment',
-  Attribute = 'attribute',
-  AugmentedAssignment = 'augmented_assignment',
-  Await = 'await',
-  BinaryOperator = 'binary_operator',
-  Block = 'block',
-  BooleanOperator = 'boolean_operator',
-  Call = 'call',
-  CaseClause = 'case_clause',
-  CasePattern = 'case_pattern',
-  Chevron = 'chevron',
-  ClassDefinition = 'class_definition',
-  ClassPattern = 'class_pattern',
-  ComparisonOperator = 'comparison_operator',
-  ComplexPattern = 'complex_pattern',
-  ConcatenatedString = 'concatenated_string',
-  ConditionalExpression = 'conditional_expression',
-  ConstrainedType = 'constrained_type',
-  DecoratedDefinition = 'decorated_definition',
-  Decorator = 'decorator',
-  DefaultParameter = 'default_parameter',
-  DeleteStatement = 'delete_statement',
-  DictPattern = 'dict_pattern',
-  Dictionary = 'dictionary',
-  DictionaryComprehension = 'dictionary_comprehension',
-  DictionarySplat = 'dictionary_splat',
-  DictionarySplatPattern = 'dictionary_splat_pattern',
-  DottedName = 'dotted_name',
-  ElifClause = 'elif_clause',
-  ElseClause = 'else_clause',
-  ExceptClause = 'except_clause',
-  ExecStatement = 'exec_statement',
-  ExpressionList = 'expression_list',
-  ExpressionStatementTuple = 'expression_statement_tuple',
-  ExpressionStatement = 'expression_statement',
-  FinallyClause = 'finally_clause',
-  ForInClause = 'for_in_clause',
-  ForStatement = 'for_statement',
-  FormatSpecifier = 'format_specifier',
-  FunctionDefinition = 'function_definition',
-  FutureImportStatement = 'future_import_statement',
-  GeneratorExpression = 'generator_expression',
-  GenericType = 'generic_type',
-  GlobalStatement = 'global_statement',
-  IfClause = 'if_clause',
-  IfStatement = 'if_statement',
-  ImportFromStatement = 'import_from_statement',
-  ImportStatement = 'import_statement',
-  Interpolation = 'interpolation',
-  KeywordArgument = 'keyword_argument',
-  KeywordPattern = 'keyword_pattern',
-  Lambda = 'lambda',
-  LambdaParameters = 'lambda_parameters',
-  LambdaWithinForInClause = 'lambda_within_for_in_clause',
-  List = 'list',
-  ListComprehension = 'list_comprehension',
-  ListPattern = 'list_pattern',
-  ListSplat = 'list_splat',
-  ListSplatPattern = 'list_splat_pattern',
-  MatchStatement = 'match_statement',
-  MemberType = 'member_type',
-  Module = 'module',
-  NamedExpression = 'named_expression',
-  NonlocalStatement = 'nonlocal_statement',
-  NotOperator = 'not_operator',
-  Pair = 'pair',
-  Parameters = 'parameters',
-  ParenthesizedExpression = 'parenthesized_expression',
-  ParenthesizedListSplat = 'parenthesized_list_splat',
-  PatternList = 'pattern_list',
-  PrintStatement = 'print_statement',
-  RaiseStatement = 'raise_statement',
-  RelativeImport = 'relative_import',
-  ReturnStatement = 'return_statement',
-  Set = 'set',
-  SetComprehension = 'set_comprehension',
-  Slice = 'slice',
-  SplatPattern = 'splat_pattern',
-  SplatType = 'splat_type',
-  String = 'string',
-  StringContent = 'string_content',
-  Subscript = 'subscript',
-  TryStatement = 'try_statement',
-  Tuple = 'tuple',
-  TuplePattern = 'tuple_pattern',
-  Type = 'type',
-  TypeAliasStatement = 'type_alias_statement',
-  TypeParameter = 'type_parameter',
-  TypedDefaultParameter = 'typed_default_parameter',
-  TypedParameter = 'typed_parameter',
-  UnaryOperator = 'unary_operator',
-  UnionPattern = 'union_pattern',
-  UnionType = 'union_type',
-  WhileStatement = 'while_statement',
-  WithClauseBare = 'with_clause_bare',
-  WithClauseParen = 'with_clause_paren',
-  WithClause = 'with_clause',
-  WithItem = 'with_item',
-  WithStatement = 'with_statement',
-  Yield = 'yield',
-  AsyncMarker = '_async_marker',
-  AugmentedAssignmentOperator = '_augmented_assignment_operator',
-  _Identifier = '_identifier',
-  IsNot = '_is_not',
-  KwAsyncMarker = '_kw_async_marker',
-  KwType = '_kw_type',
-  NotIn = '_not_in',
-  UnaryOperatorOperator = '_unary_operator_operator',
-  BreakStatement = 'break_statement',
-  Comment = 'comment',
-  ContinueStatement = 'continue_statement',
-  EscapeSequence = 'escape_sequence',
-  False = 'false',
-  Float = 'float',
-  Identifier = 'identifier',
-  ImportPrefix = 'import_prefix',
-  Integer = 'integer',
-  LineContinuation = 'line_continuation',
-  None = 'none',
-  PassStatement = 'pass_statement',
-  True = 'true',
-  TypeConversion = 'type_conversion',
-  Newline = '_newline',
-  Indent = '_indent',
-  Dedent = '_dedent',
-  StringStart = 'string_start',
-  _StringContent = '_string_content',
-  EscapeInterpolation = 'escape_interpolation',
-  StringEnd = 'string_end',
-  CloseBracket = ']',
-  CloseParen = ')',
-  CloseBrace = '}',
-  Except = 'except',
-  As = 'as',
-  Async = 'async',
-  Assert = 'assert',
-  And = 'and',
-  Break = 'break',
-  Case = 'case',
-  Class = 'class',
-  If = 'if',
-  Else = 'else',
-  Continue = 'continue',
-  Del = 'del',
-  Elif = 'elif',
-  Exec = 'exec',
-  In = 'in',
-  False2 = 'False',
-  Finally = 'finally',
-  For = 'for',
-  Def = 'def',
-  From = 'from',
-  FutureU = '__future__',
-  Import = 'import',
-  Global = 'global',
-  Match = 'match',
-  None2 = 'None',
-  Nonlocal = 'nonlocal',
-  Not = 'not',
-  Pass = 'pass',
-  Print = 'print',
-  Raise = 'raise',
-  Return = 'return',
-  Anonymous = '_',
-  True2 = 'True',
-  Try = 'try',
-  While = 'while',
-  With = 'with',
+  _AsPattern = "_as_pattern",
+  AssignmentEq = "_assignment_eq",
+  AssignmentType = "_assignment_type",
+  AssignmentTyped = "_assignment_typed",
+  ComprehensionClauses = "_comprehension_clauses",
+  ImportList = "_import_list",
+  KeyValuePattern = "_key_value_pattern",
+  _ListPattern = "_list_pattern",
+  MatchBlock = "_match_block",
+  MatchBlockBlock = "_match_block_block",
+  SimplePatternNegative = "_simple_pattern_negative",
+  SimpleStatements = "_simple_statements",
+  Suite = "_suite",
+  _TuplePattern = "_tuple_pattern",
+  _WithClauseParen = "_with_clause_paren",
+  AliasedImport = "aliased_import",
+  ArgumentList = "argument_list",
+  AsPattern = "as_pattern",
+  AssertStatement = "assert_statement",
+  Assignment = "assignment",
+  Attribute = "attribute",
+  AugmentedAssignment = "augmented_assignment",
+  Await = "await",
+  BinaryOperator = "binary_operator",
+  Block = "block",
+  BooleanOperator = "boolean_operator",
+  Call = "call",
+  CaseClause = "case_clause",
+  CasePattern = "case_pattern",
+  Chevron = "chevron",
+  ClassDefinition = "class_definition",
+  ClassPattern = "class_pattern",
+  ComparisonOperator = "comparison_operator",
+  ComplexPattern = "complex_pattern",
+  ConcatenatedString = "concatenated_string",
+  ConditionalExpression = "conditional_expression",
+  ConstrainedType = "constrained_type",
+  DecoratedDefinition = "decorated_definition",
+  Decorator = "decorator",
+  DefaultParameter = "default_parameter",
+  DeleteStatement = "delete_statement",
+  DictPattern = "dict_pattern",
+  Dictionary = "dictionary",
+  DictionaryComprehension = "dictionary_comprehension",
+  DictionarySplat = "dictionary_splat",
+  DictionarySplatPattern = "dictionary_splat_pattern",
+  DottedName = "dotted_name",
+  ElifClause = "elif_clause",
+  ElseClause = "else_clause",
+  ExceptClause = "except_clause",
+  ExecStatement = "exec_statement",
+  ExpressionList = "expression_list",
+  ExpressionStatementTuple = "expression_statement_tuple",
+  ExpressionStatement = "expression_statement",
+  FinallyClause = "finally_clause",
+  ForInClause = "for_in_clause",
+  ForStatement = "for_statement",
+  FormatSpecifier = "format_specifier",
+  FunctionDefinition = "function_definition",
+  FutureImportStatement = "future_import_statement",
+  GeneratorExpression = "generator_expression",
+  GenericType = "generic_type",
+  GlobalStatement = "global_statement",
+  IfClause = "if_clause",
+  IfStatement = "if_statement",
+  ImportFromStatement = "import_from_statement",
+  ImportStatement = "import_statement",
+  Interpolation = "interpolation",
+  KeywordArgument = "keyword_argument",
+  KeywordPattern = "keyword_pattern",
+  Lambda = "lambda",
+  LambdaParameters = "lambda_parameters",
+  LambdaWithinForInClause = "lambda_within_for_in_clause",
+  List = "list",
+  ListComprehension = "list_comprehension",
+  ListPattern = "list_pattern",
+  ListSplat = "list_splat",
+  ListSplatPattern = "list_splat_pattern",
+  MatchStatement = "match_statement",
+  MemberType = "member_type",
+  Module = "module",
+  NamedExpression = "named_expression",
+  NonlocalStatement = "nonlocal_statement",
+  NotOperator = "not_operator",
+  Pair = "pair",
+  Parameters = "parameters",
+  ParenthesizedExpression = "parenthesized_expression",
+  ParenthesizedListSplat = "parenthesized_list_splat",
+  PatternList = "pattern_list",
+  PrintStatement = "print_statement",
+  RaiseStatement = "raise_statement",
+  RelativeImport = "relative_import",
+  ReturnStatement = "return_statement",
+  Set = "set",
+  SetComprehension = "set_comprehension",
+  Slice = "slice",
+  SplatPattern = "splat_pattern",
+  SplatType = "splat_type",
+  String = "string",
+  StringContent = "string_content",
+  Subscript = "subscript",
+  TryStatement = "try_statement",
+  Tuple = "tuple",
+  TuplePattern = "tuple_pattern",
+  Type = "type",
+  TypeAliasStatement = "type_alias_statement",
+  TypeParameter = "type_parameter",
+  TypedDefaultParameter = "typed_default_parameter",
+  TypedParameter = "typed_parameter",
+  UnaryOperator = "unary_operator",
+  UnionPattern = "union_pattern",
+  UnionType = "union_type",
+  WhileStatement = "while_statement",
+  WithClauseBare = "with_clause_bare",
+  WithClauseParen = "with_clause_paren",
+  WithClause = "with_clause",
+  WithItem = "with_item",
+  WithStatement = "with_statement",
+  Yield = "yield",
+  AsyncMarker = "_async_marker",
+  AugmentedAssignmentOperator = "_augmented_assignment_operator",
+  _Identifier = "_identifier",
+  IsNot = "_is_not",
+  KwAsyncMarker = "_kw_async_marker",
+  KwType = "_kw_type",
+  NotIn = "_not_in",
+  UnaryOperatorOperator = "_unary_operator_operator",
+  BreakStatement = "break_statement",
+  Comment = "comment",
+  ContinueStatement = "continue_statement",
+  EscapeSequence = "escape_sequence",
+  False = "false",
+  Float = "float",
+  Identifier = "identifier",
+  ImportPrefix = "import_prefix",
+  Integer = "integer",
+  LineContinuation = "line_continuation",
+  None = "none",
+  PassStatement = "pass_statement",
+  True = "true",
+  TypeConversion = "type_conversion",
+  Newline = "_newline",
+  Indent = "_indent",
+  Dedent = "_dedent",
+  StringStart = "string_start",
+  _StringContent = "_string_content",
+  EscapeInterpolation = "escape_interpolation",
+  StringEnd = "string_end",
+  CloseBracket = "]",
+  CloseParen = ")",
+  CloseBrace = "}",
+  Except = "except",
+  As = "as",
+  Async = "async",
+  Assert = "assert",
+  And = "and",
+  Or = "or",
+  Break = "break",
+  Case = "case",
+  Class = "class",
+  If = "if",
+  Else = "else",
+  Continue = "continue",
+  Del = "del",
+  Elif = "elif",
+  Exec = "exec",
+  In = "in",
+  False2 = "False",
+  Finally = "finally",
+  For = "for",
+  Def = "def",
+  From = "from",
+  FutureU = "__future__",
+  Import = "import",
+  Global = "global",
+  Match = "match",
+  None2 = "None",
+  Nonlocal = "nonlocal",
+  Not = "not",
+  Pass = "pass",
+  Print = "print",
+  Raise = "raise",
+  Return = "return",
+  Anonymous = "_",
+  True2 = "True",
+  Try = "try",
+  While = "while",
+  With = "with",
 }
 
 export const enum TSKindId {
@@ -1171,171 +1173,172 @@ export function kindIdFromName(kindName: string): TSKindId {
 
 // Scoped enums per supertype
 export const enum CompoundStatementKind {
-  IfStatement = 'if_statement',
-  ForStatement = 'for_statement',
-  WhileStatement = 'while_statement',
-  TryStatement = 'try_statement',
-  WithStatement = 'with_statement',
-  FunctionDefinition = 'function_definition',
-  ClassDefinition = 'class_definition',
-  DecoratedDefinition = 'decorated_definition',
-  MatchStatement = 'match_statement',
+  IfStatement = "if_statement",
+  ForStatement = "for_statement",
+  WhileStatement = "while_statement",
+  TryStatement = "try_statement",
+  WithStatement = "with_statement",
+  FunctionDefinition = "function_definition",
+  ClassDefinition = "class_definition",
+  DecoratedDefinition = "decorated_definition",
+  MatchStatement = "match_statement",
 }
 
 export const enum DictPatternKvKind {
-  KeyValuePattern = '_key_value_pattern',
-  SplatPattern = 'splat_pattern',
+  KeyValuePattern = "_key_value_pattern",
+  SplatPattern = "splat_pattern",
 }
 
 export const enum ExpressionWithinForInClauseKind {
-  Expression = 'expression',
-  LambdaWithinForInClause = 'lambda_within_for_in_clause',
+  Expression = "expression",
+  LambdaWithinForInClause = "lambda_within_for_in_clause",
 }
 
 export const enum ExpressionsKind {
-  Expression = 'expression',
-  ExpressionList = 'expression_list',
+  Expression = "expression",
+  ExpressionList = "expression_list",
 }
 
 export const enum FExpressionKind {
-  Expression = 'expression',
-  ExpressionList = 'expression_list',
-  PatternList = 'pattern_list',
-  Yield = 'yield',
+  Expression = "expression",
+  ExpressionList = "expression_list",
+  PatternList = "pattern_list",
+  Yield = "yield",
 }
 
 export const enum LeftHandSideKind {
-  Pattern = 'pattern',
-  PatternList = 'pattern_list',
+  Pattern = "pattern",
+  PatternList = "pattern_list",
 }
 
 export const enum NamedExpressionLhsKind {
-  Identifier = 'identifier',
-  KeywordIdentifier = 'keyword_identifier',
+  Identifier = "identifier",
+  KeywordIdentifier = "keyword_identifier",
 }
 
 export const enum RightHandSideKind {
-  Expression = 'expression',
-  ExpressionList = 'expression_list',
-  Assignment = 'assignment',
-  AugmentedAssignment = 'augmented_assignment',
-  PatternList = 'pattern_list',
-  Yield = 'yield',
+  Expression = "expression",
+  ExpressionList = "expression_list",
+  Assignment = "assignment",
+  AugmentedAssignment = "augmented_assignment",
+  PatternList = "pattern_list",
+  Yield = "yield",
 }
 
 export const enum SimplePatternKind {
-  ClassPattern = 'class_pattern',
-  SplatPattern = 'splat_pattern',
-  UnionPattern = 'union_pattern',
-  _ListPattern = '_list_pattern',
-  _TuplePattern = '_tuple_pattern',
-  DictPattern = 'dict_pattern',
-  String = 'string',
-  ConcatenatedString = 'concatenated_string',
-  True = 'true',
-  False = 'false',
-  None = 'none',
-  SimplePatternNegative = '_simple_pattern_negative',
-  ComplexPattern = 'complex_pattern',
-  DottedName = 'dotted_name',
+  ClassPattern = "class_pattern",
+  SplatPattern = "splat_pattern",
+  UnionPattern = "union_pattern",
+  _ListPattern = "_list_pattern",
+  _TuplePattern = "_tuple_pattern",
+  DictPattern = "dict_pattern",
+  String = "string",
+  ConcatenatedString = "concatenated_string",
+  True = "true",
+  False = "false",
+  None = "none",
+  SimplePatternNegative = "_simple_pattern_negative",
+  ComplexPattern = "complex_pattern",
+  DottedName = "dotted_name",
 }
 
 export const enum SimpleStatementKind {
-  FutureImportStatement = 'future_import_statement',
-  ImportStatement = 'import_statement',
-  ImportFromStatement = 'import_from_statement',
-  PrintStatement = 'print_statement',
-  AssertStatement = 'assert_statement',
-  ExpressionStatement = 'expression_statement',
-  ReturnStatement = 'return_statement',
-  DeleteStatement = 'delete_statement',
-  RaiseStatement = 'raise_statement',
-  PassStatement = 'pass_statement',
-  BreakStatement = 'break_statement',
-  ContinueStatement = 'continue_statement',
-  GlobalStatement = 'global_statement',
-  NonlocalStatement = 'nonlocal_statement',
-  ExecStatement = 'exec_statement',
-  TypeAliasStatement = 'type_alias_statement',
+  FutureImportStatement = "future_import_statement",
+  ImportStatement = "import_statement",
+  ImportFromStatement = "import_from_statement",
+  PrintStatement = "print_statement",
+  AssertStatement = "assert_statement",
+  ExpressionStatement = "expression_statement",
+  ReturnStatement = "return_statement",
+  DeleteStatement = "delete_statement",
+  RaiseStatement = "raise_statement",
+  PassStatement = "pass_statement",
+  BreakStatement = "break_statement",
+  ContinueStatement = "continue_statement",
+  GlobalStatement = "global_statement",
+  NonlocalStatement = "nonlocal_statement",
+  ExecStatement = "exec_statement",
+  TypeAliasStatement = "type_alias_statement",
 }
 
 export const enum StatementKind {
-  SimpleStatements = '_simple_statements',
-  IfStatement = 'if_statement',
-  ForStatement = 'for_statement',
-  WhileStatement = 'while_statement',
-  TryStatement = 'try_statement',
-  WithStatement = 'with_statement',
-  FunctionDefinition = 'function_definition',
-  ClassDefinition = 'class_definition',
-  DecoratedDefinition = 'decorated_definition',
-  MatchStatement = 'match_statement',
+  SimpleStatements = "_simple_statements",
+  CompoundStatement = "_compound_statement",
+  IfStatement = "if_statement",
+  ForStatement = "for_statement",
+  WhileStatement = "while_statement",
+  TryStatement = "try_statement",
+  WithStatement = "with_statement",
+  FunctionDefinition = "function_definition",
+  ClassDefinition = "class_definition",
+  DecoratedDefinition = "decorated_definition",
+  MatchStatement = "match_statement",
 }
 
 export const enum ExpressionKind {
-  ComparisonOperator = 'comparison_operator',
-  NotOperator = 'not_operator',
-  BooleanOperator = 'boolean_operator',
-  Lambda = 'lambda',
-  PrimaryExpression = 'primary_expression',
-  ConditionalExpression = 'conditional_expression',
-  NamedExpression = 'named_expression',
-  AsPattern = 'as_pattern',
+  ComparisonOperator = "comparison_operator",
+  NotOperator = "not_operator",
+  BooleanOperator = "boolean_operator",
+  Lambda = "lambda",
+  PrimaryExpression = "primary_expression",
+  ConditionalExpression = "conditional_expression",
+  NamedExpression = "named_expression",
+  AsPattern = "as_pattern",
 }
 
 export const enum KeywordIdentifierKind {
-  Identifier = 'identifier',
+  Identifier = "identifier",
 }
 
 export const enum ParameterKind {
-  Identifier = 'identifier',
-  TypedParameter = 'typed_parameter',
-  DefaultParameter = 'default_parameter',
-  TypedDefaultParameter = 'typed_default_parameter',
-  ListSplatPattern = 'list_splat_pattern',
-  TuplePattern = 'tuple_pattern',
-  KeywordSeparator = 'keyword_separator',
-  PositionalSeparator = 'positional_separator',
-  DictionarySplatPattern = 'dictionary_splat_pattern',
+  Identifier = "identifier",
+  TypedParameter = "typed_parameter",
+  DefaultParameter = "default_parameter",
+  TypedDefaultParameter = "typed_default_parameter",
+  ListSplatPattern = "list_splat_pattern",
+  TuplePattern = "tuple_pattern",
+  KeywordSeparator = "keyword_separator",
+  PositionalSeparator = "positional_separator",
+  DictionarySplatPattern = "dictionary_splat_pattern",
 }
 
 export const enum PatternKind {
-  Identifier = 'identifier',
-  KeywordIdentifier = 'keyword_identifier',
-  Subscript = 'subscript',
-  Attribute = 'attribute',
-  ListSplatPattern = 'list_splat_pattern',
-  TuplePattern = 'tuple_pattern',
-  ListPattern = 'list_pattern',
+  Identifier = "identifier",
+  KeywordIdentifier = "keyword_identifier",
+  Subscript = "subscript",
+  Attribute = "attribute",
+  ListSplatPattern = "list_splat_pattern",
+  TuplePattern = "tuple_pattern",
+  ListPattern = "list_pattern",
 }
 
 export const enum PrimaryExpressionKind {
-  Await = 'await',
-  BinaryOperator = 'binary_operator',
-  Identifier = 'identifier',
-  KeywordIdentifier = 'keyword_identifier',
-  String = 'string',
-  ConcatenatedString = 'concatenated_string',
-  Integer = 'integer',
-  Float = 'float',
-  True = 'true',
-  False = 'false',
-  None = 'none',
-  UnaryOperator = 'unary_operator',
-  Attribute = 'attribute',
-  Subscript = 'subscript',
-  Call = 'call',
-  List = 'list',
-  ListComprehension = 'list_comprehension',
-  Dictionary = 'dictionary',
-  DictionaryComprehension = 'dictionary_comprehension',
-  Set = 'set',
-  SetComprehension = 'set_comprehension',
-  Tuple = 'tuple',
-  ParenthesizedExpression = 'parenthesized_expression',
-  GeneratorExpression = 'generator_expression',
-  Ellipsis2 = 'ellipsis',
-  ListSplatPattern = 'list_splat_pattern',
+  Await = "await",
+  BinaryOperator = "binary_operator",
+  Identifier = "identifier",
+  KeywordIdentifier = "keyword_identifier",
+  String = "string",
+  ConcatenatedString = "concatenated_string",
+  Integer = "integer",
+  Float = "float",
+  True = "true",
+  False = "false",
+  None = "none",
+  UnaryOperator = "unary_operator",
+  Attribute = "attribute",
+  Subscript = "subscript",
+  Call = "call",
+  List = "list",
+  ListComprehension = "list_comprehension",
+  Dictionary = "dictionary",
+  DictionaryComprehension = "dictionary_comprehension",
+  Set = "set",
+  SetComprehension = "set_comprehension",
+  Tuple = "tuple",
+  ParenthesizedExpression = "parenthesized_expression",
+  GeneratorExpression = "generator_expression",
+  Ellipsis2 = "ellipsis",
+  ListSplatPattern = "list_splat_pattern",
 }
 
 // Node types — concrete interfaces
@@ -1395,7 +1398,7 @@ export interface MatchBlock {
 
 export interface MatchBlockBlock {
   readonly $type: TSKindId.MatchBlockBlock;
-  readonly _alternative: readonly (CaseClause)[];
+  readonly _alternative?: readonly (CaseClause)[];
   alternatives(): readonly (CaseClause)[];
 }
 
@@ -1505,10 +1508,10 @@ export interface Await {
 export interface BinaryOperator {
   readonly $type: TSKindId.BinaryOperator;
   readonly _left: PrimaryExpression;
-  readonly _operator: AutoStamp<"+">;
+  readonly _operator: "+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>";
   readonly _right: PrimaryExpression;
   left(): PrimaryExpression;
-  operator(): AutoStamp<"+">;
+  operator(): "+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>";
   right(): PrimaryExpression;
 }
 
@@ -1520,10 +1523,10 @@ export interface Block {
 export interface BooleanOperator {
   readonly $type: TSKindId.BooleanOperator;
   readonly _left: Expression;
-  readonly _operator: AutoStamp<"and">;
+  readonly _operator: "and" | "or";
   readonly _right: Expression;
   left(): Expression;
-  operator(): AutoStamp<"and">;
+  operator(): "and" | "or";
   right(): Expression;
 }
 
@@ -1570,7 +1573,7 @@ export interface ClassDefinition {
 export interface ClassPattern {
   readonly $type: TSKindId.ClassPattern;
   readonly _dotted_name: DottedName;
-  readonly _arguments: readonly (CasePattern)[];
+  readonly _arguments?: readonly (CasePattern)[];
   dottedName(): DottedName;
   arguments(): readonly (CasePattern)[];
 }
@@ -2014,7 +2017,7 @@ export interface PatternList {
 
 export interface PrintStatement {
   readonly $type: TSKindId.PrintStatement;
-  readonly _argument: readonly (Expression)[];
+  readonly _argument?: readonly (Expression)[];
   arguments(): readonly (Expression)[];
   readonly $children: readonly [Chevron];
 }
@@ -2076,7 +2079,7 @@ export interface SplatType {
 export interface String {
   readonly $type: TSKindId.String;
   readonly _string_start: StringStart;
-  readonly _content: readonly (Interpolation | StringContent)[];
+  readonly _content?: readonly (Interpolation | StringContent)[];
   readonly _string_end: StringEnd;
   stringStart(): StringStart;
   contents(): readonly (Interpolation | StringContent)[];
@@ -2099,7 +2102,7 @@ export interface Subscript {
 export interface TryStatement {
   readonly $type: TSKindId.TryStatement;
   readonly _body: Suite;
-  readonly _except_clauses: readonly (ExceptClause)[];
+  readonly _except_clauses?: readonly (ExceptClause)[];
   readonly _else_clause?: ElseClause;
   readonly _finally_clause?: FinallyClause;
   body(): Suite;
@@ -2434,6 +2437,7 @@ export interface AsTree extends AnyTreeNode { readonly type: "as"; }
 export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface AssertTree extends AnyTreeNode { readonly type: "assert"; }
 export interface AndTree extends AnyTreeNode { readonly type: "and"; }
+export interface OrTree extends AnyTreeNode { readonly type: "or"; }
 export interface BreakTree extends AnyTreeNode { readonly type: "break"; }
 export interface CaseTree extends AnyTreeNode { readonly type: "case"; }
 export interface ClassTree extends AnyTreeNode { readonly type: "class"; }
@@ -2570,6 +2574,7 @@ export type SimpleStatementTree = FutureImportStatementTree | ImportStatementTre
 
 export type Statement =
   | SimpleStatements
+  | CompoundStatement
   | IfStatement
   | ForStatement
   | WhileStatement
@@ -2581,7 +2586,7 @@ export type Statement =
   | MatchStatement
 ;
 
-export type StatementTree = SimpleStatementsTree | IfStatementTree | ForStatementTree | WhileStatementTree | TryStatementTree | WithStatementTree | FunctionDefinitionTree | ClassDefinitionTree | DecoratedDefinitionTree | MatchStatementTree;
+export type StatementTree = SimpleStatementsTree | CompoundStatementTree | IfStatementTree | ForStatementTree | WhileStatementTree | TryStatementTree | WithStatementTree | FunctionDefinitionTree | ClassDefinitionTree | DecoratedDefinitionTree | MatchStatementTree;
 
 export type Expression =
   | ComparisonOperator

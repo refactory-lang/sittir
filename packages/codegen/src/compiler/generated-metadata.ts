@@ -44,6 +44,13 @@ export interface GeneratedIdTables {
 	readonly sourceArtifact: string;
 }
 
+export interface GeneratedKindEntry {
+	readonly kind: string;
+	readonly id: number;
+	readonly symbolName?: string;
+	readonly anon?: boolean;
+}
+
 export interface TreeSitterLanguageMetadata {
 	readonly nodeTypeCount: number;
 	readonly fieldCount: number;
@@ -143,6 +150,35 @@ export function deriveGeneratedMetadata(ruleCatalog: RuleCatalog, tables: Genera
 	}
 
 	return { kindByName, fieldByName };
+}
+
+export function collectGeneratedKindEntries(
+	tables: GeneratedIdTables | undefined
+): readonly GeneratedKindEntry[] {
+	if (!tables?.kindIds) return [];
+	return toEntries(tables.kindIds)
+		.filter(([, entry]) => entry.id !== undefined)
+		.map(([kind, entry]) => ({
+			kind,
+			id: entry.id!,
+			symbolName:
+				entry.parser?.symbolName !== undefined && entry.parser.symbolName !== kind
+					? entry.parser.symbolName
+					: undefined,
+			anon: entry.parser?.anon || undefined
+		}));
+}
+
+export function findGeneratedKindEntry(
+	entries: readonly GeneratedKindEntry[],
+	kind: string
+): GeneratedKindEntry | undefined {
+	return (
+		entries.find((entry) => entry.kind === kind) ??
+		entries.find((entry) => entry.kind === `_${kind}`) ??
+		entries.find((entry) => entry.anon === true && entry.symbolName === kind) ??
+		undefined
+	);
 }
 
 function collectKindIds(language: TreeSitterLanguageMetadata): Map<string, number> {

@@ -350,7 +350,6 @@ export const type = {
   unit: F.unitType,
   array: _attach(FR.arrayTypeFrom, { from: FR.arrayTypeFrom, strict: F.arrayType }),
   function: _attach(FR.functionTypeFrom, { from: FR.functionTypeFrom, strict: F.functionType }),
-  identifier: F.identifier,
   macro: _attach(FR.macroInvocationFrom, { from: FR.macroInvocationFrom, strict: F.macroInvocation }),
   dynamic: _attach(FR.dynamicTypeFrom, { from: FR.dynamicTypeFrom, strict: F.dynamicType }),
   bounded: _attach(FR.boundedTypeFrom, { from: FR.boundedTypeFrom, strict: F.boundedType }),
@@ -387,10 +386,10 @@ export const from = {
     }
   ),
   string(value: string): ReturnType<typeof F.stringLiteral> {
-    return F.stringLiteral(F.stringContent(value));
+    return F.stringLiteral({ children: [F.stringContent(value)] });
   },
   type(name: string): ReturnType<typeof F.typeIdentifier> {
-    return F.typeIdentifier(F.identifier(name));
+    return F.typeIdentifier(name);
   },
   identifier(name: string): ReturnType<typeof F.identifier> {
     return F.identifier(name);

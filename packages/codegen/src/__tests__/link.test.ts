@@ -226,6 +226,60 @@ describe('Link — output contract', () => {
 	});
 });
 
+describe('Link — top-level alias bodies', () => {
+	it('captures the dereferenced body for hidden alias sources', () => {
+		const raw = makeRaw({
+			_type_identifier: {
+				type: 'alias',
+				named: true,
+				value: 'type_identifier',
+				content: { type: 'symbol', name: 'identifier' }
+			},
+			identifier: { type: 'pattern', value: '[A-Za-z_]\\w*' }
+		});
+		const linked = link(raw);
+		expect(linked.topLevelAliasBodies?.get('_type_identifier')).toEqual({
+			type: 'pattern',
+			value: '[A-Za-z_]\\w*'
+		});
+	});
+
+	it('does not dereference aliases whose source is a supertype', () => {
+		const raw = makeRaw(
+			{
+				_expression: {
+					type: 'choice',
+					members: [
+						{ type: 'symbol', name: 'identifier' },
+						{ type: 'symbol', name: 'call_expression' }
+					]
+				},
+				_as_pattern_target: {
+					type: 'alias',
+					named: true,
+					value: 'as_pattern_target',
+					content: { type: 'symbol', name: '_expression' }
+				},
+				identifier: { type: 'pattern', value: '[A-Za-z_]\\w*' },
+				call_expression: {
+					type: 'seq',
+					members: [
+						{ type: 'field', name: 'callee', content: { type: 'symbol', name: 'identifier' } },
+						{ type: 'string', value: '(' },
+						{ type: 'string', value: ')' }
+					]
+				}
+			},
+			{ supertypes: ['_expression'] }
+		);
+		const linked = link(raw);
+		expect(linked.topLevelAliasBodies?.get('_as_pattern_target')).toEqual({
+			type: 'symbol',
+			name: '_expression'
+		});
+	});
+});
+
 describe('Link — reference graph enrichment', () => {
 	it('enrichPositions assigns position to refs by walking seq members', () => {
 		const rules: Record<string, Rule> = {

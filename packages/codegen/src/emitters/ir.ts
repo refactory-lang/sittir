@@ -524,7 +524,7 @@ function emitFromString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: strin
 	const contentNode = nodeMap.nodes.get('string_content');
 	if (contentNode && isLeafFactory(contentNode)) {
 		fns.push(`  string(value: string): ${returnTypeExpr(primaryNode)} {`);
-		fns.push(`    return F.${primaryNode.rawFactoryName}(F.${contentNode.rawFactoryName}(value));`);
+		fns.push(`    return F.${primaryNode.rawFactoryName}({ children: [F.${contentNode.rawFactoryName}(value)] });`);
 		fns.push('  },');
 	}
 	// Otherwise: skip — too complex to auto-compose

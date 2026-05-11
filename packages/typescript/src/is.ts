@@ -62,7 +62,6 @@ export interface IsGuards {
     PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
     StringDouble<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._StringDouble };
     StringSingle<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._StringSingle };
-    TypeIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeIdentifier };
     abstractClassDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractClassDeclaration };
     abstractMethodSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractMethodSignature };
     addingTypeAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AddingTypeAnnotation };
@@ -270,7 +269,6 @@ export interface AssertGuards {
     PublicFieldDefinitionDeclareFirst(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
     StringDouble(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._StringDouble };
     StringSingle(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._StringSingle };
-    TypeIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeIdentifier };
     abstractClassDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractClassDeclaration };
     abstractMethodSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractMethodSignature };
     addingTypeAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AddingTypeAnnotation };
@@ -478,11 +476,11 @@ const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1]);
 const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1]);
 const _supertype_statementIdentifier_ids = new Set<number>([1]);
 const _supertype_tupleTypeMember_ids = new Set<number>([308, 309, 310, 311]);
-const _supertype_declaration_ids = new Set<number>([271, 282, 283, 284, 293, 290, 288, 286, 281]);
+const _supertype_declaration_ids = new Set<number>([224, 226, 221, 184, 183, 271, 282, 283, 284, 293, 290, 288, 286, 281]);
 const _supertype_expression_ids = new Set<number>([274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212]);
 const _supertype_pattern_ids = new Set<number>([234, 235, 112, 1, 214, 218, 268, 260]);
-const _supertype_primaryExpression_ids = new Set<number>([268]);
-const _supertype_primaryType_ids = new Set<number>([334, 335, 1, 287, 319, 337, 346, 347, 333, 326, 327, 107, 330, 328, 318, 316, 350, 349]);
+const _supertype_primaryExpression_ids = new Set<number>([235, 234, 209, 112, 1, 107, 108, 103, 247, 248, 250, 109, 110, 111, 213, 217, 223, 227, 225, 220, 251, 231, 268]);
+const _supertype_primaryType_ids = new Set<number>([334, 335, 430, 287, 319, 337, 346, 347, 333, 326, 327, 107, 330, 328, 318, 316, 350, 349]);
 const _supertype_statement_ids = new Set<number>([167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203]);
 const _supertype_type_ids = new Set<number>([351, 348, 313, 317, 303, 304]);
 
@@ -517,6 +515,7 @@ const _kindIdByKind = new Map<string, number>([
     ["function", TSKindId.Function],
     ["async", TSKindId.Async],
     ["new", TSKindId.New],
+    ["instanceof", TSKindId.Instanceof],
     ["unescaped_double_string_fragment", TSKindId.UnescapedDoubleStringFragment],
     ["unescaped_single_string_fragment", TSKindId.UnescapedSingleStringFragment],
     ["escape_sequence", TSKindId.EscapeSequence],
@@ -800,7 +799,6 @@ export const is = {
     PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
     StringDouble: _g(TSKindId._StringDouble),
     StringSingle: _g(TSKindId._StringSingle),
-    TypeIdentifier: _g(TSKindId.TypeIdentifier),
     abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
     abstractMethodSignature: _g(TSKindId.AbstractMethodSignature),
     addingTypeAnnotation: _g(TSKindId.AddingTypeAnnotation),
@@ -1032,7 +1030,6 @@ export const assert = {
     PublicFieldDefinitionDeclareFirst: _makeAssert('PublicFieldDefinitionDeclareFirst', is.PublicFieldDefinitionDeclareFirst as _AnyGuard),
     StringDouble: _makeAssert('StringDouble', is.StringDouble as _AnyGuard),
     StringSingle: _makeAssert('StringSingle', is.StringSingle as _AnyGuard),
-    TypeIdentifier: _makeAssert('TypeIdentifier', is.TypeIdentifier as _AnyGuard),
     abstractClassDeclaration: _makeAssert('abstractClassDeclaration', is.abstractClassDeclaration as _AnyGuard),
     abstractMethodSignature: _makeAssert('abstractMethodSignature', is.abstractMethodSignature as _AnyGuard),
     addingTypeAnnotation: _makeAssert('addingTypeAnnotation', is.addingTypeAnnotation as _AnyGuard),

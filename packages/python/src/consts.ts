@@ -174,6 +174,7 @@ export const LEAF_KINDS = [
   'none',
   'nonlocal',
   'not',
+  'or',
   'pass',
   'pass_statement',
   'print',
@@ -232,6 +233,7 @@ export const KEYWORDS = [
   'none',
   'nonlocal',
   'not',
+  'or',
   'pass',
   'pass_statement',
   'positional_separator',
@@ -247,6 +249,8 @@ export const KEYWORDS = [
 
 /** Operator/punctuation tokens. */
 export const OPERATORS = [
+  "%",
+  "&",
   "(",
   "*",
   "**",
@@ -257,13 +261,16 @@ export const OPERATORS = [
   ".",
   "...",
   "/",
+  "//",
   ":",
   ":=",
+  "<<",
   "=",
   ">>",
   "@",
   "[",
   "\\",
+  "^",
   "{",
   "|",
 ] as const;
@@ -312,6 +319,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "_": 48,
   "not": 54,
   "and": 55,
+  "or": 56,
   "ellipsis": 87,
   "escape_sequence": 89,
   "type_conversion": 92,
@@ -487,6 +495,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [48]: "_",
   [54]: "not",
   [55]: "and",
+  [56]: "or",
   [87]: "ellipsis",
   [89]: "escape_sequence",
   [92]: "type_conversion",
@@ -662,6 +671,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "_", id: 48, enumName: "Anon", cName: "anon_sym__" },
   { name: "not", id: 54, enumName: "AnonNot", cName: "anon_sym_not" },
   { name: "and", id: 55, enumName: "AnonAnd", cName: "anon_sym_and" },
+  { name: "or", id: 56, enumName: "AnonOr", cName: "anon_sym_or" },
   { name: "ellipsis", id: 87, enumName: "Ellipsis", cName: "sym_ellipsis" },
   { name: "escape_sequence", id: 89, enumName: "EscapeSequence", cName: "sym_escape_sequence" },
   { name: "type_conversion", id: 92, enumName: "TypeConversion", cName: "sym_type_conversion" },
@@ -1122,7 +1132,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'class_pattern': [
     { name: 'dottedName', required: true, multiple: false },
-    { name: 'arguments', required: true, multiple: true },
+    { name: 'arguments', required: false, multiple: true },
   ],
   'comparison_operator': [
     { name: 'left', required: true, multiple: false },
@@ -1309,7 +1319,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'pattern_list': [
   ],
   'print_statement': [
-    { name: 'arguments', required: true, multiple: true },
+    { name: 'arguments', required: false, multiple: true },
   ],
   'raise_statement': [
     { name: 'cause', required: false, multiple: false },
@@ -1338,7 +1348,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'string': [
     { name: 'stringStart', required: true, multiple: false },
-    { name: 'contents', required: true, multiple: true },
+    { name: 'contents', required: false, multiple: true },
     { name: 'stringEnd', required: true, multiple: false },
   ],
   'string_content': [
@@ -1349,7 +1359,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'try_statement': [
     { name: 'body', required: true, multiple: false },
-    { name: 'exceptClauses', required: true, multiple: true },
+    { name: 'exceptClauses', required: false, multiple: true },
     { name: 'elseClause', required: false, multiple: false },
     { name: 'finallyClause', required: false, multiple: false },
   ],

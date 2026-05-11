@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 232,
+  "nodeCount": 238,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -47,6 +47,26 @@
     "with_clause__form_paren"
   ],
   "nodes": [
+    {
+      "kind": "%",
+      "modelType": "token",
+      "typeName": "Percent",
+      "irKey": "percent",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"%\" as const",
+      "text": "%"
+    },
+    {
+      "kind": "&",
+      "modelType": "token",
+      "typeName": "Amp",
+      "irKey": "amp",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"&\" as const",
+      "text": "&"
+    },
     {
       "kind": "(",
       "modelType": "token",
@@ -156,6 +176,16 @@
       "text": "/"
     },
     {
+      "kind": "//",
+      "modelType": "token",
+      "typeName": "Slashslash",
+      "irKey": "slashslash",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"//\" as const",
+      "text": "//"
+    },
+    {
       "kind": ":",
       "modelType": "token",
       "typeName": "Colon",
@@ -174,6 +204,16 @@
       "isParameterless": true,
       "stampExpression": "\":=\" as const",
       "text": ":="
+    },
+    {
+      "kind": "<<",
+      "modelType": "token",
+      "typeName": "Shl",
+      "irKey": "shl",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<<\" as const",
+      "text": "<<"
     },
     {
       "kind": "=",
@@ -262,6 +302,16 @@
       "factoryName": "closeBracket",
       "irKey": "]",
       "hidden": false
+    },
+    {
+      "kind": "^",
+      "modelType": "token",
+      "typeName": "Caret",
+      "irKey": "caret",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"^\" as const",
+      "text": "^"
     },
     {
       "kind": "_",
@@ -532,7 +582,7 @@
         {
           "name": "for_in_clause",
           "propertyName": "forInClause",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -798,7 +848,7 @@
         {
           "name": "case_pattern",
           "propertyName": "casePatterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -851,7 +901,7 @@
           "name": "alternative",
           "propertyName": "alternatives",
           "paramName": "alternatives",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -1064,6 +1114,7 @@
       "irKey": "statement",
       "hidden": true,
       "subtypes": [
+        "_compound_statement",
         "_simple_statements",
         "class_definition",
         "decorated_definition",
@@ -1134,7 +1185,7 @@
         {
           "name": "case_pattern",
           "propertyName": "casePatterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -1842,6 +1893,66 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "+"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "*"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "@"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "/"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "%"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "//"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "**"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "|"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "&"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "^"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<<"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">>"
             }
           ],
           "source": "grammar",
@@ -1888,7 +1999,7 @@
         {
           "name": "statement",
           "propertyName": "statements",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -1945,6 +2056,11 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "and"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "or"
             }
           ],
           "source": "grammar",
@@ -2367,7 +2483,7 @@
           "name": "arguments",
           "propertyName": "arguments",
           "paramName": "arguments_",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -3017,7 +3133,7 @@
         {
           "name": "dict_pattern_kv",
           "propertyName": "dictPatternKvs",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -3044,7 +3160,7 @@
         {
           "name": "pair",
           "propertyName": "pairs",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -4044,7 +4160,7 @@
         {
           "name": "interpolation",
           "propertyName": "interpolations",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5069,7 +5185,7 @@
         {
           "name": "expression",
           "propertyName": "expressions",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5163,7 +5279,7 @@
         {
           "name": "pattern",
           "propertyName": "patterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5394,7 +5510,7 @@
         {
           "name": "statement",
           "propertyName": "statements",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5557,6 +5673,16 @@
       "children": []
     },
     {
+      "kind": "or",
+      "modelType": "keyword",
+      "typeName": "Or",
+      "irKey": "or",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"or\" as const",
+      "text": "or"
+    },
+    {
       "kind": "pair",
       "modelType": "branch",
       "typeName": "Pair",
@@ -5643,7 +5769,7 @@
         {
           "name": "parameter",
           "propertyName": "parameters",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5862,7 +5988,7 @@
           "name": "argument",
           "propertyName": "arguments",
           "paramName": "arguments_",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -6356,7 +6482,7 @@
           "name": "content",
           "propertyName": "contents",
           "paramName": "contents",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -6588,7 +6714,7 @@
           "name": "except_clauses",
           "propertyName": "exceptClauses",
           "paramName": "exceptClauses",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -6668,7 +6794,7 @@
         {
           "name": "expression",
           "propertyName": "expressions",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -6712,7 +6838,7 @@
         {
           "name": "pattern",
           "propertyName": "patterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [

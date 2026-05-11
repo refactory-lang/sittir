@@ -92,6 +92,12 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
 	hoistIndentIntoRepeat(rules);
 	annotateBlockBearerFields(rules);
 	collectRepeatedShapes(rules, derivations.repeatedShapes);
+	const topLevelAliasBodies = collectTopLevelAliasBodies(
+		raw.rules,
+		rules,
+		supertypes,
+		externalRoles
+	);
 
 	// Validate refine() forms against the linked rule tree.
 	if (raw.refineForms && raw.refineForms.size > 0) {
@@ -116,6 +122,7 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
 		references,
 		derivations,
 		aliasedHiddenKinds,
+		topLevelAliasBodies,
 		polymorphVariants: raw.polymorphVariants,
 		refineForms: raw.refineForms
 	};
@@ -360,6 +367,56 @@ function extractTopLevelAliasTarget(rule: Rule): string | undefined {
 		return extractTopLevelAliasTarget((rule as { content: Rule }).content);
 	}
 	return undefined;
+}
+
+function collectTopLevelAliasBodies(
+	rawRules: Record<string, Rule>,
+	resolvedRules: Record<string, Rule>,
+	supertypes: Set<string>,
+	externalRoles: Map<string, ExternalRole>
+): Map<string, Rule> {
+	const out = new Map<string, Rule>();
+	for (const [name, rule] of Object.entries(rawRules)) {
+		if (!name.startsWith('_')) continue;
+		const content = extractTopLevelNamedAliasContent(rule);
+		if (!content) continue;
+		const resolvedContent = resolveRule(content, name, rawRules, supertypes, externalRoles);
+		out.set(
+			name,
+			dereferenceTopLevelAliasBody(resolvedContent, resolvedRules, supertypes, new Set())
+		);
+	}
+	return out;
+}
+
+function extractTopLevelNamedAliasContent(rule: Rule): Rule | undefined {
+	if (rule.type === 'alias' && rule.named) return rule.content;
+	if (
+		rule.type === 'group' ||
+		rule.type === 'variant' ||
+		rule.type === 'clause' ||
+		rule.type === 'token' ||
+		rule.type === 'terminal'
+	) {
+		return extractTopLevelNamedAliasContent((rule as { content: Rule }).content);
+	}
+	return undefined;
+}
+
+function dereferenceTopLevelAliasBody(
+	rule: Rule,
+	resolvedRules: Record<string, Rule>,
+	supertypes: ReadonlySet<string>,
+	seen: Set<string>
+): Rule {
+	if (rule.type !== 'symbol') return rule;
+	const refName = rule.aliasedFrom ?? rule.name;
+	if (supertypes.has(refName)) return rule;
+	if (seen.has(refName)) return rule;
+	const target = resolvedRules[refName];
+	if (!target) return rule;
+	seen.add(refName);
+	return dereferenceTopLevelAliasBody(target, resolvedRules, supertypes, seen);
 }
 
 /**
@@ -1789,25 +1846,44 @@ function classifyHiddenSeqRule(name: string, rule: SeqRule): Rule {
  */
 function collectSubtypeNames(rule: Rule): string[] {
 	const names: string[] = [];
-	// Emit source kind names (aliasedFrom ?? name) for rules-map lookup.
-	if (rule.type === 'choice') {
-		for (const m of rule.members) {
-			if (m.type === 'symbol') {
-				names.push(m.aliasedFrom ?? m.name);
-			} else if (m.type === 'alias' && m.named) {
-				if (m.content.type === 'symbol') {
-					names.push(m.content.name);
+	const visit = (current: Rule): void => {
+		switch (current.type) {
+			case 'symbol':
+				names.push(current.aliasedFrom ?? current.name);
+				return;
+			case 'alias':
+				if (!current.named) return;
+				if (current.content.type === 'symbol') {
+					names.push(current.content.name);
 				} else {
-					names.push(m.value);
+					visit(current.content);
 				}
-			} else if (m.type === 'seq') {
-				// Mixed content — extract symbol references
-				for (const s of m.members) {
-					if (s.type === 'symbol') names.push(s.aliasedFrom ?? s.name);
-				}
-			}
+				return;
+			case 'string':
+				if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(current.value)) names.push(current.value);
+				return;
+			case 'choice':
+			case 'seq':
+				for (const member of current.members) visit(member);
+				return;
+			case 'group':
+			case 'variant':
+			case 'clause':
+			case 'token':
+			case 'terminal':
+			case 'optional':
+			case 'repeat':
+			case 'repeat1':
+				visit(current.content);
+				return;
+			case 'enum':
+				for (const member of current.members) visit(member);
+				return;
+			default:
+				return;
 		}
-	}
+	};
+	visit(rule);
 	return names;
 }
 

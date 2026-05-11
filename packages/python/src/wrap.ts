@@ -47,6 +47,110 @@ function projectKindEnumStorage<T>(value: T): T {
   const entry = value as unknown as _NodeData;
   return typeof entry.$type === "number" ? (entry.$type as T) : value;
 }
+type _WrapVariantDescriptor =
+  | { source: "override"; childKind: Record<string, string> }
+  | { source: "promoted"; slots: Record<string, readonly string[]> };
+const _variantTable: Record<string, _WrapVariantDescriptor> = {
+  "assignment": {
+    "source": "override",
+    "childKind": {
+      "assignment_eq": "eq",
+      "assignment_type": "type",
+      "assignment_typed": "typed"
+    }
+  },
+  "expression_statement": {
+    "source": "override",
+    "childKind": {
+      "comparison_operator": "expression",
+      "not_operator": "expression",
+      "boolean_operator": "expression",
+      "lambda": "expression",
+      "await": "expression",
+      "binary_operator": "expression",
+      "identifier": "expression",
+      "string": "expression",
+      "concatenated_string": "expression",
+      "integer": "expression",
+      "float": "expression",
+      "true": "expression",
+      "false": "expression",
+      "none": "expression",
+      "unary_operator": "expression",
+      "attribute": "expression",
+      "subscript": "expression",
+      "call": "expression",
+      "list": "expression",
+      "list_comprehension": "expression",
+      "dictionary": "expression",
+      "dictionary_comprehension": "expression",
+      "set": "expression",
+      "set_comprehension": "expression",
+      "tuple": "expression",
+      "parenthesized_expression": "expression",
+      "generator_expression": "expression",
+      "ellipsis": "expression",
+      "list_splat_pattern": "expression",
+      "conditional_expression": "expression",
+      "named_expression": "expression",
+      "as_pattern": "expression",
+      "expression_statement_tuple": "tuple",
+      "assignment": "assignment",
+      "augmented_assignment": "augmented_assignment",
+      "yield": "yield"
+    }
+  },
+  "with_clause": {
+    "source": "override",
+    "childKind": {
+      "with_clause_bare": "bare",
+      "with_clause_paren": "paren"
+    }
+  }
+};
+
+function _kindNameOf(entry: unknown): string | undefined {
+  if (!entry || typeof entry !== "object") return undefined;
+  const raw = (entry as { $type?: unknown }).$type;
+  if (raw === undefined) return undefined;
+  if (typeof raw === "number") return KIND_NAMES.get(raw as never) ?? String(raw);
+  return typeof raw === "string" ? raw : undefined;
+}
+
+function _resolveVariant(kind: string, data: _NodeData): string | undefined {
+  const desc = _variantTable[kind];
+  if (!desc) return undefined;
+  if (desc.source === "override") {
+    const firstChild = data.$children?.find(
+      (child) => child != null && typeof child === "object" && (child as { $named?: boolean }).$named !== false
+    );
+    const candidate = _kindNameOf(firstChild);
+    if (!candidate) return undefined;
+    if (candidate in desc.childKind) return desc.childKind[candidate];
+    const stripped = candidate.startsWith("_") ? candidate.slice(1) : undefined;
+    if (stripped && stripped in desc.childKind) return desc.childKind[stripped];
+    let bestVariant: string | undefined;
+    let bestSpecificity = -1;
+    for (const variant of Object.values(desc.childKind)) {
+      const suffix = `_${variant}`;
+      if (candidate.endsWith(suffix) || stripped?.endsWith(suffix)) {
+        if (variant.length > bestSpecificity) {
+          bestVariant = variant;
+          bestSpecificity = variant.length;
+        }
+      }
+    }
+    return bestVariant;
+  }
+  for (const [variant, requiredSlots] of Object.entries(desc.slots) as [string, readonly string[]][]) {
+    const matches = requiredSlots.every((slot) => {
+      if (slot === "$children") return Array.isArray(data.$children) && data.$children.length > 0;
+      return (data as unknown as Record<string, unknown>)[slot] !== undefined;
+    });
+    if (matches) return variant;
+  }
+  return undefined;
+}
 
 export function wrap_AsPattern(data: T._AsPattern, tree: TreeHandle) {
   const _node = withMethods({
@@ -268,7 +372,7 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
     _right: data._right,
 
     left() { return drillIn<T.PrimaryExpression>(this._left, tree); },
-    operator() { return drillIn<"+">(this._operator, tree); },
+    operator() { return drillIn<"+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>">(this._operator, tree); },
     right() { return drillIn<T.PrimaryExpression>(this._right, tree); },
     $with: {
       left: (v: NonNullable<T.BinaryOperator['_left']>) => wrapBinaryOperator({ ...data, _left: v }, tree),
@@ -299,7 +403,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
     _right: data._right,
 
     left() { return drillIn<T.Expression>(this._left, tree); },
-    operator() { return drillIn<"and">(this._operator, tree); },
+    operator() { return drillIn<"and" | "or">(this._operator, tree); },
     right() { return drillIn<T.Expression>(this._right, tree); },
     $with: {
       left: (v: NonNullable<T.BooleanOperator['_left']>) => wrapBooleanOperator({ ...data, _left: v }, tree),
@@ -1901,6 +2005,10 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
   const canonical = _aliasTargetToSource[rawType];
   if (canonical !== undefined) {
     data = { ...data, $type: canonical as unknown as number };
+  }
+  const variant = _resolveVariant(canonical ?? rawType, data);
+  if (variant !== undefined && (data as { $variant?: unknown }).$variant === undefined) {
+    data = { ...data, $variant: variant } as _NodeData;
   }
   const fn = _wrapTable[canonical ?? rawType];
   if (!fn) return data; // unknown kind — return as-is

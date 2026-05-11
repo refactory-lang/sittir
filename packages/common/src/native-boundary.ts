@@ -46,6 +46,10 @@ function assertNativeSpan(value: unknown, path: string): void {
 
 function assertNativeFieldValue(value: unknown, path: string): asserts value is NodeMemberValue {
 	if (typeof value === 'string') return;
+	if (typeof value === 'number') {
+		assertFiniteNumber(value, path);
+		return;
+	}
 	if (Array.isArray(value)) {
 		for (const [index, item] of value.entries()) {
 			assertNativeNodeDataInternal(item, `${path}[${index}]`);
@@ -76,6 +80,7 @@ function assertNativeChildren(value: unknown, path: string): void {
  *  - no function-valued properties (methods like `render()` cannot cross napi)
  *  - nested `_<name>` storage keys and `$children` satisfy the same constraints
  *    recursively (ADR-0018 Phase 3a: `$fields` wrapper no longer emitted by readNode)
+ *  - finite numeric `_<name>` storage is allowed for kind-enum projection
  */
 function assertNativeNodeDataInternal(value: unknown, path: string): asserts value is AnyNodeData {
 	if (!isRecord(value)) {

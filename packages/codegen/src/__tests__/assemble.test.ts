@@ -3,7 +3,7 @@ import { assemble, classifyNode, simplifyRule, nameNode, nameField } from '../co
 import { simplifyRules } from '../compiler/simplify.ts';
 import type { Rule } from '../compiler/rule.ts';
 import type { OptimizedGrammar } from '../compiler/types.ts';
-import { deriveSlots, isRequired, isMultiple } from '../compiler/node-map.ts';
+import { deriveSlots, isRequired, isMultiple, allSlotsOf } from '../compiler/node-map.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
 // from a grammar `field(name, ...)` wrapper (excludes kind-derived
@@ -247,6 +247,154 @@ describe('Assemble — classifyNode', () => {
 			}
 		};
 		expect(classifyNode('_sig', rule)).toBe('group');
+	});
+
+	it('assembles hidden alias sources from their captured leaf body', () => {
+		const optimized = makeOptimized(
+			{
+				identifier: { type: 'pattern', value: '[A-Za-z_]\\w*' },
+				_type_identifier: {
+					type: 'symbol',
+					name: 'type_identifier',
+					aliasedFrom: 'identifier'
+				}
+			},
+			{
+				topLevelAliasBodies: new Map([
+					['_type_identifier', { type: 'pattern', value: '[A-Za-z_]\\w*' } satisfies Rule]
+				])
+			}
+		);
+		const node = assemble(optimized).nodes.get('_type_identifier');
+		expect(node?.modelType).toBe('pattern');
+	});
+
+	it('assembles hidden alias sources from their captured structural body', () => {
+		const optimized = makeOptimized(
+			{
+				expr: { type: 'pattern', value: '[A-Za-z_]\\w*' },
+				_pair_alias: {
+					type: 'symbol',
+					name: 'pair',
+					aliasedFrom: '_pair_source'
+				}
+			},
+			{
+				topLevelAliasBodies: new Map([
+					[
+						'_pair_alias',
+						{
+							type: 'seq',
+							members: [
+								{
+									type: 'field',
+									name: 'left',
+									content: { type: 'symbol', name: 'expr' }
+								},
+								{ type: 'string', value: ',' },
+								{
+									type: 'field',
+									name: 'right',
+									content: { type: 'symbol', name: 'expr' }
+								}
+							]
+						} satisfies Rule
+					]
+				])
+			}
+		);
+		const node = assemble(optimized).nodes.get('_pair_alias');
+		expect(node?.modelType).toBe('branch');
+		expect(allSlotsOf(node!).map((slot) => slot.name)).toEqual(['left', 'right']);
+	});
+
+	it('includes alias-member hidden kinds in supertype subtype expansion', () => {
+		const optimized = makeOptimized(
+			{
+				_property_name: {
+					type: 'supertype',
+					name: '_property_name',
+					subtypes: ['identifier', 'string'],
+					source: 'grammar'
+				},
+				_property_identifier: {
+					type: 'supertype',
+					name: '_property_identifier',
+					subtypes: ['identifier'],
+					source: 'grammar'
+				},
+				identifier: { type: 'pattern', value: '[A-Za-z_]\\w*' },
+				string: { type: 'pattern', value: '".*"' }
+			},
+			{
+				topLevelAliasBodies: new Map([
+					[
+						'_property_identifier',
+						{ type: 'symbol', name: 'identifier' } satisfies Rule
+					]
+				])
+			}
+		);
+		const node = assemble(optimized).nodes.get('_property_name');
+		expect(node?.modelType).toBe('supertype');
+		expect((node as any).subtypes).toEqual(['identifier', 'string', '_property_identifier']);
+	});
+
+	it('includes nested alias-member hidden kinds in supertype subtype expansion', () => {
+		const optimized = makeOptimized(
+			{
+				_property_name: {
+					type: 'supertype',
+					name: '_property_name',
+					subtypes: ['identifier', 'string'],
+					source: 'grammar'
+				},
+				_type_identifier: {
+					type: 'supertype',
+					name: '_type_identifier',
+					subtypes: ['identifier'],
+					source: 'grammar'
+				},
+				_reserved_identifier: {
+					type: 'supertype',
+					name: '_reserved_identifier',
+					subtypes: ['identifier'],
+					source: 'grammar'
+				},
+				_property_identifier: {
+					type: 'supertype',
+					name: '_property_identifier',
+					subtypes: ['_type_identifier', '_reserved_identifier', 'identifier'],
+					source: 'grammar'
+				},
+				identifier: { type: 'pattern', value: '[A-Za-z_]\\w*' },
+				string: { type: 'pattern', value: '\".*\"' }
+			},
+			{
+				topLevelAliasBodies: new Map([
+					['_type_identifier', { type: 'symbol', name: 'identifier' } satisfies Rule],
+					[
+						'_property_identifier',
+						{
+							type: 'choice',
+							members: [
+								{ type: 'symbol', name: '_type_identifier' },
+								{ type: 'symbol', name: '_reserved_identifier' },
+								{ type: 'symbol', name: 'identifier' }
+							]
+						} satisfies Rule
+					]
+				])
+			}
+		);
+		const node = assemble(optimized).nodes.get('_property_name');
+		expect(node?.modelType).toBe('supertype');
+		expect((node as any).subtypes).toEqual([
+			'identifier',
+			'string',
+			'_type_identifier',
+			'_property_identifier'
+		]);
 	});
 });
 

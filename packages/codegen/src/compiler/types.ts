@@ -327,6 +327,21 @@ export interface LinkedGrammar {
 	 * LinkedGrammar directly don't have to fill in an empty map.
 	 */
 	readonly aliasedHiddenKinds?: Map<string, string>;
+	/**
+	 * Hidden top-level alias-source kind → structural body to use for
+	 * assembly/classification.
+	 *
+	 * Link collapses named aliases to `symbol(targetName, aliasedFrom?)`
+	 * so downstream passes preserve runtime alias identity, but that
+	 * erases the source body's shape for kinds like
+	 * `_type_identifier: alias($.identifier, $.type_identifier)`.
+	 * This map restores the original structural body for the alias
+	 * source kind so Assemble can derive the hidden kind's model from
+	 * the aliased content instead of the collapsed symbol.
+	 *
+	 * Optional so hand-constructed test fixtures can omit it.
+	 */
+	readonly topLevelAliasBodies?: Map<string, Rule>;
 	readonly polymorphVariants?: PolymorphVariant[];
 	readonly refineForms?: Map<string, RefineForm[]>;
 }
@@ -354,6 +369,7 @@ export interface OptimizedGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule>;
 	readonly aliasedHiddenKinds?: Map<string, string>;
+	readonly topLevelAliasBodies?: Map<string, Rule>;
 	/**
 	 * Derivation-only view of every rule in `rules`, produced by
 	 * `simplifyRule` as the final pass in `optimize()`. Downstream

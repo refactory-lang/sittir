@@ -655,22 +655,26 @@ function kindEnumTextMapExpr(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
-	const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	if (storageInfo.kind !== 'kindEnum' || !kindEntries) return '[]';
 	const byText: Array<readonly [string, string]> = [];
 	for (const value of f.values) {
-		if (!isNodeRef(value)) continue;
-		const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
-		const resolved = nodeMap.nodes.get(kind);
-		if (!resolved || resolved.modelType !== 'enum') continue;
-		for (const text of resolved.values) {
-			const discriminant = hasCatalogEntry(kindEntries, text)
-				? kindDiscriminantExpr(text, nodeMap, kindEntries)
-				: hasCatalogEntry(kindEntries, resolved.kind)
-					? kindDiscriminantExpr(resolved.kind, nodeMap, kindEntries)
-					: `kindIdFromName(${JSON.stringify(resolved.kind)})`;
-			byText.push([text, discriminant]);
+		if (isNodeRef(value)) {
+			const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+			const resolved = nodeMap.nodes.get(kind);
+			if (!resolved || resolved.modelType !== 'enum') continue;
+			for (const text of resolved.values) {
+				const discriminant = hasCatalogEntry(kindEntries, text)
+					? kindDiscriminantExpr(text, nodeMap, kindEntries)
+					: hasCatalogEntry(kindEntries, resolved.kind)
+						? kindDiscriminantExpr(resolved.kind, nodeMap, kindEntries)
+						: `kindIdFromName(${JSON.stringify(resolved.kind)})`;
+				byText.push([text, discriminant]);
+			}
+			continue;
 		}
+		if (!isTerminalValue(value) || !hasCatalogEntry(kindEntries, value.value)) continue;
+		byText.push([value.value, kindDiscriminantExpr(value.value, nodeMap, kindEntries)]);
 	}
 	return `[${byText.map(([text, discriminant]) => `[${JSON.stringify(text)}, ${discriminant}] as const`).join(', ')}]`;
 }
@@ -681,7 +685,7 @@ function slotStorageFromValueExpr(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
-	const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	switch (storageInfo.kind) {
 		case 'boolean':
 			return `coerceBooleanKeywordStorage(${valueExpr})`;
@@ -918,7 +922,7 @@ function emitFieldCarryingFactory(
 	for (const f of fields) {
 		if (autoStampExpression(f, nodeMap) !== undefined) continue;
 		const method = f.propertyName;
-		const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		if (isMultiple(f) && storageInfo.kind === 'verbatim') {
 			const elemType = fieldElementType(f, nodeMap);
 			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
@@ -1149,7 +1153,7 @@ function emitRefineFormFactory(
 		if (narrowed.has(f.name)) continue;
 		if (autoStampExpression(f, nodeMap) !== undefined) continue;
 		const method = f.propertyName;
-		const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		if (isMultiple(f) && storageInfo.kind === 'verbatim') {
 			const elemType = fieldElementType(f, nodeMap);
 			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
@@ -1650,7 +1654,7 @@ function emitHoistedPolymorphFormFactory(
 	// — same rules as non-hoisted setters (rule 3, consistent across paths).
 	const withEntries: string[] = [];
 	const buildHoistedSetter = (f: AssembledNonterminal, patchSource: 'form' | 'inner'): string => {
-		const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const fMultiple = isMultiple(f) && storageInfo.kind === 'verbatim';
 		const rawElem = fieldElementType(f, nodeMap);
 		const elemType = setterElemType(f, rawElem, fn, nodeMap);

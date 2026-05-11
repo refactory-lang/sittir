@@ -29,6 +29,7 @@ import {
 	buildKindToSupertypes,
 	wrapForReparse,
 	loadReadTreeNode,
+	loadWrapNode,
 	walkWrappedTree,
 	emitValidatorMetrics,
 	type TSNode,
@@ -114,22 +115,54 @@ function readValidatorNodeData(
 	handle: TreeHandle,
 	node: TSNode,
 	nativeCoords: ReturnType<typeof findNativeNodeId>,
+	readTreeNodeFn: ((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null,
+	wrapNodeFn: ((data: AnyNodeData, tree: TreeHandle) => unknown) | null,
 	deepReadKinds: KindMembership,
-	recursive: boolean
+	recursive: boolean,
+	backend?: 'native' | 'typescript'
 ): AnyNodeData {
-	if (!recursive) {
-		return readNodeAt(handle, adaptNode(node), nativeCoords);
+	void readTreeNodeFn;
+	const deepRead = (): AnyNodeData => {
+		if (nativeCoords && handle.read) {
+			return _deepReadNode(handle, nativeCoords.handle, nativeCoords.childIndex, deepReadKinds);
+		}
+		const prev = handle.rootNode;
+		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(node);
+		try {
+			return _deepReadNode(handle, undefined, undefined, deepReadKinds);
+		} finally {
+			(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
+		}
+	};
+	if (backend === 'native' && wrapNodeFn) {
+		return deepWrapNodeData(deepRead(), wrapNodeFn, handle) as AnyNodeData;
 	}
-	if (nativeCoords && handle.read) {
-		return _deepReadNode(handle, nativeCoords.handle, nativeCoords.childIndex, deepReadKinds);
+	// Always route through _deepReadNode: when `recursive` is false the
+	// KindMembership gate limits drilling to the caller-selected subset;
+	// when true the membership test returns true for every numeric kind id.
+	// This preserves the shallow default for most nodes while still letting
+	// native RT validation selectively materialize structured descendants.
+	return deepRead();
+}
+
+function isNodeDataLike(value: unknown): value is AnyNodeData {
+	return !!value && typeof value === 'object' && typeof (value as { $type?: unknown }).$type !== 'undefined';
+}
+
+function deepWrapNodeData(
+	value: unknown,
+	wrapNodeFn: (data: AnyNodeData, tree: TreeHandle) => unknown,
+	tree: TreeHandle
+): unknown {
+	if (Array.isArray(value)) return value.map((entry) => deepWrapNodeData(entry, wrapNodeFn, tree));
+	if (!value || typeof value !== 'object') return value;
+	const source = isNodeDataLike(value) ? ((wrapNodeFn(value, tree) as object) ?? value) : value;
+	const out: Record<string, unknown> = {};
+	for (const [key, entry] of Object.entries(source)) {
+		if (typeof entry === 'function' || key === '$with') continue;
+		out[key] = deepWrapNodeData(entry, wrapNodeFn, tree);
 	}
-	const prev = handle.rootNode;
-	(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(node);
-	try {
-		return _deepReadNode(handle, undefined, undefined, deepReadKinds);
-	} finally {
-		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
-	}
+	return out;
 }
 
 /**
@@ -179,6 +212,28 @@ async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<str
 	} catch {
 		return new Set<string>();
 	}
+}
+
+/**
+ * Parser-visible named kinds that require structural materialization for the
+ * native transport path.
+ *
+ * @remarks
+ * JS render can short-circuit any structureless named node to `$text`, even
+ * when that node is a non-leaf branch/supertype like `ambient_declaration`.
+ * Native render goes through the generated transport unions instead, so a
+ * shallow descendant with only `$text` will fail `FromNapiValue` when the
+ * transport expects fields/children. For native RT validation we therefore
+ * deep-read parser-visible named kinds that have structure in node-types
+ * (fields, children, or subtypes) so nested descendants arrive with the shape
+ * the native transport layer expects.
+ */
+function loadNativeStructuredKinds(rawEntries: readonly ReturnType<typeof loadRawEntries>[number][]): ReadonlySet<string> {
+	return new Set(
+		rawEntries
+			.filter((entry) => entry.named && (entry.fields !== undefined || entry.children !== undefined || entry.subtypes !== undefined))
+			.map((entry) => entry.type)
+	);
 }
 
 /**
@@ -703,7 +758,10 @@ export async function validateReadRenderParse(
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
-	const deepReadKindNames = await loadVariantAdoptedKinds(grammar);
+	const wrapNodeFn = await loadWrapNode(grammar);
+	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
+	const nativeStructuredKindNames = backend === 'native' ? loadNativeStructuredKinds(rawEntries) : new Set<string>();
+	const deepReadKindNames = new Set([...adoptedVariantKindNames, ...nativeStructuredKindNames]);
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
 	// Wrap so unknown kind names return undefined (instead of throwing).
 	// The generated kindIdFromName throws on missing entries; readNode's
@@ -808,7 +866,16 @@ export async function validateReadRenderParse(
 					// rule name rather than falling back to a mismatched handle.
 					const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
 					if (nativeCoords === null && handle.read) continue;
-					const rawData = readValidatorNodeData(handle, node1, nativeCoords, deepReadKinds, recursive === true);
+					const rawData = readValidatorNodeData(
+						handle,
+						node1,
+						nativeCoords,
+						readTreeNodeFn,
+						wrapNodeFn,
+						deepReadKinds,
+						recursive === true,
+						backend
+					);
 					const { data, renderedKind, targetKind } = applyAliasResolution(
 						rawData,
 						node1.startIndex,
@@ -826,7 +893,7 @@ export async function validateReadRenderParse(
 						// Pass the original string-named deepReadKindNames to wrapForReparse
 						// (which uses string kind names internally), not the numeric deepReadKinds.
 						const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
-							adoptedVariantKinds: deepReadKindNames,
+							adoptedVariantKinds: adoptedVariantKindNames,
 							targetKind
 						});
 						if (wrapped === null) continue; // no supertype - skip this candidate

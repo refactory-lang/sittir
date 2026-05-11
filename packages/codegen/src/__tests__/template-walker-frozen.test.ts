@@ -342,6 +342,14 @@ const FROZEN_CASES: FrozenCase[] = [
 	},
 	{
 		grammar: 'typescript',
+		kind: 'required_parameter',
+		name: 'required parameter renders without leading space when modifiers are absent',
+		source: 'declare function greet(greeting: string): void;',
+		target: 'greeting: string',
+		mode: 'pass'
+	},
+	{
+		grammar: 'typescript',
 		kind: 'expression_statement',
 		name: 'expression statement attaches semicolon',
 		source: 'x;',

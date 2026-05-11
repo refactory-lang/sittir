@@ -47,6 +47,197 @@ function projectKindEnumStorage<T>(value: T): T {
   const entry = value as unknown as _NodeData;
   return typeof entry.$type === "number" ? (entry.$type as T) : value;
 }
+type _WrapVariantDescriptor =
+  | { source: "override"; childKind: Record<string, string> }
+  | { source: "promoted"; slots: Record<string, readonly string[]> };
+const _variantTable: Record<string, _WrapVariantDescriptor> = {
+  "array_expression": {
+    "source": "override",
+    "childKind": {
+      "array_expression_semi": "semi",
+      "array_expression_list": "list"
+    }
+  },
+  "closure_expression": {
+    "source": "override",
+    "childKind": {
+      "closure_expression_block": "block",
+      "closure_expression_expr": "expr"
+    }
+  },
+  "delim_token_tree": {
+    "source": "override",
+    "childKind": {
+      "delim_token_tree_paren": "paren",
+      "delim_token_tree_bracket": "bracket",
+      "delim_token_tree_brace": "brace"
+    }
+  },
+  "expression_statement": {
+    "source": "override",
+    "childKind": {
+      "expression_statement_with_semi": "with_semi",
+      "expression_statement_block_ending": "block_ending"
+    }
+  },
+  "field_pattern": {
+    "source": "override",
+    "childKind": {
+      "field_pattern_shorthand": "shorthand",
+      "field_pattern_named": "named"
+    }
+  },
+  "foreign_mod_item": {
+    "source": "override",
+    "childKind": {
+      "foreign_mod_item_semi": "semi",
+      "foreign_mod_item_body": "body"
+    }
+  },
+  "impl_item": {
+    "source": "override",
+    "childKind": {
+      "impl_item_body": "body",
+      "impl_item_semi": "semi"
+    }
+  },
+  "line_comment": {
+    "source": "override",
+    "childKind": {
+      "line_comment_regular_dslash": "regular_dslash",
+      "line_comment_doc": "doc",
+      "line_comment_content": "content"
+    }
+  },
+  "macro_definition": {
+    "source": "override",
+    "childKind": {
+      "macro_definition_paren": "paren",
+      "macro_definition_bracket": "bracket",
+      "macro_definition_brace": "brace"
+    }
+  },
+  "match_arm": {
+    "source": "override",
+    "childKind": {
+      "match_arm_with_comma": "with_comma",
+      "match_arm_block_ending": "block_ending"
+    }
+  },
+  "mod_item": {
+    "source": "override",
+    "childKind": {
+      "mod_item_external": "external",
+      "mod_item_inline": "inline"
+    }
+  },
+  "or_pattern": {
+    "source": "override",
+    "childKind": {
+      "or_pattern_binary": "binary",
+      "or_pattern_prefix": "prefix"
+    }
+  },
+  "pointer_type": {
+    "source": "override",
+    "childKind": {
+      "pointer_type_const": "const",
+      "pointer_type_mut": "mut"
+    }
+  },
+  "range_expression": {
+    "source": "override",
+    "childKind": {
+      "range_expression_binary": "binary",
+      "range_expression_postfix": "postfix",
+      "range_expression_prefix": "prefix",
+      "range_expression_bare": "bare"
+    }
+  },
+  "range_pattern": {
+    "source": "override",
+    "childKind": {
+      "range_pattern_prefix": "prefix",
+      "range_pattern_left_with_right": "left_with_right",
+      "range_pattern_left_bare": "left_bare"
+    }
+  },
+  "struct_item": {
+    "source": "override",
+    "childKind": {
+      "struct_item_brace": "brace",
+      "struct_item_tuple": "tuple",
+      "struct_item_unit": "unit"
+    }
+  },
+  "token_tree": {
+    "source": "override",
+    "childKind": {
+      "token_tree_paren": "paren",
+      "token_tree_bracket": "bracket",
+      "token_tree_brace": "brace"
+    }
+  },
+  "token_tree_pattern": {
+    "source": "override",
+    "childKind": {
+      "token_tree_pattern_paren": "paren",
+      "token_tree_pattern_bracket": "bracket",
+      "token_tree_pattern_brace": "brace"
+    }
+  },
+  "visibility_modifier": {
+    "source": "override",
+    "childKind": {
+      "visibility_modifier_crate": "crate",
+      "visibility_modifier_pub": "pub",
+      "visibility_modifier_in_path": "in_path"
+    }
+  }
+};
+
+function _kindNameOf(entry: unknown): string | undefined {
+  if (!entry || typeof entry !== "object") return undefined;
+  const raw = (entry as { $type?: unknown }).$type;
+  if (raw === undefined) return undefined;
+  if (typeof raw === "number") return KIND_NAMES.get(raw as never) ?? String(raw);
+  return typeof raw === "string" ? raw : undefined;
+}
+
+function _resolveVariant(kind: string, data: _NodeData): string | undefined {
+  const desc = _variantTable[kind];
+  if (!desc) return undefined;
+  if (desc.source === "override") {
+    const firstChild = data.$children?.find(
+      (child) => child != null && typeof child === "object" && (child as { $named?: boolean }).$named !== false
+    );
+    const candidate = _kindNameOf(firstChild);
+    if (!candidate) return undefined;
+    if (candidate in desc.childKind) return desc.childKind[candidate];
+    const stripped = candidate.startsWith("_") ? candidate.slice(1) : undefined;
+    if (stripped && stripped in desc.childKind) return desc.childKind[stripped];
+    let bestVariant: string | undefined;
+    let bestSpecificity = -1;
+    for (const variant of Object.values(desc.childKind)) {
+      const suffix = `_${variant}`;
+      if (candidate.endsWith(suffix) || stripped?.endsWith(suffix)) {
+        if (variant.length > bestSpecificity) {
+          bestVariant = variant;
+          bestSpecificity = variant.length;
+        }
+      }
+    }
+    return bestVariant;
+  }
+  for (const [variant, requiredSlots] of Object.entries(desc.slots) as [string, readonly string[]][]) {
+    const matches = requiredSlots.every((slot) => {
+      if (slot === "$children") return Array.isArray(data.$children) && data.$children.length > 0;
+      return (data as unknown as Record<string, unknown>)[slot] !== undefined;
+    });
+    if (matches) return variant;
+  }
+  return undefined;
+}
 
 export function wrap_ClosureExpressionExpr(data: T._ClosureExpressionExpr, tree: TreeHandle) {
   const _node = withMethods({
@@ -113,17 +304,6 @@ export function wrap_ExpressionStatementWithSemi(data: T._ExpressionStatementWit
     $children: data.$children,
 
     $with: { $child: (v: T.Expression) => wrap_ExpressionStatementWithSemi({ ...data, $children: [v] }, tree) },
-  }, methodsEngine);
-  return _node;
-}
-
-export function wrapFieldIdentifier(data: T.FieldIdentifier, tree: TreeHandle) {
-  const _node = withMethods({
-    ...data,
-    $type: TSKindId.FieldIdentifier as const,
-    $children: data.$children,
-
-    $with: { $child: (v: T.Identifier) => wrapFieldIdentifier({ ...data, $children: [v] }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -369,17 +549,6 @@ export function wrap_TokenTreePatternParen(data: T._TokenTreePatternParen, tree:
   return _node;
 }
 
-export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle) {
-  const _node = withMethods({
-    ...data,
-    $type: TSKindId.TypeIdentifier as const,
-    $children: data.$children,
-
-    $with: { $child: (v: T.Identifier) => wrapTypeIdentifier({ ...data, $children: [v] }, tree) },
-  }, methodsEngine);
-  return _node;
-}
-
 export function wrap_VisibilityModifierCrate(data: T._VisibilityModifierCrate, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
@@ -570,7 +739,7 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
     _right: data._right,
 
     left() { return drillIn<T.Expression>(this._left, tree); },
-    operator() { return drillIn<"&&">(this._operator, tree); },
+    operator() { return drillIn<"&&" | "||" | "&" | "|" | "^" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | "+" | "-" | "*" | "/" | "%">(this._operator, tree); },
     right() { return drillIn<T.Expression>(this._right, tree); },
     $with: {
       left: (v: NonNullable<T.BinaryExpression['_left']>) => wrapBinaryExpression({ ...data, _left: v }, tree),
@@ -2960,7 +3129,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_delim_token_tree_paren': (d, t) => wrap_DelimTokenTreeParen(d as T._DelimTokenTreeParen, t),
   '_expression_statement_block_ending': (d, t) => wrap_ExpressionStatementBlockEnding(d as T._ExpressionStatementBlockEnding, t),
   '_expression_statement_with_semi': (d, t) => wrap_ExpressionStatementWithSemi(d as T._ExpressionStatementWithSemi, t),
-  '_field_identifier': (d, t) => wrapFieldIdentifier(d as T.FieldIdentifier, t),
+  '_field_identifier': (d) => ({ ...d, $type: TSKindId.FieldIdentifier as const }),
   '_field_pattern_shorthand': (d, t) => wrap_FieldPatternShorthand(d as T._FieldPatternShorthand, t),
   '_foreign_mod_item_body': (d, t) => wrap_ForeignModItemBody(d as T._ForeignModItemBody, t),
   '_function_type_fn_form': (d, t) => wrapFunctionTypeFnForm(d as T.FunctionTypeFnForm, t),
@@ -2990,7 +3159,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_token_tree_pattern_brace': (d, t) => wrap_TokenTreePatternBrace(d as T._TokenTreePatternBrace, t),
   '_token_tree_pattern_bracket': (d, t) => wrap_TokenTreePatternBracket(d as T._TokenTreePatternBracket, t),
   '_token_tree_pattern_paren': (d, t) => wrap_TokenTreePatternParen(d as T._TokenTreePatternParen, t),
-  '_type_identifier': (d, t) => wrapTypeIdentifier(d as T.TypeIdentifier, t),
+  '_type_identifier': (d) => ({ ...d, $type: TSKindId.TypeIdentifier as const }),
   '_visibility_modifier_crate': (d, t) => wrap_VisibilityModifierCrate(d as T._VisibilityModifierCrate, t),
   '_wildcard_pattern': (d) => ({ ...d, $type: TSKindId.WildcardPattern as const }),
   'abstract_type': (d, t) => wrapAbstractType(d as T.AbstractType, t),
@@ -3253,6 +3422,10 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
   const canonical = _aliasTargetToSource[rawType];
   if (canonical !== undefined) {
     data = { ...data, $type: canonical as unknown as number };
+  }
+  const variant = _resolveVariant(canonical ?? rawType, data);
+  if (variant !== undefined && (data as { $variant?: unknown }).$variant === undefined) {
+    data = { ...data, $variant: variant } as _NodeData;
   }
   const fn = _wrapTable[canonical ?? rawType];
   if (!fn) return data; // unknown kind — return as-is

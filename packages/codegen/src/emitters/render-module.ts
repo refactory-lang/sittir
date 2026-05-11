@@ -352,6 +352,69 @@ export const RUST_KEYWORDS = new Set([
  */
 const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
 
+function isReservedSupertypeTransportNode(node: AssembledNode): node is AssembledSupertype {
+	return node.modelType === 'supertype' && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`);
+}
+
+interface EffectiveSupertypeTransportSubtype {
+	readonly subKind: string;
+	readonly subNode: AssembledNode;
+}
+
+interface EffectiveSupertypeTransportShape {
+	readonly subtypes: readonly EffectiveSupertypeTransportSubtype[];
+	readonly suppressedKinds: readonly string[];
+}
+
+function collectEffectiveSupertypeTransportShape(
+	supertypeNode: AssembledSupertype,
+	nodeMap: NodeMap,
+	seen: Set<string> = new Set(),
+	state: {
+		readonly variantKindByName: Map<string, string>;
+		readonly emittedKinds: Set<string>;
+		readonly suppressedKinds: Set<string>;
+		readonly subtypes: EffectiveSupertypeTransportSubtype[];
+	} = {
+		variantKindByName: new Map(),
+		emittedKinds: new Set(),
+		suppressedKinds: new Set(),
+		subtypes: []
+	}
+): EffectiveSupertypeTransportShape {
+	if (seen.has(supertypeNode.kind)) {
+		return {
+			subtypes: state.subtypes,
+			suppressedKinds: [...state.suppressedKinds]
+		};
+	}
+	seen.add(supertypeNode.kind);
+	for (const subKind of supertypeNode.subtypes) {
+		const subNode = nodeMap.nodes.get(subKind);
+		if (subNode === undefined) continue;
+		if (isReservedSupertypeTransportNode(subNode)) {
+			state.suppressedKinds.add(subKind);
+			collectEffectiveSupertypeTransportShape(subNode, nodeMap, seen, state);
+			continue;
+		}
+		const variantName = rustTypeIdent(subNode.typeName);
+		const existingKind = state.variantKindByName.get(variantName);
+		if (existingKind !== undefined && existingKind !== subKind) {
+			throw new Error(
+				`reserved supertype flattening collision: ${supertypeNode.kind} emits variant ${variantName} for both ${existingKind} and ${subKind}`
+			);
+		}
+		state.variantKindByName.set(variantName, subKind);
+		if (state.emittedKinds.has(subKind)) continue;
+		state.emittedKinds.add(subKind);
+		state.subtypes.push({ subKind, subNode });
+	}
+	return {
+		subtypes: state.subtypes,
+		suppressedKinds: [...state.suppressedKinds]
+	};
+}
+
 /** Rust field identifier mapping for generated render/transport structs.
  *  Askama template expressions do not accept raw identifiers (`r#pub`),
  *  so keyword-named fields use a uniform `_` suffix (`pub_`, `type_`,
@@ -2779,18 +2842,27 @@ function emitSupertypeTransportEnum(
 ): string[] {
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Transport`;
 	const lines: string[] = [];
-
-	// Collect valid subtypes — skip phantom kinds not in nodeMap.
-	const validSubtypes = supertypeNode.subtypes
-		.map((subKind) => {
-			const subNode = nodeMap.nodes.get(subKind);
-			return subNode !== undefined ? { subKind, subNode } : null;
-		})
-		.filter((x): x is { subKind: string; subNode: AssembledNode } => x !== null);
+	const { subtypes: validSubtypes, suppressedKinds } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 
 	// Helper: is a subtype leaf-like (small, no Box needed)?
 	const isLeafLike = (n: AssembledNode): boolean =>
 		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
+
+	const emitDecodeTrials = () => {
+		for (const { subNode } of validSubtypes) {
+			const variant = rustTypeIdent(subNode.typeName);
+			const typeName = rustTransportStructName(subNode);
+			if (isLeafLike(subNode)) {
+				lines.push(`                if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
+				lines.push(`                    return Ok(Self::${variant}(value));`);
+				lines.push(`                }`);
+			} else {
+				lines.push(`                if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
+				lines.push(`                    return Ok(Self::${variant}(Box::new(value)));`);
+				lines.push(`                }`);
+			}
+		}
+	};
 
 	// Enum declaration — Debug + Clone only; no serde, no napi object derive.
 	lines.push(`#[derive(Debug, Clone)]`);
@@ -2819,11 +2891,37 @@ function emitSupertypeTransportEnum(
 		);
 		lines.push(`        match kind_id {`);
 		const emittedIds = new Set<number>();
+		const selfId = kindIdByKind.get(supertypeNode.kind);
+		if (selfId !== undefined) {
+			lines.push(`            ${selfId} => {`);
+			emitDecodeTrials();
+			lines.push(
+				`                Err(::napi::Error::from_reason(${JSON.stringify(
+					`unknown aliased kind id {kind_id} in ${enumName}`
+				)}))`
+			);
+			lines.push(`            },`);
+			emittedIds.add(selfId);
+		}
+		for (const suppressedKind of suppressedKinds) {
+			const id = kindIdByKind.get(suppressedKind);
+			if (id === undefined || emittedIds.has(id)) continue;
+			lines.push(`            ${id} => {`);
+			emitDecodeTrials();
+			lines.push(
+				`                Err(::napi::Error::from_reason(${JSON.stringify(
+					`unknown reserved supertype kind id {kind_id} in ${enumName}`
+				)}))`
+			);
+			lines.push(`            },`);
+			emittedIds.add(id);
+		}
 		for (const { subKind, subNode } of validSubtypes) {
 			const variant = rustTypeIdent(subNode.typeName);
 			const typeName = rustTransportStructName(subNode);
-			for (const concreteKind of collectConcreteTransportKinds(subKind, nodeMap)) {
-				const id = kindIdByKind.get(concreteKind);
+			const acceptedKinds = [subKind, ...collectConcreteTransportKinds(subKind, nodeMap)];
+			for (const acceptedKind of acceptedKinds) {
+				const id = kindIdByKind.get(acceptedKind);
 				if (id === undefined || emittedIds.has(id)) continue;
 				emittedIds.add(id);
 				if (isLeafLike(subNode)) {
@@ -2934,15 +3032,14 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Transport`;
 	const fnName = `render_${rustSnakeIdent(supertypeNode.typeName)}`;
 	const lines: string[] = [];
+	const { subtypes: validSubtypes } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 
 	const isLeafLike = (n: AssembledNode): boolean =>
 		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
 
 	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(`    match t {`);
-	for (const subKind of supertypeNode.subtypes) {
-		const subNode = nodeMap.nodes.get(subKind);
-		if (subNode === undefined) continue; // phantom kind — skip
+	for (const { subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		const concreteFn = rustTypedRenderFnName(subNode.typeName);
 		// Non-leaf variants are boxed in the enum; deref with `.as_ref()`.
@@ -4445,13 +4542,18 @@ function hasRequiredChild(children: readonly AssembledNonterminal[]): boolean {
 }
 
 /**
- * True when any child in the list has `isMultiple` = true (at least one entry
- * with multiplicity `array` or `nonEmptyArray`). When true, the transport field
- * must be `Vec<T>`. When false, the slot holds at most one child and the field
- * should be `T` (required) or `Option<T>` (optional).
+ * True when native transport must treat `$children` as list-shaped.
+ *
+ * Two cases force list transport:
+ * - at least one contributing child slot is itself multiple
+ * - more than one structural child slot is aggregated into the shared
+ *   `$children` property (even when each slot is individually `single`)
+ *
+ * The second case matches the runtime projection path: aggregated children are
+ * always serialized as an array under `$children`, not as a scalar union.
  */
 function hasMultipleChildren(children: readonly AssembledNonterminal[]): boolean {
-	return children.some((child) => isMultiple(child));
+	return children.length > 1 || children.some((child) => isMultiple(child));
 }
 
 /**
@@ -4821,9 +4923,17 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 		lines.push(`    ) -> ::napi::Result<Self> {`);
 
 		if (kindEntries !== undefined) {
-			// Fix 2: read a plain u16 KindId — no heap allocation, no object property lookup.
-			// JS sends the numeric parser.c symbol ID directly for each enum member.
-			lines.push(`        let kind_id: u16 = u16::from_napi_value(env, napi_val)?;`);
+			// Accept either a bare numeric kind id or a NodeData-shaped object whose
+			// `$type` carries the numeric id. Native validators now pass the latter.
+			lines.push(`        let kind_id: u16 = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
+			lines.push(`            kind_id`);
+			lines.push(`        } else {`);
+			lines.push(`            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
+			lines.push(`            obj.get("$type")?`);
+			lines.push(
+				`                .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))?`
+			);
+			lines.push(`        };`);
 			lines.push(`        match kind_id {`);
 			for (const v of values) {
 				const entry = findKindEntry(kindEntries, v);

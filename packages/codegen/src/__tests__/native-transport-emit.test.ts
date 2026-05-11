@@ -99,6 +99,52 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 	return nodeMapWith(nodes);
 }
 
+function makeReservedNestedSupertypeNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'field',
+				name: 'value',
+				content: { type: 'symbol', name: '_expression' }
+			}
+		]
+	};
+	const literalRule: ChoiceRule = {
+		type: 'choice',
+		members: [{ type: 'symbol', name: 'string_literal' }]
+	};
+	const expressionRule: ChoiceRule = {
+		type: 'choice',
+		members: [
+			{ type: 'symbol', name: '_literal' },
+			{ type: 'symbol', name: 'identifier' }
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('parent_expression', new AssembledBranch('parent_expression', parentRule, parentRule));
+	nodes.set('string_literal', new AssembledPattern('string_literal', { type: 'pattern', value: '".*"' }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('_literal', new AssembledSupertype('_literal', literalRule, ['string_literal']));
+	nodes.set('_expression', new AssembledSupertype('_expression', expressionRule, ['_literal', 'identifier']));
+	return nodeMapWith(nodes);
+}
+
+function makeAggregatedSingleChildrenNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{ type: 'symbol', name: 'identifier' },
+			{ type: 'symbol', name: 'kw_fn' }
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('pair_parent', new AssembledBranch('pair_parent', parentRule, parentRule));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('kw_fn', new AssembledKeyword('kw_fn', { type: 'string', value: 'fn' }));
+	return nodeMapWith(nodes);
+}
+
 function makePolymorphNodeMap(): NodeMap {
 	const leftRule: SeqRule = {
 		type: 'seq',
@@ -338,6 +384,25 @@ describe('native transport emission', () => {
 		expect(emitted.transportRs.contents).not.toContain('JSON');
 	});
 
+	it('flattens reserved nested supertypes in Rust transport enums', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'parent_expression.jinja',
+					content: '{# @generated #}\n{{ value }}'
+				}
+			],
+			makeReservedNestedSupertypeNodeMap()
+		);
+
+		expect(emitted.transportRs.contents).toContain('pub enum ExpressionTransport');
+		expect(emitted.transportRs.contents).toContain('StringLiteral(StringLiteralTransport),');
+		expect(emitted.transportRs.contents).toContain('Identifier(IdentifierTransport),');
+		expect(emitted.transportRs.contents).not.toContain('Literal(Box<LiteralTransport>)');
+		expect(emitted.transportRs.contents).not.toContain('literal_transport_to_any');
+	});
+
 	it('emits keyword-safe Rust transport identifiers with serde kind renames', () => {
 		const emitted = emitRenderModule(
 			'rust',
@@ -382,6 +447,27 @@ describe('native transport emission', () => {
 		);
 		expect(structBody).not.toContain(
 			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Vec<'
+		);
+	});
+
+	it('emits aggregated single child slots as list-shaped native transport children', () => {
+		const nodeMap = makeAggregatedSingleChildrenNodeMap();
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'pair_parent.jinja',
+					content: '{# @generated #}\n{{ children | join(" ") }}'
+				}
+			],
+			nodeMap
+		);
+		const start = emitted.transportRs.contents.indexOf('pub struct PairParentTransport');
+		const end = emitted.transportRs.contents.indexOf('}', start);
+		const structBody = emitted.transportRs.contents.slice(start, end);
+
+		expect(structBody).toContain(
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: OneOrMany<PairParentChildTransport>,'
 		);
 	});
 

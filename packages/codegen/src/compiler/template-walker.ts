@@ -368,6 +368,10 @@ function walkRuleForTemplate(
 ): string[] {
 	const clauses = _clauses;
 	const optionalFields = _optionalFields;
+	const emitChildren = (): string =>
+		optionalFields?.has('children')
+			? emitJinjaConditional('children', '$$$CHILDREN')
+			: '$$$CHILDREN';
 	switch (rule.type) {
 		case 'seq': {
 			// Sibling-repeated-field detection. When `inferFields` has
@@ -578,7 +582,12 @@ function walkRuleForTemplate(
 					// body governs the rendered output when the conditional
 					// fires, and `needsSpace` operates on rendered chars.
 					const lastChar = effectiveSpacingChar(out[out.length - 1]!, 'last');
-					const firstChar = effectiveSpacingChar(parts[0]!, 'first');
+					const firstChar = effectiveSpacingCharForRule(
+						substituted,
+						parts[0]!,
+						'first',
+						rules
+					);
 					if (needsSpace(lastChar, firstChar, wordMatcher)) {
 						// For Jinja-inline optional fragments, route the
 						// leading separator INSIDE the conditional body so
@@ -745,7 +754,7 @@ function walkRuleForTemplate(
 				for (const p of parts) {
 					if (!p.startsWith('$') || out.includes(p)) continue;
 					const fname = placeholderField(p);
-					if (fname && !['newline', 'indent', 'dedent', 'children', 'text'].includes(fname)) {
+					if (fname && !['newline', 'indent', 'dedent', 'text'].includes(fname)) {
 						out.push(emitJinjaConditional(fname, p));
 					} else {
 						out.push(p);
@@ -1004,7 +1013,12 @@ function walkRuleForTemplate(
 					wrapped.splice(0, 0, ...innerPlaceholders);
 				}
 			}
-
+			if (optionalFields?.has(rule.name)) {
+				const body = rule.blockBearer
+					? `\n  ${wrapped.join('')}\n`
+					: wrapped.join('');
+				return [emitJinjaConditional(rule.name, body)];
+			}
 			return rule.blockBearer ? ['\n  ', ...wrapped, '\n'] : wrapped;
 		}
 
@@ -1039,7 +1053,7 @@ function walkRuleForTemplate(
 			// as unconsumed named children.
 			if (seen.has('children')) return [];
 			seen.add('children');
-			return ['$$$CHILDREN'];
+			return [emitChildren()];
 		}
 
 		case 'string':
@@ -1124,7 +1138,7 @@ function walkRuleForTemplate(
 		case 'supertype':
 			if (seen.has('children')) return [];
 			seen.add('children');
-			return ['$$$CHILDREN'];
+			return [emitChildren()];
 
 		case 'alias':
 			// Named aliases (`alias($._hidden, $.visible)`) create a
@@ -1137,7 +1151,7 @@ function walkRuleForTemplate(
 			if (rule.named) {
 				if (seen.has('children')) return [];
 				seen.add('children');
-				return ['$$$CHILDREN'];
+				return [emitChildren()];
 			}
 			return walkRuleForTemplate(
 				rule.content,
@@ -1584,6 +1598,102 @@ function effectiveSpacingChar(s: string, edge: 'first' | 'last'): string {
 		}
 	}
 	return edge === 'first' ? (s[0] ?? '') : (s[s.length - 1] ?? '');
+}
+
+function effectiveSpacingCharForRule(
+	rule: Rule,
+	fallback: string,
+	edge: 'first' | 'last',
+	rules?: Record<string, Rule>,
+	seen: Set<string> = new Set()
+): string {
+	const resolved = resolveRuleEdgeChar(rule, edge, rules, seen);
+	if (resolved && edge === 'first') {
+		return NO_LEADING_SEPARATOR_PUNCT.has(resolved)
+			? resolved
+			: effectiveSpacingChar(fallback, edge);
+	}
+	return resolved ?? effectiveSpacingChar(fallback, edge);
+}
+
+const NO_LEADING_SEPARATOR_PUNCT: ReadonlySet<string> = new Set([
+	':',
+	'?',
+	'.',
+	',',
+	';',
+	')',
+	']',
+	'>',
+	'(',
+	'['
+]);
+
+function resolveRuleEdgeChar(
+	rule: Rule,
+	edge: 'first' | 'last',
+	rules?: Record<string, Rule>,
+	seen: Set<string> = new Set()
+): string | undefined {
+	switch (rule.type) {
+		case 'field':
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'terminal':
+		case 'alias':
+		case 'token':
+			return resolveRuleEdgeChar(rule.content, edge, rules, seen);
+		case 'string':
+			return edge === 'first' ? rule.value[0] : rule.value[rule.value.length - 1];
+		case 'pattern': {
+			const lit = representativeLiteral(rule.value);
+			return lit ? (edge === 'first' ? lit[0] : lit[lit.length - 1]) : undefined;
+		}
+		case 'enum': {
+			const chars = new Set(
+				rule.members
+					.map((member) => resolveRuleEdgeChar(member, edge, rules, seen))
+					.filter((value): value is string => value != null)
+			);
+			return chars.size === 1 ? [...chars][0] : undefined;
+		}
+		case 'seq': {
+			const members = edge === 'first' ? rule.members : [...rule.members].reverse();
+			for (const member of members) {
+				const char = resolveRuleEdgeChar(member, edge, rules, seen);
+				if (char) return char;
+			}
+			return undefined;
+		}
+		case 'choice': {
+			const chars = new Set(
+				rule.members
+					.map((member) => resolveRuleEdgeChar(member, edge, rules, seen))
+					.filter((value): value is string => value != null)
+			);
+			return chars.size === 1 ? [...chars][0] : undefined;
+		}
+		case 'symbol': {
+			if (!rules) return undefined;
+			if (seen.has(rule.name)) return undefined;
+			const target = rules[rule.name];
+			if (!target) return undefined;
+			seen.add(rule.name);
+			return resolveRuleEdgeChar(target, edge, rules, seen);
+		}
+		case 'supertype':
+		case 'polymorph':
+		case 'indent':
+		case 'dedent':
+		case 'newline':
+			return undefined;
+		default:
+			return undefined;
+	}
 }
 
 /**

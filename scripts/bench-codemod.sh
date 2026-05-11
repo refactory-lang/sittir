@@ -26,6 +26,8 @@ fi
 # tsx invocation is propagated via `set -e`.
 run_once () {
     local backend="$1"
+    local node_env="${NODE_ENV:-production}"
+    NODE_ENV="${node_env}" \
     SITTIR_BACKEND="${backend}" \
         npx --yes tsx "${RUNNER}" "${CORPUS}"
 }

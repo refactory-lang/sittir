@@ -28,7 +28,6 @@ export const NODE_KINDS = [
   '_public_field_definition_declare_first',
   '_string_double',
   '_string_single',
-  '_type_identifier',
   'abstract_class_declaration',
   'abstract_method_signature',
   'adding_type_annotation',
@@ -207,7 +206,6 @@ export const NODE_KINDS = [
 /** All leaf/terminal node kind strings. */
 export const LEAF_KINDS = [
   '__error_recovery',
-  '__for_header_kind',
   '__for_header_operator',
   '__number_operator',
   '_abstract_marker',
@@ -240,6 +238,7 @@ export const LEAF_KINDS = [
   '_static_marker',
   '_template_chars',
   '_ternary_qmark',
+  '_type_identifier',
   '_unary_expression_operator',
   'abstract',
   'accessibility_modifier',
@@ -277,6 +276,7 @@ export const LEAF_KINDS = [
   'import',
   'in',
   'infer',
+  'instanceof',
   'interface',
   'is',
   'jsx_identifier',
@@ -323,7 +323,6 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
-  '__for_header_kind',
   '_abstract_marker',
   '_asserts_annotation_asserts',
   '_async_marker',
@@ -376,6 +375,7 @@ export const KEYWORDS = [
   'import',
   'in',
   'infer',
+  'instanceof',
   'interface',
   'is',
   'keyof',
@@ -408,16 +408,22 @@ export const KEYWORDS = [
 /** Operator/punctuation tokens. */
 export const OPERATORS = [
   "!",
+  "!=",
+  "!==",
   "\"",
   "${",
+  "%",
   "&",
   "&&",
   "'",
   "(",
   ")",
   "*",
+  "**",
+  "+",
   "+?:",
   ",",
+  "-",
   "-?:",
   ".",
   "...",
@@ -427,15 +433,24 @@ export const OPERATORS = [
   ";",
   "<",
   "</",
+  "<<",
+  "<=",
   "=",
+  "==",
+  "===",
   "=>",
   ">",
+  ">=",
+  ">>",
+  ">>>",
   "?",
   "?.",
   "?:",
+  "??",
   "@",
   "[",
   "]",
+  "^",
   "`",
   "{",
   "|",
@@ -482,6 +497,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "function": 47,
   "async": 48,
   "new": 51,
+  "instanceof": 90,
   "unescaped_double_string_fragment": 94,
   "unescaped_single_string_fragment": 95,
   "escape_sequence": 96,
@@ -743,6 +759,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [47]: "function",
   [48]: "async",
   [51]: "new",
+  [90]: "instanceof",
   [94]: "unescaped_double_string_fragment",
   [95]: "unescaped_single_string_fragment",
   [96]: "escape_sequence",
@@ -1004,6 +1021,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "function", id: 47, enumName: "AnonFunction", cName: "anon_sym_function" },
   { name: "async", id: 48, enumName: "AnonAsync", cName: "anon_sym_async" },
   { name: "new", id: 51, enumName: "AnonNew", cName: "anon_sym_new" },
+  { name: "instanceof", id: 90, enumName: "AnonInstanceof", cName: "anon_sym_instanceof" },
   { name: "unescaped_double_string_fragment", id: 94, enumName: "UnescapedDoubleStringFragment", cName: "sym_unescaped_double_string_fragment" },
   { name: "unescaped_single_string_fragment", id: 95, enumName: "UnescapedSingleStringFragment", cName: "sym_unescaped_single_string_fragment" },
   { name: "escape_sequence", id: 96, enumName: "EscapeSequence", cName: "sym_escape_sequence" },
@@ -1611,10 +1629,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_string_single': [
   ],
-  '_type_identifier': [
-  ],
   'abstract_class_declaration': [
-    { name: 'decorators', required: true, multiple: true },
+    { name: 'decorators', required: false, multiple: true },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'classHeritage', required: false, multiple: false },
@@ -1705,7 +1721,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'class': [
-    { name: 'decorators', required: true, multiple: true },
+    { name: 'decorators', required: false, multiple: true },
     { name: 'name', required: false, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'classHeritage', required: false, multiple: false },
@@ -1714,7 +1730,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'class_body': [
   ],
   'class_declaration': [
-    { name: 'decorators', required: true, multiple: true },
+    { name: 'decorators', required: false, multiple: true },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'classHeritage', required: false, multiple: false },
@@ -1823,7 +1839,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'types', required: true, multiple: true },
   ],
   'field_definition': [
-    { name: 'decorators', required: true, multiple: true },
+    { name: 'decorators', required: false, multiple: true },
     { name: 'staticMarker', required: false, multiple: false },
     { name: 'property', required: true, multiple: false },
     { name: 'value', required: false, multiple: false },
@@ -1983,12 +1999,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'jsx_opening_element': [
     { name: 'name', required: false, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
-    { name: 'attributes', required: true, multiple: true },
+    { name: 'attributes', required: false, multiple: true },
   ],
   'jsx_self_closing_element': [
     { name: 'name', required: false, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
-    { name: 'attributes', required: true, multiple: true },
+    { name: 'attributes', required: false, multiple: true },
   ],
   'labeled_statement': [
     { name: 'label', required: true, multiple: false },
@@ -2088,7 +2104,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
   ],
   'optional_parameter': [
-    { name: 'decorators', required: true, multiple: true },
+    { name: 'decorators', required: false, multiple: true },
     { name: 'readonlyMarker', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
@@ -2118,7 +2134,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'program': [
     { name: 'hashBangLine', required: false, multiple: false },
-    { name: 'statements', required: true, multiple: true },
+    { name: 'statements', required: false, multiple: true },
   ],
   'property_signature': [
     { name: 'accessibilityModifier', required: false, multiple: false },
@@ -2130,7 +2146,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: false, multiple: false },
   ],
   'public_field_definition': [
-    { name: 'decorators', required: true, multiple: true },
+    { name: 'decorators', required: false, multiple: true },
     { name: 'name', required: true, multiple: false },
     { name: 'optionalityMarker', required: false, multiple: false },
     { name: 'type', required: false, multiple: false },
@@ -2144,7 +2160,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'flags', required: false, multiple: false },
   ],
   'required_parameter': [
-    { name: 'decorators', required: true, multiple: true },
+    { name: 'decorators', required: false, multiple: true },
     { name: 'readonlyMarker', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
@@ -2168,7 +2184,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expression', required: true, multiple: false },
   ],
   'statement_block': [
-    { name: 'statements', required: true, multiple: true },
+    { name: 'statements', required: false, multiple: true },
     { name: 'automaticSemicolon', required: false, multiple: false },
   ],
   'string': [
@@ -2186,10 +2202,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'switch_case': [
     { name: 'value', required: true, multiple: false },
-    { name: 'bodies', required: true, multiple: true },
+    { name: 'bodies', required: false, multiple: true },
   ],
   'switch_default': [
-    { name: 'bodies', required: true, multiple: true },
+    { name: 'bodies', required: false, multiple: true },
   ],
   'switch_statement': [
     { name: 'value', required: true, multiple: false },

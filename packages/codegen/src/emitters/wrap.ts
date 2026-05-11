@@ -35,6 +35,7 @@ import {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
+import { expandRuntimeDiscriminatorKinds } from './factory-map.ts';
 
 export interface EmitWrapConfig {
 	grammar: string;
@@ -229,6 +230,43 @@ interface WrapNode {
 	readonly isPolymorph?: boolean;
 }
 
+type WrapVariantDescriptor =
+	| {
+			readonly source: 'override';
+			readonly childKind: Readonly<Record<string, string>>;
+	  }
+	| {
+			readonly source: 'promoted';
+			readonly slots: Readonly<Record<string, readonly string[]>>;
+	  };
+
+function buildWrapVariantDescriptors(nodeMap: NodeMap): Readonly<Record<string, WrapVariantDescriptor>> {
+	const out: Record<string, WrapVariantDescriptor> = {};
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node.modelType !== 'polymorph') continue;
+		const polymorph = node as AssembledPolymorph;
+		if (polymorph.source === 'override') {
+			const childKind: Record<string, string> = {};
+			for (const form of polymorph.formRules) {
+				const discriminatorKinds = form.discriminatorKinds ?? [`${kind}_${form.name}`];
+				for (const runtimeKind of expandRuntimeDiscriminatorKinds(discriminatorKinds, nodeMap)) {
+					childKind[runtimeKind] = form.name;
+				}
+			}
+			out[kind] = { source: 'override', childKind };
+			continue;
+		}
+		const slots: Record<string, readonly string[]> = {};
+		for (const form of polymorph.forms) {
+			const requiredSlots = [...form.fields.map((field) => `_${field.name}`)];
+			if (form.children.length > 0) requiredSlots.push('$children');
+			slots[form.name] = requiredSlots;
+		}
+		out[kind] = { source: 'promoted', slots };
+	}
+	return out;
+}
+
 /**
  * Resolve the drill-in expression for a field storage assignment.
  * Returns the raw-field read expression AND the inline accessor body.
@@ -244,12 +282,13 @@ interface WrapNode {
  */
 function resolveFieldDrillExprs(
 	f: AssembledNonterminal,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): {
 	storeExpr: string;
 	accessorBody: string;
 } {
-	const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	if (storageInfo.kind === 'boolean') {
 		return {
 			storeExpr: `coerceBooleanKeywordStorage(data._${f.name})`,
@@ -352,7 +391,7 @@ function emitFieldCarryingWrap(
 	// declare every field, but merged fields are a superset. Cast through
 	// `(data as any)` to access fields that may not exist on all union members.
 	for (const f of fields) {
-		const { storeExpr } = resolveFieldDrillExprs(f, nodeMap);
+		const { storeExpr } = resolveFieldDrillExprs(f, nodeMap, kindEntries);
 		const expr = node.isPolymorph ? storeExpr.replace(/^data\./, '(data as any).') : storeExpr;
 		lines.push(`    _${f.name}: ${expr},`);
 	}
@@ -372,12 +411,12 @@ function emitFieldCarryingWrap(
 	// Inline method shorthand accessors: `name()` returns drilled value via `this._<name>`.
 	for (const f of fields) {
 		const propName = f.propertyName;
-		const { accessorBody } = resolveFieldDrillExprs(f, nodeMap);
+		const { accessorBody } = resolveFieldDrillExprs(f, nodeMap, kindEntries);
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
 	}
 
 	// $with — calls the corresponding factory for update operations.
-	emitInlineWithProperty(lines, node, fields, children, nodeMap);
+	emitInlineWithProperty(lines, node, fields, children, nodeMap, kindEntries);
 
 	lines.push('  }, methodsEngine);');
 	if (hasWithSetters) {
@@ -404,7 +443,8 @@ function emitInlineWithProperty(
 	node: WrapNode,
 	fields: readonly AssembledNonterminal[],
 	children: readonly AssembledNonterminal[],
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
 	if (!node.rawFactoryName) return;
 
@@ -445,7 +485,7 @@ function emitInlineWithProperty(
 	lines.push('    $with: {');
 	for (const f of fields) {
 		const method = f.propertyName;
-		const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const polymorphSetterType =
 			storageInfo.kind === 'boolean'
 				? 'boolean'
@@ -552,6 +592,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesProjectKindEnum = /\bprojectKindEnumStorage\b/.test(bodySource);
 		const usesCoerceBoolean = /\bcoerceBooleanKeywordStorage\b/.test(bodySource);
 		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
+		const variantDescriptors = buildWrapVariantDescriptors(this.#nodeMap);
 		const utilsImports = [
 			'withMethods',
 			'methodsEngine',
@@ -635,6 +676,61 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'}'
 					]
 				: []),
+			...(Object.keys(variantDescriptors).length > 0
+				? [
+						'type _WrapVariantDescriptor =',
+						'  | { source: "override"; childKind: Record<string, string> }',
+						'  | { source: "promoted"; slots: Record<string, readonly string[]> };',
+						`const _variantTable: Record<string, _WrapVariantDescriptor> = ${JSON.stringify(variantDescriptors, null, 2)};`,
+						'',
+						'function _kindNameOf(entry: unknown): string | undefined {',
+						'  if (!entry || typeof entry !== "object") return undefined;',
+						'  const raw = (entry as { $type?: unknown }).$type;',
+						'  if (raw === undefined) return undefined;',
+						...(this.#kindEntries
+							? [
+									'  if (typeof raw === "number") return KIND_NAMES.get(raw as never) ?? String(raw);'
+								]
+							: []),
+						'  return typeof raw === "string" ? raw : undefined;',
+						'}',
+						'',
+						'function _resolveVariant(kind: string, data: _NodeData): string | undefined {',
+						'  const desc = _variantTable[kind];',
+						'  if (!desc) return undefined;',
+						'  if (desc.source === "override") {',
+						'    const firstChild = data.$children?.find(',
+						'      (child) => child != null && typeof child === "object" && (child as { $named?: boolean }).$named !== false',
+						'    );',
+						'    const candidate = _kindNameOf(firstChild);',
+						'    if (!candidate) return undefined;',
+						'    if (candidate in desc.childKind) return desc.childKind[candidate];',
+						'    const stripped = candidate.startsWith("_") ? candidate.slice(1) : undefined;',
+						'    if (stripped && stripped in desc.childKind) return desc.childKind[stripped];',
+						'    let bestVariant: string | undefined;',
+						'    let bestSpecificity = -1;',
+						'    for (const variant of Object.values(desc.childKind)) {',
+						'      const suffix = `_${variant}`;',
+						'      if (candidate.endsWith(suffix) || stripped?.endsWith(suffix)) {',
+						'        if (variant.length > bestSpecificity) {',
+						'          bestVariant = variant;',
+						'          bestSpecificity = variant.length;',
+						'        }',
+						'      }',
+						'    }',
+						'    return bestVariant;',
+						'  }',
+						'  for (const [variant, requiredSlots] of Object.entries(desc.slots) as [string, readonly string[]][]) {',
+						'    const matches = requiredSlots.every((slot) => {',
+						'      if (slot === "$children") return Array.isArray(data.$children) && data.$children.length > 0;',
+						'      return (data as unknown as Record<string, unknown>)[slot] !== undefined;',
+						'    });',
+						'    if (matches) return variant;',
+						'  }',
+						'  return undefined;',
+						'}'
+					]
+				: []),
 			''
 		];
 		lines.push(bodySource);
@@ -698,6 +794,12 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('  if (canonical !== undefined) {');
 		lines.push('    data = { ...data, $type: canonical as unknown as number };');
 		lines.push('  }');
+		if (Object.keys(variantDescriptors).length > 0) {
+			lines.push('  const variant = _resolveVariant(canonical ?? rawType, data);');
+			lines.push('  if (variant !== undefined && (data as { $variant?: unknown }).$variant === undefined) {');
+			lines.push('    data = { ...data, $variant: variant } as _NodeData;');
+			lines.push('  }');
+		}
 		lines.push('  const fn = _wrapTable[canonical ?? rawType];');
 		lines.push('  if (!fn) return data; // unknown kind — return as-is');
 		lines.push('  return fn(data, tree);');

@@ -1558,7 +1558,8 @@ function resolveFieldCall(
 		if (kwCall !== undefined) return kwCall;
 	}
 
-	const storageInfo = 'name' in field ? resolveFieldStorageInfo(field as AssembledNonterminal, nodeMap) : undefined;
+	const storageInfo =
+		'name' in field ? resolveFieldStorageInfo(field as AssembledNonterminal, nodeMap) : undefined;
 
 	const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap);
 	const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap);
@@ -1584,13 +1585,17 @@ function resolveFieldCall(
 function kindEnumTextMapExpr(field: AssembledNonterminal, nodeMap: NodeMap): string {
 	const entries: string[] = [];
 	for (const value of field.values) {
-		if (!isNodeRef(value)) continue;
-		const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
-		const node = nodeMap.nodes.get(kind);
-		if (!(node?.modelType === 'enum')) continue;
-		for (const text of node.values) {
-			entries.push(`[${JSON.stringify(text)}, kindIdFromName(${JSON.stringify(text)})] as const`);
+		if (isNodeRef(value)) {
+			const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+			const node = nodeMap.nodes.get(kind);
+			if (!(node?.modelType === 'enum')) continue;
+			for (const text of node.values) {
+				entries.push(`[${JSON.stringify(text)}, kindIdFromName(${JSON.stringify(text)})] as const`);
+			}
+			continue;
 		}
+		if (!isTerminalValue(value)) continue;
+		entries.push(`[${JSON.stringify(value.value)}, kindIdFromName(${JSON.stringify(value.value)})] as const`);
 	}
 	return `[${entries.join(', ')}]`;
 }

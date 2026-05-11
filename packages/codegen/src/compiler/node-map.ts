@@ -51,6 +51,8 @@ import {
 	findRepeatFlag
 } from './template-walker.ts';
 import type { WalkSlotUse } from './template-walker.ts';
+import type { GeneratedKindEntry } from './generated-metadata.ts';
+import { findGeneratedKindEntry } from './generated-metadata.ts';
 import { tokenToName } from './optimize.ts';
 import { assertNever } from '../polymorph-variant.ts';
 
@@ -106,6 +108,15 @@ export type BranchSlotClass =
 			slot: AssembledNonterminal;
 	  };
 
+export type FieldStorageKind = 'verbatim' | 'boolean' | 'bitflag' | 'kindEnum';
+
+export interface FieldStorageInfo {
+	readonly kind: FieldStorageKind;
+	readonly texts: readonly string[];
+	readonly enumKinds: readonly string[];
+	readonly collapsesMultiplicity: boolean;
+}
+
 export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly kind: 'node-ref';
 	readonly node: T | UnresolvedRef;
@@ -125,6 +136,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 export interface TerminalValue {
 	readonly kind: 'terminal';
 	readonly value: string;
+	readonly resolvedKind?: string;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -155,16 +167,21 @@ export function isUnresolvedRef(v: NodeRef['node']): v is UnresolvedRef {
 // ---------------------------------------------------------------------------
 
 /**
- * True when EVERY value in the slot is `single`, `array`, or `nonEmptyArray`
- * (none are `optional`). A slot with ANY optional value is itself optional
- * at the slot level.
+ * True when EVERY value in the slot is guaranteed to be present:
+ * `single` or `nonEmptyArray`.
+ *
+ * Plain `array` slots are optional at the transport/render surface: a
+ * repeated field with zero occurrences is emitted as a missing slot, not
+ * a present-empty collection.
  */
 export function isRequired(slot: {
 	values: readonly NodeOrTerminal[];
 }): boolean {
 	return (
 		slot.values.length > 0 &&
-		slot.values.every((v) => v.multiplicity !== 'optional')
+		slot.values.every(
+			(v) => v.multiplicity === 'single' || v.multiplicity === 'nonEmptyArray'
+		)
 	);
 }
 
@@ -656,9 +673,12 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
  * Internal — fields-side walk. The exported derivation surface is
  * `deriveSlots`; this helper is its fields-portion.
  */
-function _deriveFieldsInternal(rule: Rule): AssembledNonterminal[] {
+function _deriveFieldsInternal(
+	rule: Rule,
+	kindEntries?: readonly GeneratedKindEntry[]
+): AssembledNonterminal[] {
 	auditDerivationShape(rule, 'fields');
-	return mergeFieldsByName(deriveFieldsRaw(rule, 'single'));
+	return mergeFieldsByName(deriveFieldsRaw(rule, 'single', kindEntries));
 }
 
 /**
@@ -713,7 +733,8 @@ function mergeFieldsByName(fields: AssembledNonterminal[]): AssembledNonterminal
  */
 function deriveFieldsRaw(
 	rule: Rule,
-	outerMultiplicity: Multiplicity
+	outerMultiplicity: Multiplicity,
+	kindEntries?: readonly GeneratedKindEntry[]
 ): AssembledNonterminal[] {
 	switch (rule.type) {
 		case 'field': {
@@ -725,7 +746,7 @@ function deriveFieldsRaw(
 			// match so factories don't emit phantom parameters that the
 			// template can't reference.
 			if (isSyntheticFieldWrapper(rule.content)) {
-				return deriveFieldsRaw(rule.content, outerMultiplicity);
+				return deriveFieldsRaw(rule.content, outerMultiplicity, kindEntries);
 			}
 
 			const aliasSources = deriveAliasSources(rule.content);
@@ -741,7 +762,7 @@ function deriveFieldsRaw(
 			);
 
 			// Derive values — each NodeOrTerminal entry carries its own multiplicity.
-			const rawValues = deriveValuesForRule(rule.content, innerMult);
+			const rawValues = deriveValuesForRule(rule.content, innerMult, kindEntries);
 			const values = dedupeValues(rawValues);
 
 			// Derive trailing/leading flags — only meaningful for array/nonEmptyArray
@@ -774,7 +795,7 @@ function deriveFieldsRaw(
 			return [outerField];
 		}
 		case 'seq':
-			return rule.members.flatMap((m) => deriveFieldsRaw(m, outerMultiplicity));
+			return rule.members.flatMap((m) => deriveFieldsRaw(m, outerMultiplicity, kindEntries));
 		case 'optional':
 			// `optional(repeat1(X, sep))` is the canonical lift of
 			// `optional(commaSep1(X))` — e.g. python `parameters: seq('(',
@@ -786,13 +807,13 @@ function deriveFieldsRaw(
 			// slot the factory refuses to construct empty. Mirrors
 			// `collectChildFromMember` and `deriveValuesForRule`.
 			if (rule.content.type === 'repeat1') {
-				return deriveFieldsRaw(rule.content.content, 'array');
+				return deriveFieldsRaw(rule.content.content, 'array', kindEntries);
 			}
-			return deriveFieldsRaw(rule.content, 'optional');
+			return deriveFieldsRaw(rule.content, 'optional', kindEntries);
 		case 'repeat':
-			return deriveFieldsRaw(rule.content, 'array');
+			return deriveFieldsRaw(rule.content, 'array', kindEntries);
 		case 'repeat1':
-			return deriveFieldsRaw(rule.content, 'nonEmptyArray');
+			return deriveFieldsRaw(rule.content, 'nonEmptyArray', kindEntries);
 		case 'choice': {
 			// Choice at a position contributes ONE slot whose `values`
 			// array is the union of all arms (the field walker handles
@@ -805,7 +826,7 @@ function deriveFieldsRaw(
 			// per FR-T05 once the override migration enables strict
 			// enforcement.
 			const values = dedupeValues(
-				deriveValuesForRule(rule, outerMultiplicity)
+				deriveValuesForRule(rule, outerMultiplicity, kindEntries)
 			);
 			if (values.length === 0) return [];
 			const firstRef = values.find((v) => v.kind === 'node-ref') as
@@ -840,14 +861,14 @@ function deriveFieldsRaw(
 			];
 		}
 		case 'clause':
-			return deriveFieldsRaw(rule.content, 'optional');
+			return deriveFieldsRaw(rule.content, 'optional', kindEntries);
 		case 'variant':
 			// Rare — post-simplify most variant wrappers are either
 			// promoted to polymorph forms (variant() adoption) or
 			// stripped. A handful survive in rust's nested-variant
 			// choice arms; unwrap and continue so their inner fields
 			// still surface.
-			return deriveFieldsRaw(rule.content, outerMultiplicity);
+			return deriveFieldsRaw(rule.content, outerMultiplicity, kindEntries);
 		case 'symbol': {
 			// Top-level positional symbol — drops the hidden-rule leading
 			// underscore (`_expression` → `expression`); resolves
@@ -1012,10 +1033,13 @@ function fieldContentMultiplicity(
  * ordering. A future cleanup could rewrite the walk to preserve true
  * declared-order with one unified pass over the rule tree.
  */
-export function deriveSlots(rule: Rule): readonly AssembledNonterminal[] {
+export function deriveSlots(
+	rule: Rule,
+	kindEntries?: readonly GeneratedKindEntry[]
+): readonly AssembledNonterminal[] {
 	// The field walker handles positional symbol/supertype/choice content
 	// too, so it produces every slot — no separate children walker needed.
-	return _deriveFieldsInternal(rule);
+	return _deriveFieldsInternal(rule, kindEntries);
 }
 
 /**
@@ -1096,7 +1120,8 @@ export function isSyntheticFieldWrapper(content: Rule): boolean {
  */
 function deriveValuesForRule(
 	rule: Rule,
-	multiplicity: Multiplicity
+	multiplicity: Multiplicity,
+	kindEntries?: readonly GeneratedKindEntry[]
 ): NodeOrTerminal[] {
 	switch (rule.type) {
 		case 'symbol':
@@ -1119,18 +1144,26 @@ function deriveValuesForRule(
 				multiplicity
 			}));
 		case 'string':
-			return [{ kind: 'terminal', value: rule.value, multiplicity }];
+			return [
+				{
+					kind: 'terminal',
+					value: rule.value,
+					resolvedKind: findGeneratedKindEntry(kindEntries ?? [], rule.value)?.kind,
+					multiplicity
+				}
+			];
 		case 'enum':
 			// Enum: each enum member is a TerminalValue
 			return rule.members.map((m) => ({
 				kind: 'terminal' as const,
 				value: m.value,
+				resolvedKind: findGeneratedKindEntry(kindEntries ?? [], m.value)?.kind,
 				multiplicity
 			}));
 		case 'choice':
 			// Each arm is independent — union all entries. Arms may differ in
 			// their own multiplicity if they wrap repeat/optional differently.
-			return rule.members.flatMap((m) => deriveValuesForRule(m, multiplicity));
+			return rule.members.flatMap((m) => deriveValuesForRule(m, multiplicity, kindEntries));
 		case 'optional':
 			// `optional(repeat1(X, sep))` survives evaluate when the
 			// optional wraps the canonical commaSep1 lift (e.g. python's
@@ -1142,24 +1175,24 @@ function deriveValuesForRule(
 			// the outer-optional semantics survive. Mirrors the
 			// `collectChildFromMember` rule for child slots.
 			if (rule.content.type === 'repeat1') {
-				return deriveValuesForRule(rule.content.content, 'array');
+				return deriveValuesForRule(rule.content.content, 'array', kindEntries);
 			}
-			return deriveValuesForRule(rule.content, 'optional');
+			return deriveValuesForRule(rule.content, 'optional', kindEntries);
 		case 'repeat':
-			return deriveValuesForRule(rule.content, 'array');
+			return deriveValuesForRule(rule.content, 'array', kindEntries);
 		case 'repeat1':
-			return deriveValuesForRule(rule.content, 'nonEmptyArray');
+			return deriveValuesForRule(rule.content, 'nonEmptyArray', kindEntries);
 		case 'field':
 			// Nested field inside a choice — recurse into its content
-			return deriveValuesForRule(rule.content, multiplicity);
+			return deriveValuesForRule(rule.content, multiplicity, kindEntries);
 		case 'variant':
 		case 'clause':
 		case 'group':
-			return deriveValuesForRule(rule.content, multiplicity);
+			return deriveValuesForRule(rule.content, multiplicity, kindEntries);
 		case 'seq':
 			// Seq inside a choice arm — flatten all members (rare, but
 			// handles seq-of-symbols within choice arms).
-			return rule.members.flatMap((m) => deriveValuesForRule(m, multiplicity));
+			return rule.members.flatMap((m) => deriveValuesForRule(m, multiplicity, kindEntries));
 		default:
 			return [];
 	}
@@ -1608,6 +1641,7 @@ export interface AssembledNonterminal {
 	readonly hasLeading: boolean;
 	readonly aliasSources?: Readonly<Record<string, string>>;
 	readonly source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
+	storageInfo?: FieldStorageInfo;
 }
 
 /**
@@ -2071,12 +2105,13 @@ function wrapOptionalFieldPlaceholders(
 			const key = name.toLowerCase();
 			if (!optionalFields.has(key)) return full;
 			// Special walker placeholders (`$NEWLINE`, `$INDENT`, `$DEDENT`,
-			// `$TEXT`, `$CHILDREN`) aren't real fields — `translateToJinja`
-			// converts them to literal characters or list joins. Even if a
-			// `newline`/`indent`/etc. field exists in the AssembledNonterminal
-			// list (e.g. python's decorator carries an empty-values
-			// `newline` slot from the walker's NEWLINE token wrapping), the
-			// placeholder is already structural and must not be gated.
+			// `$TEXT`) aren't real fields — `translateToJinja` converts them
+			// to literal characters or list joins. Even if a `newline` /
+			// `indent` / etc. field exists in the AssembledNonterminal list
+			// (e.g. python's decorator carries an empty-values `newline`
+			// slot from the walker's NEWLINE token wrapping), the placeholder
+			// is already structural and must not be gated.
+			//
 			if (SPECIAL_PLACEHOLDERS.has(key)) return full;
 			const dollarStart = offset + lead.length;
 			// Defensive: ensure no straggling `$` before the matched dollar
@@ -2092,11 +2127,11 @@ function wrapOptionalFieldPlaceholders(
 }
 
 const SPECIAL_PLACEHOLDERS: ReadonlySet<string> = new Set([
+	'children',
 	'newline',
 	'indent',
 	'dedent',
-	'text',
-	'children'
+	'text'
 ]);
 
 /**
@@ -2466,10 +2501,11 @@ function escapeJinjaBraceCollisions(s: string): string {
  */
 function buildSlotsRecord(
 	kind: string,
-	rule: Rule
+	rule: Rule,
+	kindEntries?: readonly GeneratedKindEntry[]
 ): Readonly<Record<string, AssembledNonterminal>> {
 	const out: Record<string, AssembledNonterminal> = {};
-	for (const slot of deriveSlots(rule)) {
+	for (const slot of deriveSlots(rule, kindEntries)) {
 		// Strict design (FR-T05): inferred slots remap to 'child'/'children'
 		// keys and at most one unnamed slot per branch is permitted. Empirical
 		// check confirms 14 kinds across 3 grammars currently have >1 unnamed
@@ -2590,12 +2626,13 @@ export class AssembledBranch extends AssembledNodeBase<
 			factoryName?: string;
 			irKey?: string;
 			variantChildKinds?: readonly string[];
+			kindEntries?: readonly GeneratedKindEntry[];
 		}
 	) {
 		super(kind, rule, opts);
 		this.simplifiedRule = simplifiedRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
-		this.slots = buildSlotsRecord(kind, simplifiedRule);
+		this.slots = buildSlotsRecord(kind, simplifiedRule, opts?.kindEntries);
 	}
 
 	/**
@@ -2688,7 +2725,8 @@ export class AssembledBranch extends AssembledNodeBase<
 		const hasFields = fields.length > 0;
 		const optionalFields = hasFields
 			? deriveOptionalFieldNames(fields)
-			: undefined;
+			: new Set<string>();
+		if (hasFields && this.children.length > 0) optionalFields.add('children');
 		const { template, clauses, joinByField, usesChildren, slots } = renderRuleTemplate(
 			this.rule,
 			false,
@@ -2729,7 +2767,7 @@ export class AssembledBranch extends AssembledNodeBase<
 			if (leadingFields.size > 0) meta.leadingFields = leadingFields;
 		}
 		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
-		if (optionalFields && optionalFields.size > 0)
+		if (optionalFields.size > 0)
 			meta.optionalFields = optionalFields;
 		// Container-shape branches: empty children may collapse a flanking
 		// space pair into stray whitespace at render time. Set the meta
@@ -3384,13 +3422,20 @@ export class AssembledPattern extends AssembledLeaf<
 
 export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	readonly modelType = 'keyword' as const;
+	readonly resolvedKind?: string;
 
 	constructor(
 		kind: string,
 		rule: StringRule,
-		opts?: { factoryName?: string; irKey?: string; hidden?: boolean }
+		opts?: {
+			factoryName?: string;
+			irKey?: string;
+			hidden?: boolean;
+			kindEntries?: readonly GeneratedKindEntry[];
+		}
 	) {
 		super(kind, rule, opts);
+		this.resolvedKind = findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind;
 		// Keywords are always parameterless — they produce a fixed
 		// single text value. The field stamp is the literal (as const)
 		// so parent factories can inline it directly into `$fields`.
@@ -3421,9 +3466,18 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 
 export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	readonly modelType = 'token' as const;
+	readonly resolvedKind?: string;
 
-	constructor(kind: string, rule: StringRule | TokenRule) {
+	constructor(
+		kind: string,
+		rule: StringRule | TokenRule,
+		opts?: { kindEntries?: readonly GeneratedKindEntry[] }
+	) {
 		super(kind, rule, { hidden: true });
+		this.resolvedKind =
+			rule.type === 'string'
+				? findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind
+				: undefined;
 		// Single-literal tokens are parameterless — they stamp to the
 		// literal (as const) the same way keywords do. Pattern-based
 		// tokens (TokenRule) carry no single user-visible string and
@@ -3472,13 +3526,21 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 
 export class AssembledEnum extends AssembledLeaf<EnumRule> {
 	readonly modelType = 'enum' as const;
+	readonly resolvedKinds: readonly string[];
 
 	constructor(
 		kind: string,
 		rule: EnumRule,
-		opts?: { factoryName?: string; irKey?: string }
+		opts?: {
+			factoryName?: string;
+			irKey?: string;
+			kindEntries?: readonly GeneratedKindEntry[];
+		}
 	) {
 		super(kind, rule, opts);
+		this.resolvedKinds = rule.members
+			.map((member) => findGeneratedKindEntry(opts?.kindEntries ?? [], member.value)?.kind)
+			.filter((member): member is string => member !== undefined);
 		if (this.values.length < 2) {
 			throw new Error(
 				`AssembledEnum '${kind}' must have at least two members; normalize single-literal sets upstream to StringRule`
@@ -3637,6 +3699,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 			name?: string;
 			parentKind?: string;
 			overridePassthrough?: boolean;
+			kindEntries?: readonly GeneratedKindEntry[];
 		}
 	) {
 		// Groups always derive a factoryName — hidden groups emit fragment factories
@@ -3657,7 +3720,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		this.name = opts?.name ?? kind;
 		this.parentKind = opts?.parentKind;
 		this.overridePassthrough = opts?.overridePassthrough;
-		this.slots = buildSlotsRecord(kind, simplifiedRule);
+		this.slots = buildSlotsRecord(kind, simplifiedRule, opts?.kindEntries);
 	}
 
 	/**

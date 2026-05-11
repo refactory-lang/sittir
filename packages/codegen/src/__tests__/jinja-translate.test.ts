@@ -53,6 +53,13 @@ describe('translateToJinja — $$$ repeat placeholders', () => {
 		expect(translateToJinja('$$$NAME', meta)).toBe('{{ name | join("|") }}');
 	});
 
+	it('does not wrap $$$CHILDREN in translateToJinja when children is explicitly marked optional', () => {
+		const meta: JinjaTranslateMeta = { optionalFields: new Set(['children']) };
+		expect(translateToJinja('$$$CHILDREN $PATTERN', meta)).toBe(
+			'{{ children | join(" ") }} {{ pattern }}'
+		);
+	});
+
 	it('$$$CHILDREN picks joinWithTrailing when meta.joinByTrailing', () => {
 		const meta: JinjaTranslateMeta = { joinBy: ',', joinByTrailing: true };
 		expect(translateToJinja('$$$CHILDREN', meta)).toBe('{{ children | joinWithTrailing(",") }}');

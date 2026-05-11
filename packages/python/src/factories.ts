@@ -81,14 +81,18 @@ export function _assignmentTyped(config: T.AssignmentTyped.Config) {
   }, methodsEngine);
 }
 
-export function comprehensionClauses(...children: (T.ForInClause | T.IfClause)[]) {
+export function comprehensionClauses(config?: T.ComprehensionClauses.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.ComprehensionClauses['$children']>(_config, [] as unknown as T.ComprehensionClauses['$children']);
   return withMethods({
     $type: TSKindId.ComprehensionClauses as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: (T.ForInClause | T.IfClause)[]) => comprehensionClauses(...vs) },
+    $with: {
+      children: (...items: ((T.ForInClause | T.IfClause))[]) => comprehensionClauses({ ..._config, children: items } as unknown as Parameters<typeof comprehensionClauses>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -134,14 +138,18 @@ export function _keyValuePattern(config: T.KeyValuePattern.Config) {
   }, methodsEngine);
 }
 
-export function _listPattern(...children: T.CasePattern[]) {
+export function _listPattern(config?: T._ListPattern.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T._ListPattern['$children']>(_config, [] as unknown as T._ListPattern['$children']);
   return withMethods({
     $type: TSKindId._ListPattern as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.CasePattern[]) => _listPattern(...vs) },
+    $with: {
+      children: (...items: T.CasePattern[]) => _listPattern({ ..._config, children: items } as unknown as Parameters<typeof _listPattern>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -157,8 +165,9 @@ export function matchBlock(child: T.MatchBlockBlock) {
   }, methodsEngine);
 }
 
-export function _matchBlockBlock(config: T.MatchBlockBlock.Config) {
-  const _alternative = config.alternative;
+export function _matchBlockBlock(config?: T.MatchBlockBlock.Config) {
+  const _config = config ?? {};
+  const _alternative = _config.alternative;
   return withMethods({
     $type: TSKindId.MatchBlockBlock as const,
     $source: 2 as const,
@@ -166,7 +175,7 @@ export function _matchBlockBlock(config: T.MatchBlockBlock.Config) {
     _alternative,
     alternatives() { return _alternative; },
     $with: {
-      alternatives: (...values: T.CaseClause[]) => _matchBlockBlock({ ...config, alternative: values }),
+      alternatives: (...values: T.CaseClause[]) => _matchBlockBlock({ ..._config, alternative: values }),
     },
   }, methodsEngine);
 }
@@ -205,14 +214,18 @@ export function simpleStatements(...children: T.SimpleStatement[]) {
   }, methodsEngine);
 }
 
-export function _tuplePattern(...children: T.CasePattern[]) {
+export function _tuplePattern(config?: T._TuplePattern.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T._TuplePattern['$children']>(_config, [] as unknown as T._TuplePattern['$children']);
   return withMethods({
     $type: TSKindId._TuplePattern as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.CasePattern[]) => _tuplePattern(...vs) },
+    $with: {
+      children: (...items: T.CasePattern[]) => _tuplePattern({ ..._config, children: items } as unknown as Parameters<typeof _tuplePattern>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -418,7 +431,7 @@ export function await_(primaryExpression: T.Await.Config['primaryExpression']) {
 
 export function binaryOperator(config: T.BinaryOperator.Config) {
   const _left = config.left;
-  const _operator = "+" as const;
+  const _operator = config.operator;
   const _right = config.right;
   return withMethods({
     $type: TSKindId.BinaryOperator as const,
@@ -432,25 +445,30 @@ export function binaryOperator(config: T.BinaryOperator.Config) {
     right() { return _right; },
     $with: {
       left: (value: T.PrimaryExpression) => binaryOperator({ ...config, left: value }),
+      operator: (value: "+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>") => binaryOperator({ ...config, operator: value }),
       right: (value: T.PrimaryExpression) => binaryOperator({ ...config, right: value }),
     },
   }, methodsEngine);
 }
 
-export function block(...children: T.Statement[]) {
+export function block(config?: T.Block.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.Block['$children']>(_config, [] as unknown as T.Block['$children']);
   return withMethods({
     $type: TSKindId.Block as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Statement[]) => block(...vs) },
+    $with: {
+      children: (...items: T.Statement[]) => block({ ..._config, children: items } as unknown as Parameters<typeof block>[0]),
+    },
   }, methodsEngine);
 }
 
 export function booleanOperator(config: T.BooleanOperator.Config) {
   const _left = config.left;
-  const _operator = "and" as const;
+  const _operator = config.operator;
   const _right = config.right;
   return withMethods({
     $type: TSKindId.BooleanOperator as const,
@@ -464,6 +482,7 @@ export function booleanOperator(config: T.BooleanOperator.Config) {
     right() { return _right; },
     $with: {
       left: (value: T.Expression) => booleanOperator({ ...config, left: value }),
+      operator: (value: "and" | "or") => booleanOperator({ ...config, operator: value }),
       right: (value: T.Expression) => booleanOperator({ ...config, right: value }),
     },
   }, methodsEngine);
@@ -769,25 +788,33 @@ export function deleteStatement(child: T.Expressions) {
   }, methodsEngine);
 }
 
-export function dictPattern(...children: T.DictPatternKv[]) {
+export function dictPattern(config?: T.DictPattern.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.DictPattern['$children']>(_config, [] as unknown as T.DictPattern['$children']);
   return withMethods({
     $type: TSKindId.DictPattern as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.DictPatternKv[]) => dictPattern(...vs) },
+    $with: {
+      children: (...items: T.DictPatternKv[]) => dictPattern({ ..._config, children: items } as unknown as Parameters<typeof dictPattern>[0]),
+    },
   }, methodsEngine);
 }
 
-export function dictionary(...children: (T.Pair | T.DictionarySplat)[]) {
+export function dictionary(config?: T.Dictionary.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.Dictionary['$children']>(_config, [] as unknown as T.Dictionary['$children']);
   return withMethods({
     $type: TSKindId.Dictionary as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: (T.Pair | T.DictionarySplat)[]) => dictionary(...vs) },
+    $with: {
+      children: (...items: ((T.Pair | T.DictionarySplat))[]) => dictionary({ ..._config, children: items } as unknown as Parameters<typeof dictionary>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -1120,14 +1147,18 @@ export function forStatement(config: T.ForStatement.Config) {
   }, methodsEngine);
 }
 
-export function formatSpecifier(...children: T.Interpolation[]) {
+export function formatSpecifier(config?: T.FormatSpecifier.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.FormatSpecifier['$children']>(_config, [] as unknown as T.FormatSpecifier['$children']);
   return withMethods({
     $type: TSKindId.FormatSpecifier as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Interpolation[]) => formatSpecifier(...vs) },
+    $with: {
+      children: (...items: T.Interpolation[]) => formatSpecifier({ ..._config, children: items } as unknown as Parameters<typeof formatSpecifier>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -1441,14 +1472,18 @@ export function lineContinuation(text: string) {
   }, methodsEngine);
 }
 
-export function list(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
+export function list(config?: T.List.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.List['$children']>(_config, [] as unknown as T.List['$children']);
   return withMethods({
     $type: TSKindId.List as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) => list(...vs) },
+    $with: {
+      children: (...items: ((T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]) => list({ ..._config, children: items } as unknown as Parameters<typeof list>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -1470,14 +1505,18 @@ export function listComprehension(config: T.ListComprehension.Config) {
   }, methodsEngine);
 }
 
-export function listPattern(...children: T.Pattern[]) {
+export function listPattern(config?: T.ListPattern.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.ListPattern['$children']>(_config, [] as unknown as T.ListPattern['$children']);
   return withMethods({
     $type: TSKindId.ListPattern as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Pattern[]) => listPattern(...vs) },
+    $with: {
+      children: (...items: T.Pattern[]) => listPattern({ ..._config, children: items } as unknown as Parameters<typeof listPattern>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -1543,14 +1582,18 @@ export function memberType(config: T.MemberType.Config) {
   }, methodsEngine);
 }
 
-export function module(...children: T.Statement[]) {
+export function module(config?: T.Module.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.Module['$children']>(_config, [] as unknown as T.Module['$children']);
   return withMethods({
     $type: TSKindId.Module as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Statement[]) => module(...vs) },
+    $with: {
+      children: (...items: T.Statement[]) => module({ ..._config, children: items } as unknown as Parameters<typeof module>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -1625,14 +1668,18 @@ export function pair(config: T.Pair.Config) {
   }, methodsEngine);
 }
 
-export function parameters(...children: T.Parameter[]) {
+export function parameters(config?: T.Parameters.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.Parameters['$children']>(_config, [] as unknown as T.Parameters['$children']);
   return withMethods({
     $type: TSKindId.Parameters as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Parameter[]) => parameters(...vs) },
+    $with: {
+      children: (...items: T.Parameter[]) => parameters({ ..._config, children: items } as unknown as Parameters<typeof parameters>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -1681,9 +1728,10 @@ export function patternList(...children: T.Pattern[]) {
   }, methodsEngine);
 }
 
-export function printStatement(config: T.PrintStatement.Config) {
-  const children = _configChildren<T.PrintStatement['$children']>(config, [] as unknown as T.PrintStatement['$children']);
-  const _argument = config.argument;
+export function printStatement(config?: T.PrintStatement.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.PrintStatement['$children']>(_config, [] as unknown as T.PrintStatement['$children']);
+  const _argument = _config.argument;
   return withMethods({
     $type: TSKindId.PrintStatement as const,
     $source: 2 as const,
@@ -1693,8 +1741,8 @@ export function printStatement(config: T.PrintStatement.Config) {
     arguments() { return _argument; },
     children() { return children; },
     $with: {
-      arguments: (...values: T.Expression[]) => printStatement({ ...config, argument: values }),
-      children: (...items: readonly [T.Chevron]) => printStatement({ ...config, children: items } as unknown as Parameters<typeof printStatement>[0]),
+      arguments: (...values: T.Expression[]) => printStatement({ ..._config, argument: values }),
+      children: (...items: readonly [T.Chevron]) => printStatement({ ..._config, children: items } as unknown as Parameters<typeof printStatement>[0]),
     },
   }, methodsEngine);
 }
@@ -1919,25 +1967,33 @@ export function tryStatement(config: T.TryStatement.Config) {
   }, methodsEngine);
 }
 
-export function tuple(...children: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) {
+export function tuple(config?: T.Tuple.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.Tuple['$children']>(_config, [] as unknown as T.Tuple['$children']);
   return withMethods({
     $type: TSKindId.Tuple as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[]) => tuple(...vs) },
+    $with: {
+      children: (...items: ((T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]) => tuple({ ..._config, children: items } as unknown as Parameters<typeof tuple>[0]),
+    },
   }, methodsEngine);
 }
 
-export function tuplePattern(...children: T.Pattern[]) {
+export function tuplePattern(config?: T.TuplePattern.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.TuplePattern['$children']>(_config, [] as unknown as T.TuplePattern['$children']);
   return withMethods({
     $type: TSKindId.TuplePattern as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Pattern[]) => tuplePattern(...vs) },
+    $with: {
+      children: (...items: T.Pattern[]) => tuplePattern({ ..._config, children: items } as unknown as Parameters<typeof tuplePattern>[0]),
+    },
   }, methodsEngine);
 }
 

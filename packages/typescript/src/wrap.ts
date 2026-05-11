@@ -47,6 +47,128 @@ function projectKindEnumStorage<T>(value: T): T {
   const entry = value as unknown as _NodeData;
   return typeof entry.$type === "number" ? (entry.$type as T) : value;
 }
+type _WrapVariantDescriptor =
+  | { source: "override"; childKind: Record<string, string> }
+  | { source: "promoted"; slots: Record<string, readonly string[]> };
+const _variantTable: Record<string, _WrapVariantDescriptor> = {
+  "arrow_function": {
+    "source": "override",
+    "childKind": {
+      "arrow_function_parameter": "parameter",
+      "arrow_function__call_signature": "_call_signature"
+    }
+  },
+  "call_expression": {
+    "source": "override",
+    "childKind": {
+      "call_expression_call": "call",
+      "call_expression_template_call": "template_call",
+      "call_expression_member": "member"
+    }
+  },
+  "class_heritage": {
+    "source": "override",
+    "childKind": {
+      "class_heritage_extends_clause": "extends_clause",
+      "class_heritage_implements_clause": "implements_clause"
+    }
+  },
+  "export_statement": {
+    "source": "override",
+    "childKind": {
+      "export_statement_default": "default",
+      "export_statement_type_export": "type_export",
+      "export_statement_equals_export": "equals_export",
+      "export_statement_namespace_export": "namespace_export"
+    }
+  },
+  "import_clause": {
+    "source": "override",
+    "childKind": {
+      "import_clause_namespace_import": "namespace_import",
+      "import_clause_named_imports": "named_imports",
+      "import_clause_default_import": "default_import"
+    }
+  },
+  "import_specifier": {
+    "source": "override",
+    "childKind": {
+      "import_specifier_name": "name",
+      "import_specifier_as": "as"
+    }
+  },
+  "index_signature": {
+    "source": "override",
+    "childKind": {
+      "index_signature_colon": "colon",
+      "index_signature_mapped_type_clause": "mapped_type_clause"
+    }
+  },
+  "parenthesized_expression": {
+    "source": "override",
+    "childKind": {
+      "parenthesized_expression_typed": "typed",
+      "parenthesized_expression_sequence": "sequence"
+    }
+  },
+  "string": {
+    "source": "override",
+    "childKind": {
+      "string_double": "double",
+      "string_single": "single"
+    }
+  },
+  "update_expression": {
+    "source": "override",
+    "childKind": {
+      "update_expression_postfix": "postfix",
+      "update_expression_prefix": "prefix"
+    }
+  }
+};
+
+function _kindNameOf(entry: unknown): string | undefined {
+  if (!entry || typeof entry !== "object") return undefined;
+  const raw = (entry as { $type?: unknown }).$type;
+  if (raw === undefined) return undefined;
+  if (typeof raw === "number") return KIND_NAMES.get(raw as never) ?? String(raw);
+  return typeof raw === "string" ? raw : undefined;
+}
+
+function _resolveVariant(kind: string, data: _NodeData): string | undefined {
+  const desc = _variantTable[kind];
+  if (!desc) return undefined;
+  if (desc.source === "override") {
+    const firstChild = data.$children?.find(
+      (child) => child != null && typeof child === "object" && (child as { $named?: boolean }).$named !== false
+    );
+    const candidate = _kindNameOf(firstChild);
+    if (!candidate) return undefined;
+    if (candidate in desc.childKind) return desc.childKind[candidate];
+    const stripped = candidate.startsWith("_") ? candidate.slice(1) : undefined;
+    if (stripped && stripped in desc.childKind) return desc.childKind[stripped];
+    let bestVariant: string | undefined;
+    let bestSpecificity = -1;
+    for (const variant of Object.values(desc.childKind)) {
+      const suffix = `_${variant}`;
+      if (candidate.endsWith(suffix) || stripped?.endsWith(suffix)) {
+        if (variant.length > bestSpecificity) {
+          bestVariant = variant;
+          bestSpecificity = variant.length;
+        }
+      }
+    }
+    return bestVariant;
+  }
+  for (const [variant, requiredSlots] of Object.entries(desc.slots) as [string, readonly string[]][]) {
+    const matches = requiredSlots.every((slot) => {
+      if (slot === "$children") return Array.isArray(data.$children) && data.$children.length > 0;
+      return (data as unknown as Record<string, unknown>)[slot] !== undefined;
+    });
+    if (matches) return variant;
+  }
+  return undefined;
+}
 
 export function wrap_ArrowFunctionUCallSignature(data: T._ArrowFunctionUCallSignature, tree: TreeHandle) {
   const _node = withMethods({
@@ -347,17 +469,6 @@ export function wrap_StringSingle(data: T._StringSingle, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: ((T.UnescapedSingleStringFragment | T.EscapeSequence))[]) => wrap_StringSingle({ ...data, $children: vs }, tree) },
-  }, methodsEngine);
-  return _node;
-}
-
-export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle) {
-  const _node = withMethods({
-    ...data,
-    $type: TSKindId.TypeIdentifier as const,
-    $children: data.$children,
-
-    $with: { $child: (v: T.Identifier) => wrapTypeIdentifier({ ...data, $children: [v] }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -671,7 +782,7 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
     _right: data._right,
 
     left() { return drillIn<T.Expression | T.PrivatePropertyIdentifier>(this._left, tree); },
-    operator() { return drillIn<"&&">(this._operator, tree); },
+    operator() { return drillIn<"&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in">(this._operator, tree); },
     right() { return drillIn<T.Expression>(this._right, tree); },
     $with: {
       left: (v: NonNullable<T.BinaryExpression['_left']>) => wrapBinaryExpression({ ...data, _left: v }, tree),
@@ -3173,7 +3284,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_public_field_definition_declare_first': (d, t) => wrapPublicFieldDefinitionDeclareFirst(d as T.PublicFieldDefinitionDeclareFirst, t),
   '_string_double': (d, t) => wrap_StringDouble(d as T._StringDouble, t),
   '_string_single': (d, t) => wrap_StringSingle(d as T._StringSingle, t),
-  '_type_identifier': (d, t) => wrapTypeIdentifier(d as T.TypeIdentifier, t),
+  '_type_identifier': (d) => ({ ...d, $type: TSKindId.TypeIdentifier as const }),
   'abstract_class_declaration': (d, t) => wrapAbstractClassDeclaration(d as T.AbstractClassDeclaration, t),
   'abstract_method_signature': (d, t) => wrapAbstractMethodSignature(d as T.AbstractMethodSignature, t),
   'accessibility_modifier': (d) => ({ ...d, $type: TSKindId.AccessibilityModifier as const }),
@@ -3463,6 +3574,10 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
   const canonical = _aliasTargetToSource[rawType];
   if (canonical !== undefined) {
     data = { ...data, $type: canonical as unknown as number };
+  }
+  const variant = _resolveVariant(canonical ?? rawType, data);
+  if (variant !== undefined && (data as { $variant?: unknown }).$variant === undefined) {
+    data = { ...data, $variant: variant } as _NodeData;
   }
   const fn = _wrapTable[canonical ?? rawType];
   if (!fn) return data; // unknown kind — return as-is

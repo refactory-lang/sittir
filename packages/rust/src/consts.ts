@@ -8,7 +8,6 @@ export const NODE_KINDS = [
   '_delim_token_tree_paren',
   '_expression_statement_block_ending',
   '_expression_statement_with_semi',
-  '_field_identifier',
   '_field_pattern_shorthand',
   '_foreign_mod_item_body',
   '_function_type_fn_form',
@@ -24,14 +23,12 @@ export const NODE_KINDS = [
   '_pointer_type_mut',
   '_range_expression_bare',
   '_reference_expression_raw_mut',
-  '_reserved_identifier',
   '_token_tree_brace',
   '_token_tree_bracket',
   '_token_tree_paren',
   '_token_tree_pattern_brace',
   '_token_tree_pattern_bracket',
   '_token_tree_pattern_paren',
-  '_type_identifier',
   '_visibility_modifier_crate',
   'abstract_type',
   'arguments',
@@ -206,6 +203,7 @@ export const LEAF_KINDS = [
   '_closure_expression_static_marker',
   '_compound_assignment_expr_operator',
   '_error_sentinel',
+  '_field_identifier',
   '_inner_block_doc_comment_marker',
   '_kw_async_marker',
   '_kw_in',
@@ -224,7 +222,9 @@ export const LEAF_KINDS = [
   '_primitive_type',
   '_ref_marker',
   '_reference_expression_raw_const',
+  '_reserved_identifier',
   '_token_binding_pattern_type',
+  '_type_identifier',
   '_unary_expression_operator',
   '_unsafe_marker',
   '_wildcard_pattern',
@@ -398,8 +398,10 @@ export const OPERATORS = [
   "@",
   "[",
   "]",
+  "^",
   "{",
   "|",
+  "||",
   "}",
 ] as const;
 
@@ -1474,8 +1476,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_expression_statement_with_semi': [
   ],
-  '_field_identifier': [
-  ],
   '_field_pattern_shorthand': [
     { name: 'name', required: true, multiple: false },
   ],
@@ -1513,8 +1513,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_reference_expression_raw_mut': [
   ],
-  '_reserved_identifier': [
-  ],
   '_token_tree_brace': [
   ],
   '_token_tree_bracket': [
@@ -1527,8 +1525,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_token_tree_pattern_paren': [
   ],
-  '_type_identifier': [
-  ],
   '_visibility_modifier_crate': [
   ],
   'abstract_type': [
@@ -1536,7 +1532,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'trait', required: true, multiple: false },
   ],
   'arguments': [
-    { name: 'attributes', required: true, multiple: true },
+    { name: 'attributes', required: false, multiple: true },
   ],
   'array_expression': [
   ],
@@ -1838,7 +1834,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'match_arm': [
-    { name: 'attributes', required: true, multiple: true },
+    { name: 'attributes', required: false, multiple: true },
     { name: 'pattern', required: true, multiple: false },
   ],
   'match_arm_block_ending': [
@@ -1869,7 +1865,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'or_pattern': [
   ],
   'ordered_field_declaration_list': [
-    { name: 'types', required: true, multiple: true },
+    { name: 'types', required: false, multiple: true },
   ],
   'parameter': [
     { name: 'mutableSpecifier', required: false, multiple: false },
@@ -1943,14 +1939,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'self', required: true, multiple: false },
   ],
   'shorthand_field_initializer': [
-    { name: 'attributes', required: true, multiple: true },
+    { name: 'attributes', required: false, multiple: true },
     { name: 'identifier', required: true, multiple: false },
   ],
   'slice_pattern': [
   ],
   'source_file': [
     { name: 'shebang', required: false, multiple: false },
-    { name: 'statements', required: true, multiple: true },
+    { name: 'statements', required: false, multiple: true },
   ],
   'static_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -2015,7 +2011,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'tuple_expression': [
-    { name: 'attributes', required: true, multiple: true },
+    { name: 'attributes', required: false, multiple: true },
     { name: 'elements', required: false, multiple: true },
   ],
   'tuple_pattern': [
@@ -2050,7 +2046,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'defaultType', required: false, multiple: false },
   ],
   'type_parameters': [
-    { name: 'attributes', required: true, multiple: true },
+    { name: 'attributes', required: false, multiple: true },
   ],
   'unary_expression': [
     { name: 'operator', required: true, multiple: false },
@@ -2148,6 +2144,14 @@ export const _PRIMITIVE_TYPES = [
   'char',
 ] as const;
 export type PrimitiveTypeValue = (typeof _PRIMITIVE_TYPES)[number];
+
+/** Valid values for `_reserved_identifier` nodes. */
+export const _RESERVED_IDENTIFIERS = [
+  'default',
+  'union',
+  'gen',
+] as const;
+export type ReservedIdentifierValue = (typeof _RESERVED_IDENTIFIERS)[number];
 
 /** Valid values for `_token_binding_pattern_type` nodes. */
 export const _TOKEN_BINDING_PATTERN_TYPES = [
