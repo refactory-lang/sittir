@@ -38,7 +38,7 @@ fn complex_node() -> NodeData {
             text: Some("foo".to_string()),
             span: Some(Span { start: 0, end: 3 }),
             node_handle: None,
-            child_index: Some(0),
+            child_index: None,
             trivia_data: None,
         })),
     );
@@ -53,7 +53,7 @@ fn complex_node() -> NodeData {
             text: Some("1".to_string()),
             span: Some(Span { start: 5, end: 6 }),
             node_handle: None,
-            child_index: Some(1),
+            child_index: None,
             trivia_data: None,
         }]),
     );
@@ -103,6 +103,8 @@ fn top_level_keys_match_allowed_set() {
     assert!(actual.contains("_values"));
     assert!(actual.contains("_op"));
     assert!(!actual.contains("$fields"));
+    assert!(obj.get("_name").is_some_and(serde_json::Value::is_string));
+    assert!(obj.get("_values").is_some_and(serde_json::Value::is_array));
 
     // Required trio must be present even on a fully-populated node;
     // optionals (when filled) must surface as well so downstream

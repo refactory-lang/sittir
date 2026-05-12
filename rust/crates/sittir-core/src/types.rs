@@ -28,8 +28,9 @@
 
 #[cfg(feature = "napi-bindings")]
 use napi_derive::napi;
-use serde::{ser::SerializeMap, Deserialize, Deserializer, Serialize, Serializer};
+use serde::{de::{SeqAccess, Visitor}, ser::{SerializeMap, SerializeSeq}, Deserialize, Deserializer, Serialize, Serializer};
 use std::collections::HashMap;
+use std::fmt;
 
 /// Numeric runtime kind discriminant. The wire shape (`$type` on
 /// `AnyTransport` JSON) uses this directly. Per the KindID runtime
@@ -350,6 +351,7 @@ where
     Ok(Some(fields))
 }
 
+
 impl Serialize for NodeData {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         NodeDataSer {
@@ -477,12 +479,141 @@ impl napi::bindgen_prelude::TypeName for Source {
 /// Value stored in a `NodeData` named slot map. Untagged so the wire
 /// shape is simply the value (object | array | string) at each `_<slot>`
 /// property, matching the JS de-hoisted layout.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(untagged)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum FieldValue {
     Single(Box<NodeData>),
     Multiple(Vec<NodeData>),
     Text(String),
+}
+
+impl Serialize for FieldValue {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        match self {
+            Self::Single(child) => match scalar_leaf_value(child) {
+                Some(FieldScalar::Text(text)) => serializer.serialize_str(text),
+                Some(FieldScalar::KindId(kind)) => serializer.serialize_u16(kind.get()),
+                None => child.serialize(serializer),
+            },
+            Self::Multiple(items) => {
+                if items.iter().all(|item| scalar_leaf_value(item).is_some()) {
+                    let mut seq = serializer.serialize_seq(Some(items.len()))?;
+                    for item in items {
+                        match scalar_leaf_value(item).expect("checked is_some above") {
+                            FieldScalar::Text(text) => seq.serialize_element(text)?,
+                            FieldScalar::KindId(kind) => seq.serialize_element(&kind.get())?,
+                        }
+                    }
+                    seq.end()
+                } else {
+                    items.serialize(serializer)
+                }
+            }
+            Self::Text(text) => serializer.serialize_str(text),
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for FieldValue {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        struct FieldValueVisitor;
+
+        impl<'de> Visitor<'de> for FieldValueVisitor {
+            type Value = FieldValue;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+                formatter.write_str("a node object, scalar leaf, or array of node/scalar leaves")
+            }
+
+            fn visit_map<A: serde::de::MapAccess<'de>>(self, map: A) -> Result<Self::Value, A::Error> {
+                let node = NodeData::deserialize(serde::de::value::MapAccessDeserializer::new(map))?;
+                Ok(FieldValue::Single(Box::new(node)))
+            }
+
+            fn visit_str<E: serde::de::Error>(self, value: &str) -> Result<Self::Value, E> {
+                Ok(FieldValue::Text(value.to_string()))
+            }
+
+            fn visit_string<E: serde::de::Error>(self, value: String) -> Result<Self::Value, E> {
+                Ok(FieldValue::Text(value))
+            }
+
+            fn visit_u64<E: serde::de::Error>(self, value: u64) -> Result<Self::Value, E> {
+                let kind = u16::try_from(value).map_err(|_| E::custom(format!("kind id {value} out of range")))?;
+                Ok(FieldValue::Single(Box::new(scalar_kind_leaf(KindId(kind)))))
+            }
+
+            fn visit_seq<A: SeqAccess<'de>>(self, mut seq: A) -> Result<Self::Value, A::Error> {
+                let mut items = Vec::new();
+                while let Some(item) = seq.next_element::<FieldValueItem>()? {
+                    match item {
+                        FieldValueItem::Node(node) => items.push(node),
+                        FieldValueItem::Text(text) => items.push(scalar_text_leaf(text)),
+                        FieldValueItem::KindId(kind) => items.push(scalar_kind_leaf(kind)),
+                    }
+                }
+                Ok(FieldValue::Multiple(items))
+            }
+        }
+
+        deserializer.deserialize_any(FieldValueVisitor)
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum FieldValueItem {
+    Node(NodeData),
+    Text(String),
+    KindId(KindId),
+}
+
+enum FieldScalar<'a> {
+    Text(&'a str),
+    KindId(KindId),
+}
+
+fn scalar_leaf_value(node: &NodeData) -> Option<FieldScalar<'_>> {
+    if node.fields.is_some() || node.children.is_some() {
+        return None;
+    }
+    if node.node_handle.is_some() || node.child_index.is_some() {
+        return None;
+    }
+    if node.named {
+        return node.text.as_deref().map(FieldScalar::Text);
+    }
+    Some(FieldScalar::KindId(node.type_))
+}
+
+
+fn scalar_text_leaf(text: String) -> NodeData {
+    NodeData {
+        type_: KindId(0),
+        source: Source::Ts,
+        named: true,
+        fields: None,
+        children: None,
+        text: Some(text),
+        span: None,
+        node_handle: None,
+        child_index: None,
+        trivia_data: None,
+    }
+}
+
+fn scalar_kind_leaf(kind: KindId) -> NodeData {
+    NodeData {
+        type_: kind,
+        source: Source::Ts,
+        named: false,
+        fields: None,
+        children: None,
+        text: Some(kind.to_string()),
+        span: None,
+        node_handle: None,
+        child_index: None,
+        trivia_data: None,
+    }
 }
 
 /// A transport field that accepts either a single value or an array of values

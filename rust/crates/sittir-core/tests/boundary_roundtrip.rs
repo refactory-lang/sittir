@@ -32,13 +32,21 @@ fn sample_leaf() -> NodeData {
     }
 }
 
+fn sample_slot_leaf() -> NodeData {
+    NodeData {
+        node_handle: None,
+        child_index: None,
+        ..sample_leaf()
+    }
+}
+
 /// Build a branch NodeData with one field (single) + one children
 /// entry + no span/nodeId/text — exercises both elision modes.
 fn sample_branch() -> NodeData {
     let mut fields = HashMap::new();
     fields.insert(
         "name".to_string(),
-        FieldValue::Single(Box::new(sample_leaf())),
+        FieldValue::Single(Box::new(sample_slot_leaf())),
     );
     NodeData {
         type_: K_FUNCTION_ITEM,
@@ -63,11 +71,15 @@ fn roundtrip_leaf_preserves_all_present_fields() {
 }
 
 #[test]
-fn roundtrip_branch_preserves_all_present_fields() {
-    let original = sample_branch();
-    let json = serde_json::to_string(&original).unwrap();
+fn roundtrip_branch_normalizes_leaf_field_slots() {
+    let json = serde_json::to_string(&sample_branch()).unwrap();
     let parsed: NodeData = serde_json::from_str(&json).unwrap();
-    assert_eq!(original, parsed, "branch round trip must be identity");
+    let field = parsed
+        .fields
+        .as_ref()
+        .and_then(|fields| fields.get("name"))
+        .expect("name field");
+    assert!(matches!(field, FieldValue::Text(text) if text == "foo"));
 }
 
 #[test]
@@ -133,13 +145,13 @@ fn source_enum_serializes_as_numeric() {
 
 #[test]
 fn field_value_untagged_shape() {
-    // Single → object, Multiple → array, Text → string. No discriminator
-    // wrapper on the wire (untagged enum).
-    let single = FieldValue::Single(Box::new(sample_leaf()));
-    let multiple = FieldValue::Multiple(vec![sample_leaf()]);
+    // Leaf-backed Single/Multiple collapse to scalar/string-or-number wire
+    // values; branch-backed values stay object/array.
+    let single = FieldValue::Single(Box::new(sample_slot_leaf()));
+    let multiple = FieldValue::Multiple(vec![sample_slot_leaf()]);
     let text = FieldValue::Text("unsafe".to_string());
 
-    assert!(serde_json::to_value(&single).unwrap().is_object());
+    assert!(serde_json::to_value(&single).unwrap().is_string());
     assert!(serde_json::to_value(&multiple).unwrap().is_array());
     assert!(serde_json::to_value(&text).unwrap().is_string());
 }
@@ -156,6 +168,49 @@ fn field_value_deserializes_from_each_variant() {
 
     let text: FieldValue = serde_json::from_str("\"kw\"").unwrap();
     assert!(matches!(text, FieldValue::Text(ref s) if s == "kw"));
+
+    let kind: FieldValue = serde_json::from_str("85").unwrap();
+    assert!(matches!(kind, FieldValue::Single(ref node) if node.type_ == KindId(85)));
+}
+
+#[test]
+fn anonymous_leaf_children_remain_materialized_nodes_on_the_wire() {
+    let node = NodeData {
+        type_: K_FUNCTION_ITEM,
+        source: Source::Ts,
+        named: true,
+        fields: None,
+        children: Some(vec![NodeData {
+            type_: KindId(55),
+            source: Source::Ts,
+            named: false,
+            fields: None,
+            children: None,
+            text: Some("|".to_string()),
+            span: Some(Span { start: 0, end: 1 }),
+            node_handle: None,
+            child_index: None,
+            trivia_data: None,
+        }]),
+        text: None,
+        span: None,
+        node_handle: None,
+        child_index: None,
+        trivia_data: None,
+    };
+    let json = serde_json::to_string(&node).unwrap();
+    let v = wire(&json);
+    assert!(v["$children"][0].is_object());
+    assert_eq!(v["$children"][0]["$type"].as_u64(), Some(55));
+
+    let parsed: NodeData = serde_json::from_str(&json).unwrap();
+    let child = parsed
+        .children
+        .as_ref()
+        .and_then(|items| items.first())
+        .expect("child");
+    assert_eq!(child.type_, KindId(55));
+    assert_eq!(child.named, false);
 }
 
 #[test]
