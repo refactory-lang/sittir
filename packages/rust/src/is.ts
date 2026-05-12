@@ -32,7 +32,6 @@ export interface IsGuards {
     DelimTokenTreeParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._DelimTokenTreeParen };
     ExpressionStatementBlockEnding<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExpressionStatementBlockEnding };
     ExpressionStatementWithSemi<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExpressionStatementWithSemi };
-    FieldIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FieldIdentifier };
     FieldPatternShorthand<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._FieldPatternShorthand };
     ForeignModItemBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ForeignModItemBody };
     FunctionTypeFnForm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionTypeFnForm };
@@ -53,7 +52,6 @@ export interface IsGuards {
     TokenTreePatternBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreePatternBrace };
     TokenTreePatternBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreePatternBracket };
     TokenTreePatternParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreePatternParen };
-    TypeIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeIdentifier };
     VisibilityModifierCrate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._VisibilityModifierCrate };
     abstractType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractType };
     arguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Arguments };
@@ -221,7 +219,6 @@ export interface AssertGuards {
     DelimTokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._DelimTokenTreeParen };
     ExpressionStatementBlockEnding(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExpressionStatementBlockEnding };
     ExpressionStatementWithSemi(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExpressionStatementWithSemi };
-    FieldIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldIdentifier };
     FieldPatternShorthand(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._FieldPatternShorthand };
     ForeignModItemBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ForeignModItemBody };
     FunctionTypeFnForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionTypeFnForm };
@@ -242,7 +239,6 @@ export interface AssertGuards {
     TokenTreePatternBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreePatternBrace };
     TokenTreePatternBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreePatternBracket };
     TokenTreePatternParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreePatternParen };
-    TypeIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeIdentifier };
     VisibilityModifierCrate(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._VisibilityModifierCrate };
     abstractType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractType };
     arguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Arguments };
@@ -424,7 +420,7 @@ const _supertype_pattern_ids = new Set<number>([311, 312, 129, 313, 126, 151, 31
 const _supertype_statement_ids = new Set<number>([160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
 const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 142, 311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
 const _supertype_tokens_ids = new Set<number>([168, 169, 142, 311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
-const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 1, 239, 236, 228, 198]);
+const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 417, 239, 236, 228, 198]);
 const _supertype_useClause_ids = new Set<number>([139, 1, 142, 140, 141, 243, 208, 207, 206, 209]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -691,7 +687,6 @@ export const is = {
     DelimTokenTreeParen: _g(TSKindId._DelimTokenTreeParen),
     ExpressionStatementBlockEnding: _g(TSKindId._ExpressionStatementBlockEnding),
     ExpressionStatementWithSemi: _g(TSKindId._ExpressionStatementWithSemi),
-    FieldIdentifier: _g(TSKindId.FieldIdentifier),
     FieldPatternShorthand: _g(TSKindId._FieldPatternShorthand),
     ForeignModItemBody: _g(TSKindId._ForeignModItemBody),
     FunctionTypeFnForm: _g(TSKindId.FunctionTypeFnForm),
@@ -712,7 +707,6 @@ export const is = {
     TokenTreePatternBrace: _g(TSKindId._TokenTreePatternBrace),
     TokenTreePatternBracket: _g(TSKindId._TokenTreePatternBracket),
     TokenTreePatternParen: _g(TSKindId._TokenTreePatternParen),
-    TypeIdentifier: _g(TSKindId.TypeIdentifier),
     VisibilityModifierCrate: _g(TSKindId._VisibilityModifierCrate),
     abstractType: _g(TSKindId.AbstractType),
     arguments: _g(TSKindId.Arguments),
@@ -904,7 +898,6 @@ export const assert = {
     DelimTokenTreeParen: _makeAssert('DelimTokenTreeParen', is.DelimTokenTreeParen as _AnyGuard),
     ExpressionStatementBlockEnding: _makeAssert('ExpressionStatementBlockEnding', is.ExpressionStatementBlockEnding as _AnyGuard),
     ExpressionStatementWithSemi: _makeAssert('ExpressionStatementWithSemi', is.ExpressionStatementWithSemi as _AnyGuard),
-    FieldIdentifier: _makeAssert('FieldIdentifier', is.FieldIdentifier as _AnyGuard),
     FieldPatternShorthand: _makeAssert('FieldPatternShorthand', is.FieldPatternShorthand as _AnyGuard),
     ForeignModItemBody: _makeAssert('ForeignModItemBody', is.ForeignModItemBody as _AnyGuard),
     FunctionTypeFnForm: _makeAssert('FunctionTypeFnForm', is.FunctionTypeFnForm as _AnyGuard),
@@ -925,7 +918,6 @@ export const assert = {
     TokenTreePatternBrace: _makeAssert('TokenTreePatternBrace', is.TokenTreePatternBrace as _AnyGuard),
     TokenTreePatternBracket: _makeAssert('TokenTreePatternBracket', is.TokenTreePatternBracket as _AnyGuard),
     TokenTreePatternParen: _makeAssert('TokenTreePatternParen', is.TokenTreePatternParen as _AnyGuard),
-    TypeIdentifier: _makeAssert('TypeIdentifier', is.TypeIdentifier as _AnyGuard),
     VisibilityModifierCrate: _makeAssert('VisibilityModifierCrate', is.VisibilityModifierCrate as _AnyGuard),
     abstractType: _makeAssert('abstractType', is.abstractType as _AnyGuard),
     arguments: _makeAssert('arguments', is.arguments as _AnyGuard),

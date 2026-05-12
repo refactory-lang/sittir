@@ -1006,6 +1006,7 @@ function synthesizeFieldEnumRules(rules: Record<string, Rule>, provenanceByKind:
 	// can count how often each field name appears with the same member set and
 	// build the canonical-name dedup map before any rewriting happens.
 	const fieldOccurrences = collectFieldEnumOccurrences(rules);
+	const conflictingSites = collectConflictingFieldEnumSites(fieldOccurrences);
 	const memberKeyToCanonicalName = buildCanonicalEnumNames(fieldOccurrences, rules);
 
 	// Second pass: rewrite rules using the pre-computed canonical names.
@@ -1013,7 +1014,14 @@ function synthesizeFieldEnumRules(rules: Record<string, Rule>, provenanceByKind:
 	const newRules = new Map<string, Rule>();
 
 	for (const [parentKind, rule] of Object.entries(rules)) {
-		const rewritten = rewriteFieldEnums(rule, parentKind, rules, newRules, memberKeyToCanonicalName);
+		const rewritten = rewriteFieldEnums(
+			rule,
+			parentKind,
+			rules,
+			newRules,
+			memberKeyToCanonicalName,
+			conflictingSites
+		);
 		if (rewritten !== rule) rewrites.set(parentKind, rewritten);
 	}
 
@@ -1134,10 +1142,7 @@ function walkFieldEnums(rule: Rule, parentKind: string, rules: Record<string, Ru
 			const enumContent = peelRepeatWrapper(rule.content);
 			const members = resolveToEnumMembers(enumContent, rules);
 			if (members !== null && members.length > 0) {
-				const memberKey = [...members]
-					.map((m) => m.value)
-					.sort()
-					.join(',');
+				const memberKey = buildEnumMemberKey(members);
 				out.push({ parentKind, fieldName: rule.name, memberKey, members });
 			}
 			// Always recurse into content — a field can nest other fields.
@@ -1191,36 +1196,25 @@ function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], rules: Reco
 		group.push(occ);
 	}
 
-	// Two-pass name assignment to detect and resolve collisions.
-	// Pass 1: compute candidate names without collision awareness.
-	const candidates = new Map<string, { memberKey: string; priority: number }>();
 	const result = new Map<string, string>();
-
-	for (const [memberKey, group] of byKey) {
+	const groups = Array.from(byKey.entries()).map(([memberKey, group], index) => {
 		const first = group[0]!;
-		const { name, priority } = deriveCandidateName(group, first, rules);
+		const candidate = deriveCandidateName(group, first, rules);
+		return { memberKey, group, first, index, ...candidate };
+	});
 
-		const existing = candidates.get(name);
-		if (existing === undefined) {
-			// No collision — claim this name.
-			candidates.set(name, { memberKey, priority });
-			result.set(memberKey, name);
-		} else {
-			// Collision: two different member sets want the same name.
-			// The higher-priority group keeps the name; lower falls back
-			// to `_<firstParentKind>_<fieldName>`.
-			if (priority < existing.priority) {
-				// Current group wins — demote the earlier claimant.
-				const demoted = existing.memberKey;
-				const demotedGroup = byKey.get(demoted)!;
-				result.set(demoted, fallbackName(demotedGroup[0]!));
-				candidates.set(name, { memberKey, priority });
-				result.set(memberKey, name);
-			} else {
-				// Current group loses — use fallback name.
-				result.set(memberKey, fallbackName(first));
-			}
-		}
+	groups.sort((a, b) => a.priority - b.priority || a.index - b.index);
+
+	const claimedNames = new Set<string>();
+	for (const group of groups) {
+		const chosenName = claimUniqueEnumName(
+			group.name,
+			group.memberKey,
+			claimedNames,
+			rules
+		);
+		claimedNames.add(chosenName);
+		result.set(group.memberKey, chosenName);
 	}
 
 	return result;
@@ -1232,6 +1226,116 @@ function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], rules: Reco
  */
 function fallbackName(occ: FieldEnumOccurrence): string {
 	return `_${occ.parentKind}_${occ.fieldName}`;
+}
+
+function fieldEnumSiteKey(parentKind: string, fieldName: string): string {
+	return `${parentKind}\u0000${fieldName}`;
+}
+
+/**
+ * Identify field sites that carry multiple distinct literal sets inside the
+ * same parent rule.
+ *
+ * Those sites must stay inline through evaluate so simplify can merge the
+ * enclosing choice into a single `field(name, choice(...))` surface before
+ * any later enum-like storage classification runs.
+ */
+function collectConflictingFieldEnumSites(
+	occurrences: readonly FieldEnumOccurrence[]
+): ReadonlySet<string> {
+	const memberKeysBySite = new Map<string, Set<string>>();
+	for (const occ of occurrences) {
+		const siteKey = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
+		let keys = memberKeysBySite.get(siteKey);
+		if (!keys) {
+			keys = new Set<string>();
+			memberKeysBySite.set(siteKey, keys);
+		}
+		keys.add(occ.memberKey);
+	}
+	const conflicting = new Set<string>();
+	for (const [siteKey, keys] of memberKeysBySite) {
+		if (keys.size > 1) conflicting.add(siteKey);
+	}
+	return conflicting;
+}
+
+/**
+ * Claim a unique hidden enum kind name for a member set.
+ *
+ * Prefer the requested base name when it is still free. When that name has
+ * already been claimed for a different member set, append a stable slug derived
+ * from the literal set so different `parentKind + fieldName` collisions do not
+ * all collapse onto the first synthesized rule.
+ */
+function claimUniqueEnumName(
+	baseName: string,
+	memberKey: string,
+	claimedNames: ReadonlySet<string>,
+	rules: Readonly<Record<string, Rule>>
+): string {
+	if (!claimedNames.has(baseName) && canReuseExistingEnumName(baseName, memberKey, rules)) {
+		return baseName;
+	}
+	const slug = enumMemberKeySlug(memberKey);
+	let candidate = `${baseName}__${slug}`;
+	let attempt = 2;
+	while (
+		claimedNames.has(candidate) ||
+		(!canReuseExistingEnumName(candidate, memberKey, rules) &&
+			Object.prototype.hasOwnProperty.call(rules, candidate))
+	) {
+		candidate = `${baseName}__${slug}_${attempt}`;
+		attempt++;
+	}
+	return candidate;
+}
+
+/**
+ * Return `true` when an existing rule name can safely be reused for this member
+ * set: either the name is currently unused, or the existing rule resolves to
+ * the exact same literal members.
+ */
+function canReuseExistingEnumName(
+	name: string,
+	memberKey: string,
+	rules: Readonly<Record<string, Rule>>
+): boolean {
+	const existing = rules[name];
+	if (existing === undefined) return true;
+	const members = resolveToEnumMembersOneLevelDeep(existing);
+	if (members === null) return false;
+	return buildEnumMemberKey(members) === memberKey;
+}
+
+/**
+ * Build the stable key used for enum-member deduplication.
+ */
+function buildEnumMemberKey(members: readonly StringRule[]): string {
+	return [...members]
+		.map((m) => m.value)
+		.sort()
+		.join(',');
+}
+
+/**
+ * Encode a member key into an identifier-safe, deterministic suffix.
+ *
+ * Each literal contributes lowercase alphanumerics directly; every other code
+ * point is encoded as `xNN`. Commas separating members become `__`.
+ */
+function enumMemberKeySlug(memberKey: string): string {
+	return memberKey
+		.split(',')
+		.map((member) => {
+			const encoded = Array.from(member)
+				.map((ch) =>
+					/[A-Za-z0-9]/.test(ch) ? ch.toLowerCase() : `x${ch.codePointAt(0)!.toString(16)}`
+				)
+				.join('');
+			return encoded.length > 0 ? encoded : 'empty';
+		})
+		.join('__');
 }
 
 /**
@@ -1297,10 +1401,7 @@ function fieldNameMatchesGrammarRule(fieldName: string, members: StringRule[], r
 		.map((m) => m.value)
 		.sort()
 		.join(',');
-	const ruleKey = [...resolved]
-		.map((m) => m.value)
-		.sort()
-		.join(',');
+	const ruleKey = buildEnumMemberKey(resolved);
 	return ruleKey === targetKey;
 }
 
@@ -1321,13 +1422,25 @@ function rewriteFieldEnums(
 	parentKind: string,
 	rules: Record<string, Rule>,
 	newRules: Map<string, Rule>,
-	memberKeyToCanonicalName: Map<string, string>
+	memberKeyToCanonicalName: Map<string, string>,
+	conflictingSites: ReadonlySet<string>
 ): Rule {
-	const recurse = (r: Rule): Rule => rewriteFieldEnums(r, parentKind, rules, newRules, memberKeyToCanonicalName);
+	const recurse = (r: Rule): Rule =>
+		rewriteFieldEnums(
+			r,
+			parentKind,
+			rules,
+			newRules,
+			memberKeyToCanonicalName,
+			conflictingSites
+		);
 
 	switch (rule.type) {
 		case 'field': {
-			const synthesized = tryExtractFieldEnum(rule.content, rules, memberKeyToCanonicalName);
+			const synthesized =
+				conflictingSites.has(fieldEnumSiteKey(parentKind, rule.name))
+					? null
+					: tryExtractFieldEnum(rule.content, rules, memberKeyToCanonicalName);
 			if (synthesized !== null) {
 				const { enumKindName, synthesizedRule, replacementContent } = synthesized;
 				if (!newRules.has(enumKindName)) {
@@ -1420,10 +1533,7 @@ function tryExtractFieldEnum(
 	const members = resolveToEnumMembers(innerContent, rules);
 	if (members === null || members.length === 0) return null;
 
-	const memberKey = [...members]
-		.map((m) => m.value)
-		.sort()
-		.join(',');
+	const memberKey = buildEnumMemberKey(members);
 	const enumKindName = memberKeyToCanonicalName.get(memberKey);
 	if (enumKindName === undefined) return null;
 

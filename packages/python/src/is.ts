@@ -344,6 +344,7 @@ const _kindIdByKind = new Map<string, number>([
     ["_", TSKindId.Anonymous],
     ["not", TSKindId.Not],
     ["and", TSKindId.And],
+    ["or", TSKindId.Or],
     ["escape_sequence", TSKindId.EscapeSequence],
     ["type_conversion", TSKindId.TypeConversion],
     ["integer", TSKindId.Integer],

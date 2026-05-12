@@ -91,6 +91,7 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
 		externals: linked.externals,
 		derivations: linked.derivations,
 		aliasedHiddenKinds: linked.aliasedHiddenKinds,
+		topLevelAliasBodies: linked.topLevelAliasBodies,
 		polymorphVariants: linked.polymorphVariants,
 		refineForms: linked.refineForms
 	};

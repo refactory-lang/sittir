@@ -12,12 +12,12 @@
     "_closure_expression_expr": "config",
     "_closure_expression_static_marker": "text",
     "_compound_assignment_expr_operator": "text",
-    "_delim_token_tree_brace": "spread",
-    "_delim_token_tree_bracket": "spread",
-    "_delim_token_tree_paren": "spread",
+    "_delim_token_tree_brace": "config",
+    "_delim_token_tree_bracket": "config",
+    "_delim_token_tree_paren": "config",
     "_expression_statement_block_ending": "spread",
     "_expression_statement_with_semi": "spread",
-    "_field_identifier": "spread",
+    "_field_identifier": "text",
     "_field_pattern_named": "config",
     "_field_pattern_shorthand": "config",
     "_foreign_mod_item_body": "config",
@@ -50,17 +50,17 @@
     "_ref_marker": "text",
     "_reference_expression_raw_const": "text",
     "_reference_expression_raw_mut": "config",
-    "_reserved_identifier": "spread",
+    "_reserved_identifier": "text",
     "_struct_item_brace": "config",
     "_struct_item_tuple": "config",
     "_token_binding_pattern_type": "text",
-    "_token_tree_brace": "spread",
-    "_token_tree_bracket": "spread",
-    "_token_tree_paren": "spread",
-    "_token_tree_pattern_brace": "spread",
-    "_token_tree_pattern_bracket": "spread",
-    "_token_tree_pattern_paren": "spread",
-    "_type_identifier": "spread",
+    "_token_tree_brace": "config",
+    "_token_tree_bracket": "config",
+    "_token_tree_paren": "config",
+    "_token_tree_pattern_brace": "config",
+    "_token_tree_pattern_bracket": "config",
+    "_token_tree_pattern_paren": "config",
+    "_type_identifier": "text",
     "_unary_expression_operator": "text",
     "_unsafe_marker": "text",
     "_visibility_modifier_crate": "config",
@@ -89,7 +89,7 @@
     "char_literal": "text",
     "closure_expression_expr": "direct",
     "closure_expression": "config",
-    "closure_parameters": "spread",
+    "closure_parameters": "config",
     "comment": "direct",
     "compound_assignment_expr": "config",
     "const_block": "direct",
@@ -97,16 +97,16 @@
     "const_parameter": "config",
     "continue_expression": "direct",
     "crate": "text",
-    "declaration_list": "spread",
-    "delim_token_tree_paren": "spread",
-    "delim_token_tree_bracket": "spread",
-    "delim_token_tree_brace": "spread",
+    "declaration_list": "config",
+    "delim_token_tree_paren": "config",
+    "delim_token_tree_bracket": "config",
+    "delim_token_tree_brace": "config",
     "delim_token_tree": "config",
     "dynamic_type": "direct",
     "else_clause": "direct",
     "enum_item": "config",
     "enum_variant": "config",
-    "enum_variant_list": "spread",
+    "enum_variant_list": "config",
     "escape_sequence": "text",
     "expression_statement_with_semi": "direct",
     "expression_statement_block_ending": "direct",
@@ -114,10 +114,10 @@
     "extern_crate_declaration": "config",
     "extern_modifier": "direct",
     "field_declaration": "config",
-    "field_declaration_list": "spread",
+    "field_declaration_list": "config",
     "field_expression": "config",
     "field_initializer": "config",
-    "field_initializer_list": "spread",
+    "field_initializer_list": "config",
     "field_pattern_shorthand": "direct",
     "field_pattern": "config",
     "for_expression": "config",
@@ -170,7 +170,7 @@
     "or_pattern": "config",
     "ordered_field_declaration_list": "config",
     "parameter": "config",
-    "parameters": "spread",
+    "parameters": "config",
     "parenthesized_expression": "direct",
     "pointer_type_mut": "config",
     "pointer_type": "config",
@@ -193,32 +193,32 @@
     "self_parameter": "direct",
     "shebang": "text",
     "shorthand_field_initializer": "config",
-    "slice_pattern": "spread",
+    "slice_pattern": "config",
     "source_file": "config",
     "static_item": "config",
-    "string_literal": "spread",
+    "string_literal": "config",
     "struct_expression": "config",
     "struct_item": "config",
-    "struct_pattern": "config",
+    "struct_pattern": "direct",
     "super": "text",
     "token_binding_pattern": "config",
-    "token_repetition": "spread",
-    "token_repetition_pattern": "spread",
-    "token_tree_paren": "spread",
-    "token_tree_bracket": "spread",
-    "token_tree_brace": "spread",
+    "token_repetition": "config",
+    "token_repetition_pattern": "config",
+    "token_tree_paren": "config",
+    "token_tree_bracket": "config",
+    "token_tree_brace": "config",
     "token_tree": "config",
-    "token_tree_pattern_paren": "spread",
-    "token_tree_pattern_bracket": "spread",
-    "token_tree_pattern_brace": "spread",
+    "token_tree_pattern_paren": "config",
+    "token_tree_pattern_bracket": "config",
+    "token_tree_pattern_brace": "config",
     "token_tree_pattern": "config",
     "trait_bounds": "spread",
     "trait_item": "config",
     "try_block": "direct",
     "try_expression": "direct",
     "tuple_expression": "config",
-    "tuple_pattern": "spread",
-    "tuple_struct_pattern": "config",
+    "tuple_pattern": "config",
+    "tuple_struct_pattern": "direct",
     "tuple_type": "spread",
     "type_arguments": "spread",
     "type_binding": "config",
@@ -232,14 +232,14 @@
     "unit_type": "text",
     "unsafe_block": "direct",
     "use_as_clause": "config",
-    "use_bounds": "spread",
+    "use_bounds": "config",
     "use_declaration": "config",
-    "use_list": "spread",
+    "use_list": "config",
     "use_wildcard": "direct",
     "variadic_parameter": "direct",
     "visibility_modifier_crate": "config",
     "visibility_modifier": "config",
-    "where_clause": "spread",
+    "where_clause": "config",
     "where_predicate": "config",
     "while_expression": "config",
     "yield_expression": "config",
@@ -327,6 +327,10 @@
     }
   },
   "factoryFields": {
+    "_array_expression_list": [
+      "attributes",
+      "elements"
+    ],
     "_array_expression_semi": [
       "attributes",
       "elements",
@@ -426,7 +430,12 @@
     ],
     "binary_expression": [
       "left",
+      "operator",
       "right"
+    ],
+    "block": [
+      "label",
+      "trailing_expression"
     ],
     "block_comment": [
       "doc"
@@ -500,6 +509,10 @@
       "value",
       "field"
     ],
+    "field_initializer": [
+      "field",
+      "value"
+    ],
     "field_pattern_shorthand": [
       "name"
     ],
@@ -571,6 +584,10 @@
     "label": [
       "identifier"
     ],
+    "last_match_arm": [
+      "pattern",
+      "value"
+    ],
     "let_condition": [
       "pattern",
       "value"
@@ -612,6 +629,9 @@
     ],
     "negative_literal": [
       "value"
+    ],
+    "ordered_field_declaration_list": [
+      "type"
     ],
     "parameter": [
       "pattern",
@@ -676,6 +696,9 @@
       "name",
       "body"
     ],
+    "struct_pattern": [
+      "type"
+    ],
     "token_binding_pattern": [
       "name",
       "type"
@@ -697,6 +720,9 @@
     "tuple_expression": [
       "attributes",
       "elements"
+    ],
+    "tuple_struct_pattern": [
+      "type"
     ],
     "type_binding": [
       "name",

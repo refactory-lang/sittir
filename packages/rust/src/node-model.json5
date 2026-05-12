@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 359,
+  "nodeCount": 361,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -394,6 +394,16 @@
       "text": "]"
     },
     {
+      "kind": "^",
+      "modelType": "token",
+      "typeName": "Caret",
+      "irKey": "caret",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"^\" as const",
+      "text": "^"
+    },
+    {
       "kind": "_",
       "modelType": "keyword",
       "typeName": "Anonymous",
@@ -429,7 +439,7 @@
           "name": "attributes",
           "propertyName": "attributes",
           "paramName": "attributes",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -452,7 +462,7 @@
           "name": "elements",
           "propertyName": "elements",
           "paramName": "elements",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -476,7 +486,7 @@
         {
           "name": "attribute_item",
           "propertyName": "attributeItems",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -503,7 +513,7 @@
           "name": "attributes",
           "propertyName": "attributes",
           "paramName": "attributes",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -717,6 +727,7 @@
       "irKey": "condition",
       "hidden": true,
       "subtypes": [
+        "_expression",
         "_let_chain",
         "array_expression",
         "assignment_expression",
@@ -808,7 +819,7 @@
         {
           "name": "delim_tokens",
           "propertyName": "delimTokens",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -834,7 +845,7 @@
         {
           "name": "delim_tokens",
           "propertyName": "delimTokens",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -860,7 +871,7 @@
         {
           "name": "delim_tokens",
           "propertyName": "delimTokens",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -881,6 +892,9 @@
       "irKey": "delimTokens",
       "hidden": true,
       "subtypes": [
+        "$",
+        "'",
+        "_non_delim_token",
         "boolean_literal",
         "char_literal",
         "crate",
@@ -910,6 +924,7 @@
       "irKey": "expression",
       "hidden": true,
       "subtypes": [
+        "_expression_except_range",
         "array_expression",
         "assignment_expression",
         "async_block",
@@ -984,6 +999,9 @@
       "irKey": "expressionExceptRange",
       "hidden": true,
       "subtypes": [
+        "_expression_ending_with_block",
+        "_literal",
+        "_reserved_identifier",
         "array_expression",
         "assignment_expression",
         "async_block",
@@ -1084,29 +1102,12 @@
     },
     {
       "kind": "_field_identifier",
-      "modelType": "branch",
+      "modelType": "pattern",
       "typeName": "FieldIdentifier",
       "factoryName": "fieldIdentifier",
       "irKey": "fieldIdentifier",
       "hidden": false,
-      "fields": [],
-      "children": [
-        {
-          "name": "field_identifier",
-          "propertyName": "fieldIdentifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*"
     },
     {
       "kind": "_field_pattern_named",
@@ -1885,6 +1886,8 @@
       "irKey": "nonDelimToken",
       "hidden": true,
       "subtypes": [
+        "$",
+        "'",
         "boolean_literal",
         "char_literal",
         "crate",
@@ -2453,6 +2456,7 @@
       "irKey": "path",
       "hidden": true,
       "subtypes": [
+        "_reserved_identifier",
         "crate",
         "identifier",
         "metavariable",
@@ -2468,6 +2472,8 @@
       "irKey": "pattern",
       "hidden": true,
       "subtypes": [
+        "_literal_pattern",
+        "_reserved_identifier",
         "_wildcard_pattern",
         "boolean_literal",
         "captured_pattern",
@@ -2936,28 +2942,15 @@
     },
     {
       "kind": "_reserved_identifier",
-      "modelType": "branch",
+      "modelType": "enum",
       "typeName": "ReservedIdentifier",
       "factoryName": "reservedIdentifier",
       "irKey": "reservedIdentifier",
       "hidden": false,
-      "fields": [],
-      "children": [
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            }
-          ]
-        }
+      "values": [
+        "default",
+        "union",
+        "gen"
       ]
     },
     {
@@ -2967,6 +2960,7 @@
       "irKey": "statement",
       "hidden": true,
       "subtypes": [
+        "_declaration_statement",
         "associated_type",
         "attribute_item",
         "const_item",
@@ -3135,6 +3129,7 @@
       "irKey": "tokenPattern",
       "hidden": true,
       "subtypes": [
+        "'",
         "boolean_literal",
         "char_literal",
         "crate",
@@ -3164,7 +3159,7 @@
         {
           "name": "tokens",
           "propertyName": "tokens",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -3190,7 +3185,7 @@
         {
           "name": "tokens",
           "propertyName": "tokens",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -3216,7 +3211,7 @@
         {
           "name": "tokens",
           "propertyName": "tokens",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -3242,7 +3237,7 @@
         {
           "name": "token_pattern",
           "propertyName": "tokenPatterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -3268,7 +3263,7 @@
         {
           "name": "token_pattern",
           "propertyName": "tokenPatterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -3294,7 +3289,7 @@
         {
           "name": "token_pattern",
           "propertyName": "tokenPatterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -3315,6 +3310,7 @@
       "irKey": "tokens",
       "hidden": true,
       "subtypes": [
+        "'",
         "boolean_literal",
         "char_literal",
         "crate",
@@ -3339,13 +3335,13 @@
       "hidden": true,
       "subtypes": [
         "_primitive_type",
+        "_type_identifier",
         "abstract_type",
         "array_type",
         "bounded_type",
         "dynamic_type",
         "function_type",
         "generic_type",
-        "identifier",
         "macro_invocation",
         "metavariable",
         "never_type",
@@ -3359,29 +3355,12 @@
     },
     {
       "kind": "_type_identifier",
-      "modelType": "branch",
+      "modelType": "pattern",
       "typeName": "TypeIdentifier",
       "factoryName": "typeIdentifier",
       "irKey": "typeIdentifier",
       "hidden": false,
-      "fields": [],
-      "children": [
-        {
-          "name": "type_identifier",
-          "propertyName": "typeIdentifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "pattern": "(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*"
     },
     {
       "kind": "_unary_expression_operator",
@@ -3414,6 +3393,7 @@
       "irKey": "useClause",
       "hidden": true,
       "subtypes": [
+        "_path",
         "crate",
         "identifier",
         "metavariable",
@@ -3692,7 +3672,7 @@
           "name": "attributes",
           "propertyName": "attributes",
           "paramName": "attributes",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -4278,6 +4258,91 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "&&"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "||"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "&"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "|"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "^"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "=="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "!="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<<"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">>"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "+"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "*"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "/"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "%"
             }
           ],
           "source": "grammar",
@@ -4371,7 +4436,7 @@
         {
           "name": "statement",
           "propertyName": "statements",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5053,7 +5118,7 @@
         {
           "name": "pattern",
           "propertyName": "patterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5501,7 +5566,7 @@
         {
           "name": "declaration_statement",
           "propertyName": "declarationStatements",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5632,7 +5697,7 @@
         {
           "name": "delim_tokens",
           "propertyName": "delimTokens",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5658,7 +5723,7 @@
         {
           "name": "delim_tokens",
           "propertyName": "delimTokens",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5684,7 +5749,7 @@
         {
           "name": "delim_tokens",
           "propertyName": "delimTokens",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -6087,7 +6152,7 @@
         {
           "name": "attribute_item",
           "propertyName": "attributeItems",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -6102,7 +6167,7 @@
         {
           "name": "enum_variant",
           "propertyName": "enumVariants",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -6481,7 +6546,7 @@
         {
           "name": "attribute_item",
           "propertyName": "attributeItems",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -6496,7 +6561,7 @@
         {
           "name": "field_declaration",
           "propertyName": "fieldDeclarations",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -6641,7 +6706,7 @@
         {
           "name": "attribute_item",
           "propertyName": "attributeItems",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -6667,7 +6732,7 @@
         {
           "name": "shorthand_field_initializer",
           "propertyName": "shorthandFieldInitializers",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -8933,7 +8998,7 @@
         {
           "name": "attribute_item",
           "propertyName": "attributeItems",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -9850,7 +9915,7 @@
               "name": "attributes",
               "propertyName": "attributes",
               "paramName": "attributes",
-              "required": true,
+              "required": false,
               "multiple": true,
               "nonEmpty": false,
               "values": [
@@ -9930,7 +9995,7 @@
               "name": "attributes",
               "propertyName": "attributes",
               "paramName": "attributes",
-              "required": true,
+              "required": false,
               "multiple": true,
               "nonEmpty": false,
               "values": [
@@ -10600,7 +10665,7 @@
           "name": "type",
           "propertyName": "types",
           "paramName": "types",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -10624,7 +10689,7 @@
         {
           "name": "attribute_item",
           "propertyName": "attributeItems",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -10767,7 +10832,7 @@
         {
           "name": "parameter",
           "propertyName": "parameters",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -12164,7 +12229,7 @@
           "name": "attributes",
           "propertyName": "attributes",
           "paramName": "attributes",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -12221,7 +12286,7 @@
         {
           "name": "pattern",
           "propertyName": "patterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -12271,7 +12336,7 @@
           "name": "statements",
           "propertyName": "statements",
           "paramName": "statements",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -12456,7 +12521,7 @@
         {
           "name": "escape_sequence",
           "propertyName": "escapeSequences",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -12908,7 +12973,7 @@
         {
           "name": "field_pattern",
           "propertyName": "fieldPatterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -13008,7 +13073,7 @@
         {
           "name": "tokens",
           "propertyName": "tokens",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -13034,7 +13099,7 @@
         {
           "name": "token_pattern",
           "propertyName": "tokenPatterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -13155,7 +13220,7 @@
         {
           "name": "tokens",
           "propertyName": "tokens",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -13181,7 +13246,7 @@
         {
           "name": "tokens",
           "propertyName": "tokens",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -13207,7 +13272,7 @@
         {
           "name": "tokens",
           "propertyName": "tokens",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -13328,7 +13393,7 @@
         {
           "name": "token_pattern",
           "propertyName": "tokenPatterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -13354,7 +13419,7 @@
         {
           "name": "token_pattern",
           "propertyName": "tokenPatterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -13380,7 +13445,7 @@
         {
           "name": "token_pattern",
           "propertyName": "tokenPatterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -13705,7 +13770,7 @@
           "name": "attributes",
           "propertyName": "attributes",
           "paramName": "attributes",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -13774,7 +13839,7 @@
         {
           "name": "pattern",
           "propertyName": "patterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -13848,7 +13913,7 @@
         {
           "name": "pattern",
           "propertyName": "patterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -14343,7 +14408,7 @@
           "name": "attributes",
           "propertyName": "attributes",
           "paramName": "attributes",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -14725,7 +14790,7 @@
         {
           "name": "lifetime",
           "propertyName": "lifetimes",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -14814,7 +14879,7 @@
         {
           "name": "use_clause",
           "propertyName": "useClauses",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -15065,7 +15130,7 @@
         {
           "name": "where_predicate",
           "propertyName": "wherePredicates",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -15347,6 +15412,16 @@
       "isParameterless": true,
       "stampExpression": "\"|\" as const",
       "text": "|"
+    },
+    {
+      "kind": "||",
+      "modelType": "token",
+      "typeName": "Oror",
+      "irKey": "oror",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"||\" as const",
+      "text": "||"
     },
     {
       "kind": "}",

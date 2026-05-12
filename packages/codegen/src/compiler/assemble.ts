@@ -19,8 +19,14 @@ import type {
 	EnumRule,
 	SupertypeRule
 } from './rule.ts';
+import { isLinkSymbol } from './rule.ts';
 import type { OptimizedGrammar, NodeMap, SignaturePool, PolymorphVariant } from './types.ts';
 import { computePolymorphFormKinds } from './types.ts';
+import {
+	collectGeneratedKindEntries,
+	type GeneratedIdTables,
+	type GeneratedKindEntry
+} from './generated-metadata.ts';
 import type { AssembledNode, AssembledNonterminal, UnresolvedRef } from './node-map.ts';
 import {
 	AssembledBranch,
@@ -49,8 +55,13 @@ import { compileWordMatcher } from './common.ts';
 // assemble() — main entry point
 // ---------------------------------------------------------------------------
 
-export function assemble(optimized: OptimizedGrammar): NodeMap {
+export function assemble(
+	optimized: OptimizedGrammar,
+	generatedIdTables?: GeneratedIdTables
+): NodeMap {
 	const nodes = new Map<string, AssembledNode>();
+	const wordMatcher = compileWordMatcher(optimized.word, optimized.rules);
+	const kindEntries = collectGeneratedKindEntries(generatedIdTables);
 	// Parents that went through Link's variant() push-down keep their
 	// original rule shape but should NOT auto-promote to polymorph —
 	// each variant child renders via its own kind-template.
@@ -63,6 +74,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 	}
 
 	for (const [kind, rule] of Object.entries(optimized.rules)) {
+		const assemblyRule = optimized.topLevelAliasBodies?.get(kind) ?? rule;
 		// `inlinedRule` still uses inlineGroupRefs here because the
 		// RAW rule path (for template emission + classification) isn't
 		// run through simplify. Only `simplifiedRule` (derivation view)
@@ -76,11 +88,15 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 		// here — templates need anonymous delimiters (`,`, `(`, `;`,
 		// …) to surface as template text. See
 		// `project_simplify_template_walker_divergence.md`.
-		const inlinedRule = hoistInnerFieldsForTemplate(inlineGroupRefs(rule, optimized.rules));
+		const inlinedRule = hoistInnerFieldsForTemplate(
+			inlineGroupRefs(assemblyRule, optimized.rules)
+		);
 		const modelType = classifyNode(kind, inlinedRule, { variantParents });
 		// `simplifiedRules[kind]` is already inlined + fixpoint-reduced
 		// by `simplifyRules` in optimize — pass through as-is.
-		const simplifiedRule = optimized.simplifiedRules[kind]!;
+		const simplifiedRule = optimized.topLevelAliasBodies?.has(kind)
+			? simplifyRule(assemblyRule, wordMatcher)
+			: optimized.simplifiedRules[kind]!;
 		const variantChildKinds = variantChildrenByParent.get(kind);
 
 		switch (modelType) {
@@ -91,27 +107,32 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 						kind,
 						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
 						simplifiedRule,
-						variantChildKinds ? { variantChildKinds } : undefined
+						{
+							variantChildKinds,
+							kindEntries
+						}
 					)
 				);
 				break;
 			}
 			case 'polymorph': {
-				const polyForms = derivePolymorphForms(kind, rule);
+				const polyForms = derivePolymorphForms(kind, assemblyRule);
 				const polySource =
-					rule.type === 'polymorph' ? (rule.source === 'override' ? 'override' : 'promoted') : 'promoted';
-				const forms = buildAssembledFormGroups(kind, polyForms, polySource);
+					assemblyRule.type === 'polymorph'
+						? (assemblyRule.source === 'override' ? 'override' : 'promoted')
+						: 'promoted';
+				const forms = buildAssembledFormGroups(kind, polyForms, polySource, kindEntries);
 				// Forms don't get top-level nodeMap entries — they're
 				// nested inside the parent polymorph's forms array.
 				// The polymorph itself + visible variant children (below)
 				// are the nodeMap-level entries.
-				for (const child of buildVisibleVariantChildGroups(polySource, polyForms, optimized)) {
+				for (const child of buildVisibleVariantChildGroups(polySource, polyForms, optimized, kindEntries)) {
 					nodes.set(child.kind, child);
 				}
 				const variantChildKinds = collectOverrideVariantChildKinds(polySource, polyForms);
 				nodes.set(
 					kind,
-					new AssembledPolymorph(kind, rule as PolymorphRule | ChoiceRule, forms, {
+					new AssembledPolymorph(kind, assemblyRule as PolymorphRule | ChoiceRule, forms, {
 						source: polySource,
 						variantChildKinds
 					})
@@ -119,30 +140,39 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 				break;
 			}
 			case 'pattern': {
-				nodes.set(kind, new AssembledPattern(kind, rule as PatternRule | TerminalRule));
+				nodes.set(kind, new AssembledPattern(kind, assemblyRule as PatternRule | TerminalRule));
 				break;
 			}
 			case 'keyword': {
-				nodes.set(kind, new AssembledKeyword(kind, rule as StringRule));
+				nodes.set(
+					kind,
+					new AssembledKeyword(kind, assemblyRule as StringRule, { kindEntries })
+				);
 				break;
 			}
 			case 'token': {
 				// Hidden — no factoryName; token kinds have StringRule bodies
-				nodes.set(kind, new AssembledToken(kind, rule as StringRule));
+				nodes.set(kind, new AssembledToken(kind, assemblyRule as StringRule, { kindEntries }));
 				break;
 			}
 			case 'enum': {
-				nodes.set(kind, new AssembledEnum(kind, rule as EnumRule));
+				nodes.set(kind, new AssembledEnum(kind, assemblyRule as EnumRule, { kindEntries }));
 				break;
 			}
 			case 'supertype': {
-				const subtypes = resolveSupertypeSubtypes(rule, optimized);
-				nodes.set(kind, new AssembledSupertype(kind, rule as SupertypeRule | ChoiceRule, subtypes));
+				const subtypes = resolveSupertypeSubtypes(assemblyRule, optimized);
+				nodes.set(
+					kind,
+					new AssembledSupertype(kind, assemblyRule as SupertypeRule | ChoiceRule, subtypes)
+				);
 				break;
 			}
 			case 'group': {
-				const { groupRule, groupSimplified } = unwrapGroupRuleAndSimplified(rule, simplifiedRule);
-				nodes.set(kind, new AssembledGroup(kind, groupRule, groupSimplified));
+				const { groupRule, groupSimplified } = unwrapGroupRuleAndSimplified(
+					assemblyRule,
+					simplifiedRule
+				);
+				nodes.set(kind, new AssembledGroup(kind, groupRule, groupSimplified, { kindEntries }));
 				break;
 			}
 			case 'multi': {
@@ -159,8 +189,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 		}
 	}
 
-	const wordMatcher = compileWordMatcher(optimized.word, optimized.rules);
-	collectAnonymousNodes(optimized.rules, nodes, wordMatcher);
+	collectAnonymousNodes(optimized.rules, nodes, wordMatcher, kindEntries);
 	resolveCollidingNames(nodes);
 	resolveIrKeys(nodes);
 	markParameterlessKinds(nodes);
@@ -240,7 +269,8 @@ function derivePolymorphForms(kind: string, rule: Rule): PolymorphRule['forms'] 
 function buildAssembledFormGroups(
 	parentKind: string,
 	polyForms: PolymorphRule['forms'],
-	polySource: 'override' | 'promoted'
+	polySource: 'override' | 'promoted',
+	kindEntries: readonly GeneratedKindEntry[]
 ): AssembledGroup[] {
 	const nameCounts = new Map<string, number>();
 	return polyForms.map((form) => {
@@ -255,7 +285,8 @@ function buildAssembledFormGroups(
 			irKey: formNames.irKey,
 			name: disambiguated,
 			parentKind,
-			overridePassthrough: polySource === 'override' && !form.visibleChildKind
+			overridePassthrough: polySource === 'override' && !form.visibleChildKind,
+			kindEntries
 		});
 	});
 }
@@ -302,7 +333,8 @@ function collectOverrideVariantChildKinds(
 function buildVisibleVariantChildGroups(
 	polySource: 'override' | 'promoted',
 	polyForms: PolymorphRule['forms'],
-	optimized: OptimizedGrammar
+	optimized: OptimizedGrammar,
+	kindEntries: readonly GeneratedKindEntry[]
 ): AssembledNode[] {
 	if (polySource !== 'override') return [];
 	const groups: AssembledNode[] = [];
@@ -321,7 +353,8 @@ function buildVisibleVariantChildGroups(
 					new AssembledBranch(
 						visibleKind,
 						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
-						simplifiedRule
+						simplifiedRule,
+						{ kindEntries }
 					)
 				);
 				break;
@@ -364,7 +397,13 @@ function resolveSupertypeSubtypes(rule: Rule, optimized: OptimizedGrammar): stri
 	} else {
 		subtypes = [];
 	}
-	return resolveHiddenSubtypes(subtypes, optimized.rules, optimized.aliasedHiddenKinds ?? new Map());
+	return resolveHiddenSubtypes(
+		subtypes,
+		optimized.rules,
+		optimized.aliasedHiddenKinds ?? new Map(),
+		optimized.topLevelAliasBodies ?? new Map(),
+		rule.type === 'supertype' ? rule.name : undefined
+	);
 }
 
 /**
@@ -589,7 +628,9 @@ function markParameterlessKinds(nodes: Map<string, AssembledNode>): void {
 function resolveHiddenSubtypes(
 	names: readonly string[],
 	rules: Record<string, Rule>,
-	_aliasedHiddenKinds: ReadonlyMap<string, string>
+	_aliasedHiddenKinds: ReadonlyMap<string, string>,
+	topLevelAliasBodies: ReadonlyMap<string, Rule>,
+	ownerName?: string
 ): string[] {
 	// Post-synthesis-removal: the rules map is keyed by SOURCE kinds
 	// only (hidden `_X`). Subtype names surface as source kinds; we
@@ -611,9 +652,11 @@ function resolveHiddenSubtypes(
 			out.push(name);
 			return;
 		}
-		const resolved = resolveHiddenRuleContent(rule, rules, new Set([name]));
+		const body = topLevelAliasBodies.get(name) ?? rule;
+		if (rule.type === 'supertype' || topLevelAliasBodies.has(name)) out.push(name);
+		const resolved = resolveHiddenRuleContent(body, rules, new Set([name]));
 		if (resolved.length === 0) {
-			out.push(name);
+			if (!out.includes(name)) out.push(name);
 			return;
 		}
 		for (const r of resolved) {
@@ -629,7 +672,68 @@ function resolveHiddenSubtypes(
 		}
 	};
 	for (const n of names) visit(n);
+	return includeAliasMemberKinds(out, rules, topLevelAliasBodies, ownerName);
+}
+
+function includeAliasMemberKinds(
+	subtypes: readonly string[],
+	rules: Record<string, Rule>,
+	topLevelAliasBodies: ReadonlyMap<string, Rule>,
+	ownerName?: string
+): string[] {
+	const out = [...subtypes];
+	const subtypeSet = new Set(subtypes);
+	let changed = true;
+	while (changed) {
+		changed = false;
+		for (const [name, rule] of Object.entries(rules)) {
+			if (!name.startsWith('_')) continue;
+			if (name === ownerName) continue;
+			if (subtypeSet.has(name)) continue;
+			if (!isAliasMemberKind(name, rule, rules, subtypeSet, topLevelAliasBodies)) continue;
+			out.push(name);
+			subtypeSet.add(name);
+			changed = true;
+		}
+	}
 	return out;
+}
+
+function isAliasMemberKind(
+	name: string,
+	rule: Rule,
+	rules: Record<string, Rule>,
+	subtypeSet: ReadonlySet<string>,
+	topLevelAliasBodies: ReadonlyMap<string, Rule>
+): boolean {
+	if (!topLevelAliasBodies.has(name)) return false;
+	const body = topLevelAliasBodies.get(name) ?? rule;
+	const resolved = resolveHiddenRuleContent(body, rules, new Set([name]));
+	if (resolved.length === 0) return false;
+	return resolved.every((member) =>
+		isCompatibleSubtypeMember(member, rules, subtypeSet, topLevelAliasBodies, new Set())
+	);
+}
+
+function isCompatibleSubtypeMember(
+	name: string,
+	rules: Record<string, Rule>,
+	subtypeSet: ReadonlySet<string>,
+	topLevelAliasBodies: ReadonlyMap<string, Rule>,
+	seen: Set<string>
+): boolean {
+	if (subtypeSet.has(name)) return true;
+	if (!name.startsWith('_')) return false;
+	if (seen.has(name)) return false;
+	const rule = rules[name];
+	if (!rule) return false;
+	seen.add(name);
+	const body = topLevelAliasBodies.get(name) ?? rule;
+	const resolved = resolveHiddenRuleContent(body, rules, new Set([name]));
+	if (resolved.length === 0) return false;
+	return resolved.every((member) =>
+		isCompatibleSubtypeMember(member, rules, subtypeSet, topLevelAliasBodies, seen)
+	);
 }
 
 function resolveHiddenRuleContent(rule: Rule, rules: Record<string, Rule>, seen: Set<string>): string[] {
@@ -665,6 +769,8 @@ function resolveHiddenRuleContent(rule: Rule, rules: Record<string, Rule>, seen:
 			});
 		case 'choice':
 			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, rules, seen));
+		case 'string':
+			return /^[A-Za-z_][A-Za-z0-9_]*$/.test(rule.value) ? [] : [rule.value];
 		case 'variant':
 		case 'clause':
 		case 'group':
@@ -1090,29 +1196,32 @@ function detectKeywordShape(value: string, wordMatcher: RegExp | undefined): boo
 function collectAnonymousNodes(
 	rules: Record<string, Rule>,
 	nodes: Map<string, AssembledNode>,
-	wordMatcher: RegExp | undefined
+	wordMatcher: RegExp | undefined,
+	kindEntries: readonly GeneratedKindEntry[]
 ): void {
-	const seen = new Set<string>();
+	const seen = new Map<string, string>();
 
 	for (const rule of Object.values(rules)) {
 		walkForStrings(rule, seen);
 	}
 
-	for (const value of seen) {
-		if (nodes.has(value)) continue; // Already classified as a named rule
-		if (value === '' || /^\s+$/.test(value)) continue; // Skip whitespace/empty
+	for (const [kindName, literalText] of seen) {
+		if (nodes.has(kindName)) continue; // Already classified as a named rule
+		if (literalText === '' || /^\s+$/.test(literalText)) continue; // Skip whitespace/empty
 
-		const isWordShape = detectKeywordShape(value, wordMatcher);
-		// Synthetic StringRule for anonymous tokens — the kind IS the literal value.
-		const syntheticStringRule: StringRule = { type: 'string', value };
+		const isWordShape = detectKeywordShape(literalText, wordMatcher);
+		const syntheticStringRule: StringRule = { type: 'string', value: literalText };
 
 		if (isWordShape) {
 			// Keyword token (e.g., "if", "class", "pub")
 			// Anonymous keywords from grammar — no factory (hidden: no user construction path)
-			nodes.set(value, new AssembledKeyword(value, syntheticStringRule, { hidden: true }));
+			nodes.set(
+				kindName,
+				new AssembledKeyword(kindName, syntheticStringRule, { hidden: true, kindEntries })
+			);
 		} else {
 			// Operator/punctuation token (e.g., "+", "->", "{")
-			nodes.set(value, new AssembledToken(value, syntheticStringRule));
+			nodes.set(kindName, new AssembledToken(kindName, syntheticStringRule, { kindEntries }));
 		}
 	}
 }
@@ -1129,10 +1238,15 @@ function collectAnonymousNodes(
  *   node, so collecting the enum member strings as anonymous token kinds would
  *   be incorrect.
  */
-function walkForStrings(rule: Rule, out: Set<string>): void {
+function walkForStrings(rule: Rule, out: Map<string, string>): void {
 	switch (rule.type) {
 		case 'string':
-			out.add(rule.value);
+			out.set(rule.value, rule.value);
+			break;
+		case 'symbol':
+			if (isLinkSymbol(rule) && rule.literal !== undefined) {
+				out.set(rule.name, rule.literal);
+			}
 			break;
 		case 'enum':
 			// Enum values are text content — do NOT descend (see JSDoc).

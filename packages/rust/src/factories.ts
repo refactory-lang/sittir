@@ -20,15 +20,18 @@ function _assertNonEmpty<T>(
   }
 }
 
+const _leafRe_fieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_lineCommentContent = /^(?:.*)/u;
+const _leafRe_typeIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_identifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_metavariable = /^(?:\$[a-zA-Z_]\w*)/u;
 const _leafRe_shebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
 
-export function _arrayExpressionList(config: T.ArrayExpressionList.Config) {
-  const children = _configChildren<T.ArrayExpressionList['$children']>(config, [] as unknown as T.ArrayExpressionList['$children']);
-  const _attributes = config.attributes;
-  const _elements = config.elements;
+export function _arrayExpressionList(config?: T.ArrayExpressionList.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.ArrayExpressionList['$children']>(_config, [] as unknown as T.ArrayExpressionList['$children']);
+  const _attributes = _config.attributes;
+  const _elements = _config.elements;
   return withMethods({
     $type: TSKindId.ArrayExpressionList as const,
     $source: 2 as const,
@@ -40,9 +43,9 @@ export function _arrayExpressionList(config: T.ArrayExpressionList.Config) {
     elements() { return _elements; },
     children() { return children; },
     $with: {
-      attributes: (...values: T.AttributeItem[]) => _arrayExpressionList({ ...config, attributes: values }),
-      elements: (...values: T.Expression[]) => _arrayExpressionList({ ...config, elements: values }),
-      children: (...items: T.AttributeItem[]) => _arrayExpressionList({ ...config, children: items } as unknown as Parameters<typeof _arrayExpressionList>[0]),
+      attributes: (...values: T.AttributeItem[]) => _arrayExpressionList({ ..._config, attributes: values }),
+      elements: (...values: T.Expression[]) => _arrayExpressionList({ ..._config, elements: values }),
+      children: (...items: T.AttributeItem[]) => _arrayExpressionList({ ..._config, children: items } as unknown as Parameters<typeof _arrayExpressionList>[0]),
     },
   }, methodsEngine);
 }
@@ -101,36 +104,48 @@ export function _closureExpressionExpr(config: T._ClosureExpressionExpr.Config) 
   }, methodsEngine);
 }
 
-export function _delimTokenTreeBrace(...children: T.DelimTokens[]) {
+export function _delimTokenTreeBrace(config?: T._DelimTokenTreeBrace.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T._DelimTokenTreeBrace['$children']>(_config, [] as unknown as T._DelimTokenTreeBrace['$children']);
   return withMethods({
     $type: TSKindId._DelimTokenTreeBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.DelimTokens[]) => _delimTokenTreeBrace(...vs) },
+    $with: {
+      children: (...items: T.DelimTokens[]) => _delimTokenTreeBrace({ ..._config, children: items } as unknown as Parameters<typeof _delimTokenTreeBrace>[0]),
+    },
   }, methodsEngine);
 }
 
-export function _delimTokenTreeBracket(...children: T.DelimTokens[]) {
+export function _delimTokenTreeBracket(config?: T._DelimTokenTreeBracket.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T._DelimTokenTreeBracket['$children']>(_config, [] as unknown as T._DelimTokenTreeBracket['$children']);
   return withMethods({
     $type: TSKindId._DelimTokenTreeBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.DelimTokens[]) => _delimTokenTreeBracket(...vs) },
+    $with: {
+      children: (...items: T.DelimTokens[]) => _delimTokenTreeBracket({ ..._config, children: items } as unknown as Parameters<typeof _delimTokenTreeBracket>[0]),
+    },
   }, methodsEngine);
 }
 
-export function _delimTokenTreeParen(...children: T.DelimTokens[]) {
+export function _delimTokenTreeParen(config?: T._DelimTokenTreeParen.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T._DelimTokenTreeParen['$children']>(_config, [] as unknown as T._DelimTokenTreeParen['$children']);
   return withMethods({
     $type: TSKindId._DelimTokenTreeParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.DelimTokens[]) => _delimTokenTreeParen(...vs) },
+    $with: {
+      children: (...items: T.DelimTokens[]) => _delimTokenTreeParen({ ..._config, children: items } as unknown as Parameters<typeof _delimTokenTreeParen>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -158,15 +173,13 @@ export function _expressionStatementWithSemi(child: T.Expression) {
   }, methodsEngine);
 }
 
-export function fieldIdentifier(child: T.Identifier) {
-  const children = [child];
+export function fieldIdentifier(text: string) {
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_field_identifier: text must be non-empty`); if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_fieldIdentifier.test(text)) throw new Error(`_field_identifier: text does not match pattern: ${text}`);
   return withMethods({
     $type: TSKindId.FieldIdentifier as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: T.Identifier) => fieldIdentifier(v) },
+    $text: text,
   }, methodsEngine);
 }
 
@@ -593,81 +606,103 @@ export function _structItemTuple(config: T.StructItemTuple.Config) {
   }, methodsEngine);
 }
 
-export function _tokenTreeBrace(...children: T.Tokens[]) {
+export function _tokenTreeBrace(config?: T._TokenTreeBrace.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T._TokenTreeBrace['$children']>(_config, [] as unknown as T._TokenTreeBrace['$children']);
   return withMethods({
     $type: TSKindId._TokenTreeBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Tokens[]) => _tokenTreeBrace(...vs) },
+    $with: {
+      children: (...items: T.Tokens[]) => _tokenTreeBrace({ ..._config, children: items } as unknown as Parameters<typeof _tokenTreeBrace>[0]),
+    },
   }, methodsEngine);
 }
 
-export function _tokenTreeBracket(...children: T.Tokens[]) {
+export function _tokenTreeBracket(config?: T._TokenTreeBracket.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T._TokenTreeBracket['$children']>(_config, [] as unknown as T._TokenTreeBracket['$children']);
   return withMethods({
     $type: TSKindId._TokenTreeBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Tokens[]) => _tokenTreeBracket(...vs) },
+    $with: {
+      children: (...items: T.Tokens[]) => _tokenTreeBracket({ ..._config, children: items } as unknown as Parameters<typeof _tokenTreeBracket>[0]),
+    },
   }, methodsEngine);
 }
 
-export function _tokenTreeParen(...children: T.Tokens[]) {
+export function _tokenTreeParen(config?: T._TokenTreeParen.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T._TokenTreeParen['$children']>(_config, [] as unknown as T._TokenTreeParen['$children']);
   return withMethods({
     $type: TSKindId._TokenTreeParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Tokens[]) => _tokenTreeParen(...vs) },
+    $with: {
+      children: (...items: T.Tokens[]) => _tokenTreeParen({ ..._config, children: items } as unknown as Parameters<typeof _tokenTreeParen>[0]),
+    },
   }, methodsEngine);
 }
 
-export function _tokenTreePatternBrace(...children: T.TokenPattern[]) {
+export function _tokenTreePatternBrace(config?: T._TokenTreePatternBrace.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T._TokenTreePatternBrace['$children']>(_config, [] as unknown as T._TokenTreePatternBrace['$children']);
   return withMethods({
     $type: TSKindId._TokenTreePatternBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.TokenPattern[]) => _tokenTreePatternBrace(...vs) },
+    $with: {
+      children: (...items: T.TokenPattern[]) => _tokenTreePatternBrace({ ..._config, children: items } as unknown as Parameters<typeof _tokenTreePatternBrace>[0]),
+    },
   }, methodsEngine);
 }
 
-export function _tokenTreePatternBracket(...children: T.TokenPattern[]) {
+export function _tokenTreePatternBracket(config?: T._TokenTreePatternBracket.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T._TokenTreePatternBracket['$children']>(_config, [] as unknown as T._TokenTreePatternBracket['$children']);
   return withMethods({
     $type: TSKindId._TokenTreePatternBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.TokenPattern[]) => _tokenTreePatternBracket(...vs) },
+    $with: {
+      children: (...items: T.TokenPattern[]) => _tokenTreePatternBracket({ ..._config, children: items } as unknown as Parameters<typeof _tokenTreePatternBracket>[0]),
+    },
   }, methodsEngine);
 }
 
-export function _tokenTreePatternParen(...children: T.TokenPattern[]) {
+export function _tokenTreePatternParen(config?: T._TokenTreePatternParen.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T._TokenTreePatternParen['$children']>(_config, [] as unknown as T._TokenTreePatternParen['$children']);
   return withMethods({
     $type: TSKindId._TokenTreePatternParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.TokenPattern[]) => _tokenTreePatternParen(...vs) },
+    $with: {
+      children: (...items: T.TokenPattern[]) => _tokenTreePatternParen({ ..._config, children: items } as unknown as Parameters<typeof _tokenTreePatternParen>[0]),
+    },
   }, methodsEngine);
 }
 
-export function typeIdentifier(child: T.Identifier) {
-  const children = [child];
+export function typeIdentifier(text: string) {
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_type_identifier: text must be non-empty`); if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_typeIdentifier.test(text)) throw new Error(`_type_identifier: text does not match pattern: ${text}`);
   return withMethods({
     $type: TSKindId.TypeIdentifier as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: T.Identifier) => typeIdentifier(v) },
+    $text: text,
   }, methodsEngine);
 }
 
@@ -737,8 +772,9 @@ export function abstractType(config: T.AbstractType.Config) {
   }, methodsEngine);
 }
 
-export function arguments_(config: T.Arguments.Config) {
-  const _attributes = config.attributes;
+export function arguments_(config?: T.Arguments.Config) {
+  const _config = config ?? {};
+  const _attributes = _config.attributes;
   return withMethods({
     $type: TSKindId.Arguments as const,
     $source: 2 as const,
@@ -746,7 +782,7 @@ export function arguments_(config: T.Arguments.Config) {
     _attributes,
     attributes() { return _attributes; },
     $with: {
-      attributes: (...values: (T.AttributeItem | T.Expression)[]) => arguments_({ ...config, attributes: values }),
+      attributes: (...values: (T.AttributeItem | T.Expression)[]) => arguments_({ ..._config, attributes: values }),
     },
   }, methodsEngine);
 }
@@ -779,8 +815,8 @@ export function arrayExpressionUFormSemi(config: Omit<ConfigOf<T.ArrayExpression
     },
   }, methodsEngine);
 }
-export function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayExpressionUFormList>, '$variant'>) {
-  const inner = _arrayExpressionList(config);
+export function arrayExpressionUFormList(config?: Omit<ConfigOf<T.ArrayExpressionUFormList>, '$variant'>) {
+  const inner = _arrayExpressionList(config as Parameters<typeof _arrayExpressionList>[0]);
   const children = [inner] as const;
   return withMethods({
     $type: TSKindId.ArrayExpression as const,
@@ -935,7 +971,7 @@ export function baseFieldInitializer(child: T.Expression) {
 
 export function binaryExpression(config: T.BinaryExpression.Config) {
   const _left = config.left;
-  const _operator = "&&" as const;
+  const _operator = config.operator;
   const _right = config.right;
   return withMethods({
     $type: TSKindId.BinaryExpression as const,
@@ -949,6 +985,7 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
     right() { return _right; },
     $with: {
       left: (value: T.Expression) => binaryExpression({ ...config, left: value }),
+      operator: (value: "&&" | "||" | "&" | "|" | "^" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | "+" | "-" | "*" | "/" | "%") => binaryExpression({ ...config, operator: value }),
       right: (value: T.Expression) => binaryExpression({ ...config, right: value }),
     },
   }, methodsEngine);
@@ -1188,14 +1225,18 @@ export function closureExpressionUFormExpr(config: Omit<ConfigOf<T.ClosureExpres
   }, methodsEngine);
 }
 
-export function closureParameters(...children: (T.Pattern | T.Parameter)[]) {
+export function closureParameters(config?: T.ClosureParameters.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.ClosureParameters['$children']>(_config, [] as unknown as T.ClosureParameters['$children']);
   return withMethods({
     $type: TSKindId.ClosureParameters as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: (T.Pattern | T.Parameter)[]) => closureParameters(...vs) },
+    $with: {
+      children: (...items: ((T.Pattern | T.Parameter))[]) => closureParameters({ ..._config, children: items } as unknown as Parameters<typeof closureParameters>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -1306,47 +1347,63 @@ export function crate() {
   }, methodsEngine);
 }
 
-export function declarationList(...children: T.DeclarationStatement[]) {
+export function declarationList(config?: T.DeclarationList.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.DeclarationList['$children']>(_config, [] as unknown as T.DeclarationList['$children']);
   return withMethods({
     $type: TSKindId.DeclarationList as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.DeclarationStatement[]) => declarationList(...vs) },
+    $with: {
+      children: (...items: T.DeclarationStatement[]) => declarationList({ ..._config, children: items } as unknown as Parameters<typeof declarationList>[0]),
+    },
   }, methodsEngine);
 }
 
-export function delimTokenTreeParen(...children: T.DelimTokens[]) {
+export function delimTokenTreeParen(config?: T.DelimTokenTreeParen.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.DelimTokenTreeParen['$children']>(_config, [] as unknown as T.DelimTokenTreeParen['$children']);
   return withMethods({
     $type: TSKindId._DelimTokenTreeParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeParen(...vs) },
+    $with: {
+      children: (...items: T.DelimTokens[]) => delimTokenTreeParen({ ..._config, children: items } as unknown as Parameters<typeof delimTokenTreeParen>[0]),
+    },
   }, methodsEngine);
 }
 
-export function delimTokenTreeBracket(...children: T.DelimTokens[]) {
+export function delimTokenTreeBracket(config?: T.DelimTokenTreeBracket.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.DelimTokenTreeBracket['$children']>(_config, [] as unknown as T.DelimTokenTreeBracket['$children']);
   return withMethods({
     $type: TSKindId._DelimTokenTreeBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeBracket(...vs) },
+    $with: {
+      children: (...items: T.DelimTokens[]) => delimTokenTreeBracket({ ..._config, children: items } as unknown as Parameters<typeof delimTokenTreeBracket>[0]),
+    },
   }, methodsEngine);
 }
 
-export function delimTokenTreeBrace(...children: T.DelimTokens[]) {
+export function delimTokenTreeBrace(config?: T.DelimTokenTreeBrace.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.DelimTokenTreeBrace['$children']>(_config, [] as unknown as T.DelimTokenTreeBrace['$children']);
   return withMethods({
     $type: TSKindId._DelimTokenTreeBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeBrace(...vs) },
+    $with: {
+      children: (...items: T.DelimTokens[]) => delimTokenTreeBrace({ ..._config, children: items } as unknown as Parameters<typeof delimTokenTreeBrace>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -1480,14 +1537,18 @@ export function enumVariant(config: T.EnumVariant.Config) {
   }, methodsEngine);
 }
 
-export function enumVariantList(...children: (T.AttributeItem | T.EnumVariant)[]) {
+export function enumVariantList(config?: T.EnumVariantList.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.EnumVariantList['$children']>(_config, [] as unknown as T.EnumVariantList['$children']);
   return withMethods({
     $type: TSKindId.EnumVariantList as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: (T.AttributeItem | T.EnumVariant)[]) => enumVariantList(...vs) },
+    $with: {
+      children: (...items: ((T.AttributeItem | T.EnumVariant))[]) => enumVariantList({ ..._config, children: items } as unknown as Parameters<typeof enumVariantList>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -1622,14 +1683,18 @@ export function fieldDeclaration(config: T.FieldDeclaration.Config) {
   }, methodsEngine);
 }
 
-export function fieldDeclarationList(...children: (T.AttributeItem | T.FieldDeclaration)[]) {
+export function fieldDeclarationList(config?: T.FieldDeclarationList.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.FieldDeclarationList['$children']>(_config, [] as unknown as T.FieldDeclarationList['$children']);
   return withMethods({
     $type: TSKindId.FieldDeclarationList as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: (T.AttributeItem | T.FieldDeclaration)[]) => fieldDeclarationList(...vs) },
+    $with: {
+      children: (...items: ((T.AttributeItem | T.FieldDeclaration))[]) => fieldDeclarationList({ ..._config, children: items } as unknown as Parameters<typeof fieldDeclarationList>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -1673,14 +1738,18 @@ export function fieldInitializer(config: T.FieldInitializer.Config) {
   }, methodsEngine);
 }
 
-export function fieldInitializerList(...children: (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]) {
+export function fieldInitializerList(config?: T.FieldInitializerList.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.FieldInitializerList['$children']>(_config, [] as unknown as T.FieldInitializerList['$children']);
   return withMethods({
     $type: TSKindId.FieldInitializerList as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]) => fieldInitializerList(...vs) },
+    $with: {
+      children: (...items: ((T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer))[]) => fieldInitializerList({ ..._config, children: items } as unknown as Parameters<typeof fieldInitializerList>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -2876,9 +2945,10 @@ export function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUFormPrefi
   }, methodsEngine);
 }
 
-export function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationList.Config) {
-  const children = _configChildren<T.OrderedFieldDeclarationList['$children']>(config, [] as unknown as T.OrderedFieldDeclarationList['$children']);
-  const _type = config.type;
+export function orderedFieldDeclarationList(config?: T.OrderedFieldDeclarationList.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.OrderedFieldDeclarationList['$children']>(_config, [] as unknown as T.OrderedFieldDeclarationList['$children']);
+  const _type = _config.type;
   return withMethods({
     $type: TSKindId.OrderedFieldDeclarationList as const,
     $source: 2 as const,
@@ -2888,8 +2958,8 @@ export function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationLis
     types() { return _type; },
     children() { return children; },
     $with: {
-      types: (...values: T._Type[]) => orderedFieldDeclarationList({ ...config, type: values }),
-      children: (...items: ((T.AttributeItem | T.VisibilityModifier))[]) => orderedFieldDeclarationList({ ...config, children: items } as unknown as Parameters<typeof orderedFieldDeclarationList>[0]),
+      types: (...values: T._Type[]) => orderedFieldDeclarationList({ ..._config, type: values }),
+      children: (...items: ((T.AttributeItem | T.VisibilityModifier))[]) => orderedFieldDeclarationList({ ..._config, children: items } as unknown as Parameters<typeof orderedFieldDeclarationList>[0]),
     },
   }, methodsEngine);
 }
@@ -2916,14 +2986,18 @@ export function parameter(config: T.Parameter.Config) {
   }, methodsEngine);
 }
 
-export function parameters(...children: (T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type)[]) {
+export function parameters(config?: T.Parameters.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.Parameters['$children']>(_config, [] as unknown as T.Parameters['$children']);
   return withMethods({
     $type: TSKindId.Parameters as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: (T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type)[]) => parameters(...vs) },
+    $with: {
+      children: (...items: ((T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type))[]) => parameters({ ..._config, children: items } as unknown as Parameters<typeof parameters>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -3417,20 +3491,25 @@ export function shorthandFieldInitializer(config: T.ShorthandFieldInitializer.Co
   }, methodsEngine);
 }
 
-export function slicePattern(...children: T.Pattern[]) {
+export function slicePattern(config?: T.SlicePattern.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.SlicePattern['$children']>(_config, [] as unknown as T.SlicePattern['$children']);
   return withMethods({
     $type: TSKindId.SlicePattern as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Pattern[]) => slicePattern(...vs) },
+    $with: {
+      children: (...items: T.Pattern[]) => slicePattern({ ..._config, children: items } as unknown as Parameters<typeof slicePattern>[0]),
+    },
   }, methodsEngine);
 }
 
-export function sourceFile(config: T.SourceFile.Config) {
-  const _shebang = config.shebang;
-  const _statements = config.statements;
+export function sourceFile(config?: T.SourceFile.Config) {
+  const _config = config ?? {};
+  const _shebang = _config.shebang;
+  const _statements = _config.statements;
   return withMethods({
     $type: TSKindId.SourceFile as const,
     $source: 2 as const,
@@ -3440,8 +3519,8 @@ export function sourceFile(config: T.SourceFile.Config) {
     shebang() { return _shebang; },
     statements() { return _statements; },
     $with: {
-      shebang: (value?: T.Shebang) => sourceFile({ ...config, shebang: value }),
-      statements: (...values: T.Statement[]) => sourceFile({ ...config, statements: values }),
+      shebang: (value?: T.Shebang) => sourceFile({ ..._config, shebang: value }),
+      statements: (...values: T.Statement[]) => sourceFile({ ..._config, statements: values }),
     },
   }, methodsEngine);
 }
@@ -3476,14 +3555,18 @@ export function staticItem(config: T.StaticItem.Config) {
   }, methodsEngine);
 }
 
-export function stringLiteral(...children: (T.EscapeSequence | T.StringContent)[]) {
+export function stringLiteral(config?: T.StringLiteral.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.StringLiteral['$children']>(_config, [] as unknown as T.StringLiteral['$children']);
   return withMethods({
     $type: TSKindId.StringLiteral as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: (T.EscapeSequence | T.StringContent)[]) => stringLiteral(...vs) },
+    $with: {
+      children: (...items: ((T.EscapeSequence | T.StringContent))[]) => stringLiteral({ ..._config, children: items } as unknown as Parameters<typeof stringLiteral>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -3638,58 +3721,78 @@ export function tokenBindingPattern(config: T.TokenBindingPattern.Config) {
   }, methodsEngine);
 }
 
-export function tokenRepetition(...children: T.Tokens[]) {
+export function tokenRepetition(config?: T.TokenRepetition.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.TokenRepetition['$children']>(_config, [] as unknown as T.TokenRepetition['$children']);
   return withMethods({
     $type: TSKindId.TokenRepetition as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Tokens[]) => tokenRepetition(...vs) },
+    $with: {
+      children: (...items: T.Tokens[]) => tokenRepetition({ ..._config, children: items } as unknown as Parameters<typeof tokenRepetition>[0]),
+    },
   }, methodsEngine);
 }
 
-export function tokenRepetitionPattern(...children: T.TokenPattern[]) {
+export function tokenRepetitionPattern(config?: T.TokenRepetitionPattern.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.TokenRepetitionPattern['$children']>(_config, [] as unknown as T.TokenRepetitionPattern['$children']);
   return withMethods({
     $type: TSKindId.TokenRepetitionPattern as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.TokenPattern[]) => tokenRepetitionPattern(...vs) },
+    $with: {
+      children: (...items: T.TokenPattern[]) => tokenRepetitionPattern({ ..._config, children: items } as unknown as Parameters<typeof tokenRepetitionPattern>[0]),
+    },
   }, methodsEngine);
 }
 
-export function tokenTreeParen(...children: T.Tokens[]) {
+export function tokenTreeParen(config?: T.TokenTreeParen.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.TokenTreeParen['$children']>(_config, [] as unknown as T.TokenTreeParen['$children']);
   return withMethods({
     $type: TSKindId._TokenTreeParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Tokens[]) => tokenTreeParen(...vs) },
+    $with: {
+      children: (...items: T.Tokens[]) => tokenTreeParen({ ..._config, children: items } as unknown as Parameters<typeof tokenTreeParen>[0]),
+    },
   }, methodsEngine);
 }
 
-export function tokenTreeBracket(...children: T.Tokens[]) {
+export function tokenTreeBracket(config?: T.TokenTreeBracket.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.TokenTreeBracket['$children']>(_config, [] as unknown as T.TokenTreeBracket['$children']);
   return withMethods({
     $type: TSKindId._TokenTreeBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Tokens[]) => tokenTreeBracket(...vs) },
+    $with: {
+      children: (...items: T.Tokens[]) => tokenTreeBracket({ ..._config, children: items } as unknown as Parameters<typeof tokenTreeBracket>[0]),
+    },
   }, methodsEngine);
 }
 
-export function tokenTreeBrace(...children: T.Tokens[]) {
+export function tokenTreeBrace(config?: T.TokenTreeBrace.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.TokenTreeBrace['$children']>(_config, [] as unknown as T.TokenTreeBrace['$children']);
   return withMethods({
     $type: TSKindId._TokenTreeBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.Tokens[]) => tokenTreeBrace(...vs) },
+    $with: {
+      children: (...items: T.Tokens[]) => tokenTreeBrace({ ..._config, children: items } as unknown as Parameters<typeof tokenTreeBrace>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -3741,36 +3844,48 @@ export function tokenTreeUFormBrace(config?: Omit<ConfigOf<T.TokenTreeUFormBrace
   }, methodsEngine);
 }
 
-export function tokenTreePatternParen(...children: T.TokenPattern[]) {
+export function tokenTreePatternParen(config?: T.TokenTreePatternParen.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.TokenTreePatternParen['$children']>(_config, [] as unknown as T.TokenTreePatternParen['$children']);
   return withMethods({
     $type: TSKindId._TokenTreePatternParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternParen(...vs) },
+    $with: {
+      children: (...items: T.TokenPattern[]) => tokenTreePatternParen({ ..._config, children: items } as unknown as Parameters<typeof tokenTreePatternParen>[0]),
+    },
   }, methodsEngine);
 }
 
-export function tokenTreePatternBracket(...children: T.TokenPattern[]) {
+export function tokenTreePatternBracket(config?: T.TokenTreePatternBracket.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.TokenTreePatternBracket['$children']>(_config, [] as unknown as T.TokenTreePatternBracket['$children']);
   return withMethods({
     $type: TSKindId._TokenTreePatternBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternBracket(...vs) },
+    $with: {
+      children: (...items: T.TokenPattern[]) => tokenTreePatternBracket({ ..._config, children: items } as unknown as Parameters<typeof tokenTreePatternBracket>[0]),
+    },
   }, methodsEngine);
 }
 
-export function tokenTreePatternBrace(...children: T.TokenPattern[]) {
+export function tokenTreePatternBrace(config?: T.TokenTreePatternBrace.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.TokenTreePatternBrace['$children']>(_config, [] as unknown as T.TokenTreePatternBrace['$children']);
   return withMethods({
     $type: TSKindId._TokenTreePatternBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternBrace(...vs) },
+    $with: {
+      children: (...items: T.TokenPattern[]) => tokenTreePatternBrace({ ..._config, children: items } as unknown as Parameters<typeof tokenTreePatternBrace>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -3900,9 +4015,10 @@ export function tryExpression(value: T.TryExpression.Config['value']) {
   }, methodsEngine);
 }
 
-export function tupleExpression(config: T.TupleExpression.Config) {
-  const _attributes = config.attributes;
-  const _elements = config.elements;
+export function tupleExpression(config?: T.TupleExpression.Config) {
+  const _config = config ?? {};
+  const _attributes = _config.attributes;
+  const _elements = _config.elements;
   return withMethods({
     $type: TSKindId.TupleExpression as const,
     $source: 2 as const,
@@ -3912,20 +4028,24 @@ export function tupleExpression(config: T.TupleExpression.Config) {
     attributes() { return _attributes; },
     elements() { return _elements; },
     $with: {
-      attributes: (...values: T.AttributeItem[]) => tupleExpression({ ...config, attributes: values }),
-      elements: (...values: T.Expression[]) => tupleExpression({ ...config, elements: values }),
+      attributes: (...values: T.AttributeItem[]) => tupleExpression({ ..._config, attributes: values }),
+      elements: (...values: T.Expression[]) => tupleExpression({ ..._config, elements: values }),
     },
   }, methodsEngine);
 }
 
-export function tuplePattern(...children: (T.Pattern | T.ClosureExpression)[]) {
+export function tuplePattern(config?: T.TuplePattern.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.TuplePattern['$children']>(_config, [] as unknown as T.TuplePattern['$children']);
   return withMethods({
     $type: TSKindId.TuplePattern as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: (T.Pattern | T.ClosureExpression)[]) => tuplePattern(...vs) },
+    $with: {
+      children: (...items: ((T.Pattern | T.ClosureExpression))[]) => tuplePattern({ ..._config, children: items } as unknown as Parameters<typeof tuplePattern>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -4067,8 +4187,9 @@ export function typeParameter(config: T.TypeParameter.Config) {
   }, methodsEngine);
 }
 
-export function typeParameters(config: T.TypeParameters.Config) {
-  const _attributes = config.attributes;
+export function typeParameters(config?: T.TypeParameters.Config) {
+  const _config = config ?? {};
+  const _attributes = _config.attributes;
   return withMethods({
     $type: TSKindId.TypeParameters as const,
     $source: 2 as const,
@@ -4076,7 +4197,7 @@ export function typeParameters(config: T.TypeParameters.Config) {
     _attributes,
     attributes() { return _attributes; },
     $with: {
-      attributes: (...values: (T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)[]) => typeParameters({ ...config, attributes: values }),
+      attributes: (...values: (T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)[]) => typeParameters({ ..._config, attributes: values }),
     },
   }, methodsEngine);
 }
@@ -4181,14 +4302,18 @@ export function useAsClause(config: T.UseAsClause.Config) {
   }, methodsEngine);
 }
 
-export function useBounds(...children: (T.Lifetime | T.TypeIdentifier)[]) {
+export function useBounds(config?: T.UseBounds.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.UseBounds['$children']>(_config, [] as unknown as T.UseBounds['$children']);
   return withMethods({
     $type: TSKindId.UseBounds as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: (T.Lifetime | T.TypeIdentifier)[]) => useBounds(...vs) },
+    $with: {
+      children: (...items: ((T.Lifetime | T.TypeIdentifier))[]) => useBounds({ ..._config, children: items } as unknown as Parameters<typeof useBounds>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -4210,14 +4335,18 @@ export function useDeclaration(config: T.UseDeclaration.Config) {
   }, methodsEngine);
 }
 
-export function useList(...children: T.UseClause[]) {
+export function useList(config?: T.UseList.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.UseList['$children']>(_config, [] as unknown as T.UseList['$children']);
   return withMethods({
     $type: TSKindId.UseList as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.UseClause[]) => useList(...vs) },
+    $with: {
+      children: (...items: T.UseClause[]) => useList({ ..._config, children: items } as unknown as Parameters<typeof useList>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -4318,14 +4447,18 @@ export function visibilityModifierUFormInPath(config?: Omit<ConfigOf<T.Visibilit
   }, methodsEngine);
 }
 
-export function whereClause(...children: T.WherePredicate[]) {
+export function whereClause(config?: T.WhereClause.Config) {
+  const _config = config ?? {};
+  const children = _configChildren<T.WhereClause['$children']>(_config, [] as unknown as T.WhereClause['$children']);
   return withMethods({
     $type: TSKindId.WhereClause as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
     children() { return children; },
-    $with: { $children: (...vs: T.WherePredicate[]) => whereClause(...vs) },
+    $with: {
+      children: (...items: T.WherePredicate[]) => whereClause({ ..._config, children: items } as unknown as Parameters<typeof whereClause>[0]),
+    },
   }, methodsEngine);
 }
 
@@ -4464,7 +4597,7 @@ export type FluentKindMap = {
   "_delim_token_tree_paren": FluentNode<"_delim_token_tree_paren", T._DelimTokenTreeParen.Config>;
   "_expression_statement_block_ending": FluentNode<"_expression_statement_block_ending", T._ExpressionStatementBlockEnding.Config>;
   "_expression_statement_with_semi": FluentNode<"_expression_statement_with_semi", T._ExpressionStatementWithSemi.Config>;
-  "_field_identifier": FluentNode<"_field_identifier", T.FieldIdentifier.Config>;
+  "_field_identifier": T.FieldIdentifier;
   "_field_pattern_named": T.FieldPatternNamed;
   "_field_pattern_shorthand": FluentNode<"_field_pattern_shorthand", T._FieldPatternShorthand.Config>;
   "_foreign_mod_item_body": FluentNode<"_foreign_mod_item_body", T._ForeignModItemBody.Config>;
@@ -4500,7 +4633,7 @@ export type FluentKindMap = {
   "_token_tree_pattern_brace": FluentNode<"_token_tree_pattern_brace", T._TokenTreePatternBrace.Config>;
   "_token_tree_pattern_bracket": FluentNode<"_token_tree_pattern_bracket", T._TokenTreePatternBracket.Config>;
   "_token_tree_pattern_paren": FluentNode<"_token_tree_pattern_paren", T._TokenTreePatternParen.Config>;
-  "_type_identifier": FluentNode<"_type_identifier", T.TypeIdentifier.Config>;
+  "_type_identifier": T.TypeIdentifier;
   "_visibility_modifier_crate": FluentNode<"_visibility_modifier_crate", T._VisibilityModifierCrate.Config>;
   "_visibility_modifier_in_path": T.VisibilityModifierInPath;
   "_visibility_modifier_pub": T.VisibilityModifierPub;

@@ -30,6 +30,7 @@
  */
 
 import type { Rule, ChoiceRule } from './rule.ts';
+import { isLinkSymbol, literalTextOf } from './rule.ts';
 import { isSyntheticFieldWrapper, unwrapStructuralPassthroughs } from './node-map.ts';
 
 /**
@@ -57,11 +58,13 @@ function extractFlankingLiterals(content: Rule): {
 	// A leading literal is only valid if there's at least one non-literal
 	// member after it; same logic for trailing. We don't lift a literal
 	// out of a single-member seq.
-	if (first?.type === 'string' && content.members.length >= 2) {
-		leading = first.value;
+	const firstLiteral = first ? literalTextOf(first) : undefined;
+	const lastLiteral = last ? literalTextOf(last) : undefined;
+	if (firstLiteral !== undefined && content.members.length >= 2) {
+		leading = firstLiteral;
 	}
-	if (last?.type === 'string' && content.members.length >= 2 && last !== first) {
-		trailing = last.value;
+	if (lastLiteral !== undefined && content.members.length >= 2 && last !== first) {
+		trailing = lastLiteral;
 	}
 	return { leading, trailing };
 }
@@ -143,6 +146,10 @@ function fieldContentIsMultiSibling(content: Rule): boolean {
 		}
 		switch (unwrapped.type) {
 			case 'symbol':
+				if (isLinkSymbol(unwrapped)) break;
+				count++;
+				if (count >= 2) return true;
+				break;
 			case 'supertype':
 			case 'alias':
 			case 'field':
@@ -368,6 +375,10 @@ function walkRuleForTemplate(
 ): string[] {
 	const clauses = _clauses;
 	const optionalFields = _optionalFields;
+	const emitChildren = (): string =>
+		optionalFields?.has('children')
+			? emitJinjaConditional('children', '$$$CHILDREN')
+			: '$$$CHILDREN';
 	switch (rule.type) {
 		case 'seq': {
 			// Sibling-repeated-field detection. When `inferFields` has
@@ -385,7 +396,7 @@ function walkRuleForTemplate(
 				return null;
 			};
 			const unwrapChildTarget = (r: Rule): string | null => {
-				if (r.type === 'symbol') return r.name;
+				if (r.type === 'symbol') return r.source === 'link' ? null : r.name;
 				if (r.type === 'supertype') return r.name;
 				if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group')
 					return unwrapChildTarget(r.content);
@@ -407,8 +418,9 @@ function walkRuleForTemplate(
 				if (inner.type !== 'seq' || inner.members.length !== 2) return null;
 				const fname = unwrapField(inner.members[0]!);
 				const sepMember = inner.members[1]!;
-				if (!fname || sepMember.type !== 'string') return null;
-				return { name: fname, sep: sepMember.value };
+				const sep = literalTextOf(sepMember);
+				if (!fname || sep === undefined) return null;
+				return { name: fname, sep };
 			};
 			const fieldCounts = new Map<string, number>();
 			const fieldSeps = new Map<string, string>();
@@ -445,8 +457,9 @@ function walkRuleForTemplate(
 						}
 						break;
 					}
-					if (seenFirst && m.type === 'string') {
-						joinByField['children'] = m.value;
+					const literal = literalTextOf(m);
+					if (seenFirst && literal !== undefined) {
+						joinByField['children'] = literal;
 						break;
 					}
 				}
@@ -466,11 +479,13 @@ function walkRuleForTemplate(
 			if (joinByField && !('children' in joinByField) && rule.members.length >= 3) {
 				const first = rule.members[0]!;
 				const last = rule.members[rule.members.length - 1]!;
+				const firstLiteral = literalTextOf(first);
+				const lastLiteral = literalTextOf(last);
 				if (
-					first.type === 'string' &&
-					last.type === 'string' &&
-					first.value === last.value &&
-					/^[`"']$/.test(first.value)
+					firstLiteral !== undefined &&
+					lastLiteral !== undefined &&
+					firstLiteral === lastLiteral &&
+					/^[`"']$/.test(firstLiteral)
 				) {
 					joinByField['children'] = '';
 				}
@@ -498,8 +513,9 @@ function walkRuleForTemplate(
 								seenFirst = true;
 								continue;
 							}
-							if (seenFirst && m.type === 'string') {
-								joinByField[fname] = m.value;
+							const literal = literalTextOf(m);
+							if (seenFirst && literal !== undefined) {
+								joinByField[fname] = literal;
 								break;
 							}
 							if (isThisField && seenFirst) break;
@@ -535,7 +551,8 @@ function walkRuleForTemplate(
 			};
 			const out: string[] = [];
 			for (const m of rule.members) {
-				if (m.type === 'string' && skipSeps.has(m.value)) continue;
+				const literal = literalTextOf(m);
+				if (literal !== undefined && skipSeps.has(literal)) continue;
 				const substituted = substituteMember(m);
 				const parts = walkRuleForTemplate(
 					substituted,
@@ -578,7 +595,12 @@ function walkRuleForTemplate(
 					// body governs the rendered output when the conditional
 					// fires, and `needsSpace` operates on rendered chars.
 					const lastChar = effectiveSpacingChar(out[out.length - 1]!, 'last');
-					const firstChar = effectiveSpacingChar(parts[0]!, 'first');
+					const firstChar = effectiveSpacingCharForRule(
+						substituted,
+						parts[0]!,
+						'first',
+						rules
+					);
 					if (needsSpace(lastChar, firstChar, wordMatcher)) {
 						// For Jinja-inline optional fragments, route the
 						// leading separator INSIDE the conditional body so
@@ -745,7 +767,7 @@ function walkRuleForTemplate(
 				for (const p of parts) {
 					if (!p.startsWith('$') || out.includes(p)) continue;
 					const fname = placeholderField(p);
-					if (fname && !['newline', 'indent', 'dedent', 'children', 'text'].includes(fname)) {
+					if (fname && !['newline', 'indent', 'dedent', 'text'].includes(fname)) {
 						out.push(emitJinjaConditional(fname, p));
 					} else {
 						out.push(p);
@@ -1004,11 +1026,19 @@ function walkRuleForTemplate(
 					wrapped.splice(0, 0, ...innerPlaceholders);
 				}
 			}
-
+			if (optionalFields?.has(rule.name)) {
+				const body = rule.blockBearer
+					? `\n  ${wrapped.join('')}\n`
+					: wrapped.join('');
+				return [emitJinjaConditional(rule.name, body)];
+			}
 			return rule.blockBearer ? ['\n  ', ...wrapped, '\n'] : wrapped;
 		}
 
 		case 'symbol': {
+			if (isLinkSymbol(rule)) {
+				return rule.literal !== undefined ? [rule.literal] : [];
+			}
 			// Hidden helper rules (e.g. python's `_import_list`) are
 			// inlined by tree-sitter at parse time — their fields get
 			// promoted onto the parent node. To render correctly we
@@ -1039,7 +1069,7 @@ function walkRuleForTemplate(
 			// as unconsumed named children.
 			if (seen.has('children')) return [];
 			seen.add('children');
-			return ['$$$CHILDREN'];
+			return [emitChildren()];
 		}
 
 		case 'string':
@@ -1124,7 +1154,7 @@ function walkRuleForTemplate(
 		case 'supertype':
 			if (seen.has('children')) return [];
 			seen.add('children');
-			return ['$$$CHILDREN'];
+			return [emitChildren()];
 
 		case 'alias':
 			// Named aliases (`alias($._hidden, $.visible)`) create a
@@ -1137,7 +1167,7 @@ function walkRuleForTemplate(
 			if (rule.named) {
 				if (seen.has('children')) return [];
 				seen.add('children');
-				return ['$$$CHILDREN'];
+				return [emitChildren()];
 			}
 			return walkRuleForTemplate(
 				rule.content,
@@ -1196,6 +1226,8 @@ function extractSingleKeywordString(rule: Rule): string | null {
 	switch (rule.type) {
 		case 'string':
 			return rule.value;
+		case 'symbol':
+			return isLinkSymbol(rule) ? rule.literal ?? null : null;
 		case 'token':
 		case 'terminal':
 		case 'group':
@@ -1281,9 +1313,10 @@ function extractClauseBranch(rule: Rule): { fieldName: string; leading: string; 
 			fieldName = stripped.name;
 			continue;
 		}
-		if (stripped.type === 'string') {
-			if (fieldName === null) leading += stripped.value;
-			else trailing += stripped.value;
+		const literal = literalTextOf(stripped);
+		if (literal !== undefined) {
+			if (fieldName === null) leading += literal;
+			else trailing += literal;
 			continue;
 		}
 		return null; // other shapes bail out
@@ -1305,8 +1338,9 @@ function containsOnlyPunctuation(rule: Rule): boolean {
 		case 'dedent':
 		case 'newline':
 			return true;
-		case 'field':
 		case 'symbol':
+			return isLinkSymbol(rule);
+		case 'field':
 		case 'supertype':
 		case 'enum':
 			return false;
@@ -1584,6 +1618,107 @@ function effectiveSpacingChar(s: string, edge: 'first' | 'last'): string {
 		}
 	}
 	return edge === 'first' ? (s[0] ?? '') : (s[s.length - 1] ?? '');
+}
+
+function effectiveSpacingCharForRule(
+	rule: Rule,
+	fallback: string,
+	edge: 'first' | 'last',
+	rules?: Record<string, Rule>,
+	seen: Set<string> = new Set()
+): string {
+	const resolved = resolveRuleEdgeChar(rule, edge, rules, seen);
+	if (resolved && edge === 'first') {
+		return NO_LEADING_SEPARATOR_PUNCT.has(resolved)
+			? resolved
+			: effectiveSpacingChar(fallback, edge);
+	}
+	return resolved ?? effectiveSpacingChar(fallback, edge);
+}
+
+const NO_LEADING_SEPARATOR_PUNCT: ReadonlySet<string> = new Set([
+	':',
+	'?',
+	'.',
+	',',
+	';',
+	')',
+	']',
+	'>',
+	'(',
+	'['
+]);
+
+function resolveRuleEdgeChar(
+	rule: Rule,
+	edge: 'first' | 'last',
+	rules?: Record<string, Rule>,
+	seen: Set<string> = new Set()
+): string | undefined {
+	switch (rule.type) {
+		case 'field':
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'terminal':
+		case 'alias':
+		case 'token':
+			return resolveRuleEdgeChar(rule.content, edge, rules, seen);
+		case 'string':
+			return edge === 'first' ? rule.value[0] : rule.value[rule.value.length - 1];
+		case 'pattern': {
+			const lit = representativeLiteral(rule.value);
+			return lit ? (edge === 'first' ? lit[0] : lit[lit.length - 1]) : undefined;
+		}
+		case 'enum': {
+			const chars = new Set(
+				rule.members
+					.map((member) => resolveRuleEdgeChar(member, edge, rules, seen))
+					.filter((value): value is string => value != null)
+			);
+			return chars.size === 1 ? [...chars][0] : undefined;
+		}
+		case 'seq': {
+			const members = edge === 'first' ? rule.members : [...rule.members].reverse();
+			for (const member of members) {
+				const char = resolveRuleEdgeChar(member, edge, rules, seen);
+				if (char) return char;
+			}
+			return undefined;
+		}
+		case 'choice': {
+			const chars = new Set(
+				rule.members
+					.map((member) => resolveRuleEdgeChar(member, edge, rules, seen))
+					.filter((value): value is string => value != null)
+			);
+			return chars.size === 1 ? [...chars][0] : undefined;
+		}
+		case 'symbol': {
+			if (rule.source === 'link') {
+				const literal = rule.literal;
+				if (!literal) return undefined;
+				return edge === 'first' ? literal[0] : literal[literal.length - 1];
+			}
+			if (!rules) return undefined;
+			if (seen.has(rule.name)) return undefined;
+			const target = rules[rule.name];
+			if (!target) return undefined;
+			seen.add(rule.name);
+			return resolveRuleEdgeChar(target, edge, rules, seen);
+		}
+		case 'supertype':
+		case 'polymorph':
+		case 'indent':
+		case 'dedent':
+		case 'newline':
+			return undefined;
+		default:
+			return undefined;
+	}
 }
 
 /**

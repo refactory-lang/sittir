@@ -27,12 +27,12 @@ describe('ir grouped sub-namespaces (SC-012)', () => {
 	it('produces structurally identical output via flat vs grouped', () => {
 		const irExpression = ir.expression as typeof expression;
 		// ADR-0018 Phase 2: $type must be numeric TSKindId (string $type removed in Phase D).
-		// binary_expression's `operator` is an AutoStamp field (excluded from Config —
-		// factory derives it from the grammar). Pass only user-supplied fields: left + right.
+		// binary_expression.operator now carries the merged operator union, so grouped
+		// and flat IR entry points must agree when the same explicit operator is passed.
 		const leaf = { $type: TSKindId.IntegerLiteral, $text: '1' } as any;
 		const leaf2 = { $type: TSKindId.IntegerLiteral, $text: '2' } as any;
-		const flat = ir.binary({ left: leaf, right: leaf2 });
-		const grouped = irExpression.binary({ left: leaf, right: leaf2 });
+		const flat = ir.binary({ left: leaf, operator: '&&', right: leaf2 });
+		const grouped = irExpression.binary({ left: leaf, operator: '&&', right: leaf2 });
 		expect(JSON.stringify(grouped)).toBe(JSON.stringify(flat));
 	});
 

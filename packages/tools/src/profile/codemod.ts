@@ -1,6 +1,11 @@
 const CODEMOD_INLINE_PATH = '../../../../tests/acceptance/codemod-inline.ts';
 
+function ensureBenchmarkNodeEnv(): void {
+	process.env.NODE_ENV ??= 'production';
+}
+
 async function loadRunCodemodOnDir(): Promise<(corpus: string) => Promise<readonly unknown[]>> {
+	ensureBenchmarkNodeEnv();
 	const mod: { runCodemodOnDir: (corpus: string) => Promise<readonly unknown[]> } = await import(
 		new URL(CODEMOD_INLINE_PATH, import.meta.url).pathname
 	);
@@ -12,6 +17,7 @@ function printUsage(): void {
 }
 
 export async function run(argv: string[]): Promise<number> {
+	ensureBenchmarkNodeEnv();
 	const corpus = argv[0];
 	if (corpus === '--help' || corpus === '-h') {
 		printUsage();

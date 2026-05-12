@@ -11,25 +11,21 @@
 // fields is caught at compile time (FR-008). If you see a build error
 // here, the codegen is out of sync: regenerate via the command above.
 
-#![allow(
-    dead_code,
-    unused_imports,
-    non_snake_case,
-    non_camel_case_types,
-    unused_mut,
-    unused_variables
-)]
+#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
 
-use ::sittir_core::filters::{ListNonterminalView, OptionalNonterminalView, SingleNonterminalView};
+use ::sittir_core::filters::{
+    SingleNonterminalView, ListNonterminalView,
+    OptionalNonterminalView,
+};
 use ::sittir_core::types::{
-    FieldValue, NodeData, NodeTrivia, RenderableTransport, Source, Span, TransportTrivia,
+    NodeData, FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,
 };
 
 #[cfg(feature = "napi-bindings")]
 use ::napi_derive::napi;
 
-use super::bridge::*;
 use ::askama::Template as _AskamaTemplate;
+use super::bridge::*;
 
 pub mod filters {
     //! Askama resolves custom-filter names by searching for a
@@ -37,7 +33,7 @@ pub mod filters {
     //! module wraps the canonical sittir_core implementations with
     //! the `#[askama::filter_fn]` attribute so Askama can call them
     //! from templates.
-    use ::sittir_core::filters::{JoinSource, Joined};
+    use ::sittir_core::filters::{Joined, JoinSource};
 
     #[::askama::filter_fn]
     pub fn joinby<'a, T: JoinSource<'a> + ?Sized>(
@@ -89,7 +85,10 @@ pub mod filters {
         ::sittir_core::filters::joinWithFlanks(xs, values, sep)
     }
 
-    pub use ::sittir_core::filters::{isBlank, isPresent, lower, upper};
+    pub use ::sittir_core::filters::{
+        upper, lower,
+        isBlank, isPresent,
+    };
 }
 
 #[derive(::askama::Template)]
@@ -161,20 +160,14 @@ pub struct _ClassHeritageImplementsClauseTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(
-    path = "_export_statement_default_decl_arm_default_kw_value.jinja",
-    escape = "none"
-)]
+#[template(path = "_export_statement_default_decl_arm_default_kw_value.jinja", escape = "none")]
 pub struct ExportStatementDefaultDeclArmDefaultKwValueTemplate<'a> {
     pub children: ListNonterminalView<'a>,
     pub value: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
-#[template(
-    path = "_export_statement_default_decl_arm_default_kw.jinja",
-    escape = "none"
-)]
+#[template(path = "_export_statement_default_decl_arm_default_kw.jinja", escape = "none")]
 pub struct ExportStatementDefaultDeclArmDefaultKwTemplate<'a> {
     pub children: ListNonterminalView<'a>,
     pub declaration: OptionalNonterminalView<'a>,
@@ -189,30 +182,21 @@ pub struct ExportStatementDefaultDeclArmTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(
-    path = "_export_statement_default_from_arm_clause_from.jinja",
-    escape = "none"
-)]
+#[template(path = "_export_statement_default_from_arm_clause_from.jinja", escape = "none")]
 pub struct ExportStatementDefaultFromArmClauseFromTemplate<'a> {
     pub children: ListNonterminalView<'a>,
     pub source: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
-#[template(
-    path = "_export_statement_default_from_arm_ns_from.jinja",
-    escape = "none"
-)]
+#[template(path = "_export_statement_default_from_arm_ns_from.jinja", escape = "none")]
 pub struct ExportStatementDefaultFromArmNsFromTemplate<'a> {
     pub children: ListNonterminalView<'a>,
     pub source: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
-#[template(
-    path = "_export_statement_default_from_arm_star_from.jinja",
-    escape = "none"
-)]
+#[template(path = "_export_statement_default_from_arm_star_from.jinja", escape = "none")]
 pub struct ExportStatementDefaultFromArmStarFromTemplate<'a> {
     pub source: SingleNonterminalView<'a>,
 }
@@ -341,10 +325,7 @@ pub struct ParenthesizedExpressionTypedTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(
-    path = "_public_field_definition_abstract_first.jinja",
-    escape = "none"
-)]
+#[template(path = "_public_field_definition_abstract_first.jinja", escape = "none")]
 pub struct PublicFieldDefinitionAbstractFirstTemplate<'a> {
     pub abstract_marker: SingleNonterminalView<'a>,
     pub readonly_marker: OptionalNonterminalView<'a>,
@@ -370,10 +351,7 @@ pub struct PublicFieldDefinitionDeclareFirstTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(
-    path = "_public_field_definition_readonly_first.jinja",
-    escape = "none"
-)]
+#[template(path = "_public_field_definition_readonly_first.jinja", escape = "none")]
 pub struct PublicFieldDefinitionReadonlyFirstTemplate<'a> {
     pub abstract_marker: OptionalNonterminalView<'a>,
     pub readonly_marker: SingleNonterminalView<'a>,
@@ -400,16 +378,7 @@ pub struct _StringSingleTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_type_identifier.jinja", escape = "none")]
-pub struct TypeIdentifierTemplate<'a> {
-    pub children: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(
-    path = "_type_query_call_expression_in_type_annotation.jinja",
-    escape = "none"
-)]
+#[template(path = "_type_query_call_expression_in_type_annotation.jinja", escape = "none")]
 pub struct TypeQueryCallExpressionInTypeAnnotationTemplate<'a> {
     pub arguments: SingleNonterminalView<'a>,
     pub function: SingleNonterminalView<'a>,
@@ -430,10 +399,7 @@ pub struct TypeQueryInstantiationExpressionTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(
-    path = "_type_query_member_expression_in_type_annotation.jinja",
-    escape = "none"
-)]
+#[template(path = "_type_query_member_expression_in_type_annotation.jinja", escape = "none")]
 pub struct TypeQueryMemberExpressionInTypeAnnotationTemplate<'a> {
     pub object: SingleNonterminalView<'a>,
     pub property: SingleNonterminalView<'a>,
@@ -1163,7 +1129,6 @@ pub struct JsxNamespaceNameTemplate<'a> {
 pub struct JsxOpeningElementTemplate<'a> {
     pub attribute: ListNonterminalView<'a>,
     pub name: OptionalNonterminalView<'a>,
-    pub type_arguments: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1171,7 +1136,6 @@ pub struct JsxOpeningElementTemplate<'a> {
 pub struct JsxSelfClosingElementTemplate<'a> {
     pub attribute: ListNonterminalView<'a>,
     pub name: OptionalNonterminalView<'a>,
-    pub type_arguments: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1727,3 +1691,4 @@ pub struct YieldExpressionTemplate<'a> {
     pub children: ListNonterminalView<'a>,
     pub expression: OptionalNonterminalView<'a>,
 }
+

@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 413,
+  "nodeCount": 428,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -82,6 +82,26 @@
       "text": "!"
     },
     {
+      "kind": "!=",
+      "modelType": "token",
+      "typeName": "Neq",
+      "irKey": "neq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!=\" as const",
+      "text": "!="
+    },
+    {
+      "kind": "!==",
+      "modelType": "token",
+      "typeName": "TokBangEqEq",
+      "irKey": "tokBangEqEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!==\" as const",
+      "text": "!=="
+    },
+    {
       "kind": "\"",
       "modelType": "token",
       "typeName": "TokDq",
@@ -100,6 +120,16 @@
       "isParameterless": true,
       "stampExpression": "\"${\" as const",
       "text": "${"
+    },
+    {
+      "kind": "%",
+      "modelType": "token",
+      "typeName": "Percent",
+      "irKey": "percent",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"%\" as const",
+      "text": "%"
     },
     {
       "kind": "&",
@@ -162,6 +192,26 @@
       "text": "*"
     },
     {
+      "kind": "**",
+      "modelType": "token",
+      "typeName": "Starstar",
+      "irKey": "starstar",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"**\" as const",
+      "text": "**"
+    },
+    {
+      "kind": "+",
+      "modelType": "token",
+      "typeName": "Plus",
+      "irKey": "plus",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"+\" as const",
+      "text": "+"
+    },
+    {
       "kind": "+?:",
       "modelType": "token",
       "typeName": "TokPlusQColon",
@@ -180,6 +230,16 @@
       "isParameterless": true,
       "stampExpression": "\",\" as const",
       "text": ","
+    },
+    {
+      "kind": "-",
+      "modelType": "token",
+      "typeName": "Minus",
+      "irKey": "minus",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"-\" as const",
+      "text": "-"
     },
     {
       "kind": "-?:",
@@ -272,6 +332,26 @@
       "text": "</"
     },
     {
+      "kind": "<<",
+      "modelType": "token",
+      "typeName": "Shl",
+      "irKey": "shl",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<<\" as const",
+      "text": "<<"
+    },
+    {
+      "kind": "<=",
+      "modelType": "token",
+      "typeName": "Le",
+      "irKey": "le",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<=\" as const",
+      "text": "<="
+    },
+    {
       "kind": "=",
       "modelType": "token",
       "typeName": "Eq",
@@ -280,6 +360,26 @@
       "isParameterless": true,
       "stampExpression": "\"=\" as const",
       "text": "="
+    },
+    {
+      "kind": "==",
+      "modelType": "token",
+      "typeName": "Eqeq",
+      "irKey": "eqeq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"==\" as const",
+      "text": "=="
+    },
+    {
+      "kind": "===",
+      "modelType": "token",
+      "typeName": "TokEqEqEq",
+      "irKey": "tokEqEqEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"===\" as const",
+      "text": "==="
     },
     {
       "kind": "=>",
@@ -300,6 +400,36 @@
       "isParameterless": true,
       "stampExpression": "\">\" as const",
       "text": ">"
+    },
+    {
+      "kind": ">=",
+      "modelType": "token",
+      "typeName": "Ge",
+      "irKey": "ge",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">=\" as const",
+      "text": ">="
+    },
+    {
+      "kind": ">>",
+      "modelType": "token",
+      "typeName": "Shr",
+      "irKey": "shr",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">>\" as const",
+      "text": ">>"
+    },
+    {
+      "kind": ">>>",
+      "modelType": "token",
+      "typeName": "TokGtGtGt",
+      "irKey": "tokGtGtGt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">>>\" as const",
+      "text": ">>>"
     },
     {
       "kind": "?",
@@ -332,6 +462,16 @@
       "text": "?:"
     },
     {
+      "kind": "??",
+      "modelType": "token",
+      "typeName": "TokQQ",
+      "irKey": "tokQQ",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"??\" as const",
+      "text": "??"
+    },
+    {
       "kind": "@",
       "modelType": "token",
       "typeName": "At",
@@ -362,23 +502,22 @@
       "text": "]"
     },
     {
+      "kind": "^",
+      "modelType": "token",
+      "typeName": "Caret",
+      "irKey": "caret",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"^\" as const",
+      "text": "^"
+    },
+    {
       "kind": "__error_recovery",
       "modelType": "pattern",
       "typeName": "ErrorRecovery",
       "factoryName": "errorRecovery",
       "irKey": "errorRecovery",
       "hidden": false
-    },
-    {
-      "kind": "__for_header_kind",
-      "modelType": "keyword",
-      "typeName": "ForHeaderKind",
-      "factoryName": "forHeaderKind",
-      "irKey": "forHeaderKind",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"var\" as const",
-      "text": "var"
     },
     {
       "kind": "__for_header_operator",
@@ -1039,7 +1178,7 @@
           "name": "decorator",
           "propertyName": "decorators",
           "paramName": "decorators",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -1263,7 +1402,7 @@
           "name": "decorator",
           "propertyName": "decorators",
           "paramName": "decorators",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -2518,6 +2657,7 @@
       "irKey": "jsxAttributeName",
       "hidden": true,
       "subtypes": [
+        "_jsx_identifier",
         "identifier",
         "jsx_identifier",
         "jsx_namespace_name"
@@ -2530,6 +2670,7 @@
       "irKey": "jsxAttributeValue",
       "hidden": true,
       "subtypes": [
+        "_jsx_element",
         "_jsx_string",
         "jsx_element",
         "jsx_expression",
@@ -2543,6 +2684,7 @@
       "irKey": "jsxChild",
       "hidden": true,
       "subtypes": [
+        "_jsx_element",
         "html_character_reference",
         "jsx_element",
         "jsx_expression",
@@ -2568,6 +2710,7 @@
       "irKey": "jsxElementName",
       "hidden": true,
       "subtypes": [
+        "_jsx_identifier",
         "identifier",
         "jsx_identifier",
         "jsx_namespace_name",
@@ -2668,7 +2811,7 @@
           "name": "attribute",
           "propertyName": "attributes",
           "paramName": "attributes",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -2702,7 +2845,7 @@
         {
           "name": "unescaped_double_jsx_string_fragment",
           "propertyName": "unescapedDoubleJsxStringFragments",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -3146,7 +3289,7 @@
           "name": "decorator",
           "propertyName": "decorators",
           "paramName": "decorators",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -3347,6 +3490,7 @@
       "irKey": "propertyName",
       "hidden": true,
       "subtypes": [
+        "_property_identifier",
         "computed_property_name",
         "identifier",
         "number",
@@ -3695,6 +3839,7 @@
       "irKey": "semicolon",
       "hidden": true,
       "subtypes": [
+        ";",
         "_automatic_semicolon"
       ]
     },
@@ -3754,7 +3899,7 @@
         {
           "name": "unescaped_double_string_fragment",
           "propertyName": "unescapedDoubleStringFragments",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -3786,7 +3931,7 @@
         {
           "name": "unescaped_single_string_fragment",
           "propertyName": "unescapedSingleStringFragments",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -3838,29 +3983,11 @@
     },
     {
       "kind": "_type_identifier",
-      "modelType": "branch",
+      "modelType": "pattern",
       "typeName": "TypeIdentifier",
       "factoryName": "typeIdentifier",
       "irKey": "typeIdentifier",
-      "hidden": false,
-      "fields": [],
-      "children": [
-        {
-          "name": "type_identifier",
-          "propertyName": "typeIdentifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "hidden": false
     },
     {
       "kind": "_type_query_call_expression",
@@ -4553,7 +4680,7 @@
           "name": "decorator",
           "propertyName": "decorators",
           "paramName": "decorators",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5020,7 +5147,7 @@
         {
           "name": "expression",
           "propertyName": "expressions",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5053,7 +5180,7 @@
         {
           "name": "expression",
           "propertyName": "expressions",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5086,7 +5213,7 @@
         {
           "name": "pattern",
           "propertyName": "patterns",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -5969,6 +6096,126 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "&&"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "||"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">>"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">>>"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<<"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "&"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "^"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "|"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "+"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "*"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "/"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "%"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "**"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "=="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "==="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "!="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "!=="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "??"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "instanceof"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "in"
             }
           ],
           "source": "grammar",
@@ -6381,7 +6628,7 @@
           "name": "decorator",
           "propertyName": "decorators",
           "paramName": "decorators",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -6507,7 +6754,7 @@
         {
           "name": "class_body_method",
           "propertyName": "classBodyMethods",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -6556,7 +6803,7 @@
           "name": "decorator",
           "propertyName": "decorators",
           "paramName": "decorators",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -7396,13 +7643,18 @@
       "subtypes": [
         "abstract_class_declaration",
         "ambient_declaration",
+        "class_declaration",
         "enum_declaration",
+        "function_declaration",
         "function_signature",
+        "generator_function_declaration",
         "import_alias",
         "interface_declaration",
         "internal_module",
+        "lexical_declaration",
         "module",
-        "type_alias_declaration"
+        "type_alias_declaration",
+        "variable_declaration"
       ]
     },
     {
@@ -7924,7 +8176,7 @@
         {
           "name": "property_name",
           "propertyName": "propertyNames",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -8064,7 +8316,7 @@
         {
           "name": "export_specifier",
           "propertyName": "exportSpecifiers",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -8640,7 +8892,7 @@
           "name": "decorator",
           "propertyName": "decorators",
           "paramName": "decorators",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -9088,7 +9340,7 @@
         {
           "name": "formal_parameter",
           "propertyName": "formalParameters",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -11314,6 +11566,16 @@
       "children": []
     },
     {
+      "kind": "instanceof",
+      "modelType": "keyword",
+      "typeName": "Instanceof",
+      "irKey": "instanceof",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"instanceof\" as const",
+      "text": "instanceof"
+    },
+    {
       "kind": "instantiation_expression",
       "modelType": "branch",
       "typeName": "InstantiationExpression",
@@ -11758,7 +12020,7 @@
         {
           "name": "jsx_child",
           "propertyName": "jsxChildren",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -11927,7 +12189,7 @@
           "name": "attribute",
           "propertyName": "attributes",
           "paramName": "attributes",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -12031,7 +12293,7 @@
           "name": "attribute",
           "propertyName": "attributes",
           "paramName": "attributes",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -13182,7 +13444,7 @@
         {
           "name": "import_specifier",
           "propertyName": "importSpecifiers",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -13969,7 +14231,7 @@
           "name": "decorator",
           "propertyName": "decorators",
           "paramName": "decorators",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -14514,7 +14776,31 @@
       "irKey": "primaryExpression",
       "hidden": true,
       "subtypes": [
-        "non_null_expression"
+        "_identifier",
+        "_reserved_identifier",
+        "array",
+        "arrow_function",
+        "call_expression",
+        "class",
+        "false",
+        "function_expression",
+        "generator_function",
+        "identifier",
+        "member_expression",
+        "meta_property",
+        "non_null_expression",
+        "null",
+        "number",
+        "object",
+        "parenthesized_expression",
+        "regex",
+        "string",
+        "subscript_expression",
+        "super",
+        "template_string",
+        "this",
+        "true",
+        "undefined"
       ]
     },
     {
@@ -14524,12 +14810,12 @@
       "irKey": "primaryType",
       "hidden": true,
       "subtypes": [
+        "_type_identifier",
         "array_type",
         "conditional_type",
         "existential_type",
         "flow_maybe_type",
         "generic_type",
-        "identifier",
         "index_type_query",
         "intersection_type",
         "literal_type",
@@ -14588,7 +14874,7 @@
           "name": "statements",
           "propertyName": "statements",
           "paramName": "statements",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -14794,7 +15080,7 @@
           "name": "decorator",
           "propertyName": "decorators",
           "paramName": "decorators",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -15103,7 +15389,7 @@
           "name": "decorator",
           "propertyName": "decorators",
           "paramName": "decorators",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -15544,7 +15830,7 @@
           "name": "statements",
           "propertyName": "statements",
           "paramName": "statements",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -15679,7 +15965,7 @@
         {
           "name": "unescaped_double_string_fragment",
           "propertyName": "unescapedDoubleStringFragments",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -15711,7 +15997,7 @@
         {
           "name": "unescaped_single_string_fragment",
           "propertyName": "unescapedSingleStringFragments",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -15851,7 +16137,7 @@
         {
           "name": "switch_case",
           "propertyName": "switchCases",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -15906,7 +16192,7 @@
           "name": "body",
           "propertyName": "bodies",
           "paramName": "bodies",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -15940,7 +16226,7 @@
           "name": "body",
           "propertyName": "bodies",
           "paramName": "bodies",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -16031,7 +16317,7 @@
         {
           "name": "template_chars",
           "propertyName": "templateChars",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -16063,7 +16349,7 @@
         {
           "name": "template_chars",
           "propertyName": "templateChars",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
@@ -16475,7 +16761,7 @@
         {
           "name": "tuple_type_member",
           "propertyName": "tupleTypeMembers",
-          "required": true,
+          "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [

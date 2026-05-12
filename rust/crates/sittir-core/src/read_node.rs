@@ -77,11 +77,12 @@ fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u
         && children
             .as_ref()
             .is_none_or(|cs| cs.iter().all(|c| !c.named));
-    let text = if is_leaf {
-        source.get(byte_range.clone()).map(|s| s.to_string())
-    } else {
-        None
-    };
+    // Always capture the verbatim source span so text-template nodes
+    // (e.g. `raw_string_literal`) can render `{{ text }}` correctly even
+    // when they have named-field children that would otherwise suppress
+    // the leaf heuristic.  For structural nodes the extra `$text` is
+    // unused but harmless.
+    let text = source.get(byte_range.clone()).map(|s| s.to_string());
 
     // On leaves, drop the (possibly empty) `$children` entirely — the
     // shape gate in T025 enforces that leaves don't carry `$children`

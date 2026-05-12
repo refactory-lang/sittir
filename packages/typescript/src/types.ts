@@ -13,7 +13,6 @@ export type LeafScalarMap = {
 };
 
 export type LeafStringMap = {
-  __for_header_kind: "var";
   __for_header_operator: "in" | "of";
   __number_operator: "-" | "+";
   _abstract_marker: "abstract";
@@ -51,7 +50,6 @@ export type LeafStringMap = {
   this: "this";
   true: "true";
   undefined: "undefined";
-  var: "var";
   abstract: "abstract";
   async: "async";
   const: "const";
@@ -59,6 +57,7 @@ export type LeafStringMap = {
   default: "default";
   as: "as";
   namespace: "namespace";
+  var: "var";
   from: "from";
   accessor: "accessor";
   await: "await";
@@ -68,6 +67,8 @@ export type LeafStringMap = {
   using: "using";
   override: "override";
   global: "global";
+  instanceof: "instanceof";
+  in: "in";
   break: "break";
   catch: "catch";
   extends: "extends";
@@ -87,7 +88,6 @@ export type LeafStringMap = {
   keyof: "keyof";
   infer: "infer";
   interface: "interface";
-  in: "in";
   return: "return";
   satisfies: "satisfies";
   case: "case";
@@ -101,349 +101,349 @@ export type LeafStringMap = {
 };
 
 export const enum SyntaxKind {
-  _ArrowFunctionUCallSignature = '_arrow_function__call_signature',
-  _ArrowFunctionParameter = '_arrow_function_parameter',
-  CallExpressionCall = '_call_expression_call',
-  CallExpressionMember = '_call_expression_member',
-  CallExpressionTemplateCall = '_call_expression_template_call',
-  _CallSignature = '_call_signature',
-  ClassBodyMember = '_class_body_member',
-  ClassBodyMethod = '_class_body_method',
-  ClassBodyMethodSig = '_class_body_method_sig',
-  _ClassHeritageExtendsClause = '_class_heritage_extends_clause',
-  _ClassHeritageImplementsClause = '_class_heritage_implements_clause',
-  ExportStatementDefaultDeclArm = '_export_statement_default_decl_arm',
-  ExportStatementDefaultDeclArmDefaultKw = '_export_statement_default_decl_arm_default_kw',
-  ExportStatementDefaultDeclArmDefaultKwValue = '_export_statement_default_decl_arm_default_kw_value',
-  ExportStatementDefaultFromArm = '_export_statement_default_from_arm',
-  ExportStatementDefaultFromArmClauseFrom = '_export_statement_default_from_arm_clause_from',
-  ExportStatementDefaultFromArmNsFrom = '_export_statement_default_from_arm_ns_from',
-  ExportStatementDefaultFromArmStarFrom = '_export_statement_default_from_arm_star_from',
-  _ExportStatementEqualsExport = '_export_statement_equals_export',
-  _ExportStatementNamespaceExport = '_export_statement_namespace_export',
-  _ExportStatementTypeExport = '_export_statement_type_export',
-  ExtendsClauseSingle = '_extends_clause_single',
-  ForHeader = '_for_header',
-  ForHeaderLetConstKind = '_for_header_let_const_kind',
-  ForHeaderLhs = '_for_header_lhs',
-  ForHeaderVarKind = '_for_header_var_kind',
-  FromClause = '_from_clause',
-  _ImportClauseDefaultImport = '_import_clause_default_import',
-  _ImportClauseNamedImports = '_import_clause_named_imports',
-  _ImportClauseNamespaceImport = '_import_clause_namespace_import',
-  ImportSpecifierAs = '_import_specifier_as',
-  _ImportSpecifierName = '_import_specifier_name',
-  IndexSignatureColon = '_index_signature_colon',
-  _IndexSignatureMappedTypeClause = '_index_signature_mapped_type_clause',
-  Initializer = '_initializer',
-  JsxStartOpeningElement = '_jsx_start_opening_element',
-  JsxString = '_jsx_string',
-  LhsExpression = '_lhs_expression',
-  _Module = '_module',
-  _Number = '_number',
-  ParameterName = '_parameter_name',
-  _ParenthesizedExpressionSequence = '_parenthesized_expression_sequence',
-  ParenthesizedExpressionTyped = '_parenthesized_expression_typed',
-  PublicFieldDefinitionAbstractFirst = '_public_field_definition_abstract_first',
-  PublicFieldDefinitionAccessFirst = '_public_field_definition_access_first',
-  PublicFieldDefinitionAccessorOpt = '_public_field_definition_accessor_opt',
-  PublicFieldDefinitionDeclareFirst = '_public_field_definition_declare_first',
-  PublicFieldDefinitionReadonlyFirst = '_public_field_definition_readonly_first',
-  PublicFieldDefinitionStaticMods = '_public_field_definition_static_mods',
-  _StringDouble = '_string_double',
-  _StringSingle = '_string_single',
-  TypeIdentifier = '_type_identifier',
-  TypeQueryCallExpression = '_type_query_call_expression',
-  TypeQueryCallExpressionInTypeAnnotation = '_type_query_call_expression_in_type_annotation',
-  TypeQueryInstantiationExpression = '_type_query_instantiation_expression',
-  TypeQueryMemberExpression = '_type_query_member_expression',
-  TypeQueryMemberExpressionInTypeAnnotation = '_type_query_member_expression_in_type_annotation',
-  TypeQuerySubscriptExpression = '_type_query_subscript_expression',
-  UpdateExpressionPostfix = '_update_expression_postfix',
-  UpdateExpressionPrefix = '_update_expression_prefix',
-  AbstractClassDeclaration = 'abstract_class_declaration',
-  AbstractMethodSignature = 'abstract_method_signature',
-  AddingTypeAnnotation = 'adding_type_annotation',
-  AmbientDeclaration = 'ambient_declaration',
-  Arguments = 'arguments',
-  Array = 'array',
-  ArrayPattern = 'array_pattern',
-  ArrayType = 'array_type',
-  ArrowFunctionParameter = 'arrow_function_parameter',
-  ArrowFunctionUCallSignature = 'arrow_function__call_signature',
-  ArrowFunction = 'arrow_function',
-  AsExpression = 'as_expression',
-  Asserts = 'asserts',
-  AssertsAnnotation = 'asserts_annotation',
-  AssignmentExpression = 'assignment_expression',
-  AssignmentPattern = 'assignment_pattern',
-  AugmentedAssignmentExpression = 'augmented_assignment_expression',
-  AwaitExpression = 'await_expression',
-  BinaryExpression = 'binary_expression',
-  BreakStatement = 'break_statement',
-  CallExpression = 'call_expression',
-  CallSignature = 'call_signature',
-  CatchClause = 'catch_clause',
-  Class = 'class',
-  ClassBody = 'class_body',
-  ClassDeclaration = 'class_declaration',
-  ClassHeritageExtendsClause = 'class_heritage_extends_clause',
-  ClassHeritageImplementsClause = 'class_heritage_implements_clause',
-  ClassHeritage = 'class_heritage',
-  ClassStaticBlock = 'class_static_block',
-  ComputedPropertyName = 'computed_property_name',
-  ConditionalType = 'conditional_type',
-  Constraint = 'constraint',
-  ConstructSignature = 'construct_signature',
-  ConstructorType = 'constructor_type',
-  ContinueStatement = 'continue_statement',
-  DebuggerStatement = 'debugger_statement',
-  Decorator = 'decorator',
-  DecoratorCallExpression = 'decorator_call_expression',
-  DecoratorMemberExpression = 'decorator_member_expression',
-  DecoratorParenthesizedExpression = 'decorator_parenthesized_expression',
-  DefaultType = 'default_type',
-  DoStatement = 'do_statement',
-  ElseClause = 'else_clause',
-  EnumAssignment = 'enum_assignment',
-  EnumBody = 'enum_body',
-  EnumDeclaration = 'enum_declaration',
-  ExportClause = 'export_clause',
-  ExportSpecifier = 'export_specifier',
-  ExportStatementTypeExport = 'export_statement_type_export',
-  ExportStatementEqualsExport = 'export_statement_equals_export',
-  ExportStatementNamespaceExport = 'export_statement_namespace_export',
-  ExportStatement = 'export_statement',
-  ExpressionStatement = 'expression_statement',
-  ExtendsClause = 'extends_clause',
-  ExtendsTypeClause = 'extends_type_clause',
-  FieldDefinition = 'field_definition',
-  FinallyClause = 'finally_clause',
-  FlowMaybeType = 'flow_maybe_type',
-  ForInStatement = 'for_in_statement',
-  ForStatement = 'for_statement',
-  FormalParameters = 'formal_parameters',
-  FunctionDeclaration = 'function_declaration',
-  FunctionExpression = 'function_expression',
-  FunctionSignature = 'function_signature',
-  FunctionType = 'function_type',
-  GeneratorFunction = 'generator_function',
-  GeneratorFunctionDeclaration = 'generator_function_declaration',
-  GenericType = 'generic_type',
-  IfStatement = 'if_statement',
-  ImplementsClause = 'implements_clause',
-  ImportAlias = 'import_alias',
-  ImportAttribute = 'import_attribute',
-  ImportClauseNamespaceImport = 'import_clause_namespace_import',
-  ImportClauseNamedImports = 'import_clause_named_imports',
-  ImportClauseDefaultImport = 'import_clause_default_import',
-  ImportClause = 'import_clause',
-  ImportRequireClause = 'import_require_clause',
-  ImportSpecifierName = 'import_specifier_name',
-  ImportSpecifier = 'import_specifier',
-  ImportStatement = 'import_statement',
-  IndexSignatureMappedTypeClause = 'index_signature_mapped_type_clause',
-  IndexSignature = 'index_signature',
-  IndexTypeQuery = 'index_type_query',
-  InferType = 'infer_type',
-  InstantiationExpression = 'instantiation_expression',
-  InterfaceDeclaration = 'interface_declaration',
-  InternalModule = 'internal_module',
-  IntersectionType = 'intersection_type',
-  JsxAttribute = 'jsx_attribute',
-  JsxClosingElement = 'jsx_closing_element',
-  JsxElement = 'jsx_element',
-  JsxExpression = 'jsx_expression',
-  JsxNamespaceName = 'jsx_namespace_name',
-  JsxOpeningElement = 'jsx_opening_element',
-  JsxSelfClosingElement = 'jsx_self_closing_element',
-  LabeledStatement = 'labeled_statement',
-  LexicalDeclaration = 'lexical_declaration',
-  LiteralType = 'literal_type',
-  LookupType = 'lookup_type',
-  MappedTypeClause = 'mapped_type_clause',
-  MemberExpression = 'member_expression',
-  MethodDefinition = 'method_definition',
-  MethodSignature = 'method_signature',
-  Module = 'module',
-  NamedImports = 'named_imports',
-  NamespaceExport = 'namespace_export',
-  NamespaceImport = 'namespace_import',
-  NestedIdentifier = 'nested_identifier',
-  NestedTypeIdentifier = 'nested_type_identifier',
-  NewExpression = 'new_expression',
-  NonNullExpression = 'non_null_expression',
-  Object = 'object',
-  ObjectAssignmentPattern = 'object_assignment_pattern',
-  ObjectPattern = 'object_pattern',
-  ObjectType = 'object_type',
-  OmittingTypeAnnotation = 'omitting_type_annotation',
-  OptingTypeAnnotation = 'opting_type_annotation',
-  OptionalParameter = 'optional_parameter',
-  OptionalTupleParameter = 'optional_tuple_parameter',
-  OptionalType = 'optional_type',
-  Pair = 'pair',
-  PairPattern = 'pair_pattern',
-  ParenthesizedExpressionSequence = 'parenthesized_expression_sequence',
-  ParenthesizedExpression = 'parenthesized_expression',
-  ParenthesizedType = 'parenthesized_type',
-  Program = 'program',
-  PropertySignature = 'property_signature',
-  PublicFieldDefinition = 'public_field_definition',
-  ReadonlyType = 'readonly_type',
-  Regex = 'regex',
-  RequiredParameter = 'required_parameter',
-  RestPattern = 'rest_pattern',
-  RestType = 'rest_type',
-  ReturnStatement = 'return_statement',
-  SatisfiesExpression = 'satisfies_expression',
-  SequenceExpression = 'sequence_expression',
-  SpreadElement = 'spread_element',
-  StatementBlock = 'statement_block',
-  StringDouble = 'string_double',
-  StringSingle = 'string_single',
-  String = 'string',
-  SubscriptExpression = 'subscript_expression',
-  SwitchBody = 'switch_body',
-  SwitchCase = 'switch_case',
-  SwitchDefault = 'switch_default',
-  SwitchStatement = 'switch_statement',
-  TemplateLiteralType = 'template_literal_type',
-  TemplateString = 'template_string',
-  TemplateSubstitution = 'template_substitution',
-  TemplateType = 'template_type',
-  TernaryExpression = 'ternary_expression',
-  ThrowStatement = 'throw_statement',
-  TryStatement = 'try_statement',
-  TupleParameter = 'tuple_parameter',
-  TupleType = 'tuple_type',
-  TypeAliasDeclaration = 'type_alias_declaration',
-  TypeAnnotation = 'type_annotation',
-  TypeArguments = 'type_arguments',
-  TypeAssertion = 'type_assertion',
-  TypeParameter = 'type_parameter',
-  TypeParameters = 'type_parameters',
-  TypePredicate = 'type_predicate',
-  TypePredicateAnnotation = 'type_predicate_annotation',
-  TypeQuery = 'type_query',
-  UnaryExpression = 'unary_expression',
-  UnionType = 'union_type',
-  UpdateExpression = 'update_expression',
-  VariableDeclaration = 'variable_declaration',
-  VariableDeclarator = 'variable_declarator',
-  WhileStatement = 'while_statement',
-  WithStatement = 'with_statement',
-  YieldExpression = 'yield_expression',
-  ForHeaderKind = '__for_header_kind',
-  ForHeaderOperator = '__for_header_operator',
-  NumberOperator = '__number_operator',
-  AbstractMarker = '_abstract_marker',
-  _AccessibilityModifier = '_accessibility_modifier',
-  AccessorKind = '_accessor_kind',
-  AsyncMarker = '_async_marker',
-  AugmentedAssignmentExpressionOperator = '_augmented_assignment_expression_operator',
-  ConstMarker = '_const_marker',
-  ExportSpecifierExportKind = '_export_specifier_export_kind',
-  ImportAttributeObject = '_import_attribute_object',
-  Kind = '_kind',
-  KwAbstractMarker = '_kw_abstract_marker',
-  KwAccessorMarker = '_kw_accessor_marker',
-  KwAsyncMarker = '_kw_async_marker',
-  KwAwaitMarker = '_kw_await_marker',
-  KwConstMarker = '_kw_const_marker',
-  KwDeclareMarker = '_kw_declare_marker',
-  KwReadonlyMarker = '_kw_readonly_marker',
-  KwStaticMarker = '_kw_static_marker',
-  KwUsingMarker = '_kw_using_marker',
-  ObjectTypeClosing = '_object_type_closing',
-  ObjectTypeOpening = '_object_type_opening',
-  Operator = '_operator',
-  _OverrideModifier = '_override_modifier',
-  PublicFieldDefinitionOptionalityMarker = '_public_field_definition_optionality_marker',
-  ReadonlyMarker = '_readonly_marker',
-  ReservedIdentifier = '_reserved_identifier',
-  StaticMarker = '_static_marker',
-  UnaryExpressionOperator = '_unary_expression_operator',
-  AccessibilityModifier = 'accessibility_modifier',
-  Comment = 'comment',
-  EscapeSequence = 'escape_sequence',
-  False = 'false',
-  HashBangLine = 'hash_bang_line',
-  HtmlCharacterReference = 'html_character_reference',
-  Identifier = 'identifier',
-  Import = 'import',
-  JsxIdentifier = 'jsx_identifier',
-  MetaProperty = 'meta_property',
-  Null = 'null',
-  Number = 'number',
-  OverrideModifier = 'override_modifier',
-  PredefinedType = 'predefined_type',
-  PrivatePropertyIdentifier = 'private_property_identifier',
-  RegexFlags = 'regex_flags',
-  RegexPattern = 'regex_pattern',
-  Super = 'super',
-  This = 'this',
-  True = 'true',
-  Undefined = 'undefined',
-  UnescapedDoubleJsxStringFragment = 'unescaped_double_jsx_string_fragment',
-  UnescapedDoubleStringFragment = 'unescaped_double_string_fragment',
-  UnescapedSingleJsxStringFragment = 'unescaped_single_jsx_string_fragment',
-  UnescapedSingleStringFragment = 'unescaped_single_string_fragment',
-  AutomaticSemicolon = '_automatic_semicolon',
-  TemplateChars = '_template_chars',
-  TernaryQmark = '_ternary_qmark',
-  HtmlComment = 'html_comment',
-  Oror = '||',
-  JsxText = 'jsx_text',
-  FunctionSignatureAutomaticSemicolon = '_function_signature_automatic_semicolon',
-  ErrorRecovery = '__error_recovery',
-  Var = 'var',
-  Abstract = 'abstract',
-  Async = 'async',
-  Const = 'const',
-  Export = 'export',
-  Default = 'default',
-  As = 'as',
-  Namespace = 'namespace',
-  From = 'from',
-  Accessor = 'accessor',
-  Await = 'await',
-  Declare = 'declare',
-  Readonly = 'readonly',
-  Static = 'static',
-  Using = 'using',
-  Override = 'override',
-  Global = 'global',
-  Break = 'break',
-  Catch = 'catch',
-  Extends = 'extends',
-  New = 'new',
-  Continue = 'continue',
-  Debugger = 'debugger',
-  Do = 'do',
-  While = 'while',
-  Else = 'else',
-  Enum = 'enum',
-  Finally = 'finally',
-  For = 'for',
-  Function = 'function',
-  If = 'if',
-  Implements = 'implements',
-  Require = 'require',
-  Keyof = 'keyof',
-  Infer = 'infer',
-  Interface = 'interface',
-  In = 'in',
-  Return = 'return',
-  Satisfies = 'satisfies',
-  Case = 'case',
-  Switch = 'switch',
-  Throw = 'throw',
-  Try = 'try',
-  Is = 'is',
-  Typeof = 'typeof',
-  With = 'with',
-  Yield = 'yield',
+  _ArrowFunctionUCallSignature = "_arrow_function__call_signature",
+  _ArrowFunctionParameter = "_arrow_function_parameter",
+  CallExpressionCall = "_call_expression_call",
+  CallExpressionMember = "_call_expression_member",
+  CallExpressionTemplateCall = "_call_expression_template_call",
+  _CallSignature = "_call_signature",
+  ClassBodyMember = "_class_body_member",
+  ClassBodyMethod = "_class_body_method",
+  ClassBodyMethodSig = "_class_body_method_sig",
+  _ClassHeritageExtendsClause = "_class_heritage_extends_clause",
+  _ClassHeritageImplementsClause = "_class_heritage_implements_clause",
+  ExportStatementDefaultDeclArm = "_export_statement_default_decl_arm",
+  ExportStatementDefaultDeclArmDefaultKw = "_export_statement_default_decl_arm_default_kw",
+  ExportStatementDefaultDeclArmDefaultKwValue = "_export_statement_default_decl_arm_default_kw_value",
+  ExportStatementDefaultFromArm = "_export_statement_default_from_arm",
+  ExportStatementDefaultFromArmClauseFrom = "_export_statement_default_from_arm_clause_from",
+  ExportStatementDefaultFromArmNsFrom = "_export_statement_default_from_arm_ns_from",
+  ExportStatementDefaultFromArmStarFrom = "_export_statement_default_from_arm_star_from",
+  _ExportStatementEqualsExport = "_export_statement_equals_export",
+  _ExportStatementNamespaceExport = "_export_statement_namespace_export",
+  _ExportStatementTypeExport = "_export_statement_type_export",
+  ExtendsClauseSingle = "_extends_clause_single",
+  ForHeader = "_for_header",
+  ForHeaderLetConstKind = "_for_header_let_const_kind",
+  ForHeaderLhs = "_for_header_lhs",
+  ForHeaderVarKind = "_for_header_var_kind",
+  FromClause = "_from_clause",
+  _ImportClauseDefaultImport = "_import_clause_default_import",
+  _ImportClauseNamedImports = "_import_clause_named_imports",
+  _ImportClauseNamespaceImport = "_import_clause_namespace_import",
+  ImportSpecifierAs = "_import_specifier_as",
+  _ImportSpecifierName = "_import_specifier_name",
+  IndexSignatureColon = "_index_signature_colon",
+  _IndexSignatureMappedTypeClause = "_index_signature_mapped_type_clause",
+  Initializer = "_initializer",
+  JsxStartOpeningElement = "_jsx_start_opening_element",
+  JsxString = "_jsx_string",
+  LhsExpression = "_lhs_expression",
+  _Module = "_module",
+  _Number = "_number",
+  ParameterName = "_parameter_name",
+  _ParenthesizedExpressionSequence = "_parenthesized_expression_sequence",
+  ParenthesizedExpressionTyped = "_parenthesized_expression_typed",
+  PublicFieldDefinitionAbstractFirst = "_public_field_definition_abstract_first",
+  PublicFieldDefinitionAccessFirst = "_public_field_definition_access_first",
+  PublicFieldDefinitionAccessorOpt = "_public_field_definition_accessor_opt",
+  PublicFieldDefinitionDeclareFirst = "_public_field_definition_declare_first",
+  PublicFieldDefinitionReadonlyFirst = "_public_field_definition_readonly_first",
+  PublicFieldDefinitionStaticMods = "_public_field_definition_static_mods",
+  _StringDouble = "_string_double",
+  _StringSingle = "_string_single",
+  TypeQueryCallExpression = "_type_query_call_expression",
+  TypeQueryCallExpressionInTypeAnnotation = "_type_query_call_expression_in_type_annotation",
+  TypeQueryInstantiationExpression = "_type_query_instantiation_expression",
+  TypeQueryMemberExpression = "_type_query_member_expression",
+  TypeQueryMemberExpressionInTypeAnnotation = "_type_query_member_expression_in_type_annotation",
+  TypeQuerySubscriptExpression = "_type_query_subscript_expression",
+  UpdateExpressionPostfix = "_update_expression_postfix",
+  UpdateExpressionPrefix = "_update_expression_prefix",
+  AbstractClassDeclaration = "abstract_class_declaration",
+  AbstractMethodSignature = "abstract_method_signature",
+  AddingTypeAnnotation = "adding_type_annotation",
+  AmbientDeclaration = "ambient_declaration",
+  Arguments = "arguments",
+  Array = "array",
+  ArrayPattern = "array_pattern",
+  ArrayType = "array_type",
+  ArrowFunctionParameter = "arrow_function_parameter",
+  ArrowFunctionUCallSignature = "arrow_function__call_signature",
+  ArrowFunction = "arrow_function",
+  AsExpression = "as_expression",
+  Asserts = "asserts",
+  AssertsAnnotation = "asserts_annotation",
+  AssignmentExpression = "assignment_expression",
+  AssignmentPattern = "assignment_pattern",
+  AugmentedAssignmentExpression = "augmented_assignment_expression",
+  AwaitExpression = "await_expression",
+  BinaryExpression = "binary_expression",
+  BreakStatement = "break_statement",
+  CallExpression = "call_expression",
+  CallSignature = "call_signature",
+  CatchClause = "catch_clause",
+  Class = "class",
+  ClassBody = "class_body",
+  ClassDeclaration = "class_declaration",
+  ClassHeritageExtendsClause = "class_heritage_extends_clause",
+  ClassHeritageImplementsClause = "class_heritage_implements_clause",
+  ClassHeritage = "class_heritage",
+  ClassStaticBlock = "class_static_block",
+  ComputedPropertyName = "computed_property_name",
+  ConditionalType = "conditional_type",
+  Constraint = "constraint",
+  ConstructSignature = "construct_signature",
+  ConstructorType = "constructor_type",
+  ContinueStatement = "continue_statement",
+  DebuggerStatement = "debugger_statement",
+  Decorator = "decorator",
+  DecoratorCallExpression = "decorator_call_expression",
+  DecoratorMemberExpression = "decorator_member_expression",
+  DecoratorParenthesizedExpression = "decorator_parenthesized_expression",
+  DefaultType = "default_type",
+  DoStatement = "do_statement",
+  ElseClause = "else_clause",
+  EnumAssignment = "enum_assignment",
+  EnumBody = "enum_body",
+  EnumDeclaration = "enum_declaration",
+  ExportClause = "export_clause",
+  ExportSpecifier = "export_specifier",
+  ExportStatementTypeExport = "export_statement_type_export",
+  ExportStatementEqualsExport = "export_statement_equals_export",
+  ExportStatementNamespaceExport = "export_statement_namespace_export",
+  ExportStatement = "export_statement",
+  ExpressionStatement = "expression_statement",
+  ExtendsClause = "extends_clause",
+  ExtendsTypeClause = "extends_type_clause",
+  FieldDefinition = "field_definition",
+  FinallyClause = "finally_clause",
+  FlowMaybeType = "flow_maybe_type",
+  ForInStatement = "for_in_statement",
+  ForStatement = "for_statement",
+  FormalParameters = "formal_parameters",
+  FunctionDeclaration = "function_declaration",
+  FunctionExpression = "function_expression",
+  FunctionSignature = "function_signature",
+  FunctionType = "function_type",
+  GeneratorFunction = "generator_function",
+  GeneratorFunctionDeclaration = "generator_function_declaration",
+  GenericType = "generic_type",
+  IfStatement = "if_statement",
+  ImplementsClause = "implements_clause",
+  ImportAlias = "import_alias",
+  ImportAttribute = "import_attribute",
+  ImportClauseNamespaceImport = "import_clause_namespace_import",
+  ImportClauseNamedImports = "import_clause_named_imports",
+  ImportClauseDefaultImport = "import_clause_default_import",
+  ImportClause = "import_clause",
+  ImportRequireClause = "import_require_clause",
+  ImportSpecifierName = "import_specifier_name",
+  ImportSpecifier = "import_specifier",
+  ImportStatement = "import_statement",
+  IndexSignatureMappedTypeClause = "index_signature_mapped_type_clause",
+  IndexSignature = "index_signature",
+  IndexTypeQuery = "index_type_query",
+  InferType = "infer_type",
+  InstantiationExpression = "instantiation_expression",
+  InterfaceDeclaration = "interface_declaration",
+  InternalModule = "internal_module",
+  IntersectionType = "intersection_type",
+  JsxAttribute = "jsx_attribute",
+  JsxClosingElement = "jsx_closing_element",
+  JsxElement = "jsx_element",
+  JsxExpression = "jsx_expression",
+  JsxNamespaceName = "jsx_namespace_name",
+  JsxOpeningElement = "jsx_opening_element",
+  JsxSelfClosingElement = "jsx_self_closing_element",
+  LabeledStatement = "labeled_statement",
+  LexicalDeclaration = "lexical_declaration",
+  LiteralType = "literal_type",
+  LookupType = "lookup_type",
+  MappedTypeClause = "mapped_type_clause",
+  MemberExpression = "member_expression",
+  MethodDefinition = "method_definition",
+  MethodSignature = "method_signature",
+  Module = "module",
+  NamedImports = "named_imports",
+  NamespaceExport = "namespace_export",
+  NamespaceImport = "namespace_import",
+  NestedIdentifier = "nested_identifier",
+  NestedTypeIdentifier = "nested_type_identifier",
+  NewExpression = "new_expression",
+  NonNullExpression = "non_null_expression",
+  Object = "object",
+  ObjectAssignmentPattern = "object_assignment_pattern",
+  ObjectPattern = "object_pattern",
+  ObjectType = "object_type",
+  OmittingTypeAnnotation = "omitting_type_annotation",
+  OptingTypeAnnotation = "opting_type_annotation",
+  OptionalParameter = "optional_parameter",
+  OptionalTupleParameter = "optional_tuple_parameter",
+  OptionalType = "optional_type",
+  Pair = "pair",
+  PairPattern = "pair_pattern",
+  ParenthesizedExpressionSequence = "parenthesized_expression_sequence",
+  ParenthesizedExpression = "parenthesized_expression",
+  ParenthesizedType = "parenthesized_type",
+  Program = "program",
+  PropertySignature = "property_signature",
+  PublicFieldDefinition = "public_field_definition",
+  ReadonlyType = "readonly_type",
+  Regex = "regex",
+  RequiredParameter = "required_parameter",
+  RestPattern = "rest_pattern",
+  RestType = "rest_type",
+  ReturnStatement = "return_statement",
+  SatisfiesExpression = "satisfies_expression",
+  SequenceExpression = "sequence_expression",
+  SpreadElement = "spread_element",
+  StatementBlock = "statement_block",
+  StringDouble = "string_double",
+  StringSingle = "string_single",
+  String = "string",
+  SubscriptExpression = "subscript_expression",
+  SwitchBody = "switch_body",
+  SwitchCase = "switch_case",
+  SwitchDefault = "switch_default",
+  SwitchStatement = "switch_statement",
+  TemplateLiteralType = "template_literal_type",
+  TemplateString = "template_string",
+  TemplateSubstitution = "template_substitution",
+  TemplateType = "template_type",
+  TernaryExpression = "ternary_expression",
+  ThrowStatement = "throw_statement",
+  TryStatement = "try_statement",
+  TupleParameter = "tuple_parameter",
+  TupleType = "tuple_type",
+  TypeAliasDeclaration = "type_alias_declaration",
+  TypeAnnotation = "type_annotation",
+  TypeArguments = "type_arguments",
+  TypeAssertion = "type_assertion",
+  TypeParameter = "type_parameter",
+  TypeParameters = "type_parameters",
+  TypePredicate = "type_predicate",
+  TypePredicateAnnotation = "type_predicate_annotation",
+  TypeQuery = "type_query",
+  UnaryExpression = "unary_expression",
+  UnionType = "union_type",
+  UpdateExpression = "update_expression",
+  VariableDeclaration = "variable_declaration",
+  VariableDeclarator = "variable_declarator",
+  WhileStatement = "while_statement",
+  WithStatement = "with_statement",
+  YieldExpression = "yield_expression",
+  ForHeaderOperator = "__for_header_operator",
+  NumberOperator = "__number_operator",
+  AbstractMarker = "_abstract_marker",
+  _AccessibilityModifier = "_accessibility_modifier",
+  AccessorKind = "_accessor_kind",
+  AsyncMarker = "_async_marker",
+  AugmentedAssignmentExpressionOperator = "_augmented_assignment_expression_operator",
+  ConstMarker = "_const_marker",
+  ExportSpecifierExportKind = "_export_specifier_export_kind",
+  ImportAttributeObject = "_import_attribute_object",
+  Kind = "_kind",
+  KwAbstractMarker = "_kw_abstract_marker",
+  KwAccessorMarker = "_kw_accessor_marker",
+  KwAsyncMarker = "_kw_async_marker",
+  KwAwaitMarker = "_kw_await_marker",
+  KwConstMarker = "_kw_const_marker",
+  KwDeclareMarker = "_kw_declare_marker",
+  KwReadonlyMarker = "_kw_readonly_marker",
+  KwStaticMarker = "_kw_static_marker",
+  KwUsingMarker = "_kw_using_marker",
+  ObjectTypeClosing = "_object_type_closing",
+  ObjectTypeOpening = "_object_type_opening",
+  Operator = "_operator",
+  _OverrideModifier = "_override_modifier",
+  PublicFieldDefinitionOptionalityMarker = "_public_field_definition_optionality_marker",
+  ReadonlyMarker = "_readonly_marker",
+  ReservedIdentifier = "_reserved_identifier",
+  StaticMarker = "_static_marker",
+  TypeIdentifier = "_type_identifier",
+  UnaryExpressionOperator = "_unary_expression_operator",
+  AccessibilityModifier = "accessibility_modifier",
+  Comment = "comment",
+  EscapeSequence = "escape_sequence",
+  False = "false",
+  HashBangLine = "hash_bang_line",
+  HtmlCharacterReference = "html_character_reference",
+  Identifier = "identifier",
+  Import = "import",
+  JsxIdentifier = "jsx_identifier",
+  MetaProperty = "meta_property",
+  Null = "null",
+  Number = "number",
+  OverrideModifier = "override_modifier",
+  PredefinedType = "predefined_type",
+  PrivatePropertyIdentifier = "private_property_identifier",
+  RegexFlags = "regex_flags",
+  RegexPattern = "regex_pattern",
+  Super = "super",
+  This = "this",
+  True = "true",
+  Undefined = "undefined",
+  UnescapedDoubleJsxStringFragment = "unescaped_double_jsx_string_fragment",
+  UnescapedDoubleStringFragment = "unescaped_double_string_fragment",
+  UnescapedSingleJsxStringFragment = "unescaped_single_jsx_string_fragment",
+  UnescapedSingleStringFragment = "unescaped_single_string_fragment",
+  AutomaticSemicolon = "_automatic_semicolon",
+  TemplateChars = "_template_chars",
+  TernaryQmark = "_ternary_qmark",
+  HtmlComment = "html_comment",
+  Oror = "||",
+  JsxText = "jsx_text",
+  FunctionSignatureAutomaticSemicolon = "_function_signature_automatic_semicolon",
+  ErrorRecovery = "__error_recovery",
+  Abstract = "abstract",
+  Async = "async",
+  Const = "const",
+  Export = "export",
+  Default = "default",
+  As = "as",
+  Namespace = "namespace",
+  Var = "var",
+  From = "from",
+  Accessor = "accessor",
+  Await = "await",
+  Declare = "declare",
+  Readonly = "readonly",
+  Static = "static",
+  Using = "using",
+  Override = "override",
+  Global = "global",
+  Instanceof = "instanceof",
+  In = "in",
+  Break = "break",
+  Catch = "catch",
+  Extends = "extends",
+  New = "new",
+  Continue = "continue",
+  Debugger = "debugger",
+  Do = "do",
+  While = "while",
+  Else = "else",
+  Enum = "enum",
+  Finally = "finally",
+  For = "for",
+  Function = "function",
+  If = "if",
+  Implements = "implements",
+  Require = "require",
+  Keyof = "keyof",
+  Infer = "infer",
+  Interface = "interface",
+  Return = "return",
+  Satisfies = "satisfies",
+  Case = "case",
+  Switch = "switch",
+  Throw = "throw",
+  Try = "try",
+  Is = "is",
+  Typeof = "typeof",
+  With = "with",
+  Yield = "yield",
 }
 
 export const enum TSKindId {
@@ -1845,220 +1845,255 @@ export function kindIdFromName(kindName: string): TSKindId {
 
 // Scoped enums per supertype
 export const enum DestructuringPatternKind {
-  ObjectPattern = 'object_pattern',
-  ArrayPattern = 'array_pattern',
+  ObjectPattern = "object_pattern",
+  ArrayPattern = "array_pattern",
 }
 
 export const enum ExportStatementDefaultKind {
-  ExportStatementDefaultFromArm = '_export_statement_default_from_arm',
-  ExportStatementDefaultDeclArm = '_export_statement_default_decl_arm',
+  ExportStatementDefaultFromArm = "_export_statement_default_from_arm",
+  ExportStatementDefaultDeclArm = "_export_statement_default_decl_arm",
 }
 
 export const enum ExpressionsKind {
-  Expression = 'expression',
-  SequenceExpression = 'sequence_expression',
+  Expression = "expression",
+  SequenceExpression = "sequence_expression",
 }
 
 export const enum FormalParameterKind {
-  RequiredParameter = 'required_parameter',
-  OptionalParameter = 'optional_parameter',
+  RequiredParameter = "required_parameter",
+  OptionalParameter = "optional_parameter",
 }
 
 export const enum IdentifierKind {
-  Undefined = 'undefined',
-  Identifier = 'identifier',
+  Undefined = "undefined",
+  Identifier = "identifier",
 }
 
 export const enum ImportIdentifierKind {
-  Identifier = 'identifier',
+  Identifier = "identifier",
 }
 
 export const enum JsxAttributeKind {
-  JsxAttribute = 'jsx_attribute',
-  JsxExpression = 'jsx_expression',
+  JsxAttribute = "jsx_attribute",
+  JsxExpression = "jsx_expression",
 }
 
 export const enum JsxAttributeNameKind {
-  JsxIdentifier = 'jsx_identifier',
-  Identifier = 'identifier',
-  JsxNamespaceName = 'jsx_namespace_name',
+  _JsxIdentifier = "_jsx_identifier",
+  JsxIdentifier = "jsx_identifier",
+  Identifier = "identifier",
+  JsxNamespaceName = "jsx_namespace_name",
 }
 
 export const enum JsxAttributeValueKind {
-  JsxString = '_jsx_string',
-  JsxExpression = 'jsx_expression',
-  JsxElement = 'jsx_element',
-  JsxSelfClosingElement = 'jsx_self_closing_element',
+  JsxString = "_jsx_string",
+  JsxExpression = "jsx_expression",
+  _JsxElement = "_jsx_element",
+  JsxElement = "jsx_element",
+  JsxSelfClosingElement = "jsx_self_closing_element",
 }
 
 export const enum JsxChildKind {
-  JsxText = 'jsx_text',
-  HtmlCharacterReference = 'html_character_reference',
-  JsxElement = 'jsx_element',
-  JsxSelfClosingElement = 'jsx_self_closing_element',
-  JsxExpression = 'jsx_expression',
+  JsxText = "jsx_text",
+  HtmlCharacterReference = "html_character_reference",
+  _JsxElement = "_jsx_element",
+  JsxElement = "jsx_element",
+  JsxSelfClosingElement = "jsx_self_closing_element",
+  JsxExpression = "jsx_expression",
 }
 
 export const enum JsxElementKind {
-  JsxElement = 'jsx_element',
-  JsxSelfClosingElement = 'jsx_self_closing_element',
+  JsxElement = "jsx_element",
+  JsxSelfClosingElement = "jsx_self_closing_element",
 }
 
 export const enum JsxElementNameKind {
-  JsxIdentifier = 'jsx_identifier',
-  Identifier = 'identifier',
-  NestedIdentifier = 'nested_identifier',
-  JsxNamespaceName = 'jsx_namespace_name',
+  _JsxIdentifier = "_jsx_identifier",
+  JsxIdentifier = "jsx_identifier",
+  Identifier = "identifier",
+  NestedIdentifier = "nested_identifier",
+  JsxNamespaceName = "jsx_namespace_name",
 }
 
 export const enum JsxIdentifierKind {
-  JsxIdentifier = 'jsx_identifier',
-  Identifier = 'identifier',
+  JsxIdentifier = "jsx_identifier",
+  Identifier = "identifier",
 }
 
 export const enum ModuleExportNameKind {
-  Identifier = 'identifier',
-  String = 'string',
+  Identifier = "identifier",
+  String = "string",
 }
 
 export const enum PropertyIdentifierKind {
-  Identifier = 'identifier',
-  ReservedIdentifier = '_reserved_identifier',
+  Identifier = "identifier",
+  ReservedIdentifier = "_reserved_identifier",
 }
 
 export const enum PropertyNameKind {
-  Identifier = 'identifier',
-  PrivatePropertyIdentifier = 'private_property_identifier',
-  String = 'string',
-  Number = 'number',
-  ComputedPropertyName = 'computed_property_name',
+  PropertyIdentifier = "_property_identifier",
+  Identifier = "identifier",
+  PrivatePropertyIdentifier = "private_property_identifier",
+  String = "string",
+  Number = "number",
+  ComputedPropertyName = "computed_property_name",
 }
 
 export const enum SemicolonKind {
-  AutomaticSemicolon = '_automatic_semicolon',
+  AutomaticSemicolon = "_automatic_semicolon",
+  Semi = ";",
 }
 
 export const enum ShorthandPropertyIdentifierKind {
-  Identifier = 'identifier',
-  ReservedIdentifier = '_reserved_identifier',
+  Identifier = "identifier",
+  ReservedIdentifier = "_reserved_identifier",
 }
 
 export const enum ShorthandPropertyIdentifierPatternKind {
-  Identifier = 'identifier',
-  ReservedIdentifier = '_reserved_identifier',
+  Identifier = "identifier",
+  ReservedIdentifier = "_reserved_identifier",
 }
 
 export const enum StatementIdentifierKind {
-  Identifier = 'identifier',
-  ReservedIdentifier = '_reserved_identifier',
+  Identifier = "identifier",
+  ReservedIdentifier = "_reserved_identifier",
 }
 
 export const enum TupleTypeMemberKind {
-  TupleParameter = 'tuple_parameter',
-  OptionalTupleParameter = 'optional_tuple_parameter',
-  OptionalType = 'optional_type',
-  RestType = 'rest_type',
-  Type = 'type',
+  TupleParameter = "tuple_parameter",
+  OptionalTupleParameter = "optional_tuple_parameter",
+  OptionalType = "optional_type",
+  RestType = "rest_type",
+  Type = "type",
 }
 
 export const enum DeclarationKind {
-  FunctionSignature = 'function_signature',
-  AbstractClassDeclaration = 'abstract_class_declaration',
-  Module = 'module',
-  InternalModule = 'internal_module',
-  TypeAliasDeclaration = 'type_alias_declaration',
-  EnumDeclaration = 'enum_declaration',
-  InterfaceDeclaration = 'interface_declaration',
-  ImportAlias = 'import_alias',
-  AmbientDeclaration = 'ambient_declaration',
+  FunctionDeclaration = "function_declaration",
+  GeneratorFunctionDeclaration = "generator_function_declaration",
+  ClassDeclaration = "class_declaration",
+  LexicalDeclaration = "lexical_declaration",
+  VariableDeclaration = "variable_declaration",
+  FunctionSignature = "function_signature",
+  AbstractClassDeclaration = "abstract_class_declaration",
+  Module = "module",
+  InternalModule = "internal_module",
+  TypeAliasDeclaration = "type_alias_declaration",
+  EnumDeclaration = "enum_declaration",
+  InterfaceDeclaration = "interface_declaration",
+  ImportAlias = "import_alias",
+  AmbientDeclaration = "ambient_declaration",
 }
 
 export const enum ExpressionKind {
-  AsExpression = 'as_expression',
-  SatisfiesExpression = 'satisfies_expression',
-  InstantiationExpression = 'instantiation_expression',
-  InternalModule = 'internal_module',
-  TypeAssertion = 'type_assertion',
-  PrimaryExpression = 'primary_expression',
-  AssignmentExpression = 'assignment_expression',
-  AugmentedAssignmentExpression = 'augmented_assignment_expression',
-  AwaitExpression = 'await_expression',
-  UnaryExpression = 'unary_expression',
-  BinaryExpression = 'binary_expression',
-  TernaryExpression = 'ternary_expression',
-  UpdateExpression = 'update_expression',
-  NewExpression = 'new_expression',
-  YieldExpression = 'yield_expression',
+  AsExpression = "as_expression",
+  SatisfiesExpression = "satisfies_expression",
+  InstantiationExpression = "instantiation_expression",
+  InternalModule = "internal_module",
+  TypeAssertion = "type_assertion",
+  PrimaryExpression = "primary_expression",
+  AssignmentExpression = "assignment_expression",
+  AugmentedAssignmentExpression = "augmented_assignment_expression",
+  AwaitExpression = "await_expression",
+  UnaryExpression = "unary_expression",
+  BinaryExpression = "binary_expression",
+  TernaryExpression = "ternary_expression",
+  UpdateExpression = "update_expression",
+  NewExpression = "new_expression",
+  YieldExpression = "yield_expression",
 }
 
 export const enum PatternKind {
-  MemberExpression = 'member_expression',
-  SubscriptExpression = 'subscript_expression',
-  Undefined = 'undefined',
-  Identifier = 'identifier',
-  ObjectPattern = 'object_pattern',
-  ArrayPattern = 'array_pattern',
-  NonNullExpression = 'non_null_expression',
-  RestPattern = 'rest_pattern',
+  MemberExpression = "member_expression",
+  SubscriptExpression = "subscript_expression",
+  Undefined = "undefined",
+  Identifier = "identifier",
+  ObjectPattern = "object_pattern",
+  ArrayPattern = "array_pattern",
+  NonNullExpression = "non_null_expression",
+  RestPattern = "rest_pattern",
 }
 
 export const enum PrimaryExpressionKind {
-  NonNullExpression = 'non_null_expression',
+  SubscriptExpression = "subscript_expression",
+  MemberExpression = "member_expression",
+  ParenthesizedExpression = "parenthesized_expression",
+  _Identifier = "_identifier",
+  Undefined = "undefined",
+  Identifier = "identifier",
+  ReservedIdentifier = "_reserved_identifier",
+  This = "this",
+  Super = "super",
+  Number = "number",
+  String = "string",
+  TemplateString = "template_string",
+  Regex = "regex",
+  True = "true",
+  False = "false",
+  Null = "null",
+  Object = "object",
+  Array = "array",
+  FunctionExpression = "function_expression",
+  ArrowFunction = "arrow_function",
+  GeneratorFunction = "generator_function",
+  Class = "class",
+  MetaProperty = "meta_property",
+  CallExpression = "call_expression",
+  NonNullExpression = "non_null_expression",
 }
 
 export const enum PrimaryTypeKind {
-  ParenthesizedType = 'parenthesized_type',
-  PredefinedType = 'predefined_type',
-  Identifier = 'identifier',
-  NestedTypeIdentifier = 'nested_type_identifier',
-  GenericType = 'generic_type',
-  ObjectType = 'object_type',
-  ArrayType = 'array_type',
-  TupleType = 'tuple_type',
-  FlowMaybeType = 'flow_maybe_type',
-  TypeQuery = 'type_query',
-  IndexTypeQuery = 'index_type_query',
-  This = 'this',
-  ExistentialType = 'existential_type',
-  LiteralType = 'literal_type',
-  LookupType = 'lookup_type',
-  ConditionalType = 'conditional_type',
-  TemplateLiteralType = 'template_literal_type',
-  IntersectionType = 'intersection_type',
-  UnionType = 'union_type',
+  ParenthesizedType = "parenthesized_type",
+  PredefinedType = "predefined_type",
+  TypeIdentifier = "_type_identifier",
+  NestedTypeIdentifier = "nested_type_identifier",
+  GenericType = "generic_type",
+  ObjectType = "object_type",
+  ArrayType = "array_type",
+  TupleType = "tuple_type",
+  FlowMaybeType = "flow_maybe_type",
+  TypeQuery = "type_query",
+  IndexTypeQuery = "index_type_query",
+  This = "this",
+  ExistentialType = "existential_type",
+  LiteralType = "literal_type",
+  LookupType = "lookup_type",
+  ConditionalType = "conditional_type",
+  TemplateLiteralType = "template_literal_type",
+  IntersectionType = "intersection_type",
+  UnionType = "union_type",
 }
 
 export const enum StatementKind {
-  ExportStatement = 'export_statement',
-  ImportStatement = 'import_statement',
-  DebuggerStatement = 'debugger_statement',
-  ExpressionStatement = 'expression_statement',
-  Declaration = 'declaration',
-  StatementBlock = 'statement_block',
-  IfStatement = 'if_statement',
-  SwitchStatement = 'switch_statement',
-  ForStatement = 'for_statement',
-  ForInStatement = 'for_in_statement',
-  WhileStatement = 'while_statement',
-  DoStatement = 'do_statement',
-  TryStatement = 'try_statement',
-  WithStatement = 'with_statement',
-  BreakStatement = 'break_statement',
-  ContinueStatement = 'continue_statement',
-  ReturnStatement = 'return_statement',
-  ThrowStatement = 'throw_statement',
-  EmptyStatement = 'empty_statement',
-  LabeledStatement = 'labeled_statement',
+  ExportStatement = "export_statement",
+  ImportStatement = "import_statement",
+  DebuggerStatement = "debugger_statement",
+  ExpressionStatement = "expression_statement",
+  Declaration = "declaration",
+  StatementBlock = "statement_block",
+  IfStatement = "if_statement",
+  SwitchStatement = "switch_statement",
+  ForStatement = "for_statement",
+  ForInStatement = "for_in_statement",
+  WhileStatement = "while_statement",
+  DoStatement = "do_statement",
+  TryStatement = "try_statement",
+  WithStatement = "with_statement",
+  BreakStatement = "break_statement",
+  ContinueStatement = "continue_statement",
+  ReturnStatement = "return_statement",
+  ThrowStatement = "throw_statement",
+  EmptyStatement = "empty_statement",
+  LabeledStatement = "labeled_statement",
 }
 
 export const enum TypeKind {
-  PrimaryType = 'primary_type',
-  FunctionType = 'function_type',
-  ReadonlyType = 'readonly_type',
-  ConstructorType = 'constructor_type',
-  InferType = 'infer_type',
-  TypeQueryMemberExpressionInTypeAnnotation = '_type_query_member_expression_in_type_annotation',
-  TypeQueryCallExpressionInTypeAnnotation = '_type_query_call_expression_in_type_annotation',
+  PrimaryType = "primary_type",
+  FunctionType = "function_type",
+  ReadonlyType = "readonly_type",
+  ConstructorType = "constructor_type",
+  InferType = "infer_type",
+  TypeQueryMemberExpressionInTypeAnnotation = "_type_query_member_expression_in_type_annotation",
+  TypeQueryCallExpressionInTypeAnnotation = "_type_query_call_expression_in_type_annotation",
 }
 
 // Node types — concrete interfaces
@@ -2123,7 +2158,7 @@ export interface ClassBodyMember {
 
 export interface ClassBodyMethod {
   readonly $type: TSKindId.ClassBodyMethod;
-  readonly _decorator: readonly (Decorator)[];
+  readonly _decorator?: readonly (Decorator)[];
   decorators(): readonly (Decorator)[];
   readonly $children: readonly [MethodDefinition | Semicolon];
 }
@@ -2145,7 +2180,7 @@ export interface _ClassHeritageImplementsClause {
 
 export interface ExportStatementDefaultDeclArm {
   readonly $type: TSKindId.ExportStatementDefaultDeclArm;
-  readonly _decorator: readonly (Decorator)[];
+  readonly _decorator?: readonly (Decorator)[];
   decorators(): readonly (Decorator)[];
   readonly $children: readonly [Declaration | ExportStatementDefaultDeclArmDefaultKw];
 }
@@ -2309,7 +2344,7 @@ export interface JsxStartOpeningElement {
   readonly $type: "_jsx_start_opening_element";
   readonly _name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   readonly _type_arguments?: TypeArguments;
-  readonly _attribute: readonly (_JsxAttribute)[];
+  readonly _attribute?: readonly (_JsxAttribute)[];
   name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
   typeArguments(): TypeArguments | undefined;
   attributes(): readonly (_JsxAttribute)[];
@@ -2346,7 +2381,7 @@ export interface _Number {
 
 export interface ParameterName {
   readonly $type: TSKindId.ParameterName;
-  readonly _decorator: readonly (Decorator)[];
+  readonly _decorator?: readonly (Decorator)[];
   readonly _readonly_marker?: boolean;
   readonly _pattern: Pattern | This;
   readonly __inputHints__?: {
@@ -2435,11 +2470,6 @@ export interface _StringSingle {
   readonly $children: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
 }
 
-export interface TypeIdentifier {
-  readonly $type: TSKindId.TypeIdentifier;
-  readonly $children: readonly [Identifier];
-}
-
 export interface TypeQueryCallExpression {
   readonly $type: TSKindId.TypeQueryCallExpression;
   readonly _function: Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
@@ -2512,7 +2542,7 @@ export interface UpdateExpressionPrefix {
 
 export interface AbstractClassDeclaration {
   readonly $type: TSKindId.AbstractClassDeclaration;
-  readonly _decorator: readonly (Decorator)[];
+  readonly _decorator?: readonly (Decorator)[];
   readonly _name: TypeIdentifier;
   readonly _type_parameters?: TypeParameters;
   readonly _class_heritage?: ClassHeritage;
@@ -2688,10 +2718,10 @@ export interface AwaitExpression {
 export interface BinaryExpression {
   readonly $type: TSKindId.BinaryExpression;
   readonly _left: Expression | PrivatePropertyIdentifier;
-  readonly _operator: AutoStamp<"&&">;
+  readonly _operator: "&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in";
   readonly _right: Expression;
   left(): Expression | PrivatePropertyIdentifier;
-  operator(): AutoStamp<"&&">;
+  operator(): "&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in";
   right(): Expression;
 }
 
@@ -2744,7 +2774,7 @@ export interface CatchClause {
 
 export interface Class {
   readonly $type: TSKindId.Class;
-  readonly _decorator: readonly (Decorator)[];
+  readonly _decorator?: readonly (Decorator)[];
   readonly _name?: TypeIdentifier;
   readonly _type_parameters?: TypeParameters;
   readonly _class_heritage?: ClassHeritage;
@@ -2763,7 +2793,7 @@ export interface ClassBody {
 
 export interface ClassDeclaration {
   readonly $type: TSKindId.ClassDeclaration;
-  readonly _decorator: readonly (Decorator)[];
+  readonly _decorator?: readonly (Decorator)[];
   readonly _name: TypeIdentifier;
   readonly _type_parameters?: TypeParameters;
   readonly _class_heritage?: ClassHeritage;
@@ -3034,7 +3064,7 @@ export interface ExtendsTypeClause {
 
 export interface FieldDefinition {
   readonly $type: "field_definition";
-  readonly _decorator: readonly (Decorator)[];
+  readonly _decorator?: readonly (Decorator)[];
   readonly _static_marker?: boolean;
   readonly _property: PropertyName;
   readonly _value?: Expression;
@@ -3432,7 +3462,7 @@ export interface JsxOpeningElement {
   readonly $type: "jsx_opening_element";
   readonly _name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   readonly _type_arguments?: TypeArguments;
-  readonly _attribute: readonly (_JsxAttribute)[];
+  readonly _attribute?: readonly (_JsxAttribute)[];
   name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
   typeArguments(): TypeArguments | undefined;
   attributes(): readonly (_JsxAttribute)[];
@@ -3442,7 +3472,7 @@ export interface JsxSelfClosingElement {
   readonly $type: "jsx_self_closing_element";
   readonly _name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   readonly _type_arguments?: TypeArguments;
-  readonly _attribute: readonly (_JsxAttribute)[];
+  readonly _attribute?: readonly (_JsxAttribute)[];
   name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
   typeArguments(): TypeArguments | undefined;
   attributes(): readonly (_JsxAttribute)[];
@@ -3675,7 +3705,7 @@ export interface OptingTypeAnnotation {
 
 export interface OptionalParameter {
   readonly $type: TSKindId.OptionalParameter;
-  readonly _decorator: readonly (Decorator)[];
+  readonly _decorator?: readonly (Decorator)[];
   readonly _readonly_marker?: boolean;
   readonly _pattern: Pattern | This;
   readonly _type?: TypeAnnotation;
@@ -3748,7 +3778,7 @@ export interface ParenthesizedType {
 export interface Program {
   readonly $type: TSKindId.Program;
   readonly _hash_bang_line?: HashBangLine;
-  readonly _statements: readonly (Statement)[];
+  readonly _statements?: readonly (Statement)[];
   hashBangLine(): HashBangLine | undefined;
   statements(): readonly (Statement)[];
 }
@@ -3780,7 +3810,7 @@ export interface PropertySignature {
 
 export interface PublicFieldDefinition {
   readonly $type: TSKindId.PublicFieldDefinition;
-  readonly _decorator: readonly (Decorator)[];
+  readonly _decorator?: readonly (Decorator)[];
   readonly _name: PropertyName;
   readonly _optionality_marker?: number;
   readonly _type?: TypeAnnotation;
@@ -3812,7 +3842,7 @@ export interface Regex {
 
 export interface RequiredParameter {
   readonly $type: TSKindId.RequiredParameter;
-  readonly _decorator: readonly (Decorator)[];
+  readonly _decorator?: readonly (Decorator)[];
   readonly _readonly_marker?: boolean;
   readonly _pattern: Pattern | This;
   readonly _type?: TypeAnnotation;
@@ -3867,7 +3897,7 @@ export interface SpreadElement {
 
 export interface StatementBlock {
   readonly $type: TSKindId.StatementBlock;
-  readonly _statements: readonly (Statement)[];
+  readonly _statements?: readonly (Statement)[];
   readonly _automatic_semicolon?: AutomaticSemicolon;
   statements(): readonly (Statement)[];
   automaticSemicolon(): AutomaticSemicolon | undefined;
@@ -3917,14 +3947,14 @@ export interface SwitchBody {
 export interface SwitchCase {
   readonly $type: TSKindId.SwitchCase;
   readonly _value: Expressions;
-  readonly _body: readonly (Statement)[];
+  readonly _body?: readonly (Statement)[];
   value(): Expressions;
   bodies(): readonly (Statement)[];
 }
 
 export interface SwitchDefault {
   readonly $type: TSKindId.SwitchDefault;
-  readonly _body: readonly (Statement)[];
+  readonly _body?: readonly (Statement)[];
   bodies(): readonly (Statement)[];
 }
 
@@ -4153,6 +4183,7 @@ export type ObjectTypeOpening = Terminal<TSKindId.Lbrace | TSKindId.LbracePipe, 
 export type Operator = Terminal<TSKindId.PlusPlus | TSKindId.DashDash, "++" | "--">;
 export type PublicFieldDefinitionOptionalityMarker = Terminal<TSKindId.Qmark | TSKindId.Bang, "?" | "!">;
 export type ReservedIdentifier = Terminal<"_reserved_identifier", string>;
+export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
 export type UnaryExpressionOperator = Terminal<TSKindId.Bang | TSKindId.Tilde | TSKindId.Dash | TSKindId.Plus | TSKindId.Typeof | TSKindId.Void | TSKindId.Delete, "!" | "~" | "-" | "+" | "typeof" | "void" | "delete">;
 export type AccessibilityModifier = Terminal<TSKindId.Public | TSKindId.Private | TSKindId.Protected, "public" | "private" | "protected">;
 export type Comment = Terminal<TSKindId.Comment, string>;
@@ -4240,7 +4271,6 @@ export interface PublicFieldDefinitionReadonlyFirstTree extends AnyTreeNode { re
 export interface PublicFieldDefinitionStaticModsTree extends AnyTreeNode { readonly type: "_public_field_definition_static_mods"; }
 export interface _StringDoubleTree extends AnyTreeNode { readonly type: "_string_double"; }
 export interface _StringSingleTree extends AnyTreeNode { readonly type: "_string_single"; }
-export interface TypeIdentifierTree extends AnyTreeNode { readonly type: "_type_identifier"; }
 export interface TypeQueryCallExpressionTree extends AnyTreeNode { readonly type: "_type_query_call_expression"; }
 export interface TypeQueryCallExpressionInTypeAnnotationTree extends AnyTreeNode { readonly type: "_type_query_call_expression_in_type_annotation"; }
 export interface TypeQueryInstantiationExpressionTree extends AnyTreeNode { readonly type: "_type_query_instantiation_expression"; }
@@ -4459,6 +4489,7 @@ export interface ObjectTypeOpeningTree extends AnyTreeNode { readonly type: "_ob
 export interface OperatorTree extends AnyTreeNode { readonly type: "_operator"; }
 export interface PublicFieldDefinitionOptionalityMarkerTree extends AnyTreeNode { readonly type: "_public_field_definition_optionality_marker"; }
 export interface ReservedIdentifierTree extends AnyTreeNode { readonly type: "_reserved_identifier"; }
+export interface TypeIdentifierTree extends AnyTreeNode { readonly type: "_type_identifier"; }
 export interface UnaryExpressionOperatorTree extends AnyTreeNode { readonly type: "_unary_expression_operator"; }
 export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
 export interface CommentTree extends TreeNode<'comment'> {}
@@ -4493,7 +4524,6 @@ export interface OrorTree extends AnyTreeNode { readonly type: "||"; }
 export interface JsxTextTree extends AnyTreeNode { readonly type: "jsx_text"; }
 export interface FunctionSignatureAutomaticSemicolonTree extends AnyTreeNode { readonly type: "_function_signature_automatic_semicolon"; }
 export interface ErrorRecoveryTree extends AnyTreeNode { readonly type: "__error_recovery"; }
-export interface VarTree extends AnyTreeNode { readonly type: "var"; }
 export interface AbstractTree extends AnyTreeNode { readonly type: "abstract"; }
 export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface ConstTree extends AnyTreeNode { readonly type: "const"; }
@@ -4501,6 +4531,7 @@ export interface ExportTree extends AnyTreeNode { readonly type: "export"; }
 export interface DefaultTree extends AnyTreeNode { readonly type: "default"; }
 export interface AsTree extends AnyTreeNode { readonly type: "as"; }
 export interface NamespaceTree extends AnyTreeNode { readonly type: "namespace"; }
+export interface VarTree extends AnyTreeNode { readonly type: "var"; }
 export interface FromTree extends AnyTreeNode { readonly type: "from"; }
 export interface AccessorTree extends AnyTreeNode { readonly type: "accessor"; }
 export interface AwaitTree extends AnyTreeNode { readonly type: "await"; }
@@ -4510,6 +4541,8 @@ export interface StaticTree extends AnyTreeNode { readonly type: "static"; }
 export interface UsingTree extends AnyTreeNode { readonly type: "using"; }
 export interface OverrideTree extends AnyTreeNode { readonly type: "override"; }
 export interface GlobalTree extends AnyTreeNode { readonly type: "global"; }
+export interface InstanceofTree extends AnyTreeNode { readonly type: "instanceof"; }
+export interface InTree extends AnyTreeNode { readonly type: "in"; }
 export interface BreakTree extends AnyTreeNode { readonly type: "break"; }
 export interface CatchTree extends AnyTreeNode { readonly type: "catch"; }
 export interface ExtendsTree extends AnyTreeNode { readonly type: "extends"; }
@@ -4529,7 +4562,6 @@ export interface RequireTree extends AnyTreeNode { readonly type: "require"; }
 export interface KeyofTree extends AnyTreeNode { readonly type: "keyof"; }
 export interface InferTree extends AnyTreeNode { readonly type: "infer"; }
 export interface InterfaceTree extends AnyTreeNode { readonly type: "interface"; }
-export interface InTree extends AnyTreeNode { readonly type: "in"; }
 export interface ReturnTree extends AnyTreeNode { readonly type: "return"; }
 export interface SatisfiesTree extends AnyTreeNode { readonly type: "satisfies"; }
 export interface CaseTree extends AnyTreeNode { readonly type: "case"; }
@@ -4658,6 +4690,7 @@ export type PropertyIdentifier =
 export type PropertyIdentifierTree = IdentifierTree | ReservedIdentifierTree;
 
 export type PropertyName =
+  | PropertyIdentifier
   | Identifier
   | PrivatePropertyIdentifier
   | String
@@ -4665,7 +4698,7 @@ export type PropertyName =
   | ComputedPropertyName
 ;
 
-export type PropertyNameTree = IdentifierTree | PrivatePropertyIdentifierTree | StringTree | NumberTree | ComputedPropertyNameTree;
+export type PropertyNameTree = PropertyIdentifierTree | IdentifierTree | PrivatePropertyIdentifierTree | StringTree | NumberTree | ComputedPropertyNameTree;
 
 export type Semicolon =
   | AutomaticSemicolon
@@ -4704,6 +4737,11 @@ export type TupleTypeMember =
 export type TupleTypeMemberTree = TupleParameterTree | OptionalTupleParameterTree | OptionalTypeTree | RestTypeTree;
 
 export type Declaration =
+  | FunctionDeclaration
+  | GeneratorFunctionDeclaration
+  | ClassDeclaration
+  | LexicalDeclaration
+  | VariableDeclaration
   | FunctionSignature
   | AbstractClassDeclaration
   | Module
@@ -4715,7 +4753,7 @@ export type Declaration =
   | AmbientDeclaration
 ;
 
-export type DeclarationTree = FunctionSignatureTree | AbstractClassDeclarationTree | ModuleTree | InternalModuleTree | TypeAliasDeclarationTree | EnumDeclarationTree | InterfaceDeclarationTree | ImportAliasTree | AmbientDeclarationTree;
+export type DeclarationTree = FunctionDeclarationTree | GeneratorFunctionDeclarationTree | ClassDeclarationTree | LexicalDeclarationTree | VariableDeclarationTree | FunctionSignatureTree | AbstractClassDeclarationTree | ModuleTree | InternalModuleTree | TypeAliasDeclarationTree | EnumDeclarationTree | InterfaceDeclarationTree | ImportAliasTree | AmbientDeclarationTree;
 
 export type Expression =
   | AsExpression
@@ -4750,15 +4788,39 @@ export type Pattern =
 export type PatternTree = MemberExpressionTree | SubscriptExpressionTree | UndefinedTree | IdentifierTree | ObjectPatternTree | ArrayPatternTree | NonNullExpressionTree | RestPatternTree;
 
 export type PrimaryExpression =
+  | SubscriptExpression
+  | MemberExpression
+  | ParenthesizedExpression
+  | _Identifier
+  | Undefined
+  | Identifier
+  | ReservedIdentifier
+  | This
+  | Super
+  | Number
+  | String
+  | TemplateString
+  | Regex
+  | True
+  | False
+  | Null
+  | Object
+  | Array
+  | FunctionExpression
+  | ArrowFunction
+  | GeneratorFunction
+  | Class
+  | MetaProperty
+  | CallExpression
   | NonNullExpression
 ;
 
-export type PrimaryExpressionTree = NonNullExpressionTree;
+export type PrimaryExpressionTree = SubscriptExpressionTree | MemberExpressionTree | ParenthesizedExpressionTree | _IdentifierTree | UndefinedTree | IdentifierTree | ReservedIdentifierTree | ThisTree | SuperTree | NumberTree | StringTree | TemplateStringTree | RegexTree | TrueTree | FalseTree | NullTree | ObjectTree | ArrayTree | FunctionExpressionTree | ArrowFunctionTree | GeneratorFunctionTree | ClassTree | MetaPropertyTree | CallExpressionTree | NonNullExpressionTree;
 
 export type PrimaryType =
   | ParenthesizedType
   | PredefinedType
-  | Identifier
+  | TypeIdentifier
   | NestedTypeIdentifier
   | GenericType
   | ObjectType
@@ -4776,7 +4838,7 @@ export type PrimaryType =
   | UnionType
 ;
 
-export type PrimaryTypeTree = ParenthesizedTypeTree | PredefinedTypeTree | IdentifierTree | NestedTypeIdentifierTree | GenericTypeTree | ObjectTypeTree | ArrayTypeTree | TupleTypeTree | FlowMaybeTypeTree | TypeQueryTree | IndexTypeQueryTree | ThisTree | LiteralTypeTree | LookupTypeTree | ConditionalTypeTree | TemplateLiteralTypeTree | IntersectionTypeTree | UnionTypeTree;
+export type PrimaryTypeTree = ParenthesizedTypeTree | PredefinedTypeTree | TypeIdentifierTree | NestedTypeIdentifierTree | GenericTypeTree | ObjectTypeTree | ArrayTypeTree | TupleTypeTree | FlowMaybeTypeTree | TypeQueryTree | IndexTypeQueryTree | ThisTree | LiteralTypeTree | LookupTypeTree | ConditionalTypeTree | TemplateLiteralTypeTree | IntersectionTypeTree | UnionTypeTree;
 
 export type Statement =
   | ExportStatement
@@ -4821,6 +4883,8 @@ export type ExistentialType = Terminal<TSKindId.ExistentialType>;
 export interface ExistentialTypeTree extends AnyTreeNode { readonly type: "existential_type"; }
 export type OptionalChain = Terminal<TSKindId.OptionalChain>;
 export interface OptionalChainTree extends AnyTreeNode { readonly type: "optional_chain"; }
+export type Semi = Terminal<";">;
+export interface SemiTree extends AnyTreeNode { readonly type: ";"; }
 
 export type TypescriptNode =
   | _ArrowFunctionUCallSignature
@@ -4874,7 +4938,6 @@ export type TypescriptNode =
   | PublicFieldDefinitionStaticMods
   | _StringDouble
   | _StringSingle
-  | TypeIdentifier
   | TypeQueryCallExpression
   | TypeQueryCallExpressionInTypeAnnotation
   | TypeQueryInstantiationExpression
@@ -5110,7 +5173,6 @@ export interface KindMap {
   '_public_field_definition_static_mods': PublicFieldDefinitionStaticMods;
   '_string_double': _StringDouble;
   '_string_single': _StringSingle;
-  '_type_identifier': TypeIdentifier;
   '_type_query_call_expression': TypeQueryCallExpression;
   '_type_query_call_expression_in_type_annotation': TypeQueryCallExpressionInTypeAnnotation;
   '_type_query_instantiation_expression': TypeQueryInstantiationExpression;
@@ -5305,6 +5367,7 @@ export interface KindMap {
   '_operator': Operator;
   '_public_field_definition_optionality_marker': PublicFieldDefinitionOptionalityMarker;
   '_reserved_identifier': ReservedIdentifier;
+  '_type_identifier': TypeIdentifier;
   '_unary_expression_operator': UnaryExpressionOperator;
   'accessibility_modifier': AccessibilityModifier;
   'comment': Comment;
@@ -5406,7 +5469,6 @@ export interface PublicFieldDefinitionReadonlyFirstNs extends NodeNs<PublicField
 export interface PublicFieldDefinitionStaticModsNs extends NodeNs<PublicFieldDefinitionStaticMods, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _StringDoubleNs extends NodeNs<_StringDouble, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _StringSingleNs extends NodeNs<_StringSingle, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeIdentifierNs extends NodeNs<TypeIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TypeQueryCallExpressionNs extends NodeNs<TypeQueryCallExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TypeQueryCallExpressionInTypeAnnotationNs extends NodeNs<TypeQueryCallExpressionInTypeAnnotation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TypeQueryInstantiationExpressionNs extends NodeNs<TypeQueryInstantiationExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5641,7 +5703,6 @@ export interface NamespaceMap {
   '_public_field_definition_static_mods': PublicFieldDefinitionStaticModsNs;
   '_string_double': _StringDoubleNs;
   '_string_single': _StringSingleNs;
-  '_type_identifier': TypeIdentifierNs;
   '_type_query_call_expression': TypeQueryCallExpressionNs;
   '_type_query_call_expression_in_type_annotation': TypeQueryCallExpressionInTypeAnnotationNs;
   '_type_query_instantiation_expression': TypeQueryInstantiationExpressionNs;
@@ -6188,13 +6249,6 @@ export namespace _StringSingle {
   export type Loose = LooseFor<'_string_single'>;
   export type Tree = TreeFor<'_string_single'>;
   export type Kind = '_string_single';
-}
-export namespace TypeIdentifier {
-  export type Config = ConfigFor<'_type_identifier'>;
-  export type Fluent = FluentFor<'_type_identifier'>;
-  export type Loose = LooseFor<'_type_identifier'>;
-  export type Tree = TreeFor<'_type_identifier'>;
-  export type Kind = '_type_identifier';
 }
 export namespace TypeQueryCallExpression {
   export type Config = ConfigFor<'_type_query_call_expression'>;

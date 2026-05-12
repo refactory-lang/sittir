@@ -66,6 +66,7 @@ import { parseArgs } from 'node:util';
 import {
 	loadLanguageForGrammar,
 	loadKindIdFromName,
+	loadKindNames,
 	loadWebTreeSitter,
 	treeHandle,
 	adaptNode,
@@ -398,7 +399,7 @@ export async function probe(
 					? nativeEngine.render(await nativeRenderPayload(grammar, nodeData))
 					: await renderNodeDataNative(grammar, nodeData)
 				: opts.baselineDir
-					? await renderNodeDataFromPath(resolveBaselinePath(opts.baselineDir, 'templates'), nodeData)
+					? await renderNodeDataFromPath(grammar, resolveBaselinePath(opts.baselineDir, 'templates'), nodeData)
 					: await renderNodeData(grammar, nodeData);
 		renderedLen = rendered.length;
 		const originalText = probeRange ? probeRange.text : source;
@@ -747,15 +748,17 @@ async function renderNodeData(grammar: string, nodeData: unknown): Promise<strin
 	const { createRenderer } = await import('@sittir/core');
 	const thisFile = import.meta.url;
 	const templatesPath = new URL(`../../../${grammar}/templates`, thisFile).pathname;
-	const bound = createRenderer(templatesPath);
+	const kindNames = await loadKindNames(grammar);
+	const bound = createRenderer(templatesPath, { kindNames });
 	return bound.render(nodeData as Parameters<typeof bound.render>[0]);
 }
 
 /** @internal — render via templates from an explicit absolute path
  *  (used by --baseline mode to swap render-side artifacts). */
-async function renderNodeDataFromPath(templatesPath: string, nodeData: unknown): Promise<string> {
+async function renderNodeDataFromPath(grammar: string, templatesPath: string, nodeData: unknown): Promise<string> {
 	const { createRenderer } = await import('@sittir/core');
-	const bound = createRenderer(templatesPath);
+	const kindNames = await loadKindNames(grammar);
+	const bound = createRenderer(templatesPath, { kindNames });
 	return bound.render(nodeData as Parameters<typeof bound.render>[0]);
 }
 

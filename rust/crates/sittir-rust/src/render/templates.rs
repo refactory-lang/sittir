@@ -151,12 +151,6 @@ pub struct _ExpressionStatementWithSemiTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_field_identifier.jinja", escape = "none")]
-pub struct FieldIdentifierTemplate<'a> {
-    pub children: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_field_pattern_named.jinja", escape = "none")]
 pub struct FieldPatternNamedTemplate<'a> {
     pub name: SingleNonterminalView<'a>,
@@ -309,12 +303,6 @@ pub struct ReferenceExpressionRawMutTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_reserved_identifier.jinja", escape = "none")]
-pub struct ReservedIdentifierTemplate<'a> {
-    pub children: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_struct_item_brace.jinja", escape = "none")]
 pub struct StructItemBraceTemplate<'a> {
     pub children: ListNonterminalView<'a>,
@@ -361,12 +349,6 @@ pub struct _TokenTreePatternBracketTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_token_tree_pattern_paren.jinja", escape = "none")]
 pub struct _TokenTreePatternParenTemplate<'a> {
-    pub children: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_type_identifier.jinja", escape = "none")]
-pub struct TypeIdentifierTemplate<'a> {
     pub children: ListNonterminalView<'a>,
 }
 

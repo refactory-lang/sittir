@@ -15,27 +15,23 @@
  * Usage:
  *   npx tsx packages/codegen/src/scripts/bench-render.ts
  *   BENCH_ITERATIONS=500 npx tsx packages/codegen/src/scripts/bench-render.ts
+ *   NODE_ENV=development npx tsx packages/codegen/src/scripts/bench-render.ts
  *   node --expose-gc $(which tsx) packages/codegen/src/scripts/bench-render.ts
  *
  * Output: JSON to stdout (one object per grammar per backend), human-readable
  * table summary to stderr.
+ *
+ * Benchmarks default `NODE_ENV` to `production` when it is unset so native
+ * boundary assertions stay out of timing / memory measurements. An explicit
+ * `NODE_ENV` is respected.
  */
 
 import { resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 
-import { readNode } from '@sittir/common';
-import { createRenderer } from '@sittir/core';
-import {
-	loadCorpusEntries,
-	loadLanguageForGrammar,
-	loadKindNames,
-	loadKindIdFromName,
-	treeHandle
-} from '../validate/common.ts';
-import type { TSTree } from '../validate/common.ts';
 import type { AnyNodeData } from '@sittir/types';
+import type { TSTree } from '../validate/common.ts';
 
 // ---------------------------------------------------------------------------
 // Config
@@ -54,6 +50,40 @@ const N = (() => {
 })();
 
 const WARMUP_ITERATIONS = 1;
+
+function ensureBenchmarkNodeEnv(): void {
+	process.env.NODE_ENV ??= 'production';
+}
+
+type BenchmarkRuntime = {
+	readNode: typeof import('@sittir/common').readNode;
+	createRenderer: typeof import('@sittir/core').createRenderer;
+	loadCorpusEntries: typeof import('../validate/common.ts').loadCorpusEntries;
+	loadLanguageForGrammar: typeof import('../validate/common.ts').loadLanguageForGrammar;
+	loadKindNames: typeof import('../validate/common.ts').loadKindNames;
+	loadKindIdFromName: typeof import('../validate/common.ts').loadKindIdFromName;
+	treeHandle: typeof import('../validate/common.ts').treeHandle;
+};
+
+let benchmarkRuntimePromise: Promise<BenchmarkRuntime> | undefined;
+
+async function loadBenchmarkRuntime(): Promise<BenchmarkRuntime> {
+	ensureBenchmarkNodeEnv();
+	benchmarkRuntimePromise ??= Promise.all([
+		import('@sittir/common'),
+		import('@sittir/core'),
+		import('../validate/common.ts')
+	]).then(([common, core, validate]) => ({
+		readNode: common.readNode,
+		createRenderer: core.createRenderer,
+		loadCorpusEntries: validate.loadCorpusEntries,
+		loadLanguageForGrammar: validate.loadLanguageForGrammar,
+		loadKindNames: validate.loadKindNames,
+		loadKindIdFromName: validate.loadKindIdFromName,
+		treeHandle: validate.treeHandle
+	}));
+	return benchmarkRuntimePromise;
+}
 
 // ---------------------------------------------------------------------------
 // Path helpers
@@ -115,6 +145,8 @@ export interface BenchResult {
  * objects produced by readNode(). Skips entries with parse errors.
  */
 async function collectNodeData(grammar: Grammar): Promise<AnyNodeData[]> {
+	const { readNode, loadCorpusEntries, loadLanguageForGrammar, loadKindIdFromName, treeHandle } =
+		await loadBenchmarkRuntime();
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -163,6 +195,7 @@ async function collectNodeData(grammar: Grammar): Promise<AnyNodeData[]> {
  * Never throws.
  */
 async function loadNativeRender(grammar: Grammar): Promise<((node: unknown) => string) | null> {
+	ensureBenchmarkNodeEnv();
 	const path = boundaryPathFor(grammar);
 	try {
 		const mod = await import(path);
@@ -298,6 +331,7 @@ function runBench(
 // ---------------------------------------------------------------------------
 
 async function benchGrammar(grammar: Grammar): Promise<BenchResult[]> {
+	const { createRenderer, loadKindNames } = await loadBenchmarkRuntime();
 	const results: BenchResult[] = [];
 
 	process.stderr.write(`[bench] ${grammar}: collecting corpus nodes...\n`);
@@ -399,9 +433,11 @@ function formatSpeedupColumn(results: BenchResult[]): string {
 // ---------------------------------------------------------------------------
 
 export async function run(_argv: string[]): Promise<number> {
+	ensureBenchmarkNodeEnv();
 	const gcAvailable = typeof (global as { gc?: unknown }).gc === 'function';
 	process.stderr.write(`bench-render: N=${N} iterations per backend per grammar\n`);
 	process.stderr.write(`bench-render: warmup=${WARMUP_ITERATIONS}\n`);
+	process.stderr.write(`bench-render: NODE_ENV=${process.env.NODE_ENV}\n`);
 	process.stderr.write(
 		`bench-render: gc=${gcAvailable ? 'available (--expose-gc)' : 'unavailable — pass node --expose-gc for cleaner memory snapshots'}\n\n`
 	);

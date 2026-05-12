@@ -479,8 +479,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
     match node.type_.0 {
         322 => { // "_array_expression_list" | "array_expression_list"
             let children = resolve_children(node, &["attributes", "elements"])?;
-            let field_0 = resolve_field(node, "attributes", true)?;
-            let field_1 = resolve_field(node, "elements", true)?;
+            let field_0 = resolve_field(node, "attributes", false)?;
+            let field_1 = resolve_field(node, "elements", false)?;
             let children_renderables = children.renderable_items();
             let field_0_renderables = field_0.renderable_items();
             let field_1_renderables = field_1.renderable_items();
@@ -508,7 +508,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         321 => { // "_array_expression_semi" | "array_expression_semi"
             let children = resolve_children(node, &["attributes", "elements", "length"])?;
-            let field_0 = resolve_field(node, "attributes", true)?;
+            let field_0 = resolve_field(node, "attributes", false)?;
             let field_1 = resolve_field(node, "elements", true)?;
             let field_2 = resolve_field(node, "length", true)?;
             let field_0_renderables = field_0.renderable_items();
@@ -601,19 +601,6 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ExpressionStatementWithSemiTemplate {
-                children: ListNonterminalView {
-                    items: children_renderables.as_slice(),
-                    separator: children.separator,
-                    leading: children.leading_sep,
-                    trailing: children.trailing_sep,
-                },
-            };
-            template.render_into(dest)
-        }
-        414 => { // "_field_identifier" | "field_identifier"
-            let children = resolve_children(node, &[])?;
-            let children_renderables = children.renderable_items();
-            let template = FieldIdentifierTemplate {
                 children: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
@@ -980,19 +967,6 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        417 => { // "_type_identifier" | "type_identifier"
-            let children = resolve_children(node, &[])?;
-            let children_renderables = children.renderable_items();
-            let template = TypeIdentifierTemplate {
-                children: ListNonterminalView {
-                    items: children_renderables.as_slice(),
-                    separator: children.separator,
-                    leading: children.leading_sep,
-                    trailing: children.trailing_sep,
-                },
-            };
-            template.render_into(dest)
-        }
         348 => { // "_visibility_modifier_crate" | "visibility_modifier_crate"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
@@ -1051,7 +1025,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         257 => { // "arguments"
             let children = resolve_children(node, &["attributes"])?;
-            let field_0 = resolve_field(node, "attributes", true)?;
+            let field_0 = resolve_field(node, "attributes", false)?;
             let field_0_renderables = field_0.renderable_items();
             let template = ArgumentsTemplate {
                 attributes: ListNonterminalView {
@@ -2126,7 +2100,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         274 => { // "match_arm"
             let children = resolve_children(node, &["attributes", "pattern"])?;
-            let field_0 = resolve_field(node, "attributes", true)?;
+            let field_0 = resolve_field(node, "attributes", false)?;
             let field_1 = resolve_field(node, "pattern", true)?;
             let children_renderables = children.renderable_items();
             let field_0_renderables = field_0.renderable_items();
@@ -2253,7 +2227,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         183 => { // "ordered_field_declaration_list"
             let children = resolve_children(node, &["type"])?;
-            let field_0 = resolve_field(node, "type", true)?;
+            let field_0 = resolve_field(node, "type", false)?;
             let children_renderables = children.renderable_items();
             let field_0_renderables = field_0.renderable_items();
             let template = OrderedFieldDeclarationListTemplate {
@@ -2544,7 +2518,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         264 => { // "shorthand_field_initializer"
             let children = resolve_children(node, &["attributes", "identifier"])?;
-            let field_0 = resolve_field(node, "attributes", true)?;
+            let field_0 = resolve_field(node, "attributes", false)?;
             let field_1 = resolve_field(node, "identifier", true)?;
             let field_0_renderables = field_0.renderable_items();
             let template = ShorthandFieldInitializerTemplate {
@@ -2574,7 +2548,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         157 => { // "source_file"
             let children = resolve_children(node, &["shebang", "statements"])?;
             let field_0 = resolve_field(node, "shebang", false)?;
-            let field_1 = resolve_field(node, "statements", true)?;
+            let field_1 = resolve_field(node, "statements", false)?;
             let field_1_renderables = field_1.renderable_items();
             let template = SourceFileTemplate {
                 shebang: match field_0.kind {
@@ -2811,7 +2785,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         260 => { // "tuple_expression"
             let children = resolve_children(node, &["attributes", "elements"])?;
-            let field_0 = resolve_field(node, "attributes", true)?;
+            let field_0 = resolve_field(node, "attributes", false)?;
             let field_1 = resolve_field(node, "elements", false)?;
             let field_0_renderables = field_0.renderable_items();
             let field_1_renderables = field_1.renderable_items();
@@ -2960,7 +2934,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         199 => { // "type_parameters"
             let children = resolve_children(node, &["attributes"])?;
-            let field_0 = resolve_field(node, "attributes", true)?;
+            let field_0 = resolve_field(node, "attributes", false)?;
             let field_0_renderables = field_0.renderable_items();
             let template = TypeParametersTemplate {
                 attributes: ListNonterminalView {

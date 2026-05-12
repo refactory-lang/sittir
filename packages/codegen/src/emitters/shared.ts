@@ -4,7 +4,13 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNonterminal, NodeOrTerminal, AssembledNode, BranchSlotClass } from '../compiler/node-map.ts';
+import type {
+	AssembledNonterminal,
+	NodeOrTerminal,
+	AssembledNode,
+	BranchSlotClass,
+	FieldStorageInfo
+} from '../compiler/node-map.ts';
 import {
 	AssembledKeyword,
 	AssembledToken,
@@ -833,20 +839,10 @@ export function keywordPresenceIsNonEmptyRepeat(field: AssembledNonterminal): bo
 	return field.values.every((v) => v.multiplicity === 'nonEmptyArray');
 }
 
-export type FieldStorageKind = 'verbatim' | 'boolean' | 'bitflag' | 'kindEnum';
-
-export interface FieldStorageInfo {
-	readonly kind: FieldStorageKind;
-	readonly texts: readonly string[];
-	readonly enumKinds: readonly string[];
-	readonly collapsesMultiplicity: boolean;
-}
-
-/**
- * Shared classification for the public field-storage contract emitted by the
- * generator.
- */
-export function resolveFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap): FieldStorageInfo {
+function classifyFieldStorageInfo(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap
+): FieldStorageInfo {
 	const keywordKind = keywordPresenceKind(field, nodeMap);
 	if (keywordKind === 'boolean') {
 		const text = keywordPresenceValue(field, nodeMap);
@@ -871,23 +867,53 @@ export function resolveFieldStorageInfo(field: AssembledNonterminal, nodeMap: No
 	const seenKinds = new Set<string>();
 	const seenTexts = new Set<string>();
 	for (const value of field.values) {
-		if (!isNodeRef(value)) {
+		if (isNodeRef(value)) {
+			const rawKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+			const resolvedKind = resolveAliasedSlotKind(field, rawKind, nodeMap);
+			const node = nodeMap.nodes.get(resolvedKind);
+			if (node instanceof AssembledEnum) {
+				if (node.values.length <= 1 || node.resolvedKinds.length === 0) {
+					return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
+				}
+				for (const enumKind of node.resolvedKinds) {
+					if (seenKinds.has(enumKind)) continue;
+					seenKinds.add(enumKind);
+					enumKinds.push(enumKind);
+				}
+				for (const text of node.values) {
+					if (seenTexts.has(text)) continue;
+					seenTexts.add(text);
+					texts.push(text);
+				}
+				continue;
+			}
+			if (node instanceof AssembledKeyword || node instanceof AssembledToken) {
+				const text = node.text;
+				if (node.resolvedKind === undefined || text === undefined) {
+					return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
+				}
+				if (!seenKinds.has(node.resolvedKind)) {
+					seenKinds.add(node.resolvedKind);
+					enumKinds.push(node.resolvedKind);
+				}
+				if (!seenTexts.has(text)) {
+					seenTexts.add(text);
+					texts.push(text);
+				}
+				continue;
+			}
 			return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
 		}
-		const rawKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
-		const resolvedKind = resolveAliasedSlotKind(field, rawKind, nodeMap);
-		const node = nodeMap.nodes.get(resolvedKind);
-		if (!(node instanceof AssembledEnum) || node.values.length <= 1) {
+		if (!isTerminalValue(value) || value.resolvedKind === undefined) {
 			return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
 		}
-		if (!seenKinds.has(resolvedKind)) {
-			seenKinds.add(resolvedKind);
-			enumKinds.push(resolvedKind);
+		if (!seenKinds.has(value.resolvedKind)) {
+			seenKinds.add(value.resolvedKind);
+			enumKinds.push(value.resolvedKind);
 		}
-		for (const text of node.values) {
-			if (seenTexts.has(text)) continue;
-			seenTexts.add(text);
-			texts.push(text);
+		if (!seenTexts.has(value.value)) {
+			seenTexts.add(value.value);
+			texts.push(value.value);
 		}
 	}
 	if (enumKinds.length === 0) {
@@ -899,6 +925,27 @@ export function resolveFieldStorageInfo(field: AssembledNonterminal, nodeMap: No
 		enumKinds,
 		collapsesMultiplicity: false
 	};
+}
+
+export function computeFieldStorageInfo(nodeMap: NodeMap): void {
+	for (const node of nodeMap.nodes.values()) {
+		for (const slot of allSlotsOf(node)) {
+			slot.storageInfo = classifyFieldStorageInfo(slot, nodeMap);
+		}
+	}
+}
+
+/**
+ * Shared classification for the public field-storage contract emitted by the
+ * generator.
+ */
+export function resolveFieldStorageInfo(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap,
+	_kindEntries?: readonly KindEnumEntry[]
+): FieldStorageInfo {
+	field.storageInfo ??= classifyFieldStorageInfo(field, nodeMap);
+	return field.storageInfo;
 }
 
 // ---------------------------------------------------------------------------

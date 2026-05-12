@@ -22,7 +22,7 @@ import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine } from '../emitters/engine.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
-import { computeSlotClasses } from '../emitters/shared.ts';
+import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
 
@@ -136,10 +136,11 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// Phase 1: Evaluate
 	const raw = await evaluate(entryPath);
 	tracePhaseRules('evaluate', raw.rules);
+	const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
 
 	// Phase 2: Link — pass the include filter so derivation passes
 	// know whether to mutate the rule tree or only log to the sidecar.
-	const linked = link(raw, cfg.include);
+	const linked = link(raw, cfg.include, generatedIdTables);
 	tracePhaseRules('link', linked.rules);
 
 	// Phase 3: Optimize
@@ -148,9 +149,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	tracePhaseRules('simplify', optimized.simplifiedRules);
 
 	// Phase 4: Assemble
-	const nodeMap = assemble(optimized);
+	const nodeMap = assemble(optimized, generatedIdTables);
 	traceAssembleNodes('assemble', nodeMap.nodes);
-	const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
 
 	// Extract all semantic roles from the grammar's highlights.scm + tags.scm.
 	// Trivia kinds are used to type the `$trivia()` signature in utils.ts.
@@ -172,6 +172,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// intermediary exists only in the codegen rule map. They're intentional
 	// pipeline constructs; warn-and-skip at emit time is correct.
 	const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
+	computeFieldStorageInfo(nodeMap);
 
 	// Phase 5a: Serialize the unhydrated NodeMap. `node-model.json5` is
 	// JSON-stringified, so it MUST run BEFORE `hydrateSlotRefs` wires the

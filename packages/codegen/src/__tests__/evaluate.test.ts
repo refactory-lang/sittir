@@ -16,6 +16,9 @@ import {
 	createProxy,
 	evaluate
 } from '../compiler/evaluate.ts';
+import { link } from '../compiler/link.ts';
+import { optimize } from '../compiler/optimize.ts';
+import { assemble } from '../compiler/assemble.ts';
 import { transform, insert, replace } from '../dsl/transform/transform.ts';
 import type { SymbolRef } from '../compiler/rule.ts';
 import { expectCompleteCatalog, serializeCatalog, walkRule } from './helpers/rule-catalog.ts';
@@ -557,6 +560,62 @@ describe('Evaluate — evaluate()', () => {
 				source: 'grammar'
 			})
 		);
+	});
+
+	it('keeps conflicting same-parent field literal sets inline so simplify can merge them later', async () => {
+		const dir = mkdtempSync(resolve(tmpdir(), 'sittir-evaluate-'));
+		const entry = resolve(dir, 'grammar.js');
+		writeFileSync(
+			entry,
+			`module.exports = grammar({
+  name: "enum-name-collision",
+  rules: {
+    source_file: ($) => $.binary_expression,
+    binary_expression: ($) => choice(
+      seq(field('left', $.identifier), field('operator', '&&'), field('right', $.identifier)),
+      seq(field('left', $.identifier), field('operator', '||'), field('right', $.identifier)),
+      seq(field('left', $.identifier), field('operator', choice('in', 'instanceof')), field('right', $.identifier))
+    ),
+    identifier: ($) => /[a-z_]+/,
+  },
+});\n`,
+			'utf8'
+		);
+		try {
+			const raw = await evaluate(entry);
+			const hiddenOperatorRules = Object.entries(raw.rules).filter(([name]) =>
+				name.startsWith('_binary_expression_operator')
+			);
+			expect(hiddenOperatorRules).toHaveLength(0);
+
+			const operatorKinds: string[] = [];
+			const walk = (rule: any): void => {
+				if (!rule || typeof rule !== 'object') return;
+				if (rule.type === 'field' && rule.name === 'operator') {
+					operatorKinds.push(rule.content.type);
+				}
+				if (Array.isArray(rule.members)) {
+					for (const member of rule.members) walk(member);
+				}
+				if ('content' in rule) walk(rule.content);
+			};
+			walk(raw.rules['binary_expression']);
+			expect(operatorKinds.sort()).toEqual(['enum', 'string', 'string']);
+
+			const nodeMap = assemble(optimize(link(raw)));
+			const node = nodeMap.nodes.get('binary_expression');
+			expect(node && 'slots' in node).toBe(true);
+			const operatorSlot = node && 'slots' in node ? node.slots.operator : undefined;
+			const operatorValues = operatorSlot
+				? operatorSlot.values
+						.filter((value: any) => value.kind === 'terminal')
+						.map((value: any) => value.value)
+						.sort()
+				: [];
+			expect(operatorValues).toEqual(['&&', 'in', 'instanceof', '||']);
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
 	});
 
 	it('preserves pattern rules for terminals', async () => {

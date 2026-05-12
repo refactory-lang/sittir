@@ -352,6 +352,69 @@ export const RUST_KEYWORDS = new Set([
  */
 const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
 
+function isReservedSupertypeTransportNode(node: AssembledNode): node is AssembledSupertype {
+	return node.modelType === 'supertype' && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`);
+}
+
+interface EffectiveSupertypeTransportSubtype {
+	readonly subKind: string;
+	readonly subNode: AssembledNode;
+}
+
+interface EffectiveSupertypeTransportShape {
+	readonly subtypes: readonly EffectiveSupertypeTransportSubtype[];
+	readonly suppressedKinds: readonly string[];
+}
+
+function collectEffectiveSupertypeTransportShape(
+	supertypeNode: AssembledSupertype,
+	nodeMap: NodeMap,
+	seen: Set<string> = new Set(),
+	state: {
+		readonly variantKindByName: Map<string, string>;
+		readonly emittedKinds: Set<string>;
+		readonly suppressedKinds: Set<string>;
+		readonly subtypes: EffectiveSupertypeTransportSubtype[];
+	} = {
+		variantKindByName: new Map(),
+		emittedKinds: new Set(),
+		suppressedKinds: new Set(),
+		subtypes: []
+	}
+): EffectiveSupertypeTransportShape {
+	if (seen.has(supertypeNode.kind)) {
+		return {
+			subtypes: state.subtypes,
+			suppressedKinds: [...state.suppressedKinds]
+		};
+	}
+	seen.add(supertypeNode.kind);
+	for (const subKind of supertypeNode.subtypes) {
+		const subNode = nodeMap.nodes.get(subKind);
+		if (subNode === undefined) continue;
+		if (isReservedSupertypeTransportNode(subNode)) {
+			state.suppressedKinds.add(subKind);
+			collectEffectiveSupertypeTransportShape(subNode, nodeMap, seen, state);
+			continue;
+		}
+		const variantName = rustTypeIdent(subNode.typeName);
+		const existingKind = state.variantKindByName.get(variantName);
+		if (existingKind !== undefined && existingKind !== subKind) {
+			throw new Error(
+				`reserved supertype flattening collision: ${supertypeNode.kind} emits variant ${variantName} for both ${existingKind} and ${subKind}`
+			);
+		}
+		state.variantKindByName.set(variantName, subKind);
+		if (state.emittedKinds.has(subKind)) continue;
+		state.emittedKinds.add(subKind);
+		state.subtypes.push({ subKind, subNode });
+	}
+	return {
+		subtypes: state.subtypes,
+		suppressedKinds: [...state.suppressedKinds]
+	};
+}
+
 /** Rust field identifier mapping for generated render/transport structs.
  *  Askama template expressions do not accept raw identifiers (`r#pub`),
  *  so keyword-named fields use a uniform `_` suffix (`pub_`, `type_`,
@@ -1615,10 +1678,32 @@ function renderTypedDispatch(
 	lines.push(`}`);
 	lines.push('');
 
+	// ---- impl AnyTransport::transport_named --------------------------------
+	// Returns the inner transport struct's named flag so the children-slot
+	// filter (.filter(|t| t.transport_named().unwrap_or(true))) can skip
+	// anonymous fill items (e.g. duplicate commas in tuple_pattern).
+	// Unit-literal variants have no struct, so they return None (= include).
+	lines.push(`impl AnyTransport {`);
+	lines.push(`    #[inline]`);
+	lines.push(`    pub fn transport_named(&self) -> Option<bool> {`);
+	lines.push(`        match self {`);
+	for (const node of nodes) {
+		// Only transport structs carry the transport_named field.
+		// AssembledEnum nodes (perSlotEnum — e.g. RangeExpressionBinaryOperatorEnum) and
+		// polymorph nodes (e.g. ArrayExpressionTransport) generate Rust enums, not structs,
+		// and have no such field. Fall through to `_ => None` for those.
+		if (node instanceof AssembledEnum || node.modelType === 'polymorph') continue;
+		const variant = rustTransportVariantName(node);
+		lines.push(`            Self::${variant}(t) => t.transport_named,`);
+	}
+	lines.push(`            _ => None,`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+
 	return lines;
 }
-
-/** Rust function name for the typed render fn of a given typeName. */
 function rustTypedRenderFnName(typeName: string): string {
 	return `render_${rustSnakeIdent(typeName)}`;
 }
@@ -1982,13 +2067,16 @@ const RENDERABLE_PREFIX = '::sittir_core::filters::';
  * @param sourceExpr - The iterable expression to `.iter()` over
  * @param mapBody    - The closure body inside `.map(|t| ...)` (e.g. `Renderable::Transport(t)`)
  */
-function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: string): string[] {
+function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: string, filterAnon = false): string[] {
 	const R = RENDERABLE_PREFIX;
-	return [
+	const lines: string[] = [
 		`    let ${ident}_buf: Vec<${R}Renderable<'_>> = ${sourceExpr}.iter()`,
-		`        .map(|t| ${mapBody})`,
-		`        .collect();`
 	];
+	if (filterAnon) {
+		lines.push(`        .filter(|t| t.transport_named().unwrap_or(true))`);
+	}
+	lines.push(`        .map(|t| ${mapBody})`, `        .collect();`);
+	return lines;
 }
 
 /**
@@ -2041,15 +2129,15 @@ function emitSingleChildBuffer(ident: string, required: boolean, cls: SlotClass 
  *   it is `Option<Vec<...>>` and needs `as_deref()`.
  * @returns Lines to splice into the parent function body.
  */
-function emitListSlotBuffer(ident: string, required: boolean): string[] {
+function emitListSlotBuffer(ident: string, required: boolean, filterAnon = false): string[] {
 	const R = RENDERABLE_PREFIX;
 	const mapBody = `${R}Renderable::Transport(t)`;
 	if (required) {
-		return emitIterCollectBuffer(ident, `node.${ident}`, mapBody);
+		return emitIterCollectBuffer(ident, `node.${ident}`, mapBody, filterAnon);
 	}
 	return [
 		`    let ${ident}_owned = node.${ident}.as_deref().unwrap_or(&[]);`,
-		...emitIterCollectBuffer(ident, `${ident}_owned`, mapBody)
+		...emitIterCollectBuffer(ident, `${ident}_owned`, mapBody, filterAnon)
 	];
 }
 
@@ -2111,7 +2199,12 @@ function buildTypedTemplateBody(
 	if (struct.hasChildren) {
 		if (struct.transportHasChildren) {
 			if (struct.childrenMultiple) {
-				lines.push(...emitListSlotBuffer('children', struct.childrenRequired));
+				// Filter anonymous fill items only when the children slot is Vec<AnyTransport>
+				// (useBox !== false). Per-slot enum children ({TypeName}ChildTransport) do not
+				// have transport_named() and must not be filtered.
+				const filterAnon =
+					childrenCls.tag === 'heterogeneous' && childrenCls.useBox !== false;
+				lines.push(...emitListSlotBuffer('children', struct.childrenRequired, filterAnon));
 			} else {
 				lines.push(...emitSingleChildBuffer('children', struct.childrenRequired, childrenCls));
 			}
@@ -2749,18 +2842,27 @@ function emitSupertypeTransportEnum(
 ): string[] {
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Transport`;
 	const lines: string[] = [];
-
-	// Collect valid subtypes — skip phantom kinds not in nodeMap.
-	const validSubtypes = supertypeNode.subtypes
-		.map((subKind) => {
-			const subNode = nodeMap.nodes.get(subKind);
-			return subNode !== undefined ? { subKind, subNode } : null;
-		})
-		.filter((x): x is { subKind: string; subNode: AssembledNode } => x !== null);
+	const { subtypes: validSubtypes, suppressedKinds } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 
 	// Helper: is a subtype leaf-like (small, no Box needed)?
 	const isLeafLike = (n: AssembledNode): boolean =>
 		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
+
+	const emitDecodeTrials = () => {
+		for (const { subNode } of validSubtypes) {
+			const variant = rustTypeIdent(subNode.typeName);
+			const typeName = rustTransportStructName(subNode);
+			if (isLeafLike(subNode)) {
+				lines.push(`                if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
+				lines.push(`                    return Ok(Self::${variant}(value));`);
+				lines.push(`                }`);
+			} else {
+				lines.push(`                if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
+				lines.push(`                    return Ok(Self::${variant}(Box::new(value)));`);
+				lines.push(`                }`);
+			}
+		}
+	};
 
 	// Enum declaration — Debug + Clone only; no serde, no napi object derive.
 	lines.push(`#[derive(Debug, Clone)]`);
@@ -2789,11 +2891,37 @@ function emitSupertypeTransportEnum(
 		);
 		lines.push(`        match kind_id {`);
 		const emittedIds = new Set<number>();
+		const selfId = kindIdByKind.get(supertypeNode.kind);
+		if (selfId !== undefined) {
+			lines.push(`            ${selfId} => {`);
+			emitDecodeTrials();
+			lines.push(
+				`                Err(::napi::Error::from_reason(${JSON.stringify(
+					`unknown aliased kind id {kind_id} in ${enumName}`
+				)}))`
+			);
+			lines.push(`            },`);
+			emittedIds.add(selfId);
+		}
+		for (const suppressedKind of suppressedKinds) {
+			const id = kindIdByKind.get(suppressedKind);
+			if (id === undefined || emittedIds.has(id)) continue;
+			lines.push(`            ${id} => {`);
+			emitDecodeTrials();
+			lines.push(
+				`                Err(::napi::Error::from_reason(${JSON.stringify(
+					`unknown reserved supertype kind id {kind_id} in ${enumName}`
+				)}))`
+			);
+			lines.push(`            },`);
+			emittedIds.add(id);
+		}
 		for (const { subKind, subNode } of validSubtypes) {
 			const variant = rustTypeIdent(subNode.typeName);
 			const typeName = rustTransportStructName(subNode);
-			for (const concreteKind of collectConcreteTransportKinds(subKind, nodeMap)) {
-				const id = kindIdByKind.get(concreteKind);
+			const acceptedKinds = [subKind, ...collectConcreteTransportKinds(subKind, nodeMap)];
+			for (const acceptedKind of acceptedKinds) {
+				const id = kindIdByKind.get(acceptedKind);
 				if (id === undefined || emittedIds.has(id)) continue;
 				emittedIds.add(id);
 				if (isLeafLike(subNode)) {
@@ -2904,15 +3032,14 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Transport`;
 	const fnName = `render_${rustSnakeIdent(supertypeNode.typeName)}`;
 	const lines: string[] = [];
+	const { subtypes: validSubtypes } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 
 	const isLeafLike = (n: AssembledNode): boolean =>
 		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
 
 	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(`    match t {`);
-	for (const subKind of supertypeNode.subtypes) {
-		const subNode = nodeMap.nodes.get(subKind);
-		if (subNode === undefined) continue; // phantom kind — skip
+	for (const { subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		const concreteFn = rustTypedRenderFnName(subNode.typeName);
 		// Non-leaf variants are boxed in the enum; deref with `.as_ref()`.
@@ -4036,7 +4163,9 @@ function renderTransportDataStruct(
 	//   - debug  (    debug-transport): JS sends full metadata object → read fields
 	// ToNapiValue is a stub in both modes — transport structs are receive-only.
 	if (isLeafNode) {
-		lines.push(...renderLeafTransportNapiImpls(structName));
+		// Tokens are anonymous (named=false); patterns and keywords are named (named=true).
+		const leafNamed = node.modelType !== 'token';
+		lines.push(...renderLeafTransportNapiImpls(structName, leafNamed));
 	}
 	return lines;
 }
@@ -4060,11 +4189,18 @@ function renderTransportDataStruct(
  * branch structs that embed these leaf types.
  *
  * @param structName - Rust struct name, e.g. `IdentifierTransport`.
+ * @param named - Whether this leaf node is named in tree-sitter. Tokens are always
+ *   anonymous (`false`); patterns and keywords are always named (`true`). Used to
+ *   hardcode `transport_named` in non-debug mode so the children filter
+ *   `.filter(|t| t.transport_named().unwrap_or(true))` works correctly without
+ *   needing to read `$named` from the JS object.
  */
-function renderLeafTransportNapiImpls(structName: string): string[] {
+function renderLeafTransportNapiImpls(structName: string, named: boolean): string[] {
 	const lines: string[] = [];
 
 	// Release mode: read plain JS string — no metadata round-trip.
+	// transport_named is hardcoded (not read from JS) because named/anonymous
+	// is a grammar-level fact that never changes at runtime.
 	lines.push(`#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]`);
 	lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${structName} {`);
 	lines.push(`    unsafe fn from_napi_value(`);
@@ -4079,7 +4215,11 @@ function renderLeafTransportNapiImpls(structName: string): string[] {
 	lines.push(`        };`);
 	lines.push(`        Ok(Self {`);
 	for (const f of TRANSPORT_METADATA_FIELDS) {
-		lines.push(`            ${f.rustName}: None,`);
+		if (f.rustName === 'transport_named') {
+			lines.push(`            transport_named: Some(${named}),`);
+		} else {
+			lines.push(`            ${f.rustName}: None,`);
+		}
 	}
 	lines.push(`            text,`);
 	lines.push(`        })`);
@@ -4402,13 +4542,18 @@ function hasRequiredChild(children: readonly AssembledNonterminal[]): boolean {
 }
 
 /**
- * True when any child in the list has `isMultiple` = true (at least one entry
- * with multiplicity `array` or `nonEmptyArray`). When true, the transport field
- * must be `Vec<T>`. When false, the slot holds at most one child and the field
- * should be `T` (required) or `Option<T>` (optional).
+ * True when native transport must treat `$children` as list-shaped.
+ *
+ * Two cases force list transport:
+ * - at least one contributing child slot is itself multiple
+ * - more than one structural child slot is aggregated into the shared
+ *   `$children` property (even when each slot is individually `single`)
+ *
+ * The second case matches the runtime projection path: aggregated children are
+ * always serialized as an array under `$children`, not as a scalar union.
  */
 function hasMultipleChildren(children: readonly AssembledNonterminal[]): boolean {
-	return children.some((child) => isMultiple(child));
+	return children.length > 1 || children.some((child) => isMultiple(child));
 }
 
 /**
@@ -4778,9 +4923,17 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 		lines.push(`    ) -> ::napi::Result<Self> {`);
 
 		if (kindEntries !== undefined) {
-			// Fix 2: read a plain u16 KindId — no heap allocation, no object property lookup.
-			// JS sends the numeric parser.c symbol ID directly for each enum member.
-			lines.push(`        let kind_id: u16 = u16::from_napi_value(env, napi_val)?;`);
+			// Accept either a bare numeric kind id or a NodeData-shaped object whose
+			// `$type` carries the numeric id. Native validators now pass the latter.
+			lines.push(`        let kind_id: u16 = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
+			lines.push(`            kind_id`);
+			lines.push(`        } else {`);
+			lines.push(`            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
+			lines.push(`            obj.get("$type")?`);
+			lines.push(
+				`                .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))?`
+			);
+			lines.push(`        };`);
 			lines.push(`        match kind_id {`);
 			for (const v of values) {
 				const entry = findKindEntry(kindEntries, v);
