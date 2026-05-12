@@ -258,7 +258,12 @@ struct NodeDataSer<'a> {
     named: bool,
     #[serde(flatten, serialize_with = "serialize_slot_fields")]
     fields: &'a Option<HashMap<String, FieldValue>>,
-    #[serde(rename = "$children", default, skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "$children",
+        default,
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "serialize_children"
+    )]
     children: &'a Option<Vec<NodeData>>,
     #[serde(rename = "$text", default, skip_serializing_if = "Option::is_none")]
     text: &'a Option<String>,
@@ -296,7 +301,7 @@ struct NodeDataDe {
     legacy_fields: HashMap<String, FieldValue>,
     #[serde(flatten, deserialize_with = "deserialize_slot_fields", default)]
     fields: Option<HashMap<String, FieldValue>>,
-    #[serde(rename = "$children", default)]
+    #[serde(rename = "$children", deserialize_with = "deserialize_children", default)]
     children: Option<Vec<NodeData>>,
     #[serde(rename = "$text", default)]
     text: Option<String>,
@@ -349,6 +354,46 @@ where
         fields.insert(name.to_string(), value);
     }
     Ok(Some(fields))
+}
+
+fn serialize_children<S>(
+    children: &Option<Vec<NodeData>>,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    let Some(children) = children.as_ref() else {
+        return serializer.serialize_none();
+    };
+    let mut seq = serializer.serialize_seq(Some(children.len()))?;
+    for child in children {
+        match scalar_child_value(child) {
+            Some(FieldScalar::Text(text)) => seq.serialize_element(text)?,
+            Some(FieldScalar::KindId(kind)) => seq.serialize_element(&kind.get())?,
+            None => seq.serialize_element(child)?,
+        }
+    }
+    seq.end()
+}
+
+fn deserialize_children<'de, D>(deserializer: D) -> Result<Option<Vec<NodeData>>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let raw = Vec::<FieldValueItem>::deserialize(deserializer)?;
+    if raw.is_empty() {
+        return Ok(None);
+    }
+    let mut children = Vec::with_capacity(raw.len());
+    for item in raw {
+        match item {
+            FieldValueItem::Node(node) => children.push(node),
+            FieldValueItem::Text(text) => children.push(scalar_text_leaf(text)),
+            FieldValueItem::KindId(kind) => children.push(scalar_kind_leaf(kind)),
+        }
+    }
+    Ok(Some(children))
 }
 
 
@@ -581,6 +626,19 @@ fn scalar_leaf_value(node: &NodeData) -> Option<FieldScalar<'_>> {
     }
     if node.named {
         return node.text.as_deref().map(FieldScalar::Text);
+    }
+    Some(FieldScalar::KindId(node.type_))
+}
+
+fn scalar_child_value(node: &NodeData) -> Option<FieldScalar<'_>> {
+    if node.fields.is_some() || node.children.is_some() {
+        return None;
+    }
+    if node.node_handle.is_some() || node.child_index.is_some() {
+        return None;
+    }
+    if node.named {
+        return None;
     }
     Some(FieldScalar::KindId(node.type_))
 }

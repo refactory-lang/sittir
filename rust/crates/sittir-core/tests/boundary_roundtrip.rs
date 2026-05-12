@@ -174,7 +174,7 @@ fn field_value_deserializes_from_each_variant() {
 }
 
 #[test]
-fn anonymous_leaf_children_remain_materialized_nodes_on_the_wire() {
+fn anonymous_leaf_children_scalarize_on_the_wire() {
     let node = NodeData {
         type_: K_FUNCTION_ITEM,
         source: Source::Ts,
@@ -200,8 +200,7 @@ fn anonymous_leaf_children_remain_materialized_nodes_on_the_wire() {
     };
     let json = serde_json::to_string(&node).unwrap();
     let v = wire(&json);
-    assert!(v["$children"][0].is_object());
-    assert_eq!(v["$children"][0]["$type"].as_u64(), Some(55));
+    assert_eq!(v["$children"][0].as_u64(), Some(55));
 
     let parsed: NodeData = serde_json::from_str(&json).unwrap();
     let child = parsed
