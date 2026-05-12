@@ -16,7 +16,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type { AssembledNonterminal, AssembledNode, AssembledPolymorph } from '../compiler/node-map.ts';
+import type { AssembledNonterminal, AssembledNode, AssembledPolymorph, AssembledSupertype } from '../compiler/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
 	isMultiple,
@@ -203,6 +203,21 @@ type WrapVariantDescriptor =
 			readonly source: 'promoted';
 			readonly slots: Readonly<Record<string, readonly string[]>>;
 	  };
+
+/**
+ * Builds a map from supertype kind name to its resolved transitive member set.
+ * Used by the emitted `SUPERTYPE_MEMBERS` const in wrap.ts to enable
+ * `_matchesAllowedWrapKind` to correctly match concrete kinds against
+ * grammar-declared supertypes (e.g., "identifier" against "_expression").
+ */
+function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]> {
+	const out = new Map<string, string[]>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node.modelType !== 'supertype') continue;
+		out.set(kind, (node as AssembledSupertype).subtypes);
+	}
+	return out;
+}
 
 function buildWrapVariantDescriptors(nodeMap: NodeMap): Readonly<Record<string, WrapVariantDescriptor>> {
 	const out: Record<string, WrapVariantDescriptor> = {};
@@ -572,6 +587,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
 		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource);
 		const variantDescriptors = buildWrapVariantDescriptors(this.#nodeMap);
+		const supertypeMembers = buildSupertypeMembersMap(this.#nodeMap);
 		const utilsImports = [
 			'withMethods',
 			'methodsEngine',
@@ -657,6 +673,16 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				: []),
 			...(usesFilteredChildren
 				? [
+						...(supertypeMembers.size > 0
+							? [
+									'const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {',
+									...Array.from(supertypeMembers.entries()).map(
+										([k, v]) => `  ${JSON.stringify(k)}: new Set(${JSON.stringify(v)}),`
+									),
+									'};',
+									''
+								]
+							: []),
 						'function _wrapKindNameOf(entry: unknown): string | undefined {',
 						'  if (!entry || typeof entry !== "object") return undefined;',
 						'  const raw = (entry as { $type?: unknown }).$type;',
@@ -673,10 +699,19 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  if (allowedKinds.includes(kind)) return true;',
 						'  const stripped = kind.startsWith("_") ? kind.slice(1) : undefined;',
 						'  if (stripped && allowedKinds.includes(stripped)) return true;',
-						'  return allowedKinds.some((allowed) => {',
+						'  for (const allowed of allowedKinds) {',
+						...(supertypeMembers.size > 0
+							? [
+									'    if (allowed.startsWith("_")) {',
+									'      const members = SUPERTYPE_MEMBERS[allowed];',
+									'      if (members?.has(kind)) return true;',
+									'    }'
+								]
+							: []),
 						'    const allowedStripped = allowed.startsWith("_") ? allowed.slice(1) : allowed;',
-						'    return allowedStripped === kind || (stripped !== undefined && allowedStripped === stripped);',
-						'  });',
+						'    if (allowedStripped === kind || (stripped !== undefined && allowedStripped === stripped)) return true;',
+						'  }',
+						'  return false;',
 						'}',
 						'',
 						'function _filterWrapChildrenByKind(value: unknown, allowedKinds: readonly string[]): unknown[] | undefined {',
@@ -684,7 +719,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  const entries = Array.isArray(value) ? value : [value];',
 						'  return entries.filter((entry) => {',
 						'    const kind = _wrapKindNameOf(entry);',
-						'    return kind === undefined || _matchesAllowedWrapKind(kind, allowedKinds);',
+						'    if (kind === undefined) return false;',
+						'    return _matchesAllowedWrapKind(kind, allowedKinds);',
 						'  });',
 						'}'
 					]

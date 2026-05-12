@@ -47,6 +47,25 @@ function projectKindEnumStorage<T>(value: T): T {
   const entry = value as unknown as _NodeData;
   return typeof entry.$type === "number" ? (entry.$type as T) : value;
 }
+const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
+  "_condition": new Set(["_expression","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","self","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","unit_expression","break_expression","continue_expression","index_expression","metavariable","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression","let_condition","_let_chain"]),
+  "_declaration_statement": new Set(["const_item","macro_invocation","macro_definition","empty_statement","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item"]),
+  "_delim_tokens": new Set(["_non_delim_token","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","mutable_specifier","self","super","crate","'","$","delim_token_tree"]),
+  "_expression": new Set(["_expression_except_range","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","self","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","unit_expression","break_expression","continue_expression","index_expression","metavariable","closure_expression","parenthesized_expression","struct_expression","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"]),
+  "_expression_ending_with_block": new Set(["unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"]),
+  "_expression_except_range": new Set(["unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","_literal","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","_reserved_identifier","self","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","unit_expression","break_expression","continue_expression","index_expression","metavariable","closure_expression","parenthesized_expression","struct_expression","_expression_ending_with_block","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"]),
+  "_literal": new Set(["string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal"]),
+  "_literal_pattern": new Set(["string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","negative_literal"]),
+  "_non_delim_token": new Set(["string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","mutable_specifier","self","super","crate","'","$"]),
+  "_path": new Set(["self","identifier","metavariable","super","crate","scoped_identifier","_reserved_identifier"]),
+  "_pattern": new Set(["_literal_pattern","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","negative_literal","identifier","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","_reserved_identifier","ref_pattern","slice_pattern","captured_pattern","reference_pattern","remaining_field_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation","_wildcard_pattern"]),
+  "_statement": new Set(["expression_statement","_declaration_statement","const_item","macro_invocation","macro_definition","empty_statement","attribute_item","inner_attribute_item","mod_item","foreign_mod_item","struct_item","union_item","enum_item","type_item","function_item","function_signature_item","impl_item","trait_item","associated_type","let_declaration","use_declaration","extern_crate_declaration","static_item"]),
+  "_token_pattern": new Set(["token_tree_pattern","token_repetition_pattern","token_binding_pattern","metavariable","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","mutable_specifier","self","super","crate","'"]),
+  "_tokens": new Set(["token_tree","token_repetition","metavariable","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","mutable_specifier","self","super","crate","'"]),
+  "_type": new Set(["abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","_type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound","_primitive_type"]),
+  "_use_clause": new Set(["_path","self","identifier","metavariable","super","crate","scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"]),
+};
+
 function _wrapKindNameOf(entry: unknown): string | undefined {
   if (!entry || typeof entry !== "object") return undefined;
   const raw = (entry as { $type?: unknown }).$type;
@@ -59,10 +78,15 @@ function _matchesAllowedWrapKind(kind: string, allowedKinds: readonly string[]):
   if (allowedKinds.includes(kind)) return true;
   const stripped = kind.startsWith("_") ? kind.slice(1) : undefined;
   if (stripped && allowedKinds.includes(stripped)) return true;
-  return allowedKinds.some((allowed) => {
+  for (const allowed of allowedKinds) {
+    if (allowed.startsWith("_")) {
+      const members = SUPERTYPE_MEMBERS[allowed];
+      if (members?.has(kind)) return true;
+    }
     const allowedStripped = allowed.startsWith("_") ? allowed.slice(1) : allowed;
-    return allowedStripped === kind || (stripped !== undefined && allowedStripped === stripped);
-  });
+    if (allowedStripped === kind || (stripped !== undefined && allowedStripped === stripped)) return true;
+  }
+  return false;
 }
 
 function _filterWrapChildrenByKind(value: unknown, allowedKinds: readonly string[]): unknown[] | undefined {
@@ -70,7 +94,8 @@ function _filterWrapChildrenByKind(value: unknown, allowedKinds: readonly string
   const entries = Array.isArray(value) ? value : [value];
   return entries.filter((entry) => {
     const kind = _wrapKindNameOf(entry);
-    return kind === undefined || _matchesAllowedWrapKind(kind, allowedKinds);
+    if (kind === undefined) return false;
+    return _matchesAllowedWrapKind(kind, allowedKinds);
   });
 }
 type _WrapVariantDescriptor =
