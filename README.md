@@ -1,3 +1,4 @@
+e.
 # sittir
 
 Take any [tree-sitter](https://tree-sitter.github.io/) grammar; emit a typed,

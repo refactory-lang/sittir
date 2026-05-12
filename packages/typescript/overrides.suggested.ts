@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   88  (80 applied, 8 held)
+// Rule promotions:   85  (77 applied, 8 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -279,9 +279,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "public_field_definition_declare_first", classification: "polymorph", applied: true },
   { kind: "public_field_definition_readonly_first", classification: "polymorph", applied: true },
   { kind: "public_field_definition_static_mods", classification: "polymorph", applied: true },
-  { kind: "string", classification: "polymorph", applied: true },
-  { kind: "string_double", classification: "polymorph", applied: true },
-  { kind: "string_single", classification: "polymorph", applied: true },
   { kind: "update_expression", classification: "polymorph", applied: true },
   { kind: "update_expression_postfix", classification: "polymorph", applied: true },
   { kind: "update_expression_prefix", classification: "polymorph", applied: true },

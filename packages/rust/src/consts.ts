@@ -318,10 +318,13 @@ export const KEYWORDS = [
   '_struct_item_unit',
   '_unsafe_marker',
   '_wildcard_pattern',
+  'amp',
+  'amp_amp',
   'as',
   'async',
   'await',
   'break',
+  'caret',
   'const',
   'continue',
   'crate',
@@ -345,6 +348,8 @@ export const KEYWORDS = [
   'mut',
   'mutable_specifier',
   'never_type',
+  'pipe',
+  'pipe_pipe',
   'pub',
   'raw',
   'ref',
@@ -398,10 +403,8 @@ export const OPERATORS = [
   "@",
   "[",
   "]",
-  "^",
   "{",
   "|",
-  "||",
   "}",
 ] as const;
 
@@ -416,6 +419,11 @@ export const TREE_SITTER_ID_SOURCE = "packages/rust/.sittir/src/parser.c";
 
 export const TREE_SITTER_KIND_ID_BY_KIND = {
   "identifier": 1,
+  "caret": 48,
+  "amp": 50,
+  "pipe": 51,
+  "amp_amp": 52,
+  "pipe_pipe": 53,
   "_": 74,
   "as": 84,
   "async": 85,
@@ -669,6 +677,11 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
   [1]: "identifier",
+  [48]: "caret",
+  [50]: "amp",
+  [51]: "pipe",
+  [52]: "amp_amp",
+  [53]: "pipe_pipe",
   [74]: "_",
   [84]: "as",
   [85]: "async",
@@ -922,6 +935,11 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 
 export const TREE_SITTER_KIND_ID_JSON = [
   { name: "identifier", id: 1, enumName: "Identifier", cName: "sym_identifier" },
+  { name: "caret", id: 48, enumName: "AnonCaret", cName: "anon_sym_CARET" },
+  { name: "amp", id: 50, enumName: "AnonAmp", cName: "anon_sym_AMP" },
+  { name: "pipe", id: 51, enumName: "AnonPipe", cName: "anon_sym_PIPE" },
+  { name: "amp_amp", id: 52, enumName: "AnonAmpAmp", cName: "anon_sym_AMP_AMP" },
+  { name: "pipe_pipe", id: 53, enumName: "AnonPipePipe", cName: "anon_sym_PIPE_PIPE" },
   { name: "_", id: 74, enumName: "Anon", cName: "anon_sym__" },
   { name: "as", id: 84, enumName: "AnonAs", cName: "anon_sym_as" },
   { name: "async", id: 85, enumName: "AnonAsync", cName: "anon_sym_async" },

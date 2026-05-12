@@ -771,17 +771,17 @@ function tryHoistSiblingVariants(rule, variantEntries) {
     );
   const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
-  const choice = seqMembers[resolvedPos];
-  if (!choice || !isChoiceType(choice.type))
-    return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
-  const choiceMembers = membersOf2(choice);
+  const choice2 = seqMembers[resolvedPos];
+  if (!choice2 || !isChoiceType(choice2.type))
+    return bail(`position ${resolvedPos} is '${choice2?.type}', not choice/CHOICE`);
+  const choiceMembers = membersOf2(choice2);
   const anyEmpty = parsed.some(
     (p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx])
   );
   if (!anyEmpty) return null;
   const parentKind = wireGetCurrentRuleKind();
   if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
-  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack);
+  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack);
 }
 function peelPrecWrappersFromRule(rule) {
   const dbg = typeof process !== "undefined" ? process?.env?.SITTIR_DEBUG : void 0;
@@ -809,7 +809,7 @@ function parseVariantPathsForHoist(variantEntries, bail) {
   }
   return parsed;
 }
-function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack) {
+function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack) {
   const refs = [];
   const isUpperCase = core.type === core.type.toUpperCase();
   for (const p of parsed) {
@@ -836,7 +836,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     });
   }
   registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
-  const newChoice = reconstructContainer(choice, refs);
+  const newChoice = reconstructContainer(choice2, refs);
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
 function registerHoistedVariantConflicts(variantNames) {
@@ -1632,6 +1632,12 @@ var overrides_default = grammar(
       [$._type_query_call_expression_in_type_annotation, $._call_expression_call],
       [$._type_query_call_expression, $._call_expression_call],
       [$.primary_expression, $._export_statement_default],
+      // string refine rewrite: one fielded `seq` with a correlated
+      // `contents` choice replaces the old top-level variant split.
+      // Both content arms accept `escape_sequence`, so after the
+      // opening quote tree-sitter needs GLR to defer which repeat arm
+      // owns the fragment stream until more input arrives.
+      [$.string],
       // update_expression variant extraction: the hoisted
       // `_update_expression_postfix` / `_update_expression_prefix`
       // hidden rules inherit the outer `prec.left(0, ...)`, but after
@@ -2321,17 +2327,6 @@ var overrides_default = grammar(
         1: variant("template_call"),
         2: variant("member")
       },
-      // string: variant() adoption on the quote-style choice. Base
-      // grammar: `choice(seq('"', …, '"'), seq("'", …, "'"))`. The
-      // walker's primary-branch-wins would always pick the first
-      // (double-quoted) branch as the template, so `'x'` source
-      // round-trips as `"x"` — AST mismatch. Splitting into variant
-      // children (`string_double` / `string_single`) gives each its
-      // own template that preserves the quote style.
-      string: {
-        0: variant("double"),
-        1: variant("single")
-      },
       // update_expression: postfix vs prefix `++` / `--`.
       update_expression: {
         0: variant("postfix"),
@@ -2392,6 +2387,28 @@ var overrides_default = grammar(
       // existing `[primary_expression, arrow_function]` conflict
       // declaration can engage GLR to disambiguate.
       _kw_async_marker: () => "async",
+      // string — model quote style as one fielded structural shape
+      // instead of a top-level polymorph split. `opening` / `contents`
+      // / `closing` are real field-wrapped choices in the override
+      // grammar; refine correlates them so the double/single forms
+      // share one NodeData shape with auto-stamped delimiters.
+      string: ($) => refine(
+        seq(
+          field("opening", choice('"', "'")),
+          field(
+            "contents",
+            choice(
+              repeat(choice(alias($.unescaped_double_string_fragment, $.string_fragment), $.escape_sequence)),
+              repeat(choice(alias($.unescaped_single_string_fragment, $.string_fragment), $.escape_sequence))
+            )
+          ),
+          field("closing", choice('"', "'"))
+        ),
+        {
+          double: { "opening:": '"', "contents:": 0, "closing:": '"' },
+          single: { "opening:": "'", "contents:": 1, "closing:": "'" }
+        }
+      ),
       // object_type / interface_body — correlated choice selection
       // across non-adjacent positions: the opening and closing
       // delimiters must agree (`{ }` pair is a curly object type;

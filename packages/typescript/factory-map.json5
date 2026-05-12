@@ -64,8 +64,7 @@
     "_readonly_marker": "text",
     "_reserved_identifier": "text",
     "_static_marker": "text",
-    "_string_double": "config",
-    "_string_single": "config",
+    "_string_opening": "text",
     "_type_identifier": "text",
     "_type_query_call_expression": "config",
     "_type_query_call_expression_in_type_annotation": "config",
@@ -232,8 +231,6 @@
     "sequence_expression": "spread",
     "spread_element": "direct",
     "statement_block": "config",
-    "string_double": "config",
-    "string_single": "config",
     "string": "config",
     "subscript_expression": "config",
     "super": "text",
@@ -417,6 +414,9 @@
     },
     "object_assignment_pattern.left": {
       "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern"
+    },
+    "string.contents": {
+      "string_fragment": "unescaped_single_string_fragment"
     },
     "type_predicate.name": {
       "identifier": "predefined_type"
@@ -941,6 +941,11 @@
       "statements",
       "automatic_semicolon"
     ],
+    "string": [
+      "opening",
+      "contents",
+      "closing"
+    ],
     "subscript_expression": [
       "object",
       "index"
@@ -1110,13 +1115,6 @@
         "public_field_definition_abstract_first": "abstract_first",
         "public_field_definition_readonly_first": "readonly_first",
         "public_field_definition_accessor_opt": "accessor_opt"
-      }
-    },
-    "string": {
-      "source": "override",
-      "childKind": {
-        "string_double": "double",
-        "string_single": "single"
       }
     },
     "update_expression": {

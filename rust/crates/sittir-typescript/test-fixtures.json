@@ -709,7 +709,7 @@
       "$source": 0,
       "$children": [
         {
-          "$type": 426,
+          "$type": 424,
           "$source": 0,
           "$text": "x",
           "$span": {
@@ -721,7 +721,7 @@
           "$named": true
         },
         {
-          "$type": 426,
+          "$type": 424,
           "$source": 0,
           "$text": "y",
           "$span": {
@@ -814,7 +814,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "A",
         "$span": {
@@ -1022,7 +1022,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "Promise",
         "$span": {
@@ -1072,7 +1072,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_interface": {
-        "$type": 139,
+        "$type": 141,
         "$source": 0,
         "$text": "interface",
         "$span": {
@@ -1084,7 +1084,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "IAppState",
         "$span": {
@@ -1096,7 +1096,7 @@
         "$named": true
       },
       "_body": {
-        "$type": 418,
+        "$type": 416,
         "$source": 0,
         "$text": "{\n  public readonly users: ReadonlyArray<User>\n}",
         "$span": {
@@ -1184,7 +1184,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "ReadonlyArray",
         "$span": {
@@ -1229,7 +1229,7 @@
       "$source": 0,
       "$children": [
         {
-          "$type": 392,
+          "$type": 390,
           "$source": 0,
           "$span": {
             "start": 133,
@@ -1296,7 +1296,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_interface": {
-        "$type": 139,
+        "$type": 141,
         "$source": 0,
         "$text": "interface",
         "$span": {
@@ -1308,7 +1308,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "Foo",
         "$span": {
@@ -1320,7 +1320,7 @@
         "$named": true
       },
       "_body": {
-        "$type": 418,
+        "$type": 416,
         "$source": 0,
         "$text": "{\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
         "$span": {
@@ -1758,7 +1758,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "OrderedMap",
         "$span": {
@@ -1882,7 +1882,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "Keyed",
         "$span": {
@@ -1911,344 +1911,6 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
-      "$type": 293,
-      "$source": 0,
-      "$span": {
-        "start": 7,
-        "end": 46
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_type": {
-        "$type": 307,
-        "$source": 0,
-        "$text": "type",
-        "$span": {
-          "start": 7,
-          "end": 11
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_name": {
-        "$type": 430,
-        "$source": 0,
-        "$text": "Extracted",
-        "$span": {
-          "start": 12,
-          "end": 21
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_=": {
-        "$type": 42,
-        "$source": 0,
-        "$text": "=",
-        "$span": {
-          "start": 22,
-          "end": 23
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_value": {
-        "$type": 327,
-        "$source": 0,
-        "$text": "keyof Pick<Base, \"id\">",
-        "$span": {
-          "start": 24,
-          "end": 46
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "type Extracted=keyof Pick<Base, \"id\"> "
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "type Extracted = keyof Pick<Base, \"id\">",
-    "pattern": "type_alias_declaration",
-    "edits": [],
-    "expectedSourceOut": "type Extracted=keyof Pick<Base, \"id\"> ",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (index_type_query primary_type: (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier) (literal_type (string (string_double (string_fragment))))))))",
-    "wrappedText": "type Extracted=keyof Pick<Base, \"id\"> ",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 327,
-      "$source": 0,
-      "$span": {
-        "start": 24,
-        "end": 46
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_keyof": {
-        "$type": 147,
-        "$source": 0,
-        "$text": "keyof",
-        "$span": {
-          "start": 24,
-          "end": 29
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_primary_type": {
-        "$type": 319,
-        "$source": 0,
-        "$text": "Pick<Base, \"id\">",
-        "$span": {
-          "start": 30,
-          "end": 46
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      }
-    },
-    "expectedOutput": "keyof Pick<Base, \"id\">"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "keyof Pick<Base, \"id\">",
-    "pattern": "index_type_query",
-    "edits": [],
-    "expectedSourceOut": "keyof Pick<Base, \"id\">",
-    "expectedReparseTree": "(index_type_query primary_type: (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier) (literal_type (string (string_double (string_fragment)))))))",
-    "wrappedText": "type _X = keyof Pick<Base, \"id\">;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 319,
-      "$source": 0,
-      "$span": {
-        "start": 30,
-        "end": 46
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_name": {
-        "$type": 430,
-        "$source": 0,
-        "$text": "Pick",
-        "$span": {
-          "start": 30,
-          "end": 34
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": true
-      },
-      "_type_arguments": {
-        "$type": 336,
-        "$source": 0,
-        "$text": "<Base, \"id\">",
-        "$span": {
-          "start": 34,
-          "end": 46
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      }
-    },
-    "expectedOutput": "Pick <Base, \"id\">"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "Pick<Base, \"id\">",
-    "pattern": "generic_type",
-    "edits": [],
-    "expectedSourceOut": "Pick <Base, \"id\">",
-    "expectedReparseTree": "(generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier) (literal_type (string (string_double (string_fragment))))))",
-    "wrappedText": "type _X = Pick <Base, \"id\">;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 330,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 247,
-          "$source": 0,
-          "$children": [
-            {
-              "$type": 390,
-              "$source": 0,
-              "$children": [
-                {
-                  "$type": 94,
-                  "$source": 0,
-                  "$text": "id",
-                  "$span": {
-                    "start": 42,
-                    "end": 44
-                  },
-                  "$nodeHandle": 2,
-                  "$childIndex": 1,
-                  "$named": true
-                },
-                {
-                  "$type": 155,
-                  "$source": 0,
-                  "$text": "\"",
-                  "$span": {
-                    "start": 44,
-                    "end": 45
-                  },
-                  "$nodeHandle": 2,
-                  "$childIndex": 2,
-                  "$named": false
-                }
-              ],
-              "$span": {
-                "start": 41,
-                "end": 45
-              },
-              "$nodeHandle": 2,
-              "$named": true,
-              "_\"": {
-                "$type": 155,
-                "$source": 0,
-                "$text": "\"",
-                "$span": {
-                  "start": 41,
-                  "end": 42
-                },
-                "$nodeHandle": 2,
-                "$childIndex": 0,
-                "$named": false
-              }
-            }
-          ],
-          "$span": {
-            "start": 41,
-            "end": 45
-          },
-          "$nodeHandle": 1,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 41,
-        "end": 45
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "\"id\""
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "\"id\"",
-    "pattern": "literal_type",
-    "edits": [],
-    "expectedSourceOut": "\"id\"",
-    "expectedReparseTree": "(literal_type (string (string_double (string_fragment))))",
-    "wrappedText": "type _X = \"id\";",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 247,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 390,
-          "$source": 0,
-          "$children": [
-            {
-              "$type": 94,
-              "$source": 0,
-              "$text": "id",
-              "$span": {
-                "start": 42,
-                "end": 44
-              },
-              "$nodeHandle": 1,
-              "$childIndex": 1,
-              "$named": true
-            },
-            {
-              "$type": 155,
-              "$source": 0,
-              "$text": "\"",
-              "$span": {
-                "start": 44,
-                "end": 45
-              },
-              "$nodeHandle": 1,
-              "$childIndex": 2,
-              "$named": false
-            }
-          ],
-          "$span": {
-            "start": 41,
-            "end": 45
-          },
-          "$nodeHandle": 1,
-          "$named": true,
-          "_\"": {
-            "$type": 155,
-            "$source": 0,
-            "$text": "\"",
-            "$span": {
-              "start": 41,
-              "end": 42
-            },
-            "$nodeHandle": 1,
-            "$childIndex": 0,
-            "$named": false
-          }
-        }
-      ],
-      "$span": {
-        "start": 41,
-        "end": 45
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "\"id\""
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "\"id\"",
-    "pattern": "string",
-    "edits": [],
-    "expectedSourceOut": "\"id\"",
-    "expectedReparseTree": "(string (string_double (string_fragment)))",
-    "wrappedText": "let _ = \"id\";",
-    "wrappedOffset": 8
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
       "$type": 282,
       "$source": 0,
       "$span": {
@@ -2258,7 +1920,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_abstract": {
-        "$type": 133,
+        "$type": 135,
         "$source": 0,
         "$text": "abstract",
         "$span": {
@@ -2282,7 +1944,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "C",
         "$span": {
@@ -2516,7 +2178,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "C",
         "$span": {
@@ -2600,7 +2262,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "C",
         "$span": {
@@ -2672,7 +2334,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_interface": {
-        "$type": 139,
+        "$type": 141,
         "$source": 0,
         "$text": "interface",
         "$span": {
@@ -2684,7 +2346,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "I",
         "$span": {
@@ -2696,7 +2358,7 @@
         "$named": true
       },
       "_body": {
-        "$type": 418,
+        "$type": 416,
         "$source": 0,
         "$text": "{ }",
         "$span": {
@@ -2734,7 +2396,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_interface": {
-        "$type": 139,
+        "$type": 141,
         "$source": 0,
         "$text": "interface",
         "$span": {
@@ -2746,7 +2408,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "I",
         "$span": {
@@ -2758,7 +2420,7 @@
         "$named": true
       },
       "_body": {
-        "$type": 418,
+        "$type": 416,
         "$source": 0,
         "$text": "{ }",
         "$span": {
@@ -2808,7 +2470,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "A",
         "$span": {
@@ -2940,7 +2602,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "A",
         "$span": {
@@ -3072,7 +2734,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "A",
         "$span": {
@@ -3204,7 +2866,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "A",
         "$span": {
@@ -3336,7 +2998,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "A",
         "$span": {
@@ -4394,7 +4056,7 @@
         "$named": false
       },
       "_type": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "bar",
         "$span": {
@@ -4444,7 +4106,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "UserType",
         "$span": {
@@ -4568,7 +4230,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_interface": {
-        "$type": 139,
+        "$type": 141,
         "$source": 0,
         "$text": "interface",
         "$span": {
@@ -4580,7 +4242,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "UserInterface",
         "$span": {
@@ -4592,7 +4254,7 @@
         "$named": true
       },
       "_body": {
-        "$type": 418,
+        "$type": 416,
         "$source": 0,
         "$text": "{}",
         "$span": {
@@ -4642,7 +4304,7 @@
         "$named": false
       },
       "_name": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "NoInfer",
         "$span": {
@@ -4792,7 +4454,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_left": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -5064,7 +4726,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_keyof": {
-        "$type": 147,
+        "$type": 149,
         "$source": 0,
         "$text": "keyof",
         "$span": {
@@ -5076,7 +4738,7 @@
         "$named": false
       },
       "_primary_type": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -5164,7 +4826,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_primary_type": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "T",
         "$span": {
@@ -5188,7 +4850,7 @@
         "$named": false
       },
       "_index_type": {
-        "$type": 430,
+        "$type": 428,
         "$source": 0,
         "$text": "K",
         "$span": {

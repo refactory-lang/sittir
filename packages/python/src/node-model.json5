@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 238,
+  "nodeCount": 245,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -48,26 +48,6 @@
   ],
   "nodes": [
     {
-      "kind": "%",
-      "modelType": "token",
-      "typeName": "Percent",
-      "irKey": "percent",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"%\" as const",
-      "text": "%"
-    },
-    {
-      "kind": "&",
-      "modelType": "token",
-      "typeName": "Amp",
-      "irKey": "amp",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"&\" as const",
-      "text": "&"
-    },
-    {
       "kind": "(",
       "modelType": "token",
       "typeName": "Paren",
@@ -104,16 +84,6 @@
       "isParameterless": true,
       "stampExpression": "\"**\" as const",
       "text": "**"
-    },
-    {
-      "kind": "+",
-      "modelType": "token",
-      "typeName": "Plus",
-      "irKey": "plus",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"+\" as const",
-      "text": "+"
     },
     {
       "kind": ",",
@@ -176,16 +146,6 @@
       "text": "/"
     },
     {
-      "kind": "//",
-      "modelType": "token",
-      "typeName": "Slashslash",
-      "irKey": "slashslash",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"//\" as const",
-      "text": "//"
-    },
-    {
       "kind": ":",
       "modelType": "token",
       "typeName": "Colon",
@@ -204,16 +164,6 @@
       "isParameterless": true,
       "stampExpression": "\":=\" as const",
       "text": ":="
-    },
-    {
-      "kind": "<<",
-      "modelType": "token",
-      "typeName": "Shl",
-      "irKey": "shl",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"<<\" as const",
-      "text": "<<"
     },
     {
       "kind": "=",
@@ -302,16 +252,6 @@
       "factoryName": "closeBracket",
       "irKey": "]",
       "hidden": false
-    },
-    {
-      "kind": "^",
-      "modelType": "token",
-      "typeName": "Caret",
-      "irKey": "caret",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"^\" as const",
-      "text": "^"
     },
     {
       "kind": "_",
@@ -1310,6 +1250,16 @@
       "children": []
     },
     {
+      "kind": "amp",
+      "modelType": "token",
+      "typeName": "Amp",
+      "irKey": "amp",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"&\" as const",
+      "text": "&"
+    },
+    {
       "kind": "and",
       "modelType": "keyword",
       "typeName": "And",
@@ -1680,6 +1630,16 @@
       "text": "async"
     },
     {
+      "kind": "at",
+      "modelType": "token",
+      "typeName": "At2",
+      "irKey": "at",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"@\" as const",
+      "text": "@"
+    },
+    {
       "kind": "attribute",
       "modelType": "branch",
       "typeName": "Attribute",
@@ -1890,75 +1850,102 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "+"
+              "name": "plus",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "-"
+              "name": "dash",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "*"
+              "name": "star",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "@"
+              "name": "at",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "/"
+              "name": "slash",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "%"
+              "name": "percent",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "//"
+              "name": "slash_slash",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "**"
+              "name": "star_star",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "|"
+              "name": "pipe",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "&"
+              "name": "amp",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "^"
+              "name": "caret",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "<<"
+              "name": "lt_lt",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": ">>"
+              "name": "gt_gt",
+              "unresolved": true
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "plus",
+              "dash",
+              "star",
+              "at",
+              "slash",
+              "percent",
+              "slash_slash",
+              "star_star",
+              "pipe",
+              "amp",
+              "caret",
+              "lt_lt",
+              "gt_gt"
+            ]
           }
         },
         {
@@ -2053,20 +2040,25 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "and"
+              "name": "and",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "or"
+              "name": "or",
+              "unresolved": true
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "and",
+              "or"
+            ]
           }
         },
         {
@@ -2179,6 +2171,16 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "caret",
+      "modelType": "token",
+      "typeName": "Caret",
+      "irKey": "caret",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"^\" as const",
+      "text": "^"
     },
     {
       "kind": "case",
@@ -2553,44 +2555,52 @@
           "nonEmpty": true,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "<"
+              "name": "lt",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "<="
+              "name": "lt_eq",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "=="
+              "name": "eq_eq",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "!="
+              "name": "bang_eq",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": ">="
+              "name": "gt_eq",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": ">"
+              "name": "gt",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "<>"
+              "name": "lt_gt",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "in"
+              "name": "in",
+              "unresolved": true
             },
             {
               "kind": "terminal",
@@ -2598,9 +2608,10 @@
               "value": "not in"
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "is"
+              "name": "is",
+              "unresolved": true
             },
             {
               "kind": "terminal",
@@ -2611,7 +2622,17 @@
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "lt",
+              "lt_eq",
+              "eq_eq",
+              "bang_eq",
+              "gt_eq",
+              "gt",
+              "lt_gt",
+              "in",
+              "is"
+            ]
           }
         }
       ],
@@ -2905,6 +2926,16 @@
       "isParameterless": true,
       "stampExpression": "\"continue\" as const",
       "text": "continue"
+    },
+    {
+      "kind": "dash",
+      "modelType": "token",
+      "typeName": "Dash",
+      "irKey": "dash",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"-\" as const",
+      "text": "-"
     },
     {
       "kind": "decorated_definition",
@@ -4518,6 +4549,16 @@
       ]
     },
     {
+      "kind": "gt_gt",
+      "modelType": "token",
+      "typeName": "GtGt",
+      "irKey": "gtGt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">>\" as const",
+      "text": ">>"
+    },
+    {
       "kind": "identifier",
       "modelType": "pattern",
       "typeName": "Identifier",
@@ -5372,6 +5413,16 @@
       ]
     },
     {
+      "kind": "lt_lt",
+      "modelType": "token",
+      "typeName": "LtLt",
+      "irKey": "ltLt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<<\" as const",
+      "text": "<<"
+    },
+    {
       "kind": "match",
       "modelType": "keyword",
       "typeName": "Match",
@@ -5922,6 +5973,36 @@
       ]
     },
     {
+      "kind": "percent",
+      "modelType": "token",
+      "typeName": "Percent",
+      "irKey": "percent",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"%\" as const",
+      "text": "%"
+    },
+    {
+      "kind": "pipe",
+      "modelType": "token",
+      "typeName": "Pipe2",
+      "irKey": "pipe",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"|\" as const",
+      "text": "|"
+    },
+    {
+      "kind": "plus",
+      "modelType": "token",
+      "typeName": "Plus",
+      "irKey": "plus",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"+\" as const",
+      "text": "+"
+    },
+    {
       "kind": "positional_separator",
       "modelType": "token",
       "typeName": "PositionalSeparator",
@@ -6281,6 +6362,26 @@
       ]
     },
     {
+      "kind": "slash",
+      "modelType": "token",
+      "typeName": "Slash2",
+      "irKey": "slash",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"/\" as const",
+      "text": "/"
+    },
+    {
+      "kind": "slash_slash",
+      "modelType": "token",
+      "typeName": "SlashSlash",
+      "irKey": "slashSlash",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"//\" as const",
+      "text": "//"
+    },
+    {
       "kind": "slice",
       "modelType": "branch",
       "typeName": "Slice",
@@ -6446,6 +6547,26 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "star",
+      "modelType": "token",
+      "typeName": "Star2",
+      "irKey": "star",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"*\" as const",
+      "text": "*"
+    },
+    {
+      "kind": "star_star",
+      "modelType": "token",
+      "typeName": "StarStar",
+      "irKey": "starStar",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"**\" as const",
+      "text": "**"
     },
     {
       "kind": "string",

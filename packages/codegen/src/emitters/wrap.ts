@@ -23,10 +23,12 @@ import {
 	isNonEmpty,
 	isRequired,
 	resolveFieldStorageInfo,
+	classifyChildFactorySurface,
 	classifyWrapEmission,
 	warnSkippedParserSymbol
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
+import { deriveChildrenKinds } from './transport-common.ts';
 import {
 	collectKindEntries,
 	kindIdMemberName,
@@ -126,13 +128,13 @@ export namespace wrap {
 		if (!node.rawFactoryName) return;
 		// NOTE: class getters are NOT enumerable, so we must pass explicitly
 		// rather than relying on { ...node } to capture prototype-defined
-		// getters like `rawFactoryName` and `isContainerShape`.
+		// getters like `rawFactoryName`.
 		const result = emitFieldCarryingWrap(
 			{
 				kind: node.kind,
 				typeName: node.typeName,
 				rawFactoryName: node.rawFactoryName,
-				isContainerShape: node.isContainerShape
+				childSurface: classifyChildFactorySurface(node, nodeMap)
 			},
 			node.fields,
 			node.children,
@@ -153,61 +155,23 @@ export namespace wrap {
 		nodeMap: NodeMap
 	): void {
 		if (!node.rawFactoryName) return;
-		const { fields, children } = mergePolymorphFormsIntoFieldsAndChildren(node);
-		// Polymorph wraps never have container shape — they always have at least
-		// one form with fields. Pass rawFactoryName explicitly (class getters are
-		// NOT enumerable, so { ...node } would lose it).
+		// Polymorph wraps reuse the branch-style structural slot surface; the
+		// form-specific shell remains only in the variant descriptor metadata.
 		const result = emitFieldCarryingWrap(
 			{
 				kind: node.kind,
 				typeName: node.typeName,
 				rawFactoryName: node.rawFactoryName,
-				isContainerShape: false,
+				childSurface: classifyChildFactorySurface(node, nodeMap),
 				isPolymorph: true
 			},
-			fields,
-			children,
+			node.fields,
+			node.children,
 			kindEntries,
 			nodeMap
 		);
 		output.push(result);
 	}
-}
-
-/**
- * Merges all polymorph forms into a unified field list and child list so
- * the lazy view exposes any field that might be populated at runtime.
- *
- * @remarks
- * Polymorph wraps under the parent kind — unioning every form's fields
- * ensures the view surface is a superset of all possible runtime shapes.
- * First-occurrence wins on duplicate field names; same deduplication
- * applies to named child slots.
- *
- * @param node - An assembled polymorph node whose `forms` array contains
- *   the individual structural variants.
- * @returns An object with the merged `fields` array and merged `children`
- *   array, both deduplicated by name.
- */
-function mergePolymorphFormsIntoFieldsAndChildren(node: AssembledPolymorph): {
-	fields: AssembledNonterminal[];
-	children: AssembledNonterminal[];
-} {
-	const allFields = new Map<string, AssembledNonterminal>();
-	for (const form of node.forms) {
-		for (const f of form.fields) {
-			if (!allFields.has(f.name)) allFields.set(f.name, f);
-		}
-	}
-	const allChildren: AssembledNonterminal[] = [];
-	for (const form of node.forms) {
-		for (const c of form.children) {
-			if (!allChildren.some((existing) => existing.name === c.name)) {
-				allChildren.push(c);
-			}
-		}
-	}
-	return { fields: [...allFields.values()], children: allChildren };
 }
 
 // ---------------------------------------------------------------------------
@@ -219,8 +183,8 @@ interface WrapNode {
 	readonly typeName: string;
 	/** rawFactoryName for $with — null when the kind has no factory. */
 	readonly rawFactoryName?: string;
-	/** True when this is a container-shaped node (rest-param factory, no named fields). */
-	readonly isContainerShape?: boolean;
+	/** Child-factory surface when the node exposes positional child factories. */
+	readonly childSurface?: 'direct' | 'spread' | null;
 	/**
 	 * True when the node is a polymorph — the parent type is a union of UForm
 	 * interfaces where not all members may declare `$children`. Callers use
@@ -403,8 +367,7 @@ function emitFieldCarryingWrap(
 	// may declare `$children`, but it is always present at runtime. Cast
 	// through `(data as any)` to access the property without type errors.
 	if (children.length > 0) {
-		const dataExpr = node.isPolymorph ? '(data as any).$children' : 'data.$children';
-		lines.push(`    $children: ${dataExpr},`);
+		lines.push(`    $children: ${resolveChildrenStoreExpr(node, children)},`);
 	}
 	lines.push('');
 
@@ -424,6 +387,13 @@ function emitFieldCarryingWrap(
 	}
 	lines.push('}');
 	return lines.join('\n');
+}
+
+function resolveChildrenStoreExpr(node: WrapNode, children: readonly AssembledNonterminal[]): string {
+	const dataExpr = node.isPolymorph ? '(data as any).$children' : 'data.$children';
+	const allowedKinds = [...new Set(children.flatMap((child) => deriveChildrenKinds(child)))];
+	if (allowedKinds.length === 0) return dataExpr;
+	return `_filterWrapChildrenByKind(${dataExpr}, ${JSON.stringify(allowedKinds)})`;
 }
 
 /**
@@ -458,11 +428,10 @@ function emitInlineWithProperty(
 	// `$type` before calling the wrap function).
 	const spreadData = node.isPolymorph ? '...(data as any)' : '...data';
 
-	if (node.isContainerShape) {
+	if (node.childSurface === 'spread' || node.childSurface === 'direct') {
 		const childElem = childElementType({ children }, nodeMap);
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
-		const anyMultiple = children.some((c) => isMultiple(c));
-		if (anyMultiple) {
+		if (node.childSurface === 'spread') {
 			const restType = childrenSetterRestType(children, childElem, childRest);
 			lines.push(
 				`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $children: vs }, tree) },`
@@ -592,6 +561,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesProjectKindEnum = /\bprojectKindEnumStorage\b/.test(bodySource);
 		const usesCoerceBoolean = /\bcoerceBooleanKeywordStorage\b/.test(bodySource);
 		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
+		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource);
 		const variantDescriptors = buildWrapVariantDescriptors(this.#nodeMap);
 		const utilsImports = [
 			'withMethods',
@@ -673,6 +643,40 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry)) as unknown as T;',
 						'  const entry = value as unknown as _NodeData;',
 						'  return typeof entry.$type === "number" ? (entry.$type as T) : value;',
+						'}'
+					]
+				: []),
+			...(usesFilteredChildren
+				? [
+						'function _wrapKindNameOf(entry: unknown): string | undefined {',
+						'  if (!entry || typeof entry !== "object") return undefined;',
+						'  const raw = (entry as { $type?: unknown }).$type;',
+						'  if (raw === undefined) return undefined;',
+						...(this.#kindEntries
+							? [
+									'  if (typeof raw === "number") return KIND_NAMES.get(raw as never) ?? String(raw);'
+								]
+							: []),
+						'  return typeof raw === "string" ? raw : undefined;',
+						'}',
+						'',
+						'function _matchesAllowedWrapKind(kind: string, allowedKinds: readonly string[]): boolean {',
+						'  if (allowedKinds.includes(kind)) return true;',
+						'  const stripped = kind.startsWith("_") ? kind.slice(1) : undefined;',
+						'  if (stripped && allowedKinds.includes(stripped)) return true;',
+						'  return allowedKinds.some((allowed) => {',
+						'    const allowedStripped = allowed.startsWith("_") ? allowed.slice(1) : allowed;',
+						'    return allowedStripped === kind || (stripped !== undefined && allowedStripped === stripped);',
+						'  });',
+						'}',
+						'',
+						'function _filterWrapChildrenByKind(value: unknown, allowedKinds: readonly string[]): unknown[] | undefined {',
+						'  if (value == null) return undefined;',
+						'  const entries = Array.isArray(value) ? value : [value];',
+						'  return entries.filter((entry) => {',
+						'    const kind = _wrapKindNameOf(entry);',
+						'    return kind === undefined || _matchesAllowedWrapKind(kind, allowedKinds);',
+						'  });',
 						'}'
 					]
 				: []),
@@ -850,7 +854,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			lines.push('    const currentType = typeof data.$type === "number"');
 			lines.push('      ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)');
 			lines.push('      : (data.$type as unknown as string);');
-			lines.push('    if (currentType === asType.from) {');
+			lines.push('    const hiddenCurrentType = currentType.startsWith("_") ? currentType.slice(1) : undefined;');
+			lines.push('    if (currentType === asType.from || hiddenCurrentType === asType.from) {');
 			lines.push('      data = { ...data, $type: asType.to as unknown as number };');
 			lines.push('    }');
 			lines.push('  }');

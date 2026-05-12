@@ -250,6 +250,7 @@
     "_inner_block_doc_comment_marker": "text",
     "_line_doc_content": "text",
     "async": "text",
+    "_": "text",
     "static": "text",
     "fn": "text",
     "in": "text",

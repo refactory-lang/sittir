@@ -102,6 +102,12 @@ export default grammar(
 			[$._type_query_call_expression_in_type_annotation, $._call_expression_call],
 			[$._type_query_call_expression, $._call_expression_call],
 			[$.primary_expression, $._export_statement_default],
+			// string refine rewrite: one fielded `seq` with a correlated
+			// `contents` choice replaces the old top-level variant split.
+			// Both content arms accept `escape_sequence`, so after the
+			// opening quote tree-sitter needs GLR to defer which repeat arm
+			// owns the fragment stream until more input arrives.
+			[$.string],
 			// update_expression variant extraction: the hoisted
 			// `_update_expression_postfix` / `_update_expression_prefix`
 			// hidden rules inherit the outer `prec.left(0, ...)`, but after
@@ -823,18 +829,6 @@ export default grammar(
 				2: variant('member')
 			},
 
-			// string: variant() adoption on the quote-style choice. Base
-			// grammar: `choice(seq('"', …, '"'), seq("'", …, "'"))`. The
-			// walker's primary-branch-wins would always pick the first
-			// (double-quoted) branch as the template, so `'x'` source
-			// round-trips as `"x"` — AST mismatch. Splitting into variant
-			// children (`string_double` / `string_single`) gives each its
-			// own template that preserves the quote style.
-			string: {
-				0: variant('double'),
-				1: variant('single')
-			},
-
 			// update_expression: postfix vs prefix `++` / `--`.
 			update_expression: {
 				0: variant('postfix'),
@@ -901,6 +895,30 @@ export default grammar(
 			// existing `[primary_expression, arrow_function]` conflict
 			// declaration can engage GLR to disambiguate.
 			_kw_async_marker: () => 'async',
+
+			// string — model quote style as one fielded structural shape
+			// instead of a top-level polymorph split. `opening` / `contents`
+			// / `closing` are real field-wrapped choices in the override
+			// grammar; refine correlates them so the double/single forms
+			// share one NodeData shape with auto-stamped delimiters.
+			string: ($) =>
+				refine(
+					seq(
+						field('opening', choice('"', '\'')),
+						field(
+							'contents',
+							choice(
+								repeat(choice(alias($.unescaped_double_string_fragment, $.string_fragment), $.escape_sequence)),
+								repeat(choice(alias($.unescaped_single_string_fragment, $.string_fragment), $.escape_sequence))
+							)
+						),
+						field('closing', choice('"', '\''))
+					),
+					{
+						double: { 'opening:': '"', 'contents:': 0, 'closing:': '"' },
+						single: { 'opening:': '\'', 'contents:': 1, 'closing:': '\'' }
+					}
+				),
 
 			// object_type / interface_body — correlated choice selection
 			// across non-adjacent positions: the opening and closing

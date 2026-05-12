@@ -8,7 +8,7 @@ import type { TreeHandle } from '@sittir/common';
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './types.js';
 import type * as T from './types.js';
-import { withMethods, methodsEngine, coerceBooleanKeywordStorage, coerceBitflagStorage } from './utils.js';
+import { withMethods, methodsEngine, coerceBooleanKeywordStorage } from './utils.js';
 import * as _factories from './factories.js';
 
 // Drill-in helpers — call back through `readTreeNode` so the same
@@ -46,6 +46,32 @@ function projectKindEnumStorage<T>(value: T): T {
   if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry)) as unknown as T;
   const entry = value as unknown as _NodeData;
   return typeof entry.$type === "number" ? (entry.$type as T) : value;
+}
+function _wrapKindNameOf(entry: unknown): string | undefined {
+  if (!entry || typeof entry !== "object") return undefined;
+  const raw = (entry as { $type?: unknown }).$type;
+  if (raw === undefined) return undefined;
+  if (typeof raw === "number") return KIND_NAMES.get(raw as never) ?? String(raw);
+  return typeof raw === "string" ? raw : undefined;
+}
+
+function _matchesAllowedWrapKind(kind: string, allowedKinds: readonly string[]): boolean {
+  if (allowedKinds.includes(kind)) return true;
+  const stripped = kind.startsWith("_") ? kind.slice(1) : undefined;
+  if (stripped && allowedKinds.includes(stripped)) return true;
+  return allowedKinds.some((allowed) => {
+    const allowedStripped = allowed.startsWith("_") ? allowed.slice(1) : allowed;
+    return allowedStripped === kind || (stripped !== undefined && allowedStripped === stripped);
+  });
+}
+
+function _filterWrapChildrenByKind(value: unknown, allowedKinds: readonly string[]): unknown[] | undefined {
+  if (value == null) return undefined;
+  const entries = Array.isArray(value) ? value : [value];
+  return entries.filter((entry) => {
+    const kind = _wrapKindNameOf(entry);
+    return kind === undefined || _matchesAllowedWrapKind(kind, allowedKinds);
+  });
 }
 type _WrapVariantDescriptor =
   | { source: "override"; childKind: Record<string, string> }
@@ -156,9 +182,9 @@ export function wrap_AsPattern(data: T._AsPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._AsPattern as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["case_pattern","identifier"]),
 
-    $with: { $child: (v: (T.CasePattern | T.Identifier)) => wrap_AsPattern({ ...data, $children: [v] }, tree) },
+    $with: { $children: (...vs: readonly [((T.CasePattern | T.Identifier))]) => wrap_AsPattern({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -167,9 +193,11 @@ export function wrapComprehensionClauses(data: T.ComprehensionClauses, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.ComprehensionClauses as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["for_in_clause","if_clause"]),
 
-    $with: { $children: (...vs: ((T.ForInClause | T.IfClause))[]) => wrapComprehensionClauses({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: ((T.ForInClause | T.IfClause))[]) => wrapComprehensionClauses({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -178,9 +206,11 @@ export function wrap_ListPattern(data: T._ListPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ListPattern as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["case_pattern"]),
 
-    $with: { $children: (...vs: T.CasePattern[]) => wrap_ListPattern({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: T.CasePattern[]) => wrap_ListPattern({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -189,9 +219,9 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.MatchBlock as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_match_block_block"]),
 
-    $with: { $child: (v: T.MatchBlockBlock) => wrapMatchBlock({ ...data, $children: [v] }, tree) },
+    $with: { $children: (...vs: readonly [T.MatchBlockBlock]) => wrapMatchBlock({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -200,9 +230,9 @@ export function wrapSimplePatternNegative(data: T.SimplePatternNegative, tree: T
   const _node = withMethods({
     ...data,
     $type: TSKindId.SimplePatternNegative as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["integer","float"]),
 
-    $with: { $child: (v: (T.Integer | T.Float)) => wrapSimplePatternNegative({ ...data, $children: [v] }, tree) },
+    $with: { $children: (...vs: readonly [((T.Integer | T.Float))]) => wrapSimplePatternNegative({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -211,7 +241,7 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.SimpleStatements as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_simple_statement"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.SimpleStatement>) => wrapSimpleStatements({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -222,9 +252,11 @@ export function wrap_TuplePattern(data: T._TuplePattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._TuplePattern as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["case_pattern"]),
 
-    $with: { $children: (...vs: T.CasePattern[]) => wrap_TuplePattern({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: T.CasePattern[]) => wrap_TuplePattern({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -233,7 +265,7 @@ export function wrap_WithClauseParen(data: T._WithClauseParen, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId._WithClauseParen as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["with_item"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.WithItem>) => wrap_WithClauseParen({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -261,9 +293,11 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ArgumentList as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["expression","list_splat","dictionary_splat","parenthesized_list_splat","keyword_argument"]),
 
-    $with: { $children: (...vs: ((T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument))[]) => wrapArgumentList({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: ((T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument))[]) => wrapArgumentList({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -289,7 +323,7 @@ export function wrapAssertStatement(data: T.AssertStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AssertStatement as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["expression"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.Expression>) => wrapAssertStatement({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -301,7 +335,7 @@ export function wrapAssignment(data: T.Assignment, tree: TreeHandle) {
     ...data,
     $type: TSKindId.Assignment as const,
     _left: (data as any)._left,
-    $children: (data as any).$children,
+    $children: _filterWrapChildrenByKind((data as any).$children, ["_assignment_eq","_assignment_type","_assignment_typed"]),
 
     left() { return drillIn<T.LeftHandSide>(this._left, tree); },
     $with: {
@@ -368,11 +402,11 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
     ...data,
     $type: TSKindId.BinaryOperator as const,
     _left: data._left,
-    _operator: data._operator,
+    _operator: projectKindEnumStorage(data._operator),
     _right: data._right,
 
     left() { return drillIn<T.PrimaryExpression>(this._left, tree); },
-    operator() { return drillIn<"+" | "-" | "*" | "@" | "/" | "%" | "//" | "**" | "|" | "&" | "^" | "<<" | ">>">(this._operator, tree); },
+    operator() { return this._operator; },
     right() { return drillIn<T.PrimaryExpression>(this._right, tree); },
     $with: {
       left: (v: NonNullable<T.BinaryOperator['_left']>) => wrapBinaryOperator({ ...data, _left: v }, tree),
@@ -387,9 +421,11 @@ export function wrapBlock(data: T.Block, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Block as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_statement"]),
 
-    $with: { $children: (...vs: T.Statement[]) => wrapBlock({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: T.Statement[]) => wrapBlock({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -399,11 +435,11 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
     ...data,
     $type: TSKindId.BooleanOperator as const,
     _left: data._left,
-    _operator: data._operator,
+    _operator: projectKindEnumStorage(data._operator),
     _right: data._right,
 
     left() { return drillIn<T.Expression>(this._left, tree); },
-    operator() { return drillIn<"and" | "or">(this._operator, tree); },
+    operator() { return this._operator; },
     right() { return drillIn<T.Expression>(this._right, tree); },
     $with: {
       left: (v: NonNullable<T.BooleanOperator['_left']>) => wrapBooleanOperator({ ...data, _left: v }, tree),
@@ -437,7 +473,7 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
     $type: TSKindId.CaseClause as const,
     _guard: data._guard,
     _consequence: data._consequence,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["case_pattern"]),
 
     guard() { return drillIn<T.IfClause | undefined>(this._guard, tree); },
     consequence() { return drillIn<T.Suite>(this._consequence, tree); },
@@ -454,7 +490,7 @@ export function wrapCasePattern(data: T.CasePattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.CasePattern as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_as_pattern","keyword_pattern","_simple_pattern"]),
 
     $with: { $child: (v: (T._AsPattern | T.KeywordPattern | T.SimplePattern)) => wrapCasePattern({ ...data, $children: [v] }, tree) },
   }, methodsEngine);
@@ -520,14 +556,14 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
     ...data,
     $type: TSKindId.ComparisonOperator as const,
     _left: data._left,
-    _operators: coerceBitflagStorage(data._operators, ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"]),
-    $children: data.$children,
+    _operators: data._operators,
+    $children: _filterWrapChildrenByKind(data.$children, ["primary_expression"]),
 
     left() { return drillIn<T.PrimaryExpression>(this._left, tree); },
-    operators() { return this._operators; },
+    operators() { return drillInAll<T.Lt | T.LtEq | T.EqEq | T.BangEq | T.GtEq | T.Gt | T.LtGt | T.In | "not in" | T.Is | "is not">(this._operators, tree); },
     $with: {
       left: (v: NonNullable<T.ComparisonOperator['_left']>) => wrapComparisonOperator({ ...data, _left: v }, tree),
-      operators: (v: NonNullable<T.ComparisonOperator['_operators']>) => wrapComparisonOperator({ ...data, _operators: v }, tree),
+      operators: (...v: NonEmptyArray<NonNullable<T.ComparisonOperator['_operators']>[number]>) => wrapComparisonOperator({ ...data, _operators: v }, tree),
       children: (...items: NonEmptyArray<T.PrimaryExpression>) => wrapComparisonOperator({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
@@ -540,7 +576,7 @@ export function wrapComplexPattern(data: T.ComplexPattern, tree: TreeHandle) {
     $type: TSKindId.ComplexPattern as const,
     _real: coerceBooleanKeywordStorage(data._real),
     _imaginary: data._imaginary,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["integer","float"]),
 
     real() { return this._real; },
     imaginary() { return drillIn<T.Integer | T.Float>(this._imaginary, tree); },
@@ -557,7 +593,7 @@ export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.ConcatenatedString as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["string"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.String>) => wrapConcatenatedString({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -606,7 +642,7 @@ export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeH
     ...data,
     $type: TSKindId.DecoratedDefinition as const,
     _definition: data._definition,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["decorator"]),
 
     definition() { return drillIn<T.ClassDefinition | T.FunctionDefinition>(this._definition, tree); },
     $with: {
@@ -655,7 +691,7 @@ export function wrapDeleteStatement(data: T.DeleteStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DeleteStatement as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_expressions"]),
 
     $with: { $child: (v: T.Expressions) => wrapDeleteStatement({ ...data, $children: [v] }, tree) },
   }, methodsEngine);
@@ -666,9 +702,11 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DictPattern as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_dict_pattern_kv"]),
 
-    $with: { $children: (...vs: T.DictPatternKv[]) => wrapDictPattern({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: T.DictPatternKv[]) => wrapDictPattern({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -677,9 +715,11 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Dictionary as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["pair","dictionary_splat"]),
 
-    $with: { $children: (...vs: ((T.Pair | T.DictionarySplat))[]) => wrapDictionary({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: ((T.Pair | T.DictionarySplat))[]) => wrapDictionary({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -689,7 +729,7 @@ export function wrapDictionaryComprehension(data: T.DictionaryComprehension, tre
     ...data,
     $type: TSKindId.DictionaryComprehension as const,
     _body: data._body,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_comprehension_clauses"]),
 
     body() { return drillIn<T.Pair>(this._body, tree); },
     $with: {
@@ -718,7 +758,7 @@ export function wrapDictionarySplatPattern(data: T.DictionarySplatPattern, tree:
   const _node = withMethods({
     ...data,
     $type: TSKindId.DictionarySplatPattern as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["identifier","keyword_identifier","subscript","attribute"]),
 
     $with: { $child: (v: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) => wrapDictionarySplatPattern({ ...data, $children: [v] }, tree) },
   }, methodsEngine);
@@ -729,7 +769,7 @@ export function wrapDottedName(data: T.DottedName, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DottedName as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["identifier"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.Identifier>) => wrapDottedName({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -773,7 +813,7 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle) {
     $type: TSKindId.ExceptClause as const,
     _value: data._value,
     _alias: data._alias,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_suite"]),
 
     values() { return drillInAll<T.Expression>(this._value, tree); },
     alias() { return drillIn<T.Expression | undefined>(this._alias, tree); },
@@ -807,7 +847,7 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExpressionList as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["expression"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.Expression>) => wrapExpressionList({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -817,7 +857,7 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle) {
 export function wrapExpressionStatementTuple(data: T.ExpressionStatementTuple, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["expression"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.Expression>) => wrapExpressionStatementTuple({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -828,7 +868,7 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExpressionStatement as const,
-    $children: (data as any).$children,
+    $children: _filterWrapChildrenByKind((data as any).$children, ["expression","_expression_statement_tuple","assignment","augmented_assignment","yield"]),
 
     $with: {
       children: (...items: readonly [((T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield))]) => wrapExpressionStatement({ ...(data as any), $children: items }, tree),
@@ -901,9 +941,11 @@ export function wrapFormatSpecifier(data: T.FormatSpecifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FormatSpecifier as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["interpolation"]),
 
-    $with: { $children: (...vs: T.Interpolation[]) => wrapFormatSpecifier({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: T.Interpolation[]) => wrapFormatSpecifier({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -956,7 +998,7 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
     ...data,
     $type: TSKindId.GeneratorExpression as const,
     _body: data._body,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_comprehension_clauses"]),
 
     body() { return drillIn<T.Expression>(this._body, tree); },
     $with: {
@@ -988,7 +1030,7 @@ export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.GlobalStatement as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["identifier"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.Identifier>) => wrapGlobalStatement({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -1034,7 +1076,7 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
     ...data,
     $type: TSKindId.ImportFromStatement as const,
     _module_name: data._module_name,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["wildcard_import","dotted_name","aliased_import"]),
 
     moduleName() { return drillIn<T.RelativeImport | T.DottedName>(this._module_name, tree); },
     $with: {
@@ -1134,7 +1176,7 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.LambdaParameters as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["parameter"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.Parameter>) => wrapLambdaParameters({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -1162,9 +1204,11 @@ export function wrapList(data: T.List, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.List as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["expression","yield","list_splat","parenthesized_list_splat"]),
 
-    $with: { $children: (...vs: ((T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]) => wrapList({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: ((T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]) => wrapList({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -1174,7 +1218,7 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
     ...data,
     $type: TSKindId.ListComprehension as const,
     _body: data._body,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_comprehension_clauses"]),
 
     body() { return drillIn<T.Expression>(this._body, tree); },
     $with: {
@@ -1189,9 +1233,11 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ListPattern as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["pattern"]),
 
-    $with: { $children: (...vs: T.Pattern[]) => wrapListPattern({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: T.Pattern[]) => wrapListPattern({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -1214,7 +1260,7 @@ export function wrapListSplatPattern(data: T.ListSplatPattern, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.ListSplatPattern as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["identifier","keyword_identifier","subscript","attribute"]),
 
     $with: { $child: (v: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) => wrapListSplatPattern({ ...data, $children: [v] }, tree) },
   }, methodsEngine);
@@ -1259,9 +1305,11 @@ export function wrapModule(data: T.Module, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Module as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_statement"]),
 
-    $with: { $children: (...vs: T.Statement[]) => wrapModule({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: T.Statement[]) => wrapModule({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -1287,7 +1335,7 @@ export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.NonlocalStatement as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["identifier"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.Identifier>) => wrapNonlocalStatement({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -1329,9 +1377,11 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Parameters as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["parameter"]),
 
-    $with: { $children: (...vs: T.Parameter[]) => wrapParameters({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: T.Parameter[]) => wrapParameters({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -1340,7 +1390,7 @@ export function wrapParenthesizedExpression(data: T.ParenthesizedExpression, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.ParenthesizedExpression as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["expression","yield"]),
 
     $with: { $child: (v: (T.Expression | T.Yield)) => wrapParenthesizedExpression({ ...data, $children: [v] }, tree) },
   }, methodsEngine);
@@ -1351,7 +1401,7 @@ export function wrapParenthesizedListSplat(data: T.ParenthesizedListSplat, tree:
   const _node = withMethods({
     ...data,
     $type: TSKindId.ParenthesizedListSplat as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["parenthesized_list_splat","list_splat"]),
 
     $with: { $child: (v: (T.ParenthesizedListSplat | T.ListSplat)) => wrapParenthesizedListSplat({ ...data, $children: [v] }, tree) },
   }, methodsEngine);
@@ -1362,7 +1412,7 @@ export function wrapPatternList(data: T.PatternList, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.PatternList as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["pattern"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.Pattern>) => wrapPatternList({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -1374,7 +1424,7 @@ export function wrapPrintStatement(data: T.PrintStatement, tree: TreeHandle) {
     ...data,
     $type: TSKindId.PrintStatement as const,
     _argument: data._argument,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["chevron"]),
 
     arguments() { return drillInAll<T.Expression>(this._argument, tree); },
     $with: {
@@ -1390,7 +1440,7 @@ export function wrapRaiseStatement(data: T.RaiseStatement, tree: TreeHandle) {
     ...data,
     $type: TSKindId.RaiseStatement as const,
     _cause: data._cause,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_expressions"]),
 
     cause() { return drillIn<T.Expression | undefined>(this._cause, tree); },
     $with: {
@@ -1422,9 +1472,11 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ReturnStatement as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_expressions"]),
 
-    $with: { $child: (v: T.Expressions) => wrapReturnStatement({ ...data, $children: [v] }, tree) },
+    $with: {
+      children: (...items: readonly [T.Expressions]) => wrapReturnStatement({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -1433,7 +1485,7 @@ export function wrapSet(data: T.Set, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Set as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["expression","yield","list_splat","parenthesized_list_splat"]),
 
     $with: { $children: (...vs: NonEmptyArray<(T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)>) => wrapSet({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -1445,7 +1497,7 @@ export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle)
     ...data,
     $type: TSKindId.SetComprehension as const,
     _body: data._body,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_comprehension_clauses"]),
 
     body() { return drillIn<T.Expression>(this._body, tree); },
     $with: {
@@ -1528,7 +1580,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.StringContent as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["escape_interpolation","escape_sequence","_not_escape_sequence","_string_content"]),
 
     $with: { $children: (...vs: NonEmptyArray<(T.EscapeInterpolation | T.EscapeSequence | "\\" | T._StringContent)>) => wrapStringContent({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -1579,9 +1631,11 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Tuple as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["expression","yield","list_splat","parenthesized_list_splat"]),
 
-    $with: { $children: (...vs: ((T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]) => wrapTuple({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: ((T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]) => wrapTuple({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -1590,9 +1644,11 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TuplePattern as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["pattern"]),
 
-    $with: { $children: (...vs: T.Pattern[]) => wrapTuplePattern({ ...data, $children: vs }, tree) },
+    $with: {
+      children: (...items: T.Pattern[]) => wrapTuplePattern({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -1601,7 +1657,7 @@ export function wrapType(data: T.Type, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Type as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["expression","splat_type","generic_type","union_type","constrained_type","member_type"]),
 
     $with: { $child: (v: (T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType)) => wrapType({ ...data, $children: [v] }, tree) },
   }, methodsEngine);
@@ -1612,11 +1668,11 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeAliasStatement as const,
-    _type: data._type,
+    _type: projectKindEnumStorage(data._type),
     _left: data._left,
     _right: data._right,
 
-    type() { return drillIn<"type">(this._type, tree); },
+    type() { return this._type; },
     left() { return drillIn<T.Type>(this._left, tree); },
     right() { return drillIn<T.Type>(this._right, tree); },
     $with: {
@@ -1632,7 +1688,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeParameter as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["type"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.Type>) => wrapTypeParameter({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -1664,7 +1720,7 @@ export function wrapTypedParameter(data: T.TypedParameter, tree: TreeHandle) {
     ...data,
     $type: TSKindId.TypedParameter as const,
     _type: data._type,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["identifier","list_splat_pattern","dictionary_splat_pattern"]),
 
     type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
@@ -1696,7 +1752,7 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.UnionPattern as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["_simple_pattern"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.SimplePattern>) => wrapUnionPattern({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -1743,7 +1799,7 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
 export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["with_item"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.WithItem>) => wrapWithClauseBare({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -1753,7 +1809,7 @@ export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle) {
 export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["with_item"]),
 
     $with: { $children: (...vs: NonEmptyArray<T.WithItem>) => wrapWithClauseParen({ ...data, $children: vs }, tree) },
   }, methodsEngine);
@@ -1764,7 +1820,7 @@ export function wrapWithClause(data: T.WithClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.WithClause as const,
-    $children: (data as any).$children,
+    $children: _filterWrapChildrenByKind((data as any).$children, ["_with_clause_bare","_with_clause_paren"]),
 
     $with: {
       children: (...items: readonly [((T.WithClauseBare | T._WithClauseParen))]) => wrapWithClause({ ...(data as any), $children: items }, tree),
@@ -1811,9 +1867,11 @@ export function wrapYield(data: T.Yield, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Yield as const,
-    $children: data.$children,
+    $children: _filterWrapChildrenByKind(data.$children, ["expression","_expressions"]),
 
-    $with: { $child: (v: (T.Expression | T.Expressions)) => wrapYield({ ...data, $children: [v] }, tree) },
+    $with: {
+      children: (...items: readonly [((T.Expression | T.Expressions))]) => wrapYield({ ...data, $children: items }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -2059,7 +2117,8 @@ export function readTreeNode(
     const currentType = typeof data.$type === "number"
       ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)
       : (data.$type as unknown as string);
-    if (currentType === asType.from) {
+    const hiddenCurrentType = currentType.startsWith("_") ? currentType.slice(1) : undefined;
+    if (currentType === asType.from || hiddenCurrentType === asType.from) {
       data = { ...data, $type: asType.to as unknown as number };
     }
   }

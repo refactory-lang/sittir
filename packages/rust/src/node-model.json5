@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 361,
+  "nodeCount": 364,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -394,16 +394,6 @@
       "text": "]"
     },
     {
-      "kind": "^",
-      "modelType": "token",
-      "typeName": "Caret",
-      "irKey": "caret",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"^\" as const",
-      "text": "^"
-    },
-    {
       "kind": "_",
       "modelType": "keyword",
       "typeName": "Anonymous",
@@ -673,16 +663,18 @@
               "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "_"
+              "name": "_",
+              "unresolved": true
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expression"
+              "_expression",
+              "_"
             ]
           }
         }
@@ -3661,6 +3653,26 @@
       "children": []
     },
     {
+      "kind": "amp",
+      "modelType": "token",
+      "typeName": "Amp2",
+      "irKey": "amp",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"&\" as const",
+      "text": "&"
+    },
+    {
+      "kind": "amp_amp",
+      "modelType": "token",
+      "typeName": "AmpAmp",
+      "irKey": "ampAmp",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"&&\" as const",
+      "text": "&&"
+    },
+    {
       "kind": "arguments",
       "modelType": "branch",
       "typeName": "Arguments",
@@ -4255,29 +4267,34 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "&&"
+              "name": "amp_amp",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "||"
+              "name": "pipe_pipe",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "&"
+              "name": "amp",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "|"
+              "name": "pipe",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "^"
+              "name": "caret",
+              "unresolved": true
             },
             {
               "kind": "terminal",
@@ -4348,7 +4365,13 @@
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "amp_amp",
+              "pipe_pipe",
+              "amp",
+              "pipe",
+              "caret"
+            ]
           }
         },
         {
@@ -4806,6 +4829,16 @@
       ]
     },
     {
+      "kind": "caret",
+      "modelType": "token",
+      "typeName": "Caret",
+      "irKey": "caret",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"^\" as const",
+      "text": "^"
+    },
+    {
       "kind": "char_literal",
       "modelType": "pattern",
       "typeName": "CharLiteral",
@@ -5090,16 +5123,18 @@
               "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "_"
+              "name": "_",
+              "unresolved": true
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expression"
+              "_expression",
+              "_"
             ]
           }
         }
@@ -7555,24 +7590,28 @@
           "nonEmpty": true,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "async"
+              "name": "async",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "default"
+              "name": "default",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "const"
+              "name": "const",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "value": "unsafe"
+              "name": "unsafe",
+              "unresolved": true
             },
             {
               "kind": "node-ref",
@@ -7585,6 +7624,10 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "async",
+              "default",
+              "const",
+              "unsafe",
               "extern_modifier"
             ]
           }
@@ -10895,6 +10938,26 @@
           ]
         }
       ]
+    },
+    {
+      "kind": "pipe",
+      "modelType": "token",
+      "typeName": "Pipe2",
+      "irKey": "pipe",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"|\" as const",
+      "text": "|"
+    },
+    {
+      "kind": "pipe_pipe",
+      "modelType": "token",
+      "typeName": "PipePipe",
+      "irKey": "pipePipe",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"||\" as const",
+      "text": "||"
     },
     {
       "kind": "pointer_type",
@@ -15412,16 +15475,6 @@
       "isParameterless": true,
       "stampExpression": "\"|\" as const",
       "text": "|"
-    },
-    {
-      "kind": "||",
-      "modelType": "token",
-      "typeName": "Oror",
-      "irKey": "oror",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"||\" as const",
-      "text": "||"
     },
     {
       "kind": "}",

@@ -366,18 +366,6 @@ pub struct PublicFieldDefinitionStaticModsTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_string_double.jinja", escape = "none")]
-pub struct _StringDoubleTemplate<'a> {
-    pub children: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_string_single.jinja", escape = "none")]
-pub struct _StringSingleTemplate<'a> {
-    pub children: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_type_query_call_expression_in_type_annotation.jinja", escape = "none")]
 pub struct TypeQueryCallExpressionInTypeAnnotationTemplate<'a> {
     pub arguments: SingleNonterminalView<'a>,
@@ -1463,21 +1451,12 @@ pub struct StatementBlockTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "string_double.jinja", escape = "none")]
-pub struct StringDoubleTemplate<'a> {
-    pub children: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "string_single.jinja", escape = "none")]
-pub struct StringSingleTemplate<'a> {
-    pub children: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "string.jinja", escape = "none")]
 pub struct StringTemplate<'a> {
     pub children: ListNonterminalView<'a>,
+    pub closing: SingleNonterminalView<'a>,
+    pub contents: ListNonterminalView<'a>,
+    pub opening: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

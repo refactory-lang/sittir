@@ -8,7 +8,7 @@
  * enriched the Rule — each subclass corresponds to one ModelType
  * (`branch`, `polymorph`, `leaf`, `keyword`, `token`, `enum`,
  * `supertype`, `group`, `multi`). `container` was merged into
- * `branch` (discriminated by `isContainerShape`).
+ * `branch` (with slot-surface distinctions derived from `slotClass`).
  *
  * Exports:
  *
@@ -2557,17 +2557,59 @@ function buildSlotsRecord(
 	return Object.freeze(out);
 }
 
-export class AssembledBranch extends AssembledNodeBase<
-	SeqRule | ChoiceRule | RepeatRule | Repeat1Rule
-> {
+function freezeSlotRecord(
+	slots: readonly AssembledNonterminal[]
+): Readonly<Record<string, AssembledNonterminal>> {
+	const out: Record<string, AssembledNonterminal> = {};
+	for (const slot of slots) {
+		out[slot.name] = slot;
+	}
+	return Object.freeze(out);
+}
+
+function structuralSlotRecordFromForms(
+	forms: readonly AssembledGroup[]
+): Readonly<Record<string, AssembledNonterminal>> {
+	const slots = new Map<string, AssembledNonterminal>();
+	for (const form of forms) {
+		for (const slot of Object.values(form.slots)) {
+			const existing = slots.get(slot.name);
+			if (!existing) {
+				slots.set(slot.name, slot);
+				continue;
+			}
+			slots.set(slot.name, {
+				...existing,
+				values: dedupeValues([...existing.values, ...slot.values]),
+				hasTrailing: existing.hasTrailing || slot.hasTrailing,
+				hasLeading: existing.hasLeading || slot.hasLeading,
+				aliasSources:
+					existing.aliasSources || slot.aliasSources
+						? {
+								...(existing.aliasSources ?? {}),
+								...(slot.aliasSources ?? {})
+							}
+						: undefined
+			});
+		}
+	}
+	return freezeSlotRecord([...slots.values()]);
+}
+
+export class AssembledBranch<
+	R extends SeqRule | ChoiceRule | RepeatRule | Repeat1Rule | PolymorphRule =
+		| SeqRule
+		| ChoiceRule
+		| RepeatRule
+		| Repeat1Rule
+> extends AssembledNodeBase<R> {
 	readonly modelType = 'branch' as const;
 	// rule narrowed to SeqRule | ChoiceRule | RepeatRule | Repeat1Rule —
 	// branches classify from compositional rules that carry fields and/or
 	// ordered children. The prior `AssembledContainer` class was absorbed —
-	// repeat / repeat1 shapes (no `field()` on the rule) now route here
-	// too. Use the `isContainerShape` getter
-	// below to discriminate when emitter behavior must differ between
-	// the two shapes.
+	// repeat / repeat1 shapes (no `field()` on the rule) now route here too.
+	// Emitter behavior should key off `slotClass` / slot facts rather than a
+	// separate branch-global shape discriminator.
 	/**
 	 * Rule with anonymous tokens / structural wrappers stripped.
 	 * Computed once by assemble() via `simplifyRule(init.rule)` and
@@ -2616,23 +2658,30 @@ export class AssembledBranch extends AssembledNodeBase<
 	 *     keys retained, collisions don't naturally occur in the current
 	 *     grammars.
 	 */
-	readonly slots: Readonly<Record<string, AssembledNonterminal>>;
+	protected readonly _slots: Readonly<Record<string, AssembledNonterminal>>;
 
 	constructor(
 		kind: string,
-		rule: SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
+		rule: R,
 		simplifiedRule: Rule,
 		opts?: {
 			factoryName?: string;
 			irKey?: string;
+			source?: RuleSource;
 			variantChildKinds?: readonly string[];
 			kindEntries?: readonly GeneratedKindEntry[];
+			slotRecord?: Readonly<Record<string, AssembledNonterminal>>;
 		}
 	) {
 		super(kind, rule, opts);
 		this.simplifiedRule = simplifiedRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
-		this.slots = buildSlotsRecord(kind, simplifiedRule, opts?.kindEntries);
+		this._slots =
+			opts?.slotRecord ?? buildSlotsRecord(kind, simplifiedRule, opts?.kindEntries);
+	}
+
+	get slots(): Readonly<Record<string, AssembledNonterminal>> {
+		return this._slots;
 	}
 
 	/**
@@ -3079,6 +3128,8 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 	 * the parent polymorph's interface. Empty for source='promoted'.
 	 */
 	readonly variantChildKinds: readonly string[];
+	slotClass?: BranchSlotClass;
+	readonly slots: Readonly<Record<string, AssembledNonterminal>>;
 
 	constructor(
 		kind: string,
@@ -3100,6 +3151,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		this.#forms = forms;
 		this.source = opts?.source ?? 'promoted';
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
+		this.slots = structuralSlotRecordFromForms(forms);
 	}
 
 	/** A polymorph's forms are hidden groups synthesized from the choice branches. */
@@ -3108,7 +3160,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 	}
 
 	get formRules(): readonly PolymorphForm[] {
-		return this.rule.forms;
+		return this.rule.type === 'polymorph' ? this.rule.forms : [];
 	}
 
 	/**
@@ -3136,17 +3188,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 	 * `modelType === 'polymorph'` before calling this.
 	 */
 	get structuralFields(): readonly AssembledNonterminal[] {
-		const seen = new Set<string>();
-		const out: AssembledNonterminal[] = [];
-		for (const form of this.#forms) {
-			for (const f of form.fields) {
-				if (!seen.has(f.name)) {
-					seen.add(f.name);
-					out.push(f);
-				}
-			}
-		}
-		return out;
+		return this.fields;
 	}
 
 	/**
@@ -3162,17 +3204,15 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 	 * + filtering when the TS-emission shape differs by slot kind.
 	 */
 	get structuralSlots(): readonly AssembledNonterminal[] {
-		const seen = new Set<string>();
-		const out: AssembledNonterminal[] = [];
-		for (const form of this.#forms) {
-			for (const s of Object.values(form.slots)) {
-				if (!seen.has(s.name)) {
-					seen.add(s.name);
-					out.push(s);
-				}
-			}
-		}
-		return out;
+		return Object.values(this.slots);
+	}
+
+	get fields(): readonly AssembledNonterminal[] {
+		return Object.values(this.slots).filter((slot) => slot.source !== 'inferred');
+	}
+
+	get children(): readonly AssembledNonterminal[] {
+		return Object.values(this.slots).filter((slot) => slot.source === 'inferred');
 	}
 
 	renderTemplate(
@@ -3852,8 +3892,8 @@ export type AssembledNode =
 // give consumers one canonical entry point per fact.
 
 /**
- * Dedup'd structural fields for a node — Branch/Group return their
- * own `.fields`; Polymorph returns the dedup'd union across forms;
+ * Dedup'd structural fields for a node — Branch/Group/Polymorph return
+ * their own `.fields`;
  * non-structural kinds return `[]`.
  *
  * Use this when emitting types, factories, or anything that asks
@@ -3863,23 +3903,29 @@ export type AssembledNode =
 export function structuralFieldsOf(
 	node: AssembledNode
 ): readonly AssembledNonterminal[] {
-	if (node.modelType === 'polymorph') return node.structuralFields;
-	if (node.modelType === 'branch' || node.modelType === 'group')
+	if (
+		node.modelType === 'branch' ||
+		node.modelType === 'group' ||
+		node.modelType === 'polymorph'
+	)
 		return node.fields;
 	return [];
 }
 
 /**
- * Structural children for a node — Branch/Group return their own
- * `.children`; non-structural kinds (including Polymorph, which
- * routes through forms) return `[]`.
+ * Structural children for a node — Branch/Group/Polymorph return their
+ * own `.children`; non-structural kinds return `[]`.
  *
  * Use this for emitters that read child slots on the kind itself.
  */
 export function structuralChildrenOf(
 	node: AssembledNode
 ): readonly AssembledNonterminal[] {
-	if (node.modelType === 'branch' || node.modelType === 'group')
+	if (
+		node.modelType === 'branch' ||
+		node.modelType === 'group' ||
+		node.modelType === 'polymorph'
+	)
 		return node.children;
 	return [];
 }
@@ -3949,9 +3995,7 @@ export function allSlotsOf(
 
 /**
  * Dedup'd union of every slot across forms — the "all slots" sibling
- * of {@link structuralFieldsOf}. Polymorph returns
- * `node.structuralSlots` (first-occurrence per name across forms,
- * fields and children both); Branch/Group return all entries of their
+ * of {@link structuralFieldsOf}. Polymorph/Branch/Group return all entries of their
  * own `.slots`; non-structural kinds return `[]`.
  *
  * Use this when consumers want the dedup'd view regardless of slot
@@ -3963,8 +4007,11 @@ export function allSlotsOf(
 export function allStructuralSlotsOf(
 	node: AssembledNode
 ): readonly AssembledNonterminal[] {
-	if (node.modelType === 'polymorph') return node.structuralSlots;
-	if (node.modelType === 'branch' || node.modelType === 'group')
+	if (
+		node.modelType === 'branch' ||
+		node.modelType === 'group' ||
+		node.modelType === 'polymorph'
+	)
 		return Object.values(node.slots);
 	return [];
 }

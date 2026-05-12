@@ -65,7 +65,7 @@ export const jsxIdentifier = {
 
 export const moduleExportName = {
   identifier: F.identifier,
-  string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string, "double": _attach(FR.stringUFormDoubleFrom, { from: FR.stringUFormDoubleFrom, strict: F.stringUFormDouble }), "single": _attach(FR.stringUFormSingleFrom, { from: FR.stringUFormSingleFrom, strict: F.stringUFormSingle }) }),
+  string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string }),
 } as const;
 
 export const propertyIdentifier = {
@@ -75,7 +75,7 @@ export const propertyIdentifier = {
 export const propertyName = {
   identifier: F.identifier,
   privateProperty: F.privatePropertyIdentifier,
-  string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string, "double": _attach(FR.stringUFormDoubleFrom, { from: FR.stringUFormDoubleFrom, strict: F.stringUFormDouble }), "single": _attach(FR.stringUFormSingleFrom, { from: FR.stringUFormSingleFrom, strict: F.stringUFormSingle }) }),
+  string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string }),
   number: F.number,
   computedProperty: _attach(FR.computedPropertyNameFrom, { from: FR.computedPropertyNameFrom, strict: F.computedPropertyName }),
 } as const;
@@ -152,7 +152,7 @@ export const primaryExpression = {
   this: F.this_,
   super: F.super_,
   number: F.number,
-  string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string, "double": _attach(FR.stringUFormDoubleFrom, { from: FR.stringUFormDoubleFrom, strict: F.stringUFormDouble }), "single": _attach(FR.stringUFormSingleFrom, { from: FR.stringUFormSingleFrom, strict: F.stringUFormSingle }) }),
+  string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string }),
   template: _attach(FR.templateStringFrom, { from: FR.templateStringFrom, strict: F.templateString }),
   regex: _attach(FR.regexFrom, { from: FR.regexFrom, strict: F.regex }),
   true: F.true_,
@@ -356,7 +356,7 @@ export const ir = {
   object: _attach(FR.objectFrom, { from: FR.objectFrom, strict: F.object }),
   objectAssignmentPattern: _attach(FR.objectAssignmentPatternFrom, { from: FR.objectAssignmentPatternFrom, strict: F.objectAssignmentPattern }),
   objectPattern: _attach(FR.objectPatternFrom, { from: FR.objectPatternFrom, strict: F.objectPattern }),
-  objectType: _attach(FR.objectTypeFrom, { from: FR.objectTypeFrom, strict: F.objectType }),
+  objectType: _attach(FR.objectTypeFrom, { from: FR.objectTypeFrom, strict: F.objectType, "curly": F.objectTypeCurly, "flow": F.objectTypeFlow }),
   omittingTypeAnnotation: _attach(FR.omittingTypeAnnotationFrom, { from: FR.omittingTypeAnnotationFrom, strict: F.omittingTypeAnnotation }),
   optingTypeAnnotation: _attach(FR.optingTypeAnnotationFrom, { from: FR.optingTypeAnnotationFrom, strict: F.optingTypeAnnotation }),
   optionalParameter: _attach(FR.optionalParameterFrom, { from: FR.optionalParameterFrom, strict: F.optionalParameter }),
@@ -380,9 +380,7 @@ export const ir = {
   sequenceExpression: _attach(FR.sequenceExpressionFrom, { from: FR.sequenceExpressionFrom, strict: F.sequenceExpression }),
   spreadElement: _attach(FR.spreadElementFrom, { from: FR.spreadElementFrom, strict: F.spreadElement }),
   statementBlock: _attach(FR.statementBlockFrom, { from: FR.statementBlockFrom, strict: F.statementBlock }),
-  stringDouble: _attach(FR.stringDoubleFrom, { from: FR.stringDoubleFrom, strict: F.stringDouble }),
-  stringSingle: _attach(FR.stringSingleFrom, { from: FR.stringSingleFrom, strict: F.stringSingle }),
-  string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string, "double": _attach(FR.stringUFormDoubleFrom, { from: FR.stringUFormDoubleFrom, strict: F.stringUFormDouble }), "single": _attach(FR.stringUFormSingleFrom, { from: FR.stringUFormSingleFrom, strict: F.stringUFormSingle }) }),
+  string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string, "double": F.stringDouble, "single": F.stringSingle }),
   subscriptExpression: _attach(FR.subscriptExpressionFrom, { from: FR.subscriptExpressionFrom, strict: F.subscriptExpression }),
   switchBody: _attach(FR.switchBodyFrom, { from: FR.switchBodyFrom, strict: F.switchBody }),
   switchCase: _attach(FR.switchCaseFrom, { from: FR.switchCaseFrom, strict: F.switchCase }),

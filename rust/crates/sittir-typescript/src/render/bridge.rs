@@ -364,10 +364,8 @@ pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str>
         (345, 366) => Some("mapped_type_clause"), // ("index_signature", "index_signature_mapped_type_clause")
         (209, 383) => Some("sequence"), // ("parenthesized_expression", "parenthesized_expression_sequence")
         (209, 382) => Some("typed"), // ("parenthesized_expression", "parenthesized_expression_typed")
-        (247, 390) => Some("double"), // ("string", "string_double")
-        (247, 391) => Some("single"), // ("string", "string_single")
-        (245, 392) => Some("postfix"), // ("update_expression", "update_expression_postfix")
-        (245, 393) => Some("prefix"), // ("update_expression", "update_expression_prefix")
+        (245, 390) => Some("postfix"), // ("update_expression", "update_expression_postfix")
+        (245, 391) => Some("prefix"), // ("update_expression", "update_expression_prefix")
         _ => None,
     }
 }
@@ -869,7 +867,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        331 | 103 => { // "_number" | "number"
+        331 | 105 => { // "_number" | "number"
             let children = resolve_children(node, &["argument", "operator"])?;
             let field_0 = resolve_field(node, "argument", true)?;
             let field_1 = resolve_field(node, "operator", true)?;
@@ -910,7 +908,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        420 => { // "_public_field_definition_abstract_first" | "public_field_definition_abstract_first"
+        418 => { // "_public_field_definition_abstract_first" | "public_field_definition_abstract_first"
             let children = resolve_children(node, &["abstract_marker", "readonly_marker"])?;
             let field_0 = resolve_field(node, "abstract_marker", true)?;
             let field_1 = resolve_field(node, "readonly_marker", false)?;
@@ -923,7 +921,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        421 => { // "_public_field_definition_access_first" | "public_field_definition_access_first"
+        419 => { // "_public_field_definition_access_first" | "public_field_definition_access_first"
             let children = resolve_children(node, &["declare_marker"])?;
             let field_0 = resolve_field(node, "declare_marker", false)?;
             let children_renderables = children.renderable_items();
@@ -941,7 +939,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        422 => { // "_public_field_definition_accessor_opt" | "public_field_definition_accessor_opt"
+        420 => { // "_public_field_definition_accessor_opt" | "public_field_definition_accessor_opt"
             let children = resolve_children(node, &["accessor_marker"])?;
             let field_0 = resolve_field(node, "accessor_marker", true)?;
             let template = PublicFieldDefinitionAccessorOptTemplate {
@@ -949,7 +947,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        423 => { // "_public_field_definition_declare_first" | "public_field_definition_declare_first"
+        421 => { // "_public_field_definition_declare_first" | "public_field_definition_declare_first"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = PublicFieldDefinitionDeclareFirstTemplate {
@@ -962,7 +960,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        424 => { // "_public_field_definition_readonly_first" | "public_field_definition_readonly_first"
+        422 => { // "_public_field_definition_readonly_first" | "public_field_definition_readonly_first"
             let children = resolve_children(node, &["abstract_marker", "readonly_marker"])?;
             let field_0 = resolve_field(node, "abstract_marker", false)?;
             let field_1 = resolve_field(node, "readonly_marker", true)?;
@@ -975,7 +973,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        425 => { // "_public_field_definition_static_mods" | "public_field_definition_static_mods"
+        423 => { // "_public_field_definition_static_mods" | "public_field_definition_static_mods"
             let children = resolve_children(node, &["readonly_marker", "static_marker"])?;
             let field_0 = resolve_field(node, "readonly_marker", false)?;
             let field_1 = resolve_field(node, "static_marker", true)?;
@@ -992,32 +990,6 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
                 },
                 static_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-            };
-            template.render_into(dest)
-        }
-        390 => { // "_string_double" | "string_double"
-            let children = resolve_children(node, &[])?;
-            let children_renderables = children.renderable_items();
-            let template = _StringDoubleTemplate {
-                children: ListNonterminalView {
-                    items: children_renderables.as_slice(),
-                    separator: children.separator,
-                    leading: children.leading_sep,
-                    trailing: children.trailing_sep,
-                },
-            };
-            template.render_into(dest)
-        }
-        391 => { // "_string_single" | "string_single"
-            let children = resolve_children(node, &[])?;
-            let children_renderables = children.renderable_items();
-            let template = _StringSingleTemplate {
-                children: ListNonterminalView {
-                    items: children_renderables.as_slice(),
-                    separator: children.separator,
-                    leading: children.leading_sep,
-                    trailing: children.trailing_sep,
-                },
             };
             template.render_into(dest)
         }
@@ -1081,7 +1053,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        392 => { // "_update_expression_postfix" | "update_expression_postfix"
+        390 => { // "_update_expression_postfix" | "update_expression_postfix"
             let children = resolve_children(node, &["argument", "operator"])?;
             let field_0 = resolve_field(node, "argument", true)?;
             let field_1 = resolve_field(node, "operator", true)?;
@@ -1091,7 +1063,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        393 => { // "_update_expression_prefix" | "update_expression_prefix"
+        391 => { // "_update_expression_prefix" | "update_expression_prefix"
             let children = resolve_children(node, &["argument", "operator"])?;
             let field_0 = resolve_field(node, "argument", true)?;
             let field_1 = resolve_field(node, "operator", true)?;
@@ -3013,8 +2985,12 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         247 => { // "string"
-            let children = resolve_children(node, &[])?;
+            let children = resolve_children(node, &["closing", "contents", "opening"])?;
+            let field_0 = resolve_field(node, "closing", true)?;
+            let field_1 = resolve_field(node, "contents", false)?;
+            let field_2 = resolve_field(node, "opening", true)?;
             let children_renderables = children.renderable_items();
+            let field_1_renderables = field_1.renderable_items();
             let template = StringTemplate {
                 children: ListNonterminalView {
                     items: children_renderables.as_slice(),
@@ -3022,6 +2998,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
+                closing: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                contents: ListNonterminalView {
+                    items: field_1_renderables.as_slice(),
+                    separator: field_1.separator,
+                    leading: field_1.leading_sep,
+                    trailing: field_1.trailing_sep,
+                },
+                opening: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
             };
             template.render_into(dest)
         }

@@ -391,10 +391,12 @@ export const enum TSKindId {
   Plus = 10,
   Star = 11,
   Qmark = 12,
+  AnonBlock = 13,
   Expr = 14,
   Expr2021 = 15,
   Ident = 16,
   Item = 17,
+  AnonLifetime = 18,
   Literal = 19,
   Meta = 20,
   Pat = 21,
@@ -426,8 +428,8 @@ export const enum TSKindId {
   Percent = 47,
   Caret = 48,
   Bang = 49,
-  Amp = 50,
-  Pipe = 51,
+  Amp2 = 50,
+  Pipe2 = 51,
   AmpAmp = 52,
   PipePipe = 53,
   LtLt = 54,
@@ -808,10 +810,12 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [10, "plus"],
   [11, "star"],
   [12, "qmark"],
+  [13, "anon_block"],
   [14, "expr"],
   [15, "expr_2021"],
   [16, "ident"],
   [17, "item"],
+  [18, "anon_lifetime"],
   [19, "literal"],
   [20, "meta"],
   [21, "pat"],
@@ -1226,10 +1230,12 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "plus": return TSKindId.Plus;
     case "star": return TSKindId.Star;
     case "qmark": return TSKindId.Qmark;
+    case "anon_block": return TSKindId.AnonBlock;
     case "expr": return TSKindId.Expr;
     case "expr_2021": return TSKindId.Expr2021;
     case "ident": return TSKindId.Ident;
     case "item": return TSKindId.Item;
+    case "anon_lifetime": return TSKindId.AnonLifetime;
     case "literal": return TSKindId.Literal;
     case "meta": return TSKindId.Meta;
     case "pat": return TSKindId.Pat;
@@ -1261,8 +1267,8 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "percent": return TSKindId.Percent;
     case "caret": return TSKindId.Caret;
     case "bang": return TSKindId.Bang;
-    case "amp": return TSKindId.Amp;
-    case "pipe": return TSKindId.Pipe;
+    case "amp": return TSKindId.Amp2;
+    case "pipe": return TSKindId.Pipe2;
     case "amp_amp": return TSKindId.AmpAmp;
     case "pipe_pipe": return TSKindId.PipePipe;
     case "lt_lt": return TSKindId.LtLt;
@@ -1644,8 +1650,8 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "%": return TSKindId.Percent;
     case "^": return TSKindId.Caret;
     case "!": return TSKindId.Bang;
-    case "&": return TSKindId.Amp;
-    case "|": return TSKindId.Pipe;
+    case "&": return TSKindId.Amp2;
+    case "|": return TSKindId.Pipe2;
     case "&&": return TSKindId.AmpAmp;
     case "||": return TSKindId.PipePipe;
     case "<<": return TSKindId.LtLt;
@@ -2293,8 +2299,11 @@ export interface _PointerTypeMut {
 
 export interface _RangeExpressionBare {
   readonly $type: TSKindId._RangeExpressionBare;
-  readonly _operator: AutoStamp<"..">;
-  operator(): AutoStamp<"..">;
+  readonly _operator: number;
+  readonly __inputHints__?: {
+    readonly operator: KindEnum<"..", TSKindId.DotDot>;
+  };
+  operator(): number;
 }
 
 export interface RangeExpressionBinary {
@@ -2313,16 +2322,22 @@ export interface RangeExpressionBinary {
 export interface RangeExpressionPostfix {
   readonly $type: TSKindId.RangeExpressionPostfix;
   readonly _start: Expression;
-  readonly _operator: AutoStamp<"..">;
+  readonly _operator: number;
+  readonly __inputHints__?: {
+    readonly operator: KindEnum<"..", TSKindId.DotDot>;
+  };
   start(): Expression;
-  operator(): AutoStamp<"..">;
+  operator(): number;
 }
 
 export interface RangeExpressionPrefix {
   readonly $type: TSKindId.RangeExpressionPrefix;
-  readonly _operator: AutoStamp<"..">;
+  readonly _operator: number;
   readonly _end: Expression;
-  operator(): AutoStamp<"..">;
+  readonly __inputHints__?: {
+    readonly operator: KindEnum<"..", TSKindId.DotDot>;
+  };
+  operator(): number;
   end(): Expression;
 }
 
@@ -2394,15 +2409,21 @@ export interface _VisibilityModifierCrate {
 
 export interface VisibilityModifierInPath {
   readonly $type: TSKindId.VisibilityModifierInPath;
-  readonly _in: AutoStamp<"in">;
-  in(): AutoStamp<"in">;
+  readonly _in: number;
+  readonly __inputHints__?: {
+    readonly in: KindEnum<"in", TSKindId.In>;
+  };
+  in(): number;
   readonly $children: readonly [Path];
 }
 
 export interface VisibilityModifierPub {
   readonly $type: TSKindId.VisibilityModifierPub;
-  readonly _pub: AutoStamp<"pub">;
-  pub(): AutoStamp<"pub">;
+  readonly _pub: number;
+  readonly __inputHints__?: {
+    readonly pub: KindEnum<"pub", TSKindId.Pub>;
+  };
+  pub(): number;
   readonly $children: readonly [Self | Super | Crate | VisibilityModifierInPath];
 }
 
@@ -2498,10 +2519,13 @@ export interface BaseFieldInitializer {
 export interface BinaryExpression {
   readonly $type: TSKindId.BinaryExpression;
   readonly _left: Expression;
-  readonly _operator: "&&" | "||" | "&" | "|" | "^" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | "+" | "-" | "*" | "/" | "%";
+  readonly _operator: number;
   readonly _right: Expression;
+  readonly __inputHints__?: {
+    readonly operator: KindEnum<"&&" | "||" | "&" | "|" | "^" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | "+" | "-" | "*" | "/" | "%", TSKindId.AmpAmp | TSKindId.PipePipe | TSKindId.Amp2 | TSKindId.Pipe2 | TSKindId.Caret | TSKindId.EqEq | TSKindId.BangEq | TSKindId.Lt | TSKindId.LtEq | TSKindId.Gt | TSKindId.GtEq | TSKindId.LtLt | TSKindId.GtGt | TSKindId.Plus | TSKindId.Dash | TSKindId.Star | TSKindId.Slash | TSKindId.Percent>;
+  };
   left(): Expression;
-  operator(): "&&" | "||" | "&" | "|" | "^" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | "+" | "-" | "*" | "/" | "%";
+  operator(): number;
   right(): Expression;
 }
 
@@ -2774,14 +2798,15 @@ export type ExpressionStatement = ExpressionStatementUFormWithSemi | ExpressionS
 export interface ExternCrateDeclaration {
   readonly $type: TSKindId.ExternCrateDeclaration;
   readonly _visibility_modifier?: VisibilityModifier;
-  readonly _crate: AutoStamp<"crate">;
+  readonly _crate: number;
   readonly _name: Identifier;
   readonly _alias?: Identifier;
   readonly __inputHints__?: {
     readonly visibility_modifier?: VisibilityModifier | "crate" | "pub";
+    readonly crate: KindEnum<"crate", TSKindId.Crate>;
   };
   visibilityModifier(): VisibilityModifier | undefined;
-  crate(): AutoStamp<"crate">;
+  crate(): number;
   name(): Identifier;
   alias(): Identifier | undefined;
 }
@@ -2941,8 +2966,8 @@ export interface FunctionItem {
 
 export interface FunctionModifiers {
   readonly $type: TSKindId.FunctionModifiers;
-  readonly _modifier: NonEmptyArray<"async" | "default" | "const" | "unsafe" | ExternModifier>;
-  modifiers(): NonEmptyArray<"async" | "default" | "const" | "unsafe" | ExternModifier>;
+  readonly _modifier: NonEmptyArray<Async | Default | Const | Unsafe | ExternModifier>;
+  modifiers(): NonEmptyArray<Async | Default | Const | Unsafe | ExternModifier>;
 }
 
 export interface FunctionSignatureItem {
@@ -3014,10 +3039,13 @@ export interface GenericType {
 export interface GenericTypeWithTurbofish {
   readonly $type: TSKindId.GenericTypeWithTurbofish;
   readonly _type: TypeIdentifier | ScopedIdentifier;
-  readonly _turbofish: AutoStamp<"::">;
+  readonly _turbofish: number;
   readonly _type_arguments: TypeArguments;
+  readonly __inputHints__?: {
+    readonly turbofish: KindEnum<"::", TSKindId.ColonColon>;
+  };
   type(): TypeIdentifier | ScopedIdentifier;
-  turbofish(): AutoStamp<"::">;
+  turbofish(): number;
   typeArguments(): TypeArguments;
 }
 
@@ -3406,8 +3434,11 @@ export interface QualifiedType {
 
 export interface RangeExpressionBare {
   readonly $type: "range_expression_bare";
-  readonly _operator: AutoStamp<"..">;
-  operator(): AutoStamp<"..">;
+  readonly _operator: number;
+  readonly __inputHints__?: {
+    readonly operator: KindEnum<"..", TSKindId.DotDot>;
+  };
+  operator(): number;
 }
 
 export interface RangeExpressionUFormBinary {
@@ -3550,15 +3581,16 @@ export interface SelfParameter {
   readonly _reference?: boolean;
   readonly _lifetime?: Lifetime;
   readonly _mutable_specifier?: boolean;
-  readonly _self: AutoStamp<"self">;
+  readonly _self: number;
   readonly __inputHints__?: {
     readonly reference?: BooleanKeyword<"&">;
     readonly mutable_specifier?: BooleanKeyword<"mut">;
+    readonly self: KindEnum<"self", TSKindId.Self>;
   };
   reference(): boolean | undefined;
   lifetime(): Lifetime | undefined;
   mutableSpecifier(): boolean | undefined;
-  self(): AutoStamp<"self">;
+  self(): number;
 }
 
 export interface ShorthandFieldInitializer {
@@ -4041,6 +4073,10 @@ export type OuterBlockDocCommentMarker = Terminal<TSKindId.OuterBlockDocCommentM
 export type InnerBlockDocCommentMarker = Terminal<TSKindId.InnerBlockDocCommentMarker, string>;
 export type LineDocContent = Terminal<TSKindId.LineDocContent, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
+export type Async = Terminal<TSKindId.Async, "async">;
+export type Unsafe = Terminal<TSKindId.Unsafe, "unsafe">;
+export type Const = Terminal<TSKindId.Const, "const">;
+export type Default = Terminal<TSKindId.Default, "default">;
 
 export type BlockCommentContent = Terminal<TSKindId._BlockCommentContent, string>;
 
@@ -4776,6 +4812,16 @@ export type RemainingFieldPattern = Terminal<TSKindId.RemainingFieldPattern>;
 export interface RemainingFieldPatternTree extends AnyTreeNode { readonly type: "remaining_field_pattern"; }
 export type TokSq = Terminal<"'">;
 export interface TokSqTree extends AnyTreeNode { readonly type: "'"; }
+export type AmpAmp = Terminal<TSKindId.AmpAmp>;
+export interface AmpAmpTree extends AnyTreeNode { readonly type: "amp_amp"; }
+export type PipePipe = Terminal<TSKindId.PipePipe>;
+export interface PipePipeTree extends AnyTreeNode { readonly type: "pipe_pipe"; }
+export type Amp2 = Terminal<TSKindId.Amp2>;
+export interface Amp2Tree extends AnyTreeNode { readonly type: "amp"; }
+export type Pipe2 = Terminal<TSKindId.Pipe2>;
+export interface Pipe2Tree extends AnyTreeNode { readonly type: "pipe"; }
+export type Caret = Terminal<TSKindId.Caret>;
+export interface CaretTree extends AnyTreeNode { readonly type: "caret"; }
 export type TokDollar = Terminal<"$">;
 export interface TokDollarTree extends AnyTreeNode { readonly type: "$"; }
 
@@ -5231,6 +5277,10 @@ export interface KindMap {
   '_inner_block_doc_comment_marker': InnerBlockDocCommentMarker;
   '_line_doc_content': LineDocContent;
   '_error_sentinel': ErrorSentinel;
+  'async': Async;
+  'unsafe': Unsafe;
+  'const': Const;
+  'default': Default;
 }
 
 export interface VariantMap {

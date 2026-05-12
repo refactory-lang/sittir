@@ -18,7 +18,7 @@ pub const LPAREN: KindId = KindId(7);
 pub const RPAREN: KindId = KindId(8);
 pub const COMMA: KindId = KindId(9);
 pub const AS: KindId = KindId(10);
-pub const STAR: KindId = KindId(11);
+pub const STAR2: KindId = KindId(11);
 pub const PRINT: KindId = KindId(12);
 pub const GT_GT: KindId = KindId(13);
 pub const ASSERT: KindId = KindId(14);
@@ -41,7 +41,7 @@ pub const IN: KindId = KindId(30);
 pub const WHILE: KindId = KindId(31);
 pub const TRY: KindId = KindId(32);
 pub const EXCEPT: KindId = KindId(33);
-pub const STAR2: KindId = KindId(34);
+pub const STAR2_34: KindId = KindId(34);
 pub const FINALLY: KindId = KindId(35);
 pub const WITH: KindId = KindId(36);
 pub const DEF: KindId = KindId(37);
@@ -54,9 +54,9 @@ pub const EQ: KindId = KindId(43);
 pub const CLASS: KindId = KindId(44);
 pub const LBRACK: KindId = KindId(45);
 pub const RBRACK: KindId = KindId(46);
-pub const AT: KindId = KindId(47);
+pub const AT2: KindId = KindId(47);
 pub const _ANONYMOUS: KindId = KindId(48);
-pub const PIPE: KindId = KindId(49);
+pub const PIPE2: KindId = KindId(49);
 pub const LBRACE: KindId = KindId(50);
 pub const RBRACE: KindId = KindId(51);
 pub const PLUS: KindId = KindId(52);
@@ -64,7 +64,7 @@ pub const DASH: KindId = KindId(53);
 pub const NOT: KindId = KindId(54);
 pub const AND: KindId = KindId(55);
 pub const OR: KindId = KindId(56);
-pub const SLASH: KindId = KindId(57);
+pub const SLASH2: KindId = KindId(57);
 pub const PERCENT: KindId = KindId(58);
 pub const SLASH_SLASH: KindId = KindId(59);
 pub const AMP: KindId = KindId(60);
@@ -79,6 +79,7 @@ pub const BANG_EQ: KindId = KindId(68);
 pub const GT_EQ: KindId = KindId(69);
 pub const GT: KindId = KindId(70);
 pub const LT_GT: KindId = KindId(71);
+pub const ANON_LAMBDA: KindId = KindId(72);
 pub const PLUS_EQ: KindId = KindId(73);
 pub const DASH_EQ: KindId = KindId(74);
 pub const STAR_EQ: KindId = KindId(75);
@@ -92,13 +93,16 @@ pub const LT_LT_EQ: KindId = KindId(82);
 pub const AMP_EQ: KindId = KindId(83);
 pub const CARET_EQ: KindId = KindId(84);
 pub const PIPE_EQ: KindId = KindId(85);
+pub const ANON_YIELD: KindId = KindId(86);
 pub const ELLIPSIS2: KindId = KindId(87);
+pub const ANON_TYPE: KindId = KindId(88);
 pub const ESCAPE_SEQUENCE: KindId = KindId(89);
 pub const BSLASH: KindId = KindId(90);
 pub const FORMAT_SPECIFIER_TOKEN1: KindId = KindId(91);
 pub const TYPE_CONVERSION: KindId = KindId(92);
 pub const INTEGER: KindId = KindId(93);
 pub const FLOAT: KindId = KindId(94);
+pub const ANON_AWAIT: KindId = KindId(95);
 pub const TRUE: KindId = KindId(96);
 pub const FALSE: KindId = KindId(97);
 pub const NONE: KindId = KindId(98);
@@ -365,6 +369,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         69 => ">=", // "gt_eq"
         70 => ">", // "gt"
         71 => "<>", // "lt_gt"
+        72 => "lambda", // "anon_lambda"
         73 => "+=", // "plus_eq"
         74 => "-=", // "dash_eq"
         75 => "*=", // "star_eq"
@@ -378,13 +383,16 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         83 => "&=", // "amp_eq"
         84 => "^=", // "caret_eq"
         85 => "|=", // "pipe_eq"
+        86 => "yield", // "anon_yield"
         87 => "ellipsis", // "ellipsis"
+        88 => "type", // "anon_type"
         89 => "escape_sequence", // "escape_sequence"
         90 => "\\", // "bslash"
         91 => "format_specifier_token1", // "format_specifier_token1"
         92 => "type_conversion", // "type_conversion"
         93 => "integer", // "integer"
         94 => "float", // "float"
+        95 => "await", // "anon_await"
         96 => "true", // "true"
         97 => "false", // "false"
         98 => "none", // "none"

@@ -187,6 +187,7 @@ function stepPath(rule: Rule, seg: PathSegment, kind: string, formName: string, 
  */
 function unwrapToChoice(rule: Rule, rules?: Readonly<Record<string, Rule>>): ChoiceRule | EnumRule | undefined {
 	let cur = rule;
+	const visitedSymbols = new Set<string>();
 	for (;;) {
 		if (isChoice(cur)) return cur;
 		if (isEnum(cur)) return cur;
@@ -194,14 +195,17 @@ function unwrapToChoice(rule: Rule, rules?: Readonly<Record<string, Rule>>): Cho
 			cur = cur.content;
 			continue;
 		}
-		// Follow one level of symbol indirection for synthesized field-enum
-		// hidden rules (e.g. `_binary_expression_operator` synthesized by
-		// evaluate's `synthesizeFieldEnumRules` pass). Without this, refine()
-		// paths that previously terminated at an inline EnumRule now see a
-		// SymbolRule and fail validation.
+		// Follow synthesized field-enum indirection until we reach the
+		// underlying enum/choice. Real grammars often lower field-wrapped
+		// literal choices to hidden symbol refs during evaluate.
 		if (isSymbol(cur) && rules !== undefined) {
+			if (visitedSymbols.has(cur.name)) return undefined;
+			visitedSymbols.add(cur.name);
 			const target = rules[cur.name];
-			if (target !== undefined && (isEnum(target) || isChoice(target))) return target;
+			if (target !== undefined) {
+				cur = target;
+				continue;
+			}
 		}
 		return undefined;
 	}
@@ -296,16 +300,12 @@ function unwrapToStringValue(rule: Rule): string | undefined {
  */
 export function narrowedFieldLiteralsForForm(
 	rule: Rule,
-	form: RefineForm
+	form: RefineForm,
+	rules?: Readonly<Record<string, Rule>>
 ): Array<{ fieldName: string; literal: string }> {
 	const out: Array<{ fieldName: string; literal: string }> = [];
 	for (const [pathStr, selection] of Object.entries(form.selections)) {
-		let resolution: RefinePathResolution;
-		try {
-			resolution = resolveRefinePath('<emit>', form.name, pathStr, rule);
-		} catch {
-			continue;
-		}
+		const resolution = resolveRefinePath('<emit>', form.name, pathStr, rule, rules);
 		if (!resolution.fieldName) continue;
 		const literal = resolveSelectionLiteral(resolution.choice, selection);
 		if (literal === undefined) continue;

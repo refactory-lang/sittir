@@ -109,6 +109,18 @@ export interface AssignmentEqTransport {
   _right: RightHandSideTransport
 }
 
+export interface AssignmentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _left: LeftHandSideTransport
+  '$children': OneOrMany<AssignmentChildTransport>
+}
+
 export interface AssignmentTypedTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -130,42 +142,6 @@ export interface AssignmentTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: TypeTransport
-}
-
-export interface AssignmentUFormEqTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _left: LeftHandSideTransport
-  '$children': AssignmentEqTransport
-}
-
-export interface AssignmentUFormTypedTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _left: LeftHandSideTransport
-  '$children': AssignmentTypedTransport
-}
-
-export interface AssignmentUFormTypeTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _left: LeftHandSideTransport
-  '$children': AssignmentTypeTransport
 }
 
 export interface AttributeTransport {
@@ -564,6 +540,17 @@ export interface ExpressionListTransport {
   '$children': OneOrMany<ExpressionTransport>
 }
 
+export interface ExpressionStatementTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  '$children': OneOrMany<ExpressionStatementChildTransport>
+}
+
 export interface ExpressionStatementTupleTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -573,61 +560,6 @@ export interface ExpressionStatementTupleTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   '$children': OneOrMany<ExpressionTransport>
-}
-
-export interface ExpressionStatementUFormAssignmentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  '$children': Box<AnyTransport>
-}
-
-export interface ExpressionStatementUFormAugmentedAssignmentTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  '$children': AugmentedAssignmentTransport
-}
-
-export interface ExpressionStatementUFormExpressionTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  '$children': ExpressionTransport
-}
-
-export interface ExpressionStatementUFormTupleTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  '$children': Box<AnyTransport>
-}
-
-export interface ExpressionStatementUFormYieldTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  '$children': YieldTransport
 }
 
 export interface FinallyClauseTransport {
@@ -1460,7 +1392,7 @@ export interface WithClauseParenTransport {
   '$children': OneOrMany<WithItemTransport>
 }
 
-export interface WithClauseUFormBareTransport {
+export interface WithClauseTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1468,18 +1400,7 @@ export interface WithClauseUFormBareTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': Box<AnyTransport>
-}
-
-export interface WithClauseUFormParenTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  '$children': WithClauseParenTransport
+  '$children': OneOrMany<WithClauseChildTransport>
 }
 
 export interface WithItemTransport {
@@ -1502,7 +1423,7 @@ export interface WithStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _async_marker?: AsyncMarkerTransport
-  _with_clause: Box<AnyTransport>
+  _with_clause: WithClauseTransport
   _body: SuiteTransport
 }
 
