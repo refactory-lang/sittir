@@ -116,30 +116,33 @@ function readValidatorNodeData(
 	nativeCoords: ReturnType<typeof findNativeNodeId>,
 	readTreeNodeFn: ((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null,
 	deepReadKinds: KindMembership,
-	recursive: boolean,
-	backend?: 'native' | 'typescript'
+	recursive: boolean
 ): AnyNodeData {
-	void readTreeNodeFn;
-	void recursive;
-	void backend;
-	const deepRead = (): AnyNodeData => {
+	if (!recursive) {
+		return readNodeAt(handle, adaptNode(node), nativeCoords);
+	}
+	if (readTreeNodeFn) {
 		if (nativeCoords && handle.read) {
-			return _deepReadNode(handle, nativeCoords.handle, nativeCoords.childIndex, deepReadKinds);
+			return readTreeNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyNodeData;
 		}
 		const prev = handle.rootNode;
 		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(node);
 		try {
-			return _deepReadNode(handle, undefined, undefined, deepReadKinds);
+			return readTreeNodeFn(handle) as AnyNodeData;
 		} finally {
 			(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
 		}
-	};
-	// Always route through _deepReadNode: when `recursive` is false the
-	// KindMembership gate limits drilling to the caller-selected subset;
-	// when true the membership test returns true for every numeric kind id.
-	// This preserves the shallow default for most nodes while still letting
-	// native RT validation selectively materialize structured descendants.
-	return deepRead();
+	}
+	if (nativeCoords && handle.read) {
+		return _deepReadNode(handle, nativeCoords.handle, nativeCoords.childIndex, deepReadKinds);
+	}
+	const prev = handle.rootNode;
+	(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(node);
+	try {
+		return _deepReadNode(handle, undefined, undefined, deepReadKinds);
+	} finally {
+		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
+	}
 }
 
 /**
@@ -848,8 +851,7 @@ export async function validateReadRenderParse(
 						nativeCoords,
 						readTreeNodeFn,
 						deepReadKinds,
-						recursive === true,
-						backend
+						recursive === true
 					);
 					const { data, renderedKind, targetKind } = applyAliasResolution(
 						rawData,
