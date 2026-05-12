@@ -238,6 +238,8 @@ export interface ProbeReport {
 export interface ProbeTraceLane {
 	readMode: 'shallow' | 'deep';
 	engine: 'typescript' | 'native';
+	rawNodeData?: unknown;
+	readTreeNodeRaw?: unknown;
 	nodeData: unknown;
 	rendererInput?: unknown;
 	nativeTransport?: unknown;
@@ -493,12 +495,40 @@ export async function probeTrace(
 		cst,
 		trace: {
 			typescript: {
-				shallow: await buildTraceLane(grammar, tsRead.shallow, 'typescript', 'shallow'),
-				deep: await buildTraceLane(grammar, tsRead.deep, 'typescript', 'deep')
+				shallow: await buildTraceLane(
+					grammar,
+					tsRead.shallow,
+					tsRead.shallow,
+					tsRead.shallow,
+					'typescript',
+					'shallow'
+				),
+				deep: await buildTraceLane(
+					grammar,
+					tsRead.shallow,
+					tsRead.deepReadTreeNodeRaw ?? tsRead.deep,
+					tsRead.deep,
+					'typescript',
+					'deep'
+				)
 			},
 			native: {
-				shallow: await buildTraceLane(grammar, nativeRead.shallow, 'native', 'shallow'),
-				deep: await buildTraceLane(grammar, nativeRead.deep, 'native', 'deep')
+				shallow: await buildTraceLane(
+					grammar,
+					nativeRead.shallow,
+					nativeRead.shallow,
+					nativeRead.shallow,
+					'native',
+					'shallow'
+				),
+				deep: await buildTraceLane(
+					grammar,
+					nativeRead.shallow,
+					nativeRead.deepReadTreeNodeRaw ?? nativeRead.deep,
+					nativeRead.deep,
+					'native',
+					'deep'
+				)
 			}
 		}
 	};
@@ -569,6 +599,40 @@ async function deepReadProbeNode(
 	return data;
 }
 
+function stripFieldBackedText(root: unknown): unknown {
+	const seen = new WeakSet<object>();
+	const isNodeData = (value: unknown): value is AnyNodeData =>
+		typeof value === 'object' && value !== null && '$type' in value;
+	const hasNamedFields = (record: Record<string, unknown>): boolean =>
+		Object.keys(record).some((key) => key.startsWith('_'))
+		|| (record.$fields != null && typeof record.$fields === 'object');
+	const recurse = (value: unknown): void => {
+		if (!isNodeData(value)) return;
+		if (seen.has(value)) return;
+		seen.add(value);
+		const record = value as unknown as Record<string, unknown>;
+		if (hasNamedFields(record)) {
+			delete record.$text;
+		}
+		for (const [key, child] of Object.entries(record)) {
+			if (key === '$with') continue;
+			if (key === '$children' && Array.isArray(child)) {
+				for (const entry of child) recurse(entry);
+				continue;
+			}
+			if (key.startsWith('_')) {
+				if (Array.isArray(child)) {
+					for (const entry of child) recurse(entry);
+				} else {
+					recurse(child);
+				}
+			}
+		}
+	};
+	recurse(root);
+	return root;
+}
+
 async function readProbeNodeData(
 	grammar: string,
 	source: string,
@@ -576,22 +640,30 @@ async function readProbeNodeData(
 	targetNode: any,
 	isRoot: boolean,
 	engine: 'typescript' | 'native'
-): Promise<{ shallow: unknown; deep: unknown }> {
+): Promise<{ shallow: unknown; deep: unknown; deepReadTreeNodeRaw?: unknown }> {
 	if (engine === 'native') {
 		const nativeEngine = await loadNativeEngine(grammar);
+		const readTreeNodeFn = await loadReadTreeNode(grammar);
 		const handle = nativeTreeHandle(nativeEngine, source);
 		if (isRoot) {
 			const shallow = stripBigInts(handle.read?.());
-			const deep = await deepReadProbeNode(handle, undefined, undefined);
-			return { shallow, deep };
+			const deep = stripFieldBackedText(await deepReadProbeNode(handle, undefined, undefined));
+			const deepReadTreeNodeRaw = readTreeNodeFn ? readTreeNodeFn(handle) : undefined;
+			return { shallow, deep, deepReadTreeNodeRaw };
 		}
 		const root = await deepReadProbeNode(handle, undefined, undefined);
 		const target = findInNodeDataByRange(root, targetNode.startIndex, targetNode.endIndex);
 		if (!target) throw new Error('probe-kind: no native node match in NodeData tree');
 		const targetHandle = getTargetHandle(target);
 		const shallow = targetHandle ? handle.read?.(targetHandle.handle, targetHandle.childIndex) : target;
-		const deep = targetHandle ? await deepReadProbeNode(handle, targetHandle.handle, targetHandle.childIndex) : target;
-		return { shallow, deep };
+		const deep = stripFieldBackedText(
+			targetHandle ? await deepReadProbeNode(handle, targetHandle.handle, targetHandle.childIndex) : target
+		);
+		const deepReadTreeNodeRaw =
+			targetHandle && readTreeNodeFn
+				? readTreeNodeFn(handle, targetHandle.handle, targetHandle.childIndex)
+				: target;
+		return { shallow, deep, deepReadTreeNodeRaw };
 	}
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
 	const kindIdFromName = rawKindIdFromName
@@ -605,8 +677,9 @@ async function readProbeNodeData(
 		: undefined;
 	const handle = treeHandle(tree, source, kindIdFromName);
 	const shallow = isRoot ? await fallbackReadNode(handle) : await readSelectedNode(handle, targetNode);
-	const deep = await deepReadSelectedNode(grammar, handle, targetNode, isRoot, shallow);
-	return { shallow, deep };
+	const deepReadTreeNodeRaw = await deepReadSelectedNode(grammar, handle, targetNode, isRoot, shallow);
+	const deep = deepReadTreeNodeRaw;
+	return { shallow, deep, deepReadTreeNodeRaw };
 }
 
 async function readSelectedNode(
@@ -651,10 +724,14 @@ function getTargetHandle(target: unknown): { handle: number; childIndex: number 
 
 async function buildTraceLane(
 	grammar: string,
+	rawNodeData: unknown,
+	readTreeNodeRaw: unknown,
 	nodeData: unknown,
 	engine: 'typescript' | 'native',
 	readMode: 'shallow' | 'deep'
 ): Promise<ProbeTraceLane> {
+	const cleanedRawNodeData = stripBigInts(rawNodeData);
+	const cleanedReadTreeNodeRaw = stripBigInts(readTreeNodeRaw);
 	const cleanedNodeData = stripBigInts(nodeData);
 	if (engine === 'typescript') {
 		try {
@@ -662,6 +739,8 @@ async function buildTraceLane(
 			return {
 				engine,
 				readMode,
+				rawNodeData: cleanedRawNodeData,
+				readTreeNodeRaw: cleanedReadTreeNodeRaw,
 				nodeData: cleanedNodeData,
 				rendererInput: cleanedNodeData,
 				rendered
@@ -670,6 +749,8 @@ async function buildTraceLane(
 			return {
 				engine,
 				readMode,
+				rawNodeData: cleanedRawNodeData,
+				readTreeNodeRaw: cleanedReadTreeNodeRaw,
 				nodeData: cleanedNodeData,
 				rendererInput: cleanedNodeData,
 				renderError: error instanceof Error ? error.message : String(error)
@@ -682,6 +763,8 @@ async function buildTraceLane(
 		return {
 			engine,
 			readMode,
+			rawNodeData: cleanedRawNodeData,
+			readTreeNodeRaw: cleanedReadTreeNodeRaw,
 			nodeData: cleanedNodeData,
 			nativeTransport,
 			rendered
@@ -696,6 +779,8 @@ async function buildTraceLane(
 		return {
 			engine,
 			readMode,
+			rawNodeData: cleanedRawNodeData,
+			readTreeNodeRaw: cleanedReadTreeNodeRaw,
 			nodeData: cleanedNodeData,
 			nativeTransport,
 			renderError: error instanceof Error ? error.message : String(error)

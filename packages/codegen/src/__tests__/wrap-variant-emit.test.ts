@@ -90,4 +90,11 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(wrapSrc).toContain('"right": [');
 		expect(wrapSrc).toContain('"$children"');
 	});
+
+	it('emits a drilled children() getter for wrapped nodes with unnamed children', () => {
+		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makePromotedPolymorphNodeMap() });
+
+		expect(wrapSrc).toContain('children() { return drillInAll<');
+		expect(wrapSrc).toContain('this.$children as readonly T.Identifier[] | undefined, tree');
+	});
 });

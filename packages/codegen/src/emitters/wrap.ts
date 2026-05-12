@@ -377,6 +377,9 @@ function emitFieldCarryingWrap(
 		const { accessorBody } = resolveFieldDrillExprs(f, nodeMap, kindEntries);
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
 	}
+	if (children.length > 0) {
+		lines.push(`    children() { ${resolveChildrenAccessorBody(children, nodeMap)}; },`);
+	}
 
 	// $with — calls the corresponding factory for update operations.
 	emitInlineWithProperty(lines, node, fields, children, nodeMap, kindEntries);
@@ -394,6 +397,12 @@ function resolveChildrenStoreExpr(node: WrapNode, children: readonly AssembledNo
 	const allowedKinds = [...new Set(children.flatMap((child) => deriveChildrenKinds(child)))];
 	if (allowedKinds.length === 0) return dataExpr;
 	return `_filterWrapChildrenByKind(${dataExpr}, ${JSON.stringify(allowedKinds)})`;
+}
+
+function resolveChildrenAccessorBody(children: readonly AssembledNonterminal[], nodeMap: NodeMap): string {
+	const elemType = childElementType({ children }, nodeMap);
+	const arrayElemType = elemType.includes(' | ') ? `(${elemType})` : elemType;
+	return `return drillInAll<${elemType}>(this.$children as readonly ${arrayElemType}[] | undefined, tree)`;
 }
 
 /**

@@ -110,6 +110,53 @@ function _deepReadNode(
 	return data;
 }
 
+/**
+ * Force evaluation of every wrapped-node getter before render.
+ *
+ * @remarks
+ * `readTreeNode()` returns a lazy wrapped view. Recursive RT mode is
+ * documented as full recursive materialization before render, so force a
+ * complete walk here rather than relying on templates to touch every getter.
+ */
+function materializeWrappedNodeData(root: unknown): AnyNodeData {
+	walkWrappedTree(root, () => {});
+	return root as AnyNodeData;
+}
+
+function stripMaterializedNodeText(root: AnyNodeData): AnyNodeData {
+	const seen = new WeakSet<object>();
+	const isNodeData = (value: unknown): value is AnyNodeData =>
+		typeof value === 'object' && value !== null && '$type' in value;
+	const hasNamedFields = (record: Record<string, unknown>): boolean =>
+		Object.keys(record).some((key) => key.startsWith('_'))
+		|| (record.$fields != null && typeof record.$fields === 'object');
+	const recurse = (value: unknown): void => {
+		if (!isNodeData(value)) return;
+		if (seen.has(value)) return;
+		seen.add(value);
+		const record = value as unknown as Record<string, unknown>;
+		if (hasNamedFields(record)) {
+			delete record.$text;
+		}
+		for (const [key, child] of Object.entries(record)) {
+			if (key === '$with') continue;
+			if (key === '$children' && Array.isArray(child)) {
+				for (const entry of child) recurse(entry);
+				continue;
+			}
+			if (key.startsWith('_')) {
+				if (Array.isArray(child)) {
+					for (const entry of child) recurse(entry);
+				} else {
+					recurse(child);
+				}
+			}
+		}
+	};
+	recurse(root);
+	return root;
+}
+
 function readValidatorNodeData(
 	handle: TreeHandle,
 	node: TSNode,
@@ -123,12 +170,14 @@ function readValidatorNodeData(
 	}
 	if (readTreeNodeFn) {
 		if (nativeCoords && handle.read) {
-			return readTreeNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyNodeData;
+			return stripMaterializedNodeText(
+				materializeWrappedNodeData(readTreeNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex))
+			);
 		}
 		const prev = handle.rootNode;
 		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(node);
 		try {
-			return readTreeNodeFn(handle) as AnyNodeData;
+			return materializeWrappedNodeData(readTreeNodeFn(handle));
 		} finally {
 			(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
 		}
