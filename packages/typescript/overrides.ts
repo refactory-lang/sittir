@@ -182,38 +182,10 @@ export default grammar(
 			$._public_field_definition_abstract_first,
 			$._public_field_definition_readonly_first,
 			$._public_field_definition_accessor_opt,
-			// Wave-3 follow-up (016 task #28): inline `_kw_readonly_marker`
-			// so the synthesized hidden rule's body folds into every
-			// reference site at LR-table generation. Without inlining, the
-			// hidden rule's `prec(-1, 'readonly')` body diverges from the
-			// bare `'readonly'` token in sibling rules at runtime — the
-			// parser takes `readonly` as the property identifier instead
-			// of the marker on `class C { readonly foo() {} }`. Same
-			// pattern as wave-1 follow-up's `_kw_async_marker` for rust
-			// (commit c00636a5). The FIELD wrapper survives inlining so
-			// the parse tree still surfaces the named `readonly_marker`
-			// child.
-			$._kw_readonly_marker,
-			// Wave-3 follow-up (016 task #28): same mechanism for the
-			// function-family `async_marker` promotion (function_signature,
-			// function_expression, function_declaration, generator_function,
-			// generator_function_declaration, arrow_function). Without
-			// inlining, the synthesized `_kw_async_marker` rule's body
-			// collides with `primary_expression` and `_property_name` on
-			// `{ async (` (method-shorthand vs async-function ambiguity)
-			// and with the bare `'async'` token on `'async' • 'function'`
-			// lookahead in sibling function rules. Inlining folds the body
-			// into each function rule's state machine — same shape as the
-			// pre-promotion grammar — while the FIELD wrapper survives in
-			// the parse tree. NOTE: the default `_kw_async_marker` body is
-			// `prec(-1, 'async')`, which would be inlined as a strictly
-			// lower-precedence wrap and lose to primary_expression's bare
-			// `'async'` (prec 0) on `async () =>` (parser commits to call
-			// expression and ERRORs at `=>`). To prevent this, the rule is
-			// re-authored below in `rules:` as `() => 'async'` (prec 0) so
-			// the existing `[primary_expression, arrow_function]` conflict
-			// can engage GLR to disambiguate.
-			$._kw_async_marker
+			// `_kw_readonly_marker` / `_kw_async_marker` are now
+			// auto-inlined by wire() whenever field promotion synthesizes
+			// them, so only the polymorph helpers remain explicitly listed
+			// here.
 		],
 		polymorphs: {
 			arrow_function: { '1/0': 'parameter', '1/1': '_call_signature' },
@@ -882,19 +854,6 @@ export default grammar(
 			// `?` — drop the synthetic `parameter_name` wrapper override and
 			// let the walker inline the `_parameter_name` helper's fields.
 			required_parameter: ($, original) => original,
-
-			// Wave-3 follow-up (016 task #28): override the synthesized
-			// `_kw_async_marker` body to drop the default `prec(-1, …)`
-			// wrapper. The default body is `prec(-1, 'async')` which makes
-			// the bare `'async'` token strictly LOWER precedence than
-			// primary_expression's bare `'async'` (prec 0). When inlined
-			// into arrow_function (`async • _arrow_function__call_signature
-			// => …`), the parser commits to the higher-precedence
-			// primary_expression path and ERRORs at `=>`. Authoring the
-			// hidden rule with no precedence wrap puts both at prec 0 so the
-			// existing `[primary_expression, arrow_function]` conflict
-			// declaration can engage GLR to disambiguate.
-			_kw_async_marker: () => 'async',
 
 			// string — model quote style as one fielded structural shape
 			// instead of a top-level polymorph split. `opening` / `contents`

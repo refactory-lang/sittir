@@ -65,6 +65,7 @@ export const NODE_KINDS = [
   'import_statement',
   'interpolation',
   'keyword_argument',
+  'keyword_identifier',
   'keyword_pattern',
   'lambda',
   'lambda_parameters',
@@ -476,8 +477,6 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "keyword_separator": 239,
   "_with_clause_paren": 245,
   "_simple_pattern_negative": 248,
-  "_kw_async_marker": 250,
-  "_kw_type": 251,
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -665,8 +664,6 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [239]: "keyword_separator",
   [245]: "_with_clause_paren",
   [248]: "_simple_pattern_negative",
-  [250]: "_kw_async_marker",
-  [251]: "_kw_type",
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -854,8 +851,6 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "keyword_separator", id: 239, enumName: "KeywordSeparator", cName: "sym_keyword_separator" },
   { name: "_with_clause_paren", id: 245, enumName: "WithClauseParen", cName: "sym__with_clause_paren" },
   { name: "_simple_pattern_negative", id: 248, enumName: "SimplePatternNegative", cName: "sym__simple_pattern_negative" },
-  { name: "_kw_async_marker", id: 250, enumName: "KwAsyncMarker", cName: "sym__kw_async_marker" },
-  { name: "_kw_type", id: 251, enumName: "KwType", cName: "sym__kw_type" },
 ] as const;
 
 export const enum TSFieldId {
@@ -1306,6 +1301,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'keyword_argument': [
     { name: 'name', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
+  ],
+  'keyword_identifier': [
   ],
   'keyword_pattern': [
     { name: 'identifier', required: true, multiple: false },

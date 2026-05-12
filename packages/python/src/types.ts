@@ -133,6 +133,7 @@ export const enum SyntaxKind {
   ImportStatement = "import_statement",
   Interpolation = "interpolation",
   KeywordArgument = "keyword_argument",
+  KeywordIdentifier = "keyword_identifier",
   KeywordPattern = "keyword_pattern",
   Lambda = "lambda",
   LambdaParameters = "lambda_parameters",
@@ -503,43 +504,40 @@ export const enum TSKindId {
   MatchBlockBlock = 246,
   DictPatternKv = 247,
   SimplePatternNegative = 248,
-  _KwReal = 249,
-  KwAsyncMarker = 250,
-  KwType = 251,
-  ModuleRepeat1 = 252,
-  _SimpleStatementsRepeat1 = 253,
-  ImportPrefixRepeat1 = 254,
-  _ImportListRepeat1 = 255,
-  PrintStatementRepeat1 = 256,
-  AssertStatementRepeat1 = 257,
-  IfStatementRepeat1 = 258,
-  MatchStatementRepeat1 = 259,
-  CaseClauseRepeat1 = 260,
-  TryStatementRepeat1 = 261,
-  ExceptClauseRepeat1 = 262,
-  GlobalStatementRepeat1 = 263,
-  TypeParameterRepeat1 = 264,
-  ArgumentListRepeat1 = 265,
-  DecoratedDefinitionRepeat1 = 266,
-  DottedNameRepeat1 = 267,
-  UnionPatternRepeat1 = 268,
-  DictPatternRepeat1 = 269,
-  _ParametersRepeat1 = 270,
-  _PatternsRepeat1 = 271,
-  ComparisonOperatorRepeat1 = 272,
-  SubscriptRepeat1 = 273,
-  DictionaryRepeat1 = 274,
-  _ComprehensionClausesRepeat1 = 275,
-  _CollectionElementsRepeat1 = 276,
-  ForInClauseRepeat1 = 277,
-  ConcatenatedStringRepeat1 = 278,
-  StringRepeat1 = 279,
-  StringContentRepeat1 = 280,
-  FormatSpecifierRepeat1 = 281,
-  _WithClauseBareRepeat1 = 282,
-  _MatchBlockBlockRepeat1 = 283,
-  _AsPatternTarget = 284,
-  _FormatExpression = 285,
+  ModuleRepeat1 = 249,
+  _SimpleStatementsRepeat1 = 250,
+  ImportPrefixRepeat1 = 251,
+  _ImportListRepeat1 = 252,
+  PrintStatementRepeat1 = 253,
+  AssertStatementRepeat1 = 254,
+  IfStatementRepeat1 = 255,
+  MatchStatementRepeat1 = 256,
+  CaseClauseRepeat1 = 257,
+  TryStatementRepeat1 = 258,
+  ExceptClauseRepeat1 = 259,
+  GlobalStatementRepeat1 = 260,
+  TypeParameterRepeat1 = 261,
+  ArgumentListRepeat1 = 262,
+  DecoratedDefinitionRepeat1 = 263,
+  DottedNameRepeat1 = 264,
+  UnionPatternRepeat1 = 265,
+  DictPatternRepeat1 = 266,
+  _ParametersRepeat1 = 267,
+  _PatternsRepeat1 = 268,
+  ComparisonOperatorRepeat1 = 269,
+  SubscriptRepeat1 = 270,
+  DictionaryRepeat1 = 271,
+  _ComprehensionClausesRepeat1 = 272,
+  _CollectionElementsRepeat1 = 273,
+  ForInClauseRepeat1 = 274,
+  ConcatenatedStringRepeat1 = 275,
+  StringRepeat1 = 276,
+  StringContentRepeat1 = 277,
+  FormatSpecifierRepeat1 = 278,
+  _WithClauseBareRepeat1 = 279,
+  _MatchBlockBlockRepeat1 = 280,
+  _AsPatternTarget = 281,
+  _FormatExpression = 282,
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -791,43 +789,40 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [246, "_match_block_block"],
   [247, "_dict_pattern_kv"],
   [248, "_simple_pattern_negative"],
-  [249, "_kw_real"],
-  [250, "_kw_async_marker"],
-  [251, "_kw_type"],
-  [252, "module_repeat1"],
-  [253, "_simple_statements_repeat1"],
-  [254, "import_prefix_repeat1"],
-  [255, "_import_list_repeat1"],
-  [256, "print_statement_repeat1"],
-  [257, "assert_statement_repeat1"],
-  [258, "if_statement_repeat1"],
-  [259, "match_statement_repeat1"],
-  [260, "case_clause_repeat1"],
-  [261, "try_statement_repeat1"],
-  [262, "except_clause_repeat1"],
-  [263, "global_statement_repeat1"],
-  [264, "type_parameter_repeat1"],
-  [265, "argument_list_repeat1"],
-  [266, "decorated_definition_repeat1"],
-  [267, "dotted_name_repeat1"],
-  [268, "union_pattern_repeat1"],
-  [269, "dict_pattern_repeat1"],
-  [270, "_parameters_repeat1"],
-  [271, "_patterns_repeat1"],
-  [272, "comparison_operator_repeat1"],
-  [273, "subscript_repeat1"],
-  [274, "dictionary_repeat1"],
-  [275, "_comprehension_clauses_repeat1"],
-  [276, "_collection_elements_repeat1"],
-  [277, "for_in_clause_repeat1"],
-  [278, "concatenated_string_repeat1"],
-  [279, "string_repeat1"],
-  [280, "string_content_repeat1"],
-  [281, "format_specifier_repeat1"],
-  [282, "_with_clause_bare_repeat1"],
-  [283, "_match_block_block_repeat1"],
-  [284, "_as_pattern_target"],
-  [285, "_format_expression"],
+  [249, "module_repeat1"],
+  [250, "_simple_statements_repeat1"],
+  [251, "import_prefix_repeat1"],
+  [252, "_import_list_repeat1"],
+  [253, "print_statement_repeat1"],
+  [254, "assert_statement_repeat1"],
+  [255, "if_statement_repeat1"],
+  [256, "match_statement_repeat1"],
+  [257, "case_clause_repeat1"],
+  [258, "try_statement_repeat1"],
+  [259, "except_clause_repeat1"],
+  [260, "global_statement_repeat1"],
+  [261, "type_parameter_repeat1"],
+  [262, "argument_list_repeat1"],
+  [263, "decorated_definition_repeat1"],
+  [264, "dotted_name_repeat1"],
+  [265, "union_pattern_repeat1"],
+  [266, "dict_pattern_repeat1"],
+  [267, "_parameters_repeat1"],
+  [268, "_patterns_repeat1"],
+  [269, "comparison_operator_repeat1"],
+  [270, "subscript_repeat1"],
+  [271, "dictionary_repeat1"],
+  [272, "_comprehension_clauses_repeat1"],
+  [273, "_collection_elements_repeat1"],
+  [274, "for_in_clause_repeat1"],
+  [275, "concatenated_string_repeat1"],
+  [276, "string_repeat1"],
+  [277, "string_content_repeat1"],
+  [278, "format_specifier_repeat1"],
+  [279, "_with_clause_bare_repeat1"],
+  [280, "_match_block_block_repeat1"],
+  [281, "_as_pattern_target"],
+  [282, "_format_expression"],
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -1080,9 +1075,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_match_block_block": return TSKindId.MatchBlockBlock;
     case "_dict_pattern_kv": return TSKindId.DictPatternKv;
     case "_simple_pattern_negative": return TSKindId.SimplePatternNegative;
-    case "_kw_real": return TSKindId._KwReal;
-    case "_kw_async_marker": return TSKindId.KwAsyncMarker;
-    case "_kw_type": return TSKindId.KwType;
     case "module_repeat1": return TSKindId.ModuleRepeat1;
     case "_simple_statements_repeat1": return TSKindId._SimpleStatementsRepeat1;
     case "import_prefix_repeat1": return TSKindId.ImportPrefixRepeat1;
@@ -1295,10 +1287,6 @@ export const enum ExpressionKind {
   ConditionalExpression = "conditional_expression",
   NamedExpression = "named_expression",
   AsPattern = "as_pattern",
-}
-
-export const enum KeywordIdentifierKind {
-  Identifier = "identifier",
 }
 
 export const enum ParameterKind {
@@ -1904,6 +1892,11 @@ export interface KeywordArgument {
   value(): Expression;
 }
 
+export interface KeywordIdentifier {
+  readonly $type: "keyword_identifier";
+  readonly $children: readonly [Identifier];
+}
+
 export interface KeywordPattern {
   readonly $type: TSKindId.KeywordPattern;
   readonly _identifier: Identifier;
@@ -2379,6 +2372,7 @@ export interface ImportFromStatementTree extends TreeNode<'import_from_statement
 export interface ImportStatementTree extends TreeNode<'import_statement'> {}
 export interface InterpolationTree extends TreeNode<'interpolation'> {}
 export interface KeywordArgumentTree extends TreeNode<'keyword_argument'> {}
+export interface KeywordIdentifierTree extends AnyTreeNode { readonly type: "keyword_identifier"; }
 export interface KeywordPatternTree extends TreeNode<'keyword_pattern'> {}
 export interface LambdaTree extends TreeNode<'lambda'> {}
 export interface LambdaParametersTree extends TreeNode<'lambda_parameters'> {}
@@ -2546,9 +2540,10 @@ export type LeftHandSideTree = PatternListTree;
 
 export type NamedExpressionLhs =
   | Identifier
+  | KeywordIdentifier
 ;
 
-export type NamedExpressionLhsTree = IdentifierTree;
+export type NamedExpressionLhsTree = IdentifierTree | KeywordIdentifierTree;
 
 export type RightHandSide =
   | ExpressionList
@@ -2627,12 +2622,6 @@ export type Expression =
 ;
 
 export type ExpressionTree = ComparisonOperatorTree | NotOperatorTree | BooleanOperatorTree | LambdaTree | ConditionalExpressionTree | NamedExpressionTree | AsPatternTree;
-
-export type KeywordIdentifier =
-  | Identifier
-;
-
-export type KeywordIdentifierTree = IdentifierTree;
 
 export type Parameter =
   | Identifier
@@ -2794,6 +2783,7 @@ export type PythonNode =
   | ImportStatement
   | Interpolation
   | KeywordArgument
+  | KeywordIdentifier
   | KeywordPattern
   | Lambda
   | LambdaParameters
@@ -2916,6 +2906,7 @@ export interface KindMap {
   'import_statement': ImportStatement;
   'interpolation': Interpolation;
   'keyword_argument': KeywordArgument;
+  'keyword_identifier': KeywordIdentifier;
   'keyword_pattern': KeywordPattern;
   'lambda': Lambda;
   'lambda_parameters': LambdaParameters;
@@ -3077,6 +3068,7 @@ export interface ImportFromStatementNs extends NodeNs<ImportFromStatement, LeafS
 export interface ImportStatementNs extends NodeNs<ImportStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface InterpolationNs extends NodeNs<Interpolation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface KeywordArgumentNs extends NodeNs<KeywordArgument, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface KeywordIdentifierNs extends NodeNs<KeywordIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface KeywordPatternNs extends NodeNs<KeywordPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LambdaNs extends NodeNs<Lambda, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LambdaParametersNs extends NodeNs<LambdaParameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -3198,6 +3190,7 @@ export interface NamespaceMap {
   'import_statement': ImportStatementNs;
   'interpolation': InterpolationNs;
   'keyword_argument': KeywordArgumentNs;
+  'keyword_identifier': KeywordIdentifierNs;
   'keyword_pattern': KeywordPatternNs;
   'lambda': LambdaNs;
   'lambda_parameters': LambdaParametersNs;
@@ -3739,6 +3732,13 @@ export namespace KeywordArgument {
   export type Loose = LooseFor<'keyword_argument'>;
   export type Tree = TreeFor<'keyword_argument'>;
   export type Kind = 'keyword_argument';
+}
+export namespace KeywordIdentifier {
+  export type Config = ConfigFor<'keyword_identifier'>;
+  export type Fluent = FluentFor<'keyword_identifier'>;
+  export type Loose = LooseFor<'keyword_identifier'>;
+  export type Tree = TreeFor<'keyword_identifier'>;
+  export type Kind = 'keyword_identifier';
 }
 export namespace KeywordPattern {
   export type Config = ConfigFor<'keyword_pattern'>;

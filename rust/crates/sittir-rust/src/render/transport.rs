@@ -425,27 +425,27 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 _ClosureExpressionExprTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _delim_token_tree_brace (_DELIM_TOKEN_TREE_BRACE)
-            381 => Ok(AnyTransport::_DelimTokenTreeBrace(
+            371 => Ok(AnyTransport::_DelimTokenTreeBrace(
                 _DelimTokenTreeBraceTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _delim_token_tree_bracket (_DELIM_TOKEN_TREE_BRACKET)
-            380 => Ok(AnyTransport::_DelimTokenTreeBracket(
+            370 => Ok(AnyTransport::_DelimTokenTreeBracket(
                 _DelimTokenTreeBracketTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _delim_token_tree_paren (_DELIM_TOKEN_TREE_PAREN)
-            379 => Ok(AnyTransport::_DelimTokenTreeParen(
+            369 => Ok(AnyTransport::_DelimTokenTreeParen(
                 _DelimTokenTreeParenTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _expression_statement_block_ending (_EXPRESSION_STATEMENT_BLOCK_ENDING)
-            366 => Ok(AnyTransport::_ExpressionStatementBlockEnding(
+            356 => Ok(AnyTransport::_ExpressionStatementBlockEnding(
                 _ExpressionStatementBlockEndingTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _expression_statement_with_semi (_EXPRESSION_STATEMENT_WITH_SEMI)
-            365 => Ok(AnyTransport::_ExpressionStatementWithSemi(
+            355 => Ok(AnyTransport::_ExpressionStatementWithSemi(
                 _ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _field_identifier (_FIELD_IDENTIFIER)
-            414 => Ok(AnyTransport::FieldIdentifier(
+            404 => Ok(AnyTransport::FieldIdentifier(
                 FieldIdentifierTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _field_pattern_named (_FIELD_PATTERN_NAMED)
@@ -457,11 +457,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 _FieldPatternShorthandTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _foreign_mod_item_body (_FOREIGN_MOD_ITEM_BODY)
-            368 => Ok(AnyTransport::_ForeignModItemBody(
+            358 => Ok(AnyTransport::_ForeignModItemBody(
                 _ForeignModItemBodyTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _foreign_mod_item_semi (_FOREIGN_MOD_ITEM_SEMI)
-            367 => Ok(AnyTransport::ForeignModItemSemi(
+            357 => Ok(AnyTransport::ForeignModItemSemi(
                 ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _function_type_fn_form (_FUNCTION_TYPE_FN_FORM)
@@ -484,38 +484,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             316 => Ok(AnyTransport::InnerLineDocCommentMarker(
                 InnerLineDocCommentMarkerTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: _kw_in (_KW_IN)
-            354 => Ok(AnyTransport::KwIn(
-                KwInTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: _kw_move_marker (_KW_MOVE_MARKER)
-            351 => Ok(AnyTransport::KwMoveMarker(
-                KwMoveMarkerTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: _kw_negative (_KW_NEGATIVE)
-            357 => Ok(AnyTransport::KwNegative(
-                KwNegativeTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: _kw_operator (_KW_OPERATOR)
-            360 => Ok(AnyTransport::KwOperator(
-                KwOperatorTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: _kw_pub (_KW_PUB)
-            353 => Ok(AnyTransport::KwPub(
-                KwPubTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: _kw_static_marker (_KW_STATIC_MARKER)
-            352 => Ok(AnyTransport::KwStaticMarker(
-                KwStaticMarkerTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: _kw_turbofish (_KW_TURBOFISH)
-            355 => Ok(AnyTransport::KwTurbofish(
-                KwTurbofishTransport::from_napi_value(env, napi_val)?
-            )),
-            // kind: _kw_unsafe_marker (_KW_UNSAFE_MARKER)
-            356 => Ok(AnyTransport::KwUnsafeMarker(
-                KwUnsafeMarkerTransport::from_napi_value(env, napi_val)?
-            )),
             // kind: _let_chain (_LET_CHAIN)
             269 => Ok(AnyTransport::LetChain(
                 LetChainTransport::from_napi_value(env, napi_val)?
@@ -525,11 +493,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 LineCommentContentTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _line_comment_doc (_LINE_COMMENT_DOC)
-            372 => Ok(AnyTransport::LineCommentDoc(
+            362 => Ok(AnyTransport::LineCommentDoc(
                 LineCommentDocTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _line_comment_regular_dslash (_LINE_COMMENT_REGULAR_DSLASH)
-            371 => Ok(AnyTransport::LineCommentRegularDslash(
+            361 => Ok(AnyTransport::LineCommentRegularDslash(
                 LineCommentRegularDslashTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _macro_definition_brace (_MACRO_DEFINITION_BRACE)
@@ -545,11 +513,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 _MacroDefinitionParenTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _match_arm_block_ending (_MATCH_ARM_BLOCK_ENDING)
-            370 => Ok(AnyTransport::_MatchArmBlockEnding(
+            360 => Ok(AnyTransport::_MatchArmBlockEnding(
                 _MatchArmBlockEndingTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _match_arm_with_comma (_MATCH_ARM_WITH_COMMA)
-            369 => Ok(AnyTransport::MatchArmWithComma(
+            359 => Ok(AnyTransport::MatchArmWithComma(
                 MatchArmWithCommaTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _mod_item_external (_MOD_ITEM_EXTERNAL)
@@ -573,11 +541,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 OuterLineDocCommentMarkerTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _pointer_type_const (_POINTER_TYPE_CONST)
-            358 => Ok(AnyTransport::PointerTypeConst(
+            351 => Ok(AnyTransport::PointerTypeConst(
                 PointerTypeConstTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _pointer_type_mut (_POINTER_TYPE_MUT)
-            359 => Ok(AnyTransport::_PointerTypeMut(
+            352 => Ok(AnyTransport::_PointerTypeMut(
                 _PointerTypeMutTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _range_expression_bare (_RANGE_EXPRESSION_BARE)
@@ -609,11 +577,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 RangePatternPrefixTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _reference_expression_raw_const (_REFERENCE_EXPRESSION_RAW_CONST)
-            361 => Ok(AnyTransport::ReferenceExpressionRawConst(
+            353 => Ok(AnyTransport::ReferenceExpressionRawConst(
                 ReferenceExpressionRawConstTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _reference_expression_raw_mut (_REFERENCE_EXPRESSION_RAW_MUT)
-            362 => Ok(AnyTransport::ReferenceExpressionRawMut(
+            354 => Ok(AnyTransport::ReferenceExpressionRawMut(
                 ReferenceExpressionRawMutTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _struct_item_brace (_STRUCT_ITEM_BRACE)
@@ -629,31 +597,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 StructItemUnitTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _token_tree_brace (_TOKEN_TREE_BRACE)
-            378 => Ok(AnyTransport::_TokenTreeBrace(
+            368 => Ok(AnyTransport::_TokenTreeBrace(
                 _TokenTreeBraceTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _token_tree_bracket (_TOKEN_TREE_BRACKET)
-            377 => Ok(AnyTransport::_TokenTreeBracket(
+            367 => Ok(AnyTransport::_TokenTreeBracket(
                 _TokenTreeBracketTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _token_tree_paren (_TOKEN_TREE_PAREN)
-            376 => Ok(AnyTransport::_TokenTreeParen(
+            366 => Ok(AnyTransport::_TokenTreeParen(
                 _TokenTreeParenTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _token_tree_pattern_brace (_TOKEN_TREE_PATTERN_BRACE)
-            375 => Ok(AnyTransport::_TokenTreePatternBrace(
+            365 => Ok(AnyTransport::_TokenTreePatternBrace(
                 _TokenTreePatternBraceTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _token_tree_pattern_bracket (_TOKEN_TREE_PATTERN_BRACKET)
-            374 => Ok(AnyTransport::_TokenTreePatternBracket(
+            364 => Ok(AnyTransport::_TokenTreePatternBracket(
                 _TokenTreePatternBracketTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _token_tree_pattern_paren (_TOKEN_TREE_PATTERN_PAREN)
-            373 => Ok(AnyTransport::_TokenTreePatternParen(
+            363 => Ok(AnyTransport::_TokenTreePatternParen(
                 _TokenTreePatternParenTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _type_identifier (_TYPE_IDENTIFIER)
-            417 => Ok(AnyTransport::TypeIdentifier(
+            407 => Ok(AnyTransport::TypeIdentifier(
                 TypeIdentifierTransport::from_napi_value(env, napi_val)?
             )),
             // kind: _visibility_modifier_crate (_VISIBILITY_MODIFIER_CRATE)
@@ -4816,7 +4784,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
             222 => Ok(Self::FunctionType(Box::new(
                 FunctionTypeTransport::from_napi_value(env, napi_val)?
             ))),
-            417 => Ok(Self::TypeIdentifier(
+            407 => Ok(Self::TypeIdentifier(
                 TypeIdentifierTransport::from_napi_value(env, napi_val)?
             )),
             239 => Ok(Self::MacroInvocation(Box::new(
@@ -5969,7 +5937,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeChildTransport {
             222 => Ok(Self::FunctionType(Box::new(
                 FunctionTypeTransport::from_napi_value(env, napi_val)?
             ))),
-            417 => Ok(Self::TypeIdentifier(
+            407 => Ok(Self::TypeIdentifier(
                 TypeIdentifierTransport::from_napi_value(env, napi_val)?
             )),
             239 => Ok(Self::MacroInvocation(Box::new(
@@ -6456,13 +6424,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokenTreeChildTransport {
         let kind_id: u16 = obj.get("$type")?
             .ok_or_else(|| ::napi::Error::from_reason("$type property missing in DelimTokenTreeChildTransport"))?;
         match kind_id {
-            379 => Ok(Self::_DelimTokenTreeParen(Box::new(
+            369 => Ok(Self::_DelimTokenTreeParen(Box::new(
                 _DelimTokenTreeParenTransport::from_napi_value(env, napi_val)?
             ))),
-            380 => Ok(Self::_DelimTokenTreeBracket(Box::new(
+            370 => Ok(Self::_DelimTokenTreeBracket(Box::new(
                 _DelimTokenTreeBracketTransport::from_napi_value(env, napi_val)?
             ))),
-            381 => Ok(Self::_DelimTokenTreeBrace(Box::new(
+            371 => Ok(Self::_DelimTokenTreeBrace(Box::new(
                 _DelimTokenTreeBraceTransport::from_napi_value(env, napi_val)?
             ))),
             other => Err(::napi::Error::from_reason(format!(
@@ -6577,10 +6545,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementChildTranspor
         let kind_id: u16 = obj.get("$type")?
             .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ExpressionStatementChildTransport"))?;
         match kind_id {
-            365 => Ok(Self::_ExpressionStatementWithSemi(Box::new(
+            355 => Ok(Self::_ExpressionStatementWithSemi(Box::new(
                 _ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val)?
             ))),
-            366 => Ok(Self::_ExpressionStatementBlockEnding(Box::new(
+            356 => Ok(Self::_ExpressionStatementBlockEnding(Box::new(
                 _ExpressionStatementBlockEndingTransport::from_napi_value(env, napi_val)?
             ))),
             other => Err(::napi::Error::from_reason(format!(
@@ -6815,10 +6783,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemChildTransport {
         let kind_id: u16 = obj.get("$type")?
             .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ForeignModItemChildTransport"))?;
         match kind_id {
-            367 => Ok(Self::ForeignModItemSemi(
+            357 => Ok(Self::ForeignModItemSemi(
                 ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
             )),
-            368 => Ok(Self::_ForeignModItemBody(Box::new(
+            358 => Ok(Self::_ForeignModItemBody(Box::new(
                 _ForeignModItemBodyTransport::from_napi_value(env, napi_val)?
             ))),
             other => Err(::napi::Error::from_reason(format!(
@@ -6990,10 +6958,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentChildTransport {
         let kind_id: u16 = obj.get("$type")?
             .ok_or_else(|| ::napi::Error::from_reason("$type property missing in LineCommentChildTransport"))?;
         match kind_id {
-            371 => Ok(Self::LineCommentRegularDslash(
+            361 => Ok(Self::LineCommentRegularDslash(
                 LineCommentRegularDslashTransport::from_napi_value(env, napi_val)?
             )),
-            372 => Ok(Self::LineCommentDoc(Box::new(
+            362 => Ok(Self::LineCommentDoc(Box::new(
                 LineCommentDocTransport::from_napi_value(env, napi_val)?
             ))),
             146 => Ok(Self::LineCommentContent(
@@ -7117,10 +7085,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchArmChildTransport {
         let kind_id: u16 = obj.get("$type")?
             .ok_or_else(|| ::napi::Error::from_reason("$type property missing in MatchArmChildTransport"))?;
         match kind_id {
-            369 => Ok(Self::MatchArmWithComma(Box::new(
+            359 => Ok(Self::MatchArmWithComma(Box::new(
                 MatchArmWithCommaTransport::from_napi_value(env, napi_val)?
             ))),
-            370 => Ok(Self::_MatchArmBlockEnding(Box::new(
+            360 => Ok(Self::_MatchArmBlockEnding(Box::new(
                 _MatchArmBlockEndingTransport::from_napi_value(env, napi_val)?
             ))),
             other => Err(::napi::Error::from_reason(format!(
@@ -7468,7 +7436,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParametersChildTransport {
             222 => Ok(Self::FunctionType(Box::new(
                 FunctionTypeTransport::from_napi_value(env, napi_val)?
             ))),
-            417 => Ok(Self::TypeIdentifier(
+            407 => Ok(Self::TypeIdentifier(
                 TypeIdentifierTransport::from_napi_value(env, napi_val)?
             )),
             239 => Ok(Self::MacroInvocation(Box::new(
@@ -7627,10 +7595,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeChildTransport {
         let kind_id: u16 = obj.get("$type")?
             .ok_or_else(|| ::napi::Error::from_reason("$type property missing in PointerTypeChildTransport"))?;
         match kind_id {
-            358 => Ok(Self::PointerTypeConst(
+            351 => Ok(Self::PointerTypeConst(
                 PointerTypeConstTransport::from_napi_value(env, napi_val)?
             )),
-            359 => Ok(Self::_PointerTypeMut(Box::new(
+            352 => Ok(Self::_PointerTypeMut(Box::new(
                 _PointerTypeMutTransport::from_napi_value(env, napi_val)?
             ))),
             other => Err(::napi::Error::from_reason(format!(
@@ -7820,10 +7788,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReferenceExpressionChildTranspor
         let kind_id: u16 = obj.get("$type")?
             .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ReferenceExpressionChildTransport"))?;
         match kind_id {
-            361 => Ok(Self::ReferenceExpressionRawConst(
+            353 => Ok(Self::ReferenceExpressionRawConst(
                 ReferenceExpressionRawConstTransport::from_napi_value(env, napi_val)?
             )),
-            362 => Ok(Self::ReferenceExpressionRawMut(Box::new(
+            354 => Ok(Self::ReferenceExpressionRawMut(Box::new(
                 ReferenceExpressionRawMutTransport::from_napi_value(env, napi_val)?
             ))),
             120 => Ok(Self::MutableSpecifier(
@@ -8064,13 +8032,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreeChildTransport {
         let kind_id: u16 = obj.get("$type")?
             .ok_or_else(|| ::napi::Error::from_reason("$type property missing in TokenTreeChildTransport"))?;
         match kind_id {
-            376 => Ok(Self::_TokenTreeParen(Box::new(
+            366 => Ok(Self::_TokenTreeParen(Box::new(
                 _TokenTreeParenTransport::from_napi_value(env, napi_val)?
             ))),
-            377 => Ok(Self::_TokenTreeBracket(Box::new(
+            367 => Ok(Self::_TokenTreeBracket(Box::new(
                 _TokenTreeBracketTransport::from_napi_value(env, napi_val)?
             ))),
-            378 => Ok(Self::_TokenTreeBrace(Box::new(
+            368 => Ok(Self::_TokenTreeBrace(Box::new(
                 _TokenTreeBraceTransport::from_napi_value(env, napi_val)?
             ))),
             other => Err(::napi::Error::from_reason(format!(
@@ -8128,13 +8096,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenTreePatternChildTransport {
         let kind_id: u16 = obj.get("$type")?
             .ok_or_else(|| ::napi::Error::from_reason("$type property missing in TokenTreePatternChildTransport"))?;
         match kind_id {
-            373 => Ok(Self::_TokenTreePatternParen(Box::new(
+            363 => Ok(Self::_TokenTreePatternParen(Box::new(
                 _TokenTreePatternParenTransport::from_napi_value(env, napi_val)?
             ))),
-            374 => Ok(Self::_TokenTreePatternBracket(Box::new(
+            364 => Ok(Self::_TokenTreePatternBracket(Box::new(
                 _TokenTreePatternBracketTransport::from_napi_value(env, napi_val)?
             ))),
-            375 => Ok(Self::_TokenTreePatternBrace(Box::new(
+            365 => Ok(Self::_TokenTreePatternBrace(Box::new(
                 _TokenTreePatternBraceTransport::from_napi_value(env, napi_val)?
             ))),
             other => Err(::napi::Error::from_reason(format!(
@@ -8238,7 +8206,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsChildTransport {
             222 => Ok(Self::FunctionType(Box::new(
                 FunctionTypeTransport::from_napi_value(env, napi_val)?
             ))),
-            417 => Ok(Self::TypeIdentifier(
+            407 => Ok(Self::TypeIdentifier(
                 TypeIdentifierTransport::from_napi_value(env, napi_val)?
             )),
             239 => Ok(Self::MacroInvocation(Box::new(
@@ -8668,7 +8636,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsChildTransport {
             222 => Ok(Self::FunctionType(Box::new(
                 FunctionTypeTransport::from_napi_value(env, napi_val)?
             ))),
-            417 => Ok(Self::TypeIdentifier(
+            407 => Ok(Self::TypeIdentifier(
                 TypeIdentifierTransport::from_napi_value(env, napi_val)?
             )),
             239 => Ok(Self::MacroInvocation(Box::new(
@@ -8878,7 +8846,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseBoundsChildTransport {
             219 => Ok(Self::Lifetime(Box::new(
                 LifetimeTransport::from_napi_value(env, napi_val)?
             ))),
-            417 => Ok(Self::TypeIdentifier(
+            407 => Ok(Self::TypeIdentifier(
                 TypeIdentifierTransport::from_napi_value(env, napi_val)?
             )),
             other => Err(::napi::Error::from_reason(format!(
@@ -32307,7 +32275,7 @@ fn transport_to_node__delim_token_tree_brace(transport: _DelimTokenTreeBraceTran
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(381) /* "_delim_token_tree_brace" */,
+        TransportKindId(371) /* "_delim_token_tree_brace" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32330,7 +32298,7 @@ fn transport_to_node__delim_token_tree_bracket(transport: _DelimTokenTreeBracket
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(380) /* "_delim_token_tree_bracket" */,
+        TransportKindId(370) /* "_delim_token_tree_bracket" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32353,7 +32321,7 @@ fn transport_to_node__delim_token_tree_paren(transport: _DelimTokenTreeParenTran
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(379) /* "_delim_token_tree_paren" */,
+        TransportKindId(369) /* "_delim_token_tree_paren" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32373,7 +32341,7 @@ fn transport_to_node__expression_statement_block_ending(transport: _ExpressionSt
     let children = Some(transport_children(transport.children.into_iter().map(|v| expression_ending_with_block_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(366) /* "_expression_statement_block_ending" */,
+        TransportKindId(356) /* "_expression_statement_block_ending" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32393,7 +32361,7 @@ fn transport_to_node__expression_statement_with_semi(transport: _ExpressionState
     let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(365) /* "_expression_statement_with_semi" */,
+        TransportKindId(355) /* "_expression_statement_with_semi" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32410,7 +32378,7 @@ fn transport_to_node__expression_statement_with_semi(transport: _ExpressionState
 fn transport_to_node_field_identifier(transport: FieldIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(414) /* "_field_identifier" */,
+        TransportKindId(404) /* "_field_identifier" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32474,7 +32442,7 @@ fn transport_to_node__foreign_mod_item_body(transport: _ForeignModItemBodyTransp
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(368) /* "_foreign_mod_item_body" */,
+        TransportKindId(358) /* "_foreign_mod_item_body" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32491,7 +32459,7 @@ fn transport_to_node__foreign_mod_item_body(transport: _ForeignModItemBodyTransp
 fn transport_to_node_foreign_mod_item_semi(transport: ForeignModItemSemiTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(367) /* "_foreign_mod_item_semi" */,
+        TransportKindId(357) /* "_foreign_mod_item_semi" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32641,7 +32609,7 @@ fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Resul
 fn transport_to_node_kw_in(transport: KwInTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(354) /* "_kw_in" */,
+        TransportKindId(0) /* "_kw_in" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32658,7 +32626,7 @@ fn transport_to_node_kw_in(transport: KwInTransport) -> Result<TransportNodeData
 fn transport_to_node_kw_move_marker(transport: KwMoveMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(351) /* "_kw_move_marker" */,
+        TransportKindId(0) /* "_kw_move_marker" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32675,7 +32643,7 @@ fn transport_to_node_kw_move_marker(transport: KwMoveMarkerTransport) -> Result<
 fn transport_to_node_kw_negative(transport: KwNegativeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(357) /* "_kw_negative" */,
+        TransportKindId(0) /* "_kw_negative" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32692,7 +32660,7 @@ fn transport_to_node_kw_negative(transport: KwNegativeTransport) -> Result<Trans
 fn transport_to_node_kw_operator(transport: KwOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(360) /* "_kw_operator" */,
+        TransportKindId(0) /* "_kw_operator" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32709,7 +32677,7 @@ fn transport_to_node_kw_operator(transport: KwOperatorTransport) -> Result<Trans
 fn transport_to_node_kw_pub(transport: KwPubTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(353) /* "_kw_pub" */,
+        TransportKindId(0) /* "_kw_pub" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32743,7 +32711,7 @@ fn transport_to_node_kw_ref_marker(transport: KwRefMarkerTransport) -> Result<Tr
 fn transport_to_node_kw_static_marker(transport: KwStaticMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(352) /* "_kw_static_marker" */,
+        TransportKindId(0) /* "_kw_static_marker" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32760,7 +32728,7 @@ fn transport_to_node_kw_static_marker(transport: KwStaticMarkerTransport) -> Res
 fn transport_to_node_kw_turbofish(transport: KwTurbofishTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(355) /* "_kw_turbofish" */,
+        TransportKindId(0) /* "_kw_turbofish" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32777,7 +32745,7 @@ fn transport_to_node_kw_turbofish(transport: KwTurbofishTransport) -> Result<Tra
 fn transport_to_node_kw_unsafe_marker(transport: KwUnsafeMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(356) /* "_kw_unsafe_marker" */,
+        TransportKindId(0) /* "_kw_unsafe_marker" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32835,7 +32803,7 @@ fn transport_to_node_line_comment_doc(transport: LineCommentDocTransport) -> Res
     let children = Some(transport_children(transport.children.into_iter().map(|v| line_comment_doc_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(372) /* "_line_comment_doc" */,
+        TransportKindId(362) /* "_line_comment_doc" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32852,7 +32820,7 @@ fn transport_to_node_line_comment_doc(transport: LineCommentDocTransport) -> Res
 fn transport_to_node_line_comment_regular_dslash(transport: LineCommentRegularDslashTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(371) /* "_line_comment_regular_dslash" */,
+        TransportKindId(361) /* "_line_comment_regular_dslash" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32942,7 +32910,7 @@ fn transport_to_node__match_arm_block_ending(transport: _MatchArmBlockEndingTran
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(370) /* "_match_arm_block_ending" */,
+        TransportKindId(360) /* "_match_arm_block_ending" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -32963,7 +32931,7 @@ fn transport_to_node_match_arm_with_comma(transport: MatchArmWithCommaTransport)
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(369) /* "_match_arm_with_comma" */,
+        TransportKindId(359) /* "_match_arm_with_comma" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -33149,7 +33117,7 @@ fn transport_to_node_outer_line_doc_comment_marker(transport: OuterLineDocCommen
 fn transport_to_node_pointer_type_const(transport: PointerTypeConstTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(358) /* "_pointer_type_const" */,
+        TransportKindId(351) /* "_pointer_type_const" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -33169,7 +33137,7 @@ fn transport_to_node__pointer_type_mut(transport: _PointerTypeMutTransport) -> R
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::MutableSpecifier(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(359) /* "_pointer_type_mut" */,
+        TransportKindId(352) /* "_pointer_type_mut" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -33366,7 +33334,7 @@ fn transport_to_node_ref_marker(transport: RefMarkerTransport) -> Result<Transpo
 fn transport_to_node_reference_expression_raw_const(transport: ReferenceExpressionRawConstTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(361) /* "_reference_expression_raw_const" */,
+        TransportKindId(353) /* "_reference_expression_raw_const" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -33386,7 +33354,7 @@ fn transport_to_node_reference_expression_raw_mut(transport: ReferenceExpression
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::MutableSpecifier(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(362) /* "_reference_expression_raw_mut" */,
+        TransportKindId(354) /* "_reference_expression_raw_mut" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -33506,7 +33474,7 @@ fn transport_to_node__token_tree_brace(transport: _TokenTreeBraceTransport) -> R
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(378) /* "_token_tree_brace" */,
+        TransportKindId(368) /* "_token_tree_brace" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -33529,7 +33497,7 @@ fn transport_to_node__token_tree_bracket(transport: _TokenTreeBracketTransport) 
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(377) /* "_token_tree_bracket" */,
+        TransportKindId(367) /* "_token_tree_bracket" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -33552,7 +33520,7 @@ fn transport_to_node__token_tree_paren(transport: _TokenTreeParenTransport) -> R
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(376) /* "_token_tree_paren" */,
+        TransportKindId(366) /* "_token_tree_paren" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -33575,7 +33543,7 @@ fn transport_to_node__token_tree_pattern_brace(transport: _TokenTreePatternBrace
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(375) /* "_token_tree_pattern_brace" */,
+        TransportKindId(365) /* "_token_tree_pattern_brace" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -33598,7 +33566,7 @@ fn transport_to_node__token_tree_pattern_bracket(transport: _TokenTreePatternBra
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(374) /* "_token_tree_pattern_bracket" */,
+        TransportKindId(364) /* "_token_tree_pattern_bracket" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -33621,7 +33589,7 @@ fn transport_to_node__token_tree_pattern_paren(transport: _TokenTreePatternParen
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(373) /* "_token_tree_pattern_paren" */,
+        TransportKindId(363) /* "_token_tree_pattern_paren" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -33638,7 +33606,7 @@ fn transport_to_node__token_tree_pattern_paren(transport: _TokenTreePatternParen
 fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(417) /* "_type_identifier" */,
+        TransportKindId(407) /* "_type_identifier" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -34504,7 +34472,7 @@ fn transport_to_node_delim_token_tree_paren(transport: DelimTokenTreeParenTransp
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(379) /* "delim_token_tree_paren" */,
+        TransportKindId(369) /* "delim_token_tree_paren" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -34527,7 +34495,7 @@ fn transport_to_node_delim_token_tree_bracket(transport: DelimTokenTreeBracketTr
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(380) /* "delim_token_tree_bracket" */,
+        TransportKindId(370) /* "delim_token_tree_bracket" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -34550,7 +34518,7 @@ fn transport_to_node_delim_token_tree_brace(transport: DelimTokenTreeBraceTransp
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(381) /* "delim_token_tree_brace" */,
+        TransportKindId(371) /* "delim_token_tree_brace" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -34749,7 +34717,7 @@ fn transport_to_node_expression_statement_with_semi(transport: ExpressionStateme
     let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(365) /* "expression_statement_with_semi" */,
+        TransportKindId(355) /* "expression_statement_with_semi" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -34769,7 +34737,7 @@ fn transport_to_node_expression_statement_block_ending(transport: ExpressionStat
     let children = Some(transport_children(transport.children.into_iter().map(|v| expression_ending_with_block_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(366) /* "expression_statement_block_ending" */,
+        TransportKindId(356) /* "expression_statement_block_ending" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -35072,7 +35040,7 @@ fn transport_to_node_foreign_mod_item_body(transport: ForeignModItemBodyTranspor
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(368) /* "foreign_mod_item_body" */,
+        TransportKindId(358) /* "foreign_mod_item_body" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -35873,7 +35841,7 @@ fn transport_to_node_match_arm_block_ending(transport: MatchArmBlockEndingTransp
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(370) /* "match_arm_block_ending" */,
+        TransportKindId(360) /* "match_arm_block_ending" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -36237,7 +36205,7 @@ fn transport_to_node_pointer_type_mut(transport: PointerTypeMutTransport) -> Res
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::MutableSpecifier(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(359) /* "pointer_type_mut" */,
+        TransportKindId(352) /* "pointer_type_mut" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -36992,7 +36960,7 @@ fn transport_to_node_token_tree_paren(transport: TokenTreeParenTransport) -> Res
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(376) /* "token_tree_paren" */,
+        TransportKindId(366) /* "token_tree_paren" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -37015,7 +36983,7 @@ fn transport_to_node_token_tree_bracket(transport: TokenTreeBracketTransport) ->
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(377) /* "token_tree_bracket" */,
+        TransportKindId(367) /* "token_tree_bracket" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -37038,7 +37006,7 @@ fn transport_to_node_token_tree_brace(transport: TokenTreeBraceTransport) -> Res
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(378) /* "token_tree_brace" */,
+        TransportKindId(368) /* "token_tree_brace" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -37081,7 +37049,7 @@ fn transport_to_node_token_tree_pattern_paren(transport: TokenTreePatternParenTr
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(373) /* "token_tree_pattern_paren" */,
+        TransportKindId(363) /* "token_tree_pattern_paren" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -37104,7 +37072,7 @@ fn transport_to_node_token_tree_pattern_bracket(transport: TokenTreePatternBrack
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(374) /* "token_tree_pattern_bracket" */,
+        TransportKindId(364) /* "token_tree_pattern_bracket" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -37127,7 +37095,7 @@ fn transport_to_node_token_tree_pattern_brace(transport: TokenTreePatternBraceTr
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(375) /* "token_tree_pattern_brace" */,
+        TransportKindId(365) /* "token_tree_pattern_brace" */,
         transport.transport_source,
         transport.transport_named,
         true,

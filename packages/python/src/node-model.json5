@@ -15,7 +15,6 @@
     "_simple_statement",
     "_statement",
     "expression",
-    "keyword_identifier",
     "parameter",
     "pattern",
     "primary_expression"
@@ -4990,12 +4989,28 @@
     },
     {
       "kind": "keyword_identifier",
-      "modelType": "supertype",
+      "modelType": "branch",
       "typeName": "KeywordIdentifier",
+      "factoryName": "keywordIdentifier",
       "irKey": "keywordIdentifier",
-      "hidden": true,
-      "subtypes": [
-        "identifier"
+      "hidden": false,
+      "fields": [],
+      "children": [
+        {
+          "name": "identifier",
+          "propertyName": "identifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "unresolved": true
+            }
+          ]
+        }
       ]
     },
     {

@@ -353,31 +353,31 @@ pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str>
         (258, 321) => Some("semi"), // ("array_expression", "array_expression_semi")
         (281, 323) => Some("block"), // ("closure_expression", "closure_expression_block")
         (281, 324) => Some("expr"), // ("closure_expression", "closure_expression_expr")
-        (240, 381) => Some("brace"), // ("delim_token_tree", "delim_token_tree_brace")
-        (240, 380) => Some("bracket"), // ("delim_token_tree", "delim_token_tree_bracket")
-        (240, 379) => Some("paren"), // ("delim_token_tree", "delim_token_tree_paren")
-        (160, 366) => Some("block_ending"), // ("expression_statement", "expression_statement_block_ending")
-        (160, 365) => Some("with_semi"), // ("expression_statement", "expression_statement_with_semi")
+        (240, 371) => Some("brace"), // ("delim_token_tree", "delim_token_tree_brace")
+        (240, 370) => Some("bracket"), // ("delim_token_tree", "delim_token_tree_bracket")
+        (240, 369) => Some("paren"), // ("delim_token_tree", "delim_token_tree_paren")
+        (160, 356) => Some("block_ending"), // ("expression_statement", "expression_statement_block_ending")
+        (160, 355) => Some("with_semi"), // ("expression_statement", "expression_statement_with_semi")
         (300, 326) => Some("named"), // ("field_pattern", "field_pattern_named")
         (300, 325) => Some("shorthand"), // ("field_pattern", "field_pattern_shorthand")
-        (174, 368) => Some("body"), // ("foreign_mod_item", "foreign_mod_item_body")
-        (174, 367) => Some("semi"), // ("foreign_mod_item", "foreign_mod_item_semi")
+        (174, 358) => Some("body"), // ("foreign_mod_item", "foreign_mod_item_body")
+        (174, 357) => Some("semi"), // ("foreign_mod_item", "foreign_mod_item_semi")
         (193, 329) => Some("body"), // ("impl_item", "impl_item_body")
         (193, 330) => Some("semi"), // ("impl_item", "impl_item_semi")
         (314, 146) => Some("content"), // ("line_comment", "line_comment_content")
-        (314, 372) => Some("doc"), // ("line_comment", "line_comment_doc")
-        (314, 371) => Some("regular_dslash"), // ("line_comment", "line_comment_regular_dslash")
+        (314, 362) => Some("doc"), // ("line_comment", "line_comment_doc")
+        (314, 361) => Some("regular_dslash"), // ("line_comment", "line_comment_regular_dslash")
         (161, 333) => Some("brace"), // ("macro_definition", "macro_definition_brace")
         (161, 332) => Some("bracket"), // ("macro_definition", "macro_definition_bracket")
         (161, 331) => Some("paren"), // ("macro_definition", "macro_definition_paren")
-        (274, 370) => Some("block_ending"), // ("match_arm", "match_arm_block_ending")
-        (274, 369) => Some("with_comma"), // ("match_arm", "match_arm_with_comma")
+        (274, 360) => Some("block_ending"), // ("match_arm", "match_arm_block_ending")
+        (274, 359) => Some("with_comma"), // ("match_arm", "match_arm_with_comma")
         (173, 334) => Some("external"), // ("mod_item", "mod_item_external")
         (173, 335) => Some("inline"), // ("mod_item", "mod_item_inline")
         (307, 336) => Some("binary"), // ("or_pattern", "or_pattern_binary")
         (307, 337) => Some("prefix"), // ("or_pattern", "or_pattern_prefix")
-        (233, 358) => Some("const"), // ("pointer_type", "pointer_type_const")
-        (233, 359) => Some("mut"), // ("pointer_type", "pointer_type_mut")
+        (233, 351) => Some("const"), // ("pointer_type", "pointer_type_const")
+        (233, 352) => Some("mut"), // ("pointer_type", "pointer_type_mut")
         (246, 341) => Some("bare"), // ("range_expression", "range_expression_bare")
         (246, 338) => Some("binary"), // ("range_expression", "range_expression_binary")
         (246, 339) => Some("postfix"), // ("range_expression", "range_expression_postfix")
@@ -388,12 +388,12 @@ pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str>
         (176, 345) => Some("brace"), // ("struct_item", "struct_item_brace")
         (176, 346) => Some("tuple"), // ("struct_item", "struct_item_tuple")
         (176, 347) => Some("unit"), // ("struct_item", "struct_item_unit")
-        (168, 378) => Some("brace"), // ("token_tree", "token_tree_brace")
-        (168, 377) => Some("bracket"), // ("token_tree", "token_tree_bracket")
-        (168, 376) => Some("paren"), // ("token_tree", "token_tree_paren")
-        (164, 375) => Some("brace"), // ("token_tree_pattern", "token_tree_pattern_brace")
-        (164, 374) => Some("bracket"), // ("token_tree_pattern", "token_tree_pattern_bracket")
-        (164, 373) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_paren")
+        (168, 368) => Some("brace"), // ("token_tree", "token_tree_brace")
+        (168, 367) => Some("bracket"), // ("token_tree", "token_tree_bracket")
+        (168, 366) => Some("paren"), // ("token_tree", "token_tree_paren")
+        (164, 365) => Some("brace"), // ("token_tree_pattern", "token_tree_pattern_brace")
+        (164, 364) => Some("bracket"), // ("token_tree_pattern", "token_tree_pattern_bracket")
+        (164, 363) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_paren")
         (215, 348) => Some("crate"), // ("visibility_modifier", "visibility_modifier_crate")
         (215, 350) => Some("in_path"), // ("visibility_modifier", "visibility_modifier_in_path")
         (215, 349) => Some("pub"), // ("visibility_modifier", "visibility_modifier_pub")
@@ -545,7 +545,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        381 => { // "_delim_token_tree_brace" | "delim_token_tree_brace"
+        371 => { // "_delim_token_tree_brace" | "delim_token_tree_brace"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _DelimTokenTreeBraceTemplate {
@@ -558,7 +558,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        380 => { // "_delim_token_tree_bracket" | "delim_token_tree_bracket"
+        370 => { // "_delim_token_tree_bracket" | "delim_token_tree_bracket"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _DelimTokenTreeBracketTemplate {
@@ -571,7 +571,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        379 => { // "_delim_token_tree_paren" | "delim_token_tree_paren"
+        369 => { // "_delim_token_tree_paren" | "delim_token_tree_paren"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _DelimTokenTreeParenTemplate {
@@ -584,7 +584,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        366 => { // "_expression_statement_block_ending" | "expression_statement_block_ending"
+        356 => { // "_expression_statement_block_ending" | "expression_statement_block_ending"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ExpressionStatementBlockEndingTemplate {
@@ -597,7 +597,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        365 => { // "_expression_statement_with_semi" | "expression_statement_with_semi"
+        355 => { // "_expression_statement_with_semi" | "expression_statement_with_semi"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ExpressionStatementWithSemiTemplate {
@@ -628,7 +628,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        368 => { // "_foreign_mod_item_body" | "foreign_mod_item_body"
+        358 => { // "_foreign_mod_item_body" | "foreign_mod_item_body"
             let children = resolve_children(node, &["body"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let template = _ForeignModItemBodyTemplate {
@@ -678,7 +678,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        372 => { // "_line_comment_doc" | "line_comment_doc"
+        362 => { // "_line_comment_doc" | "line_comment_doc"
             let children = resolve_children(node, &["doc", "inner", "outer"])?;
             let field_0 = resolve_field(node, "doc", true)?;
             let field_1 = resolve_field(node, "inner", false)?;
@@ -735,7 +735,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        370 => { // "_match_arm_block_ending" | "match_arm_block_ending"
+        360 => { // "_match_arm_block_ending" | "match_arm_block_ending"
             let children = resolve_children(node, &["value"])?;
             let field_0 = resolve_field(node, "value", true)?;
             let template = _MatchArmBlockEndingTemplate {
@@ -743,7 +743,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        369 => { // "_match_arm_with_comma" | "match_arm_with_comma"
+        359 => { // "_match_arm_with_comma" | "match_arm_with_comma"
             let children = resolve_children(node, &["value"])?;
             let field_0 = resolve_field(node, "value", true)?;
             let template = MatchArmWithCommaTemplate {
@@ -777,7 +777,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        359 => { // "_pointer_type_mut" | "pointer_type_mut"
+        352 => { // "_pointer_type_mut" | "pointer_type_mut"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _PointerTypeMutTemplate {
@@ -846,7 +846,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        362 => { // "_reference_expression_raw_mut" | "reference_expression_raw_mut"
+        354 => { // "_reference_expression_raw_mut" | "reference_expression_raw_mut"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ReferenceExpressionRawMutTemplate {
@@ -889,7 +889,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        378 => { // "_token_tree_brace" | "token_tree_brace"
+        368 => { // "_token_tree_brace" | "token_tree_brace"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _TokenTreeBraceTemplate {
@@ -902,7 +902,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        377 => { // "_token_tree_bracket" | "token_tree_bracket"
+        367 => { // "_token_tree_bracket" | "token_tree_bracket"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _TokenTreeBracketTemplate {
@@ -915,7 +915,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        376 => { // "_token_tree_paren" | "token_tree_paren"
+        366 => { // "_token_tree_paren" | "token_tree_paren"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _TokenTreeParenTemplate {
@@ -928,7 +928,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        375 => { // "_token_tree_pattern_brace" | "token_tree_pattern_brace"
+        365 => { // "_token_tree_pattern_brace" | "token_tree_pattern_brace"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _TokenTreePatternBraceTemplate {
@@ -941,7 +941,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        374 => { // "_token_tree_pattern_bracket" | "token_tree_pattern_bracket"
+        364 => { // "_token_tree_pattern_bracket" | "token_tree_pattern_bracket"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _TokenTreePatternBracketTemplate {
@@ -954,7 +954,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        373 => { // "_token_tree_pattern_paren" | "token_tree_pattern_paren"
+        363 => { // "_token_tree_pattern_paren" | "token_tree_pattern_paren"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _TokenTreePatternParenTemplate {

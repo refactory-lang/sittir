@@ -56,19 +56,6 @@ const config: WireConfig<RustGrammar> = {
 		// share the `pub` prefix; parser needs lookahead.
 		[$._visibility_modifier_pub]
 	],
-	// Inline the synthesized hidden `_kw_async_marker` rule's body at
-	// every reference site. Without inlining, `closure_expression`'s
-	// `optional(_kw_async_marker)` (a SYMBOL ref to a `prec(-1, 'async')`
-	// body) parses differently from `async_block`'s bare `'async'` token
-	// — same lexeme, different LR state — and corpus inputs containing a
-	// closure with an inner async_block (e.g. `async move || async move
-	// {}`) regress to ERROR. Inlining folds the hidden rule's body into
-	// closure_expression's state machine so the bare `'async'` token
-	// surfaces directly in the LR table — restoring parity with the
-	// pre-promotion shape — while the FIELD wrapper survives inlining
-	// so the parse tree still surfaces the named `async_marker` field.
-	// Wave-1 follow-up (016 task #27).
-	inline: ($, previous) => [...(previous ?? []), $._kw_async_marker],
 	polymorphs: {
 		array_expression: { '2/0': 'semi', '2/1': 'list' },
 		closure_expression: { '4/0': 'block', '4/1': 'expr' },

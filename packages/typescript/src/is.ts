@@ -476,7 +476,7 @@ const _supertype_declaration_ids = new Set<number>([224, 226, 221, 184, 183, 271
 const _supertype_expression_ids = new Set<number>([274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212]);
 const _supertype_pattern_ids = new Set<number>([234, 235, 114, 1, 214, 218, 268, 260]);
 const _supertype_primaryExpression_ids = new Set<number>([235, 234, 209, 114, 1, 109, 110, 105, 247, 248, 250, 111, 112, 113, 213, 217, 223, 227, 225, 220, 251, 231, 268]);
-const _supertype_primaryType_ids = new Set<number>([334, 335, 428, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
+const _supertype_primaryType_ids = new Set<number>([334, 335, 423, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
 const _supertype_statement_ids = new Set<number>([167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203]);
 const _supertype_type_ids = new Set<number>([351, 348, 313, 317, 303, 304]);
 
@@ -745,10 +745,6 @@ const _kindIdByKind = new Map<string, number>([
     ["_for_header_lhs", TSKindId.ForHeaderLhs],
     ["_for_header_var_kind", TSKindId.ForHeaderVarKind],
     ["_for_header_let_const_kind", TSKindId.ForHeaderLetConstKind],
-    ["_kw_static_marker", TSKindId.KwStaticMarker],
-    ["_kw_abstract_marker", TSKindId.KwAbstractMarker],
-    ["_kw_const_marker", TSKindId.KwConstMarker],
-    ["_kw_using_marker", TSKindId.KwUsingMarker],
     ["_parenthesized_expression_typed", TSKindId.ParenthesizedExpressionTyped],
     ["_parenthesized_expression_sequence", TSKindId._ParenthesizedExpressionSequence],
     ["_export_statement_type_export", TSKindId._ExportStatementTypeExport],

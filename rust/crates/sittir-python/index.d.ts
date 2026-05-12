@@ -250,7 +250,7 @@ export interface CasePatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': CasePatternChildTransport
+  '$children': OneOrMany<CasePatternChildTransport>
 }
 
 export interface ChevronTransport {
@@ -313,7 +313,7 @@ export interface ComplexPatternTransport {
   '$triviaData'?: TransportTrivia
   _real?: Box<AnyTransport>
   _imaginary: PrimaryExpressionTransport
-  '$children': PrimaryExpressionTransport
+  '$children': OneOrMany<PrimaryExpressionTransport>
 }
 
 export interface ComprehensionClausesTransport {
@@ -407,7 +407,7 @@ export interface DeleteStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': ExpressionsTransport
+  '$children': OneOrMany<ExpressionsTransport>
 }
 
 export interface DictionaryComprehensionTransport {
@@ -419,7 +419,7 @@ export interface DictionaryComprehensionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _body: PairTransport
-  '$children': ComprehensionClausesTransport
+  '$children': OneOrMany<ComprehensionClausesTransport>
 }
 
 export interface DictionarySplatPatternTransport {
@@ -430,7 +430,7 @@ export interface DictionarySplatPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': PatternTransport
+  '$children': OneOrMany<PatternTransport>
 }
 
 export interface DictionarySplatTransport {
@@ -514,7 +514,7 @@ export interface ExceptClauseTransport {
   '$triviaData'?: TransportTrivia
   _value?: OneOrMany<ExpressionTransport>
   _alias?: ExpressionTransport
-  '$children': SuiteTransport
+  '$children': OneOrMany<SuiteTransport>
 }
 
 export interface ExecStatementTransport {
@@ -648,7 +648,7 @@ export interface GeneratorExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _body: ExpressionTransport
-  '$children': ComprehensionClausesTransport
+  '$children': OneOrMany<ComprehensionClausesTransport>
 }
 
 export interface GenericTypeTransport {
@@ -769,6 +769,17 @@ export interface KeywordArgumentTransport {
   _value: ExpressionTransport
 }
 
+export interface KeywordIdentifierTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  '$children': OneOrMany<IdentifierTransport>
+}
+
 export interface KeywordPatternTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -825,7 +836,7 @@ export interface ListComprehensionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _body: ExpressionTransport
-  '$children': ComprehensionClausesTransport
+  '$children': OneOrMany<ComprehensionClausesTransport>
 }
 
 export interface ListPatternTransport {
@@ -858,7 +869,7 @@ export interface ListSplatPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': PatternTransport
+  '$children': OneOrMany<PatternTransport>
 }
 
 export interface ListSplatTransport {
@@ -902,7 +913,7 @@ export interface MatchBlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': MatchBlockBlockTransport
+  '$children': OneOrMany<MatchBlockBlockTransport>
 }
 
 export interface MatchStatementTransport {
@@ -1005,7 +1016,7 @@ export interface ParenthesizedExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': FExpressionTransport
+  '$children': OneOrMany<FExpressionTransport>
 }
 
 export interface ParenthesizedListSplatTransport {
@@ -1016,7 +1027,7 @@ export interface ParenthesizedListSplatTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': ParenthesizedListSplatChildTransport
+  '$children': OneOrMany<ParenthesizedListSplatChildTransport>
 }
 
 export interface PatternListTransport {
@@ -1039,7 +1050,7 @@ export interface PrintStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _argument?: OneOrMany<ExpressionTransport>
-  '$children'?: ChevronTransport
+  '$children'?: OneOrMany<ChevronTransport>
 }
 
 export interface RaiseStatementTransport {
@@ -1051,7 +1062,7 @@ export interface RaiseStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _cause?: ExpressionTransport
-  '$children'?: ExpressionsTransport
+  '$children'?: OneOrMany<ExpressionsTransport>
 }
 
 export interface RelativeImportTransport {
@@ -1074,7 +1085,7 @@ export interface ReturnStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children'?: ExpressionsTransport
+  '$children'?: OneOrMany<ExpressionsTransport>
 }
 
 export interface SetComprehensionTransport {
@@ -1086,7 +1097,7 @@ export interface SetComprehensionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _body: ExpressionTransport
-  '$children': ComprehensionClausesTransport
+  '$children': OneOrMany<ComprehensionClausesTransport>
 }
 
 export interface SetTransport {
@@ -1108,7 +1119,7 @@ export interface SimplePatternNegativeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': PrimaryExpressionTransport
+  '$children': OneOrMany<PrimaryExpressionTransport>
 }
 
 export interface SimpleStatementsTransport {
@@ -1201,7 +1212,7 @@ export interface SuiteTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': SuiteChildTransport
+  '$children': OneOrMany<SuiteChildTransport>
 }
 
 export interface TryStatementTransport {
@@ -1286,7 +1297,7 @@ export interface TypedParameterTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: TypeTransport
-  '$children': ParameterTransport
+  '$children': OneOrMany<ParameterTransport>
 }
 
 export interface TypeParameterTransport {
@@ -1308,7 +1319,7 @@ export interface TypeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': TypeChildTransport
+  '$children': OneOrMany<TypeChildTransport>
 }
 
 export interface UnaryOperatorTransport {
@@ -1435,5 +1446,5 @@ export interface YieldTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children'?: Box<AnyTransport>
+  '$children'?: OneOrMany<YieldChildTransport>
 }
