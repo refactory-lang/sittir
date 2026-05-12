@@ -1065,6 +1065,32 @@ function hasUserFacingFactoryChildren(children: readonly AssembledNonterminal[],
 }
 
 /**
+ * Returns true when any child slot is optional but carries user-facing named
+ * content types (i.e. not terminal literals, not parameterless compounds, not
+ * hidden keyword/token kinds). Such children are invisible to `isAutoStampSlot`
+ * (which skips all optional slots) but must still appear in the factory config
+ * surface — so a node with these children cannot be classified as `'direct'`.
+ *
+ * Example: `struct_pattern` has an optional repeating `field_pattern` children
+ * slot. `isAutoStampSlot` skips it (optional), but the user needs to be able
+ * to supply those children through the factory config.
+ */
+function hasOptionalUserContentChildren(children: readonly AssembledNonterminal[], nodeMap: NodeMap): boolean {
+	return children.some((child) => {
+		if (isRequired(child)) return false; // only optional slots are missed by isAutoStampSlot
+		return child.values.some((v) => {
+			if (isTerminalValue(v)) return false;
+			if (!isNodeRef(v)) return false;
+			const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+			const ref = nodeMap.nodes.get(kindName);
+			if (ref?.isParameterless) return false;
+			if (kindName.startsWith('_') && (ref instanceof AssembledKeyword || ref instanceof AssembledToken)) return false;
+			return true; // user-facing named content
+		});
+	});
+}
+
+/**
  * Resolve the raw field names visible on a kind's factory surface.
  *
  * @remarks
@@ -1130,7 +1156,14 @@ export function classifyFactoryShape(
 		case 'branch': {
 			const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 			if (slotClass.tag === 'singleSlot') {
-				if (!node.kind.startsWith('_') && slotClass.arity === 'singular') return 'direct';
+				// Guard: if optional user-content children exist the factory needs a
+				// config bag to expose them — 'direct' (single-arg) is insufficient.
+				if (
+					!node.kind.startsWith('_') &&
+					slotClass.arity === 'singular' &&
+					!hasOptionalUserContentChildren(node.children, nodeMap)
+				)
+					return 'direct';
 				if (slotClass.slot.source === 'inferred') return 'spread';
 				return 'config';
 			}
