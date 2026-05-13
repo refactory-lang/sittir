@@ -8,6 +8,8 @@ describe('slot-model', () => {
 
 		expect(named.name).toBe('body');
 		expect(slotStorageKey(named)).toBe('_body');
+		expect(named.unnamed).toBe(false);
+		expect(named.arity).toBe('one');
 
 		expect(children.name).toBe('children');
 		expect(slotStorageKey(children)).toBe('$children');
