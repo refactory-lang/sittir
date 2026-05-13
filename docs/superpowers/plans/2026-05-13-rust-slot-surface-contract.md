@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Make the Rust path obey the approved slot-surface contract by deriving slot arity from `AssembledNonterminal.values`, normalizing wrap and validator behavior from that derivation, and emitting Rust transport/template surfaces that match the target matrix without changing the raw native read payload.
+**Goal:** Make the Rust path obey the approved slot-surface contract by deriving slot arity from `AssembledNonterminal.values`, normalizing wrap and validator behavior from that derivation, and emitting Rust transport/template surfaces that match the target matrix without changing the raw native read payload. Preserve token-rule whitespace fidelity while doing so: token-only output must not widen from `jjjj` to ` jjjj ` as render wiring changes.
 
 **Architecture:** Keep the raw native boundary unchanged and push schema-aware arity handling into generated layers. The single source of truth for arity is the `values` multiplicity on each `AssembledNonterminal`; codegen should derive storage, validator metadata, wrap normalization, and Rust render transport/template shapes from that source instead of inferring from realized payload shape.
 
@@ -39,7 +39,7 @@
 - Modify: `packages/codegen/src/__tests__/native-transport-emit.test.ts`
   - Lock Rust transport field shapes for singular and repeated slots.
 - Modify: `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts`
-  - Lock Rust template view shapes for singular and repeated slots.
+  - Lock Rust template view shapes for singular and repeated slots, and preserve token-only whitespace fidelity when token rules are threaded through the new path.
 - Modify: `rust/crates/sittir-core/tests/read_node.rs`
   - Add a regression proving the raw native read payload still preserves realized shape.
 - Regenerate: `packages/rust/src/types.ts`
@@ -555,6 +555,8 @@ git commit -m "fix: normalize validator slots from emitted arity metadata"
 - Modify: `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts`
 
 - [ ] **Step 1: Write the failing Rust render-module tests**
+
+Also add or extend a regression here for token-only render spacing so the new transport/template path cannot turn `jjjj` into ` jjjj ` by losing token-rule fidelity.
 
 ```ts
 // packages/codegen/src/__tests__/native-transport-emit.test.ts

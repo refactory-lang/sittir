@@ -212,6 +212,22 @@ export function isNonEmpty(slot: {
 	);
 }
 
+export interface SlotCardinality {
+	readonly required: boolean;
+	readonly multiple: boolean;
+	readonly nonEmpty: boolean;
+}
+
+export function deriveSlotCardinality(slot: {
+	values: readonly NodeOrTerminal[];
+}): SlotCardinality {
+	return {
+		required: isRequired(slot),
+		multiple: isMultiple(slot),
+		nonEmpty: isNonEmpty(slot)
+	};
+}
+
 export interface RenderTemplateSurface {
 	readonly slots: readonly RenderTemplateSlot[];
 	readonly usesChildren: boolean;
@@ -2586,8 +2602,8 @@ function structuralSlotRecordFromForms(
 				aliasSources:
 					existing.aliasSources || slot.aliasSources
 						? {
-								...(existing.aliasSources ?? {}),
-								...(slot.aliasSources ?? {})
+								...existing.aliasSources,
+								...slot.aliasSources
 							}
 						: undefined
 			});

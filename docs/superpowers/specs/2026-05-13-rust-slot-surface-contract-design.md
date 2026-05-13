@@ -154,6 +154,14 @@ Config remains the explicit user-facing construction contract. `from()` / Loose 
 - Loose input is what convenience resolution accepts
 - both eventually resolve into the stricter storage/wrap/config contracts
 
+### 6.7 Token / whitespace fidelity
+
+This arity work must not accidentally drop token-rule fidelity while changing render-facing surfaces.
+
+- If token-only output renders as `jjjj` today, the new path must not widen that to ` jjjj `.
+- Throwing away token-rule information or routing token-only children through generic spacing helpers is a regression, even if the slot arity itself is otherwise correct.
+- Any render-surface change that touches token/pattern leaves needs explicit review for whitespace preservation, not just shape preservation.
+
 ## 7. Required implementation consequences
 
 1. **Wrap emitter**
@@ -176,12 +184,17 @@ Config remains the explicit user-facing construction contract. `from()` / Loose 
 5. **No raw payload redesign**
    - do not turn native read payload into a schema-carrying contract as part of this work
 
+6. **Preserve token-rule render fidelity**
+   - do not lose token-rule information while changing render transport/template wiring
+   - do not introduce synthetic surrounding whitespace for token-only output as a side effect of slot normalization
+
 ## 8. Validation strategy
 
 - Focus on Rust first.
 - Add regression cases that distinguish singular-vs-repeated behavior for both named and unnamed slots.
 - Verify that wrap storage, validator reconstruction, render transport, and template input all match the target matrix.
 - Keep native read payload tests separate so the raw boundary contract stays explicit and does not silently drift toward schema-shaping.
+- Add at least one regression that proves token-only render output keeps exact spacing, so a case like `jjjj` cannot regress to ` jjjj ` when token rules are threaded through the new path.
 
 ## 9. Expected outcome
 

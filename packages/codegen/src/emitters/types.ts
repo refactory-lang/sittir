@@ -54,10 +54,7 @@ function kindDiscriminantOrLiteral(
 }
 import type {
 	AssembledNode,
-	AssembledNonterminal,
-	AssembledPattern,
-	AssembledKeyword,
-	AssembledToken
+	AssembledNonterminal
 } from '../compiler/node-map.ts';
 import {
 	AssembledBranch,
@@ -68,6 +65,7 @@ import {
 	isNodeRef,
 	isTerminalValue,
 	isUnresolvedRef,
+	deriveSlotCardinality,
 	structuralFieldsOf,
 	structuralChildrenOf
 } from '../compiler/node-map.ts';
@@ -1105,28 +1103,7 @@ function emitInterface(
 		}
 	}
 
-	if (children && children.length > 0) {
-		const perChildParts = children.map((c) => childContentParts(c, nodeMap));
-		const allPartsFlat = perChildParts.flat();
-		const aliased = lookupUnion?.(allPartsFlat);
-		const childTypes = perChildParts.map((parts) => parts.join(' | ')).filter(Boolean);
-		if (childTypes.length > 0) {
-			const union = aliased ?? childTypes.join(' | ');
-			const anyMultiple = children.some((c) => isMultiple(c));
-			const anyNonEmpty = children.some((c) => isNonEmpty(c));
-			if (anyMultiple) {
-				// Same `repeat1` treatment for children slots — a
-				// non-empty children list gets a NonEmptyArray head.
-				if (anyNonEmpty) {
-					lines.push(`  readonly $children: NonEmptyArray<${union}>;`);
-				} else {
-					lines.push(`  readonly $children: readonly (${union})[];`);
-				}
-			} else {
-				lines.push(`  readonly $children: readonly [${union}];`);
-			}
-		}
-	}
+	if (children && children.length > 0) emitChildrenSlotDeclaration(lines, children, nodeMap, lookupUnion);
 
 	lines.push('}');
 	lines.push('');
@@ -1220,6 +1197,46 @@ function childContentParts(child: AssembledNonterminal, nodeMap: NodeMap): strin
 		parts.push(/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t));
 	}
 	return parts;
+}
+
+function emitChildrenSlotDeclaration(
+	lines: string[],
+	children: readonly AssembledNonterminal[],
+	nodeMap: NodeMap,
+	lookupUnion?: LookupUnion
+): void {
+	const perChildParts = children.map((c) => childContentParts(c, nodeMap));
+	const allPartsFlat = perChildParts.flat();
+	const aliased = lookupUnion?.(allPartsFlat);
+	const childTypes = perChildParts.map((parts) => parts.join(' | ')).filter(Boolean);
+	if (childTypes.length === 0) return;
+	const union = aliased ?? childTypes.join(' | ');
+	if (children.length === 1) {
+		const cardinality = deriveSlotCardinality(children[0]!);
+		if (cardinality.multiple) {
+			if (cardinality.nonEmpty) {
+				lines.push(`  readonly $children: NonEmptyArray<${union}>;`);
+			} else {
+				lines.push(`  readonly $children: readonly (${union})[];`);
+			}
+		} else if (cardinality.required) {
+			lines.push(`  readonly $children: ${union};`);
+		} else {
+			lines.push(`  readonly $children?: ${union};`);
+		}
+		return;
+	}
+	const anyMultiple = children.some((c) => isMultiple(c));
+	const anyNonEmpty = children.some((c) => isNonEmpty(c));
+	if (anyMultiple) {
+		if (anyNonEmpty) {
+			lines.push(`  readonly $children: NonEmptyArray<${union}>;`);
+		} else {
+			lines.push(`  readonly $children: readonly (${union})[];`);
+		}
+	} else {
+		lines.push(`  readonly $children: readonly [${union}];`);
+	}
 }
 
 // `childrenOf` → `nodeChildren(node)` (getter on AssembledNodeBase +
@@ -1344,31 +1361,7 @@ function emitFormChildrenSlot(
 	};
 	const emittableChildren = form.children.filter((c) => slotKindNames(c).some(isEmittableRef));
 	if (emittableChildren.length === 0) return;
-	const parts = emittableChildren.map((c) =>
-		slotKindNames(c)
-			.filter(isEmittableRef)
-			.map((t) => {
-				const n = nodeMap.nodes.get(t)!;
-				const name = n.typeName;
-				return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t);
-			})
-	);
-	const flatParts = parts.flat();
-	const aliased = lookupUnion?.(flatParts);
-	const union =
-		aliased ??
-		parts
-			.map((p) => p.join(' | '))
-			.filter(Boolean)
-			.join(' | ');
-	if (union) {
-		const anyMultiple = emittableChildren.some((c) => isMultiple(c));
-		if (anyMultiple) {
-			lines.push(`  readonly $children: readonly (${union})[];`);
-		} else {
-			lines.push(`  readonly $children: readonly [${union}];`);
-		}
-	}
+	emitChildrenSlotDeclaration(lines, emittableChildren, nodeMap, lookupUnion);
 }
 
 /**
