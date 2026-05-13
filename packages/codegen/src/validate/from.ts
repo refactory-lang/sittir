@@ -10,7 +10,7 @@
  */
 
 import type { AnyNodeData } from '@sittir/types';
-import type { FactoryShape } from '../emitters/factory-map.ts';
+import type { FactoryShape, FactorySlotMeta } from '../emitters/factory-map.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
@@ -210,6 +210,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
 	let factoryShapes: Record<string, FactoryShape> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
+	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let polymorphVariants: Record<string, unknown> = {};
 	let readTreeNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
@@ -223,7 +224,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata (shapes, field-alias, factoryFields,
-		// polymorphVariants) lives in factory-map.json5.
+		// factorySlots, polymorphVariants) lives in factory-map.json5.
 		try {
 			const mapPath = `../../../${grammar}/factory-map.json5`;
 			const { readFileSync } = await import('node:fs');
@@ -232,6 +233,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 			const mapData = JSON.parse(jsonOnly);
 			factoryShapes = mapData.factoryShapes ?? {};
 			factoryFields = mapData.factoryFields ?? {};
+			factorySlots = mapData.factorySlots ?? {};
 			fieldAliasMap = mapData.fieldAliasMap ?? {};
 			polymorphVariants = mapData.polymorphVariants ?? {};
 		} catch {
@@ -317,6 +319,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
 							factoryShapes,
 							factoryFields,
+							factorySlots,
 							fieldAliasMap,
 							polymorphVariants: polymorphVariants as any,
 							kindNameFromId

@@ -13,7 +13,7 @@
 import { createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
-import type { FactoryShape } from '../emitters/factory-map.ts';
+import type { FactoryShape, FactorySlotMeta } from '../emitters/factory-map.ts';
 import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
@@ -193,6 +193,7 @@ async function loadFactoryMap(grammar: string): Promise<{
 	factoryShapes: Record<string, FactoryShape>;
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
+	factorySlots: Record<string, Record<string, FactorySlotMeta>>;
 	polymorphVariants: PolymorphVariantMap;
 }> {
 	const p = FACTORY_MAP_PATHS[grammar];
@@ -201,6 +202,7 @@ async function loadFactoryMap(grammar: string): Promise<{
 			factoryShapes: {},
 			fieldAliasMap: {},
 			factoryFields: {},
+			factorySlots: {},
 			polymorphVariants: {}
 		};
 	const { readFileSync } = await import('node:fs');
@@ -212,6 +214,7 @@ async function loadFactoryMap(grammar: string): Promise<{
 		factoryShapes: data.factoryShapes ?? {},
 		fieldAliasMap: data.fieldAliasMap ?? {},
 		factoryFields: data.factoryFields ?? {},
+		factorySlots: data.factorySlots ?? {},
 		polymorphVariants: data.polymorphVariants ?? {}
 	};
 }
@@ -268,6 +271,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	factoryShapes: Record<string, FactoryShape>;
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
+	factorySlots: Record<string, Record<string, FactorySlotMeta>>;
 	polymorphVariants: PolymorphVariantMap;
 	kindNames: ReadonlyMap<number, string> | undefined;
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
@@ -279,6 +283,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	let factoryShapes: Record<string, FactoryShape> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
+	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let polymorphVariants: PolymorphVariantMap = {};
 	let kindNameFromId: ((id: number) => string | undefined) | undefined = undefined;
 	let kindNames: ReadonlyMap<number, string> | undefined = undefined;
@@ -289,6 +294,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factoryShapes,
 			fieldAliasMap,
 			factoryFields,
+			factorySlots,
 			polymorphVariants,
 			kindNames,
 			kindNameFromId,
@@ -305,6 +311,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		factoryShapes = mapData.factoryShapes;
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
+		factorySlots = mapData.factorySlots;
 		polymorphVariants = mapData.polymorphVariants;
 		// Load KIND_NAMES (static Map) and kindIdFromName from the grammar's
 		// types module.
@@ -337,6 +344,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factoryShapes,
 			fieldAliasMap,
 			factoryFields,
+			factorySlots,
 			polymorphVariants,
 			kindNames,
 			kindNameFromId,
@@ -351,6 +359,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factoryShapes,
 			fieldAliasMap,
 			factoryFields,
+			factorySlots,
 			polymorphVariants,
 			kindNames,
 			kindNameFromId,
@@ -464,6 +473,7 @@ function resolveNodeForKind(kind: string, rootNode: TSNode, nodeIdToEffectiveTyp
  * @param factoryShapes - Codegen-produced calling-convention map per kind.
  * @param fieldAliasMap - Camel→snake alias map used by `nodeToConfig`.
  * @param factoryFields - Declared field list per kind used by `nodeToConfig`.
+ * @param factorySlots - Declared slot metadata per kind used by `nodeToConfig`.
  * @param treeHandle - Tree handle forwarded to `nodeToConfig` in recursive mode.
  * @param entryName - Corpus entry name, used when recording errors.
  * @param inputSource - Original source text, used when recording errors.
@@ -485,6 +495,7 @@ function buildFactoryNodeData(
 	factoryShapes: Record<string, FactoryShape>,
 	fieldAliasMap: Record<string, Record<string, string>>,
 	factoryFields: Record<string, readonly string[]>,
+	factorySlots: Record<string, Record<string, FactorySlotMeta>>,
 	polymorphVariants: PolymorphVariantMap,
 	treeHandle: any,
 	entryName: string,
@@ -520,6 +531,7 @@ function buildFactoryNodeData(
 						factoryShapes,
 						fieldAliasMap,
 						factoryFields,
+						factorySlots,
 						polymorphVariants,
 						cstNodeKindHint,
 						firstNamedChildKindHint,
@@ -531,6 +543,7 @@ function buildFactoryNodeData(
 						factoryShapes,
 						fieldAliasMap,
 						factoryFields,
+						factorySlots,
 						polymorphVariants,
 						cstNodeKindHint,
 						firstNamedChildKindHint,
@@ -693,6 +706,7 @@ export async function validateFactoryRenderParse(
 		factoryShapes,
 		fieldAliasMap,
 		factoryFields,
+		factorySlots,
 		polymorphVariants,
 		kindNames,
 		kindNameFromId,
@@ -824,6 +838,7 @@ export async function validateFactoryRenderParse(
 				factoryShapes,
 				fieldAliasMap,
 				factoryFields,
+				factorySlots,
 				polymorphVariants,
 				handle,
 				entry.name,

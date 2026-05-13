@@ -3,6 +3,22 @@ import { describe, expect, it } from 'vitest';
 import { nodeToConfig } from '../validate/common.ts';
 import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 
+function makeFactorySlots(
+	kind: string,
+	slots: Record<
+		string,
+		{
+			unnamed: boolean;
+			slotCount: number;
+			required: boolean;
+			multiple: boolean;
+			nonEmpty: boolean;
+		}
+	>
+) {
+	return { [kind]: slots };
+}
+
 describe('nodeToConfig field promotion', () => {
 	it('promotes lexical_declaration children into declarators and semicolon', () => {
 		const config = nodeToConfig(
@@ -72,6 +88,128 @@ describe('nodeToConfig field promotion', () => {
 		} as never);
 
 		expect(config.children).toEqual([55, { $type: 'identifier', $source: 0, $named: true, $text: 'x' }]);
+	});
+
+	it('uses named slot metadata instead of payload shape for singular and repeated config slots', () => {
+		const leaf = { $type: 'identifier', $source: 0, $named: true, $text: 'x' };
+
+		const singularConfig = nodeToConfig(
+			{
+				$type: 'single_field_parent',
+				$source: 0,
+				$named: true,
+				_value: [leaf]
+			} as never,
+			{
+				factorySlots: makeFactorySlots('single_field_parent', {
+					value: {
+						unnamed: false,
+						slotCount: 1,
+						required: true,
+						multiple: false,
+						nonEmpty: false
+					}
+				})
+			}
+		);
+
+		const repeatedConfig = nodeToConfig(
+			{
+				$type: 'repeat_field_parent',
+				$source: 0,
+				$named: true,
+				_items: leaf
+			} as never,
+			{
+				factorySlots: makeFactorySlots('repeat_field_parent', {
+					items: {
+						unnamed: false,
+						slotCount: 1,
+						required: true,
+						multiple: true,
+						nonEmpty: true
+					}
+				})
+			}
+		);
+
+		expect(singularConfig.value).toEqual(leaf);
+		expect(repeatedConfig.items).toEqual([leaf]);
+	});
+
+	it('uses unnamed children metadata instead of payload shape and preserves multi-slot child lists', () => {
+		const left = { $type: 'identifier', $source: 0, $named: true, $text: 'x' };
+		const right = { $type: 'number_literal', $source: 0, $named: true, $text: '1' };
+
+		const singularChildren = nodeToConfig(
+			{
+				$type: 'single_child_parent',
+				$source: 0,
+				$named: true,
+				$children: [left]
+			} as never,
+			{
+				factorySlots: makeFactorySlots('single_child_parent', {
+					children: {
+						unnamed: true,
+						slotCount: 1,
+						required: true,
+						multiple: false,
+						nonEmpty: false
+					}
+				})
+			}
+		);
+
+		const pairChildren = nodeToConfig(
+			{
+				$type: 'pair_parent',
+				$source: 0,
+				$named: true,
+				$children: [left, right]
+			} as never,
+			{
+				factorySlots: makeFactorySlots('pair_parent', {
+					children: {
+						unnamed: true,
+						slotCount: 2,
+						required: true,
+						multiple: false,
+						nonEmpty: false
+					}
+				})
+			}
+		);
+
+		expect(singularChildren.children).toEqual(left);
+		expect(pairChildren.children).toEqual([left, right]);
+	});
+
+	it('throws when singular slot metadata receives multiple realized values', () => {
+		const leafA = { $type: 'identifier', $source: 0, $named: true, $text: 'x' };
+		const leafB = { $type: 'identifier', $source: 0, $named: true, $text: 'y' };
+
+		expect(() =>
+			nodeToConfig(
+				{
+					$type: 'single_child_parent',
+					$source: 0,
+					$named: true,
+					$children: [leafA, leafB]
+				} as never,
+				{
+					factorySlots: makeFactorySlots('single_child_parent', {
+						children: {
+							unnamed: true,
+							slotCount: 1,
+							required: true,
+							multiple: false,
+							nonEmpty: false
+						}
+					})
+				}
+			)
+		).toThrow(/singular slot/i);
 	});
 
 	it(

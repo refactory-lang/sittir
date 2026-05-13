@@ -24,7 +24,7 @@ import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 import type { AnyNodeData, AnyTreeNode, NativeParseResult } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common';
 import { assertNever, type PolymorphVariantDescriptor, type PolymorphVariantMap } from '../polymorph-variant.ts';
-import type { FactoryShape } from '../emitters/factory-map.ts';
+import type { FactoryShape, FactorySlotMeta } from '../emitters/factory-map.ts';
 import { createNamedSlotModel, createUnnamedChildrenSlotModel, type SlotModel } from '../compiler/slot-model.ts';
 
 // ---------------------------------------------------------------------------
@@ -967,6 +967,9 @@ export interface NodeToConfigOpts {
 	 * expression-statement position is the canonical case), route
 	 * children into the declared fields by position. */
 	readonly factoryFields?: Record<string, readonly string[]>;
+	/** Per-kind slot metadata (from the generated `_factorySlots`).
+	 * Drives config-surface normalization for both named and unnamed slots. */
+	readonly factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 	/** Per-polymorph variant descriptor (from `_polymorphVariants`).
 	 *  `nodeToConfig` uses this to stamp `$variant` on the returned
 	 *  config when the parent kind is a polymorph. The dispatcher's
@@ -1230,13 +1233,61 @@ function resolveMemberValue(value: readonly unknown[] | unknown, childOpts: Node
 	return Array.isArray(value) ? value.map((item) => resolveChild(item, childOpts)) : resolveChild(value, childOpts);
 }
 
+function lookupFactorySlotMeta(opts: NodeToConfigOpts, slot: SlotModel): FactorySlotMeta | undefined {
+	const parentKind = opts._parentKind;
+	return parentKind ? opts.factorySlots?.[parentKind]?.[slot.name] : undefined;
+}
+
+function shouldNormalizeConfigSlotAsMany(slot: SlotModel, slotMeta: FactorySlotMeta | undefined): boolean {
+	if (!slotMeta) return slot.arity === 'many';
+	return slotMeta.multiple || (slotMeta.unnamed && slotMeta.slotCount !== 1);
+}
+
+function normalizeConfigSlotValue(
+	slot: SlotModel,
+	value: readonly unknown[] | unknown,
+	childOpts: NodeToConfigOpts,
+	slotMeta: FactorySlotMeta | undefined
+): unknown {
+	const resolved = resolveMemberValue(value, childOpts);
+	if (shouldNormalizeConfigSlotAsMany(slot, slotMeta)) {
+		const items: readonly unknown[] = Array.isArray(resolved)
+			? resolved
+			: resolved == null
+				? []
+				: [resolved];
+		if (slotMeta?.nonEmpty && items.length === 0) {
+			throw new TypeError(`nodeToConfig: repeated slot ${JSON.stringify(slot.name)} requires at least one value`);
+		}
+		return items;
+	}
+	if (Array.isArray(resolved)) {
+		if (resolved.length === 0) {
+			if (slotMeta?.required) {
+				throw new TypeError(`nodeToConfig: singular slot ${JSON.stringify(slot.name)} requires one value`);
+			}
+			return undefined;
+		}
+		if (resolved.length !== 1) {
+			throw new TypeError(
+				`nodeToConfig: singular slot ${JSON.stringify(slot.name)} received ${resolved.length} values`
+			);
+		}
+		return resolved[0];
+	}
+	if (resolved == null && slotMeta?.required) {
+		throw new TypeError(`nodeToConfig: singular slot ${JSON.stringify(slot.name)} requires one value`);
+	}
+	return resolved;
+}
+
 function assignSlotToConfig(
 	slot: SlotModel,
 	value: readonly unknown[] | unknown,
 	childOpts: NodeToConfigOpts,
 	out: Record<string, unknown>
 ): void {
-	out[slotConfigKey(slot)] = resolveMemberValue(value, childOpts);
+	out[slotConfigKey(slot)] = normalizeConfigSlotValue(slot, value, childOpts, lookupFactorySlotMeta(childOpts, slot));
 }
 
 function isAnonymousPromotableField(name: string): boolean {
@@ -1410,7 +1461,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 		const namedChildren = data.$children.filter(
 			(c) => c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false
 		);
-		const childOpts = memberValueOpts(opts, undefined, undefined);
+		const childOpts = memberValueOpts(opts, parentKind, undefined);
 		if (promoteNamedChildrenToMissingFields(declaredFields, parentKind, namedChildren, opts, out)) {
 			// Missing declared fields were recovered from surviving named children.
 		} else if (shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
