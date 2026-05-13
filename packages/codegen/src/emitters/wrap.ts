@@ -18,6 +18,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNonterminal, AssembledNode, AssembledPolymorph, AssembledSupertype } from '../compiler/node-map.ts';
 import { createNamedSlotModel, createUnnamedChildrenSlotModel, type SlotModel } from '../compiler/slot-model.ts';
+import { deriveChildrenCardinality, deriveSlotCardinality } from '../compiler/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
 	isMultiple,
@@ -164,7 +165,8 @@ export namespace wrap {
 				typeName: node.typeName,
 				rawFactoryName: node.rawFactoryName,
 				childSurface: classifyChildFactorySurface(node, nodeMap),
-				isPolymorph: true
+				isPolymorph: true,
+				optionalChildren: node.forms.some((form) => form.children.length === 0)
 			},
 			node.fields,
 			node.children,
@@ -186,6 +188,7 @@ interface WrapNode {
 	readonly rawFactoryName?: string;
 	/** Child-factory surface when the node exposes positional child factories. */
 	readonly childSurface?: 'direct' | 'spread' | null;
+	readonly optionalChildren?: boolean;
 	/**
 	 * True when the node is a polymorph — the parent type is a union of UForm
 	 * interfaces where not all members may declare `$children`. Callers use
@@ -264,6 +267,7 @@ interface ResolveSlotDrillConfig {
 	readonly dataExpr: string;
 	readonly elemType: string;
 	readonly required: boolean;
+	readonly nonEmpty?: boolean;
 	readonly alias?: readonly [string, string];
 	readonly storageInfo?: ReturnType<typeof resolveFieldStorageInfo>;
 	readonly allowedKinds?: readonly string[];
@@ -278,22 +282,26 @@ function resolveSlotDrillExprs(slot: SlotModel, config: ResolveSlotDrillConfig):
 		config.allowedKinds && config.allowedKinds.length > 0
 			? `_filterWrapChildrenByKind(${slotStoreExpr}, ${JSON.stringify(config.allowedKinds)})`
 			: slotStoreExpr;
+	const normalizedStoreExpr =
+		slot.arity === 'many'
+			? `normalizeRepeatedWrapSlot(${filteredStoreExpr}, ${config.nonEmpty ? 'true' : 'false'}, ${JSON.stringify(slot.name)})`
+			: `normalizeSingularWrapSlot(${filteredStoreExpr}, ${JSON.stringify(slot.name)}, ${config.required ? 'true' : 'false'})`;
 	const storageInfo = config.storageInfo;
 	if (storageInfo?.kind === 'boolean') {
 		return {
-			storeExpr: `coerceBooleanKeywordStorage(${filteredStoreExpr})`,
+			storeExpr: `coerceBooleanKeywordStorage(${normalizedStoreExpr})`,
 			accessorBody: `return this.${slot.storageKey}`
 		};
 	}
 	if (storageInfo?.kind === 'bitflag') {
 		return {
-			storeExpr: `coerceBitflagStorage(${filteredStoreExpr}, ${bitflagTextsExpr(storageInfo.texts)})`,
+			storeExpr: `coerceBitflagStorage(${normalizedStoreExpr}, ${bitflagTextsExpr(storageInfo.texts)})`,
 			accessorBody: `return this.${slot.storageKey}`
 		};
 	}
 	if (storageInfo?.kind === 'kindEnum') {
 		return {
-			storeExpr: `projectKindEnumStorage(${filteredStoreExpr})`,
+			storeExpr: `projectKindEnumStorage(${normalizedStoreExpr})`,
 			accessorBody: `return this.${slot.storageKey}`
 		};
 	}
@@ -301,22 +309,48 @@ function resolveSlotDrillExprs(slot: SlotModel, config: ResolveSlotDrillConfig):
 		const [fromType, toType] = config.alias;
 		if (slot.arity === 'many') {
 			return {
-				storeExpr: filteredStoreExpr,
+				storeExpr: normalizedStoreExpr,
 				accessorBody: `return drillAsAll<${config.elemType}>(this.${slot.storageKey}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`
 			};
 		}
 		const returnType = config.required ? config.elemType : `${config.elemType} | undefined`;
 		return {
-			storeExpr: filteredStoreExpr,
+			storeExpr: normalizedStoreExpr,
 			accessorBody: `return drillAs<${returnType}>(this.${slot.storageKey}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`
 		};
 	}
 	return {
-		storeExpr: filteredStoreExpr,
+		storeExpr: normalizedStoreExpr,
 		accessorBody: resolveSlotAccessorBody(
 			slot,
 			slot.arity === 'many' ? config.elemType : config.required ? config.elemType : `${config.elemType} | undefined`
 		)
+	};
+}
+
+interface UnnamedChildrenSlotConfig {
+	readonly slot: SlotModel;
+	readonly elemType: string;
+	readonly required: boolean;
+	readonly nonEmpty: boolean;
+	readonly allowedKinds: readonly string[];
+}
+
+function resolveUnnamedSlotConfig(
+	children: readonly AssembledNonterminal[],
+	nodeMap: NodeMap,
+	options?: { optional?: boolean }
+): UnnamedChildrenSlotConfig {
+	const cardinality =
+		children.length === 1
+			? deriveSlotCardinality(children[0]!)
+			: deriveChildrenCardinality(children);
+	return {
+		slot: createUnnamedChildrenSlotModel(children.length === 1 && !cardinality.multiple ? 'one' : 'many'),
+		elemType: childElementType({ children }, nodeMap),
+		required: options?.optional ? false : cardinality.required,
+		nonEmpty: cardinality.nonEmpty,
+		allowedKinds: [...new Set(children.flatMap((child) => deriveChildrenKinds(child)))]
 	};
 }
 
@@ -393,6 +427,7 @@ function emitFieldCarryingWrap(
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
 			elemType: fieldElementType(f, nodeMap),
 			required: isRequired(f),
+			nonEmpty: isNonEmpty(f),
 			alias: aliasEntries[0],
 			storageInfo: resolveFieldStorageInfo(f, nodeMap, kindEntries)
 		});
@@ -406,13 +441,15 @@ function emitFieldCarryingWrap(
 	// may declare `$children`, but it is always present at runtime. Cast
 	// through `(data as any)` to access the property without type errors.
 	if (children.length > 0) {
-		const slot = createUnnamedChildrenSlotModel('many');
-		const allowedKinds = [...new Set(children.flatMap((child) => deriveChildrenKinds(child)))];
-		const { storeExpr } = resolveSlotDrillExprs(slot, {
+		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, {
+			optional: node.optionalChildren
+		});
+		const { storeExpr } = resolveSlotDrillExprs(childrenConfig.slot, {
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
-			elemType: childElementType({ children }, nodeMap),
-			required: false,
-			allowedKinds
+			elemType: childrenConfig.elemType,
+			required: childrenConfig.required,
+			nonEmpty: childrenConfig.nonEmpty,
+			allowedKinds: childrenConfig.allowedKinds
 		});
 		lines.push(`    $children: ${storeExpr},`);
 	}
@@ -427,18 +464,22 @@ function emitFieldCarryingWrap(
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
 			elemType: fieldElementType(f, nodeMap),
 			required: isRequired(f),
+			nonEmpty: isNonEmpty(f),
 			alias: aliasEntries[0],
 			storageInfo: resolveFieldStorageInfo(f, nodeMap, kindEntries)
 		});
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
 	}
 	if (children.length > 0) {
-		const slot = createUnnamedChildrenSlotModel('many');
-		const { accessorBody } = resolveSlotDrillExprs(slot, {
+		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, {
+			optional: node.optionalChildren
+		});
+		const { accessorBody } = resolveSlotDrillExprs(childrenConfig.slot, {
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
-			elemType: childElementType({ children }, nodeMap),
-			required: false,
-			allowedKinds: [...new Set(children.flatMap((child) => deriveChildrenKinds(child)))]
+			elemType: childrenConfig.elemType,
+			required: childrenConfig.required,
+			nonEmpty: childrenConfig.nonEmpty,
+			allowedKinds: childrenConfig.allowedKinds
 		});
 		lines.push(`    children() { ${accessorBody}; },`);
 	}
@@ -487,7 +528,10 @@ function emitInlineWithProperty(
 	const spreadData = node.isPolymorph ? '...(data as any)' : '...data';
 
 	if (node.childSurface === 'spread' || node.childSurface === 'direct') {
-		const childElem = childElementType({ children }, nodeMap);
+		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, {
+			optional: node.optionalChildren
+		});
+		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		if (node.childSurface === 'spread') {
 			const restType = childrenSetterRestType(children, childElem, childRest);
@@ -495,7 +539,7 @@ function emitInlineWithProperty(
 				`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $children: vs }, tree) },`
 			);
 		} else {
-			lines.push(`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $children: [v] }, tree) },`);
+			lines.push(`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $children: v }, tree) },`);
 		}
 		return;
 	}
@@ -532,10 +576,17 @@ function emitInlineWithProperty(
 		}
 	}
 	if (children.length > 0) {
-		const childElem = childElementType({ children }, nodeMap);
+		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, {
+			optional: node.optionalChildren
+		});
+		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
-		const restType = childrenSetterRestType(children, childElem, childRest);
-		lines.push(`      children: (...items: ${restType}) => ${wrapFn}({ ${spreadData}, $children: items }, tree),`);
+		if (childrenConfig.slot.arity === 'one') {
+			lines.push(`      children: (item: ${childElem}) => ${wrapFn}({ ${spreadData}, $children: item }, tree),`);
+		} else {
+			const restType = childrenSetterRestType(children, childElem, childRest);
+			lines.push(`      children: (...items: ${restType}) => ${wrapFn}({ ${spreadData}, $children: items }, tree),`);
+		}
 	}
 	lines.push('    },');
 }
@@ -620,6 +671,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesCoerceBoolean = /\bcoerceBooleanKeywordStorage\b/.test(bodySource);
 		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
 		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource);
+		const usesNormalizeSingular = /\bnormalizeSingularWrapSlot\b/.test(bodySource);
+		const usesNormalizeRepeated = /\bnormalizeRepeatedWrapSlot\b/.test(bodySource);
 		const variantDescriptors = buildWrapVariantDescriptors(this.#nodeMap);
 		const supertypeMembers = buildSupertypeMembersMap(this.#nodeMap);
 		const utilsImports = [
@@ -644,6 +697,27 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			`import { ${utilsImports.join(', ')} } from './utils.js';`,
 			"import * as _factories from './factories.js';",
 			'',
+			...(usesNormalizeSingular
+				? [
+						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, _required: boolean): T | undefined {',
+						'  if (Array.isArray(value)) {',
+						'    if (value.length === 0) return undefined;',
+						'    if (value.length !== 1) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} received ${value.length} values`);',
+						'    return value[0];',
+						'  }',
+						'  return value;',
+						'}'
+					]
+				: []),
+			...(usesNormalizeRepeated
+				? [
+						'function normalizeRepeatedWrapSlot<T>(value: T | readonly T[] | undefined, nonEmpty: boolean, slotName: string): readonly T[] {',
+						'  const items = Array.isArray(value) ? value : value == null ? [] : [value];',
+						'  if (nonEmpty && items.length === 0) throw new TypeError(`wrapNode: repeated slot ${JSON.stringify(slotName)} requires at least one value`);',
+						'  return items;',
+						'}'
+					]
+				: []),
 			'// Drill-in helpers — call back through `readTreeNode` so the same',
 			'// per-handle dispatch + wrap pipeline runs at every level. Layering:',
 			'//   readTreeNode (public entry)',
@@ -778,11 +852,20 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  return typeof raw === "string" ? raw : undefined;',
 						'}',
 						'',
+						'function _wrapChildEntries(value: unknown): unknown[] {',
+						'  if (value == null) return [];',
+						'  return Array.isArray(value) ? value : [value];',
+						'}',
+						'',
+						'function _hasWrapChildren(value: unknown): boolean {',
+						'  return _wrapChildEntries(value).length > 0;',
+						'}',
+						'',
 						'function _resolveVariant(kind: string, data: _NodeData): string | undefined {',
 						'  const desc = _variantTable[kind];',
 						'  if (!desc) return undefined;',
 						'  if (desc.source === "override") {',
-						'    const firstChild = data.$children?.find(',
+						'    const firstChild = _wrapChildEntries(data.$children).find(',
 						'      (child) => child != null && typeof child === "object" && (child as { $named?: boolean }).$named !== false',
 						'    );',
 						'    const candidate = _kindNameOf(firstChild);',
@@ -805,7 +888,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  }',
 						'  for (const [variant, requiredSlots] of Object.entries(desc.slots) as [string, readonly string[]][]) {',
 						'    const matches = requiredSlots.every((slot) => {',
-						'      if (slot === "$children") return Array.isArray(data.$children) && data.$children.length > 0;',
+						'      if (slot === "$children") return _hasWrapChildren(data.$children);',
 						'      return (data as unknown as Record<string, unknown>)[slot] !== undefined;',
 						'    });',
 						'    if (matches) return variant;',

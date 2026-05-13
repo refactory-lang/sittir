@@ -17,7 +17,13 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/node-map.ts';
-import { allSlotsOf } from '../compiler/node-map.ts';
+import {
+	allSlotsOf,
+	deriveChildrenCardinality,
+	deriveSlotCardinality,
+	structuralChildrenOf,
+	structuralFieldsOf
+} from '../compiler/node-map.ts';
 import { classifyFactoryShape, resolveFactoryFieldNames } from './shared.ts';
 import type { FactoryShape } from './shared.ts';
 import type { PolymorphVariantDescriptor, PolymorphVariantMap } from '../polymorph-variant.ts';
@@ -29,10 +35,18 @@ export interface EmitFactoryMapConfig {
 
 export type { FactoryShape } from './shared.ts';
 
+export interface FactorySlotMeta {
+	readonly unnamed: boolean;
+	readonly required: boolean;
+	readonly multiple: boolean;
+	readonly nonEmpty: boolean;
+}
+
 export interface FactoryMapData {
 	readonly factoryShapes: Readonly<Record<string, FactoryShape>>;
 	readonly fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	readonly factoryFields: Readonly<Record<string, readonly string[]>>;
+	readonly factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
 	/**
 	 * Polymorph variant discriminators. For each polymorph parent kind a
 	 * descriptor telling `nodeToConfig` how to stamp `$variant` on the
@@ -77,6 +91,24 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		const fieldNames = resolveFactoryFieldNames(node, nodeMap);
 		if (fieldNames) factoryFields[kind] = fieldNames;
+	}
+
+	const factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
+	for (const [kind, node] of nodeMap.nodes) {
+		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (nodeMap.polymorphFormKinds.has(kind)) continue;
+		const slots: Record<string, FactorySlotMeta> = {};
+		for (const field of structuralFieldsOf(node)) {
+			slots[field.name] = { unnamed: false, ...deriveSlotCardinality(field) };
+		}
+		const children = structuralChildrenOf(node);
+		if (children.length > 0) {
+			slots.children = {
+				unnamed: true,
+				...deriveChildrenCardinality(children)
+			};
+		}
+		if (Object.keys(slots).length > 0) factorySlots[kind] = slots;
 	}
 
 	const polymorphVariants: Record<string, PolymorphVariantDescriptor> = {};
@@ -139,7 +171,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		}
 	}
 
-	return { factoryShapes, fieldAliasMap, factoryFields, polymorphVariants };
+	return { factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants };
 }
 
 export function emitFactoryMap(config: EmitFactoryMapConfig): string {

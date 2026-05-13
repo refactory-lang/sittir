@@ -107,9 +107,9 @@ describe('wrap emitter — polymorph variant stamping', () => {
 	it('emits unnamed slot storage and access through the shared slot path', () => {
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makePromotedPolymorphNodeMap() });
 
-		expect(wrapSrc).toContain('$children: _filterWrapChildrenByKind((data as any).$children, ["identifier"]),');
-		expect(wrapSrc).toContain('children() { return drillInAll<');
-		expect(wrapSrc).toContain('this.$children as readonly T.Identifier[] | undefined, tree');
+		expect(wrapSrc).toContain('$children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["identifier"]), "children", false),');
+		expect(wrapSrc).toContain('children() { return drillIn<T.Identifier | undefined>(');
+		expect(wrapSrc).toContain('this.$children, tree');
 	});
 
 	it('routes unnamed children through the shared slot resolver entrypoint', () => {

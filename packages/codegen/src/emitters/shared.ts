@@ -24,13 +24,15 @@ import {
 	isRequired,
 	isMultiple,
 	isNonEmpty,
+	deriveSlotCardinality,
+	deriveChildrenCardinality,
 	allSlotsOf
 } from '../compiler/node-map.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { hasCatalogEntry } from './kind-discriminant.ts';
 
 // Re-export derived helpers so emitters can import from one place.
-export { isRequired, isMultiple, isNonEmpty };
+export { isRequired, isMultiple, isNonEmpty, deriveSlotCardinality, deriveChildrenCardinality };
 
 /**
  * Compute the set of kind names referenced by any structural node in the
@@ -404,32 +406,6 @@ export function stampExpressionFor(
 	}
 
 	return undefined;
-}
-
-export interface SlotCardinality {
-	readonly required: boolean;
-	readonly multiple: boolean;
-	readonly nonEmpty: boolean;
-}
-
-/**
- * Collapse one or more slots into the cardinality surface consumed by emitters.
- *
- * This is the shared derivation for the "shape" part of a slot: whether callers
- * must supply a value, whether the slot is singular or repeated, and whether a
- * repeated slot is guaranteed non-empty. Keeping this in one helper prevents TS
- * transport types, JS projection rules, and Rust transport structs from making
- * slightly different decisions from the same `values[]` metadata.
- */
-export function combineSlotCardinality(slots: readonly AssembledNonterminal[]): SlotCardinality {
-	if (slots.length === 0) {
-		return { required: false, multiple: false, nonEmpty: false };
-	}
-	return {
-		required: slots.some((slot) => isRequired(slot)),
-		multiple: slots.some((slot) => isMultiple(slot)),
-		nonEmpty: slots.some((slot) => isNonEmpty(slot))
-	};
 }
 
 // ---------------------------------------------------------------------------

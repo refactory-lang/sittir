@@ -228,6 +228,21 @@ export function deriveSlotCardinality(slot: {
 	};
 }
 
+export function deriveChildrenCardinality(
+	children: readonly {
+		values: readonly NodeOrTerminal[];
+	}[]
+): SlotCardinality {
+	if (children.length === 0) {
+		return { required: false, multiple: false, nonEmpty: false };
+	}
+	return {
+		required: children.some((child) => isRequired(child)),
+		multiple: children.some((child) => isMultiple(child)),
+		nonEmpty: children.some((child) => isNonEmpty(child))
+	};
+}
+
 export interface RenderTemplateSurface {
 	readonly slots: readonly RenderTemplateSlot[];
 	readonly usesChildren: boolean;
