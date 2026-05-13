@@ -6,6 +6,13 @@ import type { AnyNodeData } from '@sittir/types';
 type GrammarName = 'rust' | 'typescript' | 'python';
 type FactoryShape = 'config' | 'spread' | 'text' | 'direct';
 type FactoryFn = (...args: readonly unknown[]) => unknown;
+type FactorySlotMeta = {
+	readonly unnamed: boolean;
+	readonly required: boolean;
+	readonly multiple: boolean;
+	readonly nonEmpty: boolean;
+	readonly slotCount: number;
+};
 
 interface ExerciseCase {
 	readonly kind: string;
@@ -63,10 +70,16 @@ interface CommonModule {
 			factoryShapes?: Record<string, FactoryShape>;
 			fieldAliasMap?: Record<string, Record<string, string>>;
 			factoryFields?: Record<string, readonly string[]>;
+			factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 			polymorphVariants?: Record<string, unknown>;
 			kindNameFromId?: (id: number) => string | undefined;
 		}
 	): Record<string, unknown>;
+	getChildFactoryArgs(
+		kind: string,
+		childConfig: Record<string, unknown>,
+		factorySlots?: Record<string, Record<string, FactorySlotMeta>>
+	): readonly unknown[];
 }
 
 interface TreeSitterNode {
@@ -80,6 +93,7 @@ interface FactoryMapJson {
 	readonly factoryShapes?: Record<string, FactoryShape>;
 	readonly fieldAliasMap?: Record<string, Record<string, string>>;
 	readonly factoryFields?: Record<string, readonly string[]>;
+	readonly factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
 	readonly polymorphVariants?: Record<string, unknown>;
 }
 
@@ -88,6 +102,7 @@ interface FactoryArtifacts {
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
 	readonly factoryFields: Record<string, readonly string[]>;
+	readonly factorySlots: Record<string, Record<string, FactorySlotMeta>>;
 	readonly polymorphVariants: Record<string, unknown>;
 }
 
@@ -167,6 +182,7 @@ async function loadFactoryArtifacts(grammar: GrammarName): Promise<FactoryArtifa
 		factoryShapes: data.factoryShapes ?? {},
 		fieldAliasMap: data.fieldAliasMap ?? {},
 		factoryFields: data.factoryFields ?? {},
+		factorySlots: data.factorySlots ?? {},
 		polymorphVariants: data.polymorphVariants ?? {}
 	};
 }
@@ -290,12 +306,20 @@ function buildFactoryNode(
 		factoryShapes: artifacts.factoryShapes,
 		fieldAliasMap: artifacts.fieldAliasMap,
 		factoryFields: artifacts.factoryFields,
+		factorySlots: artifacts.factorySlots,
 		polymorphVariants: artifacts.polymorphVariants,
 		kindNameFromId
 	});
+	const childArgs = common.getChildFactoryArgs(resolvedKind, config, artifacts.factorySlots);
 	if (shape === 'spread') {
-		const children = Array.isArray(config.children) ? config.children : [];
-		return factory(...children);
+		return factory(...childArgs);
+	}
+	if (shape === 'direct') {
+		const fieldNames = artifacts.factoryFields[resolvedKind];
+		const rawName = fieldNames?.[0];
+		const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
+		const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
+		return factory(value);
 	}
 	return factory(config);
 }
