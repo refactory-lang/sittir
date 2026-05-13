@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { nodeToConfig } from '../validate/common.ts';
 
@@ -59,5 +61,23 @@ describe('nodeToConfig field promotion', () => {
 			closing: { $text: '}' }
 		});
 		expect(config).not.toHaveProperty('children');
+	});
+
+	it('treats unnamed slot members through the same member-value path as named slots', () => {
+		const config = nodeToConfig({
+			$type: 'argument_list',
+			$source: 0,
+			$named: true,
+			$children: [55, { $type: 'identifier', $source: 0, $named: true, $text: 'x' }]
+		} as never);
+
+		expect(config.children).toEqual([55, { $type: 'identifier', $source: 0, $named: true, $text: 'x' }]);
+	});
+
+	it('routes unnamed slot reconstruction through the shared slot helper path', () => {
+		const content = readFileSync(resolve(import.meta.dirname, '../validate/common.ts'), 'utf-8');
+
+		expect(content).toContain('assignSlotToConfig(createUnnamedChildrenSlotModel');
+		expect(content).not.toContain('function assignChildrenToConfig');
 	});
 });
