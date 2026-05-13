@@ -674,7 +674,7 @@ export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ArrowFunction as const,
-    _async_marker: coerceBooleanKeywordStorage(data._async_marker),
+    _async_marker: coerceBooleanKeywordStorage((data as any)._async_marker),
     _body: (data as any)._body,
     $children: _filterWrapChildrenByKind((data as any).$children, ["_arrow_function_parameter","_arrow_function__call_signature"]),
 
@@ -1865,7 +1865,7 @@ export function wrapImportSpecifier(data: T.ImportSpecifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportSpecifier as const,
-    _import_kind: projectKindEnumStorage(data._import_kind),
+    _import_kind: projectKindEnumStorage((data as any)._import_kind),
     $children: _filterWrapChildrenByKind((data as any).$children, ["_import_specifier_name","_import_specifier_as"]),
 
     importKind() { return this._import_kind; },
@@ -1916,7 +1916,7 @@ export function wrapIndexSignature(data: T.IndexSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.IndexSignature as const,
-    _sign: projectKindEnumStorage(data._sign),
+    _sign: projectKindEnumStorage((data as any)._sign),
     _type: (data as any)._type,
     $children: _filterWrapChildrenByKind((data as any).$children, ["_index_signature_colon","_index_signature_mapped_type_clause"]),
 

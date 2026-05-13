@@ -17,6 +17,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNonterminal, AssembledNode, AssembledPolymorph, AssembledSupertype } from '../compiler/node-map.ts';
+import { createNamedSlotModel, createUnnamedChildrenSlotModel, type SlotModel } from '../compiler/slot-model.ts';
 import {
 	collectAliasTargetToSourceMap,
 	isMultiple,
@@ -261,29 +262,32 @@ function buildWrapVariantDescriptors(nodeMap: NodeMap): Readonly<Record<string, 
  */
 function resolveFieldDrillExprs(
 	f: AssembledNonterminal,
+	dataExpr: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): {
 	storeExpr: string;
 	accessorBody: string;
 } {
+	const slot = createNamedSlotModel(f.name, isMultiple(f) ? 'many' : 'one');
+	const slotStoreExpr = resolveSlotStoreExpr(slot, dataExpr);
 	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	if (storageInfo.kind === 'boolean') {
 		return {
-			storeExpr: `coerceBooleanKeywordStorage(data._${f.name})`,
-			accessorBody: `return this._${f.name}`
+			storeExpr: `coerceBooleanKeywordStorage(${slotStoreExpr})`,
+			accessorBody: `return this.${slot.storageKey}`
 		};
 	}
 	if (storageInfo.kind === 'bitflag') {
 		return {
-			storeExpr: `coerceBitflagStorage(data._${f.name}, ${bitflagTextsExpr(storageInfo.texts)})`,
-			accessorBody: `return this._${f.name}`
+			storeExpr: `coerceBitflagStorage(${slotStoreExpr}, ${bitflagTextsExpr(storageInfo.texts)})`,
+			accessorBody: `return this.${slot.storageKey}`
 		};
 	}
 	if (storageInfo.kind === 'kindEnum') {
 		return {
-			storeExpr: `projectKindEnumStorage(data._${f.name})`,
-			accessorBody: `return this._${f.name}`
+			storeExpr: `projectKindEnumStorage(${slotStoreExpr})`,
+			accessorBody: `return this.${slot.storageKey}`
 		};
 	}
 	const elemType = fieldElementType(f, nodeMap);
@@ -292,31 +296,38 @@ function resolveFieldDrillExprs(
 		const [fromType, toType] = aliasEntries[0]!;
 		if (isMultiple(f)) {
 			return {
-				storeExpr: `data._${f.name}`,
-				accessorBody: `return drillAsAll<${elemType}>(this._${f.name}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`
+				storeExpr: slotStoreExpr,
+				accessorBody: `return drillAsAll<${elemType}>(this.${slot.storageKey}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`
 			};
 		}
 		const returnType = isRequired(f) ? elemType : `${elemType} | undefined`;
 		return {
-			storeExpr: `data._${f.name}`,
-			accessorBody: `return drillAs<${returnType}>(this._${f.name}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`
-		};
-	} else if (isMultiple(f)) {
-		return {
-			storeExpr: `data._${f.name}`,
-			accessorBody: `return drillInAll<${elemType}>(this._${f.name}, tree)`
-		};
-	} else {
-		const returnType = isRequired(f) ? elemType : `${elemType} | undefined`;
-		return {
-			storeExpr: `data._${f.name}`,
-			accessorBody: `return drillIn<${returnType}>(this._${f.name}, tree)`
+			storeExpr: slotStoreExpr,
+			accessorBody: `return drillAs<${returnType}>(this.${slot.storageKey}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`
 		};
 	}
+	return {
+		storeExpr: slotStoreExpr,
+		accessorBody: resolveSlotAccessorBody(slot, slot.arity === 'many' ? elemType : isRequired(f) ? elemType : `${elemType} | undefined`)
+	};
 }
 
 function bitflagTextsExpr(texts: readonly string[]): string {
 	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
+}
+
+function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string): string {
+	return `${dataExpr}.${slot.storageKey}`;
+}
+
+function resolveSlotAccessorBody(slot: SlotModel, valueType: string): string {
+	if (slot.arity === 'many') {
+		const arrayElemType = valueType.includes(' | ') ? `(${valueType})` : valueType;
+		return slot.storageKey === '$children'
+			? `return drillInAll<${valueType}>(this.$children as readonly ${arrayElemType}[] | undefined, tree)`
+			: `return drillInAll<${valueType}>(this.${slot.storageKey}, tree)`;
+	}
+	return `return drillIn<${valueType}>(this.${slot.storageKey}, tree)`;
 }
 
 /**
@@ -370,9 +381,8 @@ function emitFieldCarryingWrap(
 	// declare every field, but merged fields are a superset. Cast through
 	// `(data as any)` to access fields that may not exist on all union members.
 	for (const f of fields) {
-		const { storeExpr } = resolveFieldDrillExprs(f, nodeMap, kindEntries);
-		const expr = node.isPolymorph ? storeExpr.replace(/^data\./, '(data as any).') : storeExpr;
-		lines.push(`    _${f.name}: ${expr},`);
+		const { storeExpr } = resolveFieldDrillExprs(f, node.isPolymorph ? '(data as any)' : 'data', nodeMap, kindEntries);
+		lines.push(`    _${f.name}: ${storeExpr},`);
 	}
 	// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
 	// $children is a $-prefixed metadata key, not a _<name> storage key, so
@@ -389,7 +399,7 @@ function emitFieldCarryingWrap(
 	// Inline method shorthand accessors: `name()` returns drilled value via `this._<name>`.
 	for (const f of fields) {
 		const propName = f.propertyName;
-		const { accessorBody } = resolveFieldDrillExprs(f, nodeMap, kindEntries);
+		const { accessorBody } = resolveFieldDrillExprs(f, node.isPolymorph ? '(data as any)' : 'data', nodeMap, kindEntries);
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
 	}
 	if (children.length > 0) {
@@ -408,16 +418,17 @@ function emitFieldCarryingWrap(
 }
 
 function resolveChildrenStoreExpr(node: WrapNode, children: readonly AssembledNonterminal[]): string {
-	const dataExpr = node.isPolymorph ? '(data as any).$children' : 'data.$children';
+	const slot = createUnnamedChildrenSlotModel('many');
+	const dataExpr = resolveSlotStoreExpr(slot, node.isPolymorph ? '(data as any)' : 'data');
 	const allowedKinds = [...new Set(children.flatMap((child) => deriveChildrenKinds(child)))];
 	if (allowedKinds.length === 0) return dataExpr;
 	return `_filterWrapChildrenByKind(${dataExpr}, ${JSON.stringify(allowedKinds)})`;
 }
 
 function resolveChildrenAccessorBody(children: readonly AssembledNonterminal[], nodeMap: NodeMap): string {
+	const slot = createUnnamedChildrenSlotModel('many');
 	const elemType = childElementType({ children }, nodeMap);
-	const arrayElemType = elemType.includes(' | ') ? `(${elemType})` : elemType;
-	return `return drillInAll<${elemType}>(this.$children as readonly ${arrayElemType}[] | undefined, tree)`;
+	return resolveSlotAccessorBody(slot, elemType);
 }
 
 /**

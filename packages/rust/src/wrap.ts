@@ -990,9 +990,9 @@ export function wrapClosureExpression(data: T.ClosureExpression, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClosureExpression as const,
-    _static_marker: coerceBooleanKeywordStorage(data._static_marker),
-    _async_marker: coerceBooleanKeywordStorage(data._async_marker),
-    _move_marker: coerceBooleanKeywordStorage(data._move_marker),
+    _static_marker: coerceBooleanKeywordStorage((data as any)._static_marker),
+    _async_marker: coerceBooleanKeywordStorage((data as any)._async_marker),
+    _move_marker: coerceBooleanKeywordStorage((data as any)._move_marker),
     _parameters: (data as any)._parameters,
     $children: _filterWrapChildrenByKind((data as any).$children, ["_closure_expression_block","_closure_expression_expr"]),
 
@@ -1448,8 +1448,8 @@ export function wrapFieldPattern(data: T.FieldPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FieldPattern as const,
-    _ref_marker: coerceBooleanKeywordStorage(data._ref_marker),
-    _mutable_specifier: coerceBooleanKeywordStorage(data._mutable_specifier),
+    _ref_marker: coerceBooleanKeywordStorage((data as any)._ref_marker),
+    _mutable_specifier: coerceBooleanKeywordStorage((data as any)._mutable_specifier),
     $children: _filterWrapChildrenByKind((data as any).$children, ["_field_pattern_shorthand","_field_pattern_named"]),
 
     refMarker() { return this._ref_marker; },
@@ -1778,9 +1778,9 @@ export function wrapImplItem(data: T.ImplItem, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImplItem as const,
-    _unsafe_marker: coerceBooleanKeywordStorage(data._unsafe_marker),
+    _unsafe_marker: coerceBooleanKeywordStorage((data as any)._unsafe_marker),
     _type_parameters: (data as any)._type_parameters,
-    _negative: coerceBooleanKeywordStorage(data._negative),
+    _negative: coerceBooleanKeywordStorage((data as any)._negative),
     _trait: (data as any)._trait,
     _type: (data as any)._type,
     _where_clause: (data as any)._where_clause,

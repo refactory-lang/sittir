@@ -91,9 +91,10 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(wrapSrc).toContain('"$children"');
 	});
 
-	it('emits a drilled children() getter for wrapped nodes with unnamed children', () => {
+	it('emits unnamed slot storage and access through the shared slot path', () => {
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makePromotedPolymorphNodeMap() });
 
+		expect(wrapSrc).toContain('$children: _filterWrapChildrenByKind((data as any).$children, ["identifier"]),');
 		expect(wrapSrc).toContain('children() { return drillInAll<');
 		expect(wrapSrc).toContain('this.$children as readonly T.Identifier[] | undefined, tree');
 	});
