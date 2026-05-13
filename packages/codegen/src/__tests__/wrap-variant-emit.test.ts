@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { emitWrap } from '../emitters/wrap.ts';
 import {
@@ -8,6 +9,18 @@ import {
 } from '../compiler/node-map.ts';
 import type { ChoiceRule, PolymorphRule, SeqRule } from '../compiler/rule.ts';
 import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
+
+const wrapEmitterSource = readFileSync(new URL('../emitters/wrap.ts', import.meta.url), 'utf8');
+
+function extractFunctionBody(source: string, functionName: string): string {
+	const start = source.indexOf(`function ${functionName}`);
+	if (start === -1) throw new Error(`Missing function ${functionName}`);
+	const end = source.indexOf('\n/**\n * Emit the inline `$with: { ... }` property for a wrap function literal.', start);
+	if (end === -1) throw new Error(`Missing end marker for function ${functionName}`);
+	const fnSource = source.slice(start, end);
+	const bodyStart = fnSource.indexOf('{');
+	return fnSource.slice(bodyStart + 1).trimEnd();
+}
 
 function makeOverridePolymorphNodeMap() {
 	const doubleRule: SeqRule = { type: 'seq', members: [{ type: 'symbol', name: 'string_double' }] };
@@ -97,5 +110,14 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(wrapSrc).toContain('$children: _filterWrapChildrenByKind((data as any).$children, ["identifier"]),');
 		expect(wrapSrc).toContain('children() { return drillInAll<');
 		expect(wrapSrc).toContain('this.$children as readonly T.Identifier[] | undefined, tree');
+	});
+
+	it('routes unnamed children through the shared slot resolver entrypoint', () => {
+		const emitFieldCarryingWrapBody = extractFunctionBody(wrapEmitterSource, 'emitFieldCarryingWrap');
+
+		expect(wrapEmitterSource).not.toContain('function resolveChildrenStoreExpr');
+		expect(wrapEmitterSource).not.toContain('function resolveChildrenAccessorBody');
+		expect(emitFieldCarryingWrapBody.match(/resolveSlotDrillExprs\(/g)?.length).toBe(4);
+		expect(emitFieldCarryingWrapBody).not.toMatch(/resolve[A-Za-z0-9_]*Children[A-Za-z0-9_]*\(/);
 	});
 });
