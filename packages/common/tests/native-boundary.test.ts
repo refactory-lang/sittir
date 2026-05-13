@@ -43,4 +43,15 @@ describe('native boundary', () => {
 			})
 		).not.toThrow();
 	});
+
+	it('rejects boolean members in $children', () => {
+		expect(() =>
+			assertRenderableNodeData({
+				$type: 1,
+				$source: 0,
+				$named: true,
+				$children: [true]
+			} as never)
+		).toThrow('node.$children[0] must be an object, got boolean');
+	});
 });
