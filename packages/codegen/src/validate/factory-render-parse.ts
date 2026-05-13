@@ -573,8 +573,35 @@ function buildFactoryNodeData(
 			return (factory as (text: string) => AnyNodeData)(text);
 		} else {
 			// shape === 'spread' — child-spread factory.
-			const namedChildren = (readData.$children ?? []).filter((c: any) => c?.$named !== false);
-			return (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
+			const recursive = process?.env?.SITTIR_VALIDATE_RECURSIVE === '1';
+			const config = recursive
+				? nodeToConfig(readData, {
+						tree: treeHandle,
+						factoryMap,
+						factoryShapes,
+						fieldAliasMap,
+						factoryFields,
+						factorySlots,
+						polymorphVariants,
+						cstNodeKindHint,
+						firstNamedChildKindHint,
+						namedChildKindHints,
+						kindNameFromId
+					})
+				: nodeToConfig(readData, {
+						factoryMap,
+						factoryShapes,
+						fieldAliasMap,
+						factoryFields,
+						factorySlots,
+						polymorphVariants,
+						cstNodeKindHint,
+						firstNamedChildKindHint,
+						namedChildKindHints,
+						kindNameFromId
+					});
+			const childArgs = getChildFactoryArgs(renderedKind, config, factorySlots);
+			return (factory as (...args: unknown[]) => AnyNodeData)(...childArgs);
 		}
 	} catch (e) {
 		errors.push({

@@ -1,11 +1,8 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import * as common from '../../codegen/src/validate/common.ts';
 import { buildFactoryNode, loadFactoryArtifacts } from '../src/exercise/roundtrip.ts';
 
 describe('exercise roundtrip helpers', () => {
-	afterEach(() => {
-		vi.restoreAllMocks();
-	});
-
 	it('loads factorySlots from factory-map metadata', async () => {
 		const artifacts = await loadFactoryArtifacts('rust');
 
@@ -17,29 +14,12 @@ describe('exercise roundtrip helpers', () => {
 		});
 	});
 
-	it('passes factorySlots into nodeToConfig and uses normalized child args for direct factories', () => {
+	it('uses real metadata-driven child args for direct child-backed factories', () => {
 		const leaf = { $type: 'identifier', $named: true, $text: 'x' };
-		const factory = vi.fn((value: unknown) => ({ $type: 'rebuilt', value }));
-		const nodeToConfig = vi.fn(() => ({ children: leaf }));
-		const getChildFactoryArgs = vi.fn(() => [leaf]);
-		const common = {
-			loadLanguageForGrammar: async () => {
-				throw new Error('unused');
-			},
-			loadCorpusEntries: () => [],
-			loadKindIdFromName: async () => undefined,
-			loadKindNameFromId: async () => undefined,
-			loadKindNames: async () => undefined,
-			buildReadHandle: () => ({}),
-			findNativeNodeId: () => null,
-			adaptNode: () => ({}),
-			findFirst: () => null,
-			readNodeAt: () => ({ $type: 'direct_child' }),
-			nodeToConfig,
-			getChildFactoryArgs
-		};
 		const artifacts = {
-			factoryMap: { direct_child: factory },
+			factoryMap: {
+				direct_child: (value: unknown) => ({ $type: 'rebuilt_direct', value })
+			},
 			factoryShapes: { direct_child: 'direct' as const },
 			fieldAliasMap: {},
 			factoryFields: {},
@@ -57,21 +37,44 @@ describe('exercise roundtrip helpers', () => {
 			polymorphVariants: {}
 		};
 
+		const result = buildFactoryNode('direct_child', { $type: 'direct_child', $children: [leaf] }, {}, artifacts, common, undefined);
+
+		expect(result).toEqual({ $type: 'rebuilt_direct', value: leaf });
+	});
+
+	it('uses real metadata-driven child args for spread child-backed factories', () => {
+		const left = { $type: 'identifier', $named: true, $text: 'x' };
+		const right = { $type: 'number_literal', $named: true, $text: '1' };
+		const artifacts = {
+			factoryMap: {
+				spread_child: (...args: unknown[]) => ({ $type: 'rebuilt_spread', args })
+			},
+			factoryShapes: { spread_child: 'spread' as const },
+			fieldAliasMap: {},
+			factoryFields: {},
+			factorySlots: {
+				spread_child: {
+					children: {
+						unnamed: true,
+						slotCount: 1,
+						required: true,
+						multiple: true,
+						nonEmpty: true
+					}
+				}
+			},
+			polymorphVariants: {}
+		};
+
 		const result = buildFactoryNode(
-			'direct_child',
-			{ $type: 'direct_child' },
+			'spread_child',
+			{ $type: 'spread_child', $children: [left, right] },
 			{},
 			artifacts,
 			common,
 			undefined
 		);
 
-		expect(nodeToConfig).toHaveBeenCalledWith(
-			{ $type: 'direct_child' },
-			expect.objectContaining({ factorySlots: artifacts.factorySlots })
-		);
-		expect(getChildFactoryArgs).toHaveBeenCalledWith('direct_child', { children: leaf }, artifacts.factorySlots);
-		expect(factory).toHaveBeenCalledWith(leaf);
-		expect(result).toEqual({ $type: 'rebuilt', value: leaf });
+		expect(result).toEqual({ $type: 'rebuilt_spread', args: [left, right] });
 	});
 });

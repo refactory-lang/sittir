@@ -347,8 +347,17 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 							readData.$text ?? (readData.$span ? entry.source.slice(readData.$span.start, readData.$span.end) : '');
 						factoryResult = (factory as (text: string) => AnyNodeData)(textForFactory);
 					} else {
-						const namedChildren = (readData.$children ?? []).filter((c: any) => typeof c !== 'number' && c?.$named !== false);
-						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
+						const config = nodeToConfig(readData, {
+							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
+							factoryShapes,
+							factoryFields,
+							factorySlots,
+							fieldAliasMap,
+							polymorphVariants: polymorphVariants as any,
+							kindNameFromId
+						});
+						const childArgs = getChildFactoryArgs(kind, config, factorySlots);
+						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...childArgs);
 					}
 				} catch {
 					skip++;
