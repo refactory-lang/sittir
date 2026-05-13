@@ -1,7 +1,7 @@
-import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { nodeToConfig } from '../validate/common.ts';
+import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 
 describe('nodeToConfig field promotion', () => {
 	it('promotes lexical_declaration children into declarators and semicolon', () => {
@@ -74,10 +74,20 @@ describe('nodeToConfig field promotion', () => {
 		expect(config.children).toEqual([55, { $type: 'identifier', $source: 0, $named: true, $text: 'x' }]);
 	});
 
-	it('routes unnamed slot reconstruction through the shared slot helper path', () => {
-		const content = readFileSync(resolve(import.meta.dirname, '../validate/common.ts'), 'utf-8');
+	it(
+		'keeps python argument_list factory reconstruction from re-emitting double-wrapped unnamed children',
+		async () => {
+			const templatesPath = resolve(import.meta.dirname, '../../../python/templates');
+			const result = await validateFactoryRenderParse('python', templatesPath, 'native');
+			const regression = result.errors.find(
+				(error) =>
+					error.kind === 'argument_list' &&
+					error.entry === 'Matching specific values' &&
+					error.message === 're-parse error: "((,\\"Goodbye!\\",))"'
+			);
 
-		expect(content).toContain('assignSlotToConfig(createUnnamedChildrenSlotModel');
-		expect(content).not.toContain('function assignChildrenToConfig');
-	});
+			expect(regression).toBeUndefined();
+		},
+		60000
+	);
 });
