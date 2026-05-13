@@ -433,12 +433,12 @@ describe('expression_statement', () => {
 
 describe('extern_crate_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.externCrateDeclaration({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.externCrateDeclaration({ crate: 'crate', name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ExternCrateDeclaration);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.externCrateDeclaration({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.externCrateDeclaration({ crate: 'crate', name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -667,12 +667,12 @@ describe('generic_type', () => {
 
 describe('generic_type_with_turbofish', () => {
   it('factory produces correct type', () => {
-    const node = ir.genericTypeWithTurbofish({ type: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, typeArguments: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.genericTypeWithTurbofish({ turbofish: '::', type: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, typeArguments: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.GenericTypeWithTurbofish);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.genericTypeWithTurbofish({ type: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, typeArguments: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.genericTypeWithTurbofish({ turbofish: '::', type: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, typeArguments: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1096,12 +1096,12 @@ describe('qualified_type', () => {
 
 describe('range_expression_bare', () => {
   it('factory produces correct type', () => {
-    const node = ir.rangeExpressionBare({});
+    const node = ir.rangeExpressionBare({ operator: '..' });
     expect(node.$type).toBe(TSKindId._RangeExpressionBare);
     expect(node.$source).toBe(2);
   });
   it('render does not throw on minimal config', () => {
-    const node = ir.rangeExpressionBare({});
+    const node = ir.rangeExpressionBare({ operator: '..' });
     expect(() => node.$render!()).not.toThrow();
   });
 });

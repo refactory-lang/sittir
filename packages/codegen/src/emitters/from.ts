@@ -179,24 +179,17 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
  *   - an array of any of above   (multi-field slot)
  *   - undefined / null           (absent optional field)
  *
- * `_FromFieldInput` is the minimum closed union that captures every one of
- * those shapes without leaking `unknown`. The `{ kind, ... }` arm is
- * modeled as an index signature whose values recursively match the same
- * union so `{kind, ...rest}` destructuring preserves types.
+ * `_FromFieldInput` is intentionally `unknown`. Generated field resolver
+ * helpers immediately narrow with runtime guards (`typeof`, `Array.isArray`,
+ * `isNodeData`, `'kind' in value`), and keeping the alias closed causes
+ * recursive assignability failures once strict Config surfaces expose large
+ * concrete node unions.
  *
  * @param lines - Output lines array to push into.
  */
 function emitFromFieldInputType(lines: string[]): void {
-	lines.push('/** Closed union of every shape a loose-from() field value can hold. */');
-	lines.push('type _FromFieldInput =');
-	lines.push('  | AnyNodeData');
-	lines.push('  | string');
-	lines.push('  | number');
-	lines.push('  | boolean');
-	lines.push('  | null');
-	lines.push('  | undefined');
-	lines.push('  | { readonly [key: string]: _FromFieldInput }');
-	lines.push('  | readonly _FromFieldInput[];');
+	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
+	lines.push('type _FromFieldInput = unknown;');
 	lines.push('');
 }
 
@@ -951,7 +944,7 @@ function emitSingularContainerFrom(
 		`export function ${fn}(input?: ${elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (isNodeData(input) && input.$type === ${typeCheck}) {`,
 		`    const data = input;`,
-		`    const child = data.$children ? data.$children[0] : undefined;`,
+		`    const child = data.$children;`,
 		`    return ${factory}(child as Parameters<typeof ${factory}>[0]);`,
 		`  }`,
 		// Post-guard `input` is necessarily an `${elementType}` (the self-
@@ -970,7 +963,7 @@ function emitContainerFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const tName = `T.${node.typeName}`;
-	const elementType = `NonNullable<T.${node.typeName}.Config['children']>[number]`;
+	const elementType = `NonNullable<T.${node.typeName}['$children']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$children']>`;
 	const childrenMultiple = node.children.some((c) => isMultiple(c));
 	if (childrenMultiple) {
 		return emitRepeatedContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap);
@@ -1399,9 +1392,11 @@ function resolveChildrenFromTypedInput(
 	const pseudo = { values: mergedValues } as {
 		values: readonly NodeOrTerminal[];
 	};
-	// Direct bag access — same pattern as field reads.
-	const optChain = inputOptional ? '?' : '';
-	const access = allowDirectInputFallback ? `_childrenInput(${sourceVar})` : `${sourceVar}${optChain}.children`;
+	// Children bag access mirrors field reads, but must guard for inputs whose
+	// Loose surface omits `children` entirely (for example scalar single-child
+	// surfaces that accept the child directly).
+	const guardedChildrenAccess = `(${sourceVar} !== null && typeof ${sourceVar} === 'object' && !Array.isArray(${sourceVar}) && !isNodeData(${sourceVar}) && "children" in ${sourceVar} ? ${sourceVar}.children : undefined)`;
+	const access = allowDirectInputFallback ? `_childrenInput(${sourceVar})` : guardedChildrenAccess;
 	// Children slots never adopt the boolean-keyword /
 	// bitflag surface — the Config key is `children`, not the keyword
 	// name. Skip the short-circuit here.

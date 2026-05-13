@@ -533,13 +533,13 @@ function emitInlineWithProperty(
 		});
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
-		if (node.childSurface === 'spread') {
+		if (childrenConfig.slot.arity === 'one') {
+			lines.push(`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $children: v }, tree) },`);
+		} else {
 			const restType = childrenSetterRestType(children, childElem, childRest);
 			lines.push(
 				`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $children: vs }, tree) },`
 			);
-		} else {
-			lines.push(`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $children: v }, tree) },`);
 		}
 		return;
 	}
@@ -699,20 +699,26 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'',
 			...(usesNormalizeSingular
 				? [
-						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, _required: boolean): T | undefined {',
+						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: true): T;',
+						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: false): T | undefined;',
+						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: boolean): T | undefined {',
 						'  if (Array.isArray(value)) {',
-						'    if (value.length === 0) return undefined;',
+						'    if (value.length === 0) {',
+						'      if (required) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} requires one value`);',
+						'      return undefined;',
+						'    }',
 						'    if (value.length !== 1) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} received ${value.length} values`);',
-						'    return value[0];',
+						'    return value[0] as T;',
 						'  }',
-						'  return value;',
+						'  if (value == null && required) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} requires one value`);',
+						'  return value as T | undefined;',
 						'}'
 					]
 				: []),
 			...(usesNormalizeRepeated
 				? [
 						'function normalizeRepeatedWrapSlot<T>(value: T | readonly T[] | undefined, nonEmpty: boolean, slotName: string): readonly T[] {',
-						'  const items = Array.isArray(value) ? value : value == null ? [] : [value];',
+						'  const items: readonly T[] = Array.isArray(value) ? (value as readonly T[]) : value == null ? ([] as readonly T[]) : ([value] as readonly T[]);',
 						'  if (nonEmpty && items.length === 0) throw new TypeError(`wrapNode: repeated slot ${JSON.stringify(slotName)} requires at least one value`);',
 						'  return items;',
 						'}'
@@ -822,7 +828,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  return false;',
 						'}',
 						'',
-						'function _filterWrapChildrenByKind(value: unknown, allowedKinds: readonly string[]): unknown[] | undefined {',
+						'function _filterWrapChildrenByKind<T>(value: T | readonly T[] | undefined, allowedKinds: readonly string[]): readonly T[] | undefined {',
 						'  if (value == null) return undefined;',
 						'  const entries = Array.isArray(value) ? value : [value];',
 						'  return entries.filter((entry) => {',
@@ -907,7 +913,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			if (!node.factoryName) continue;
 			if (this.#kindEntries && !hasCatalogEntry(this.#kindEntries, kind)) continue;
 			if (node.modelType === 'branch' || node.modelType === 'polymorph') {
-				lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d as T.${node.typeName}, t),`);
+				lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`);
 			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword') {
 				if (this.#kindEntries) {
 					const entry = this.#kindEntries.find((e) => e.kind === kind);
