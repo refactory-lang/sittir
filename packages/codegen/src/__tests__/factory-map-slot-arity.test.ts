@@ -7,6 +7,7 @@ import {
 import type { SeqRule } from '../compiler/rule.ts';
 import { buildFactoryMap } from '../emitters/factory-map.ts';
 import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
+import type { FactorySlotMeta } from '../emitters/factory-map.ts';
 
 function makeSlotArityNodeMap() {
 	const singleChildRule: SeqRule = {
@@ -42,25 +43,43 @@ function makeSlotArityNodeMap() {
 	return makeNodeMapWith(nodes);
 }
 
+function expectFactorySlot(
+	data: ReturnType<typeof buildFactoryMap>,
+	kind: string,
+	slotName: string
+): FactorySlotMeta {
+	const slots = data.factorySlots[kind];
+	expect(slots).toBeDefined();
+	if (!slots) {
+		throw new Error(`Missing factorySlots entry for ${kind}`);
+	}
+	const slot = slots[slotName];
+	expect(slot).toBeDefined();
+	if (!slot) {
+		throw new Error(`Missing factorySlots entry for ${kind}.${slotName}`);
+	}
+	return slot;
+}
+
 describe('factory-map slot arity metadata', () => {
 	it('emits named and unnamed slot metadata from assembled slot values', () => {
 		const data = buildFactoryMap(makeSlotArityNodeMap());
 
-		expect(data.factorySlots.single_parent.children).toEqual({
+		expect(expectFactorySlot(data, 'single_parent', 'children')).toEqual({
 			unnamed: true,
 			slotCount: 1,
 			required: true,
 			multiple: false,
 			nonEmpty: false
 		});
-		expect(data.factorySlots.multi_parent.children).toEqual({
+		expect(expectFactorySlot(data, 'multi_parent', 'children')).toEqual({
 			unnamed: true,
 			slotCount: 2,
 			required: true,
 			multiple: false,
 			nonEmpty: false
 		});
-		expect(data.factorySlots.repeat_parent.items).toEqual({
+		expect(expectFactorySlot(data, 'repeat_parent', 'items')).toEqual({
 			unnamed: false,
 			slotCount: 1,
 			required: true,
