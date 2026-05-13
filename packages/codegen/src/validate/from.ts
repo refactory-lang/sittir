@@ -23,6 +23,7 @@ import {
 	adaptNode,
 	collectKinds,
 	emitValidatorMetrics,
+	getChildFactoryArgs,
 	nodeToConfig,
 	type TSTree
 } from './common.ts';
@@ -330,9 +331,10 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 							const fieldNames = factoryFields[kind];
 							const rawName = fieldNames?.[0];
 							const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
+							const childArgs = getChildFactoryArgs(kind, config, factorySlots);
 							const value = camelName
 								? (config as Record<string, unknown>)[camelName]
-								: ((readData.$children ?? []).filter((c: any) => typeof c !== "number" && c?.$named !== false) as unknown[])[0];
+								: childArgs[0];
 							factoryResult = (factory as (v: unknown) => AnyNodeData)(value);
 						} else {
 							factoryResult = factory(config) as AnyNodeData;

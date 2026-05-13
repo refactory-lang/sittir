@@ -29,6 +29,7 @@ import {
 	wrapForReparse,
 	loadReadTreeNode,
 	walkWrappedTree,
+	getChildFactoryArgs,
 	nodeToConfig,
 	emitValidatorMetrics,
 	type TSNode,
@@ -556,9 +557,10 @@ function buildFactoryNodeData(
 				const fieldNames = factoryFields[renderedKind];
 				const rawName = fieldNames?.[0];
 				const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
+				const childArgs = getChildFactoryArgs(renderedKind, config, factorySlots);
 				const value = camelName
 					? (config as Record<string, unknown>)[camelName]
-					: ((config.children ?? []) as unknown[])[0];
+					: childArgs[0];
 				return (factory as (v: unknown) => AnyNodeData)(value);
 			}
 			return factory(config) as AnyNodeData;

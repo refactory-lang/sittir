@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { nodeToConfig } from '../validate/common.ts';
+import { getChildFactoryArgs, nodeToConfig } from '../validate/common.ts';
 import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 
 function makeFactorySlots(
@@ -254,6 +254,40 @@ describe('nodeToConfig field promotion', () => {
 
 		expect(calls).toEqual([[leaf]]);
 		expect(config.payload).toEqual({ $type: 'rebuilt', args: [leaf] });
+	});
+
+	it('rebuilds direct child args from metadata for singular unnamed children', () => {
+		const leaf = { $type: 'identifier', $source: 0, $named: true, $text: 'x' };
+		const config = nodeToConfig(
+			{
+				$type: 'direct_child',
+				$source: 0,
+				$named: true,
+				$children: [leaf]
+			} as never,
+			{
+				factorySlots: makeFactorySlots('direct_child', {
+					children: {
+						unnamed: true,
+						slotCount: 1,
+						required: true,
+						multiple: false,
+						nonEmpty: false
+					}
+				})
+			}
+		);
+
+		expect(config.children).toEqual(leaf);
+		expect(getChildFactoryArgs('direct_child', config, makeFactorySlots('direct_child', {
+			children: {
+				unnamed: true,
+				slotCount: 1,
+				required: true,
+				multiple: false,
+				nonEmpty: false
+			}
+		}))).toEqual([leaf]);
 	});
 
 	it(

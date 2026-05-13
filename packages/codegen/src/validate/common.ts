@@ -1281,7 +1281,7 @@ function normalizeConfigSlotValue(
 	return resolved;
 }
 
-function getChildFactoryArgs(
+export function getChildFactoryArgs(
 	kind: string,
 	childConfig: Record<string, unknown>,
 	factorySlots: NodeToConfigOpts['factorySlots']
