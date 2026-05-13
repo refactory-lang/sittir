@@ -10,7 +10,6 @@
  * 5. Re-parse and verify the kind exists
  */
 
-import { readNode } from '@sittir/common';
 import { createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';

@@ -9,7 +9,6 @@
  * No tree-sitter re-parsing needed — pure structural comparison.
  */
 
-import { readNode } from '@sittir/common';
 import type { AnyNodeData } from '@sittir/types';
 import type { FactoryShape } from '../emitters/factory-map.ts';
 import {

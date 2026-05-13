@@ -1619,7 +1619,7 @@ function inferFromStructuralMarkers(
 		variant,
 		tokens: collectVariantTokens(parentKind, candidateKind, variant)
 	}));
-	for (const { candidateKind, variant, tokens: variantTokens } of variantEntries) {
+	for (const { variant, tokens: variantTokens } of variantEntries) {
 		if (variantTokens.length === 0) continue;
 		const matched = variantTokens.reduce((sum, token) => sum + (actualTokens.get(token) ?? 0), 0);
 		if (matched <= 0) continue;

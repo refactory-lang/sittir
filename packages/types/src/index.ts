@@ -416,7 +416,7 @@ type Pluralize<S extends string> = S extends `${string}s`
 					? `${Pre}Children`
 					: S extends `${infer Pre}child`
 						? `${Pre}children`
-						: S extends `${infer Pre}${Vowel}y`
+						: S extends `${string}${Vowel}y`
 							? `${S}s`
 							: S extends `${infer Pre}y`
 								? `${Pre}ies`

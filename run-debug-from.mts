@@ -1,12 +1,10 @@
 // Temporarily patch from.ts to debug await_expression
-import { validateFrom } from './packages/codegen/src/validate/from.ts';
 import { awaitExpressionFrom } from './packages/rust/src/from.ts';
 import { awaitExpression } from './packages/rust/src/factories.ts';
 import { readTreeNode } from './packages/rust/src/wrap.ts';
 import { buildReadHandle } from './packages/codegen/src/validate/common.ts';
 import Parser from 'web-tree-sitter';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 await Parser.init();
 const wasmPath = resolve('./packages/rust/.sittir/parser.wasm');
@@ -31,33 +29,9 @@ const node1 = findKind(tree.rootNode, 'await_expression');
 if (!node1) { console.log('NOT FOUND'); process.exit(1); }
 
 const kindIdFromName = lang.idForNodeType.bind(lang);
-const kindNameFromId = (id: number) => lang.nodeTypeForId(id) ?? String(id);
 
 const handle = buildReadHandle('rust', tree, src, 'native', kindIdFromName);
 console.log('handle.read:', !!handle.read);
-
-// Find native coords
-function findNativeNodeId(handle: any, targetKind: string, kindNameFromId: (id: number) => string): any {
-  const root = handle.read!(handle.nodeHandle, 0);
-  function search(nh: number, ci: number, depth: number): any {
-    const d = handle.read!(nh, ci);
-    if (!d) return null;
-    const name = typeof d.$type === 'number' ? kindNameFromId(d.$type) : d.$type;
-    if (name === targetKind) return { handle: nh, childIndex: ci };
-    // recurse into children
-    if (d.$children) {
-      for (const c of d.$children) {
-        if (c && typeof c === 'object' && '$nodeHandle' in c && '$childIndex' in c) {
-          const r = search((c as any).$nodeHandle, (c as any).$childIndex, depth+1);
-          if (r) return r;
-        }
-      }
-    }
-    return null;
-  }
-  if (!handle.nodeHandle) return null;
-  return search(handle.nodeHandle, 0, 0);
-}
 
 // Use readTreeNode directly on node1
 const adapted = { 

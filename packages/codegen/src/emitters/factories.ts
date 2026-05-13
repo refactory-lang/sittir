@@ -31,7 +31,6 @@ import {
 	type HoistedForm,
 	fieldTypeComponents,
 	isValidIdent,
-	keywordPresenceKind,
 	resolveFieldStorageInfo,
 	resolveHiddenKeywordLiteral,
 	classifyFactoryShape,
@@ -124,6 +123,47 @@ function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
 	// unimported in the emitted factories.ts.
 	for (const n of nodeMap.nodes.values()) {
 		if (n.modelType === 'polymorph') return true;
+	}
+	return false;
+}
+
+function collectStorageCoercionImports(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string[] {
+	const imports = new Set<string>();
+	for (const node of nodeMap.nodes.values()) {
+		for (const slot of allSlotsOf(node)) {
+			const storageInfo = resolveFieldStorageInfo(slot, nodeMap, kindEntries);
+			switch (storageInfo.kind) {
+				case 'boolean':
+					imports.add('coerceBooleanKeywordStorage');
+					break;
+				case 'bitflag':
+					imports.add('coerceBitflagStorage');
+					break;
+				case 'kindEnum':
+					if (kindEntries) imports.add('coerceKindEnumStorage');
+					break;
+				case 'verbatim':
+					break;
+			}
+		}
+	}
+	return [...imports].sort();
+}
+
+function collectUsesKindIdFromName(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): boolean {
+	if (!kindEntries) return false;
+	for (const node of nodeMap.nodes.values()) {
+		for (const slot of allSlotsOf(node)) {
+			const storageInfo = resolveFieldStorageInfo(slot, nodeMap, kindEntries);
+			if (storageInfo.kind !== 'kindEnum') continue;
+			if (kindEnumTextMapExpr(slot, nodeMap, kindEntries).includes('kindIdFromName(')) return true;
+		}
 	}
 	return false;
 }
@@ -1976,17 +2016,18 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 
 		lines.push(`import type * as T from './types.js';`);
 		if (kindEntries) {
-			lines.push(`import { TSKindId, kindIdFromName } from './types.js';`);
+			const kindIdImports = ['TSKindId'];
+			if (collectUsesKindIdFromName(nodeMap, kindEntries)) kindIdImports.push('kindIdFromName');
+			lines.push(`import { ${kindIdImports.join(', ')} } from './types.js';`);
 		}
 		const usesNonEmptyArray = collectUsesNonEmptyArray(nodeMap);
 		const usesConfigOf = collectUsesHoistedPolymorphForm(nodeMap);
-		const utilImports = ['AnyNodeData', 'FluentNode'];
+		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
+		const utilImports = ['FluentNode'];
 		if (usesConfigOf) utilImports.push('ConfigOf');
 		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
 		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
-		lines.push(
-			"import { withMethods, methodsEngine, coerceBitflagStorage, coerceBooleanKeywordStorage, coerceKindEnumStorage } from './utils.js';"
-		);
+		lines.push(`import { ${['withMethods', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
 		lines.push(...emitConfigChildrenHelper());
