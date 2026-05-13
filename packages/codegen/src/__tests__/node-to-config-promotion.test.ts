@@ -212,6 +212,50 @@ describe('nodeToConfig field promotion', () => {
 		).toThrow(/singular slot/i);
 	});
 
+	it('wraps recursive singular unnamed children back into spread arguments', () => {
+		const leaf = { $type: 'identifier', $source: 0, $named: true, $text: 'x' };
+		const calls: unknown[][] = [];
+		const factoryMap = {
+			spread_child: (...args: unknown[]) => {
+				calls.push(args);
+				return { $type: 'rebuilt', args };
+			}
+		};
+
+		const config = nodeToConfig(
+			{
+				$type: 'parent',
+				$source: 0,
+				$named: true,
+				_payload: {
+					$type: 'spread_child',
+					$source: 0,
+					$named: true,
+					$children: [leaf]
+				}
+			} as never,
+			{
+				tree: {} as never,
+				factoryMap,
+				factoryShapes: { spread_child: 'spread' },
+				factorySlots: {
+					...makeFactorySlots('spread_child', {
+						children: {
+							unnamed: true,
+							slotCount: 1,
+							required: true,
+							multiple: false,
+							nonEmpty: false
+						}
+					})
+				}
+			}
+		);
+
+		expect(calls).toEqual([[leaf]]);
+		expect(config.payload).toEqual({ $type: 'rebuilt', args: [leaf] });
+	});
+
 	it(
 		'keeps python argument_list factory reconstruction from re-emitting double-wrapped unnamed children',
 		async () => {

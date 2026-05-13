@@ -1141,10 +1141,10 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		return factory(drilled.$text ?? '');
 	}
 	const childConfig = nodeToConfig(drilled, { ...opts, _depth: _depth + 1 });
+	const childArgs = getChildFactoryArgs(kind, childConfig, opts.factorySlots);
 	// 'spread' shape: rest-params signature — spread `children`.
 	if (shape === 'spread') {
-		const kids = (childConfig.children ?? []) as unknown[];
-		return factory(...kids);
+		return factory(...childArgs);
 	}
 	// 'direct' shape: factory takes one direct value rather than a config
 	// object. Field-backed direct calls use factoryFields metadata; child-
@@ -1156,7 +1156,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
 		const value = camelName
 			? (childConfig as Record<string, unknown>)[camelName]
-			: ((childConfig.children ?? []) as unknown[])[0];
+			: childArgs[0];
 		return factory(value);
 	}
 	return factory(childConfig);
@@ -1279,6 +1279,20 @@ function normalizeConfigSlotValue(
 		throw new TypeError(`nodeToConfig: singular slot ${JSON.stringify(slot.name)} requires one value`);
 	}
 	return resolved;
+}
+
+function getChildFactoryArgs(
+	kind: string,
+	childConfig: Record<string, unknown>,
+	factorySlots: NodeToConfigOpts['factorySlots']
+): readonly unknown[] {
+	const childrenValue = childConfig.children;
+	const childrenMeta = factorySlots?.[kind]?.children;
+	if (childrenMeta && !childrenMeta.multiple && childrenMeta.slotCount === 1) {
+		return childrenValue == null ? [] : [childrenValue];
+	}
+	if (Array.isArray(childrenValue)) return childrenValue;
+	return childrenValue == null ? [] : [childrenValue];
 }
 
 function assignSlotToConfig(
