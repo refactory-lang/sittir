@@ -1238,9 +1238,30 @@ function lookupFactorySlotMeta(opts: NodeToConfigOpts, slot: SlotModel): Factory
 	return parentKind ? opts.factorySlots?.[parentKind]?.[slot.name] : undefined;
 }
 
+function slotModelArityFromMeta(slotMeta: FactorySlotMeta | undefined, unnamed: boolean): 'one' | 'many' {
+	if (!slotMeta) return unnamed ? 'many' : 'one';
+	return slotMeta.multiple || (slotMeta.unnamed && slotMeta.slotCount !== 1) ? 'many' : 'one';
+}
+
+function createNamedConfigSlotModel(
+	parentKind: string | undefined,
+	name: string,
+	factorySlots: NodeToConfigOpts['factorySlots']
+): SlotModel {
+	const slotMeta = parentKind ? factorySlots?.[parentKind]?.[name] : undefined;
+	return createNamedSlotModel(name, slotModelArityFromMeta(slotMeta, false));
+}
+
+function createChildrenConfigSlotModel(
+	parentKind: string | undefined,
+	factorySlots: NodeToConfigOpts['factorySlots']
+): SlotModel {
+	const slotMeta = parentKind ? factorySlots?.[parentKind]?.children : undefined;
+	return createUnnamedChildrenSlotModel(slotModelArityFromMeta(slotMeta, true));
+}
+
 function shouldNormalizeConfigSlotAsMany(slot: SlotModel, slotMeta: FactorySlotMeta | undefined): boolean {
-	if (!slotMeta) return slot.arity === 'many';
-	return slotMeta.multiple || (slotMeta.unnamed && slotMeta.slotCount !== 1);
+	return slotModelArityFromMeta(slotMeta, slot.unnamed) === 'many';
 }
 
 function normalizeConfigSlotValue(
@@ -1467,7 +1488,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 	for (const [k, v] of namedSlotEntries) {
 		if (v === undefined) continue;
 		if (!isIdentifierShapedFieldKey(k)) continue;
-		assignSlotToConfig(createNamedSlotModel(k, Array.isArray(v) ? 'many' : 'one'), v, memberValueOpts(opts, parentKind, k), out);
+		assignSlotToConfig(createNamedConfigSlotModel(parentKind, k, opts.factorySlots), v, memberValueOpts(opts, parentKind, k), out);
 	}
 	promoteAnonymousTokenFields(parentKind ? opts.factoryFields?.[parentKind] : undefined, namedSlotEntries, opts, parentKind, out);
 	if (data.$children) {
@@ -1484,7 +1505,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 		} else if (promoteAnonymousChildrenToMissingFields(declaredFields, parentKind, data.$children, opts, out)) {
 			// Ambiguous-free anonymous-token fill completed above.
 		} else {
-			assignSlotToConfig(createUnnamedChildrenSlotModel('many'), data.$children, childOpts, out);
+			assignSlotToConfig(createChildrenConfigSlotModel(parentKind, opts.factorySlots), data.$children, childOpts, out);
 		}
 	}
 	// Polymorph $variant stamping — the dispatcher's `switch

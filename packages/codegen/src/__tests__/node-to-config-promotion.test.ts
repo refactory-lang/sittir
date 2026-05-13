@@ -37,7 +37,12 @@ describe('nodeToConfig field promotion', () => {
 			{
 				factoryFields: {
 					lexical_declaration: ['kind', 'declarators', 'semicolon']
-				}
+				},
+				factorySlots: makeFactorySlots('lexical_declaration', {
+					kind: { unnamed: false, slotCount: 1, required: true, multiple: false, nonEmpty: false },
+					declarators: { unnamed: false, slotCount: 1, required: true, multiple: true, nonEmpty: true },
+					semicolon: { unnamed: false, slotCount: 1, required: true, multiple: false, nonEmpty: false }
+				})
 			}
 		);
 
@@ -67,7 +72,12 @@ describe('nodeToConfig field promotion', () => {
 			{
 				factoryFields: {
 					object_type: ['opening', 'members', 'closing']
-				}
+				},
+				factorySlots: makeFactorySlots('object_type', {
+					opening: { unnamed: false, slotCount: 1, required: true, multiple: false, nonEmpty: false },
+					members: { unnamed: false, slotCount: 1, required: true, multiple: true, nonEmpty: true },
+					closing: { unnamed: false, slotCount: 1, required: true, multiple: false, nonEmpty: false }
+				})
 			}
 		);
 
