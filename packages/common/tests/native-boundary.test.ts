@@ -24,4 +24,23 @@ describe('native boundary', () => {
 			})
 		).not.toThrow();
 	});
+
+	it('accepts scalarized unnamed-slot members in $children', () => {
+		expect(() =>
+			assertRenderableNodeData({
+				$type: 1,
+				$source: 0,
+				$named: true,
+				$children: [
+					16,
+					{
+						$type: 2,
+						$source: 0,
+						$named: true,
+						$text: 'x'
+					}
+				]
+			})
+		).not.toThrow();
+	});
 });

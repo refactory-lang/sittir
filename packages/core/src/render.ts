@@ -246,11 +246,9 @@ function resolveTemplate(
 		// 2. Detect from anonymous tokens in children
 		if (obj.detect && node.$children) {
 			for (const child of node.$children) {
-				const c = child as AnyNodeData;
-				if (c.$named === false) {
-					for (const [subtype, token] of Object.entries(obj.detect)) {
-						if (c.$text === token) return obj.variants[subtype]!;
-					}
+				if (!isAnonEntry(child)) continue;
+				for (const [subtype, token] of Object.entries(obj.detect)) {
+					if (child.$text === token) return obj.variants[subtype]!;
 				}
 			}
 		}
@@ -310,12 +308,19 @@ function isAnonEntry(value: unknown): value is AnyNodeData {
 	return value != null && typeof value === 'object' && (value as AnyNodeData).$named === false;
 }
 
+function isNamedChildEntry(value: unknown): boolean {
+	return !isAnonEntry(value);
+}
+
+function anonText(value: unknown): string | undefined {
+	return isAnonEntry(value) && typeof value.$text === 'string' ? value.$text : undefined;
+}
+
 function collectAnonText(node: AnyNodeData): string | null {
 	const fieldsAllAnon = [...iterNodeFields(node)].every(([, value]) =>
 		Array.isArray(value) ? value.every(isAnonEntry) : isAnonEntry(value)
 	);
-	const childrenAllAnon =
-		!node.$children || (node.$children as readonly AnyNodeData[]).every((child) => child.$named === false);
+	const childrenAllAnon = !node.$children || node.$children.every(isAnonEntry);
 	if (!fieldsAllAnon || !childrenAllAnon) return null;
 	if (node.$text !== undefined) return node.$text;
 
@@ -1277,23 +1282,19 @@ function buildNunjucksTemplateContext(
 		let firstNamedIdx = -1;
 		let lastNamedIdx = -1;
 		for (let i = 0; i < node.$children.length; i++) {
-			const c = node.$children[i] as AnyNodeData | undefined;
-			if (!c || c.$named === false) continue;
+			const child = node.$children[i];
+			if (child === undefined || child === null || !isNamedChildEntry(child)) continue;
 			if (firstNamedIdx === -1) firstNamedIdx = i;
 			lastNamedIdx = i;
-			children.push(renderChild(c));
+			children.push(renderChild(child));
 		}
 		if (firstNamedIdx > 0) {
-			const before = node.$children[firstNamedIdx - 1] as AnyNodeData | undefined;
-			if (before && before.$named === false && typeof before.$text === 'string') {
-				children._leading_anon = before.$text;
-			}
+			const beforeText = anonText(node.$children[firstNamedIdx - 1]);
+			if (beforeText !== undefined) children._leading_anon = beforeText;
 		}
 		if (lastNamedIdx >= 0 && lastNamedIdx < node.$children.length - 1) {
-			const after = node.$children[lastNamedIdx + 1] as AnyNodeData | undefined;
-			if (after && after.$named === false && typeof after.$text === 'string') {
-				children._trailing_anon = after.$text;
-			}
+			const afterText = anonText(node.$children[lastNamedIdx + 1]);
+			if (afterText !== undefined) children._trailing_anon = afterText;
 		}
 	}
 

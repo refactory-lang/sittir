@@ -65,7 +65,7 @@ function assertNativeChildren(value: unknown, path: string): void {
 		throw new TypeError(`${path} must be an array, got ${describe(value)}`);
 	}
 	for (const [index, child] of value.entries()) {
-		assertNativeNodeDataInternal(child, `${path}[${index}]`);
+		assertNativeFieldValue(child, `${path}[${index}]`);
 	}
 }
 
