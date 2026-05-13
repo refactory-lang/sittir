@@ -168,7 +168,7 @@ async function loadCommon(): Promise<CommonModule> {
 	return mod;
 }
 
-async function loadFactoryArtifacts(grammar: GrammarName): Promise<FactoryArtifacts> {
+export async function loadFactoryArtifacts(grammar: GrammarName): Promise<FactoryArtifacts> {
 	const factoryModule: { _factoryMap?: Record<string, FactoryFn> } = await import(
 		new URL(FACTORY_MODULE_PATHS[grammar], import.meta.url).pathname
 	);
@@ -284,7 +284,7 @@ function resolveFactory(
 	return { factory: undefined, resolvedKind: kind };
 }
 
-function buildFactoryNode(
+export function buildFactoryNode(
 	kind: string,
 	readData: ReadNodeLike,
 	handle: ReadHandle,
