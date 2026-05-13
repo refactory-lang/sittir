@@ -60,21 +60,12 @@ function assertNativeFieldValue(value: unknown, path: string): asserts value is 
 	assertNativeNodeDataInternal(value, path);
 }
 
-function assertNativeChildValue(value: unknown, path: string): asserts value is NodeMemberValue {
-	if (typeof value === 'string') return;
-	if (typeof value === 'number') {
-		assertFiniteNumber(value, path);
-		return;
-	}
-	assertNativeNodeDataInternal(value, path);
-}
-
 function assertNativeChildren(value: unknown, path: string): void {
 	if (!Array.isArray(value)) {
 		throw new TypeError(`${path} must be an array, got ${describe(value)}`);
 	}
 	for (const [index, child] of value.entries()) {
-		assertNativeChildValue(child, `${path}[${index}]`);
+		assertNativeNodeDataInternal(child, `${path}[${index}]`);
 	}
 }
 
