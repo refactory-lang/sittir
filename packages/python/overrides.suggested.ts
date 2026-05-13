@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   41  (34 applied, 7 held)
+// Rule promotions:   40  (33 applied, 7 held)
 // Repeated shapes:   0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -117,9 +117,6 @@ export const suggestedRules = {
   expression: $ => choice($.comparison_operator, $.not_operator, $.boolean_operator, $.lambda, $.primary_expression, $.conditional_expression, $.named_expression, $.as_pattern),
 
   // [applied] promoted supertype
-  keyword_identifier: $ => choice($.identifier),
-
-  // [applied] promoted supertype
   parameter: $ => choice($.identifier, $.typed_parameter, $.default_parameter, $.typed_default_parameter, $.list_splat_pattern, $.tuple_pattern, $.keyword_separator, $.positional_separator, $.dictionary_splat_pattern),
 
   // [applied] promoted supertype
@@ -151,7 +148,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_simple_statement", classification: "supertype", applied: true },
   { kind: "_statement", classification: "supertype", applied: true },
   { kind: "expression", classification: "supertype", applied: true },
-  { kind: "keyword_identifier", classification: "supertype", applied: true },
   { kind: "parameter", classification: "supertype", applied: true },
   { kind: "pattern", classification: "supertype", applied: true },
   { kind: "primary_expression", classification: "supertype", applied: true },

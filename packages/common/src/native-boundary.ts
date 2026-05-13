@@ -46,6 +46,7 @@ function assertNativeSpan(value: unknown, path: string): void {
 
 function assertNativeFieldValue(value: unknown, path: string): asserts value is NodeMemberValue {
 	if (typeof value === 'string') return;
+	if (typeof value === 'boolean') return;
 	if (typeof value === 'number') {
 		assertFiniteNumber(value, path);
 		return;

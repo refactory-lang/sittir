@@ -24,12 +24,22 @@ export interface ValidationRun {
 	fromTotal: number;
 	covPass: number;
 	covTotal: number;
-	rtPass: number;
-	rtTotal: number;
-	rtAstMatchPass: number;
-	factoryPass: number;
-	factoryTotal: number;
-	factoryAstMatchPass: number;
+	readRenderParsePass: number;
+	readRenderParseTotal: number;
+	readRenderParseAstMatchPass: number;
+	readRenderParseShallowPass: number;
+	readRenderParseShallowTotal: number;
+	readRenderParseShallowAstMatchPass: number;
+	factoryRenderParsePass: number;
+	factoryRenderParseTotal: number;
+	factoryRenderParseAstMatchPass: number;
+	/** Legacy pre-rename fields kept optional for older rows. */
+	rtPass?: number;
+	rtTotal?: number;
+	rtAstMatchPass?: number;
+	factoryPass?: number;
+	factoryTotal?: number;
+	factoryAstMatchPass?: number;
 }
 
 /**

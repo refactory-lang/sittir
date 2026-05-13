@@ -12,7 +12,6 @@ import type {
     ExpressionWithinForInClause,
     Expressions,
     FExpression,
-    KeywordIdentifier,
     LeftHandSide,
     NamedExpressionLhs,
     Parameter,
@@ -148,7 +147,6 @@ export interface IsGuards {
     simpleStatement(v: { readonly $type: string | number }): v is SimpleStatement;
     statement(v: { readonly $type: string | number }): v is Statement;
     expression(v: { readonly $type: string | number }): v is Expression;
-    keywordIdentifier(v: { readonly $type: string | number }): v is KeywordIdentifier;
     parameter(v: { readonly $type: string | number }): v is Parameter;
     pattern(v: { readonly $type: string | number }): v is Pattern;
     primaryExpression(v: { readonly $type: string | number }): v is PrimaryExpression;
@@ -278,7 +276,6 @@ export interface AssertGuards {
     simpleStatement(v: { readonly $type: string | number }): asserts v is SimpleStatement;
     statement(v: { readonly $type: string | number }): asserts v is Statement;
     expression(v: { readonly $type: string | number }): asserts v is Expression;
-    keywordIdentifier(v: { readonly $type: string | number }): asserts v is KeywordIdentifier;
     parameter(v: { readonly $type: string | number }): asserts v is Parameter;
     pattern(v: { readonly $type: string | number }): asserts v is Pattern;
     primaryExpression(v: { readonly $type: string | number }): asserts v is PrimaryExpression;
@@ -304,7 +301,6 @@ const _supertype_simplePattern_ids = new Set<number>([173, 172, 166, 167, 168, 1
 const _supertype_simpleStatement_ids = new Set<number>([114, 111, 115, 119, 121, 122, 125, 126, 127, 128, 129, 130, 150, 151, 152, 153]);
 const _supertype_statement_ids = new Set<number>([110, 131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_expression_ids = new Set<number>([195, 189, 190, 196, 229, 123, 185]);
-const _supertype_keywordIdentifier_ids = new Set<number>([1]);
 const _supertype_parameter_ids = new Set<number>([1, 207, 181, 182, 183, 179, 184]);
 const _supertype_pattern_ids = new Set<number>([1, 204, 203, 183, 179, 180]);
 const _supertype_primaryExpression_ids = new Set<number>([237, 191, 1, 231, 230, 93, 94, 96, 97, 98, 192, 203, 204, 206, 215, 220, 218, 221, 216, 222, 217, 225, 223, 183]);
@@ -482,8 +478,6 @@ const _kindIdByKind = new Map<string, number>([
     ["_with_clause_paren", TSKindId._WithClauseParen],
     ["_match_block_block", TSKindId.MatchBlockBlock],
     ["_simple_pattern_negative", TSKindId.SimplePatternNegative],
-    ["_kw_async_marker", TSKindId.KwAsyncMarker],
-    ["_kw_type", TSKindId.KwType],
 ]);
 
 export const is = {
@@ -612,7 +606,6 @@ export const is = {
     simpleStatement: _sg(_supertype_simpleStatement_ids),
     statement: _sg(_supertype_statement_ids),
     expression: _sg(_supertype_expression_ids),
-    keywordIdentifier: _sg(_supertype_keywordIdentifier_ids),
     parameter: _sg(_supertype_parameter_ids),
     pattern: _sg(_supertype_pattern_ids),
     primaryExpression: _sg(_supertype_primaryExpression_ids),
@@ -763,7 +756,6 @@ export const assert = {
     simpleStatement: _makeAssert('simpleStatement', is.simpleStatement as _AnyGuard),
     statement: _makeAssert('statement', is.statement as _AnyGuard),
     expression: _makeAssert('expression', is.expression as _AnyGuard),
-    keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard),
     parameter: _makeAssert('parameter', is.parameter as _AnyGuard),
     pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
     primaryExpression: _makeAssert('primaryExpression', is.primaryExpression as _AnyGuard),

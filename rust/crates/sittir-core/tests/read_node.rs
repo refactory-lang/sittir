@@ -66,6 +66,12 @@ fn parse_and_read(language: tree_sitter::Language, source: &str) -> NodeData {
     read_node(&tree, source, None, Some(0))
 }
 
+fn parse_tree(language: tree_sitter::Language, source: &str) -> tree_sitter::Tree {
+    let mut parser = tree_sitter::Parser::new();
+    parser.set_language(&language).expect("set language");
+    parser.parse(source, None).expect("parse succeeds")
+}
+
 #[test]
 fn rust_top_level_node_has_allowed_keys_only() {
     let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
@@ -144,6 +150,24 @@ fn child_index_set_on_non_root_nodes() {
     assert_eq!(node.node_handle, Some(0));
 }
 
+#[test]
+fn anonymous_leaf_children_do_not_invent_fields() {
+    let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+    let source = "fn f() { let _ = async move || async move {}; }";
+    let tree = parse_tree(lang, source);
+    let params = find_first_ts_node_by_kind(tree.root_node(), "closure_parameters")
+        .expect("closure_parameters cst node");
+    let node = read_node(&tree, source, Some(params), Some(0));
+    let json = serde_json::to_value(&node).expect("serialize");
+    let params = json.as_object().expect("closure_parameters object");
+    assert!(
+        !params.contains_key("_|"),
+        "native read must not invent _<text> fields for anonymous children"
+    );
+    assert!(params.get("$children").is_none(), "anonymous-only leaf nodes should still collapse to text");
+    assert_eq!(params.get("$text").and_then(Value::as_str), Some("||"));
+}
+
 /// Pre-order walk over the JSON NodeData tree, collecting child stub
 /// `(childIndex, nodeHandle)` pairs. Recurses through `_<slot>` values
 /// and `$children`.
@@ -192,4 +216,20 @@ fn is_allowed_node_key(key: &str) -> bool {
             | "$childIndex"
             | "$triviaData"
     ) || key.starts_with('_')
+}
+
+fn find_first_ts_node_by_kind<'a>(
+    node: tree_sitter::Node<'a>,
+    kind: &str,
+) -> Option<tree_sitter::Node<'a>> {
+    if node.kind() == kind {
+        return Some(node);
+    }
+    for i in 0..node.child_count() {
+        let child = node.child(i as u32)?;
+        if let Some(found) = find_first_ts_node_by_kind(child, kind) {
+            return Some(found);
+        }
+    }
+    None
 }

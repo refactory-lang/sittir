@@ -22,6 +22,8 @@
 import type { Rule, RuleId, SymbolRef } from './rule.ts';
 import type { AssembledNode } from './node-map.ts';
 
+export type { SlotArity, SlotModel } from './slot-model.ts';
+
 /**
  * One entry in the {@link LinkedGrammar.polymorphVariants} /
  * {@link OptimizedGrammar.polymorphVariants} /

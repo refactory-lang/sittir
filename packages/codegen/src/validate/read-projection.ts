@@ -28,7 +28,6 @@
 
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { readNode } from '@sittir/common';
 import type { AnyNodeData } from '@sittir/types';
 import { loadRawEntries } from './node-types-loader.ts';
 import {

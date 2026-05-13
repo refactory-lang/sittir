@@ -346,15 +346,15 @@ pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str>
     match (parent_id, child_id) {
         (227, 357) => Some("_call_signature"), // ("arrow_function", "arrow_function__call_signature")
         (227, 356) => Some("parameter"), // ("arrow_function", "arrow_function_parameter")
-        (231, 387) => Some("call"), // ("call_expression", "call_expression_call")
-        (231, 389) => Some("member"), // ("call_expression", "call_expression_member")
-        (231, 388) => Some("template_call"), // ("call_expression", "call_expression_template_call")
+        (231, 382) => Some("call"), // ("call_expression", "call_expression_call")
+        (231, 384) => Some("member"), // ("call_expression", "call_expression_member")
+        (231, 383) => Some("template_call"), // ("call_expression", "call_expression_template_call")
         (222, 358) => Some("extends_clause"), // ("class_heritage", "class_heritage_extends_clause")
         (222, 359) => Some("implements_clause"), // ("class_heritage", "class_heritage_implements_clause")
         (167, 352) => Some("default"), // ("export_statement", "export_statement_default")
-        (167, 385) => Some("equals_export"), // ("export_statement", "export_statement_equals_export")
-        (167, 386) => Some("namespace_export"), // ("export_statement", "export_statement_namespace_export")
-        (167, 384) => Some("type_export"), // ("export_statement", "export_statement_type_export")
+        (167, 380) => Some("equals_export"), // ("export_statement", "export_statement_equals_export")
+        (167, 381) => Some("namespace_export"), // ("export_statement", "export_statement_namespace_export")
+        (167, 379) => Some("type_export"), // ("export_statement", "export_statement_type_export")
         (175, 362) => Some("default_import"), // ("import_clause", "import_clause_default_import")
         (175, 361) => Some("named_imports"), // ("import_clause", "import_clause_named_imports")
         (175, 360) => Some("namespace_import"), // ("import_clause", "import_clause_namespace_import")
@@ -362,12 +362,10 @@ pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str>
         (179, 363) => Some("name"), // ("import_specifier", "import_specifier_name")
         (345, 365) => Some("colon"), // ("index_signature", "index_signature_colon")
         (345, 366) => Some("mapped_type_clause"), // ("index_signature", "index_signature_mapped_type_clause")
-        (209, 383) => Some("sequence"), // ("parenthesized_expression", "parenthesized_expression_sequence")
-        (209, 382) => Some("typed"), // ("parenthesized_expression", "parenthesized_expression_typed")
-        (247, 390) => Some("double"), // ("string", "string_double")
-        (247, 391) => Some("single"), // ("string", "string_single")
-        (245, 392) => Some("postfix"), // ("update_expression", "update_expression_postfix")
-        (245, 393) => Some("prefix"), // ("update_expression", "update_expression_prefix")
+        (209, 378) => Some("sequence"), // ("parenthesized_expression", "parenthesized_expression_sequence")
+        (209, 377) => Some("typed"), // ("parenthesized_expression", "parenthesized_expression_typed")
+        (245, 385) => Some("postfix"), // ("update_expression", "update_expression_postfix")
+        (245, 386) => Some("prefix"), // ("update_expression", "update_expression_prefix")
         _ => None,
     }
 }
@@ -474,7 +472,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        387 => { // "_call_expression_call" | "call_expression_call"
+        382 => { // "_call_expression_call" | "call_expression_call"
             let children = resolve_children(node, &["arguments", "function", "type_arguments"])?;
             let field_0 = resolve_field(node, "arguments", true)?;
             let field_1 = resolve_field(node, "function", true)?;
@@ -489,7 +487,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        389 => { // "_call_expression_member" | "call_expression_member"
+        384 => { // "_call_expression_member" | "call_expression_member"
             let children = resolve_children(node, &["arguments", "function", "type_arguments"])?;
             let field_0 = resolve_field(node, "arguments", true)?;
             let field_1 = resolve_field(node, "function", true)?;
@@ -504,7 +502,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        388 => { // "_call_expression_template_call" | "call_expression_template_call"
+        383 => { // "_call_expression_template_call" | "call_expression_template_call"
             let children = resolve_children(node, &["arguments", "function"])?;
             let field_0 = resolve_field(node, "arguments", true)?;
             let field_1 = resolve_field(node, "function", true)?;
@@ -697,7 +695,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        385 => { // "_export_statement_equals_export" | "export_statement_equals_export"
+        380 => { // "_export_statement_equals_export" | "export_statement_equals_export"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ExportStatementEqualsExportTemplate {
@@ -710,7 +708,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        386 => { // "_export_statement_namespace_export" | "export_statement_namespace_export"
+        381 => { // "_export_statement_namespace_export" | "export_statement_namespace_export"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ExportStatementNamespaceExportTemplate {
@@ -723,7 +721,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        384 => { // "_export_statement_type_export" | "export_statement_type_export"
+        379 => { // "_export_statement_type_export" | "export_statement_type_export"
             let children = resolve_children(node, &["source"])?;
             let field_0 = resolve_field(node, "source", false)?;
             let children_renderables = children.renderable_items();
@@ -869,7 +867,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        331 | 103 => { // "_number" | "number"
+        331 | 105 => { // "_number" | "number"
             let children = resolve_children(node, &["argument", "operator"])?;
             let field_0 = resolve_field(node, "argument", true)?;
             let field_1 = resolve_field(node, "operator", true)?;
@@ -879,7 +877,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        383 => { // "_parenthesized_expression_sequence" | "parenthesized_expression_sequence"
+        378 => { // "_parenthesized_expression_sequence" | "parenthesized_expression_sequence"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ParenthesizedExpressionSequenceTemplate {
@@ -892,7 +890,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        382 => { // "_parenthesized_expression_typed" | "parenthesized_expression_typed"
+        377 => { // "_parenthesized_expression_typed" | "parenthesized_expression_typed"
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", false)?;
             let children_renderables = children.renderable_items();
@@ -910,7 +908,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        420 => { // "_public_field_definition_abstract_first" | "public_field_definition_abstract_first"
+        413 => { // "_public_field_definition_abstract_first" | "public_field_definition_abstract_first"
             let children = resolve_children(node, &["abstract_marker", "readonly_marker"])?;
             let field_0 = resolve_field(node, "abstract_marker", true)?;
             let field_1 = resolve_field(node, "readonly_marker", false)?;
@@ -923,7 +921,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        421 => { // "_public_field_definition_access_first" | "public_field_definition_access_first"
+        414 => { // "_public_field_definition_access_first" | "public_field_definition_access_first"
             let children = resolve_children(node, &["declare_marker"])?;
             let field_0 = resolve_field(node, "declare_marker", false)?;
             let children_renderables = children.renderable_items();
@@ -941,7 +939,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        422 => { // "_public_field_definition_accessor_opt" | "public_field_definition_accessor_opt"
+        415 => { // "_public_field_definition_accessor_opt" | "public_field_definition_accessor_opt"
             let children = resolve_children(node, &["accessor_marker"])?;
             let field_0 = resolve_field(node, "accessor_marker", true)?;
             let template = PublicFieldDefinitionAccessorOptTemplate {
@@ -949,7 +947,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        423 => { // "_public_field_definition_declare_first" | "public_field_definition_declare_first"
+        416 => { // "_public_field_definition_declare_first" | "public_field_definition_declare_first"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = PublicFieldDefinitionDeclareFirstTemplate {
@@ -962,7 +960,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        424 => { // "_public_field_definition_readonly_first" | "public_field_definition_readonly_first"
+        417 => { // "_public_field_definition_readonly_first" | "public_field_definition_readonly_first"
             let children = resolve_children(node, &["abstract_marker", "readonly_marker"])?;
             let field_0 = resolve_field(node, "abstract_marker", false)?;
             let field_1 = resolve_field(node, "readonly_marker", true)?;
@@ -975,7 +973,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        425 => { // "_public_field_definition_static_mods" | "public_field_definition_static_mods"
+        418 => { // "_public_field_definition_static_mods" | "public_field_definition_static_mods"
             let children = resolve_children(node, &["readonly_marker", "static_marker"])?;
             let field_0 = resolve_field(node, "readonly_marker", false)?;
             let field_1 = resolve_field(node, "static_marker", true)?;
@@ -992,32 +990,6 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
                 },
                 static_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-            };
-            template.render_into(dest)
-        }
-        390 => { // "_string_double" | "string_double"
-            let children = resolve_children(node, &[])?;
-            let children_renderables = children.renderable_items();
-            let template = _StringDoubleTemplate {
-                children: ListNonterminalView {
-                    items: children_renderables.as_slice(),
-                    separator: children.separator,
-                    leading: children.leading_sep,
-                    trailing: children.trailing_sep,
-                },
-            };
-            template.render_into(dest)
-        }
-        391 => { // "_string_single" | "string_single"
-            let children = resolve_children(node, &[])?;
-            let children_renderables = children.renderable_items();
-            let template = _StringSingleTemplate {
-                children: ListNonterminalView {
-                    items: children_renderables.as_slice(),
-                    separator: children.separator,
-                    leading: children.leading_sep,
-                    trailing: children.trailing_sep,
-                },
             };
             template.render_into(dest)
         }
@@ -1081,7 +1053,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        392 => { // "_update_expression_postfix" | "update_expression_postfix"
+        385 => { // "_update_expression_postfix" | "update_expression_postfix"
             let children = resolve_children(node, &["argument", "operator"])?;
             let field_0 = resolve_field(node, "argument", true)?;
             let field_1 = resolve_field(node, "operator", true)?;
@@ -1091,7 +1063,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        393 => { // "_update_expression_prefix" | "update_expression_prefix"
+        386 => { // "_update_expression_prefix" | "update_expression_prefix"
             let children = resolve_children(node, &["argument", "operator"])?;
             let field_0 = resolve_field(node, "argument", true)?;
             let field_1 = resolve_field(node, "operator", true)?;
@@ -3013,8 +2985,12 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         247 => { // "string"
-            let children = resolve_children(node, &[])?;
+            let children = resolve_children(node, &["closing", "contents", "opening"])?;
+            let field_0 = resolve_field(node, "closing", true)?;
+            let field_1 = resolve_field(node, "contents", false)?;
+            let field_2 = resolve_field(node, "opening", true)?;
             let children_renderables = children.renderable_items();
+            let field_1_renderables = field_1.renderable_items();
             let template = StringTemplate {
                 children: ListNonterminalView {
                     items: children_renderables.as_slice(),
@@ -3022,6 +2998,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
+                closing: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                contents: ListNonterminalView {
+                    items: field_1_renderables.as_slice(),
+                    separator: field_1.separator,
+                    leading: field_1.leading_sep,
+                    trailing: field_1.trailing_sep,
+                },
+                opening: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
             };
             template.render_into(dest)
         }

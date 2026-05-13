@@ -22,8 +22,9 @@ vi.mock('../src/history.ts', () => ({
 			backend: 'native',
 			fromPass: 10, fromTotal: 12,
 			covPass: 8, covTotal: 9,
-			rtPass: 5, rtTotal: 6, rtAstMatchPass: 4,
-			factoryPass: 3, factoryTotal: 4, factoryAstMatchPass: 3,
+			readRenderParsePass: 5, readRenderParseTotal: 6, readRenderParseAstMatchPass: 4,
+			readRenderParseShallowPass: 4, readRenderParseShallowTotal: 6, readRenderParseShallowAstMatchPass: 3,
+			factoryRenderParsePass: 3, factoryRenderParseTotal: 4, factoryRenderParseAstMatchPass: 3,
 		} satisfies ValidationRun,
 	]),
 	appendHistory: vi.fn(),
@@ -32,7 +33,7 @@ vi.mock('../src/history.ts', () => ({
 
 import { runCountsCli, runProbeFactoryCli, runHistoryCli } from '../src/cli.ts';
 import { runFrom, runRt, runFactory, runCoverage } from '../src/run.ts';
-import { readHistory } from '../src/history.ts';
+import { appendHistory, readHistory } from '../src/history.ts';
 
 describe('@sittir/validator cli surface — exports', () => {
 	it('exports runCountsCli as a function', () => {
@@ -88,13 +89,19 @@ describe('@sittir/validator cli surface — runHistoryCli behavior', () => {
 });
 
 describe('@sittir/validator cli surface — runCountsCli behavior', () => {
-	beforeEach(() => { vi.clearAllMocks(); });
+	beforeEach(() => {
+		vi.clearAllMocks();
+		vi.mocked(runRt)
+			.mockResolvedValueOnce({ grammar: 'rust', total: 8, pass: 8, fail: 0, skip: 0, astMatchPass: 8, errors: [], astMismatches: [] })
+			.mockResolvedValueOnce({ grammar: 'rust', total: 8, pass: 6, fail: 2, skip: 0, astMatchPass: 5, errors: [], astMismatches: [] });
+	});
 
 	it('defaults to native backend for each requested grammar', async () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		await runCountsCli(['rust']);
 		expect(vi.mocked(runFrom)).toHaveBeenCalledWith('rust', 'native');
-		expect(vi.mocked(runRt)).toHaveBeenCalledWith('rust', '/fake/templates', 'native');
+		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(1, 'rust', '/fake/templates', 'native', { recursive: true });
+		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(2, 'rust', '/fake/templates', 'native', { recursive: false });
 		expect(vi.mocked(runCoverage)).toHaveBeenCalled();
 		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('rust', '/fake/templates', 'native');
 		logSpy.mockRestore();
@@ -105,6 +112,9 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 		await runCountsCli(['rust']);
 		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
 		expect(allOutput).toMatch(/rust\/native:/);
+		expect(allOutput).toMatch(/read-render-parsePass=/);
+		expect(allOutput).toMatch(/read-render-parse-shallowPass=/);
+		expect(allOutput).toMatch(/factory-render-parsePass=/);
 		logSpy.mockRestore();
 	});
 
@@ -117,9 +127,13 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 
 	it('maps js backend to the internal typescript backend', async () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+		vi.mocked(runRt)
+			.mockResolvedValueOnce({ grammar: 'python', total: 8, pass: 8, fail: 0, skip: 0, astMatchPass: 8, errors: [], astMismatches: [] })
+			.mockResolvedValueOnce({ grammar: 'python', total: 8, pass: 6, fail: 2, skip: 0, astMatchPass: 5, errors: [], astMismatches: [] });
 		await runCountsCli(['python'], 'js');
 		expect(vi.mocked(runFrom)).toHaveBeenCalledWith('python', 'typescript');
-		expect(vi.mocked(runRt)).toHaveBeenCalledWith('python', '/fake/templates', 'typescript');
+		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(1, 'python', '/fake/templates', 'typescript', { recursive: true });
+		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(2, 'python', '/fake/templates', 'typescript', { recursive: false });
 		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('python', '/fake/templates', 'typescript');
 		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
 		expect(allOutput).toMatch(/python\/js:/);
@@ -128,12 +142,29 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 
 	it('runs both backends when backend=all', async () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+		vi.mocked(runRt).mockResolvedValue({ grammar: 'rust', total: 8, pass: 8, fail: 0, skip: 0, astMatchPass: 8, errors: [], astMismatches: [] });
 		await runCountsCli(['rust'], 'all');
 		expect(vi.mocked(runFrom)).toHaveBeenNthCalledWith(1, 'rust', 'native');
 		expect(vi.mocked(runFrom)).toHaveBeenNthCalledWith(2, 'rust', 'typescript');
+		expect(vi.mocked(runRt)).toHaveBeenCalledTimes(4);
 		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
 		expect(allOutput).toMatch(/rust\/native:/);
 		expect(allOutput).toMatch(/rust\/js:/);
+		logSpy.mockRestore();
+	});
+
+	it('appends history rows for successful counts runs', async () => {
+		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+		await runCountsCli(['rust']);
+		expect(vi.mocked(appendHistory)).toHaveBeenCalledWith(
+			expect.objectContaining({
+				grammar: 'rust',
+				backend: 'native',
+				readRenderParsePass: 8,
+				readRenderParseShallowPass: 6,
+				factoryRenderParsePass: 7,
+			}),
+		);
 		logSpy.mockRestore();
 	});
 });

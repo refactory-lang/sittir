@@ -957,7 +957,7 @@ export type FactoryShape = 'config' | 'spread' | 'text' | 'direct';
 export type ChildFactorySurface = 'direct' | 'spread';
 
 /**
- * Classify a branch or group node's user-facing slot count — the ONE
+ * Classify a branch/group/polymorph node's user-facing slot count — the ONE
  * source of truth for single-slot vs multi-slot detection.
  *
  * Filters out:
@@ -975,12 +975,16 @@ export type ChildFactorySurface = 'direct' | 'spread';
  * factory-map.ts, and from.ts. Those call sites should migrate to
  * this function (Task 3).
  *
- * @param node - An AssembledNode (only `branch` and `group` modelTypes
+ * @param node - An AssembledNode (only `branch`, `group`, and `polymorph` modelTypes
  *   produce meaningful results; other modelTypes always return `multiSlot`).
  * @param nodeMap - The assembled node map, needed by the filtering helpers.
  */
 export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): BranchSlotClass {
-	if (node.modelType !== 'branch' && node.modelType !== 'group') {
+	if (
+		node.modelType !== 'branch' &&
+		node.modelType !== 'group' &&
+		node.modelType !== 'polymorph'
+	) {
 		return { tag: 'multiSlot' };
 	}
 
@@ -1012,12 +1016,17 @@ export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): Bran
 }
 
 /**
- * Post-assembly pass: compute and store `slotClass` on every branch/group
+ * Post-assembly pass: compute and store `slotClass` on every branch/group/
+ * polymorph
  * node in the node map. Called from `generate.ts` after `hydrateSlotRefs`.
  */
 export function computeSlotClasses(nodeMap: NodeMap): void {
 	for (const [, node] of nodeMap.nodes) {
-		if (node.modelType === 'branch' || node.modelType === 'group') {
+		if (
+			node.modelType === 'branch' ||
+			node.modelType === 'group' ||
+			node.modelType === 'polymorph'
+		) {
 			node.slotClass = classifyBranchSlots(node, nodeMap);
 		}
 	}
@@ -1056,6 +1065,32 @@ function hasUserFacingFactoryChildren(children: readonly AssembledNonterminal[],
 }
 
 /**
+ * Returns true when any child slot is optional but carries user-facing named
+ * content types (i.e. not terminal literals, not parameterless compounds, not
+ * hidden keyword/token kinds). Such children are invisible to `isAutoStampSlot`
+ * (which skips all optional slots) but must still appear in the factory config
+ * surface — so a node with these children cannot be classified as `'direct'`.
+ *
+ * Example: `struct_pattern` has an optional repeating `field_pattern` children
+ * slot. `isAutoStampSlot` skips it (optional), but the user needs to be able
+ * to supply those children through the factory config.
+ */
+function hasOptionalUserContentChildren(children: readonly AssembledNonterminal[], nodeMap: NodeMap): boolean {
+	return children.some((child) => {
+		if (isRequired(child)) return false; // only optional slots are missed by isAutoStampSlot
+		return child.values.some((v) => {
+			if (isTerminalValue(v)) return false;
+			if (!isNodeRef(v)) return false;
+			const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+			const ref = nodeMap.nodes.get(kindName);
+			if (ref?.isParameterless) return false;
+			if (kindName.startsWith('_') && (ref instanceof AssembledKeyword || ref instanceof AssembledToken)) return false;
+			return true; // user-facing named content
+		});
+	});
+}
+
+/**
  * Resolve the raw field names visible on a kind's factory surface.
  *
  * @remarks
@@ -1067,23 +1102,12 @@ function hasUserFacingFactoryChildren(children: readonly AssembledNonterminal[],
 export function resolveFactoryFieldNames(node: AssembledNode, nodeMap: NodeMap): readonly string[] | undefined {
 	switch (node.modelType) {
 		case 'branch':
-		case 'group': {
+		case 'group':
+		case 'polymorph': {
 			const fields = configurableFactoryFields(node.fields, nodeMap);
 			if (fields.length === 0) return undefined;
 			if (hasUserFacingFactoryChildren(node.children, nodeMap)) return undefined;
 			return fields.map((field) => field.name);
-		}
-		case 'polymorph': {
-			if (node.forms.some((form) => hasUserFacingFactoryChildren(form.children, nodeMap))) {
-				return undefined;
-			}
-			const unique = new Set<string>();
-			for (const form of node.forms) {
-				for (const field of configurableFactoryFields(form.fields, nodeMap)) {
-					unique.add(field.name);
-				}
-			}
-			return unique.size === 0 ? undefined : [...unique];
 		}
 		default:
 			return undefined;
@@ -1132,7 +1156,14 @@ export function classifyFactoryShape(
 		case 'branch': {
 			const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 			if (slotClass.tag === 'singleSlot') {
-				if (!node.kind.startsWith('_') && slotClass.arity === 'singular') return 'direct';
+				// Guard: if optional user-content children exist the factory needs a
+				// config bag to expose them — 'direct' (single-arg) is insufficient.
+				if (
+					!node.kind.startsWith('_') &&
+					slotClass.arity === 'singular' &&
+					!hasOptionalUserContentChildren(node.children, nodeMap)
+				)
+					return 'direct';
 				if (slotClass.slot.source === 'inferred') return 'spread';
 				return 'config';
 			}

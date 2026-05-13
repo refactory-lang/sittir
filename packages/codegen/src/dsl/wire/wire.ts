@@ -53,6 +53,9 @@ import { isVariantPlaceholder } from '../primitives/variant.ts';
 export interface WireContext {
 	/** Hidden-rule name → captured content body. */
 	readonly deposits: Map<string, RuntimeRule>;
+	/** Hidden `_kw_*` helper names that should be appended to the
+	 *  grammar's inline list after rule evaluation deposits their body. */
+	readonly syntheticInline: Set<string>;
 	/** `{parent, child}` pairs registered by variant(). Sittir's Link
 	 *  reads these to classify polymorphs — tree-sitter ignores them. */
 	readonly polymorphVariants: PolymorphVariant[];
@@ -71,6 +74,9 @@ export interface WireContext {
 	 *  auto-prefix behavior (`variant('eq')` under `assignment` →
 	 *  `_assignment_eq`). Set by the rule-fn wrapper. */
 	currentRuleKind: string | null;
+	/** Rule names explicitly authored in `config.rules`. Synthetic `_kw_*`
+	 *  auto-inline only applies to helpers wire synthesized itself. */
+	readonly authoredRuleNames: ReadonlySet<string>;
 }
 
 /**
@@ -102,6 +108,20 @@ export function getCurrentWireContext(): WireContext | null {
 export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): boolean {
 	if (!currentContext) return false;
 	currentContext.deposits.set(name, content);
+	return true;
+}
+
+/**
+ * Register a synthesized `_kw_*` helper for automatic inlining.
+ *
+ * @remarks
+ * Only wire-authored helpers participate. If the grammar author declared
+ * the rule explicitly in `config.rules`, they own its `inline:` policy.
+ */
+export function wireRegisterSyntheticInline(name: string): boolean {
+	if (!currentContext) return false;
+	if (currentContext.authoredRuleNames.has(name)) return false;
+	currentContext.syntheticInline.add(name);
 	return true;
 }
 
@@ -185,10 +205,12 @@ export function withWireContext<T>(
 ): { result: T; ctx: WireContext } {
 	const ctx: WireContext = {
 		deposits: new Map(),
+		syntheticInline: new Set(),
 		polymorphVariants: [],
 		conflictGroups: [],
 		refineForms: new Map(),
-		currentRuleKind: ruleKind
+		currentRuleKind: ruleKind,
+		authoredRuleNames: new Set()
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -348,10 +370,12 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<Base>): WiredOpts {
 	const context: WireContext = {
 		deposits: new Map(),
+		syntheticInline: new Set(),
 		polymorphVariants: [],
 		conflictGroups: [],
 		refineForms: new Map(),
-		currentRuleKind: null
+		currentRuleKind: null,
+		authoredRuleNames: new Set(Object.keys(config.rules))
 	};
 
 	const polymorphs = config.polymorphs ?? {};
@@ -381,11 +405,13 @@ export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<
 	wrapAllRuleFns(outRules, context);
 
 	const conflicts = wrapConflictsCallback(config.conflicts, context);
+	const inline = wrapInlineCallback(config.inline, context);
 
 	const wired: WiredOpts = {
 		...config,
 		rules: outRules,
-		...(conflicts === undefined ? {} : { conflicts })
+		...(conflicts === undefined ? {} : { conflicts }),
+		...(inline === undefined ? {} : { inline })
 	};
 	Object.defineProperty(wired, '__wireContext__', {
 		value: context,
@@ -691,6 +717,19 @@ function wrapConflictsCallback(userConflicts: ConflictsFn | undefined, context: 
 }
 
 /**
+ * Wrap the user's `inline` callback so synthesized `_kw_*` helpers drain
+ * into the returned inline list after rule evaluation deposits them.
+ *
+ * @remarks
+ * Tree-sitter evaluates metadata callbacks after rules, so the set is
+ * complete by the time this runs. `_kw_*` helpers are leaf token rules,
+ * which satisfies tree-sitter's inline restrictions.
+ */
+function wrapInlineCallback(userInline: DollarFn<unknown[]> | undefined, context: WireContext): DollarFn<unknown[]> {
+	return buildWiredInlineFn(userInline, context);
+}
+
+/**
  * Build the wired conflicts callback that drains accumulated variant
  * conflict groups into the returned conflict list.
  *
@@ -713,6 +752,58 @@ function buildWiredConflictsFn(userConflicts: ConflictsFn | undefined, context: 
 		const symbolized = context.conflictGroups.map((group) => group.map((name) => symbolizeRef($, name)));
 		return [...(base as unknown[][]), ...symbolized];
 	};
+}
+
+/**
+ * Build the wired inline callback that appends synthesized keyword-helper
+ * names to the grammar's inline list.
+ *
+ * @remarks
+ * Name-based dedupe matters here for the same reason as `appendDedup` in
+ * evaluate.ts: every `$._kw_x` lookup produces a fresh symbol object.
+ */
+function buildWiredInlineFn(userInline: DollarFn<unknown[]> | undefined, context: WireContext): DollarFn<unknown[]> {
+	return function wiredInline(this: unknown, $: unknown, previous?: unknown[]): unknown[] {
+		const base = userInline ? userInline.call(this, $, previous) : (previous ?? []);
+		if (context.syntheticInline.size === 0) return base as unknown[];
+		const existingNames = collectInlineNames(base as unknown[]);
+		const appended: unknown[] = [];
+		for (const name of context.syntheticInline) {
+			if (existingNames.has(name)) continue;
+			appended.push(nativeInlineRef($, name));
+		}
+		return appended.length === 0 ? (base as unknown[]) : [...(base as unknown[]), ...appended];
+	};
+}
+
+/**
+ * Extract rule names from an `inline:` callback result using the same
+ * name semantics tree-sitter stores in the final grammar.
+ */
+function collectInlineNames(entries: readonly unknown[]): Set<string> {
+	const names = new Set<string>();
+	for (const entry of entries) {
+		if (!entry || typeof entry !== 'object') continue;
+		const symbol = entry as { type?: string; name?: string };
+		if ((symbol.type === 'symbol' || symbol.type === 'SYMBOL') && typeof symbol.name === 'string') {
+			names.add(symbol.name);
+		}
+	}
+	return names;
+}
+
+/**
+ * Resolve an inline entry through the runtime's native symbol constructor.
+ *
+ * @remarks
+ * Sittir's evaluator injects `symbol(name)` as part of the baseline DSL
+ * globals; tree-sitter metadata callbacks always receive the `$` proxy, so
+ * falling back to `$[name]` keeps the callback native-shaped there too.
+ */
+function nativeInlineRef($: unknown, name: string): unknown {
+	const nativeSymbol = (globalThis as { symbol?: (name: string) => unknown }).symbol;
+	if (typeof nativeSymbol === 'function') return nativeSymbol(name);
+	return ($ as Record<string, unknown>)[name];
 }
 
 /**

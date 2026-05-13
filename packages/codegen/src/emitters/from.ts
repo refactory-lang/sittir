@@ -34,6 +34,7 @@ import {
 	resolveHiddenKeywordLiteral,
 	resolveSingleFieldFactorySlot,
 	resolveFieldStorageInfo,
+	resolveEffectiveLiteral,
 	collectPolymorphLiteralDispatchCases,
 	stampExpressionFor,
 	isHiddenInfraSlot,
@@ -418,7 +419,6 @@ interface BranchLikeNode {
 	readonly fromFunctionName?: string;
 	readonly fields: readonly AssembledNonterminal[];
 	readonly children: readonly AssembledNonterminal[];
-	readonly isContainerShape?: boolean;
 	readonly slotClass?: BranchSlotClass;
 }
 
@@ -445,6 +445,11 @@ function _emitVariantFrom(
 	const parentFields = 'fields' in node ? (node as { fields: readonly AssembledNonterminal[] }).fields : [];
 	const configParts: string[] = [];
 	for (const f of parentFields) {
+		const stampedExpr = stampedConfigFieldExpr(f, nodeMap, intern);
+		if (stampedExpr !== null) {
+			configParts.push(`    ${f.configKey}: ${stampedExpr},`);
+			continue;
+		}
 		if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 		const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', false);
 		configParts.push(`    ${f.configKey}: ${call},`);
@@ -460,6 +465,11 @@ function _emitVariantFrom(
 		for (const vf of vFields) {
 			if (seenProps.has(vf.configKey)) continue;
 			seenProps.add(vf.configKey);
+			const stampedExpr = stampedConfigFieldExpr(vf, nodeMap, intern);
+			if (stampedExpr !== null) {
+				configParts.push(`    ${vf.configKey}: ${stampedExpr},`);
+				continue;
+			}
 			if (isAutoStampField(vf, nodeMap)) continue; // factory stamps these; no Config slot
 			const call = resolveFieldFromTypedInput(vf, nodeMap, typeName, intern, 'input', true);
 			configParts.push(`    ${vf.configKey}: ${call},`);
@@ -485,6 +495,18 @@ function buildBranchSignatureParts(
 	const inputType = `T.${node.typeName}.Loose`;
 	const inputOptional = opt === '?';
 	return { inputType, inputOptional };
+}
+
+function stampedConfigFieldExpr(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap,
+	intern: KindInterner
+): string | null {
+	const literal = resolveEffectiveLiteral(field, nodeMap);
+	if (literal === undefined) return null;
+	const storageInfo = resolveFieldStorageInfo(field, nodeMap);
+	if (storageInfo.kind !== 'kindEnum') return null;
+	return resolveFieldCall(JSON.stringify(literal), field, isMultiple(field), nodeMap, intern);
 }
 
 function factoryReturnTypeExpr(factory: string): string {
@@ -630,14 +652,21 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	if (!targetNode) return null;
 	if (!targetNode.rawFactoryName) return null;
 
-	// Container-shaped branches: rest-param signature can be called with
-	// zero args ONLY when no child is nonEmpty (requires ≥1 element).
-	if (targetNode instanceof AssembledBranch && targetNode.isContainerShape) {
-		const anyMultiple = targetNode.children.some((c) => isMultiple(c));
-		const anyNonEmpty = targetNode.children.some((c) => isNonEmpty(c));
-		if (anyMultiple && !anyNonEmpty) return targetNode.rawFactoryName;
-		// Singular child — callable only when the child is not required.
-		const firstChild = targetNode.children[0];
+	const branchTarget = targetNode instanceof AssembledBranch ? targetNode : null;
+	const childSurface = branchTarget?.modelType === 'branch'
+		? classifyChildFactorySurface(branchTarget, nodeMap)
+		: null;
+	// Positional-child factories: `spread` is callable with zero args only
+	// when no child is nonEmpty; `direct` is callable when the sole child is
+	// optional.
+	if (childSurface !== null) {
+		if (branchTarget === null) return null;
+		const anyMultiple = branchTarget.children.some((c) => isMultiple(c));
+		const anyNonEmpty = branchTarget.children.some((c) => isNonEmpty(c));
+		const firstChild = branchTarget.children[0];
+		if (childSurface === 'spread' && anyMultiple && !anyNonEmpty) {
+			return targetNode.rawFactoryName;
+		}
 		if (!firstChild || !isRequired(firstChild)) return targetNode.rawFactoryName;
 		return null;
 	}
@@ -706,6 +735,7 @@ function emitBranchFrom(
 		const needsNonEmptyHoist = (f: AssembledNonterminal): boolean =>
 			isNonEmpty(f) && isMultiple(f) && keywordPresenceKind(f, nodeMap) === null;
 		for (const f of fields) {
+			if (stampedConfigFieldExpr(f, nodeMap, intern) !== null) continue;
 			if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 			if (needsNonEmptyHoist(f)) {
 				const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional);
@@ -729,6 +759,11 @@ function emitBranchFrom(
 		} else {
 			lines.push(`  return ${factory}({`);
 			for (const f of fields) {
+				const stampedExpr = stampedConfigFieldExpr(f, nodeMap, intern);
+				if (stampedExpr !== null) {
+					lines.push(`    ${f.configKey}: ${stampedExpr},`);
+					continue;
+				}
 				if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 				if (needsNonEmptyHoist(f)) {
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
@@ -1158,6 +1193,11 @@ function emitPolymorphFormFrom(form: AssembledGroup, nodeMap: NodeMap, intern: K
 		fLines.push(`  return ${formFactory}({`);
 		// Form-level fields (always Config keys at the form's surface).
 		for (const f of form.fields) {
+			const stampedExpr = stampedConfigFieldExpr(f, nodeMap, intern);
+			if (stampedExpr !== null) {
+				fLines.push(`    ${f.configKey}: ${stampedExpr},`);
+				continue;
+			}
 			if (isAutoStampField(f, nodeMap)) continue;
 			fLines.push(
 				`    ${f.configKey}: ${resolveFieldFromTypedInput(f, nodeMap, form.typeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`
@@ -1168,6 +1208,11 @@ function emitPolymorphFormFrom(form: AssembledGroup, nodeMap: NodeMap, intern: K
 		// shape so node-ref / leaf / many semantics still apply.
 		if (hoist) {
 			for (const f of hoist.innerFields) {
+				const stampedExpr = stampedConfigFieldExpr(f, nodeMap, intern);
+				if (stampedExpr !== null) {
+					fLines.push(`    ${f.configKey}: ${stampedExpr},`);
+					continue;
+				}
 				if (isAutoStampField(f, nodeMap)) continue;
 				fLines.push(
 					`    ${f.configKey}: ${resolveFieldFromTypedInput(f, nodeMap, hoist.innerTypeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`

@@ -10,7 +10,6 @@
  * 5. Re-parse and verify the kind exists
  */
 
-import { readNode } from '@sittir/common';
 import { createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
@@ -138,11 +137,11 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 	const dehoistedKeys = Object.keys(rec).filter((k) => k.startsWith('_'));
 
 	/** Recursively strip a single field value. */
-	const stripFieldValue = (value: unknown): NodeMemberValue | readonly (AnyNodeData | string | number)[] => {
+	const stripMemberValue = (value: unknown): NodeMemberValue | readonly NodeMemberValue[] => {
 		if (Array.isArray(value)) {
 			return value.map((v) =>
 				typeof v === 'object' && v !== null ? stripToFactory(v as AnyNodeData) : v
-			) as readonly (AnyNodeData | string | number)[];
+			) as readonly NodeMemberValue[];
 		}
 		if (typeof value === 'object' && value !== null) {
 			return stripToFactory(value as AnyNodeData);
@@ -153,13 +152,14 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 	// New shape: iterate `_<name>` keys directly.
 	for (const rawKey of dehoistedKeys) {
 		const value = rec[rawKey];
-		(result as unknown as Record<string, unknown>)[rawKey] = stripFieldValue(value);
+		(result as unknown as Record<string, unknown>)[rawKey] = stripMemberValue(value);
 	}
 	if (data.$children) {
 		// Factory nodes only have named children — filter anonymous
-		result.$children = (data.$children as AnyNodeData[])
-			.filter((c) => c.$named !== false)
-			.map((c) => (typeof c === 'object' && c !== null ? stripToFactory(c as AnyNodeData) : c));
+		const namedChildren = data.$children.filter(
+			(c): c is NodeMemberValue => typeof c !== 'object' || c === null || (c as AnyNodeData).$named !== false
+		);
+		result.$children = stripMemberValue(namedChildren) as readonly NodeMemberValue[];
 	}
 
 	return result;

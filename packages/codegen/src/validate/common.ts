@@ -25,6 +25,7 @@ import type { AnyNodeData, AnyTreeNode, NativeParseResult } from '@sittir/types'
 import type { TreeHandle } from '@sittir/common';
 import { assertNever, type PolymorphVariantDescriptor, type PolymorphVariantMap } from '../polymorph-variant.ts';
 import type { FactoryShape } from '../emitters/factory-map.ts';
+import { createNamedSlotModel, createUnnamedChildrenSlotModel, type SlotModel } from '../compiler/slot-model.ts';
 
 // ---------------------------------------------------------------------------
 // Corpus parser — tree-sitter test corpus format
@@ -1207,9 +1208,35 @@ function shouldPromoteOrphanChildren(
 	return noFieldMatched;
 }
 
-function assignPromotedField(out: Record<string, unknown>, rawName: string, value: unknown): void {
-	const camel = rawName.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
-	out[camel] = value;
+function slotConfigKey(slot: SlotModel): string {
+	return slot.unnamed ? slot.name : slot.name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+}
+
+function memberValueOpts(
+	opts: NodeToConfigOpts,
+	parentKind: string | undefined,
+	fieldName: string | undefined
+): NodeToConfigOpts {
+	return {
+		...opts,
+		_parentKind: parentKind,
+		_fieldName: fieldName,
+		firstNamedChildKindHint: undefined,
+		namedChildKindHints: undefined
+	};
+}
+
+function resolveMemberValue(value: readonly unknown[] | unknown, childOpts: NodeToConfigOpts): unknown {
+	return Array.isArray(value) ? value.map((item) => resolveChild(item, childOpts)) : resolveChild(value, childOpts);
+}
+
+function assignSlotToConfig(
+	slot: SlotModel,
+	value: readonly unknown[] | unknown,
+	childOpts: NodeToConfigOpts,
+	out: Record<string, unknown>
+): void {
+	out[slotConfigKey(slot)] = resolveMemberValue(value, childOpts);
 }
 
 function isAnonymousPromotableField(name: string): boolean {
@@ -1256,14 +1283,12 @@ function promoteAnonymousTokenFields(
 	const assign = (fieldName: string, entryIndex: number): void => {
 		const entry = anonymousEntries[entryIndex]?.[1];
 		if (!entry) return;
-		const camel = fieldName.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
-		out[camel] = resolveChild(entry, {
-			...opts,
-			_parentKind: parentKind,
-			_fieldName: fieldName,
-			firstNamedChildKindHint: undefined,
-			namedChildKindHints: undefined
-		});
+		assignSlotToConfig(
+			createNamedSlotModel(fieldName, 'one'),
+			entry,
+			memberValueOpts(opts, parentKind, fieldName),
+			out
+		);
 		missing.delete(fieldName);
 		used.add(entryIndex);
 	};
@@ -1300,32 +1325,18 @@ function promoteNamedChildrenToMissingFields(
 	if (missing.length === 0) return false;
 	if (missing.length === 1) {
 		const name = missing[0]!;
-		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
-		out[camel] = namedChildren.map((child) =>
-			resolveChild(child, {
-				...opts,
-				_parentKind: parentKind,
-				_fieldName: name,
-				firstNamedChildKindHint: undefined,
-				namedChildKindHints: undefined
-			})
+		assignSlotToConfig(
+			createNamedSlotModel(name, 'many'),
+			namedChildren,
+			memberValueOpts(opts, parentKind, name),
+			out
 		);
 		return true;
 	}
 	if (namedChildren.length > missing.length) return false;
 	namedChildren.forEach((child, index) => {
 		const name = missing[index]!;
-		assignPromotedField(
-			out,
-			name,
-			resolveChild(child, {
-				...opts,
-				_parentKind: parentKind,
-				_fieldName: name,
-				firstNamedChildKindHint: undefined,
-				namedChildKindHints: undefined
-			})
-		);
+		assignSlotToConfig(createNamedSlotModel(name, 'one'), child, memberValueOpts(opts, parentKind, name), out);
 	});
 	return true;
 }
@@ -1339,38 +1350,8 @@ function assignPositionPromotedChildren(
 ): void {
 	namedChildren.forEach((child, i) => {
 		const name = declaredFields[i]!;
-		assignPromotedField(
-			out,
-			name,
-			resolveChild(child, {
-				...opts,
-				_parentKind: parentKind,
-				_fieldName: name,
-				firstNamedChildKindHint: undefined,
-				namedChildKindHints: undefined
-			})
-		);
+		assignSlotToConfig(createNamedSlotModel(name, 'one'), child, memberValueOpts(opts, parentKind, name), out);
 	});
-}
-
-/**
- * Map `$children` entries directly to `out.children` without alias resolution.
- *
- * @remarks
- * `$children` entries don't have a field name; alias resolution falls back to
- * the raw `$type` (no parent.field lookup). Only the `$fields` iteration can
- * trigger alias-source dispatch.
- *
- * @param children - The raw `$children` array from NodeData.
- * @param childOpts - Options for `resolveChild` with parent/field context cleared.
- * @param out - The config object to write `children` into.
- */
-function assignChildrenToConfig(
-	children: readonly unknown[],
-	childOpts: NodeToConfigOpts,
-	out: Record<string, unknown>
-): void {
-	out.children = children.map((c) => resolveChild(c, childOpts));
 }
 
 function promoteAnonymousChildrenToMissingFields(
@@ -1394,14 +1375,7 @@ function promoteAnonymousChildrenToMissingFields(
 	if (anonymousChildren.length !== missingFields.length) return false;
 	anonymousChildren.forEach((child, index) => {
 		const name = missingFields[index]!;
-		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
-		out[camel] = resolveChild(child, {
-			...opts,
-			_parentKind: parentKind,
-			_fieldName: name,
-			firstNamedChildKindHint: undefined,
-			namedChildKindHints: undefined
-		});
+		assignSlotToConfig(createNamedSlotModel(name, 'one'), child, memberValueOpts(opts, parentKind, name), out);
 	});
 	return true;
 }
@@ -1428,15 +1402,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 	for (const [k, v] of namedSlotEntries) {
 		if (v === undefined) continue;
 		if (!isIdentifierShapedFieldKey(k)) continue;
-		const camelKey = k.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
-		const childOpts: NodeToConfigOpts = {
-			...opts,
-			_parentKind: parentKind,
-			_fieldName: k,
-			firstNamedChildKindHint: undefined,
-			namedChildKindHints: undefined
-		};
-		out[camelKey] = Array.isArray(v) ? v.map((item) => resolveChild(item, childOpts)) : resolveChild(v, childOpts);
+		assignSlotToConfig(createNamedSlotModel(k, Array.isArray(v) ? 'many' : 'one'), v, memberValueOpts(opts, parentKind, k), out);
 	}
 	promoteAnonymousTokenFields(parentKind ? opts.factoryFields?.[parentKind] : undefined, namedSlotEntries, opts, parentKind, out);
 	if (data.$children) {
@@ -1444,13 +1410,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 		const namedChildren = data.$children.filter(
 			(c) => c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false
 		);
-		const childOpts: NodeToConfigOpts = {
-			...opts,
-			_parentKind: undefined,
-			_fieldName: undefined,
-			firstNamedChildKindHint: undefined,
-			namedChildKindHints: undefined
-		};
+		const childOpts = memberValueOpts(opts, undefined, undefined);
 		if (promoteNamedChildrenToMissingFields(declaredFields, parentKind, namedChildren, opts, out)) {
 			// Missing declared fields were recovered from surviving named children.
 		} else if (shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
@@ -1459,7 +1419,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 		} else if (promoteAnonymousChildrenToMissingFields(declaredFields, parentKind, data.$children, opts, out)) {
 			// Ambiguous-free anonymous-token fill completed above.
 		} else {
-			assignChildrenToConfig(data.$children, childOpts, out);
+			assignSlotToConfig(createUnnamedChildrenSlotModel('many'), data.$children, childOpts, out);
 		}
 	}
 	// Polymorph $variant stamping — the dispatcher's `switch
@@ -1659,7 +1619,7 @@ function inferFromStructuralMarkers(
 		variant,
 		tokens: collectVariantTokens(parentKind, candidateKind, variant)
 	}));
-	for (const { candidateKind, variant, tokens: variantTokens } of variantEntries) {
+	for (const { variant, tokens: variantTokens } of variantEntries) {
 		if (variantTokens.length === 0) continue;
 		const matched = variantTokens.reduce((sum, token) => sum + (actualTokens.get(token) ?? 0), 0);
 		if (matched <= 0) continue;

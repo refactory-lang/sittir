@@ -213,6 +213,9 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 			case 'multi':
 				break;
 		}
+		if (factoryEmission === 'emit') {
+			factoryEmitter.emitRefineForms(kind, node);
+		}
 	}
 
 	// -----------------------------------------------------------------

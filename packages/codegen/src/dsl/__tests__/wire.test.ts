@@ -418,6 +418,70 @@ describe('wire()', () => {
 		expect(asyncFn.call({}, {})).toEqual({ type: 'BLANK' });
 	});
 
+	it('drains synthesized keyword helpers into inline after rule evaluation', () => {
+		const origSeq = {
+			type: 'seq',
+			members: [{ type: 'string', value: 'async' }]
+		};
+		const wired = wire({
+			name: 'test',
+			rules: {},
+			transforms: {
+				r: { 0: field('async') }
+			}
+		});
+		wired.rules.r!.call({}, {}, origSeq);
+		const $ = new Proxy(
+			{},
+			{
+				get: (_, prop: string) => ({ type: 'symbol', name: prop })
+			}
+		);
+		const inline = wired.inline!;
+		expect(inline.call({}, $, [])).toEqual([{ type: 'symbol', name: '_kw_async' }]);
+	});
+
+	it('dedupes synthesized keyword helpers against explicit inline entries', () => {
+		const origSeq = {
+			type: 'seq',
+			members: [{ type: 'string', value: 'async' }]
+		};
+		const wired = wire({
+			name: 'test',
+			rules: {},
+			transforms: {
+				r: { 0: field('async') }
+			},
+			inline: ($, previous) => [...(previous ?? []), ($ as Record<string, unknown>)._kw_async]
+		});
+		wired.rules.r!.call({}, {}, origSeq);
+		const $ = new Proxy(
+			{},
+			{
+				get: (_, prop: string) => ({ type: 'symbol', name: prop })
+			}
+		);
+		const inline = wired.inline!;
+		expect(inline.call({}, $, [])).toEqual([{ type: 'symbol', name: '_kw_async' }]);
+	});
+
+	it('synthesizes bare-token keyword helper bodies instead of prec-wrapped bodies', () => {
+		const origSeq = {
+			type: 'seq',
+			members: [{ type: 'string', value: 'async' }]
+		};
+		const wired = wire({
+			name: 'test',
+			rules: {},
+			transforms: {
+				r: { 0: field('async') }
+			}
+		});
+		wired.rules.r!.call({}, {}, origSeq);
+		const asyncFn = wired.rules._kw_async!;
+		expect(asyncFn.call({}, {})).toEqual({ type: 'string', value: 'async' });
+	});
+
 	it('transforms: pre-registers _<name> for alias() placeholders', () => {
 		const wired = wire({
 			name: 'test',
@@ -457,6 +521,18 @@ describe('wire()', () => {
 		// callee. Calling it produces 'custom', not a blank.
 		const fn = wired.rules._kw_async!;
 		expect(fn.call({}, {})).toEqual({ type: 'string', value: 'custom' });
+		const origSeq = {
+			type: 'seq',
+			members: [{ type: 'string', value: 'async' }]
+		};
+		wired.rules.r!.call({}, {}, origSeq);
+		const $ = new Proxy(
+			{},
+			{
+				get: (_, prop: string) => ({ type: 'symbol', name: prop })
+			}
+		);
+		expect(wired.inline!.call({}, $, [])).toEqual([]);
 	});
 });
 

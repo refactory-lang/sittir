@@ -420,7 +420,7 @@ const _supertype_pattern_ids = new Set<number>([311, 312, 129, 313, 126, 151, 31
 const _supertype_statement_ids = new Set<number>([160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
 const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 142, 311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
 const _supertype_tokens_ids = new Set<number>([168, 169, 142, 311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
-const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 417, 239, 236, 228, 198]);
+const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 407, 239, 236, 228, 198]);
 const _supertype_useClause_ids = new Set<number>([139, 1, 142, 140, 141, 243, 208, 207, 206, 209]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -651,11 +651,6 @@ const _kindIdByKind = new Map<string, number>([
     ["_visibility_modifier_crate", TSKindId._VisibilityModifierCrate],
     ["_visibility_modifier_pub", TSKindId.VisibilityModifierPub],
     ["_visibility_modifier_in_path", TSKindId.VisibilityModifierInPath],
-    ["_kw_move_marker", TSKindId.KwMoveMarker],
-    ["_kw_static_marker", TSKindId.KwStaticMarker],
-    ["_kw_pub", TSKindId.KwPub],
-    ["_kw_in", TSKindId.KwIn],
-    ["_kw_unsafe_marker", TSKindId.KwUnsafeMarker],
     ["_pointer_type_const", TSKindId.PointerTypeConst],
     ["_pointer_type_mut", TSKindId._PointerTypeMut],
     ["_reference_expression_raw_const", TSKindId.ReferenceExpressionRawConst],

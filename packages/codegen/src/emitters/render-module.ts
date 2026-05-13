@@ -26,6 +26,7 @@ import {
 	isMultiple,
 	isRequired,
 	isNodeRef,
+	isUnresolvedRef,
 	kindsOf,
 	structuralFieldsOf,
 	structuralChildrenOf
@@ -39,7 +40,7 @@ import { renderModuleSrcDir, renderModuleTemplatesDir } from './render-module-pa
 import { type TransportLiteral } from './transport-projection.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import { buildSupertypeTransportSet, classifySlot, deriveChildrenKinds, type SlotClass } from './transport-common.ts';
-import { slotLiteralValues } from './shared.ts';
+import { keywordPresenceValue, slotLiteralValues } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
 	collectKindEntries,
@@ -113,10 +114,7 @@ function collectRenderModuleEntry(node: AssembledNode): RenderModuleCollectedEnt
 	if (node.userFacing) {
 		if (node instanceof AssembledBranch) {
 			separator = node.separator ?? findRepeatSeparator(node.simplifiedRule);
-			if (node.isContainerShape) {
-				const childCount = node.children?.length ?? 0;
-				if (childCount > 0) isListContainer = true;
-			}
+			if (node.fields.length === 0 && node.children.length > 0) isListContainer = true;
 		} else if (node instanceof AssembledGroup) {
 			separator = findRepeatSeparator(node.simplifiedRule);
 		}
@@ -1412,10 +1410,8 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 		if (node instanceof AssembledBranch) {
 			const sep = node.separator ?? findRepeatSeparator(node.simplifiedRule);
 			if (sep !== undefined) separators.set(kind, sep);
-			// Every container-shape branch with children is a list-container.
-			if (node.isContainerShape) {
-				const childCount = node.children?.length ?? 0;
-				if (childCount > 0) listContainers.add(kind);
+			if (node.fields.length === 0 && node.children.length > 0) {
+				listContainers.add(kind);
 			}
 		} else if (node instanceof AssembledGroup) {
 			const sep = findRepeatSeparator(node.simplifiedRule);
@@ -1489,11 +1485,7 @@ function classifySlotForEmit(kinds: readonly string[], nodeMap: NodeMap): SlotCl
 			return { tag: 'supertype', supertypeName: node.typeName };
 		}
 		if (node.modelType === 'polymorph') {
-			// Polymorph transport enums do not implement `ToNapiValue` in Phase 1
-			// (only a custom `FromNapiValue` is emitted). Struct fields with
-			// `#[napi(object)]` require `ToNapiValue` for every field type.
-			// Downgrade to heterogeneous (bare AnyTransport, which has both traits).
-			return { tag: 'heterogeneous' };
+			return { tag: 'concrete', kind: cls.kind, typeName: node.typeName };
 		}
 		// Concrete node: use the assembled typeName (PascalCase, leading-underscore-
 		// stripped by the assemble phase). This ensures the render fn name and
@@ -1722,13 +1714,10 @@ function renderTypedKindFn(
 	meta: MetaData,
 	nodeMap: NodeMap
 ): string[] {
-	if (node.modelType === 'polymorph' && node.forms.length > 0) {
-		return renderTypedPolymorphFn(node, structsByKind, meta, nodeMap);
-	}
-
 	switch (node.modelType) {
 		case 'branch':
-		case 'group': {
+		case 'group':
+		case 'polymorph': {
 			const struct = structsByKind.get(node.kind);
 			if (struct === undefined) {
 				// No template for this kind — fall back to joining children/text.
@@ -1755,13 +1744,14 @@ function renderTypedKindFn(
 function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const structName = rustTransportStructName(node);
-	const hasChildren = hasRequiredChild(structuralChildrenOf(node)) || structuralChildrenOf(node).length > 0;
+	const children = transportChildrenOf(node);
+	const hasChildren = hasRequiredChild(children) || children.length > 0;
 	const lines: string[] = [];
 	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	if (hasChildren) {
-		const childrenIsRequired = hasRequiredChild(structuralChildrenOf(node));
-		const childrenIsMultiple = hasMultipleChildren(structuralChildrenOf(node));
-		const childrenCls = classifySlotFromChildren(structuralChildrenOf(node), nodeMap);
+		const childrenIsRequired = hasRequiredChild(children);
+		const childrenIsMultiple = hasMultipleChildren(children);
+		const childrenCls = classifySlotFromChildren(children, nodeMap);
 		// For per-slot enum (heterogeneous) and concrete/supertype, all implement
 		// RenderableTransport — use `child` directly as the expression.
 		const childWriteCall = buildSlotWriteCall(childrenCls, 'child');
@@ -1922,7 +1912,7 @@ function renderTypedBranchFn(node: AssembledNode, struct: EmittedStruct, meta: M
 	// Build per-field kind maps for typed render call selection (Phase 1).
 	const fieldKindsByName = buildFieldKindsByName(structuralFieldsOf(node));
 	const fieldMixedByName = buildFieldMixedByName(structuralFieldsOf(node));
-	const childrenCls = classifySlotFromChildren(structuralChildrenOf(node), nodeMap);
+	const childrenCls = classifySlotFromChildren(transportChildrenOf(node), nodeMap);
 
 	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(...buildTypedTemplateBody(struct, separator, fieldKindsByName, fieldMixedByName, childrenCls, nodeMap));
@@ -2538,7 +2528,15 @@ function renderTransportSupport(
 	// grammar supertype covers all kinds). Emit before transport structs since
 	// structs reference the enum type in their children field.
 	const perSlotEnums = collectPerSlotChildEnums(nodes, nodeMap);
-	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) => emitPerSlotChildEnum(entry, kidByKind, nodeMap));
+	const literalVariantByKey = new Map(
+		projection.literals.map((literal, index) => [
+			`${literal.kind}\0${literal.text}`,
+			rustLiteralTransportVariantName(literal, index)
+		] as const)
+	);
+	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) =>
+		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey)
+	);
 
 	return [
 		...anyTransportLines,
@@ -2697,16 +2695,7 @@ function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: Nod
 	};
 
 	for (const node of nodes) {
-		if (node.modelType === 'polymorph' && node.forms.length > 0) {
-			// Polymorph forms own the actual fields/children; the parent has none.
-			// Form kinds are excluded from projection.nodes (polymorphFormKinds),
-			// but their transport structs are emitted — collect from each form.
-			for (const form of node.forms) {
-				collectFromNode(form.fields, form.children);
-			}
-		} else {
-			collectFromNode(structuralFieldsOf(node), structuralChildrenOf(node));
-		}
+		collectFromNode(structuralFieldsOf(node), transportChildrenOf(node));
 	}
 	// Transitive closure: supertype enums include sub-supertypes as variants.
 	// If PatternTransport has `KeywordIdentifier(Box<KeywordIdentifierTransport>)`,
@@ -2919,7 +2908,12 @@ function emitSupertypeTransportEnum(
 		for (const { subKind, subNode } of validSubtypes) {
 			const variant = rustTypeIdent(subNode.typeName);
 			const typeName = rustTransportStructName(subNode);
-			const acceptedKinds = [subKind, ...collectConcreteTransportKinds(subKind, nodeMap)];
+			const acceptedKinds = new Set([subKind, ...collectConcreteTransportKinds(subKind, nodeMap)]);
+			if (subNode instanceof AssembledEnum) {
+				for (const resolvedKind of subNode.resolvedKinds) {
+					acceptedKinds.add(resolvedKind);
+				}
+			}
 			for (const acceptedKind of acceptedKinds) {
 				const id = kindIdByKind.get(acceptedKind);
 				if (id === undefined || emittedIds.has(id)) continue;
@@ -3072,6 +3066,36 @@ function collectConcreteTransportKinds(
 	return [...concreteKinds];
 }
 
+function expandConcreteTransportKinds(
+	kinds: readonly string[],
+	nodeMap: NodeMap
+): { kind: string; node: AssembledNode; concreteName: string }[] {
+	const expanded: { kind: string; node: AssembledNode; concreteName: string }[] = [];
+	const seen = new Set<string>();
+
+	const includeKind = (kind: string): void => {
+		if (seen.has(kind)) return;
+		const node = nodeMap.nodes.get(kind);
+		if (node === undefined) return;
+		const concreteName = concreteTransportTypeName(kind, nodeMap);
+		if (concreteName !== null) {
+			seen.add(kind);
+			expanded.push({ kind, node, concreteName });
+			return;
+		}
+		if (node.modelType !== 'supertype') return;
+		for (const concreteKind of collectConcreteTransportKinds(kind, nodeMap)) {
+			includeKind(concreteKind);
+		}
+	};
+
+	for (const kind of kinds) {
+		includeKind(kind);
+	}
+
+	return expanded;
+}
+
 /**
  * Per-slot children enum entry: the parent node typeName and the set of
  * concrete child kinds that the slot accepts.
@@ -3081,6 +3105,8 @@ interface PerSlotChildEnum {
 	typeName: string;
 	/** Concrete child kinds in this slot. */
 	kinds: readonly string[];
+	/** Terminal literal children that may appear in runtime `$children`. */
+	literals: readonly TransportLiteral[];
 }
 
 /**
@@ -3102,7 +3128,7 @@ interface PerSlotChildEnum {
  * empty and must not be emitted — callers fall back to `Box<AnyTransport>`.
  */
 function hasAnyConcreteChildKind(kinds: readonly string[], nodeMap: NodeMap): boolean {
-	return kinds.some((k) => concreteTransportTypeName(k, nodeMap) !== null);
+	return expandConcreteTransportKinds(kinds, nodeMap).length > 0;
 }
 
 function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: NodeMap): PerSlotChildEnum[] {
@@ -3112,6 +3138,16 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 	const consider = (typeName: string, children: readonly AssembledNonterminal[]): void => {
 		if (children.length === 0) return;
 		const allKinds = [...new Set(children.flatMap((c) => deriveChildrenKinds(c)))];
+		const literalSet = new Set<string>();
+		const literals: TransportLiteral[] = [];
+		for (const child of children) {
+			for (const text of slotLiteralValues(child)) {
+				const key = `${text}\0${text}`;
+				if (literalSet.has(key)) continue;
+				literalSet.add(key);
+				literals.push({ kind: text, text });
+			}
+		}
 		const cls = classifySlotForEmit(allKinds, nodeMap);
 		if (cls.tag !== 'heterogeneous') return;
 		// If all child kinds map to supertypes/polymorphs/multi (no concrete transport
@@ -3121,17 +3157,11 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 		const enumName = perSlotEnumName(typeName);
 		if (seen.has(enumName)) return;
 		seen.add(enumName);
-		entries.push({ typeName, kinds: allKinds });
+		entries.push({ typeName, kinds: allKinds, literals });
 	};
 
 	for (const node of nodes) {
-		if (node.modelType === 'polymorph' && node.forms.length > 0) {
-			for (const form of node.forms) {
-				consider(form.typeName, form.children);
-			}
-		} else {
-			consider(node.typeName, structuralChildrenOf(node));
-		}
+		consider(node.typeName, transportChildrenOf(node));
 	}
 	return entries;
 }
@@ -3151,24 +3181,15 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 function emitPerSlotChildEnum(
 	entry: PerSlotChildEnum,
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	literalVariantByKey: ReadonlyMap<string, string>
 ): string[] {
 	const enumName = perSlotEnumName(entry.typeName);
 	const lines: string[] = [];
 
-	// Only include kinds that have a concrete transport struct or enum.
-	// Supertypes, polymorphs, and multi nodes are emitted via separate paths
-	// and do not have a {Kind}Transport struct — skip them.
-	const validKinds = entry.kinds
-		.map((kind) => {
-			const node = nodeMap.nodes.get(kind);
-			if (node === undefined) return null;
-			// Skip nodes with no concrete transport type (supertype, multi, polymorph).
-			const concreteName = concreteTransportTypeName(kind, nodeMap);
-			if (concreteName === null) return null;
-			return { kind, node, concreteName };
-		})
-		.filter((x): x is { kind: string; node: AssembledNode; concreteName: string } => x !== null);
+	// Expand any supertype child kinds to their concrete transport-bearing kinds,
+	// then dedupe so aliased / overlapping paths emit one variant per concrete kind.
+	const validKinds = expandConcreteTransportKinds(entry.kinds, nodeMap);
 
 	// If no valid concrete kinds remain (all were supertypes/polymorphs), fall back
 	// to emitting an empty enum — this should be caught upstream by the caller.
@@ -3181,6 +3202,12 @@ function emitPerSlotChildEnum(
 		const variant = rustTypeIdent(node.typeName);
 		const variantType = isLeafLike(node) ? concreteName : `Box<${concreteName}>`;
 		lines.push(`    ${variant}(${variantType}),`);
+	}
+	for (const literal of entry.literals) {
+		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
+		if (variant !== undefined) {
+			lines.push(`    ${variant},`);
+		}
 	}
 	lines.push(`}`);
 	lines.push(``);
@@ -3198,20 +3225,37 @@ function emitPerSlotChildEnum(
 			`            .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))?;`
 		);
 		lines.push(`        match kind_id {`);
+		const emittedIds = new Set<number>();
 		for (const { kind, node, concreteName } of validKinds) {
-			const id = kindIdByKind.get(kind);
-			if (id === undefined) continue;
 			const variant = rustTypeIdent(node.typeName);
 			const typeName = concreteName;
-			if (isLeafLike(node)) {
-				lines.push(`            ${id} => Ok(Self::${variant}(`);
-				lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
-				lines.push(`            )),`);
-			} else {
-				lines.push(`            ${id} => Ok(Self::${variant}(Box::new(`);
-				lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
-				lines.push(`            ))),`);
+			const acceptedKinds = new Set<string>([kind]);
+			if (node instanceof AssembledEnum) {
+				for (const resolvedKind of node.resolvedKinds) {
+					acceptedKinds.add(resolvedKind);
+				}
 			}
+			for (const acceptedKind of acceptedKinds) {
+				const id = kindIdByKind.get(acceptedKind);
+				if (id === undefined || emittedIds.has(id)) continue;
+				emittedIds.add(id);
+				if (isLeafLike(node)) {
+					lines.push(`            ${id} => Ok(Self::${variant}(`);
+					lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
+					lines.push(`            )),`);
+				} else {
+					lines.push(`            ${id} => Ok(Self::${variant}(Box::new(`);
+					lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
+					lines.push(`            ))),`);
+				}
+			}
+		}
+		for (const literal of entry.literals) {
+			const id = kindIdByKind.get(literal.kind);
+			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
+			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
+			emittedIds.add(id);
+			lines.push(`            ${id} => Ok(Self::${variant}),`);
 		}
 		lines.push(`            other => Err(::napi::Error::from_reason(format!(`);
 		lines.push(`                "unknown kind id {{other}} in ${enumName}",`);
@@ -3259,6 +3303,12 @@ function emitPerSlotChildEnum(
 			lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${variant}(*inner),`);
 		}
 	}
+	for (const literal of entry.literals) {
+		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
+		if (variant !== undefined) {
+			lines.push(`        ${enumName}::${variant} => AnyTransport::${variant},`);
+		}
+	}
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push(``);
@@ -3275,6 +3325,12 @@ function emitPerSlotChildEnum(
 		const concreteFn = rustTypedRenderFnName(node.typeName);
 		const innerExpr = isLeafLike(node) ? 'inner' : 'inner.as_ref()';
 		lines.push(`            ${enumName}::${variant}(inner) => ${concreteFn}(${innerExpr}, dest),`);
+	}
+	for (const literal of entry.literals) {
+		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
+		if (variant !== undefined) {
+			lines.push(`            ${enumName}::${variant} => dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from),`);
+		}
 	}
 	lines.push(`        }`);
 	lines.push(`    }`);
@@ -3592,48 +3648,16 @@ function renderTransportToNodeFns(
 	kindIdByKind?: ReadonlyMap<string, number>,
 	nodeMap?: NodeMap
 ): string[] {
-	if (node.modelType === 'polymorph' && node.forms.length > 0) {
-		const lines: string[] = [];
-		lines.push(
-			`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${rustTransportStructName(node)}) -> Result<TransportNodeData, ::askama::Error> {`
-		);
-		lines.push('    match transport {');
-		for (const form of node.forms) {
-			lines.push(
-				`        ${rustTransportStructName(node)}::${rustTransportFormVariantName(form)}(data) => ${rustTransportToNodeFnName(form.typeName)}(data),`
-			);
-		}
-		lines.push('    }');
-		lines.push('}');
-		lines.push('');
-		for (const form of node.forms) {
-			lines.push(
-				...renderTransportDataToNodeFn(
-					rustTransportToNodeFnName(form.typeName),
-					rustTransportFormStructName(form),
-					node.kind,
-					form.fields,
-					form.children,
-					true,
-					true,
-					kindIdByKind,
-					nodeMap,
-					form.typeName
-				)
-			);
-		}
-		return lines;
-	}
-
 	switch (node.modelType) {
 		case 'branch':
 		case 'group':
+		case 'polymorph':
 			return renderTransportDataToNodeFn(
 				rustTransportToNodeFnName(node.typeName),
 				rustTransportStructName(node),
 				node.kind,
 				structuralFieldsOf(node),
-				structuralChildrenOf(node),
+				transportChildrenOf(node),
 				true,
 				true,
 				kindIdByKind,
@@ -4033,6 +4057,27 @@ function renderLiteralTransportStruct(_literals: readonly TransportLiteral[]): s
 	return [];
 }
 
+function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): string | undefined {
+	if (node.modelType !== 'keyword' && node.modelType !== 'token') return undefined;
+	const literal = node.text;
+	if (!literal) return undefined;
+	for (const [, owner] of nodeMap.nodes) {
+		for (const field of structuralFieldsOf(owner)) {
+			if (keywordPresenceValue(field, nodeMap) !== literal) continue;
+			if (
+				field.values.some(
+					(value) =>
+						isNodeRef(value) &&
+						(isUnresolvedRef(value.node) ? value.node.name : value.node.kind) === node.kind
+				)
+			) {
+				return literal;
+			}
+		}
+	}
+	return undefined;
+}
+
 function renderTransportStruct(
 	node: AssembledNode,
 	nodeMap: NodeMap,
@@ -4059,37 +4104,13 @@ function renderPolymorphTransportDefs(
 	node: Extract<AssembledNode, { modelType: 'polymorph' }>,
 	nodeMap: NodeMap
 ): string[] {
-	const lines: string[] = [];
-	// Polymorph envelope enum: no serde, no napi(object) — custom FromNapiValue
-	// impl below reads $variant and dispatches to the appropriate form struct.
-	lines.push('#[derive(Debug, Clone)]');
-	lines.push(`pub enum ${rustTransportStructName(node)} {`);
-	for (const form of node.forms) {
-		lines.push(`    ${rustTransportFormVariantName(form)}(${rustTransportFormStructName(form)}),`);
-	}
-	lines.push('}');
-	lines.push('');
-	// Custom FromNapiValue impl for the polymorph envelope.
-	lines.push(...renderPolymorphTransportFromNapiValue(node));
-	// RenderableTransport for the polymorph enum — delegates to the per-polymorph
-	// render fn which matches on variants and calls each form's render fn.
-	const polymorphStructName = rustTransportStructName(node);
-	const polymorphRenderFn = rustTypedRenderFnName(node.typeName);
-	lines.push(`impl RenderableTransport for ${polymorphStructName} {`);
-	lines.push(`    fn render_into(`);
-	lines.push(`        &self,`);
-	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
-	lines.push(`    ) -> Result<(), ::askama::Error> {`);
-	lines.push(`        ${polymorphRenderFn}(self, dest)`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push('');
-	for (const form of node.forms) {
-		lines.push(
-			...renderTransportDataStruct(rustTransportFormStructName(form), form, form.fields, form.children, nodeMap)
-		);
-	}
-	return lines;
+	return renderTransportDataStruct(
+		rustTransportStructName(node),
+		node,
+		structuralFieldsOf(node),
+		transportChildrenOf(node),
+		nodeMap
+	);
 }
 
 function renderTransportDataStruct(
@@ -4165,7 +4186,13 @@ function renderTransportDataStruct(
 	if (isLeafNode) {
 		// Tokens are anonymous (named=false); patterns and keywords are named (named=true).
 		const leafNamed = node.modelType !== 'token';
-		lines.push(...renderLeafTransportNapiImpls(structName, leafNamed));
+		lines.push(
+			...renderLeafTransportNapiImpls(
+				structName,
+				leafNamed,
+				leafBooleanPresenceLiteral(node, nodeMap)
+			)
+		);
 	}
 	return lines;
 }
@@ -4195,7 +4222,11 @@ function renderTransportDataStruct(
  *   `.filter(|t| t.transport_named().unwrap_or(true))` works correctly without
  *   needing to read `$named` from the JS object.
  */
-function renderLeafTransportNapiImpls(structName: string, named: boolean): string[] {
+function renderLeafTransportNapiImpls(
+	structName: string,
+	named: boolean,
+	booleanLiteral?: string
+): string[] {
 	const lines: string[] = [];
 
 	// Release mode: read plain JS string — no metadata round-trip.
@@ -4209,6 +4240,17 @@ function renderLeafTransportNapiImpls(structName: string, named: boolean): strin
 	lines.push(`    ) -> ::napi::Result<Self> {`);
 	lines.push(`        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {`);
 	lines.push(`            text`);
+	if (booleanLiteral !== undefined) {
+		lines.push(`        } else if let Ok(present) = bool::from_napi_value(env, napi_val) {`);
+		lines.push(`            if !present {`);
+		lines.push(
+			`                return Err(::napi::Error::from_reason(${JSON.stringify(
+				`${structName} received false; omit the field instead of sending false`
+			)}));`
+		);
+		lines.push(`            }`);
+		lines.push(`            ${JSON.stringify(booleanLiteral)}.to_string()`);
+	}
 	lines.push(`        } else {`);
 	lines.push(`            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
 	lines.push(`            obj.get("$text")?.unwrap_or_default()`);
@@ -4234,6 +4276,39 @@ function renderLeafTransportNapiImpls(structName: string, named: boolean): strin
 	lines.push(`        env: ::napi::sys::napi_env,`);
 	lines.push(`        napi_val: ::napi::sys::napi_value,`);
 	lines.push(`    ) -> ::napi::Result<Self> {`);
+	if (booleanLiteral !== undefined) {
+		lines.push(`        if let Ok(text) = String::from_napi_value(env, napi_val) {`);
+		lines.push(`            return Ok(Self {`);
+		for (const f of TRANSPORT_METADATA_FIELDS) {
+			if (f.rustName === 'transport_named') {
+				lines.push(`                transport_named: Some(${named}),`);
+			} else {
+				lines.push(`                ${f.rustName}: None,`);
+			}
+		}
+		lines.push(`                text,`);
+		lines.push(`            });`);
+		lines.push(`        }`);
+		lines.push(`        if let Ok(present) = bool::from_napi_value(env, napi_val) {`);
+		lines.push(`            if !present {`);
+		lines.push(
+			`                return Err(::napi::Error::from_reason(${JSON.stringify(
+				`${structName} received false; omit the field instead of sending false`
+			)}));`
+		);
+		lines.push(`            }`);
+		lines.push(`            return Ok(Self {`);
+		for (const f of TRANSPORT_METADATA_FIELDS) {
+			if (f.rustName === 'transport_named') {
+				lines.push(`                transport_named: Some(${named}),`);
+			} else {
+				lines.push(`                ${f.rustName}: None,`);
+			}
+		}
+		lines.push(`                text: ${JSON.stringify(booleanLiteral)}.to_string(),`);
+		lines.push(`            });`);
+		lines.push(`        }`);
+	}
 	lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
 	lines.push('        let text: String = obj.get("$text")?.unwrap_or_default();');
 	for (const f of TRANSPORT_METADATA_FIELDS) {
@@ -4522,10 +4597,7 @@ function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | nul
 	const node = nodeMap.nodes.get(kind);
 	if (node !== undefined) {
 		// Supertype and multi nodes are not emitted as transport structs.
-		// Polymorph enums don't implement ToNapiValue in Phase 1 so struct fields
-		// with #[napi(object)] can't use them — return null to fall back to bare AnyTransport.
-		// All three: returning null signals "fall back to AnyTransport" for Phase 1.
-		if (node.modelType === 'supertype' || node.modelType === 'multi' || node.modelType === 'polymorph') {
+		if (node.modelType === 'supertype' || node.modelType === 'multi') {
 			return null;
 		}
 		if (node instanceof AssembledEnum) {
@@ -4544,16 +4616,11 @@ function hasRequiredChild(children: readonly AssembledNonterminal[]): boolean {
 /**
  * True when native transport must treat `$children` as list-shaped.
  *
- * Two cases force list transport:
- * - at least one contributing child slot is itself multiple
- * - more than one structural child slot is aggregated into the shared
- *   `$children` property (even when each slot is individually `single`)
- *
- * The second case matches the runtime projection path: aggregated children are
- * always serialized as an array under `$children`, not as a scalar union.
+ * Any structural child slot forces list transport because the runtime projection
+ * always serializes `$children` as an array, even for a single required child.
  */
 function hasMultipleChildren(children: readonly AssembledNonterminal[]): boolean {
-	return children.length > 1 || children.some((child) => isMultiple(child));
+	return children.length > 0;
 }
 
 /**
@@ -4589,6 +4656,10 @@ function rustTransportFormStructName(form: AssembledGroup): string {
 
 function rustTransportFormVariantName(form: AssembledGroup): string {
 	return rustTypeIdent(form.typeName);
+}
+
+function transportChildrenOf(node: AssembledNode): readonly AssembledNonterminal[] {
+	return structuralChildrenOf(node);
 }
 
 function rustTransportToNodeFnName(typeName: string): string {
@@ -4923,34 +4994,40 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 		lines.push(`    ) -> ::napi::Result<Self> {`);
 
 		if (kindEntries !== undefined) {
-			// Accept either a bare numeric kind id or a NodeData-shaped object whose
-			// `$type` carries the numeric id. Native validators now pass the latter.
-			lines.push(`        let kind_id: u16 = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
-			lines.push(`            kind_id`);
-			lines.push(`        } else {`);
-			lines.push(`            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-			lines.push(`            obj.get("$type")?`);
-			lines.push(
-				`                .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))?`
-			);
-			lines.push(`        };`);
-			lines.push(`        match kind_id {`);
+			// Enum-valued fields cross the native boundary as NodeData-shaped objects.
+			// Some grammars send the resolved leaf kind in `$type` (primitive_type),
+			// while others keep the parent enum kind and expose the chosen literal
+			// under `$text` or `_<literal>` child fields (fragment_specifier).
+			lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
+			lines.push(`        if let Some(kind_id) = obj.get::<u16>("$type")? {`);
+			lines.push(`            match kind_id {`);
 			for (const v of values) {
 				const entry = findKindEntry(kindEntries, v);
 				const variant = literalToVariantName(v);
 				if (entry !== undefined) {
-					lines.push(`            ${entry.id} => Ok(Self::${variant}), // ${JSON.stringify(v)}`);
+					lines.push(`                ${entry.id} => return Ok(Self::${variant}), // ${JSON.stringify(v)}`);
 				} else {
-					// No catalog entry for this literal — emit a commented-out arm.
-					// This arm will never match at runtime (the value has no parser symbol);
-					// the unreachable comment signals that the literal is synthesized.
-					lines.push(`            // ${JSON.stringify(v)}: no parser symbol — cannot dispatch by KindId`);
+					lines.push(`                // ${JSON.stringify(v)}: no parser symbol — cannot dispatch by KindId`);
 				}
 			}
-			lines.push(`            other => Err(::napi::Error::from_reason(format!(`);
-			lines.push(`                "unknown kind id {{other}} for ${enumName}",`);
-			lines.push(`            ))),`);
+			lines.push(`                _ => {}`);
+			lines.push(`            }`);
 			lines.push(`        }`);
+			lines.push(`        if let Some(text) = obj.get::<String>("$text")? {`);
+			lines.push(`            match text.as_str() {`);
+			for (const v of values) {
+				lines.push(`                ${JSON.stringify(v)} => return Ok(Self::${literalToVariantName(v)}),`);
+			}
+			lines.push(`                _ => {}`);
+			lines.push(`            }`);
+			lines.push(`        }`);
+			for (const v of values) {
+				const variant = literalToVariantName(v);
+				lines.push(
+					`        if obj.get::<::napi::bindgen_prelude::Object>(${JSON.stringify(`_${v}`)})?.is_some() { return Ok(Self::${variant}); }`
+				);
+			}
+			lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`unknown enum payload for ${enumName}`)}))`);
 		} else {
 			// Fallback: kindEntries unavailable (parser.c not found) — read $text string.
 			lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);

@@ -442,6 +442,12 @@ function wireRegisterSyntheticRule(name, content) {
   currentContext.deposits.set(name, content);
   return true;
 }
+function wireRegisterSyntheticInline(name) {
+  if (!currentContext) return false;
+  if (currentContext.authoredRuleNames.has(name)) return false;
+  currentContext.syntheticInline.add(name);
+  return true;
+}
 function wireRegisterPolymorphVariant(parent, child) {
   if (!currentContext) return false;
   const exists = currentContext.polymorphVariants.some((v) => v.parent === parent && v.child === child);
@@ -466,10 +472,12 @@ function wireGetCurrentRuleKind() {
 function wire(config) {
   const context = {
     deposits: /* @__PURE__ */ new Map(),
+    syntheticInline: /* @__PURE__ */ new Set(),
     polymorphVariants: [],
     conflictGroups: [],
     refineForms: /* @__PURE__ */ new Map(),
-    currentRuleKind: null
+    currentRuleKind: null,
+    authoredRuleNames: new Set(Object.keys(config.rules))
   };
   const polymorphs = config.polymorphs ?? {};
   const transforms = config.transforms ?? {};
@@ -480,10 +488,12 @@ function wire(config) {
   injectTransformHiddenRulePlaceholders(outRules, transforms, context);
   wrapAllRuleFns(outRules, context);
   const conflicts = wrapConflictsCallback(config.conflicts, context);
+  const inline = wrapInlineCallback(config.inline, context);
   const wired = {
     ...config,
     rules: outRules,
-    ...conflicts === void 0 ? {} : { conflicts }
+    ...conflicts === void 0 ? {} : { conflicts },
+    ...inline === void 0 ? {} : { inline }
   };
   Object.defineProperty(wired, "__wireContext__", {
     value: context,
@@ -607,6 +617,9 @@ function wrapOneRuleFn(name, fn, context) {
 function wrapConflictsCallback(userConflicts, context) {
   return buildWiredConflictsFn(userConflicts, context);
 }
+function wrapInlineCallback(userInline, context) {
+  return buildWiredInlineFn(userInline, context);
+}
 function buildWiredConflictsFn(userConflicts, context) {
   return function wiredConflicts($, previous) {
     const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
@@ -614,6 +627,35 @@ function buildWiredConflictsFn(userConflicts, context) {
     const symbolized = context.conflictGroups.map((group) => group.map((name) => symbolizeRef($, name)));
     return [...base2, ...symbolized];
   };
+}
+function buildWiredInlineFn(userInline, context) {
+  return function wiredInline($, previous) {
+    const base2 = userInline ? userInline.call(this, $, previous) : previous ?? [];
+    if (context.syntheticInline.size === 0) return base2;
+    const existingNames = collectInlineNames(base2);
+    const appended = [];
+    for (const name of context.syntheticInline) {
+      if (existingNames.has(name)) continue;
+      appended.push(nativeInlineRef($, name));
+    }
+    return appended.length === 0 ? base2 : [...base2, ...appended];
+  };
+}
+function collectInlineNames(entries) {
+  const names = /* @__PURE__ */ new Set();
+  for (const entry of entries) {
+    if (!entry || typeof entry !== "object") continue;
+    const symbol = entry;
+    if ((symbol.type === "symbol" || symbol.type === "SYMBOL") && typeof symbol.name === "string") {
+      names.add(symbol.name);
+    }
+  }
+  return names;
+}
+function nativeInlineRef($, name) {
+  const nativeSymbol = globalThis.symbol;
+  if (typeof nativeSymbol === "function") return nativeSymbol(name);
+  return $[name];
 }
 function symbolizeRef(_$, name) {
   return { type: "SYMBOL", name };
@@ -645,14 +687,14 @@ function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
   const c = content;
   const isUpperCase = c.type === "STRING";
   const hiddenName = `_kw_${fieldName}`;
-  const nativePrec = globalThis.prec;
-  let precBody = typeof nativePrec === "function" ? nativePrec(-1, content) : content;
-  if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody);
-  if (!wireRegisterSyntheticRule(hiddenName, precBody)) {
+  let body = content;
+  if (wrapSyntheticBody) body = wrapSyntheticBody(body);
+  if (!wireRegisterSyntheticRule(hiddenName, body)) {
     throw new Error(
       `field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`
     );
   }
+  wireRegisterSyntheticInline(hiddenName);
   return {
     type: isUpperCase ? "SYMBOL" : "symbol",
     name: hiddenName

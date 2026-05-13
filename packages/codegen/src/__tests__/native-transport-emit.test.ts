@@ -13,6 +13,8 @@ import {
 import type { AssembledNode } from '../compiler/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../compiler/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
+import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import type { GeneratedKindEntry } from '../compiler/generated-metadata.ts';
 import { emitClientUtils } from '../emitters/client-utils.ts';
 import { emitRenderModule } from '../emitters/render-module.ts';
 import { emitTypes } from '../emitters/types.ts';
@@ -70,6 +72,20 @@ function makeMinimalNodeMap(): NodeMap {
 	);
 	nodes.set('_expression', new AssembledSupertype('_expression', expressionRule, ['identifier', 'call_expression']));
 	return nodeMapWith(nodes);
+}
+
+function makeMinimalGeneratedIdTables(): GeneratedIdTables {
+	return {
+		kindIds: {
+			call_expression: 11,
+			identifier: 12,
+			kw_fn: 13,
+			self: 14,
+			'+': 21,
+			'-': 22
+		},
+		sourceArtifact: 'parser.wasm'
+	};
 }
 
 function makeRequiredChildrenNodeMap(): NodeMap {
@@ -142,6 +158,38 @@ function makeAggregatedSingleChildrenNodeMap(): NodeMap {
 	nodes.set('pair_parent', new AssembledBranch('pair_parent', parentRule, parentRule));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
 	nodes.set('kw_fn', new AssembledKeyword('kw_fn', { type: 'string', value: 'fn' }));
+	return nodeMapWith(nodes);
+}
+
+function makeEnumChildNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{ type: 'symbol', name: 'identifier' },
+			{ type: 'symbol', name: 'operator' }
+		]
+	};
+	const operatorKindEntries: GeneratedKindEntry[] = [
+		{ kind: '+', id: 21 },
+		{ kind: '-', id: 22 }
+	];
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('enum_child_parent', new AssembledBranch('enum_child_parent', parentRule, parentRule));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set(
+		'operator',
+		new AssembledEnum(
+			'operator',
+			{
+				type: 'enum',
+				members: [
+					{ type: 'string', value: '+' },
+					{ type: 'string', value: '-' }
+				]
+			},
+			{ kindEntries: operatorKindEntries }
+		)
+	);
 	return nodeMapWith(nodes);
 }
 
@@ -382,6 +430,61 @@ describe('native transport emission', () => {
 		expect(emitted.transportRs.contents).not.toContain('AnyTransport::NodeData');
 		expect(emitted.transportRs.contents).not.toContain('node_json');
 		expect(emitted.transportRs.contents).not.toContain('JSON');
+	});
+
+	it('emits enum transport decoding that accepts numeric ids and $type objects when kind ids are available', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'call_expression.jinja',
+					content: '{# @generated #}\n{{ operator }}'
+				}
+			],
+			makeMinimalNodeMap(),
+			makeMinimalGeneratedIdTables()
+		);
+
+		const start = emitted.transportRs.contents.indexOf(
+			'impl ::napi::bindgen_prelude::FromNapiValue for OperatorEnum'
+		);
+		const end = emitted.transportRs.contents.indexOf(
+			'impl ::napi::bindgen_prelude::ToNapiValue for OperatorEnum',
+			start
+		);
+		const operatorFromNapi = emitted.transportRs.contents.slice(start, end);
+
+		expect(operatorFromNapi).toContain('if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {');
+		expect(operatorFromNapi).toContain('$type property missing in OperatorEnum');
+		expect(operatorFromNapi).toContain(
+			'let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;'
+		);
+	});
+
+	it('emits per-slot child transport arms for all resolved enum kind ids', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'enum_child_parent.jinja',
+					content: '{# @generated #}\n{{ children | join(" ") }}'
+				}
+			],
+			makeEnumChildNodeMap(),
+			makeMinimalGeneratedIdTables()
+		);
+		const start = emitted.transportRs.contents.indexOf(
+			'impl ::napi::bindgen_prelude::FromNapiValue for EnumChildParentChildTransport'
+		);
+		const end = emitted.transportRs.contents.indexOf(
+			'impl ::napi::bindgen_prelude::ToNapiValue for EnumChildParentChildTransport',
+			start
+		);
+		const childFromNapi = emitted.transportRs.contents.slice(start, end);
+
+		expect(childFromNapi).toContain('12 => Ok(Self::Identifier(');
+		expect(childFromNapi).toContain('21 => Ok(Self::Operator(');
+		expect(childFromNapi).toContain('22 => Ok(Self::Operator(');
 	});
 
 	it('flattens reserved nested supertypes in Rust transport enums', () => {

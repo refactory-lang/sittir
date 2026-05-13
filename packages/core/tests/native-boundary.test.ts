@@ -41,6 +41,15 @@ describe('native render boundary', () => {
 		expect(isNativeNodeData(withVariant)).toBe(true);
 	});
 
+	it('accepts boolean keyword-presence field storage', () => {
+		const withBooleanMarker: AnyNodeData = { ...leaf, _optional_marker: true };
+
+		expect(() => assertRenderableNodeData(withBooleanMarker)).not.toThrow();
+		expect(isRenderableNodeData(withBooleanMarker)).toBe(true);
+		expect(() => assertNativeNodeData(withBooleanMarker)).not.toThrow();
+		expect(isNativeNodeData(withBooleanMarker)).toBe(true);
+	});
+
 	it('rejects non-data values at the native transport boundary', async () => {
 		const invalidNode = {
 			$type: MOCK_KIND_ID,

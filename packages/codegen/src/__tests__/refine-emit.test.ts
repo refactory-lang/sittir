@@ -21,6 +21,7 @@ import { assemble } from '../compiler/assemble.ts';
 import { emitTypes } from '../emitters/types.ts';
 import { emitFactories } from '../emitters/factories.ts';
 import { emitIr } from '../emitters/ir.ts';
+import { emitAll } from '../emitters/emit.ts';
 import { createEmptyRuleCatalog } from '../compiler/rule-catalog.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 
@@ -60,6 +61,126 @@ function makeRefineRaw(forms: RefineForm[]): RawGrammar {
 		name: 'synth',
 		rules: {
 			iface_body: ifaceBodyRule
+		},
+		ruleCatalog: createEmptyRuleCatalog(),
+		extras: [],
+		externals: [],
+		supertypes: [],
+		inline: [],
+		conflicts: [],
+		word: null,
+		references: [],
+		refineForms: new Map([['iface_body', forms]])
+	};
+}
+
+function makeStringRefineRaw(forms: RefineForm[]): RawGrammar {
+	const stringRule: Rule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'field',
+				name: 'opening',
+				content: {
+					type: 'choice',
+					members: [
+						{ type: 'string', value: '"' },
+						{ type: 'string', value: "'" }
+					]
+				}
+			},
+			{
+				type: 'field',
+				name: 'contents',
+				content: {
+					type: 'choice',
+					members: [
+						{
+							type: 'repeat',
+							content: {
+								type: 'choice',
+								members: [{ type: 'symbol', name: 'string_fragment' }, { type: 'symbol', name: 'escape_sequence' }]
+							}
+						},
+						{
+							type: 'repeat',
+							content: {
+								type: 'choice',
+								members: [{ type: 'symbol', name: 'string_fragment' }, { type: 'symbol', name: 'escape_sequence' }]
+							}
+						}
+					]
+				}
+			},
+			{
+				type: 'field',
+				name: 'closing',
+				content: {
+					type: 'choice',
+					members: [
+						{ type: 'string', value: '"' },
+						{ type: 'string', value: "'" }
+					]
+				}
+			}
+		]
+	};
+	return {
+		name: 'synth',
+		rules: {
+			string: stringRule,
+			string_fragment: { type: 'pattern', value: '[^"\'\\\\]+' },
+			escape_sequence: { type: 'pattern', value: '\\\\.' }
+		},
+		ruleCatalog: createEmptyRuleCatalog(),
+		extras: [],
+		externals: [],
+		supertypes: [],
+		inline: [],
+		conflicts: [],
+		word: null,
+		references: [],
+		refineForms: new Map([['string', forms]])
+	};
+}
+
+function makeRefineSymbolRaw(forms: RefineForm[], wrapOptional = false): RawGrammar {
+	const enumRef = (name: string): Rule =>
+		wrapOptional
+			? { type: 'optional', content: { type: 'symbol', name } }
+			: { type: 'symbol', name };
+	return {
+		name: 'synth',
+		rules: {
+			iface_body: {
+				type: 'seq',
+				members: [
+					{
+						type: 'field',
+						name: 'opening',
+						content: enumRef('_iface_body_opening')
+					},
+					{
+						type: 'field',
+						name: 'closing',
+						content: enumRef('_iface_body_closing')
+					}
+				]
+			},
+			_iface_body_opening: {
+				type: 'enum',
+				members: [
+					{ type: 'string', value: '{' },
+					{ type: 'string', value: '{|' }
+				]
+			},
+			_iface_body_closing: {
+				type: 'enum',
+				members: [
+					{ type: 'string', value: '}' },
+					{ type: 'string', value: '|}' }
+				]
+			}
 		},
 		ruleCatalog: createEmptyRuleCatalog(),
 		extras: [],
@@ -144,6 +265,33 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 			{ fieldName: 'closing', literal: '|}' }
 		]);
 	});
+
+	it('accepts non-literal selections while narrowing only literal fields', () => {
+		const form: RefineForm = {
+			name: 'double',
+			selections: { 'opening:': '"', 'contents:': 0, 'closing:': '"' }
+		};
+		const raw = makeStringRefineRaw([form]);
+		expect(() => link(raw)).not.toThrow();
+		const narrowed = narrowedFieldLiteralsForForm(raw.rules.string!, form);
+		expect(narrowed).toEqual([
+			{ fieldName: 'opening', literal: '"' },
+			{ fieldName: 'closing', literal: '"' }
+		]);
+	});
+
+	it('follows synthesized enum-symbol indirection when rules are provided', () => {
+		const form: RefineForm = {
+			name: 'flow',
+			selections: { 'opening:': 1, 'closing:': 1 }
+		};
+		const raw = makeRefineSymbolRaw([form], true);
+		const narrowed = narrowedFieldLiteralsForForm(raw.rules.iface_body!, form, raw.rules);
+		expect(narrowed).toEqual([
+			{ fieldName: 'opening', literal: '{|' },
+			{ fieldName: 'closing', literal: '|}' }
+		]);
+	});
 });
 
 // ---------------------------------------------------------------------------
@@ -151,7 +299,10 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 // ---------------------------------------------------------------------------
 
 function runPipeline(forms: RefineForm[]) {
-	const raw = makeRefineRaw(forms);
+	return runPipelineRaw(makeRefineRaw(forms));
+}
+
+function runPipelineRaw(raw: RawGrammar) {
 	const linked = link(raw);
 	const optimized = optimize(linked);
 	const nodeMap = assemble(optimized);
@@ -224,6 +375,17 @@ describe('types emitter — per-form namespace sugar', () => {
 		expect(typesSrc).toMatch(/export type Config = Curly\.Config;/);
 	});
 
+	it('narrows Config through synthesized enum-symbol indirection', () => {
+		const { typesSrc } = runPipelineRaw(
+			makeRefineSymbolRaw([
+				{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
+				{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
+			])
+		);
+		expect(typesSrc).toMatch(/Curly \{\s+export type Config = Omit<ConfigFor<'iface_body'>, "opening" \| "closing">/);
+		expect(typesSrc).toMatch(/Flow \{\s+export type Config = Omit<ConfigFor<'iface_body'>, "opening" \| "closing">/);
+	});
+
 	it('leaves non-refined kinds with the original ConfigFor shape', () => {
 		// Same kind, but no refine forms declared — namespace should be the
 		// plain `Config = ConfigFor<'kind'>` form.
@@ -283,6 +445,19 @@ describe('factories emitter — per-form factory emission', () => {
 		// emitRefineFormSubNamespaces in emitters/types.ts.
 		expect(factoriesSrc).toMatch(/export function ifaceBodyCurly\(config\??: T\.IfaceBody\.Curly\.Config\)/);
 	});
+
+	it('emitAll keeps refine form factories in the real generation path', () => {
+		const raw = makeRefineRaw([
+			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
+			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
+		]);
+		const linked = link(raw);
+		const optimized = optimize(linked);
+		const nodeMap = assemble(optimized);
+		const { factories } = emitAll({ grammar: 'synth', nodeMap });
+		expect(factories).toMatch(/export function ifaceBodyCurly\(/);
+		expect(factories).toMatch(/export function ifaceBodyFlow\(/);
+	});
 });
 
 describe('ir emitter — per-form key attachment', () => {
@@ -293,7 +468,7 @@ describe('ir emitter — per-form key attachment', () => {
 		]);
 		// The bundle expression should list curly and flow entries alongside `from`.
 		expect(irSrc).toMatch(
-			/ifaceBody: _attach\(F\.ifaceBody, \{ from: FR\.ifaceBodyFrom, curly: F\.ifaceBodyCurly, flow: F\.ifaceBodyFlow \}\)/
+			/ifaceBody: _attach\(FR\.ifaceBodyFrom, \{ from: FR\.ifaceBodyFrom, strict: F\.ifaceBody, "curly": F\.ifaceBodyCurly, "flow": F\.ifaceBodyFlow \}\)/
 		);
 	});
 });

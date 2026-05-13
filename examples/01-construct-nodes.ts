@@ -47,14 +47,14 @@ export function minimalMainFunction() {
 }
 
 export function immutableFunctionUpdates() {
-	const fn = ir.functionItem.from({
+	const fn = ir.functionItem({
 		name: 'main',
-		parameters: ir.parameters.strict(),
-		body: ir.block.strict(),
+		parameters: ir.parameters(),
+		body: ir.block() /*TODO: from api should permit empty block, but it doesn't currently - likely need an overload for single slot array parameters in the from api*/,
 	});
 
 	return fn.$with
-		.name(ir.identifier('greet'))
+		.name(ir.identifier('greet')) /* TODO: name setter loses type infomation - withMethods must be dropping the type signature */
 		.$with.body(ir.block.strict());
 }
 

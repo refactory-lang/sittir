@@ -40,6 +40,7 @@ export type LeafStringMap = {
   _public_field_definition_optionality_marker: "?" | "!";
   _readonly_marker: "readonly";
   _static_marker: "static";
+  _string_opening: "\"" | "'";
   _unary_expression_operator: "!" | "~" | "-" | "+" | "typeof" | "void" | "delete";
   accessibility_modifier: "public" | "private" | "protected";
   false: "false";
@@ -150,8 +151,6 @@ export const enum SyntaxKind {
   PublicFieldDefinitionDeclareFirst = "_public_field_definition_declare_first",
   PublicFieldDefinitionReadonlyFirst = "_public_field_definition_readonly_first",
   PublicFieldDefinitionStaticMods = "_public_field_definition_static_mods",
-  _StringDouble = "_string_double",
-  _StringSingle = "_string_single",
   TypeQueryCallExpression = "_type_query_call_expression",
   TypeQueryCallExpressionInTypeAnnotation = "_type_query_call_expression_in_type_annotation",
   TypeQueryInstantiationExpression = "_type_query_instantiation_expression",
@@ -299,8 +298,6 @@ export const enum SyntaxKind {
   SequenceExpression = "sequence_expression",
   SpreadElement = "spread_element",
   StatementBlock = "statement_block",
-  StringDouble = "string_double",
-  StringSingle = "string_single",
   String = "string",
   SubscriptExpression = "subscript_expression",
   SwitchBody = "switch_body",
@@ -361,6 +358,7 @@ export const enum SyntaxKind {
   ReadonlyMarker = "_readonly_marker",
   ReservedIdentifier = "_reserved_identifier",
   StaticMarker = "_static_marker",
+  StringOpening = "_string_opening",
   TypeIdentifier = "_type_identifier",
   UnaryExpressionOperator = "_unary_expression_operator",
   AccessibilityModifier = "accessibility_modifier",
@@ -449,12 +447,14 @@ export const enum SyntaxKind {
 export const enum TSKindId {
   Identifier = 1,
   HashBangLine = 2,
-  Star = 3,
+  Star2 = 3,
   As = 4,
   Lbrace = 5,
   Comma = 6,
   Rbrace = 7,
+  AnonType = 8,
   Typeof = 9,
+  AnonImport = 10,
   From = 11,
   With = 12,
   Assert = 13,
@@ -490,6 +490,7 @@ export const enum TSKindId {
   Lbrack = 43,
   Rbrack = 44,
   Dot = 45,
+  AnonClass = 46,
   Function = 47,
   Async = 48,
   EqGt = 49,
@@ -516,85 +517,90 @@ export const enum TSKindId {
   GtGt = 70,
   GtGtGt = 71,
   LtLt = 72,
-  Amp = 73,
+  Amp2 = 73,
   Caret = 74,
-  Pipe = 75,
+  Pipe2 = 75,
   Plus = 76,
   Dash = 77,
-  Slash = 78,
+  Slash2 = 78,
   Percent = 79,
   StarStar = 80,
-  Lt = 81,
+  Lt2 = 81,
   LtEq = 82,
   EqEq = 83,
   EqEqEq = 84,
   BangEq = 85,
   BangEqEq = 86,
   GtEq = 87,
-  Gt = 88,
+  Gt2 = 88,
   QmarkQmark = 89,
   Instanceof = 90,
   Tilde = 91,
   Void = 92,
   Delete = 93,
-  UnescapedDoubleStringFragment = 94,
-  UnescapedSingleStringFragment = 95,
-  EscapeSequence = 96,
-  Comment = 97,
-  Bquote = 98,
-  DollarLbrace = 99,
-  Slash2 = 100,
-  RegexPattern = 101,
-  RegexFlags = 102,
-  Number = 103,
-  PrivatePropertyIdentifier = 104,
-  Target = 105,
-  Meta = 106,
-  This = 107,
-  Super = 108,
-  True = 109,
-  False = 110,
-  Null = 111,
-  Undefined = 112,
-  At = 113,
-  Static = 114,
-  Get = 115,
-  Set = 116,
-  Declare = 117,
-  Namespace = 118,
-  Public = 119,
-  Private = 120,
-  Protected = 121,
-  Override = 122,
-  Readonly = 123,
-  Any = 125,
-  Boolean = 127,
-  Symbol = 129,
-  Export = 130,
-  Qmark = 132,
-  Abstract = 133,
-  Satisfies = 134,
-  Require = 135,
-  Extends = 136,
-  Implements = 137,
-  Global = 138,
-  Interface = 139,
-  Enum = 140,
-  DashQmarkColon = 141,
-  PlusQmarkColon = 142,
-  QmarkColon = 143,
-  Infer = 145,
-  Is = 146,
-  Keyof = 147,
-  Unique = 148,
-  Unknown = 149,
-  Never = 150,
-  LbracePipe = 151,
-  PipeRbrace = 152,
-  Accessor = 153,
-  Using = 154,
-  Dquote = 155,
-  Squote = 156,
+  Dquote = 94,
+  Squote = 95,
+  UnescapedDoubleStringFragment = 96,
+  UnescapedSingleStringFragment = 97,
+  EscapeSequence = 98,
+  Comment = 99,
+  Bquote = 100,
+  DollarLbrace = 101,
+  Slash2_102 = 102,
+  RegexPattern = 103,
+  RegexFlags = 104,
+  Number = 105,
+  PrivatePropertyIdentifier = 106,
+  Target = 107,
+  Meta = 108,
+  This = 109,
+  Super = 110,
+  True = 111,
+  False = 112,
+  Null = 113,
+  Undefined = 114,
+  At = 115,
+  Static = 116,
+  Get = 117,
+  Set = 118,
+  Declare = 119,
+  Namespace = 120,
+  Public = 121,
+  Private = 122,
+  Protected = 123,
+  Override = 124,
+  Readonly = 125,
+  AnonModule = 126,
+  Any = 127,
+  AnonNumber = 128,
+  Boolean = 129,
+  AnonString = 130,
+  Symbol = 131,
+  Export = 132,
+  AnonObject = 133,
+  Qmark = 134,
+  Abstract = 135,
+  Satisfies = 136,
+  Require = 137,
+  Extends = 138,
+  Implements = 139,
+  Global = 140,
+  Interface = 141,
+  Enum = 142,
+  DashQmarkColon = 143,
+  PlusQmarkColon = 144,
+  QmarkColon = 145,
+  AnonAsserts = 146,
+  Infer = 147,
+  Is = 148,
+  Keyof = 149,
+  Unique = 150,
+  Unknown = 151,
+  Never = 152,
+  LbracePipe = 153,
+  PipeRbrace = 154,
+  Accessor = 155,
+  Using = 156,
   PlusPlus = 157,
   DashDash = 158,
   AutomaticSemicolon = 159,
@@ -815,60 +821,53 @@ export const enum TSKindId {
   ForHeaderLhs = 374,
   ForHeaderVarKind = 375,
   ForHeaderLetConstKind = 376,
-  KwOptionalMarker = 377,
-  KwStaticMarker = 378,
-  KwAbstractMarker = 379,
-  KwConstMarker = 380,
-  KwUsingMarker = 381,
-  ParenthesizedExpressionTyped = 382,
-  _ParenthesizedExpressionSequence = 383,
-  _ExportStatementTypeExport = 384,
-  _ExportStatementEqualsExport = 385,
-  _ExportStatementNamespaceExport = 386,
-  CallExpressionCall = 387,
-  CallExpressionTemplateCall = 388,
-  CallExpressionMember = 389,
-  _StringDouble = 390,
-  _StringSingle = 391,
-  UpdateExpressionPostfix = 392,
-  UpdateExpressionPrefix = 393,
-  ProgramRepeat1 = 394,
-  ExportClauseRepeat1 = 395,
-  NamedImportsRepeat1 = 396,
-  VariableDeclarationRepeat1 = 397,
-  SwitchBodyRepeat1 = 398,
-  ObjectRepeat1 = 399,
-  ObjectPatternRepeat1 = 400,
-  ArrayRepeat1 = 401,
-  ArrayPatternRepeat1 = 402,
-  ClassRepeat1 = 403,
-  SequenceExpressionRepeat1 = 404,
-  TemplateStringRepeat1 = 405,
-  ClassBodyRepeat1 = 406,
-  FormalParametersRepeat1 = 407,
-  ExtendsClauseRepeat1 = 408,
-  ImplementsClauseRepeat1 = 409,
-  ExtendsTypeClauseRepeat1 = 410,
-  EnumBodyRepeat1 = 411,
-  TemplateLiteralTypeRepeat1 = 412,
-  ObjectTypeRepeat1 = 413,
-  TypeParametersRepeat1 = 414,
-  TupleTypeRepeat1 = 415,
-  _StringDoubleRepeat1 = 416,
-  _StringSingleRepeat1 = 417,
-  _InterfaceBody = 418,
-  PropertyIdentifier = 419,
-  PublicFieldDefinitionAbstractFirst = 420,
-  PublicFieldDefinitionAccessFirst = 421,
-  PublicFieldDefinitionAccessorOpt = 422,
-  PublicFieldDefinitionDeclareFirst = 423,
-  PublicFieldDefinitionReadonlyFirst = 424,
-  PublicFieldDefinitionStaticMods = 425,
-  ShorthandPropertyIdentifier = 426,
-  ShorthandPropertyIdentifierPattern = 427,
-  StatementIdentifier = 428,
-  _ThisType = 429,
-  TypeIdentifier = 430,
+  ParenthesizedExpressionTyped = 377,
+  _ParenthesizedExpressionSequence = 378,
+  _ExportStatementTypeExport = 379,
+  _ExportStatementEqualsExport = 380,
+  _ExportStatementNamespaceExport = 381,
+  CallExpressionCall = 382,
+  CallExpressionTemplateCall = 383,
+  CallExpressionMember = 384,
+  UpdateExpressionPostfix = 385,
+  UpdateExpressionPrefix = 386,
+  ProgramRepeat1 = 387,
+  ExportClauseRepeat1 = 388,
+  NamedImportsRepeat1 = 389,
+  VariableDeclarationRepeat1 = 390,
+  SwitchBodyRepeat1 = 391,
+  ObjectRepeat1 = 392,
+  ObjectPatternRepeat1 = 393,
+  ArrayRepeat1 = 394,
+  ArrayPatternRepeat1 = 395,
+  ClassRepeat1 = 396,
+  SequenceExpressionRepeat1 = 397,
+  StringRepeat1 = 398,
+  StringRepeat2 = 399,
+  TemplateStringRepeat1 = 400,
+  ClassBodyRepeat1 = 401,
+  FormalParametersRepeat1 = 402,
+  ExtendsClauseRepeat1 = 403,
+  ImplementsClauseRepeat1 = 404,
+  ExtendsTypeClauseRepeat1 = 405,
+  EnumBodyRepeat1 = 406,
+  TemplateLiteralTypeRepeat1 = 407,
+  ObjectTypeRepeat1 = 408,
+  TypeParametersRepeat1 = 409,
+  TupleTypeRepeat1 = 410,
+  _InterfaceBody = 411,
+  PropertyIdentifier = 412,
+  PublicFieldDefinitionAbstractFirst = 413,
+  PublicFieldDefinitionAccessFirst = 414,
+  PublicFieldDefinitionAccessorOpt = 415,
+  PublicFieldDefinitionDeclareFirst = 416,
+  PublicFieldDefinitionReadonlyFirst = 417,
+  PublicFieldDefinitionStaticMods = 418,
+  ShorthandPropertyIdentifier = 419,
+  ShorthandPropertyIdentifierPattern = 420,
+  StatementIdentifier = 421,
+  _ThisType = 422,
+  TypeIdentifier = 423,
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -879,7 +878,9 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [5, "lbrace"],
   [6, "comma"],
   [7, "rbrace"],
+  [8, "anon_type"],
   [9, "typeof"],
+  [10, "anon_import"],
   [11, "from"],
   [12, "with"],
   [13, "assert"],
@@ -915,6 +916,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [43, "lbrack"],
   [44, "rbrack"],
   [45, "dot"],
+  [46, "anon_class"],
   [47, "function"],
   [48, "async"],
   [49, "eq_gt"],
@@ -962,64 +964,69 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [91, "tilde"],
   [92, "void"],
   [93, "delete"],
-  [94, "unescaped_double_string_fragment"],
-  [95, "unescaped_single_string_fragment"],
-  [96, "escape_sequence"],
-  [97, "comment"],
-  [98, "bquote"],
-  [99, "dollar_lbrace"],
-  [100, "slash2"],
-  [101, "regex_pattern"],
-  [102, "regex_flags"],
-  [103, "number"],
-  [104, "private_property_identifier"],
-  [105, "target"],
-  [106, "meta"],
-  [107, "this"],
-  [108, "super"],
-  [109, "true"],
-  [110, "false"],
-  [111, "null"],
-  [112, "undefined"],
-  [113, "at"],
-  [114, "static"],
-  [115, "get"],
-  [116, "set"],
-  [117, "declare"],
-  [118, "namespace"],
-  [119, "public"],
-  [120, "private"],
-  [121, "protected"],
-  [122, "override"],
-  [123, "readonly"],
-  [125, "any"],
-  [127, "boolean"],
-  [129, "symbol"],
-  [130, "export"],
-  [132, "qmark"],
-  [133, "abstract"],
-  [134, "satisfies"],
-  [135, "require"],
-  [136, "extends"],
-  [137, "implements"],
-  [138, "global"],
-  [139, "interface"],
-  [140, "enum"],
-  [141, "dash_qmark_colon"],
-  [142, "plus_qmark_colon"],
-  [143, "qmark_colon"],
-  [145, "infer"],
-  [146, "is"],
-  [147, "keyof"],
-  [148, "unique"],
-  [149, "unknown"],
-  [150, "never"],
-  [151, "lbrace_pipe"],
-  [152, "pipe_rbrace"],
-  [153, "accessor"],
-  [154, "using"],
-  [155, "dquote"],
-  [156, "squote"],
+  [94, "dquote"],
+  [95, "squote"],
+  [96, "unescaped_double_string_fragment"],
+  [97, "unescaped_single_string_fragment"],
+  [98, "escape_sequence"],
+  [99, "comment"],
+  [100, "bquote"],
+  [101, "dollar_lbrace"],
+  [102, "slash2"],
+  [103, "regex_pattern"],
+  [104, "regex_flags"],
+  [105, "number"],
+  [106, "private_property_identifier"],
+  [107, "target"],
+  [108, "meta"],
+  [109, "this"],
+  [110, "super"],
+  [111, "true"],
+  [112, "false"],
+  [113, "null"],
+  [114, "undefined"],
+  [115, "at"],
+  [116, "static"],
+  [117, "get"],
+  [118, "set"],
+  [119, "declare"],
+  [120, "namespace"],
+  [121, "public"],
+  [122, "private"],
+  [123, "protected"],
+  [124, "override"],
+  [125, "readonly"],
+  [126, "anon_module"],
+  [127, "any"],
+  [128, "anon_number"],
+  [129, "boolean"],
+  [130, "anon_string"],
+  [131, "symbol"],
+  [132, "export"],
+  [133, "anon_object"],
+  [134, "qmark"],
+  [135, "abstract"],
+  [136, "satisfies"],
+  [137, "require"],
+  [138, "extends"],
+  [139, "implements"],
+  [140, "global"],
+  [141, "interface"],
+  [142, "enum"],
+  [143, "dash_qmark_colon"],
+  [144, "plus_qmark_colon"],
+  [145, "qmark_colon"],
+  [146, "anon_asserts"],
+  [147, "infer"],
+  [148, "is"],
+  [149, "keyof"],
+  [150, "unique"],
+  [151, "unknown"],
+  [152, "never"],
+  [153, "lbrace_pipe"],
+  [154, "pipe_rbrace"],
+  [155, "accessor"],
+  [156, "using"],
   [157, "plus_plus"],
   [158, "dash_dash"],
   [159, "_automatic_semicolon"],
@@ -1240,72 +1247,67 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [374, "_for_header_lhs"],
   [375, "_for_header_var_kind"],
   [376, "_for_header_let_const_kind"],
-  [377, "_kw_optional_marker"],
-  [378, "_kw_static_marker"],
-  [379, "_kw_abstract_marker"],
-  [380, "_kw_const_marker"],
-  [381, "_kw_using_marker"],
-  [382, "_parenthesized_expression_typed"],
-  [383, "_parenthesized_expression_sequence"],
-  [384, "_export_statement_type_export"],
-  [385, "_export_statement_equals_export"],
-  [386, "_export_statement_namespace_export"],
-  [387, "_call_expression_call"],
-  [388, "_call_expression_template_call"],
-  [389, "_call_expression_member"],
-  [390, "_string_double"],
-  [391, "_string_single"],
-  [392, "_update_expression_postfix"],
-  [393, "_update_expression_prefix"],
-  [394, "program_repeat1"],
-  [395, "export_clause_repeat1"],
-  [396, "named_imports_repeat1"],
-  [397, "variable_declaration_repeat1"],
-  [398, "switch_body_repeat1"],
-  [399, "object_repeat1"],
-  [400, "object_pattern_repeat1"],
-  [401, "array_repeat1"],
-  [402, "array_pattern_repeat1"],
-  [403, "class_repeat1"],
-  [404, "sequence_expression_repeat1"],
-  [405, "template_string_repeat1"],
-  [406, "class_body_repeat1"],
-  [407, "formal_parameters_repeat1"],
-  [408, "extends_clause_repeat1"],
-  [409, "implements_clause_repeat1"],
-  [410, "extends_type_clause_repeat1"],
-  [411, "enum_body_repeat1"],
-  [412, "template_literal_type_repeat1"],
-  [413, "object_type_repeat1"],
-  [414, "type_parameters_repeat1"],
-  [415, "tuple_type_repeat1"],
-  [416, "_string_double_repeat1"],
-  [417, "_string_single_repeat1"],
-  [418, "_interface_body"],
-  [419, "_property_identifier"],
-  [420, "_public_field_definition_abstract_first"],
-  [421, "_public_field_definition_access_first"],
-  [422, "_public_field_definition_accessor_opt"],
-  [423, "_public_field_definition_declare_first"],
-  [424, "_public_field_definition_readonly_first"],
-  [425, "_public_field_definition_static_mods"],
-  [426, "_shorthand_property_identifier"],
-  [427, "_shorthand_property_identifier_pattern"],
-  [428, "_statement_identifier"],
-  [429, "_this_type"],
-  [430, "_type_identifier"],
+  [377, "_parenthesized_expression_typed"],
+  [378, "_parenthesized_expression_sequence"],
+  [379, "_export_statement_type_export"],
+  [380, "_export_statement_equals_export"],
+  [381, "_export_statement_namespace_export"],
+  [382, "_call_expression_call"],
+  [383, "_call_expression_template_call"],
+  [384, "_call_expression_member"],
+  [385, "_update_expression_postfix"],
+  [386, "_update_expression_prefix"],
+  [387, "program_repeat1"],
+  [388, "export_clause_repeat1"],
+  [389, "named_imports_repeat1"],
+  [390, "variable_declaration_repeat1"],
+  [391, "switch_body_repeat1"],
+  [392, "object_repeat1"],
+  [393, "object_pattern_repeat1"],
+  [394, "array_repeat1"],
+  [395, "array_pattern_repeat1"],
+  [396, "class_repeat1"],
+  [397, "sequence_expression_repeat1"],
+  [398, "string_repeat1"],
+  [399, "string_repeat2"],
+  [400, "template_string_repeat1"],
+  [401, "class_body_repeat1"],
+  [402, "formal_parameters_repeat1"],
+  [403, "extends_clause_repeat1"],
+  [404, "implements_clause_repeat1"],
+  [405, "extends_type_clause_repeat1"],
+  [406, "enum_body_repeat1"],
+  [407, "template_literal_type_repeat1"],
+  [408, "object_type_repeat1"],
+  [409, "type_parameters_repeat1"],
+  [410, "tuple_type_repeat1"],
+  [411, "_interface_body"],
+  [412, "_property_identifier"],
+  [413, "_public_field_definition_abstract_first"],
+  [414, "_public_field_definition_access_first"],
+  [415, "_public_field_definition_accessor_opt"],
+  [416, "_public_field_definition_declare_first"],
+  [417, "_public_field_definition_readonly_first"],
+  [418, "_public_field_definition_static_mods"],
+  [419, "_shorthand_property_identifier"],
+  [420, "_shorthand_property_identifier_pattern"],
+  [421, "_statement_identifier"],
+  [422, "_this_type"],
+  [423, "_type_identifier"],
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
   switch (kindName) {
     case "identifier": return TSKindId.Identifier;
     case "hash_bang_line": return TSKindId.HashBangLine;
-    case "star": return TSKindId.Star;
+    case "star": return TSKindId.Star2;
     case "as": return TSKindId.As;
     case "lbrace": return TSKindId.Lbrace;
     case "comma": return TSKindId.Comma;
     case "rbrace": return TSKindId.Rbrace;
+    case "anon_type": return TSKindId.AnonType;
     case "typeof": return TSKindId.Typeof;
+    case "anon_import": return TSKindId.AnonImport;
     case "from": return TSKindId.From;
     case "with": return TSKindId.With;
     case "assert": return TSKindId.Assert;
@@ -1341,6 +1343,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "lbrack": return TSKindId.Lbrack;
     case "rbrack": return TSKindId.Rbrack;
     case "dot": return TSKindId.Dot;
+    case "anon_class": return TSKindId.AnonClass;
     case "function": return TSKindId.Function;
     case "async": return TSKindId.Async;
     case "eq_gt": return TSKindId.EqGt;
@@ -1367,34 +1370,36 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "gt_gt": return TSKindId.GtGt;
     case "gt_gt_gt": return TSKindId.GtGtGt;
     case "lt_lt": return TSKindId.LtLt;
-    case "amp": return TSKindId.Amp;
+    case "amp": return TSKindId.Amp2;
     case "caret": return TSKindId.Caret;
-    case "pipe": return TSKindId.Pipe;
+    case "pipe": return TSKindId.Pipe2;
     case "plus": return TSKindId.Plus;
     case "dash": return TSKindId.Dash;
-    case "slash": return TSKindId.Slash;
+    case "slash": return TSKindId.Slash2;
     case "percent": return TSKindId.Percent;
     case "star_star": return TSKindId.StarStar;
-    case "lt": return TSKindId.Lt;
+    case "lt": return TSKindId.Lt2;
     case "lt_eq": return TSKindId.LtEq;
     case "eq_eq": return TSKindId.EqEq;
     case "eq_eq_eq": return TSKindId.EqEqEq;
     case "bang_eq": return TSKindId.BangEq;
     case "bang_eq_eq": return TSKindId.BangEqEq;
     case "gt_eq": return TSKindId.GtEq;
-    case "gt": return TSKindId.Gt;
+    case "gt": return TSKindId.Gt2;
     case "qmark_qmark": return TSKindId.QmarkQmark;
     case "instanceof": return TSKindId.Instanceof;
     case "tilde": return TSKindId.Tilde;
     case "void": return TSKindId.Void;
     case "delete": return TSKindId.Delete;
+    case "dquote": return TSKindId.Dquote;
+    case "squote": return TSKindId.Squote;
     case "unescaped_double_string_fragment": return TSKindId.UnescapedDoubleStringFragment;
     case "unescaped_single_string_fragment": return TSKindId.UnescapedSingleStringFragment;
     case "escape_sequence": return TSKindId.EscapeSequence;
     case "comment": return TSKindId.Comment;
     case "bquote": return TSKindId.Bquote;
     case "dollar_lbrace": return TSKindId.DollarLbrace;
-    case "slash2": return TSKindId.Slash2;
+    case "slash2": return TSKindId.Slash2_102;
     case "regex_pattern": return TSKindId.RegexPattern;
     case "regex_flags": return TSKindId.RegexFlags;
     case "number": return TSKindId.Number;
@@ -1418,10 +1423,14 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "protected": return TSKindId.Protected;
     case "override": return TSKindId.Override;
     case "readonly": return TSKindId.Readonly;
+    case "anon_module": return TSKindId.AnonModule;
     case "any": return TSKindId.Any;
+    case "anon_number": return TSKindId.AnonNumber;
     case "boolean": return TSKindId.Boolean;
+    case "anon_string": return TSKindId.AnonString;
     case "symbol": return TSKindId.Symbol;
     case "export": return TSKindId.Export;
+    case "anon_object": return TSKindId.AnonObject;
     case "qmark": return TSKindId.Qmark;
     case "abstract": return TSKindId.Abstract;
     case "satisfies": return TSKindId.Satisfies;
@@ -1434,6 +1443,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "dash_qmark_colon": return TSKindId.DashQmarkColon;
     case "plus_qmark_colon": return TSKindId.PlusQmarkColon;
     case "qmark_colon": return TSKindId.QmarkColon;
+    case "anon_asserts": return TSKindId.AnonAsserts;
     case "infer": return TSKindId.Infer;
     case "is": return TSKindId.Is;
     case "keyof": return TSKindId.Keyof;
@@ -1444,8 +1454,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "pipe_rbrace": return TSKindId.PipeRbrace;
     case "accessor": return TSKindId.Accessor;
     case "using": return TSKindId.Using;
-    case "dquote": return TSKindId.Dquote;
-    case "squote": return TSKindId.Squote;
     case "plus_plus": return TSKindId.PlusPlus;
     case "dash_dash": return TSKindId.DashDash;
     case "_automatic_semicolon": return TSKindId.AutomaticSemicolon;
@@ -1666,11 +1674,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_for_header_lhs": return TSKindId.ForHeaderLhs;
     case "_for_header_var_kind": return TSKindId.ForHeaderVarKind;
     case "_for_header_let_const_kind": return TSKindId.ForHeaderLetConstKind;
-    case "_kw_optional_marker": return TSKindId.KwOptionalMarker;
-    case "_kw_static_marker": return TSKindId.KwStaticMarker;
-    case "_kw_abstract_marker": return TSKindId.KwAbstractMarker;
-    case "_kw_const_marker": return TSKindId.KwConstMarker;
-    case "_kw_using_marker": return TSKindId.KwUsingMarker;
     case "_parenthesized_expression_typed": return TSKindId.ParenthesizedExpressionTyped;
     case "_parenthesized_expression_sequence": return TSKindId._ParenthesizedExpressionSequence;
     case "_export_statement_type_export": return TSKindId._ExportStatementTypeExport;
@@ -1679,8 +1682,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_call_expression_call": return TSKindId.CallExpressionCall;
     case "_call_expression_template_call": return TSKindId.CallExpressionTemplateCall;
     case "_call_expression_member": return TSKindId.CallExpressionMember;
-    case "_string_double": return TSKindId._StringDouble;
-    case "_string_single": return TSKindId._StringSingle;
     case "_update_expression_postfix": return TSKindId.UpdateExpressionPostfix;
     case "_update_expression_prefix": return TSKindId.UpdateExpressionPrefix;
     case "program_repeat1": return TSKindId.ProgramRepeat1;
@@ -1694,6 +1695,8 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "array_pattern_repeat1": return TSKindId.ArrayPatternRepeat1;
     case "class_repeat1": return TSKindId.ClassRepeat1;
     case "sequence_expression_repeat1": return TSKindId.SequenceExpressionRepeat1;
+    case "string_repeat1": return TSKindId.StringRepeat1;
+    case "string_repeat2": return TSKindId.StringRepeat2;
     case "template_string_repeat1": return TSKindId.TemplateStringRepeat1;
     case "class_body_repeat1": return TSKindId.ClassBodyRepeat1;
     case "formal_parameters_repeat1": return TSKindId.FormalParametersRepeat1;
@@ -1705,8 +1708,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "object_type_repeat1": return TSKindId.ObjectTypeRepeat1;
     case "type_parameters_repeat1": return TSKindId.TypeParametersRepeat1;
     case "tuple_type_repeat1": return TSKindId.TupleTypeRepeat1;
-    case "_string_double_repeat1": return TSKindId._StringDoubleRepeat1;
-    case "_string_single_repeat1": return TSKindId._StringSingleRepeat1;
     case "_interface_body": return TSKindId._InterfaceBody;
     case "_property_identifier": return TSKindId.PropertyIdentifier;
     case "_public_field_definition_abstract_first": return TSKindId.PublicFieldDefinitionAbstractFirst;
@@ -1720,7 +1721,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_statement_identifier": return TSKindId.StatementIdentifier;
     case "_this_type": return TSKindId._ThisType;
     case "_type_identifier": return TSKindId.TypeIdentifier;
-    case "*": return TSKindId.Star;
+    case "*": return TSKindId.Star2;
     case "{": return TSKindId.Lbrace;
     case ",": return TSKindId.Comma;
     case "}": return TSKindId.Rbrace;
@@ -1756,24 +1757,26 @@ export function kindIdFromName(kindName: string): TSKindId {
     case ">>": return TSKindId.GtGt;
     case ">>>": return TSKindId.GtGtGt;
     case "<<": return TSKindId.LtLt;
-    case "&": return TSKindId.Amp;
+    case "&": return TSKindId.Amp2;
     case "^": return TSKindId.Caret;
-    case "|": return TSKindId.Pipe;
+    case "|": return TSKindId.Pipe2;
     case "+": return TSKindId.Plus;
     case "-": return TSKindId.Dash;
-    case "/": return TSKindId.Slash;
+    case "/": return TSKindId.Slash2;
     case "%": return TSKindId.Percent;
     case "**": return TSKindId.StarStar;
-    case "<": return TSKindId.Lt;
+    case "<": return TSKindId.Lt2;
     case "<=": return TSKindId.LtEq;
     case "==": return TSKindId.EqEq;
     case "===": return TSKindId.EqEqEq;
     case "!=": return TSKindId.BangEq;
     case "!==": return TSKindId.BangEqEq;
     case ">=": return TSKindId.GtEq;
-    case ">": return TSKindId.Gt;
+    case ">": return TSKindId.Gt2;
     case "??": return TSKindId.QmarkQmark;
     case "~": return TSKindId.Tilde;
+    case "\"": return TSKindId.Dquote;
+    case "'": return TSKindId.Squote;
     case "string_fragment": return TSKindId.UnescapedDoubleStringFragment;
     case "`": return TSKindId.Bquote;
     case "${": return TSKindId.DollarLbrace;
@@ -1785,8 +1788,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "unique symbol": return TSKindId.Unique;
     case "{|": return TSKindId.LbracePipe;
     case "|}": return TSKindId.PipeRbrace;
-    case "\"": return TSKindId.Dquote;
-    case "'": return TSKindId.Squote;
     case "++": return TSKindId.PlusPlus;
     case "--": return TSKindId.DashDash;
     case "export_statement_default": return TSKindId.ExportStatementDefault;
@@ -1822,8 +1823,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "call_expression_call": return TSKindId.CallExpressionCall;
     case "call_expression_template_call": return TSKindId.CallExpressionTemplateCall;
     case "call_expression_member": return TSKindId.CallExpressionMember;
-    case "string_double": return TSKindId._StringDouble;
-    case "string_single": return TSKindId._StringSingle;
     case "update_expression_postfix": return TSKindId.UpdateExpressionPostfix;
     case "update_expression_prefix": return TSKindId.UpdateExpressionPrefix;
     case "interface_body": return TSKindId._InterfaceBody;
@@ -2279,9 +2278,12 @@ export interface ForHeaderLhs {
 
 export interface ForHeaderVarKind {
   readonly $type: TSKindId.ForHeaderVarKind;
-  readonly _kind: AutoStamp<"var">;
+  readonly _kind: number;
   readonly _left: Identifier | DestructuringPattern;
-  kind(): AutoStamp<"var">;
+  readonly __inputHints__?: {
+    readonly kind: KindEnum<"var", TSKindId.Var>;
+  };
+  kind(): number;
   left(): Identifier | DestructuringPattern;
   readonly $children: readonly [Initializer];
 }
@@ -2407,12 +2409,13 @@ export interface ParenthesizedExpressionTyped {
 
 export interface PublicFieldDefinitionAbstractFirst {
   readonly $type: TSKindId.PublicFieldDefinitionAbstractFirst;
-  readonly _abstract_marker: AutoStamp<"abstract">;
+  readonly _abstract_marker: number;
   readonly _readonly_marker?: boolean;
   readonly __inputHints__?: {
+    readonly abstract_marker: KindEnum<"abstract", TSKindId.Abstract>;
     readonly readonly_marker?: BooleanKeyword<"readonly">;
   };
-  abstractMarker(): AutoStamp<"abstract">;
+  abstractMarker(): number;
   readonlyMarker(): boolean | undefined;
 }
 
@@ -2428,8 +2431,11 @@ export interface PublicFieldDefinitionAccessFirst {
 
 export interface PublicFieldDefinitionAccessorOpt {
   readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt;
-  readonly _accessor_marker: AutoStamp<"accessor">;
-  accessorMarker(): AutoStamp<"accessor">;
+  readonly _accessor_marker: number;
+  readonly __inputHints__?: {
+    readonly accessor_marker: KindEnum<"accessor", TSKindId.Accessor>;
+  };
+  accessorMarker(): number;
 }
 
 export interface PublicFieldDefinitionDeclareFirst {
@@ -2439,35 +2445,27 @@ export interface PublicFieldDefinitionDeclareFirst {
 
 export interface PublicFieldDefinitionReadonlyFirst {
   readonly $type: TSKindId.PublicFieldDefinitionReadonlyFirst;
-  readonly _readonly_marker: AutoStamp<"readonly">;
+  readonly _readonly_marker: number;
   readonly _abstract_marker?: boolean;
   readonly __inputHints__?: {
+    readonly readonly_marker: KindEnum<"readonly", TSKindId.Readonly>;
     readonly abstract_marker?: BooleanKeyword<"abstract">;
   };
-  readonlyMarker(): AutoStamp<"readonly">;
+  readonlyMarker(): number;
   abstractMarker(): boolean | undefined;
 }
 
 export interface PublicFieldDefinitionStaticMods {
   readonly $type: TSKindId.PublicFieldDefinitionStaticMods;
-  readonly _static_marker: AutoStamp<"static">;
+  readonly _static_marker: number;
   readonly _readonly_marker?: boolean;
   readonly __inputHints__?: {
+    readonly static_marker: KindEnum<"static", TSKindId.Static>;
     readonly readonly_marker?: BooleanKeyword<"readonly">;
   };
-  staticMarker(): AutoStamp<"static">;
+  staticMarker(): number;
   readonlyMarker(): boolean | undefined;
   readonly $children: readonly [OverrideModifier];
-}
-
-export interface _StringDouble {
-  readonly $type: TSKindId._StringDouble;
-  readonly $children: readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
-}
-
-export interface _StringSingle {
-  readonly $type: TSKindId._StringSingle;
-  readonly $children: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
 }
 
 export interface TypeQueryCallExpression {
@@ -2567,7 +2565,7 @@ export interface AbstractMethodSignature {
   readonly __inputHints__?: {
     readonly accessibility_modifier?: KindEnum<"public" | "private" | "protected", TSKindId.Public | TSKindId.Private | TSKindId.Protected>;
     readonly override_modifier?: BooleanKeyword<"override">;
-    readonly accessor_kind?: KindEnum<"get" | "set" | "*", TSKindId.Get | TSKindId.Set | TSKindId.Star>;
+    readonly accessor_kind?: KindEnum<"get" | "set" | "*", TSKindId.Get | TSKindId.Set | TSKindId.Star2>;
     readonly optional_marker?: BooleanKeyword<"?">;
   };
   accessibilityModifier(): number | undefined;
@@ -2659,9 +2657,9 @@ export type ArrowFunction = ArrowFunctionUFormParameter | ArrowFunctionUFormUCal
 export interface AsExpression {
   readonly $type: TSKindId.AsExpression;
   readonly _expression: Expression;
-  readonly _type_annotation: "const" | Type;
+  readonly _type_annotation: Const | Type;
   expression(): Expression;
-  typeAnnotation(): "const" | Type;
+  typeAnnotation(): Const | Type;
 }
 
 export interface Asserts {
@@ -2718,10 +2716,13 @@ export interface AwaitExpression {
 export interface BinaryExpression {
   readonly $type: TSKindId.BinaryExpression;
   readonly _left: Expression | PrivatePropertyIdentifier;
-  readonly _operator: "&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in";
+  readonly _operator: number;
   readonly _right: Expression;
+  readonly __inputHints__?: {
+    readonly operator: KindEnum<"&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in", TSKindId.AmpAmp | TSKindId.PipePipe | TSKindId.GtGt | TSKindId.GtGtGt | TSKindId.LtLt | TSKindId.Amp2 | TSKindId.Caret | TSKindId.Pipe2 | TSKindId.Plus | TSKindId.Dash | TSKindId.Star2 | TSKindId.Slash2 | TSKindId.Percent | TSKindId.StarStar | TSKindId.Lt2 | TSKindId.LtEq | TSKindId.EqEq | TSKindId.EqEqEq | TSKindId.BangEq | TSKindId.BangEqEq | TSKindId.GtEq | TSKindId.Gt2 | TSKindId.QmarkQmark | TSKindId.Instanceof | TSKindId.In>;
+  };
   left(): Expression | PrivatePropertyIdentifier;
-  operator(): "&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in";
+  operator(): number;
   right(): Expression;
 }
 
@@ -3342,11 +3343,14 @@ export interface ImportSpecifierUFormAs {
 export type ImportSpecifier = ImportSpecifierUFormName | ImportSpecifierUFormAs;
 export interface ImportStatement {
   readonly $type: TSKindId.ImportStatement;
-  readonly _import_clause?: "type" | "typeof";
+  readonly _import_clause?: number;
   readonly _from_clause: ImportClause | "from" | String | ImportRequireClause;
   readonly _import_attribute?: ImportAttribute;
   readonly _semicolon: Semicolon;
-  importClause(): "type" | "typeof" | undefined;
+  readonly __inputHints__?: {
+    readonly import_clause?: KindEnum<"type" | "typeof", TSKindId.Type | TSKindId.Typeof>;
+  };
+  importClause(): number | undefined;
   fromClause(): ImportClause | "from" | String | ImportRequireClause;
   importAttribute(): ImportAttribute | undefined;
   semicolon(): Semicolon;
@@ -3360,9 +3364,12 @@ export interface IndexSignatureMappedTypeClause {
 export interface IndexSignatureUFormColon {
   readonly $type: TSKindId.IndexSignature;
   readonly $variant: 'colon';
-  readonly _sign?: "-" | "+";
+  readonly _sign?: number;
   readonly _type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
-  sign(): "-" | "+" | undefined;
+  readonly __inputHints__?: {
+    readonly sign?: KindEnum<"-" | "+", TSKindId.Dash | TSKindId.Plus>;
+  };
+  sign(): number | undefined;
   type(): TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
   readonly $children: readonly [IndexSignatureColon];
 }
@@ -3370,9 +3377,12 @@ export interface IndexSignatureUFormColon {
 export interface IndexSignatureUFormMappedTypeClause {
   readonly $type: TSKindId.IndexSignature;
   readonly $variant: 'mapped_type_clause';
-  readonly _sign?: "-" | "+";
+  readonly _sign?: number;
   readonly _type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
-  sign(): "-" | "+" | undefined;
+  readonly __inputHints__?: {
+    readonly sign?: KindEnum<"-" | "+", TSKindId.Dash | TSKindId.Plus>;
+  };
+  sign(): number | undefined;
   type(): TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
   readonly $children: readonly [_IndexSignatureMappedTypeClause];
 }
@@ -3551,7 +3561,7 @@ export interface MethodDefinition {
     readonly override_modifier?: BooleanKeyword<"override">;
     readonly readonly_marker?: BooleanKeyword<"readonly">;
     readonly async_marker?: BooleanKeyword<"async">;
-    readonly accessor_kind?: KindEnum<"get" | "set" | "*", TSKindId.Get | TSKindId.Set | TSKindId.Star>;
+    readonly accessor_kind?: KindEnum<"get" | "set" | "*", TSKindId.Get | TSKindId.Set | TSKindId.Star2>;
     readonly optional_marker?: BooleanKeyword<"?">;
   };
   accessibilityModifier(): number | undefined;
@@ -3587,7 +3597,7 @@ export interface MethodSignature {
     readonly override_modifier?: BooleanKeyword<"override">;
     readonly readonly_marker?: BooleanKeyword<"readonly">;
     readonly async_marker?: BooleanKeyword<"async">;
-    readonly accessor_kind?: KindEnum<"get" | "set" | "*", TSKindId.Get | TSKindId.Set | TSKindId.Star>;
+    readonly accessor_kind?: KindEnum<"get" | "set" | "*", TSKindId.Get | TSKindId.Set | TSKindId.Star2>;
     readonly optional_marker?: BooleanKeyword<"?">;
   };
   accessibilityModifier(): number | undefined;
@@ -3903,29 +3913,20 @@ export interface StatementBlock {
   automaticSemicolon(): AutomaticSemicolon | undefined;
 }
 
-export interface StringDouble {
-  readonly $type: "string_double";
-  readonly $children: readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
-}
-
-export interface StringSingle {
-  readonly $type: "string_single";
-  readonly $children: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
-}
-
-export interface StringUFormDouble {
+export interface String {
   readonly $type: TSKindId.String;
-  readonly $variant: 'double';
-  readonly $children: readonly [_StringDouble];
+  readonly _opening: number;
+  readonly _contents?: readonly (UnescapedDoubleStringFragment | EscapeSequence | UnescapedSingleStringFragment)[];
+  readonly _closing: number;
+  readonly __inputHints__?: {
+    readonly opening: KindEnum<"\"" | "'", TSKindId.Dquote | TSKindId.Squote>;
+    readonly closing: KindEnum<"\"" | "'", TSKindId.Dquote | TSKindId.Squote>;
+  };
+  opening(): number;
+  contents(): readonly (UnescapedDoubleStringFragment | EscapeSequence | UnescapedSingleStringFragment)[];
+  closing(): number;
 }
 
-export interface StringUFormSingle {
-  readonly $type: TSKindId.String;
-  readonly $variant: 'single';
-  readonly $children: readonly [_StringSingle];
-}
-
-export type String = StringUFormDouble | StringUFormSingle;
 export interface SubscriptExpression {
   readonly $type: TSKindId.SubscriptExpression;
   readonly _object: Expression | PrimaryExpression;
@@ -4173,7 +4174,7 @@ export interface YieldExpression {
 export type ForHeaderOperator = Terminal<TSKindId.In | TSKindId.Of, "in" | "of">;
 export type NumberOperator = Terminal<TSKindId.Dash | TSKindId.Plus, "-" | "+">;
 export type _AccessibilityModifier = Terminal<TSKindId.Public | TSKindId.Private | TSKindId.Protected, "public" | "private" | "protected">;
-export type AccessorKind = Terminal<TSKindId.Get | TSKindId.Set | TSKindId.Star, "get" | "set" | "*">;
+export type AccessorKind = Terminal<TSKindId.Get | TSKindId.Set | TSKindId.Star2, "get" | "set" | "*">;
 export type AugmentedAssignmentExpressionOperator = Terminal<TSKindId.PlusEq | TSKindId.DashEq | TSKindId.StarEq | TSKindId.SlashEq | TSKindId.PercentEq | TSKindId.CaretEq | TSKindId.AmpEq | TSKindId.PipeEq | TSKindId.GtGtEq | TSKindId.GtGtGtEq | TSKindId.LtLtEq | TSKindId.StarStarEq | TSKindId.AmpAmpEq | TSKindId.PipePipeEq | TSKindId.QmarkQmarkEq, "+=" | "-=" | "*=" | "/=" | "%=" | "^=" | "&=" | "|=" | ">>=" | ">>>=" | "<<=" | "**=" | "&&=" | "||=" | "??=">;
 export type ExportSpecifierExportKind = Terminal<TSKindId.Type | TSKindId.Typeof, "type" | "typeof">;
 export type ImportAttributeObject = Terminal<TSKindId.With | TSKindId.Assert, "with" | "assert">;
@@ -4183,6 +4184,7 @@ export type ObjectTypeOpening = Terminal<TSKindId.Lbrace | TSKindId.LbracePipe, 
 export type Operator = Terminal<TSKindId.PlusPlus | TSKindId.DashDash, "++" | "--">;
 export type PublicFieldDefinitionOptionalityMarker = Terminal<TSKindId.Qmark | TSKindId.Bang, "?" | "!">;
 export type ReservedIdentifier = Terminal<"_reserved_identifier", string>;
+export type StringOpening = Terminal<TSKindId.Dquote | TSKindId.Squote, "\"" | "'">;
 export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
 export type UnaryExpressionOperator = Terminal<TSKindId.Bang | TSKindId.Tilde | TSKindId.Dash | TSKindId.Plus | TSKindId.Typeof | TSKindId.Void | TSKindId.Delete, "!" | "~" | "-" | "+" | "typeof" | "void" | "delete">;
 export type AccessibilityModifier = Terminal<TSKindId.Public | TSKindId.Private | TSKindId.Protected, "public" | "private" | "protected">;
@@ -4218,6 +4220,9 @@ export type Oror = Terminal<"||", string>;
 export type JsxText = Terminal<TSKindId.JsxText, string>;
 export type FunctionSignatureAutomaticSemicolon = Terminal<TSKindId.FunctionSignatureAutomaticSemicolon, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
+export type Const = Terminal<TSKindId.Const, "const">;
+export type Instanceof = Terminal<TSKindId.Instanceof, "instanceof">;
+export type In = Terminal<TSKindId.In, "in">;
 
 // Tree types
 export interface _ArrowFunctionUCallSignatureTree extends AnyTreeNode { readonly type: "_arrow_function__call_signature"; }
@@ -4269,8 +4274,6 @@ export interface PublicFieldDefinitionAccessorOptTree extends AnyTreeNode { read
 export interface PublicFieldDefinitionDeclareFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_declare_first"; }
 export interface PublicFieldDefinitionReadonlyFirstTree extends AnyTreeNode { readonly type: "_public_field_definition_readonly_first"; }
 export interface PublicFieldDefinitionStaticModsTree extends AnyTreeNode { readonly type: "_public_field_definition_static_mods"; }
-export interface _StringDoubleTree extends AnyTreeNode { readonly type: "_string_double"; }
-export interface _StringSingleTree extends AnyTreeNode { readonly type: "_string_single"; }
 export interface TypeQueryCallExpressionTree extends AnyTreeNode { readonly type: "_type_query_call_expression"; }
 export interface TypeQueryCallExpressionInTypeAnnotationTree extends AnyTreeNode { readonly type: "_type_query_call_expression_in_type_annotation"; }
 export interface TypeQueryInstantiationExpressionTree extends AnyTreeNode { readonly type: "_type_query_instantiation_expression"; }
@@ -4438,11 +4441,7 @@ export interface SatisfiesExpressionTree extends TreeNode<'satisfies_expression'
 export interface SequenceExpressionTree extends TreeNode<'sequence_expression'> {}
 export interface SpreadElementTree extends TreeNode<'spread_element'> {}
 export interface StatementBlockTree extends TreeNode<'statement_block'> {}
-export interface StringDoubleTree extends TreeNode<'string_double'> {}
-export interface StringSingleTree extends TreeNode<'string_single'> {}
 export interface StringTree extends TreeNode<'string'> {}
-export interface StringUFormDoubleTree extends TreeNode<'string'> {}
-export interface StringUFormSingleTree extends TreeNode<'string'> {}
 export interface SubscriptExpressionTree extends TreeNode<'subscript_expression'> {}
 export interface SwitchBodyTree extends TreeNode<'switch_body'> {}
 export interface SwitchCaseTree extends TreeNode<'switch_case'> {}
@@ -4489,6 +4488,7 @@ export interface ObjectTypeOpeningTree extends AnyTreeNode { readonly type: "_ob
 export interface OperatorTree extends AnyTreeNode { readonly type: "_operator"; }
 export interface PublicFieldDefinitionOptionalityMarkerTree extends AnyTreeNode { readonly type: "_public_field_definition_optionality_marker"; }
 export interface ReservedIdentifierTree extends AnyTreeNode { readonly type: "_reserved_identifier"; }
+export interface StringOpeningTree extends AnyTreeNode { readonly type: "_string_opening"; }
 export interface TypeIdentifierTree extends AnyTreeNode { readonly type: "_type_identifier"; }
 export interface UnaryExpressionOperatorTree extends AnyTreeNode { readonly type: "_unary_expression_operator"; }
 export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
@@ -4574,6 +4574,8 @@ export interface WithTree extends AnyTreeNode { readonly type: "with"; }
 export interface YieldTree extends AnyTreeNode { readonly type: "yield"; }
 
 // refine() per-form Tree aliases — same shape as the base kind Tree.
+export type StringDoubleTree = StringTree;
+export type StringSingleTree = StringTree;
 export type ObjectTypeCurlyTree = ObjectTypeTree;
 export type ObjectTypeFlowTree = ObjectTypeTree;
 
@@ -4883,6 +4885,52 @@ export type ExistentialType = Terminal<TSKindId.ExistentialType>;
 export interface ExistentialTypeTree extends AnyTreeNode { readonly type: "existential_type"; }
 export type OptionalChain = Terminal<TSKindId.OptionalChain>;
 export interface OptionalChainTree extends AnyTreeNode { readonly type: "optional_chain"; }
+export type AmpAmp = Terminal<TSKindId.AmpAmp>;
+export interface AmpAmpTree extends AnyTreeNode { readonly type: "amp_amp"; }
+export type PipePipe = Terminal<TSKindId.PipePipe>;
+export interface PipePipeTree extends AnyTreeNode { readonly type: "pipe_pipe"; }
+export type GtGt = Terminal<TSKindId.GtGt>;
+export interface GtGtTree extends AnyTreeNode { readonly type: "gt_gt"; }
+export type GtGtGt = Terminal<TSKindId.GtGtGt>;
+export interface GtGtGtTree extends AnyTreeNode { readonly type: "gt_gt_gt"; }
+export type LtLt = Terminal<TSKindId.LtLt>;
+export interface LtLtTree extends AnyTreeNode { readonly type: "lt_lt"; }
+export type Amp2 = Terminal<TSKindId.Amp2>;
+export interface Amp2Tree extends AnyTreeNode { readonly type: "amp"; }
+export type Caret = Terminal<TSKindId.Caret>;
+export interface CaretTree extends AnyTreeNode { readonly type: "caret"; }
+export type Pipe2 = Terminal<TSKindId.Pipe2>;
+export interface Pipe2Tree extends AnyTreeNode { readonly type: "pipe"; }
+export type Plus = Terminal<TSKindId.Plus>;
+export interface PlusTree extends AnyTreeNode { readonly type: "plus"; }
+export type Dash = Terminal<TSKindId.Dash>;
+export interface DashTree extends AnyTreeNode { readonly type: "dash"; }
+export type Star2 = Terminal<TSKindId.Star2>;
+export interface Star2Tree extends AnyTreeNode { readonly type: "star"; }
+export type Slash2 = Terminal<TSKindId.Slash2>;
+export interface Slash2Tree extends AnyTreeNode { readonly type: "slash"; }
+export type Percent = Terminal<TSKindId.Percent>;
+export interface PercentTree extends AnyTreeNode { readonly type: "percent"; }
+export type StarStar = Terminal<TSKindId.StarStar>;
+export interface StarStarTree extends AnyTreeNode { readonly type: "star_star"; }
+export type Lt2 = Terminal<TSKindId.Lt2>;
+export interface Lt2Tree extends AnyTreeNode { readonly type: "lt"; }
+export type LtEq = Terminal<TSKindId.LtEq>;
+export interface LtEqTree extends AnyTreeNode { readonly type: "lt_eq"; }
+export type EqEq = Terminal<TSKindId.EqEq>;
+export interface EqEqTree extends AnyTreeNode { readonly type: "eq_eq"; }
+export type EqEqEq = Terminal<TSKindId.EqEqEq>;
+export interface EqEqEqTree extends AnyTreeNode { readonly type: "eq_eq_eq"; }
+export type BangEq = Terminal<TSKindId.BangEq>;
+export interface BangEqTree extends AnyTreeNode { readonly type: "bang_eq"; }
+export type BangEqEq = Terminal<TSKindId.BangEqEq>;
+export interface BangEqEqTree extends AnyTreeNode { readonly type: "bang_eq_eq"; }
+export type GtEq = Terminal<TSKindId.GtEq>;
+export interface GtEqTree extends AnyTreeNode { readonly type: "gt_eq"; }
+export type Gt2 = Terminal<TSKindId.Gt2>;
+export interface Gt2Tree extends AnyTreeNode { readonly type: "gt"; }
+export type QmarkQmark = Terminal<TSKindId.QmarkQmark>;
+export interface QmarkQmarkTree extends AnyTreeNode { readonly type: "qmark_qmark"; }
 export type Semi = Terminal<";">;
 export interface SemiTree extends AnyTreeNode { readonly type: ";"; }
 
@@ -4936,8 +4984,6 @@ export type TypescriptNode =
   | PublicFieldDefinitionDeclareFirst
   | PublicFieldDefinitionReadonlyFirst
   | PublicFieldDefinitionStaticMods
-  | _StringDouble
-  | _StringSingle
   | TypeQueryCallExpression
   | TypeQueryCallExpressionInTypeAnnotation
   | TypeQueryInstantiationExpression
@@ -5085,8 +5131,6 @@ export type TypescriptNode =
   | SequenceExpression
   | SpreadElement
   | StatementBlock
-  | StringDouble
-  | StringSingle
   | String
   | SubscriptExpression
   | SwitchBody
@@ -5171,8 +5215,6 @@ export interface KindMap {
   '_public_field_definition_declare_first': PublicFieldDefinitionDeclareFirst;
   '_public_field_definition_readonly_first': PublicFieldDefinitionReadonlyFirst;
   '_public_field_definition_static_mods': PublicFieldDefinitionStaticMods;
-  '_string_double': _StringDouble;
-  '_string_single': _StringSingle;
   '_type_query_call_expression': TypeQueryCallExpression;
   '_type_query_call_expression_in_type_annotation': TypeQueryCallExpressionInTypeAnnotation;
   '_type_query_instantiation_expression': TypeQueryInstantiationExpression;
@@ -5320,8 +5362,6 @@ export interface KindMap {
   'sequence_expression': SequenceExpression;
   'spread_element': SpreadElement;
   'statement_block': StatementBlock;
-  'string_double': StringDouble;
-  'string_single': StringSingle;
   'string': String;
   'subscript_expression': SubscriptExpression;
   'switch_body': SwitchBody;
@@ -5367,6 +5407,7 @@ export interface KindMap {
   '_operator': Operator;
   '_public_field_definition_optionality_marker': PublicFieldDefinitionOptionalityMarker;
   '_reserved_identifier': ReservedIdentifier;
+  '_string_opening': StringOpening;
   '_type_identifier': TypeIdentifier;
   '_unary_expression_operator': UnaryExpressionOperator;
   'accessibility_modifier': AccessibilityModifier;
@@ -5402,6 +5443,9 @@ export interface KindMap {
   'jsx_text': JsxText;
   '_function_signature_automatic_semicolon': FunctionSignatureAutomaticSemicolon;
   '__error_recovery': ErrorRecovery;
+  'const': Const;
+  'instanceof': Instanceof;
+  'in': In;
 }
 
 export interface VariantMap {
@@ -5413,7 +5457,6 @@ export interface VariantMap {
   'import_specifier': { name: ImportSpecifierUFormName; as: ImportSpecifierUFormAs };
   'index_signature': { colon: IndexSignatureUFormColon; mapped_type_clause: IndexSignatureUFormMappedTypeClause };
   'parenthesized_expression': { typed: ParenthesizedExpressionUFormTyped; sequence: ParenthesizedExpressionUFormSequence };
-  'string': { double: StringUFormDouble; single: StringUFormSingle };
   'update_expression': { postfix: UpdateExpressionUFormPostfix; prefix: UpdateExpressionUFormPrefix };
 }
 
@@ -5467,8 +5510,6 @@ export interface PublicFieldDefinitionAccessorOptNs extends NodeNs<PublicFieldDe
 export interface PublicFieldDefinitionDeclareFirstNs extends NodeNs<PublicFieldDefinitionDeclareFirst, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface PublicFieldDefinitionReadonlyFirstNs extends NodeNs<PublicFieldDefinitionReadonlyFirst, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface PublicFieldDefinitionStaticModsNs extends NodeNs<PublicFieldDefinitionStaticMods, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _StringDoubleNs extends NodeNs<_StringDouble, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _StringSingleNs extends NodeNs<_StringSingle, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TypeQueryCallExpressionNs extends NodeNs<TypeQueryCallExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TypeQueryCallExpressionInTypeAnnotationNs extends NodeNs<TypeQueryCallExpressionInTypeAnnotation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TypeQueryInstantiationExpressionNs extends NodeNs<TypeQueryInstantiationExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5616,8 +5657,6 @@ export interface SatisfiesExpressionNs extends NodeNs<SatisfiesExpression, LeafS
 export interface SequenceExpressionNs extends NodeNs<SequenceExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface SpreadElementNs extends NodeNs<SpreadElement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StatementBlockNs extends NodeNs<StatementBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface StringDoubleNs extends NodeNs<StringDouble, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface StringSingleNs extends NodeNs<StringSingle, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StringNs extends NodeNs<String, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface SubscriptExpressionNs extends NodeNs<SubscriptExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface SwitchBodyNs extends NodeNs<SwitchBody, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5701,8 +5740,6 @@ export interface NamespaceMap {
   '_public_field_definition_declare_first': PublicFieldDefinitionDeclareFirstNs;
   '_public_field_definition_readonly_first': PublicFieldDefinitionReadonlyFirstNs;
   '_public_field_definition_static_mods': PublicFieldDefinitionStaticModsNs;
-  '_string_double': _StringDoubleNs;
-  '_string_single': _StringSingleNs;
   '_type_query_call_expression': TypeQueryCallExpressionNs;
   '_type_query_call_expression_in_type_annotation': TypeQueryCallExpressionInTypeAnnotationNs;
   '_type_query_instantiation_expression': TypeQueryInstantiationExpressionNs;
@@ -5850,8 +5887,6 @@ export interface NamespaceMap {
   'sequence_expression': SequenceExpressionNs;
   'spread_element': SpreadElementNs;
   'statement_block': StatementBlockNs;
-  'string_double': StringDoubleNs;
-  'string_single': StringSingleNs;
   'string': StringNs;
   'subscript_expression': SubscriptExpressionNs;
   'switch_body': SwitchBodyNs;
@@ -6235,20 +6270,6 @@ export namespace PublicFieldDefinitionStaticMods {
   export type Loose = LooseFor<'_public_field_definition_static_mods'>;
   export type Tree = TreeFor<'_public_field_definition_static_mods'>;
   export type Kind = '_public_field_definition_static_mods';
-}
-export namespace _StringDouble {
-  export type Config = ConfigFor<'_string_double'>;
-  export type Fluent = FluentFor<'_string_double'>;
-  export type Loose = LooseFor<'_string_double'>;
-  export type Tree = TreeFor<'_string_double'>;
-  export type Kind = '_string_double';
-}
-export namespace _StringSingle {
-  export type Config = ConfigFor<'_string_single'>;
-  export type Fluent = FluentFor<'_string_single'>;
-  export type Loose = LooseFor<'_string_single'>;
-  export type Tree = TreeFor<'_string_single'>;
-  export type Kind = '_string_single';
 }
 export namespace TypeQueryCallExpression {
   export type Config = ConfigFor<'_type_query_call_expression'>;
@@ -7113,11 +7134,11 @@ export namespace ObjectPattern {
 }
 export namespace ObjectType {
   export namespace Curly {
-    export type Config = ConfigFor<'object_type'>;
+    export type Config = Omit<ConfigFor<'object_type'>, "opening" | "closing">;
     export type Tree = ObjectTypeCurlyTree;
   }
   export namespace Flow {
-    export type Config = ConfigFor<'object_type'>;
+    export type Config = Omit<ConfigFor<'object_type'>, "opening" | "closing">;
     export type Tree = ObjectTypeFlowTree;
   }
   /** Default form: 'curly' (first-declared). */
@@ -7288,22 +7309,17 @@ export namespace StatementBlock {
   export type Tree = TreeFor<'statement_block'>;
   export type Kind = 'statement_block';
 }
-export namespace StringDouble {
-  export type Config = ConfigFor<'string_double'>;
-  export type Fluent = FluentFor<'string_double'>;
-  export type Loose = LooseFor<'string_double'>;
-  export type Tree = TreeFor<'string_double'>;
-  export type Kind = 'string_double';
-}
-export namespace StringSingle {
-  export type Config = ConfigFor<'string_single'>;
-  export type Fluent = FluentFor<'string_single'>;
-  export type Loose = LooseFor<'string_single'>;
-  export type Tree = TreeFor<'string_single'>;
-  export type Kind = 'string_single';
-}
 export namespace String {
-  export type Config = ConfigFor<'string'>;
+  export namespace Double {
+    export type Config = Omit<ConfigFor<'string'>, "opening" | "closing">;
+    export type Tree = StringDoubleTree;
+  }
+  export namespace Single {
+    export type Config = Omit<ConfigFor<'string'>, "opening" | "closing">;
+    export type Tree = StringSingleTree;
+  }
+  /** Default form: 'double' (first-declared). */
+  export type Config = Double.Config;
   export type Fluent = FluentFor<'string'>;
   export type Loose = LooseFor<'string'>;
   export type Tree = TreeFor<'string'>;

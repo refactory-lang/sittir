@@ -110,36 +110,88 @@ function _deepReadNode(
 	return data;
 }
 
+/**
+ * Force evaluation of every wrapped-node getter before render.
+ *
+ * @remarks
+ * `readTreeNode()` returns a lazy wrapped view. Recursive RT mode is
+ * documented as full recursive materialization before render, so force a
+ * complete walk here rather than relying on templates to touch every getter.
+ */
+function materializeWrappedNodeData(root: unknown): AnyNodeData {
+	walkWrappedTree(root, () => {});
+	return root as AnyNodeData;
+}
+
+function stripMaterializedNodeText(root: AnyNodeData): AnyNodeData {
+	const seen = new WeakSet<object>();
+	const isNodeData = (value: unknown): value is AnyNodeData =>
+		typeof value === 'object' && value !== null && '$type' in value;
+	const hasNamedFields = (record: Record<string, unknown>): boolean =>
+		Object.keys(record).some((key) => key.startsWith('_'))
+		|| (record.$fields != null && typeof record.$fields === 'object');
+	const recurse = (value: unknown): void => {
+		if (!isNodeData(value)) return;
+		if (seen.has(value)) return;
+		seen.add(value);
+		const record = value as unknown as Record<string, unknown>;
+		if (hasNamedFields(record)) {
+			delete record.$text;
+		}
+		for (const [key, child] of Object.entries(record)) {
+			if (key === '$with') continue;
+			if (key === '$children' && Array.isArray(child)) {
+				for (const entry of child) recurse(entry);
+				continue;
+			}
+			if (key.startsWith('_')) {
+				if (Array.isArray(child)) {
+					for (const entry of child) recurse(entry);
+				} else {
+					recurse(child);
+				}
+			}
+		}
+	};
+	recurse(root);
+	return root;
+}
+
 function readValidatorNodeData(
 	handle: TreeHandle,
 	node: TSNode,
 	nativeCoords: ReturnType<typeof findNativeNodeId>,
 	readTreeNodeFn: ((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null,
 	deepReadKinds: KindMembership,
-	recursive: boolean,
-	backend?: 'native' | 'typescript'
+	recursive: boolean
 ): AnyNodeData {
-	void readTreeNodeFn;
-	void recursive;
-	void backend;
-	const deepRead = (): AnyNodeData => {
+	if (!recursive) {
+		return readNodeAt(handle, adaptNode(node), nativeCoords);
+	}
+	if (readTreeNodeFn) {
 		if (nativeCoords && handle.read) {
-			return _deepReadNode(handle, nativeCoords.handle, nativeCoords.childIndex, deepReadKinds);
+			return stripMaterializedNodeText(
+				materializeWrappedNodeData(readTreeNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex))
+			);
 		}
 		const prev = handle.rootNode;
 		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(node);
 		try {
-			return _deepReadNode(handle, undefined, undefined, deepReadKinds);
+			return materializeWrappedNodeData(readTreeNodeFn(handle));
 		} finally {
 			(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
 		}
-	};
-	// Always route through _deepReadNode: when `recursive` is false the
-	// KindMembership gate limits drilling to the caller-selected subset;
-	// when true the membership test returns true for every numeric kind id.
-	// This preserves the shallow default for most nodes while still letting
-	// native RT validation selectively materialize structured descendants.
-	return deepRead();
+	}
+	if (nativeCoords && handle.read) {
+		return _deepReadNode(handle, nativeCoords.handle, nativeCoords.childIndex, deepReadKinds);
+	}
+	const prev = handle.rootNode;
+	(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(node);
+	try {
+		return _deepReadNode(handle, undefined, undefined, deepReadKinds);
+	} finally {
+		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
+	}
 }
 
 /**
@@ -848,8 +900,7 @@ export async function validateReadRenderParse(
 						nativeCoords,
 						readTreeNodeFn,
 						deepReadKinds,
-						recursive === true,
-						backend
+						recursive === true
 					);
 					const { data, renderedKind, targetKind } = applyAliasResolution(
 						rawData,

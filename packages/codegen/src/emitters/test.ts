@@ -18,6 +18,7 @@ import {
 	isAutoStampField,
 	isAutoStampSlot,
 	resolveSingleFieldFactorySlot,
+	classifyChildFactorySurface,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
@@ -109,12 +110,8 @@ export function emitTests(config: EmitTestsConfig): string {
 
 		switch (node.modelType) {
 			case 'branch':
-				// Phase 1d.vii (spec 022): the former `'container'` modelType
-				// is now `'branch'` with `isContainerShape === true`.
-				// Container-shape branches still need the rest-param test
-				// scaffolding.
 				if (
-					node.isContainerShape ||
+					classifyChildFactorySurface(node, nodeMap) !== null ||
 					((node.fields.length === 0 || node.fields.every((field) => isAutoStampField(field, nodeMap))) &&
 						node.children.length > 0)
 				) {
@@ -253,10 +250,7 @@ function emitContainerTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	// Phase 1d.vii (spec 022): the former `'container'` modelType is now
-	// `'branch'` with `isContainerShape === true`. The caller already
-	// gates on that, but check defensively.
-	if (node.modelType !== 'branch' || !node.isContainerShape) return;
+	if (node.modelType !== 'branch' || classifyChildFactorySurface(node, nodeMap) === null) return;
 
 	// Container-shape branch factories take positional args: singular-
 	// child containers require one `child?` and repeated containers take
@@ -563,11 +557,9 @@ function resolveInnerContainerNonEmptyChild(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string | null {
-	// Only container-shape branches go through this path — others surface
-	// their data via fields. Phase 1d.vii (spec 022) merged the former
-	// `AssembledContainer` into `AssembledBranch`; the discriminant is
-	// `modelType === 'branch' && isContainerShape === true`.
-	if (innerNode.modelType !== 'branch' || !innerNode.isContainerShape) return null;
+	// Only positional-child branch factories go through this path — others
+	// surface their data via fields/config.
+	if (innerNode.modelType !== 'branch' || classifyChildFactorySurface(innerNode, nodeMap) === null) return null;
 	const childSlots = innerNode.children;
 	if (!childSlots || childSlots.length === 0) return null;
 	const firstRequired = childSlots.find((c) => isRequired(c) && isNonEmpty(c));

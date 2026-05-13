@@ -31,7 +31,6 @@ import {
 	type HoistedForm,
 	fieldTypeComponents,
 	isValidIdent,
-	keywordPresenceKind,
 	resolveFieldStorageInfo,
 	resolveHiddenKeywordLiteral,
 	classifyFactoryShape,
@@ -124,6 +123,47 @@ function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
 	// unimported in the emitted factories.ts.
 	for (const n of nodeMap.nodes.values()) {
 		if (n.modelType === 'polymorph') return true;
+	}
+	return false;
+}
+
+function collectStorageCoercionImports(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string[] {
+	const imports = new Set<string>();
+	for (const node of nodeMap.nodes.values()) {
+		for (const slot of allSlotsOf(node)) {
+			const storageInfo = resolveFieldStorageInfo(slot, nodeMap, kindEntries);
+			switch (storageInfo.kind) {
+				case 'boolean':
+					imports.add('coerceBooleanKeywordStorage');
+					break;
+				case 'bitflag':
+					imports.add('coerceBitflagStorage');
+					break;
+				case 'kindEnum':
+					if (kindEntries) imports.add('coerceKindEnumStorage');
+					break;
+				case 'verbatim':
+					break;
+			}
+		}
+	}
+	return [...imports].sort();
+}
+
+function collectUsesKindIdFromName(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): boolean {
+	if (!kindEntries) return false;
+	for (const node of nodeMap.nodes.values()) {
+		for (const slot of allSlotsOf(node)) {
+			const storageInfo = resolveFieldStorageInfo(slot, nodeMap, kindEntries);
+			if (storageInfo.kind !== 'kindEnum') continue;
+			if (kindEnumTextMapExpr(slot, nodeMap, kindEntries).includes('kindIdFromName(')) return true;
+		}
 	}
 	return false;
 }
@@ -797,7 +837,7 @@ function emitFieldCarryingFactory(
 	const hasChildren = children.length > 0;
 	const opt = resolveConfigOptional(fields, children, nodeMap);
 	const typeKind = node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
-	const configType = resolveConfigType(node, isPolymorphForm);
+	const configType = resolveConfigType(node, isPolymorphForm, nodeMap.refineForms?.has(typeKind) ?? false);
 
 	// Gap 5: Single-field-no-children factories take the value directly
 	// instead of a config object. Uses the pre-computed slotClass
@@ -835,17 +875,18 @@ function emitFieldCarryingFactory(
 	const childrenUserConfigurable = hasChildren && !(allRequiredAutoStamp && optionalChildren.length === 0);
 
 	// When opt is '?' (all fields optional), emit a local `_config` default so
-	// property access uses `_config.x` (no optional chaining) instead of
-	// `config?.x`. Only emit the default when the body actually reads from
-	// config — avoids dead code when all fields auto-stamp.
+	// property access can use `config.x` (no optional chaining). Only emit
+	// the default when the body actually reads from config — avoids dead code
+	// when all fields auto-stamp.
 	const hasConfigReads = fields.some((f) => autoStampExpression(f, nodeMap) === undefined) || childrenUserConfigurable;
-	const configAccess = opt === '?' && hasConfigReads ? '_config' : 'config';
+	const configAccess = 'config';
 
 	const lines: string[] = [];
-	lines.push(`export function ${fn}(config${opt}: ${configType}) {`);
-	if (opt === '?' && hasConfigReads) {
-		lines.push('  const _config = config ?? {};');
-	}
+	const signature =
+		opt === '?' && hasConfigReads
+			? `export function ${fn}(config: Partial<${configType}> = {}) {`
+			: `export function ${fn}(config${opt}: ${configType}) {`;
+	lines.push(signature);
 
 	// Build children local variable.
 	if (hasChildren) {
@@ -1243,26 +1284,27 @@ function resolveConfigOptional(
  *   `T.${typeName}.Config` namespace alias, which resolves to the same
  *   `ConfigOf<T.${typeName}>` shape under the hood.
  */
-function resolveConfigType(node: FieldCarryingNode, isPolymorphForm: boolean): string {
+function resolveConfigType(node: FieldCarryingNode, isPolymorphForm: boolean, hasRefineForms: boolean): string {
 	// Polymorph FORM factories omit `$variant` from their input Config —
 	// the form itself stamps `$variant` on the output, so accepting it
 	// as input would be redundant. Parent (dispatcher) factories use
 	// `T.${parent}.Config` which resolves to `ConfigOf<union>` and
 	// REQUIRES `$variant` (discriminated-union narrowing).
 	//
-	// Refined kinds also alias their parent `T.<TypeName>.Config` to the
+	// Refined base kinds alias their parent `T.<TypeName>.Config` to the
 	// first-declared form's narrowed Config (per emitRefineFormSubNamespaces),
-	// dropping the narrowed-out fields. The parent factory still references
-	// those fields directly, so route through `ConfigOf<T.<TypeName>>` here
-	// to get the full Config — same shape as the generic indirection
-	// for polymorph dispatchers, just minus the `$variant` Omit.
+	// dropping the narrowed-out fields. The base factory still references
+	// every field directly, so it must bypass that narrowed alias and use the
+	// full generic projection instead.
 	// Hygiene rule 5 — prefer concrete per-kind namespace alias over the
 	// `ConfigOf<T>` generic indirection. `T.${typeName}.Config` is emitted
 	// by the types.ts namespace-sugar pass and resolves to the same
 	// `ConfigFor<kind>` shape, so this is a pure typing-surface improvement
 	// with no runtime change. Polymorph forms keep `ConfigOf<T.X>` because
 	// synthetic UForm names don't carry a `.Config` namespace member.
-	return isPolymorphForm ? `Omit<ConfigOf<T.${node.typeName}>, '$variant'>` : `T.${node.typeName}.Config`;
+	if (isPolymorphForm) return `Omit<ConfigOf<T.${node.typeName}>, '$variant'>`;
+	if (hasRefineForms) return `ConfigOf<T.${node.typeName}>`;
+	return `T.${node.typeName}.Config`;
 }
 
 /**
@@ -1536,15 +1578,12 @@ function emitHoistedPolymorphFormFactory(
 	//     inner kind is a hidden field-carrying group without
 	//     retrofitting factory emission onto every hidden group.
 	//     Example: python's `_assignment_eq`.
-	// The former `AssembledContainer` shape is
-	// now an `AssembledBranch`. Distinguish via the structural
-	// `isContainerShape` getter (no `field()` on the rule). The
-	// `hoist.innerFields.length === 0` clause keeps the prior behavior
-	// for hoisted forms whose inner has empty derived fields too.
 	const innerIsContainer =
-		hoist.innerNode.modelType === 'branch' && hoist.innerNode.isContainerShape && hoist.innerFields.length === 0;
+		hoist.innerNode.modelType === 'branch' &&
+		classifyChildFactorySurface(hoist.innerNode, nodeMap) !== null &&
+		hoist.innerFields.length === 0;
 	if (innerIsContainer && hoist.innerFactoryName !== undefined) {
-		// innerNode is AssembledBranch (checked via isContainerShape above)
+		// innerNode is a positional-child branch factory
 		const innerNode = hoist.innerNode as { slots: Readonly<Record<string, AssembledNonterminal>> };
 		const innerChildren = Object.values(innerNode.slots);
 		const anyMultiple = innerChildren.some((c) => isMultiple(c));
@@ -1977,17 +2016,18 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 
 		lines.push(`import type * as T from './types.js';`);
 		if (kindEntries) {
-			lines.push(`import { TSKindId, kindIdFromName } from './types.js';`);
+			const kindIdImports = ['TSKindId'];
+			if (collectUsesKindIdFromName(nodeMap, kindEntries)) kindIdImports.push('kindIdFromName');
+			lines.push(`import { ${kindIdImports.join(', ')} } from './types.js';`);
 		}
 		const usesNonEmptyArray = collectUsesNonEmptyArray(nodeMap);
 		const usesConfigOf = collectUsesHoistedPolymorphForm(nodeMap);
-		const utilImports = ['AnyNodeData', 'FluentNode'];
+		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
+		const utilImports = ['FluentNode'];
 		if (usesConfigOf) utilImports.push('ConfigOf');
 		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
 		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
-		lines.push(
-			"import { withMethods, methodsEngine, coerceBitflagStorage, coerceBooleanKeywordStorage, coerceKindEnumStorage } from './utils.js';"
-		);
+		lines.push(`import { ${['withMethods', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
 		lines.push(...emitConfigChildrenHelper());
@@ -2029,6 +2069,16 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		factory.group(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 
+	emitRefineForms(kind: string, node: AssembledNode): void {
+		const refineInfo = this.#refineByKind.get(kind);
+		if (!refineInfo) return;
+		for (const form of refineInfo.forms) {
+			const formSource = emitRefineFormFactory(node, form, refineInfo, this.#nodeMap, this.#kindEntries);
+			if (formSource === undefined) continue;
+			this.#output.push(formSource);
+		}
+	}
+
 	dispatchNode(kind: string, node: AssembledNode): void {
 		const emission = classifyFactoryEmission(kind, node, {
 			nodeMap: this.#nodeMap,
@@ -2065,14 +2115,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 		}
 		if (this.#output.length === prevLen) return;
-
-		const refineInfo = this.#refineByKind.get(kind);
-		if (!refineInfo) return;
-		for (const form of refineInfo.forms) {
-			const formSource = emitRefineFormFactory(node, form, refineInfo, this.#nodeMap, this.#kindEntries);
-			if (formSource === undefined) continue;
-			this.#output.push(formSource);
-		}
+		this.emitRefineForms(kind, node);
 	}
 
 	finalize(): string {

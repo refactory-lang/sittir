@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 428,
+  "nodeCount": 432,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -65,8 +65,6 @@
     "index_signature__form_mapped_type_clause",
     "parenthesized_expression__form_sequence",
     "parenthesized_expression__form_typed",
-    "string__form_double",
-    "string__form_single",
     "update_expression__form_postfix",
     "update_expression__form_prefix"
   ],
@@ -80,26 +78,6 @@
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
       "text": "!"
-    },
-    {
-      "kind": "!=",
-      "modelType": "token",
-      "typeName": "Neq",
-      "irKey": "neq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"!=\" as const",
-      "text": "!="
-    },
-    {
-      "kind": "!==",
-      "modelType": "token",
-      "typeName": "TokBangEqEq",
-      "irKey": "tokBangEqEq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"!==\" as const",
-      "text": "!=="
     },
     {
       "kind": "\"",
@@ -122,16 +100,6 @@
       "text": "${"
     },
     {
-      "kind": "%",
-      "modelType": "token",
-      "typeName": "Percent",
-      "irKey": "percent",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"%\" as const",
-      "text": "%"
-    },
-    {
       "kind": "&",
       "modelType": "token",
       "typeName": "Amp",
@@ -140,16 +108,6 @@
       "isParameterless": true,
       "stampExpression": "\"&\" as const",
       "text": "&"
-    },
-    {
-      "kind": "&&",
-      "modelType": "token",
-      "typeName": "Andand",
-      "irKey": "andand",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"&&\" as const",
-      "text": "&&"
     },
     {
       "kind": "'",
@@ -192,26 +150,6 @@
       "text": "*"
     },
     {
-      "kind": "**",
-      "modelType": "token",
-      "typeName": "Starstar",
-      "irKey": "starstar",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"**\" as const",
-      "text": "**"
-    },
-    {
-      "kind": "+",
-      "modelType": "token",
-      "typeName": "Plus",
-      "irKey": "plus",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"+\" as const",
-      "text": "+"
-    },
-    {
       "kind": "+?:",
       "modelType": "token",
       "typeName": "TokPlusQColon",
@@ -230,16 +168,6 @@
       "isParameterless": true,
       "stampExpression": "\",\" as const",
       "text": ","
-    },
-    {
-      "kind": "-",
-      "modelType": "token",
-      "typeName": "Minus",
-      "irKey": "minus",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"-\" as const",
-      "text": "-"
     },
     {
       "kind": "-?:",
@@ -332,26 +260,6 @@
       "text": "</"
     },
     {
-      "kind": "<<",
-      "modelType": "token",
-      "typeName": "Shl",
-      "irKey": "shl",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"<<\" as const",
-      "text": "<<"
-    },
-    {
-      "kind": "<=",
-      "modelType": "token",
-      "typeName": "Le",
-      "irKey": "le",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"<=\" as const",
-      "text": "<="
-    },
-    {
       "kind": "=",
       "modelType": "token",
       "typeName": "Eq",
@@ -360,26 +268,6 @@
       "isParameterless": true,
       "stampExpression": "\"=\" as const",
       "text": "="
-    },
-    {
-      "kind": "==",
-      "modelType": "token",
-      "typeName": "Eqeq",
-      "irKey": "eqeq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"==\" as const",
-      "text": "=="
-    },
-    {
-      "kind": "===",
-      "modelType": "token",
-      "typeName": "TokEqEqEq",
-      "irKey": "tokEqEqEq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"===\" as const",
-      "text": "==="
     },
     {
       "kind": "=>",
@@ -400,36 +288,6 @@
       "isParameterless": true,
       "stampExpression": "\">\" as const",
       "text": ">"
-    },
-    {
-      "kind": ">=",
-      "modelType": "token",
-      "typeName": "Ge",
-      "irKey": "ge",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\">=\" as const",
-      "text": ">="
-    },
-    {
-      "kind": ">>",
-      "modelType": "token",
-      "typeName": "Shr",
-      "irKey": "shr",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\">>\" as const",
-      "text": ">>"
-    },
-    {
-      "kind": ">>>",
-      "modelType": "token",
-      "typeName": "TokGtGtGt",
-      "irKey": "tokGtGtGt",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\">>>\" as const",
-      "text": ">>>"
     },
     {
       "kind": "?",
@@ -462,16 +320,6 @@
       "text": "?:"
     },
     {
-      "kind": "??",
-      "modelType": "token",
-      "typeName": "TokQQ",
-      "irKey": "tokQQ",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"??\" as const",
-      "text": "??"
-    },
-    {
       "kind": "@",
       "modelType": "token",
       "typeName": "At",
@@ -500,16 +348,6 @@
       "isParameterless": true,
       "stampExpression": "\"]\" as const",
       "text": "]"
-    },
-    {
-      "kind": "^",
-      "modelType": "token",
-      "typeName": "Caret",
-      "irKey": "caret",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"^\" as const",
-      "text": "^"
     },
     {
       "kind": "__error_recovery",
@@ -3888,67 +3726,15 @@
       "text": "static"
     },
     {
-      "kind": "_string_double",
-      "modelType": "branch",
-      "typeName": "_StringDouble",
-      "factoryName": "_stringDouble",
-      "irKey": "_stringDouble",
+      "kind": "_string_opening",
+      "modelType": "enum",
+      "typeName": "StringOpening",
+      "factoryName": "stringOpening",
+      "irKey": "stringOpening",
       "hidden": false,
-      "fields": [],
-      "children": [
-        {
-          "name": "unescaped_double_string_fragment",
-          "propertyName": "unescapedDoubleStringFragments",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "unescaped_double_string_fragment",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "escape_sequence",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "_string_single",
-      "modelType": "branch",
-      "typeName": "_StringSingle",
-      "factoryName": "_stringSingle",
-      "irKey": "_stringSingle",
-      "hidden": false,
-      "fields": [],
-      "children": [
-        {
-          "name": "unescaped_single_string_fragment",
-          "propertyName": "unescapedSingleStringFragments",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "unescaped_single_string_fragment",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "escape_sequence",
-              "unresolved": true
-            }
-          ]
-        }
+      "values": [
+        "\"",
+        "'"
       ]
     },
     {
@@ -5136,6 +4922,26 @@
       "children": []
     },
     {
+      "kind": "amp",
+      "modelType": "token",
+      "typeName": "Amp2",
+      "irKey": "amp",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"&\" as const",
+      "text": "&"
+    },
+    {
+      "kind": "amp_amp",
+      "modelType": "token",
+      "typeName": "AmpAmp",
+      "irKey": "ampAmp",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"&&\" as const",
+      "text": "&&"
+    },
+    {
       "kind": "arguments",
       "modelType": "branch",
       "typeName": "Arguments",
@@ -5632,9 +5438,10 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "const"
+              "name": "const",
+              "unresolved": true
             },
             {
               "kind": "node-ref",
@@ -5647,6 +5454,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "const",
               "type"
             ]
           }
@@ -6047,6 +5855,26 @@
       "children": []
     },
     {
+      "kind": "bang_eq",
+      "modelType": "token",
+      "typeName": "BangEq",
+      "irKey": "bangEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!=\" as const",
+      "text": "!="
+    },
+    {
+      "kind": "bang_eq_eq",
+      "modelType": "token",
+      "typeName": "BangEqEq",
+      "irKey": "bangEqEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!==\" as const",
+      "text": "!=="
+    },
+    {
       "kind": "binary_expression",
       "modelType": "branch",
       "typeName": "BinaryExpression",
@@ -6093,135 +5921,186 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "&&"
+              "name": "amp_amp",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "||"
+              "name": "pipe_pipe",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": ">>"
+              "name": "gt_gt",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": ">>>"
+              "name": "gt_gt_gt",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "<<"
+              "name": "lt_lt",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "&"
+              "name": "amp",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "^"
+              "name": "caret",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "|"
+              "name": "pipe",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "+"
+              "name": "plus",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "-"
+              "name": "dash",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "*"
+              "name": "star",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "/"
+              "name": "slash",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "%"
+              "name": "percent",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "**"
+              "name": "star_star",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "<"
+              "name": "lt",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "<="
+              "name": "lt_eq",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "=="
+              "name": "eq_eq",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "==="
+              "name": "eq_eq_eq",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "!="
+              "name": "bang_eq",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "!=="
+              "name": "bang_eq_eq",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": ">="
+              "name": "gt_eq",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": ">"
+              "name": "gt",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "??"
+              "name": "qmark_qmark",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "instanceof"
+              "name": "instanceof",
+              "unresolved": true
             },
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "in"
+              "name": "in",
+              "unresolved": true
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "amp_amp",
+              "pipe_pipe",
+              "gt_gt",
+              "gt_gt_gt",
+              "lt_lt",
+              "amp",
+              "caret",
+              "pipe",
+              "plus",
+              "dash",
+              "star",
+              "slash",
+              "percent",
+              "star_star",
+              "lt",
+              "lt_eq",
+              "eq_eq",
+              "eq_eq_eq",
+              "bang_eq",
+              "bang_eq_eq",
+              "gt_eq",
+              "gt",
+              "qmark_qmark",
+              "instanceof",
+              "in"
+            ]
           }
         },
         {
@@ -6508,6 +6387,16 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "caret",
+      "modelType": "token",
+      "typeName": "Caret",
+      "irKey": "caret",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"^\" as const",
+      "text": "^"
     },
     {
       "kind": "case",
@@ -7591,6 +7480,16 @@
       "children": []
     },
     {
+      "kind": "dash",
+      "modelType": "token",
+      "typeName": "Dash",
+      "irKey": "dash",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"-\" as const",
+      "text": "-"
+    },
+    {
       "kind": "debugger",
       "modelType": "keyword",
       "typeName": "Debugger",
@@ -8275,6 +8174,26 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "eq_eq",
+      "modelType": "token",
+      "typeName": "EqEq",
+      "irKey": "eqEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"==\" as const",
+      "text": "=="
+    },
+    {
+      "kind": "eq_eq_eq",
+      "modelType": "token",
+      "typeName": "EqEqEq",
+      "irKey": "eqEqEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"===\" as const",
+      "text": "==="
     },
     {
       "kind": "escape_sequence",
@@ -10395,6 +10314,46 @@
       "isParameterless": true,
       "stampExpression": "\"global\" as const",
       "text": "global"
+    },
+    {
+      "kind": "gt",
+      "modelType": "token",
+      "typeName": "Gt2",
+      "irKey": "gt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">\" as const",
+      "text": ">"
+    },
+    {
+      "kind": "gt_eq",
+      "modelType": "token",
+      "typeName": "GtEq",
+      "irKey": "gtEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">=\" as const",
+      "text": ">="
+    },
+    {
+      "kind": "gt_gt",
+      "modelType": "token",
+      "typeName": "GtGt",
+      "irKey": "gtGt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">>\" as const",
+      "text": ">>"
+    },
+    {
+      "kind": "gt_gt_gt",
+      "modelType": "token",
+      "typeName": "GtGtGt",
+      "irKey": "gtGtGt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">>>\" as const",
+      "text": ">>>"
     },
     {
       "kind": "hash_bang_line",
@@ -12593,6 +12552,36 @@
       "children": []
     },
     {
+      "kind": "lt",
+      "modelType": "token",
+      "typeName": "Lt2",
+      "irKey": "lt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<\" as const",
+      "text": "<"
+    },
+    {
+      "kind": "lt_eq",
+      "modelType": "token",
+      "typeName": "LtEq",
+      "irKey": "ltEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<=\" as const",
+      "text": "<="
+    },
+    {
+      "kind": "lt_lt",
+      "modelType": "token",
+      "typeName": "LtLt",
+      "irKey": "ltLt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<<\" as const",
+      "text": "<<"
+    },
+    {
       "kind": "mapped_type_clause",
       "modelType": "branch",
       "typeName": "MappedTypeClause",
@@ -14762,6 +14751,46 @@
       ]
     },
     {
+      "kind": "percent",
+      "modelType": "token",
+      "typeName": "Percent",
+      "irKey": "percent",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"%\" as const",
+      "text": "%"
+    },
+    {
+      "kind": "pipe",
+      "modelType": "token",
+      "typeName": "Pipe2",
+      "irKey": "pipe",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"|\" as const",
+      "text": "|"
+    },
+    {
+      "kind": "pipe_pipe",
+      "modelType": "token",
+      "typeName": "PipePipe",
+      "irKey": "pipePipe",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"||\" as const",
+      "text": "||"
+    },
+    {
+      "kind": "plus",
+      "modelType": "token",
+      "typeName": "Plus",
+      "irKey": "plus",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"+\" as const",
+      "text": "+"
+    },
+    {
       "kind": "predefined_type",
       "modelType": "pattern",
       "typeName": "PredefinedType",
@@ -15248,6 +15277,16 @@
           ]
         }
       ]
+    },
+    {
+      "kind": "qmark_qmark",
+      "modelType": "token",
+      "typeName": "QmarkQmark",
+      "irKey": "qmarkQmark",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"??\" as const",
+      "text": "??"
     },
     {
       "kind": "readonly",
@@ -15756,6 +15795,16 @@
       "separator": ","
     },
     {
+      "kind": "slash",
+      "modelType": "token",
+      "typeName": "Slash2",
+      "irKey": "slash",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"/\" as const",
+      "text": "/"
+    },
+    {
       "kind": "spread_element",
       "modelType": "branch",
       "typeName": "SpreadElement",
@@ -15788,6 +15837,26 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "star",
+      "modelType": "token",
+      "typeName": "Star2",
+      "irKey": "star",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"*\" as const",
+      "text": "*"
+    },
+    {
+      "kind": "star_star",
+      "modelType": "token",
+      "typeName": "StarStar",
+      "irKey": "starStar",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"**\" as const",
+      "text": "**"
     },
     {
       "kind": "statement",
@@ -15887,84 +15956,39 @@
     },
     {
       "kind": "string",
-      "modelType": "polymorph",
+      "modelType": "branch",
       "typeName": "String",
       "factoryName": "string",
       "irKey": "string",
       "hidden": false,
-      "source": "override",
-      "polymorphSource": "override",
-      "variantChildKinds": [
-        "string_double",
-        "string_single"
-      ],
-      "forms": [
+      "fields": [
         {
-          "kind": "string__form_double",
-          "name": "double",
-          "typeName": "StringUFormDouble",
-          "factoryName": "stringUFormDouble",
-          "irKey": "stringUFormDouble",
-          "parentKind": "string",
-          "fields": [],
-          "children": [
+          "name": "opening",
+          "propertyName": "opening",
+          "paramName": "opening",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
-              "name": "string_double",
-              "propertyName": "stringDouble",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_string_double",
-                  "unresolved": true
-                }
-              ]
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_string_opening",
+              "unresolved": true
             }
-          ]
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_string_opening"
+            ]
+          }
         },
         {
-          "kind": "string__form_single",
-          "name": "single",
-          "typeName": "StringUFormSingle",
-          "factoryName": "stringUFormSingle",
-          "irKey": "stringUFormSingle",
-          "parentKind": "string",
-          "fields": [],
-          "children": [
-            {
-              "name": "string_single",
-              "propertyName": "stringSingle",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_string_single",
-                  "unresolved": true
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "string_double",
-      "modelType": "branch",
-      "typeName": "StringDouble",
-      "factoryName": "stringDouble",
-      "irKey": "stringDouble",
-      "hidden": false,
-      "fields": [],
-      "children": [
-        {
-          "name": "unescaped_double_string_fragment",
-          "propertyName": "unescapedDoubleStringFragments",
+          "name": "contents",
+          "propertyName": "contents",
+          "paramName": "contents",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -15980,42 +16004,52 @@
               "multiplicity": "array",
               "name": "escape_sequence",
               "unresolved": true
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "string_single",
-      "modelType": "branch",
-      "typeName": "StringSingle",
-      "factoryName": "stringSingle",
-      "irKey": "stringSingle",
-      "hidden": false,
-      "fields": [],
-      "children": [
-        {
-          "name": "unescaped_single_string_fragment",
-          "propertyName": "unescapedSingleStringFragments",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "unescaped_single_string_fragment",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "unescaped_double_string_fragment",
+              "escape_sequence",
+              "unescaped_single_string_fragment"
+            ]
+          },
+          "aliasSources": {
+            "string_fragment": "unescaped_single_string_fragment"
+          }
+        },
+        {
+          "name": "closing",
+          "propertyName": "closing",
+          "paramName": "closing",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "escape_sequence",
+              "multiplicity": "single",
+              "name": "_string_opening",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_string_opening"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "subscript_expression",

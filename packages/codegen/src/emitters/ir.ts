@@ -16,7 +16,7 @@ import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode, AssembledSupertype } from '../compiler/node-map.ts';
 import { isValidIdent } from './shared.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
-import { collectRefineKindInfos } from './refine-emit.ts';
+import { camelCase, collectRefineKindInfos, refineFormFactoryName } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
@@ -280,9 +280,21 @@ function bundleExpr(node: AssembledNode, refineInfo?: RefineKindInfo): string {
 			});
 		return `_attach(FR.${node.fromFunctionName}, { from: FR.${node.fromFunctionName}, strict: F.${node.rawFactoryName}, ${variantEntries.join(', ')} })`;
 	}
-	void refineInfo;
 	if (node.modelType === 'branch') {
-		return `_attach(FR.${node.fromFunctionName}, { from: FR.${node.fromFunctionName}, strict: F.${node.rawFactoryName} })`;
+		if (!node.rawFactoryName) {
+			return `_attach(FR.${node.fromFunctionName}, { from: FR.${node.fromFunctionName} })`;
+		}
+		const baseFactoryName = node.rawFactoryName;
+		const refineEntries =
+			refineInfo?.forms.flatMap((form) => {
+				const factoryName = refineFormFactoryName(baseFactoryName, form.name);
+				const camelKey = JSON.stringify(camelCase(form.name));
+				const keys = [camelKey];
+				if (camelCase(form.name) !== form.name) keys.push(JSON.stringify(form.name));
+				return keys.map((key) => `${key}: F.${factoryName}`);
+			}) ?? [];
+		const extras = refineEntries.length > 0 ? `, ${refineEntries.join(', ')}` : '';
+		return `_attach(FR.${node.fromFunctionName}, { from: FR.${node.fromFunctionName}, strict: F.${baseFactoryName}${extras} })`;
 	}
 	return `_attach(F.${node.rawFactoryName}, { from: FR.${node.fromFunctionName} })`;
 }

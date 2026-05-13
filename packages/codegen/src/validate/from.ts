@@ -9,7 +9,6 @@
  * No tree-sitter re-parsing needed — pure structural comparison.
  */
 
-import { readNode } from '@sittir/common';
 import type { AnyNodeData } from '@sittir/types';
 import type { FactoryShape } from '../emitters/factory-map.ts';
 import {
@@ -105,7 +104,11 @@ function findUndefined(node: AnyNodeData, path = ''): string[] {
  * access can't distinguish `{a: undefined}` from `{}`, so the structural
  * comparison shouldn't either.
  */
-function structuralDiff(a: AnyNodeData, b: AnyNodeData): string[] {
+function structuralDiff(
+	a: AnyNodeData,
+	b: AnyNodeData,
+	kindNameFromId?: ((id: number) => string | undefined) | undefined,
+): string[] {
 	const diffs: string[] = [];
 	if (a.$type !== b.$type) diffs.push(`$type: ${a.$type} vs ${b.$type}`);
 
@@ -124,9 +127,31 @@ function structuralDiff(a: AnyNodeData, b: AnyNodeData): string[] {
 	if (missingInA.length) diffs.push(`from() missing declared fields: ${missingInA.join(', ')}`);
 
 	// Compare only named children — anonymous tokens (delimiters, separators)
-	// are reconstructed from templates, not carried in factory output
-	const aNamed = (a.$children ?? []).filter((c: any) => c?.$named !== false);
-	const bNamed = (b.$children ?? []).filter((c: any) => c?.$named !== false);
+	// are reconstructed from templates, not carried in factory output.
+	// After commit 15c4c195 (child hoisting), anonymous leaf children scalarize
+	// to numeric kind IDs on the wire. Numbers have no `$named` property, so
+	// `c?.$named !== false` evaluates true for them — exclude explicitly.
+	// Polymorph wrapper children (whose name starts with "{parent}_") are
+	// produced differently by read vs factory — filter them from both sides to
+	// avoid false divergence on the wrapper/unwrapper split.
+	// $type is a numeric kind ID after child hoisting, so resolve parent name
+	// through kindNameFromId before building the prefix. Hidden-rule types are
+	// stored with a leading `_` (e.g. `_mod_item_external`); strip it before
+	// the prefix comparison so the filter matches both underscored and plain names.
+	const resolveTypeName = (t: string | number | undefined): string | undefined =>
+		typeof t === 'string' ? t : t != null ? kindNameFromId?.(t) : undefined;
+	const parentName = resolveTypeName(a.$type);
+	const polymorphPrefix = parentName ? parentName + '_' : null;
+	const resolveChildName = (t: string | number | undefined): string | undefined => {
+		const name = resolveTypeName(t);
+		return name?.startsWith('_') ? name.slice(1) : name;
+	};
+	const isRealNamedChild = (c: any) =>
+		typeof c !== 'number' &&
+		c?.$named !== false &&
+		!(polymorphPrefix && resolveChildName(c?.$type)?.startsWith(polymorphPrefix));
+	const aNamed = (a.$children ?? []).filter(isRealNamedChild);
+	const bNamed = (b.$children ?? []).filter(isRealNamedChild);
 	if (aNamed.length !== bNamed.length) diffs.push(`named children: ${aNamed.length} vs ${bNamed.length}`);
 
 	return diffs;
@@ -304,7 +329,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 							const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
 							const value = camelName
 								? (config as Record<string, unknown>)[camelName]
-								: ((readData.$children ?? []).filter((c: any) => c?.$named !== false) as unknown[])[0];
+								: ((readData.$children ?? []).filter((c: any) => typeof c !== "number" && c?.$named !== false) as unknown[])[0];
 							factoryResult = (factory as (v: unknown) => AnyNodeData)(value);
 						} else {
 							factoryResult = factory(config) as AnyNodeData;
@@ -317,7 +342,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 							readData.$text ?? (readData.$span ? entry.source.slice(readData.$span.start, readData.$span.end) : '');
 						factoryResult = (factory as (text: string) => AnyNodeData)(textForFactory);
 					} else {
-						const namedChildren = (readData.$children ?? []).filter((c: any) => c?.$named !== false);
+						const namedChildren = (readData.$children ?? []).filter((c: any) => typeof c !== 'number' && c?.$named !== false);
 						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
 					}
 				} catch {
@@ -338,7 +363,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 				}
 
 				// Structural comparison
-				const diffs = structuralDiff(fromResult, factoryResult);
+				const diffs = structuralDiff(fromResult, factoryResult, kindNameFromId);
 				if (diffs.length > 0) {
 					divergentCount++;
 					errors.push({

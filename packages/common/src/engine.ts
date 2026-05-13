@@ -117,13 +117,13 @@ export function createNativeEngine<
 			opts?: Parameters<SittirEngineLike['render']>[1]
 		): RenderHandle {
 			assertRenderableNodeData(node);
-			const transport = config.toNativeRenderTransport(node);
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
 					'ignoreFormat option not yet supported by native engine. ' +
 						'Use JS engine or wait for Task 4 (engine-owned format state).'
 				);
 			}
+			const transport = config.toNativeRenderTransport(node);
 			return createRenderHandle(
 				() => engine.render(transport),
 				(path) => {

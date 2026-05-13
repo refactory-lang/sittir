@@ -124,10 +124,6 @@ export const expression = {
   as: _attach(FR.asPatternFrom, { from: FR.asPatternFrom, strict: F.asPattern }),
 } as const;
 
-export const keywordIdentifier = {
-  identifier: F.identifier,
-} as const;
-
 export const parameter = {
   identifier: F.identifier,
   typed: _attach(FR.typedParameterFrom, { from: FR.typedParameterFrom, strict: F.typedParameter }),
@@ -392,7 +388,6 @@ export const ir = {
   simpleStatement,
   statement,
   expression,
-  keywordIdentifier,
   parameter,
   pattern,
   primaryExpression,

@@ -633,13 +633,13 @@ function resolvePatch(
  * wrappers around anonymous string literals during grammar normalization
  * (fields must label structural content, not bare tokens).
  * `maybeKeywordSymbol` synthesizes a hidden `_kw_<name>` rule that
- * produces the string and returns a SYMBOL reference — FIELD around
- * SYMBOL survives the normalizer. The hidden rule's body is wrapped in
- * high precedence so soft keywords (python `match`/`case` that are also
- * valid identifiers) win the keyword interpretation at the position
- * enrich promoted. Shared helper used by both this one-arg field()
- * placeholder and dsl/field.ts's two-arg form; receives the prec stack
- * so synthetic rules inherit the outer precedence context.
+ * produces the original token and returns a SYMBOL reference — FIELD
+ * around SYMBOL survives the normalizer. wire() then auto-inlines the
+ * helper back into the grammar's LR state machine so parse behavior
+ * stays aligned with the pre-promotion bare token. Shared helper used
+ * by both this one-arg field() placeholder and dsl/field.ts's two-arg
+ * form; receives the prec stack so synthetic rules inherit any OUTER
+ * precedence wrapper the original position lived under.
  *
  * @param patch - The one-arg FieldPlaceholder with the desired field name.
  * @param originalMember - The rule currently at the target position.

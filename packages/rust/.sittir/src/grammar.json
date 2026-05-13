@@ -10435,12 +10435,8 @@
       ]
     },
     "_kw_move_marker": {
-      "type": "PREC",
-      "value": -1,
-      "content": {
-        "type": "STRING",
-        "value": "move"
-      }
+      "type": "STRING",
+      "value": "move"
     },
     "_kw_attributes": {
       "type": "BLANK"
@@ -10464,68 +10460,40 @@
       "type": "PREC",
       "value": -1,
       "content": {
-        "type": "PREC",
-        "value": -1,
-        "content": {
-          "type": "STRING",
-          "value": "static"
-        }
+        "type": "STRING",
+        "value": "static"
       }
     },
     "_kw_async_marker": {
       "type": "PREC",
       "value": -1,
       "content": {
-        "type": "PREC",
-        "value": -1,
-        "content": {
-          "type": "STRING",
-          "value": "async"
-        }
+        "type": "STRING",
+        "value": "async"
       }
     },
     "_kw_modifier": {
       "type": "BLANK"
     },
     "_kw_pub": {
-      "type": "PREC",
-      "value": -1,
-      "content": {
-        "type": "STRING",
-        "value": "pub"
-      }
+      "type": "STRING",
+      "value": "pub"
     },
     "_kw_in": {
-      "type": "PREC",
-      "value": -1,
-      "content": {
-        "type": "STRING",
-        "value": "in"
-      }
+      "type": "STRING",
+      "value": "in"
     },
     "_kw_turbofish": {
-      "type": "PREC",
-      "value": -1,
-      "content": {
-        "type": "STRING",
-        "value": "::"
-      }
+      "type": "STRING",
+      "value": "::"
     },
     "_kw_unsafe_marker": {
-      "type": "PREC",
-      "value": -1,
-      "content": {
-        "type": "STRING",
-        "value": "unsafe"
-      }
+      "type": "STRING",
+      "value": "unsafe"
     },
     "_kw_negative": {
-      "type": "PREC",
-      "value": -1,
-      "content": {
-        "type": "STRING",
-        "value": "!"
-      }
+      "type": "STRING",
+      "value": "!"
     },
     "_kw_object": {
       "type": "BLANK"
@@ -10560,12 +10528,8 @@
       "type": "PREC_LEFT",
       "value": 1,
       "content": {
-        "type": "PREC",
-        "value": -1,
-        "content": {
-          "type": "STRING",
-          "value": ".."
-        }
+        "type": "STRING",
+        "value": ".."
       }
     },
     "_kw_start": {
@@ -10594,23 +10558,15 @@
       "type": "BLANK"
     },
     "_kw_reference": {
-      "type": "PREC",
-      "value": -1,
-      "content": {
-        "type": "STRING",
-        "value": "&"
-      }
+      "type": "STRING",
+      "value": "&"
     },
     "_kw_statements": {
       "type": "BLANK"
     },
     "_kw_mutable_specifier": {
-      "type": "PREC",
-      "value": -1,
-      "content": {
-        "type": "STRING",
-        "value": "ref"
-      }
+      "type": "STRING",
+      "value": "ref"
     },
     "_kw_where_clause": {
       "type": "BLANK"
@@ -11046,7 +11002,17 @@
     "_declaration_statement",
     "_reserved_identifier",
     "_expression_ending_with_block",
-    "_kw_async_marker"
+    "_kw_move_marker",
+    "_kw_static_marker",
+    "_kw_async_marker",
+    "_kw_pub",
+    "_kw_in",
+    "_kw_turbofish",
+    "_kw_unsafe_marker",
+    "_kw_negative",
+    "_kw_operator",
+    "_kw_reference",
+    "_kw_mutable_specifier"
   ],
   "supertypes": [
     "_expression",

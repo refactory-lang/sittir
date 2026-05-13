@@ -507,6 +507,14 @@ export function repeat1(content: Input): Rule {
 	return { type: 'repeat1', content: resolved };
 }
 
+/**
+ * Symbol reference constructor — baseline DSL shadow used by metadata
+ * helpers that need a real runtime symbol without fabricating the object.
+ */
+export function symbol(name: string): SymbolRule {
+	return { type: 'symbol', name, hidden: name.startsWith('_') };
+}
+
 // ---------------------------------------------------------------------------
 // $ proxy — reference tracking
 // ---------------------------------------------------------------------------
@@ -2094,6 +2102,7 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
 		optional,
 		repeat,
 		repeat1,
+		symbol,
 		field,
 		token,
 		prec,
