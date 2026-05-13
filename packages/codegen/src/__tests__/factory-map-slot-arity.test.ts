@@ -13,6 +13,13 @@ function makeSlotArityNodeMap() {
 		type: 'seq',
 		members: [{ type: 'symbol', name: 'identifier' }]
 	};
+	const multiSingularChildRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{ type: 'symbol', name: 'identifier' },
+			{ type: 'symbol', name: 'number_literal' }
+		]
+	};
 	const repeatFieldRule: SeqRule = {
 		type: 'seq',
 		members: [
@@ -28,8 +35,10 @@ function makeSlotArityNodeMap() {
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('single_parent', new AssembledBranch('single_parent', singleChildRule, singleChildRule));
+	nodes.set('multi_parent', new AssembledBranch('multi_parent', multiSingularChildRule, multiSingularChildRule));
 	nodes.set('repeat_parent', new AssembledBranch('repeat_parent', repeatFieldRule, repeatFieldRule));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('number_literal', new AssembledPattern('number_literal', { type: 'pattern', value: '[0-9]+' }));
 	return makeNodeMapWith(nodes);
 }
 
@@ -39,12 +48,21 @@ describe('factory-map slot arity metadata', () => {
 
 		expect(data.factorySlots.single_parent.children).toEqual({
 			unnamed: true,
+			slotCount: 1,
+			required: true,
+			multiple: false,
+			nonEmpty: false
+		});
+		expect(data.factorySlots.multi_parent.children).toEqual({
+			unnamed: true,
+			slotCount: 2,
 			required: true,
 			multiple: false,
 			nonEmpty: false
 		});
 		expect(data.factorySlots.repeat_parent.items).toEqual({
 			unnamed: false,
+			slotCount: 1,
 			required: true,
 			multiple: true,
 			nonEmpty: true

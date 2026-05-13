@@ -37,6 +37,7 @@ export type { FactoryShape } from './shared.ts';
 
 export interface FactorySlotMeta {
 	readonly unnamed: boolean;
+	readonly slotCount: number;
 	readonly required: boolean;
 	readonly multiple: boolean;
 	readonly nonEmpty: boolean;
@@ -99,14 +100,11 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		const slots: Record<string, FactorySlotMeta> = {};
 		for (const field of structuralFieldsOf(node)) {
-			slots[field.name] = { unnamed: false, ...deriveSlotCardinality(field) };
+			slots[field.name] = createFactorySlotMeta(false, 1, deriveSlotCardinality(field));
 		}
 		const children = structuralChildrenOf(node);
 		if (children.length > 0) {
-			slots.children = {
-				unnamed: true,
-				...deriveChildrenCardinality(children)
-			};
+			slots.children = createFactorySlotMeta(true, children.length, deriveChildrenCardinality(children));
 		}
 		if (Object.keys(slots).length > 0) factorySlots[kind] = slots;
 	}
@@ -188,6 +186,18 @@ export function emitFactoryMap(config: EmitFactoryMapConfig): string {
 
 function shapeOf(node: AssembledNode, nodeMap: NodeMap): FactoryShape | null {
 	return classifyFactoryShape(node, nodeMap);
+}
+
+function createFactorySlotMeta(
+	unnamed: boolean,
+	slotCount: number,
+	cardinality: ReturnType<typeof deriveSlotCardinality>
+): FactorySlotMeta {
+	return {
+		unnamed,
+		slotCount,
+		...cardinality
+	};
 }
 
 function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
