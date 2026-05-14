@@ -1,7 +1,7 @@
 # Rust Slot Surface Contract — Architectural Design
 
-**Status:** Draft, 2026-05-13
-**Branch:** `023-native-read-parity`
+**Status:** Approved, 2026-05-14
+**Branch:** `024-rust-slot-surface-contract`
 **Related:** `docs/superpowers/specs/2026-05-12-slot-debt-cleanup-design.md`, ADR-0018 (NodeData surface), spec 012 (Rust core port), spec 023 (native read parity)
 
 This design narrows the slot-arity contract for the Rust path only. It does not redesign the raw native payload. Instead, it makes the target shape of each actual surface explicit so implementation can stop conflating typed storage, wrap, validator reconstruction, native read transport, native render transport, template input, factory config, and widened `from()` input.
@@ -137,6 +137,19 @@ That means:
 
 This is acceptable because downstream layers own the schema-aware normalization.
 
+### 6.4.1 JS-side native preflight during this audit
+
+The JS-side native-boundary preflight is not part of the Rust slot contract and is not a source of truth for slot arity.
+
+For this audit, if that preflight rejects a shape that the matrix says wrap or validator must normalize, it is allowed to disable the preflight entirely so the next real contract violation remains visible.
+
+This is a debugging and audit gate decision, not a redesign of any runtime surface:
+
+- the raw native payload stays raw
+- wrap and validator remain the schema-aware normalization layers
+- native render transport and template input still have to satisfy the matrix after normalization
+- disabling the JS-side preflight does not authorize new runtime widening or reconstruction rules elsewhere
+
 ### 6.5 Native render transport and template input
 
 These two surfaces are separate from the raw read payload.
@@ -184,7 +197,11 @@ This arity work must not accidentally drop token-rule fidelity while changing re
 5. **No raw payload redesign**
    - do not turn native read payload into a schema-carrying contract as part of this work
 
-6. **Preserve token-rule render fidelity**
+6. **JS-side preflight may be disabled for this audit**
+   - if the JS-side native boundary assertion masks a real downstream matrix violation, it may be commented out entirely
+   - treat that as a temporary audit gate, not as a new contract surface
+
+7. **Preserve token-rule render fidelity**
    - do not lose token-rule information while changing render transport/template wiring
    - do not introduce synthetic surrounding whitespace for token-only output as a side effect of slot normalization
 
