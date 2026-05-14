@@ -39,6 +39,92 @@ function makeMinimalNodeMap(): NodeMap {
 	} as unknown as NodeMap;
 }
 
+function makeRequiredChildrenNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'identifier' }]
+	};
+	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
+		['required_child_parent', new AssembledBranch('required_child_parent', parentRule, parentRule)],
+		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })]
+	]);
+	return {
+		grammar: 'rust',
+		grammarSha: 'test-sha',
+		rules: {},
+		nodes,
+		externals: new Set(),
+		word: undefined
+	} as unknown as NodeMap;
+}
+
+function makeOptionalChildrenNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'optional',
+				content: { type: 'symbol', name: 'identifier' }
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
+		['optional_child_parent', new AssembledBranch('optional_child_parent', parentRule, parentRule)],
+		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })]
+	]);
+	return {
+		grammar: 'rust',
+		grammarSha: 'test-sha',
+		rules: {},
+		nodes,
+		externals: new Set(),
+		word: undefined
+	} as unknown as NodeMap;
+}
+
+function makeRepeatedChildrenNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'repeat1',
+				content: { type: 'symbol', name: 'identifier' }
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
+		['repeated_child_parent', new AssembledBranch('repeated_child_parent', parentRule, parentRule)],
+		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })]
+	]);
+	return {
+		grammar: 'rust',
+		grammarSha: 'test-sha',
+		rules: {},
+		nodes,
+		externals: new Set(),
+		word: undefined
+	} as unknown as NodeMap;
+}
+
+function makeTokenOnlyChildrenNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'kw_j' }]
+	};
+	const nodes = new Map<string, AssembledBranch | AssembledKeyword>([
+		['token_child_parent', new AssembledBranch('token_child_parent', parentRule, parentRule)],
+		['kw_j', new AssembledKeyword('kw_j', { type: 'string', value: 'jjjj' })]
+	]);
+	return {
+		grammar: 'rust',
+		grammarSha: 'test-sha',
+		rules: {},
+		nodes,
+		externals: new Set(),
+		word: undefined
+	} as unknown as NodeMap;
+}
+
 describe('render pipeline optimization — retained baseline convergence', () => {
 	it('emits native render artifacts under rust/crates/sittir-{lang}/src/render', () => {
 		const files = [
@@ -92,6 +178,67 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		expect(emitted.templatesRs.contents).not.toContain('    pub name_leading_sep: bool,');
 		expect(emitted.templatesRs.contents).not.toContain('    pub name_trailing_sep: bool,');
 		expect(emitted.templatesRs.contents).not.toContain('.cloned().unwrap_or_default()');
+	});
+
+	it('emits cardinality-aware children views for singular and repeated child slots', () => {
+		const required = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'required_child_parent.jinja',
+					content: '{# @generated #}\n{{ children }}'
+				}
+			],
+			makeRequiredChildrenNodeMap()
+		);
+		const optional = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'optional_child_parent.jinja',
+					content: '{# @generated #}\n{% if children | isPresent %}{{ children }}{% endif %}'
+				}
+			],
+			makeOptionalChildrenNodeMap()
+		);
+		const repeated = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'repeated_child_parent.jinja',
+					content: '{# @generated #}\n{{ children | join(" ") }}'
+				}
+			],
+			makeRepeatedChildrenNodeMap()
+		);
+
+		expect(required.templatesRs.contents).toContain("pub struct RequiredChildParentTemplate<'a> {");
+		expect(required.templatesRs.contents).toContain("    pub children: SingleNonterminalView<'a>,");
+		expect(optional.templatesRs.contents).toContain("pub struct OptionalChildParentTemplate<'a> {");
+		expect(optional.templatesRs.contents).toContain("    pub children: OptionalNonterminalView<'a>,");
+		expect(optional.bridgeRs.contents).toContain('if children.is_empty() {');
+		expect(optional.bridgeRs.contents).toContain('return Ok(ResolvedField::default());');
+		expect(repeated.templatesRs.contents).toContain("pub struct RepeatedChildParentTemplate<'a> {");
+		expect(repeated.templatesRs.contents).toContain("    pub children: ListNonterminalView<'a>,");
+	});
+
+	it('keeps token-only singular children on direct transport views so jjjj does not widen', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'token_child_parent.jinja',
+					content: '{# @generated #}\n{{ children }}'
+				}
+			],
+			makeTokenOnlyChildrenNodeMap()
+		);
+
+		expect(emitted.templatesRs.contents).toContain("    pub children: SingleNonterminalView<'a>,");
+		expect(emitted.transportRs.contents).toContain(
+			'children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),'
+		);
+		expect(emitted.transportRs.contents).not.toContain('let children_buf: Vec<::sittir_core::filters::Renderable');
 	});
 });
 

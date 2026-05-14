@@ -17,12 +17,18 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal, AssembledSupertype } from '../compiler/node-map.ts';
+import type {
+	AssembledNode,
+	RenderTemplateSurface,
+	AssembledNonterminal,
+	AssembledSupertype
+} from '../compiler/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledEnum,
 	AssembledGroup,
 	AssembledPolymorph,
+	deriveSlotCardinality,
 	isMultiple,
 	isRequired,
 	isNodeRef,
@@ -561,8 +567,8 @@ function emitStruct(kind: string, node: AssembledNode | undefined, surface: Rend
 		fields,
 		hasChildren: surface.usesChildren,
 		transportHasChildren: node ? structuralChildrenOf(node).length > 0 : false,
-		childrenRequired: node ? hasRequiredChild(structuralChildrenOf(node)) : false,
-		childrenMultiple: node ? hasMultipleChildren(structuralChildrenOf(node)) : false,
+		childrenRequired: node ? deriveChildrenTransportCardinality(structuralChildrenOf(node)).required : false,
+		childrenMultiple: node ? deriveChildrenTransportCardinality(structuralChildrenOf(node)).multiple : false,
 		hasVariant: surface.usesVariant,
 		hasText: surface.usesText
 	};
@@ -629,7 +635,7 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 		lines.push(`#[template(path = ${JSON.stringify(`${s.kind}.jinja`)}, escape = "none")]`);
 		lines.push(`pub struct ${s.name}<'a> {`);
 		if (s.hasChildren) {
-			lines.push(`    pub children: ListNonterminalView<'a>,`);
+			lines.push(`    pub children: ${childrenFieldType(s)},`);
 		}
 		if (s.hasVariant) {
 			lines.push(`    pub variant: &'a str,`);
@@ -678,6 +684,11 @@ function slotFieldType(f: EmittedField): string {
 	// scalar OR field-view-single
 	if (f.required) return `SingleNonterminalView<'a>`;
 	return `OptionalNonterminalView<'a>`;
+}
+
+function childrenFieldType(s: Pick<EmittedStruct, 'childrenRequired' | 'childrenMultiple'>): string {
+	if (s.childrenMultiple) return `ListNonterminalView<'a>`;
+	return s.childrenRequired ? `SingleNonterminalView<'a>` : `OptionalNonterminalView<'a>`;
 }
 
 /**
@@ -977,6 +988,9 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`    for (_, _, child) in child_nodes {`);
 	lines.push(`        children.push(render_node_value(child)?);`);
 	lines.push(`    }`);
+	lines.push(`    if children.is_empty() {`);
+	lines.push(`        return Ok(ResolvedField::default());`);
+	lines.push(`    }`);
 	lines.push(`    let mut leading_sep = false;`);
 	lines.push(`    let mut trailing_sep = false;`);
 	lines.push(`    if let Some(items) = &node.children {`);
@@ -1225,7 +1239,7 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 		// `ResolvedField::items: Vec<String>` lives in this stack frame, so the
 		// renderable vec borrowing from it is sound for the template's
 		// lifetime.
-		if (s.hasChildren) {
+		if (s.hasChildren && s.childrenMultiple) {
 			lines.push(`    let children_renderables = children.renderable_items();`);
 		}
 		for (const [index, f] of s.fields.entries()) {
@@ -1234,12 +1248,25 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 		}
 		lines.push(`    let template = ${s.name} {`);
 		if (s.hasChildren) {
-			lines.push(`        children: ListNonterminalView {`);
-			lines.push(`            items: children_renderables.as_slice(),`);
-			lines.push(`            separator: children.separator,`);
-			lines.push(`            leading: children.leading_sep,`);
-			lines.push(`            trailing: children.trailing_sep,`);
-			lines.push(`        },`);
+			if (s.childrenMultiple) {
+				lines.push(`        children: ListNonterminalView {`);
+				lines.push(`            items: children_renderables.as_slice(),`);
+				lines.push(`            separator: children.separator,`);
+				lines.push(`            leading: children.leading_sep,`);
+				lines.push(`            trailing: children.trailing_sep,`);
+				lines.push(`        },`);
+			} else if (s.childrenRequired) {
+				lines.push(
+					`        children: SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),`
+				);
+			} else {
+				lines.push(`        children: match children.kind {`);
+				lines.push(`            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,`);
+				lines.push(
+					`            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),`
+				);
+				lines.push(`        },`);
+			}
 		}
 		if (s.hasVariant) {
 			lines.push(`        variant,`);
@@ -1341,19 +1368,32 @@ function renderInlinedMatchArm(s: EmittedStruct): string[] {
 	}
 	if (s.hasVariant) lines.push(`${indent}let variant = resolve_variant(node);`);
 	if (s.hasText) lines.push(`${indent}let text = resolve_text(node)?;`);
-	if (s.hasChildren) lines.push(`${indent}let children_renderables = children.renderable_items();`);
+	if (s.hasChildren && s.childrenMultiple) lines.push(`${indent}let children_renderables = children.renderable_items();`);
 	for (const [index, f] of s.fields.entries()) {
 		if (f.view === 'scalar') continue;
 		lines.push(`${indent}let field_${index}_renderables = field_${index}.renderable_items();`);
 	}
 	lines.push(`${indent}let template = ${s.name} {`);
 	if (s.hasChildren) {
-		lines.push(`${indent}    children: ListNonterminalView {`);
-		lines.push(`${indent}        items: children_renderables.as_slice(),`);
-		lines.push(`${indent}        separator: children.separator,`);
-		lines.push(`${indent}        leading: children.leading_sep,`);
-		lines.push(`${indent}        trailing: children.trailing_sep,`);
-		lines.push(`${indent}    },`);
+		if (s.childrenMultiple) {
+			lines.push(`${indent}    children: ListNonterminalView {`);
+			lines.push(`${indent}        items: children_renderables.as_slice(),`);
+			lines.push(`${indent}        separator: children.separator,`);
+			lines.push(`${indent}        leading: children.leading_sep,`);
+			lines.push(`${indent}        trailing: children.trailing_sep,`);
+			lines.push(`${indent}    },`);
+		} else if (s.childrenRequired) {
+			lines.push(
+				`${indent}    children: SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),`
+			);
+		} else {
+			lines.push(`${indent}    children: match children.kind {`);
+			lines.push(`${indent}        ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,`);
+			lines.push(
+				`${indent}        ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),`
+			);
+			lines.push(`${indent}    },`);
+		}
 	}
 	if (s.hasVariant) lines.push(`${indent}    variant,`);
 	if (s.hasText) lines.push(`${indent}    text: text.as_str(),`);
@@ -1750,7 +1790,7 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	if (hasChildren) {
 		const childrenIsRequired = hasRequiredChild(children);
-		const childrenIsMultiple = hasMultipleChildren(children);
+		const childrenIsMultiple = deriveChildrenTransportCardinality(children).multiple;
 		const childrenCls = classifySlotFromChildren(children, nodeMap);
 		// For per-slot enum (heterogeneous) and concrete/supertype, all implement
 		// RenderableTransport — use `child` directly as the expression.
@@ -2003,8 +2043,8 @@ function renderTypedFormFn(
 		}),
 		hasChildren: parentStruct.hasChildren,
 		transportHasChildren: form.children.length > 0,
-		childrenRequired: hasRequiredChild(form.children),
-		childrenMultiple: hasMultipleChildren(form.children),
+		childrenRequired: deriveChildrenTransportCardinality(form.children).required,
+		childrenMultiple: deriveChildrenTransportCardinality(form.children).multiple,
 		hasVariant: parentStruct.hasVariant,
 		hasText: parentStruct.hasText
 	};
@@ -2022,21 +2062,6 @@ function renderTypedFormFn(
 	return lines;
 }
 
-/**
- * Emit the Rust boilerplate that converts a **single-child** transport slot
- * (cardinality: multiple=false) into a `*_buf` slice ready for `ListNonterminalView`.
- *
- * For required (bare T): wraps `&node.ident` in a 1-element stack array and
- * coerces to `&[Renderable]` via `std::slice::from_ref`. No heap allocation.
- *
- * For optional (Option<T>): maps to `Option<Renderable>` and uses
- * `Option::as_slice()` (stable ≥ Rust 1.75) for a zero-allocation `&[Renderable]`
- * (empty when None, 1-element when Some).
- *
- * @param ident    - Rust identifier base (e.g. `"children"`)
- * @param required - When `true`, the slot type is `T`; when `false` it is `Option<T>`.
- * @param cls      - slot classification (Rust auto-coerces `&T` to `&dyn RT`).
- */
 /**
  * Fully-qualified prefix for the core `Renderable` enum.
  *
@@ -2067,41 +2092,6 @@ function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: strin
 	}
 	lines.push(`        .map(|t| ${mapBody})`, `        .collect();`);
 	return lines;
-}
-
-/**
- * Emit the Rust boilerplate that converts a single-child transport slot
- * into a `*_buf: Vec<Renderable>` ready for `ListNonterminalView`.
- *
- * For required (T): wraps the single value in a `vec![...]`.
- *
- * For optional (Option<T>): uses `.iter().map(...).collect()` which
- * produces a 0-or-1-element Vec. This avoids `std::slice::from_ref` /
- * `Option::as_slice()` which trigger the `str_as_str` unstable feature
- * (issue #130366) on current stable Rust.
- *
- * @param ident    - Rust identifier base (e.g. `"children"`)
- * @param required - When `true`, the slot type is `T`; when `false` it is `Option<T>`.
- * @param cls      - slot classification (Rust auto-coerces `&T` to `&dyn RT`).
- */
-function emitSingleChildBuffer(ident: string, required: boolean, cls: SlotClass = { tag: 'heterogeneous' }): string[] {
-	const R = RENDERABLE_PREFIX;
-	// useBox=true: type is Box<AnyTransport> — use .as_ref() to deref through Box.
-	// All other paths (per-slot enum, concrete, supertype): Rust auto-coerces
-	// &T to &dyn RenderableTransport when all types implement the trait.
-	const isBox = cls.tag === 'heterogeneous' && cls.useBox === true;
-	if (isBox) {
-		if (required) {
-			return [
-				`    let ${ident}_buf: Vec<${R}Renderable<'_>> = vec![${R}Renderable::Transport(node.${ident}.as_ref())];`
-			];
-		}
-		return emitIterCollectBuffer(ident, `node.${ident}`, `${R}Renderable::Transport(t.as_ref())`);
-	}
-	if (required) {
-		return [`    let ${ident}_buf: Vec<${R}Renderable<'_>> = vec![${R}Renderable::Transport(&node.${ident})];`];
-	}
-	return emitIterCollectBuffer(ident, `node.${ident}`, `${R}Renderable::Transport(t)`);
 }
 
 /**
@@ -2186,18 +2176,13 @@ function buildTypedTemplateBody(
 	// Emit children-slot buffer. For list slots (Vec<T>) use emitListSlotBuffer;
 	// for single-child slots (T / Option<T>) use emitSingleChildBuffer which
 	// exploits Option::as_slice() for zero-allocation feeding into ListNonterminalView.
-	if (struct.hasChildren) {
+	if (struct.hasChildren && struct.childrenMultiple) {
 		if (struct.transportHasChildren) {
-			if (struct.childrenMultiple) {
-				// Filter anonymous fill items only when the children slot is Vec<AnyTransport>
-				// (useBox !== false). Per-slot enum children ({TypeName}ChildTransport) do not
-				// have transport_named() and must not be filtered.
-				const filterAnon =
-					childrenCls.tag === 'heterogeneous' && childrenCls.useBox !== false;
-				lines.push(...emitListSlotBuffer('children', struct.childrenRequired, filterAnon));
-			} else {
-				lines.push(...emitSingleChildBuffer('children', struct.childrenRequired, childrenCls));
-			}
+			// Filter anonymous fill items only when the children slot is Vec<AnyTransport>
+			// (useBox !== false). Per-slot enum children ({TypeName}ChildTransport) do not
+			// have transport_named() and must not be filtered.
+			const filterAnon = childrenCls.tag === 'heterogeneous' && childrenCls.useBox !== false;
+			lines.push(...emitListSlotBuffer('children', struct.childrenRequired, filterAnon));
 		} else {
 			// Template uses children but transport has no children field —
 			// emit an empty buffer so the ListNonterminalView slot in the template is empty.
@@ -2221,12 +2206,34 @@ function buildTypedTemplateBody(
 	lines.push(`    let template = ${templateName} {`);
 
 	if (struct.hasChildren) {
-		lines.push(`        children: ListNonterminalView {`);
-		lines.push(`            items: children_buf.as_slice(),`);
-		lines.push(`            separator: ${sepLiteral},`);
-		lines.push(`            leading: false,`);
-		lines.push(`            trailing: false,`);
-		lines.push(`        },`);
+		if (struct.childrenMultiple) {
+			lines.push(`        children: ListNonterminalView {`);
+			lines.push(`            items: children_buf.as_slice(),`);
+			lines.push(`            separator: ${sepLiteral},`);
+			lines.push(`            leading: false,`);
+			lines.push(`            trailing: false,`);
+			lines.push(`        },`);
+		} else if (struct.childrenRequired) {
+			if (!struct.transportHasChildren) {
+				lines.push(`        children: SingleNonterminalView(${R}Renderable::Text("")),`);
+			} else if (childrenCls.tag === 'heterogeneous' && childrenCls.useBox === true) {
+				lines.push(`        children: SingleNonterminalView(${R}Renderable::Transport(node.children.as_ref())),`);
+			} else {
+				lines.push(`        children: SingleNonterminalView(${R}Renderable::Transport(&node.children)),`);
+			}
+		} else if (!struct.transportHasChildren) {
+			lines.push(`        children: OptionalNonterminalView::Missing,`);
+		} else if (childrenCls.tag === 'heterogeneous' && childrenCls.useBox === true) {
+			lines.push(`        children: match &node.children {`);
+			lines.push(`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(v.as_ref())),`);
+			lines.push(`            None => OptionalNonterminalView::Missing,`);
+			lines.push(`        },`);
+		} else {
+			lines.push(`        children: match &node.children {`);
+			lines.push(`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(v)),`);
+			lines.push(`            None => OptionalNonterminalView::Missing,`);
+			lines.push(`        },`);
+		}
 	}
 
 	if (struct.hasVariant) {
@@ -3859,7 +3866,7 @@ function renderTransportChildrenBinding(
 	// before passing to transport_children().
 	const childrenCls = nodeMap !== undefined ? classifySlotFromChildren(children, nodeMap) : undefined;
 	const reqd = hasRequiredChild(children);
-	const isMultipleSlot = hasMultipleChildren(children);
+	const isMultipleSlot = deriveChildrenTransportCardinality(children).multiple;
 
 	/** Wrap a single typed child value into `AnyTransport`. */
 	const wrapSingle = (expr: string): string => {
@@ -3891,7 +3898,7 @@ function renderTransportChildrenBinding(
 		if (childrenCls === undefined) return expr;
 		if (childrenCls.tag === 'heterogeneous') {
 			if (childrenCls.useBox === true) {
-				// Children type is OneOrMany<AnyTransport>; convert to Vec<AnyTransport>.
+				// Children type is Vec<AnyTransport>; pass through as Vec<AnyTransport>.
 				return `${expr}.into_iter().collect::<Vec<_>>()`;
 			}
 			// Per-slot child enum: convert each variant to AnyTransport.
@@ -3911,11 +3918,11 @@ function renderTransportChildrenBinding(
 	};
 
 	if (isMultipleSlot) {
-		// OneOrMany<T> slot — convert to Vec<AnyTransport> for transport_children.
+		// Vec<T> slot — convert to Vec<AnyTransport> for transport_children.
 		// needsWrap: true whenever wrapVec() must transform the expression (i.e., the
 		// type is not already the expected Vec<AnyTransport>). All classified slots
 		// (concrete, supertype, heterogeneous/useBox, per-slot child enum) need wrapping
-		// now that the generated field type is OneOrMany<T>.
+		// now that the generated field type is Vec<T>.
 		const needsWrap = childrenCls !== undefined;
 		if (reqd) {
 			const bridged = wrapVec('transport.children');
@@ -4545,38 +4552,37 @@ function rustTransportChildrenType(
 ): string {
 	const allKinds = [...new Set(children.flatMap((c) => deriveChildrenKinds(c)))];
 	const cls = classifySlotForEmit(allKinds, nodeMap);
-	const required = hasRequiredChild(children);
-	const multiple = hasMultipleChildren(children);
+	const { required, multiple } = deriveChildrenTransportCardinality(children);
 	switch (cls.tag) {
 		case 'concrete': {
 			const base = concreteTransportTypeName(cls.kind, nodeMap);
 			if (base !== null) {
-				if (multiple) return required ? `OneOrMany<${base}>` : `Option<OneOrMany<${base}>>`;
+				if (multiple) return required ? `Vec<${base}>` : `Option<Vec<${base}>>`;
 				return required ? base : `Option<${base}>`;
 			}
 			// Unknown kind — fall back to AnyTransport.
-			// OneOrMany<AnyTransport> is safe (Vec provides indirection). Single-value
+			// Vec<AnyTransport> is safe (Vec provides indirection). Single-value
 			// children need Box<> to break recursive size cycles.
-			if (multiple) return required ? 'OneOrMany<AnyTransport>' : 'Option<OneOrMany<AnyTransport>>';
+			if (multiple) return required ? 'Vec<AnyTransport>' : 'Option<Vec<AnyTransport>>';
 			return required ? 'Box<AnyTransport>' : 'Option<Box<AnyTransport>>';
 		}
 		case 'supertype': {
 			const base = `${rustTypeIdent(cls.supertypeName)}Transport`;
-			if (multiple) return required ? `OneOrMany<${base}>` : `Option<OneOrMany<${base}>>`;
+			if (multiple) return required ? `Vec<${base}>` : `Option<Vec<${base}>>`;
 			return required ? base : `Option<${base}>`;
 		}
 		case 'heterogeneous': {
 			// Multiple distinct kinds, no grammar supertype.
 			// If all child kinds are supertypes/polymorphs/multi, we cannot produce
 			// a concrete per-slot enum (it would be empty). Fall back to AnyTransport.
-			// OneOrMany<AnyTransport> is safe. Single-value AnyTransport needs Box<> for
+			// Vec<AnyTransport> is safe. Single-value AnyTransport needs Box<> for
 			// recursive size cycle-breaking.
 			if (!hasAnyConcreteChildKind(allKinds, nodeMap)) {
-				if (multiple) return required ? 'OneOrMany<AnyTransport>' : 'Option<OneOrMany<AnyTransport>>';
+				if (multiple) return required ? 'Vec<AnyTransport>' : 'Option<Vec<AnyTransport>>';
 				return required ? 'Box<AnyTransport>' : 'Option<Box<AnyTransport>>';
 			}
 			const enumName = perSlotEnumName(typeName);
-			if (multiple) return required ? `OneOrMany<${enumName}>` : `Option<OneOrMany<${enumName}>>`;
+			if (multiple) return required ? `Vec<${enumName}>` : `Option<Vec<${enumName}>>`;
 			return required ? enumName : `Option<${enumName}>`;
 		}
 		default:
@@ -4613,14 +4619,20 @@ function hasRequiredChild(children: readonly AssembledNonterminal[]): boolean {
 	return children.some((child) => isRequired(child));
 }
 
-/**
- * True when native transport must treat `$children` as list-shaped.
- *
- * Any structural child slot forces list transport because the runtime projection
- * always serializes `$children` as an array, even for a single required child.
- */
-function hasMultipleChildren(children: readonly AssembledNonterminal[]): boolean {
-	return children.length > 0;
+function deriveChildrenTransportCardinality(
+	children: readonly AssembledNonterminal[]
+): { readonly required: boolean; readonly multiple: boolean } {
+	if (children.length === 0) {
+		return { required: false, multiple: false };
+	}
+	if (children.length === 1) {
+		const cardinality = deriveSlotCardinality(children[0]!);
+		return { required: cardinality.required, multiple: cardinality.multiple };
+	}
+	return {
+		required: hasRequiredChild(children),
+		multiple: true
+	};
 }
 
 /**
