@@ -566,6 +566,13 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.templatesRs.contents).not.toContain('TemplateContext');
 		expect(emitted.templatesRs.contents).not.toContain('pub struct RustGrammarMeta');
 		// mod.rs re-exports from dispatch and transport (spec 024 split).
+		expect(emitted.libRs.contents).toContain(
+			'#[deprecated(note = "legacy direct NodeData render bridge; normal native flow uses render_transport_dispatch via typed transport")]'
+		);
+		expect(emitted.libRs.contents).toContain('pub use bridge::render_nodedata_into;');
+		expect(emitted.libRs.contents).toContain(
+			'#[deprecated(note = "legacy direct NodeData render entrypoint; normal native flow uses render_transport_dispatch via typed transport")]'
+		);
 		expect(emitted.libRs.contents).toContain('pub use dispatch::render_dispatch;');
 		expect(emitted.libRs.contents).toContain(
 			'pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'

@@ -2423,7 +2423,9 @@ pub mod kind_ids;
 pub mod templates;
 pub mod transport;
 
+#[deprecated(note = "legacy direct NodeData render bridge; normal native flow uses render_transport_dispatch via typed transport")]
 pub use bridge::render_nodedata_into;
+#[deprecated(note = "legacy direct NodeData render entrypoint; normal native flow uses render_transport_dispatch via typed transport")]
 pub use dispatch::render_dispatch;
 pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};
 pub use hash::TEMPLATE_BUNDLE_HASH;
@@ -2943,18 +2945,19 @@ function emitSupertypeTransportEnum(
 	const isLeafLike = (n: AssembledNode): boolean =>
 		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
 
-	const emitDecodeTrials = () => {
+	const emitDecodeTrials = (leafOnly = false, indent = '                ') => {
 		for (const { subNode } of validSubtypes) {
+			if (leafOnly && !isLeafLike(subNode)) continue;
 			const variant = rustTypeIdent(subNode.typeName);
 			const typeName = rustTransportStructName(subNode);
 			if (isLeafLike(subNode)) {
-				lines.push(`                if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
-				lines.push(`                    return Ok(Self::${variant}(value));`);
-				lines.push(`                }`);
+				lines.push(`${indent}if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
+				lines.push(`${indent}    return Ok(Self::${variant}(value));`);
+				lines.push(`${indent}}`);
 			} else {
-				lines.push(`                if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
-				lines.push(`                    return Ok(Self::${variant}(Box::new(value)));`);
-				lines.push(`                }`);
+				lines.push(`${indent}if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
+				lines.push(`${indent}    return Ok(Self::${variant}(Box::new(value)));`);
+				lines.push(`${indent}}`);
 			}
 		}
 	};
@@ -2979,12 +2982,15 @@ function emitSupertypeTransportEnum(
 		lines.push(`        env: ::napi::sys::napi_env,`);
 		lines.push(`        napi_val: ::napi::sys::napi_value,`);
 		lines.push(`    ) -> ::napi::Result<Self> {`);
-		lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-		lines.push(`        let kind_id: u16 = obj.get("$type")?`);
-		lines.push(
-			`            .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))?;`
-		);
-		lines.push(`        match kind_id {`);
+		lines.push(`        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
+		lines.push(`            Some(kind_id)`);
+		lines.push(`        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {`);
+		lines.push(`            obj.get::<u16>("$type")?`);
+		lines.push(`        } else {`);
+		lines.push(`            None`);
+		lines.push(`        };`);
+		lines.push(`        if let Some(kind_id) = kind_id {`);
+		lines.push(`            return match kind_id {`);
 		const emittedIds = new Set<number>();
 		const selfId = kindIdByKind.get(supertypeNode.kind);
 		if (selfId !== undefined) {
@@ -3038,7 +3044,14 @@ function emitSupertypeTransportEnum(
 		lines.push(`                other => Err(::napi::Error::from_reason(format!(`);
 		lines.push(`                    "unknown kind id {{other}} in ${enumName}",`);
 		lines.push(`                ))),`);
+		lines.push(`            };`);
 		lines.push(`        }`);
+		lines.push(`        if String::from_napi_value(env, napi_val).is_ok() {`);
+		emitDecodeTrials(false, '            ');
+		lines.push(`        }`);
+		lines.push(
+			`        Err(::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))`
+		);
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -3321,12 +3334,15 @@ function emitPerSlotChildEnum(
 		lines.push(`        env: ::napi::sys::napi_env,`);
 		lines.push(`        napi_val: ::napi::sys::napi_value,`);
 		lines.push(`    ) -> ::napi::Result<Self> {`);
-		lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-		lines.push(`        let kind_id: u16 = obj.get("$type")?`);
-		lines.push(
-			`            .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))?;`
-		);
-		lines.push(`        match kind_id {`);
+		lines.push(`        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
+		lines.push(`            Some(kind_id)`);
+		lines.push(`        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {`);
+		lines.push(`            obj.get::<u16>("$type")?`);
+		lines.push(`        } else {`);
+		lines.push(`            None`);
+		lines.push(`        };`);
+		lines.push(`        if let Some(kind_id) = kind_id {`);
+		lines.push(`            return match kind_id {`);
 		const emittedIds = new Set<number>();
 		for (const { kind, node, concreteName } of validKinds) {
 			const variant = rustTypeIdent(node.typeName);
@@ -3362,7 +3378,25 @@ function emitPerSlotChildEnum(
 		lines.push(`                other => Err(::napi::Error::from_reason(format!(`);
 		lines.push(`                    "unknown kind id {{other}} in ${enumName}",`);
 		lines.push(`                ))),`);
+		lines.push(`            };`);
 		lines.push(`        }`);
+		lines.push(`        if String::from_napi_value(env, napi_val).is_ok() {`);
+		for (const { node, concreteName } of validKinds) {
+			const variant = rustTypeIdent(node.typeName);
+			if (isLeafLike(node)) {
+				lines.push(`            if let Ok(value) = ${concreteName}::from_napi_value(env, napi_val) {`);
+				lines.push(`                return Ok(Self::${variant}(value));`);
+				lines.push(`            }`);
+			} else {
+				lines.push(`            if let Ok(value) = ${concreteName}::from_napi_value(env, napi_val) {`);
+				lines.push(`                return Ok(Self::${variant}(Box::new(value)));`);
+				lines.push(`            }`);
+			}
+		}
+		lines.push(`        }`);
+		lines.push(
+			`        Err(::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))`
+		);
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -3514,10 +3548,15 @@ function renderAnyTransportWithNapiFromValue(
 	lines.push('        env: ::napi::sys::napi_env,');
 	lines.push('        napi_val: ::napi::sys::napi_value,');
 	lines.push('    ) -> ::napi::Result<Self> {');
-	lines.push('        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;');
-	lines.push('        let kind_id: u16 = obj.get("$type")?');
-	lines.push('            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in AnyTransport"))?;');
-	lines.push('        match kind_id {');
+	lines.push('        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {');
+	lines.push('            Some(kind_id)');
+	lines.push('        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {');
+	lines.push('            obj.get::<u16>("$type")?');
+	lines.push('        } else {');
+	lines.push('            None');
+	lines.push('        };');
+	lines.push('        if let Some(kind_id) = kind_id {');
+	lines.push('            return match kind_id {');
 
 	// One match arm per node — each arm delegates to the per-kind struct's
 	// FromNapiValue (generated by #[napi(object)]) over the same napi_val.
@@ -3554,7 +3593,18 @@ function renderAnyTransportWithNapiFromValue(
 	lines.push('                other => Err(::napi::Error::from_reason(format!(');
 	lines.push('                    "unknown kind id {other} in AnyTransport"');
 	lines.push('                ))),');
+	lines.push('            };');
 	lines.push('        }');
+	lines.push('        if String::from_napi_value(env, napi_val).is_ok() {');
+	for (const node of nodes) {
+		const variant = rustTransportVariantName(node);
+		const structName = rustTransportStructName(node);
+		lines.push(`            if let Ok(value) = ${structName}::from_napi_value(env, napi_val) {`);
+		lines.push(`                return Ok(AnyTransport::${variant}(value));`);
+		lines.push('            }');
+	}
+	lines.push('        }');
+	lines.push('        Err(::napi::Error::from_reason("$type property missing in AnyTransport"))');
 	lines.push('    }');
 	lines.push('}');
 
@@ -5033,6 +5083,28 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 			// Some grammars send the resolved leaf kind in `$type` (primitive_type),
 			// while others keep the parent enum kind and expose the chosen literal
 			// under `$text` or `_<literal>` child fields (fragment_specifier).
+			lines.push(`        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
+			lines.push(`            match kind_id {`);
+			for (const v of values) {
+				const entry = findKindEntry(kindEntries, v);
+				const variant = literalToVariantName(v);
+				if (entry !== undefined) {
+					lines.push(`                ${entry.id} => return Ok(Self::${variant}), // ${JSON.stringify(v)}`);
+				} else {
+					lines.push(`                // ${JSON.stringify(v)}: no parser symbol — cannot dispatch by KindId`);
+				}
+			}
+			lines.push(`                _ => {}`);
+			lines.push(`            }`);
+			lines.push(`        }`);
+			lines.push(`        if let Ok(text) = String::from_napi_value(env, napi_val) {`);
+			lines.push(`            match text.as_str() {`);
+			for (const v of values) {
+				lines.push(`                ${JSON.stringify(v)} => return Ok(Self::${literalToVariantName(v)}),`);
+			}
+			lines.push(`                _ => {}`);
+			lines.push(`            }`);
+			lines.push(`        }`);
 			lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
 			lines.push(`        if let Some(kind_id) = obj.get::<u16>("$type")? {`);
 			lines.push(`            match kind_id {`);
