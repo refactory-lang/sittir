@@ -5,12 +5,13 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { AssembledBranch, AssembledKeyword, AssembledPattern } from '../compiler/node-map.ts';
+import { AssembledBranch, AssembledGroup, AssembledKeyword, AssembledPattern, AssembledPolymorph } from '../compiler/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type { SeqRule } from '../compiler/rule.ts';
+import type { ChoiceRule, SeqRule } from '../compiler/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { emitHashFiles, emitRenderModule } from '../emitters/render-module.ts';
 import { fixturesOutputPath } from '../emitters/parity-fixtures.ts';
+import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 
@@ -124,6 +125,44 @@ function makeTokenOnlyChildrenNodeMap(): NodeMap {
 		externals: new Set(),
 		word: undefined
 	} as unknown as NodeMap;
+}
+
+function makePolymorphSingularChildrenNodeMap(): NodeMap {
+	const identifierRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'identifier' }]
+	};
+	const integerRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'integer' }]
+	};
+	const parentRule: ChoiceRule = {
+		type: 'choice',
+		members: [
+			{ type: 'symbol', name: 'expression__form_identifier' },
+			{ type: 'symbol', name: 'expression__form_integer' }
+		]
+	};
+	const identifierForm = new AssembledGroup('expression__form_identifier', identifierRule, identifierRule, {
+		name: 'identifier',
+		parentKind: 'expression'
+	});
+	const integerForm = new AssembledGroup('expression__form_integer', integerRule, integerRule, {
+		name: 'integer',
+		parentKind: 'expression'
+	});
+	const nodes = new Map([
+		[
+			'expression',
+			new AssembledPolymorph('expression', parentRule, [identifierForm, integerForm])
+		],
+		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })],
+		['integer', new AssembledPattern('integer', { type: 'pattern', value: '[0-9]+' })]
+	]);
+	return makeNodeMapWith(
+		nodes,
+		new Set(['expression__form_identifier', 'expression__form_integer'])
+	);
 }
 
 function makeTokenOnlyGeneratedIdTables(): GeneratedIdTables {
@@ -372,6 +411,30 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		expect(emitted.transportRs.contents).not.toContain('let children_buf: Vec<::sittir_core::filters::Renderable');
 		assertRustRenderRuntimeBehavior();
 	}, 20_000);
+
+	it('keeps polymorph singular unnamed children on direct transport views', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'expression.jinja',
+					content: '{{ children }}'
+				}
+			],
+			makePolymorphSingularChildrenNodeMap()
+		);
+		const renderStart = emitted.transportRs.contents.indexOf('fn render_expression(');
+		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
+		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
+
+		expect(emitted.templatesRs.contents).toContain("pub struct ExpressionTemplate<'a> {");
+		expect(emitted.templatesRs.contents).toContain("    pub children: SingleNonterminalView<'a>,");
+		expect(renderBody).toContain(
+			'children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),'
+		);
+		expect(renderBody).not.toContain('let children_buf: Vec<::sittir_core::filters::Renderable');
+		expect(renderBody).not.toContain('children: ListNonterminalView {');
+	});
 });
 
 describe('render pipeline optimization — level 3 direct render path', () => {
@@ -440,9 +503,11 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_children');
 		expect(emitted.bridgeRs.contents).not.toContain('consumed_fields');
 		// render_dispatch is a thin shim in dispatch.rs delegating to bridge::render_nodedata_into.
+		expect(emitted.dispatchRs.contents).toContain('/// Legacy direct NodeData render entrypoint.');
 		expect(emitted.dispatchRs.contents).toContain('pub fn render_dispatch(node: &NodeData)');
 		expect(emitted.dispatchRs.contents).toContain('render_nodedata_into(node, &mut buf)');
 		// Per-kind render functions are inlined into bridge::render_nodedata_into.
+		expect(emitted.bridgeRs.contents).toContain('/// Legacy direct NodeData render bridge.');
 		expect(emitted.bridgeRs.contents).toContain('fn render_nodedata_into(');
 		// Phase D: dispatch inlined into bridge uses numeric KindId (42).
 		expect(emitted.bridgeRs.contents).toContain('42 =>');
@@ -456,7 +521,9 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.templatesRs.contents).not.toContain('TemplateContext');
 		expect(emitted.templatesRs.contents).not.toContain('pub struct RustGrammarMeta');
 		// mod.rs re-exports from dispatch and transport (spec 024 split).
+		expect(emitted.libRs.contents).toContain('#[deprecated(note = "legacy direct NodeData render bridge; normal native flow uses render_transport_dispatch via typed transport")]');
 		expect(emitted.libRs.contents).toContain('pub use dispatch::render_dispatch;');
+		expect(emitted.libRs.contents).toContain('#[deprecated(note = "legacy direct NodeData render entrypoint; normal native flow uses render_transport_dispatch via typed transport")]');
 		expect(emitted.libRs.contents).toContain(
 			'pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
 		);

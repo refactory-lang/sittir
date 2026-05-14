@@ -3,11 +3,14 @@ import { describe, expect, it } from 'vitest';
 import {
 	AssembledBranch,
 	AssembledEnum,
+	AssembledGroup,
 	AssembledKeyword,
 	AssembledPattern,
+	AssembledPolymorph,
 	AssembledSupertype
 } from '../compiler/node-map.ts';
 import type { AssembledNode } from '../compiler/node-map.ts';
+import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { ChoiceRule, SeqRule } from '../compiler/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { emitRenderModule } from '../emitters/render-module.ts';
@@ -181,6 +184,80 @@ function makeReservedNestedSupertypeNodeMap(): NodeMap {
 	return nodeMapWith(nodes);
 }
 
+function makeHeterogeneousChildrenNodeMap(): NodeMap {
+	const parentRule: ChoiceRule = {
+		type: 'choice',
+		members: [
+			{ type: 'symbol', name: 'identifier' },
+			{ type: 'symbol', name: 'integer' }
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('heterogeneous_children_parent', new AssembledBranch('heterogeneous_children_parent', parentRule, parentRule));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('integer', new AssembledPattern('integer', { type: 'pattern', value: '[0-9]+' }));
+	return nodeMapWith(nodes);
+}
+
+function makePolymorphSingularChildrenNodeMap(): NodeMap {
+	const identRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'identifier' }]
+	};
+	const integerRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'integer' }]
+	};
+	const parentRule: ChoiceRule = {
+		type: 'choice',
+		members: [
+			{ type: 'symbol', name: 'expression__form_identifier' },
+			{ type: 'symbol', name: 'expression__form_integer' }
+		]
+	};
+	const identifierForm = new AssembledGroup('expression__form_identifier', identRule, identRule, {
+		name: 'identifier',
+		parentKind: 'expression'
+	});
+	const integerForm = new AssembledGroup('expression__form_integer', integerRule, integerRule, {
+		name: 'integer',
+		parentKind: 'expression'
+	});
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set(
+		'expression',
+		new AssembledPolymorph('expression', parentRule, [identifierForm, integerForm])
+	);
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('integer', new AssembledPattern('integer', { type: 'pattern', value: '[0-9]+' }));
+	return nodeMapWith(
+		nodes,
+		new Set(['expression__form_identifier', 'expression__form_integer'])
+	);
+}
+
+function makeGeneratedIdTables(kindIds: Record<string, number>): GeneratedIdTables {
+	return {
+		kindIds: Object.fromEntries(
+			Object.entries(kindIds).map(([kind, id]) => [
+				kind,
+				{
+					id,
+					parser: {
+						cSymbol: `sym_${kind.replace(/[^A-Za-z0-9_]/g, '_')}`,
+						parserName: kind,
+						anon: /[^A-Za-z0-9_]/.test(kind),
+						aux: false,
+						alias: false,
+						hidden: kind.startsWith('_')
+					}
+				}
+			])
+		),
+		sourceArtifact: 'parser.c'
+	};
+}
+
 describe('native transport emission', () => {
 	it('emits transport-oriented Rust render support', () => {
 		const emitted = emitRenderModule(
@@ -255,6 +332,28 @@ describe('native transport emission', () => {
 		expect(structBody).not.toContain('pub children: Option<');
 		expect(structBody).not.toContain('pub children: Vec<');
 		expect(structBody).not.toContain('OneOrMany<');
+	});
+
+	it('emits polymorph singular unnamed children as bare transport values', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'expression.jinja',
+					content: '{# @generated #}\n{{ children }}'
+				}
+			],
+			makePolymorphSingularChildrenNodeMap()
+		);
+		const start = emitted.transportRs.contents.indexOf('pub struct ExpressionTransport');
+		const end = emitted.transportRs.contents.indexOf('}', start);
+		const structBody = emitted.transportRs.contents.slice(start, end);
+
+		expect(structBody).toContain(
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: ExpressionChildTransport,'
+		);
+		expect(structBody).not.toContain('pub children: Option<');
+		expect(structBody).not.toContain('pub children: Vec<');
 	});
 
 	it('emits repeated children as Vec transport instead of OneOrMany', () => {
@@ -354,5 +453,117 @@ describe('native transport emission', () => {
 		expect(emitted.transportRs.contents).toContain('#[serde(rename = "self")]\n    Self_(Self_Transport),');
 		expect(emitted.transportRs.contents).toContain('pub struct Self_Transport');
 		expect(emitted.transportRs.contents).not.toContain('\n    Self(SelfTransport),');
+	});
+
+	it('emits scalar string fallback for supertype transport decoders', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'call_expression.jinja',
+					content: '{# @generated #}\n{{ callee }}'
+				}
+			],
+			makeMinimalNodeMap(),
+			makeGeneratedIdTables({
+				call_expression: 17,
+				identifier: 3,
+				kw_fn: 5,
+				'+': 7,
+				'-': 8,
+				';': 9
+			})
+		);
+
+		const start = emitted.transportRs.contents.indexOf('impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport');
+		const end = emitted.transportRs.contents.indexOf('#[cfg(feature = "napi-bindings")]\nimpl ::napi::bindgen_prelude::ToNapiValue for ExpressionTransport', start);
+		const implBody = emitted.transportRs.contents.slice(start, end);
+
+		expect(implBody).toContain('let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {');
+		expect(implBody).toContain('if String::from_napi_value(env, napi_val).is_ok() {');
+		expect(implBody).toContain('if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {');
+	});
+
+	it('emits scalar string fallback for heterogeneous child transport enums', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'heterogeneous_children_parent.jinja',
+					content: '{# @generated #}\n{{ children }}'
+				}
+			],
+			makeHeterogeneousChildrenNodeMap(),
+			makeGeneratedIdTables({
+				identifier: 3,
+				integer: 4
+			})
+		);
+
+		const start = emitted.transportRs.contents.indexOf('impl ::napi::bindgen_prelude::FromNapiValue for HeterogeneousChildrenParentChildTransport');
+		const end = emitted.transportRs.contents.indexOf('#[cfg(feature = "napi-bindings")]\nimpl ::napi::bindgen_prelude::ToNapiValue for HeterogeneousChildrenParentChildTransport', start);
+		const implBody = emitted.transportRs.contents.slice(start, end);
+
+		expect(implBody).toContain('let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {');
+		expect(implBody).toContain('if String::from_napi_value(env, napi_val).is_ok() {');
+		expect(implBody).toContain('if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {');
+		expect(implBody).toContain('if let Ok(value) = IntegerTransport::from_napi_value(env, napi_val) {');
+	});
+
+	it('emits direct numeric KindId fallback for enum transport decoders', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'call_expression.jinja',
+					content: '{# @generated #}\n{{ operator }}'
+				}
+			],
+			makeMinimalNodeMap(),
+			makeGeneratedIdTables({
+				call_expression: 17,
+				identifier: 3,
+				kw_fn: 5,
+				'+': 7,
+				'-': 8,
+				';': 9
+			})
+		);
+
+		const start = emitted.transportRs.contents.indexOf('impl ::napi::bindgen_prelude::FromNapiValue for OperatorEnum');
+		const end = emitted.transportRs.contents.indexOf('#[cfg(feature = "napi-bindings")]\nimpl ::napi::bindgen_prelude::ToNapiValue for OperatorEnum', start);
+		const implBody = emitted.transportRs.contents.slice(start, end);
+
+		expect(implBody).toContain('if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {');
+		expect(implBody).toContain('if let Ok(text) = String::from_napi_value(env, napi_val) {');
+	});
+
+	it('emits scalar string fallback for AnyTransport decoders', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'call_expression.jinja',
+					content: '{# @generated #}\n{{ callee }}'
+				}
+			],
+			makeMinimalNodeMap(),
+			makeGeneratedIdTables({
+				call_expression: 17,
+				identifier: 3,
+				kw_fn: 5,
+				'+': 7,
+				'-': 8,
+				';': 9
+			})
+		);
+
+		const start = emitted.transportRs.contents.indexOf('impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport');
+		const end = emitted.transportRs.contents.indexOf('#[cfg(feature = "napi-bindings")]\nimpl ::napi::bindgen_prelude::ToNapiValue for AnyTransport', start);
+		const implBody = emitted.transportRs.contents.slice(start, end);
+
+		expect(implBody).toContain('let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {');
+		expect(implBody).toContain('if String::from_napi_value(env, napi_val).is_ok() {');
+		expect(implBody).toContain('if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {');
 	});
 });
