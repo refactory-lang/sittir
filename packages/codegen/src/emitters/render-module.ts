@@ -691,6 +691,20 @@ function childrenFieldType(s: Pick<EmittedStruct, 'childrenRequired' | 'children
 	return s.childrenRequired ? `SingleNonterminalView<'a>` : `OptionalNonterminalView<'a>`;
 }
 
+function requiredResolvedFieldViewLines(
+	target: string,
+	valueExpr: string,
+	missingExpr: string,
+	indent = ''
+): string[] {
+	return [
+		`${indent}${target}: match ${valueExpr}.kind {`,
+		`${indent}    ResolvedFieldKind::Missing => return Err(${missingExpr}),`,
+		`${indent}    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(${valueExpr}.as_scalar())),`,
+		`${indent}},`
+	];
+}
+
 /**
  * Emit the `ResolvedFieldKind` enum, `ResolvedField` struct, its impl block,
  * and all field/children resolution functions (`render_node_value`,
@@ -1256,9 +1270,7 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 				lines.push(`            trailing: children.trailing_sep,`);
 				lines.push(`        },`);
 			} else if (s.childrenRequired) {
-				lines.push(
-					`        children: SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),`
-				);
+				lines.push(...requiredResolvedFieldViewLines('        children', 'children', 'missing_required_field(node, "children")'));
 			} else {
 				lines.push(`        children: match children.kind {`);
 				lines.push(`            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,`);
@@ -1383,9 +1395,7 @@ function renderInlinedMatchArm(s: EmittedStruct): string[] {
 			lines.push(`${indent}        trailing: children.trailing_sep,`);
 			lines.push(`${indent}    },`);
 		} else if (s.childrenRequired) {
-			lines.push(
-				`${indent}    children: SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),`
-			);
+			lines.push(...requiredResolvedFieldViewLines('    children', 'children', 'missing_required_field(node, "children")', indent));
 		} else {
 			lines.push(`${indent}    children: match children.kind {`);
 			lines.push(`${indent}        ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,`);
@@ -2201,6 +2211,11 @@ function buildTypedTemplateBody(
 
 	// No pre-render pass needed: concrete/supertype single-value fields are now
 	// handled inline in the template construction block below via Transport coercion.
+	if (struct.hasChildren && struct.childrenRequired && !struct.childrenMultiple && !struct.transportHasChildren) {
+		lines.push(
+			`    return Err(::askama::Error::Custom(format!("render_transport_dispatch: missing required children on '{}'", ${JSON.stringify(struct.kind)}).into()));`
+		);
+	}
 
 	// Build template struct — all single-value fields use Renderable::Transport.
 	lines.push(`    let template = ${templateName} {`);
@@ -4494,15 +4509,15 @@ function rustTransportFieldType(field: AssembledNonterminal, nodeMap: NodeMap): 
 		case 'concrete': {
 			const base = concreteTransportTypeName(cls.kind, nodeMap);
 			if (base !== null) {
-				const inner = isMultiple(field) ? `OneOrMany<${base}>` : base;
+				const inner = isMultiple(field) ? `Vec<${base}>` : base;
 				return isRequired(field) ? inner : `Option<${inner}>`;
 			}
 			// Unknown kind — fall back to AnyTransport.
-			// OneOrMany<AnyTransport> is safe (Vec provides indirection). Single-value
+			// Vec<AnyTransport> is safe (Vec provides indirection). Single-value
 			// AnyTransport fields need Box<> to break recursive size cycles when
 			// the owning struct is itself a variant of AnyTransport.
 			if (isMultiple(field)) {
-				const inner = 'OneOrMany<AnyTransport>';
+				const inner = 'Vec<AnyTransport>';
 				return isRequired(field) ? inner : `Option<${inner}>`;
 			}
 			const inner = 'Box<AnyTransport>';
@@ -4510,14 +4525,14 @@ function rustTransportFieldType(field: AssembledNonterminal, nodeMap: NodeMap): 
 		}
 		case 'supertype': {
 			const base = `${rustTypeIdent(cls.supertypeName)}Transport`;
-			const inner = isMultiple(field) ? `OneOrMany<${base}>` : base;
+			const inner = isMultiple(field) ? `Vec<${base}>` : base;
 			return isRequired(field) ? inner : `Option<${inner}>`;
 		}
 		case 'heterogeneous': {
-			// OneOrMany<AnyTransport> is safe (Vec provides indirection). Single-value
+			// Vec<AnyTransport> is safe (Vec provides indirection). Single-value
 			// AnyTransport fields need Box<> to break recursive size cycles.
 			if (isMultiple(field)) {
-				const inner = 'OneOrMany<AnyTransport>';
+				const inner = 'Vec<AnyTransport>';
 				return isRequired(field) ? inner : `Option<${inner}>`;
 			}
 			const inner = 'Box<AnyTransport>';

@@ -1,5 +1,6 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { basename, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
@@ -125,6 +126,136 @@ function makeTokenOnlyChildrenNodeMap(): NodeMap {
 	} as unknown as NodeMap;
 }
 
+function makeTokenOnlyGeneratedIdTables(): GeneratedIdTables {
+	return {
+		kindIds: {
+			token_child_parent: {
+				id: 1,
+				parser: {
+					cSymbol: 'sym_token_child_parent',
+					parserName: 'token_child_parent',
+					anon: false,
+					aux: false,
+					alias: false,
+					hidden: false
+				}
+			},
+			kw_j: {
+				id: 2,
+				parser: {
+					cSymbol: 'anon_sym_jjjj',
+					parserName: 'kw_j',
+					anon: true,
+					aux: false,
+					alias: false,
+					hidden: false
+				}
+			}
+		},
+		sourceArtifact: 'parser.wasm'
+	};
+}
+
+function assertRustRenderRuntimeBehavior(): void {
+	const emitted = emitRenderModule(
+		'rust',
+		[
+			{
+				filename: 'token_child_parent.jinja',
+				content: '{{ children }}'
+			}
+		],
+		makeTokenOnlyChildrenNodeMap(),
+		makeTokenOnlyGeneratedIdTables()
+	);
+	const runtimeDir = resolve(repoRoot, 'scratch/render-module-runtime-fixture');
+	rmSync(runtimeDir, { recursive: true, force: true });
+	try {
+		mkdirSync(resolve(runtimeDir, 'src/render'), { recursive: true });
+		mkdirSync(resolve(runtimeDir, 'templates'), { recursive: true });
+		mkdirSync(resolve(runtimeDir, 'tests'), { recursive: true });
+
+		writeFileSync(
+			resolve(runtimeDir, 'Cargo.toml'),
+			`[package]
+name = "render_runtime_fixture"
+version = "0.0.0"
+edition = "2021"
+
+[workspace]
+
+[features]
+napi-bindings = []
+debug-transport = []
+
+[dependencies]
+sittir-core = { path = ${JSON.stringify(resolve(repoRoot, 'rust/crates/sittir-core'))} }
+askama = "0.15"
+serde = { version = "1", features = ["derive"] }
+`
+		);
+		writeFileSync(resolve(runtimeDir, 'src/lib.rs'), 'pub mod render;\n');
+		for (const file of [
+			emitted.hashRs,
+			emitted.templatesRs,
+			emitted.dispatchRs,
+			emitted.transportRs,
+			emitted.bridgeRs,
+			emitted.libRs
+		]) {
+			writeFileSync(resolve(runtimeDir, 'src/render', basename(file.path)), file.contents);
+		}
+		writeFileSync(resolve(runtimeDir, 'src/render/kind_ids.rs'), '');
+		writeFileSync(resolve(runtimeDir, 'templates/token_child_parent.jinja'), '{{ children }}');
+		writeFileSync(
+			resolve(runtimeDir, 'tests/runtime.rs'),
+			`use render_runtime_fixture::render::render_dispatch;
+use sittir_core::types::{KindId, NodeData, Source};
+
+fn node(kind: u16, named: bool, text: Option<&str>, children: Option<Vec<NodeData>>) -> NodeData {
+    NodeData {
+        type_: KindId(kind),
+        source: Source::Factory,
+        named,
+        fields: None,
+        children,
+        text: text.map(str::to_string),
+        span: None,
+        node_handle: None,
+        child_index: None,
+        trivia_data: None,
+    }
+}
+
+#[test]
+fn token_only_child_renders_exactly() {
+    let parent = node(1, true, None, Some(vec![node(2, true, Some("jjjj"), None)]));
+    let rendered = render_dispatch(&parent).expect("render succeeds");
+    assert_eq!(rendered, "jjjj");
+}
+
+#[test]
+fn missing_required_children_errors() {
+    let parent = node(1, true, None, None);
+    let err = render_dispatch(&parent).expect_err("missing required children should fail");
+    let message = err.to_string();
+    assert!(
+        message.contains("missing required field 'children'"),
+        "unexpected error: {message}"
+    );
+}
+`
+		);
+
+		execFileSync('cargo', ['test', '--quiet'], {
+			cwd: runtimeDir,
+			stdio: 'pipe'
+		});
+	} finally {
+		rmSync(runtimeDir, { recursive: true, force: true });
+	}
+}
+
 describe('render pipeline optimization — retained baseline convergence', () => {
 	it('emits native render artifacts under rust/crates/sittir-{lang}/src/render', () => {
 		const files = [
@@ -222,13 +353,15 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		expect(repeated.templatesRs.contents).toContain("    pub children: ListNonterminalView<'a>,");
 	});
 
-	it('keeps token-only singular children on direct transport views so jjjj does not widen', () => {
+	it(
+		'keeps token-only singular children on direct transport views so jjjj does not widen',
+		() => {
 		const emitted = emitRenderModule(
 			'rust',
 			[
 				{
 					filename: 'token_child_parent.jinja',
-					content: '{# @generated #}\n{{ children }}'
+					content: '{{ children }}'
 				}
 			],
 			makeTokenOnlyChildrenNodeMap()
@@ -239,7 +372,10 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 			'children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),'
 		);
 		expect(emitted.transportRs.contents).not.toContain('let children_buf: Vec<::sittir_core::filters::Renderable');
-	});
+		assertRustRenderRuntimeBehavior();
+		},
+		20_000
+	);
 });
 
 describe('render pipeline optimization — level 3 direct render path', () => {

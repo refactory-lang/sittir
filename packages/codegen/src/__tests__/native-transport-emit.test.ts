@@ -110,6 +110,46 @@ function makeRepeatedChildrenNodeMap(): NodeMap {
 	return nodeMapWith(nodes);
 }
 
+function makeRepeatedFieldNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'field',
+				name: 'items',
+				content: {
+					type: 'repeat1',
+					content: { type: 'symbol', name: 'identifier' }
+				}
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('repeated_field_parent', new AssembledBranch('repeated_field_parent', parentRule, parentRule));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	return nodeMapWith(nodes);
+}
+
+function makeOptionalRepeatedFieldNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'field',
+				name: 'items',
+				content: {
+					type: 'repeat',
+					content: { type: 'symbol', name: 'identifier' }
+				}
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('optional_repeated_field_parent', new AssembledBranch('optional_repeated_field_parent', parentRule, parentRule));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	return nodeMapWith(nodes);
+}
+
 function makeReservedNestedSupertypeNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
 		type: 'seq',
@@ -236,6 +276,48 @@ describe('native transport emission', () => {
 			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Vec<IdentifierTransport>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<IdentifierTransport>');
+	});
+
+	it('emits repeated named fields as Vec transport instead of OneOrMany', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'repeated_field_parent.jinja',
+					content: '{# @generated #}\n{{ items | join(" ") }}'
+				}
+			],
+			makeRepeatedFieldNodeMap()
+		);
+		const start = emitted.transportRs.contents.indexOf('pub struct RepeatedFieldParentTransport');
+		const end = emitted.transportRs.contents.indexOf('}', start);
+		const structBody = emitted.transportRs.contents.slice(start, end);
+
+		expect(structBody).toContain(
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_items"))]\n    pub items: Vec<IdentifierTransport>,'
+		);
+		expect(structBody).not.toContain('OneOrMany<IdentifierTransport>');
+	});
+
+	it('emits optional repeated named fields as Option<Vec<T>> transport', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'optional_repeated_field_parent.jinja',
+					content: '{# @generated #}\n{{ items | join(" ") }}'
+				}
+			],
+			makeOptionalRepeatedFieldNodeMap()
+		);
+		const start = emitted.transportRs.contents.indexOf('pub struct OptionalRepeatedFieldParentTransport');
+		const end = emitted.transportRs.contents.indexOf('}', start);
+		const structBody = emitted.transportRs.contents.slice(start, end);
+
+		expect(structBody).toContain(
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_items"))]\n    pub items: Option<Vec<IdentifierTransport>>,'
+		);
+		expect(structBody).not.toContain('Option<OneOrMany<IdentifierTransport>>');
 	});
 
 	it('flattens reserved nested supertypes in Rust transport enums', () => {
