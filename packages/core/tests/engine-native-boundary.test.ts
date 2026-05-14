@@ -3,9 +3,13 @@ import { createNativeEngine, type GrammarEngineConfig } from '../../common/src/e
 import type { AnyNodeData } from '@sittir/types';
 
 describe('createNativeEngine native boundary', () => {
-	it('rejects non-data render inputs before transport projection', () => {
+	it('projects render inputs before native validation', () => {
+		let projected = false;
 		const render = vi.fn((_node: unknown) => 'ok');
-		const toNativeRenderTransport = vi.fn((node: AnyNodeData) => node);
+		const toNativeRenderTransport = vi.fn((node: AnyNodeData) => {
+			projected = true;
+			return node;
+		});
 		const config = {
 			templatesPath: '.',
 			kindNames: new Map<number, string>(),
@@ -56,8 +60,13 @@ describe('createNativeEngine native boundary', () => {
 		};
 
 		expect(engine).not.toBeNull();
-		expect(() => engine!.render(invalid)).toThrow(/only plain data objects can cross the native render boundary/);
-		expect(toNativeRenderTransport).not.toHaveBeenCalled();
+		const handle = engine!.render(invalid);
+
+		expect(toNativeRenderTransport).toHaveBeenCalledTimes(1);
+		expect(toNativeRenderTransport).toHaveBeenCalledWith(invalid);
 		expect(render).not.toHaveBeenCalled();
+		expect(projected).toBe(true);
+		expect(handle.toString()).toBe('ok');
+		expect(render).toHaveBeenCalledTimes(1);
 	});
 });

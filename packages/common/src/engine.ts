@@ -1,7 +1,6 @@
 import { writeFileSync } from 'node:fs';
 import type { AnyNodeData, Edit, FormatRecord } from '@sittir/types';
 import type { TreeHandle } from './readNode.ts';
-import { assertRenderableNodeData } from './native-boundary.ts';
 
 export interface EngineOptions {
 	readonly format?: FormatRecord;
@@ -116,7 +115,6 @@ export function createNativeEngine<
 			node: Parameters<SittirEngineLike['render']>[0],
 			opts?: Parameters<SittirEngineLike['render']>[1]
 		): RenderHandle {
-			assertRenderableNodeData(node);
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
 					'ignoreFormat option not yet supported by native engine. ' +
