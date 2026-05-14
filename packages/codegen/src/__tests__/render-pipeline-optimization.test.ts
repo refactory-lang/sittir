@@ -108,6 +108,30 @@ function makeRepeatedChildrenNodeMap(): NodeMap {
 	} as unknown as NodeMap;
 }
 
+function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'repeat',
+				content: { type: 'symbol', name: 'identifier' }
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
+		['optional_repeated_child_parent', new AssembledBranch('optional_repeated_child_parent', parentRule, parentRule)],
+		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })]
+	]);
+	return {
+		grammar: 'rust',
+		grammarSha: 'test-sha',
+		rules: {},
+		nodes,
+		externals: new Set(),
+		word: undefined
+	} as unknown as NodeMap;
+}
+
 function makeTokenOnlyChildrenNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
 		type: 'seq',
@@ -435,6 +459,27 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		expect(renderBody).not.toContain('let children_buf: Vec<::sittir_core::filters::Renderable');
 		expect(renderBody).not.toContain('children: ListNonterminalView {');
 	});
+
+	it('keeps repeated unnamed children on direct Vec-backed transport views', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'optional_repeated_child_parent.jinja',
+					content: '{{ children | join(" ") }}'
+				}
+			],
+			makeOptionalRepeatedChildrenNodeMap()
+		);
+		const renderStart = emitted.transportRs.contents.indexOf('fn render_optional_repeated_child_parent(');
+		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
+		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
+
+		expect(emitted.templatesRs.contents).toContain("pub struct OptionalRepeatedChildParentTemplate<'a> {");
+		expect(emitted.templatesRs.contents).toContain("    pub children: ListNonterminalView<'a>,");
+		expect(renderBody).toContain("let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()");
+		expect(renderBody).not.toContain('node.children.as_deref().unwrap_or(&[])');
+	});
 });
 
 describe('render pipeline optimization — level 3 direct render path', () => {
@@ -521,9 +566,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.templatesRs.contents).not.toContain('TemplateContext');
 		expect(emitted.templatesRs.contents).not.toContain('pub struct RustGrammarMeta');
 		// mod.rs re-exports from dispatch and transport (spec 024 split).
-		expect(emitted.libRs.contents).toContain('#[deprecated(note = "legacy direct NodeData render bridge; normal native flow uses render_transport_dispatch via typed transport")]');
 		expect(emitted.libRs.contents).toContain('pub use dispatch::render_dispatch;');
-		expect(emitted.libRs.contents).toContain('#[deprecated(note = "legacy direct NodeData render entrypoint; normal native flow uses render_transport_dispatch via typed transport")]');
 		expect(emitted.libRs.contents).toContain(
 			'pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
 		);
