@@ -34,8 +34,7 @@ import {
 	isNodeRef,
 	isUnresolvedRef,
 	kindsOf,
-	structuralFieldsOf,
-	structuralChildrenOf
+	structuralFieldsOf
 } from '../compiler/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { findRepeatSeparator } from '../compiler/template-walker.ts';
@@ -45,7 +44,7 @@ import { computeTemplateBundleHash } from './template-hash.ts';
 import { renderModuleSrcDir, renderModuleTemplatesDir } from './render-module-paths.ts';
 import { type TransportLiteral } from './transport-projection.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
-import { buildSupertypeTransportSet, classifySlot, deriveChildrenKinds, type SlotClass } from './transport-common.ts';
+import { buildSupertypeTransportSet, classifySlot, type SlotClass } from './transport-common.ts';
 import { keywordPresenceValue, slotLiteralValues } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -281,7 +280,7 @@ function bridgeRsHeader(lang: Grammar): string {
 	return `${generatedHeader(lang)}
 //
 // Field and child resolution helpers — ResolvedField, resolve_field,
-// resolve_children, separator_for, variant_for, etc. Used by both
+// resolve_unnamed_children, separator_for, variant_for, etc. Used by both
 // dispatch and templates modules.`;
 }
 
@@ -357,7 +356,9 @@ export const RUST_KEYWORDS = new Set([
 const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
 
 function isReservedSupertypeTransportNode(node: AssembledNode): node is AssembledSupertype {
-	return node.modelType === 'supertype' && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`);
+	return (
+		node.modelType === 'supertype' && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`)
+	);
 }
 
 interface EffectiveSupertypeTransportSubtype {
@@ -453,10 +454,7 @@ function preserveMultilineTrailingNewline(body: string): string {
 	return body + '\n';
 }
 
-export function planRenderModuleTemplateCopies(
-	lang: Grammar,
-	templates: EmittedTemplates
-): RenderModuleTemplateCopies {
+export function planRenderModuleTemplateCopies(lang: Grammar, templates: EmittedTemplates): RenderModuleTemplateCopies {
 	const directory = renderModuleTemplatesDir(lang);
 	const files = [...templates.bodies.entries()].map(([kind, body]) => ({
 		path: `${directory}/${kind}.jinja`,
@@ -533,8 +531,62 @@ interface EmittedStruct {
 	hasText: boolean;
 }
 
+interface RenderSlotModel {
+	readonly named: readonly AssembledNonterminal[];
+	readonly unnamed: readonly AssembledNonterminal[];
+	readonly unnamedRequired: boolean;
+	readonly unnamedMultiple: boolean;
+	readonly unnamedKinds: readonly string[];
+}
+
+function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
+	if (
+		node === undefined ||
+		(node.modelType !== 'branch' && node.modelType !== 'group' && node.modelType !== 'polymorph')
+	) {
+		return {
+			named: [],
+			unnamed: [],
+			unnamedRequired: false,
+			unnamedMultiple: false,
+			unnamedKinds: []
+		};
+	}
+	const slots = Object.values(node.slots);
+	const named = slots.filter((slot) => slot.source !== 'inferred');
+	const unnamed = slots.filter((slot) => slot.source === 'inferred');
+	if (unnamed.length === 0) {
+		return {
+			named,
+			unnamed,
+			unnamedRequired: false,
+			unnamedMultiple: false,
+			unnamedKinds: []
+		};
+	}
+	const unnamedKinds = [...new Set(unnamed.flatMap((slot) => kindsOf(slot)))];
+	if (unnamed.length === 1) {
+		const cardinality = deriveSlotCardinality(unnamed[0]!);
+		return {
+			named,
+			unnamed,
+			unnamedRequired: cardinality.required,
+			unnamedMultiple: cardinality.multiple,
+			unnamedKinds
+		};
+	}
+	return {
+		named,
+		unnamed,
+		unnamedRequired: unnamed.some((slot) => isRequired(slot)),
+		unnamedMultiple: true,
+		unnamedKinds
+	};
+}
+
 function emitStruct(kind: string, node: AssembledNode | undefined, surface: RenderTemplateSurface): EmittedStruct {
 	const name = structNameFor(kind, node);
+	const slotModel = renderSlotModelOf(node);
 	// Build name→multiple and name→required lookups from the assembled node's
 	// structural fields so the typed dispatch emitter generates code consistent
 	// with what the transport struct emits (Vec<...> vs Option<Vec<...>>,
@@ -545,7 +597,7 @@ function emitStruct(kind: string, node: AssembledNode | undefined, surface: Rend
 	const multipleByName = new Map<string, boolean>();
 	const requiredByName = new Map<string, boolean>();
 	if (node) {
-		for (const f of structuralFieldsOf(node)) {
+		for (const f of slotModel.named) {
 			multipleByName.set(f.name, isMultiple(f));
 			requiredByName.set(f.name, isRequired(f));
 		}
@@ -566,18 +618,15 @@ function emitStruct(kind: string, node: AssembledNode | undefined, surface: Rend
 		kind,
 		fields,
 		hasChildren: surface.usesChildren,
-		transportHasChildren: node ? structuralChildrenOf(node).length > 0 : false,
-		childrenRequired: node ? deriveChildrenTransportCardinality(structuralChildrenOf(node)).required : false,
-		childrenMultiple: node ? deriveChildrenTransportCardinality(structuralChildrenOf(node)).multiple : false,
+		transportHasChildren: slotModel.unnamed.length > 0,
+		childrenRequired: slotModel.unnamedRequired,
+		childrenMultiple: slotModel.unnamedMultiple,
 		hasVariant: surface.usesVariant,
 		hasText: surface.usesText
 	};
 }
 
-function mergeTemplateSurfaceFromBody(
-	body: string,
-	surface: RenderTemplateSurface | undefined
-): RenderTemplateSurface {
+function mergeTemplateSurfaceFromBody(body: string, surface: RenderTemplateSurface | undefined): RenderTemplateSurface {
 	const reserved = new Set(['children', 'variant', 'text']);
 	const guarded = new Set<string>();
 	const byName = new Map<string, RenderTemplateSurface['slots'][number]>();
@@ -691,12 +740,7 @@ function childrenFieldType(s: Pick<EmittedStruct, 'childrenRequired' | 'children
 	return s.childrenRequired ? `SingleNonterminalView<'a>` : `OptionalNonterminalView<'a>`;
 }
 
-function requiredResolvedFieldViewLines(
-	target: string,
-	valueExpr: string,
-	missingExpr: string,
-	indent = ''
-): string[] {
+function requiredResolvedFieldViewLines(target: string, valueExpr: string, missingExpr: string, indent = ''): string[] {
 	return [
 		`${indent}${target}: match ${valueExpr}.kind {`,
 		`${indent}    ResolvedFieldKind::Missing => return Err(${missingExpr}),`,
@@ -710,7 +754,7 @@ function requiredResolvedFieldViewLines(
  * and all field/children resolution functions (`render_node_value`,
  * `missing_required_field`, `resolve_text`, `resolve_leaf`, `resolve_optional`,
  * `resolve_required`, `is_join_flank_token`, `detect_field_trailing_sep`,
- * `resolve_field`, `resolve_children`).
+ * `resolve_field`, `resolve_unnamed_children`).
  *
  * @returns Rust source lines for the field resolution helpers.
  */
@@ -949,9 +993,7 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(
-		`pub(crate) fn resolve_children(node: &NodeData, consumed_fields: &[&str]) -> Result<ResolvedField, ::askama::Error> {`
-	);
+	lines.push(`pub(crate) fn resolve_unnamed_children(node: &NodeData) -> Result<ResolvedField, ::askama::Error> {`);
 	lines.push(`    let mut child_nodes: Vec<(u32, usize, &NodeData)> = Vec::new();`);
 	lines.push(`    let mut child_ordinal = 0usize;`);
 	lines.push(`    let mut first_named_idx: Option<usize> = None;`);
@@ -967,34 +1009,6 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`            last_named_idx = Some(index);`);
 	lines.push(`            child_nodes.push((child.span.map_or(u32::MAX, |span| span.start), child_ordinal, child));`);
 	lines.push(`            child_ordinal += 1;`);
-	lines.push(`        }`);
-	lines.push(`    }`);
-	lines.push(`    if let Some(fields) = &node.fields {`);
-	lines.push(`        for (name, value) in fields {`);
-	lines.push(`            if consumed_fields.iter().any(|consumed| consumed == &name.as_str()) {`);
-	lines.push(`                continue;`);
-	lines.push(`            }`);
-	lines.push(`            match value {`);
-	lines.push(`                FieldValue::Single(child) => {`);
-	lines.push(`                    if child.named {`);
-	lines.push(
-		`                        child_nodes.push((child.span.map_or(u32::MAX, |span| span.start), child_ordinal, child.as_ref()));`
-	);
-	lines.push(`                        child_ordinal += 1;`);
-	lines.push(`                    }`);
-	lines.push(`                }`);
-	lines.push(`                FieldValue::Multiple(items) => {`);
-	lines.push(`                    for child in items {`);
-	lines.push(`                        if child.named {`);
-	lines.push(
-		`                            child_nodes.push((child.span.map_or(u32::MAX, |span| span.start), child_ordinal, child));`
-	);
-	lines.push(`                            child_ordinal += 1;`);
-	lines.push(`                        }`);
-	lines.push(`                    }`);
-	lines.push(`                }`);
-	lines.push(`                FieldValue::Text(_) => {}`);
-	lines.push(`            }`);
 	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`    child_nodes.sort_by(|left, right| left.0.cmp(&right.0).then(left.1.cmp(&right.1)));`);
@@ -1236,9 +1250,9 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 	const lines: string[] = [];
 	for (const s of structs) {
 		lines.push(`${PER_KIND_FN_VIS}fn ${renderFnName(s.kind)}(node: &NodeData) -> Result<String, ::askama::Error> {`);
-		const consumedFieldArgs =
-			s.fields.length === 0 ? '&[]' : `&[${s.fields.map((field) => JSON.stringify(field.name)).join(', ')}]`;
-		lines.push(`    let children = resolve_children(node, ${consumedFieldArgs})?;`);
+		if (s.hasChildren) {
+			lines.push(`    let children = resolve_unnamed_children(node)?;`);
+		}
 		for (const [index, f] of s.fields.entries()) {
 			lines.push(`    let field_${index} = resolve_field(node, ${JSON.stringify(f.name)}, ${f.required})?;`);
 		}
@@ -1270,7 +1284,9 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 				lines.push(`            trailing: children.trailing_sep,`);
 				lines.push(`        },`);
 			} else if (s.childrenRequired) {
-				lines.push(...requiredResolvedFieldViewLines('        children', 'children', 'missing_required_field(node, "children")'));
+				lines.push(
+					...requiredResolvedFieldViewLines('        children', 'children', 'missing_required_field(node, "children")')
+				);
 			} else {
 				lines.push(`        children: match children.kind {`);
 				lines.push(`            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,`);
@@ -1372,15 +1388,16 @@ function renderNodedataIntoFn(structs: EmittedStruct[], kindIdByKind?: ReadonlyM
 function renderInlinedMatchArm(s: EmittedStruct): string[] {
 	const lines: string[] = [];
 	const indent = '            ';
-	const consumedFieldArgs =
-		s.fields.length === 0 ? '&[]' : `&[${s.fields.map((field) => JSON.stringify(field.name)).join(', ')}]`;
-	lines.push(`${indent}let children = resolve_children(node, ${consumedFieldArgs})?;`);
+	if (s.hasChildren) {
+		lines.push(`${indent}let children = resolve_unnamed_children(node)?;`);
+	}
 	for (const [index, f] of s.fields.entries()) {
 		lines.push(`${indent}let field_${index} = resolve_field(node, ${JSON.stringify(f.name)}, ${f.required})?;`);
 	}
 	if (s.hasVariant) lines.push(`${indent}let variant = resolve_variant(node);`);
 	if (s.hasText) lines.push(`${indent}let text = resolve_text(node)?;`);
-	if (s.hasChildren && s.childrenMultiple) lines.push(`${indent}let children_renderables = children.renderable_items();`);
+	if (s.hasChildren && s.childrenMultiple)
+		lines.push(`${indent}let children_renderables = children.renderable_items();`);
 	for (const [index, f] of s.fields.entries()) {
 		if (f.view === 'scalar') continue;
 		lines.push(`${indent}let field_${index}_renderables = field_${index}.renderable_items();`);
@@ -1395,7 +1412,14 @@ function renderInlinedMatchArm(s: EmittedStruct): string[] {
 			lines.push(`${indent}        trailing: children.trailing_sep,`);
 			lines.push(`${indent}    },`);
 		} else if (s.childrenRequired) {
-			lines.push(...requiredResolvedFieldViewLines('    children', 'children', 'missing_required_field(node, "children")', indent));
+			lines.push(
+				...requiredResolvedFieldViewLines(
+					'    children',
+					'children',
+					'missing_required_field(node, "children")',
+					indent
+				)
+			);
 		} else {
 			lines.push(`${indent}    children: match children.kind {`);
 			lines.push(`${indent}        ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,`);
@@ -1794,14 +1818,14 @@ function renderTypedKindFn(
 function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const structName = rustTransportStructName(node);
-	const children = transportChildrenOf(node);
-	const hasChildren = hasRequiredChild(children) || children.length > 0;
+	const slotModel = renderSlotModelOf(node);
+	const hasChildren = slotModel.unnamed.length > 0;
 	const lines: string[] = [];
 	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	if (hasChildren) {
-		const childrenIsRequired = hasRequiredChild(children);
-		const childrenIsMultiple = deriveChildrenTransportCardinality(children).multiple;
-		const childrenCls = classifySlotFromChildren(children, nodeMap);
+		const childrenIsRequired = slotModel.unnamedRequired;
+		const childrenIsMultiple = slotModel.unnamedMultiple;
+		const childrenCls = classifyUnnamedSlot(slotModel, nodeMap);
 		// For per-slot enum (heterogeneous) and concrete/supertype, all implement
 		// RenderableTransport — use `child` directly as the expression.
 		const childWriteCall = buildSlotWriteCall(childrenCls, 'child');
@@ -1927,24 +1951,18 @@ function buildFieldMixedByName(fields: readonly AssembledNonterminal[]): Readonl
 }
 
 /**
- * Classify the children slot of a node from its structural children list.
- * Merges kind sets across all child entries (a node can have multiple child
- * slots) and classifies the union.
+ * Classify a node's canonical unnamed slot model.
  *
  * Uses `classifySlotForEmit` — downgrades supertype/multi concrete slots to
  * heterogeneous (no Phase 1 transport type for those).
- *
- * @param children - the node's structural children
- * @param nodeMap - for supertype/multi detection
  */
-function classifySlotFromChildren(children: readonly AssembledNonterminal[], nodeMap: NodeMap): SlotClass {
-	const allKinds = [...new Set(children.flatMap((c) => deriveChildrenKinds(c)))];
-	const cls = classifySlotForEmit(allKinds, nodeMap);
+function classifyUnnamedSlot(slotModel: RenderSlotModel, nodeMap: NodeMap): SlotClass {
+	const cls = classifySlotForEmit(slotModel.unnamedKinds, nodeMap);
 	// When the slot classifies as heterogeneous, mark whether all child kinds are
 	// supertypes/polymorphs/multi (useBox=true → Box<AnyTransport> fallback) or
 	// at least one has a concrete transport struct (useBox=false → per-slot enum).
 	if (cls.tag === 'heterogeneous') {
-		return { tag: 'heterogeneous', useBox: !hasAnyConcreteChildKind(allKinds, nodeMap) };
+		return { tag: 'heterogeneous', useBox: !hasAnyConcreteChildKind(slotModel.unnamedKinds, nodeMap) };
 	}
 	return cls;
 }
@@ -1958,11 +1976,12 @@ function renderTypedBranchFn(node: AssembledNode, struct: EmittedStruct, meta: M
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const structName = rustTransportStructName(node);
 	const separator = meta.separators.get(node.kind) ?? '';
+	const slotModel = renderSlotModelOf(node);
 
 	// Build per-field kind maps for typed render call selection (Phase 1).
-	const fieldKindsByName = buildFieldKindsByName(structuralFieldsOf(node));
-	const fieldMixedByName = buildFieldMixedByName(structuralFieldsOf(node));
-	const childrenCls = classifySlotFromChildren(transportChildrenOf(node), nodeMap);
+	const fieldKindsByName = buildFieldKindsByName(slotModel.named);
+	const fieldMixedByName = buildFieldMixedByName(slotModel.named);
+	const childrenCls = classifyUnnamedSlot(slotModel, nodeMap);
 
 	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(...buildTypedTemplateBody(struct, separator, fieldKindsByName, fieldMixedByName, childrenCls, nodeMap));
@@ -2017,6 +2036,7 @@ function renderTypedFormFn(
 	// The view for each slot always comes from the PARENT struct — that
 	// determines the Rust struct field type (&'a str vs NonterminalView vs ListNonterminalView).
 	const formFieldByName = new Map(form.fields.map((f) => [f.name, f]));
+	const formSlotModel = renderSlotModelOf(form);
 	const formEmittedStruct: EmittedStruct = {
 		name: parentStruct.name, // e.g. ClosureExpressionTemplate
 		kind: parentKind,
@@ -2052,9 +2072,9 @@ function renderTypedFormFn(
 			};
 		}),
 		hasChildren: parentStruct.hasChildren,
-		transportHasChildren: form.children.length > 0,
-		childrenRequired: deriveChildrenTransportCardinality(form.children).required,
-		childrenMultiple: deriveChildrenTransportCardinality(form.children).multiple,
+		transportHasChildren: formSlotModel.unnamed.length > 0,
+		childrenRequired: formSlotModel.unnamedRequired,
+		childrenMultiple: formSlotModel.unnamedMultiple,
 		hasVariant: parentStruct.hasVariant,
 		hasText: parentStruct.hasText
 	};
@@ -2062,10 +2082,19 @@ function renderTypedFormFn(
 	// Build per-field kind maps for typed render call selection (Phase 1).
 	const formFieldKindsByName = buildFieldKindsByName(form.fields);
 	const formFieldMixedByName = buildFieldMixedByName(form.fields);
-	const formChildrenCls = classifySlotFromChildren(form.children, nodeMap);
+	const formChildrenCls = classifyUnnamedSlot(formSlotModel, nodeMap);
 
 	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
-	lines.push(...buildTypedTemplateBody(formEmittedStruct, separator, formFieldKindsByName, formFieldMixedByName, formChildrenCls, nodeMap));
+	lines.push(
+		...buildTypedTemplateBody(
+			formEmittedStruct,
+			separator,
+			formFieldKindsByName,
+			formFieldMixedByName,
+			formChildrenCls,
+			nodeMap
+		)
+	);
 	lines.push(`}`);
 	lines.push('');
 
@@ -2094,9 +2123,7 @@ const RENDERABLE_PREFIX = '::sittir_core::filters::';
  */
 function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: string, filterAnon = false): string[] {
 	const R = RENDERABLE_PREFIX;
-	const lines: string[] = [
-		`    let ${ident}_buf: Vec<${R}Renderable<'_>> = ${sourceExpr}.iter()`,
-	];
+	const lines: string[] = [`    let ${ident}_buf: Vec<${R}Renderable<'_>> = ${sourceExpr}.iter()`];
 	if (filterAnon) {
 		lines.push(`        .filter(|t| t.transport_named().unwrap_or(true))`);
 	}
@@ -2410,13 +2437,7 @@ export function emitRenderModule(
 		// emitJinjaTemplates); if the jinja file exists, the node exists
 		// and is userFacing.
 		const rendered = node?.renderTemplate(nodeMap.rules ?? {}, wordMatcher ?? /\w/, nodeMap.externals);
-		structs.push(
-			emitStruct(
-				kind,
-				node,
-				mergeTemplateSurfaceFromBody(f.content, rendered?.surface)
-			)
-		);
+		structs.push(emitStruct(kind, node, mergeTemplateSurfaceFromBody(f.content, rendered?.surface)));
 	}
 	const meta = precomputed?.meta ?? collectMetaData(nodeMap);
 	const hasNumericDispatch = generatedIdTables !== undefined;
@@ -2551,10 +2572,9 @@ function renderTransportSupport(
 	// structs reference the enum type in their children field.
 	const perSlotEnums = collectPerSlotChildEnums(nodes, nodeMap);
 	const literalVariantByKey = new Map(
-		projection.literals.map((literal, index) => [
-			`${literal.kind}\0${literal.text}`,
-			rustLiteralTransportVariantName(literal, index)
-		] as const)
+		projection.literals.map(
+			(literal, index) => [`${literal.kind}\0${literal.text}`, rustLiteralTransportVariantName(literal, index)] as const
+		)
 	);
 	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) =>
 		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey)
@@ -2701,23 +2721,20 @@ function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: Nod
 	const used = new Set<string>();
 
 	/** Accumulate supertype names from a single node's fields + children. */
-	const collectFromNode = (
-		fields: readonly AssembledNonterminal[],
-		children: readonly AssembledNonterminal[]
-	): void => {
+	const collectFromNode = (fields: readonly AssembledNonterminal[], slotModel: RenderSlotModel): void => {
 		for (const field of fields) {
 			const cls = classifySlotForEmit(kindsOf(field), nodeMap);
 			if (cls.tag === 'supertype') used.add(cls.supertypeName);
 		}
-		if (children.length > 0) {
-			const allKinds = [...new Set(children.flatMap((c) => deriveChildrenKinds(c)))];
-			const cls = classifySlotForEmit(allKinds, nodeMap);
+		if (slotModel.unnamed.length > 0) {
+			const cls = classifySlotForEmit(slotModel.unnamedKinds, nodeMap);
 			if (cls.tag === 'supertype') used.add(cls.supertypeName);
 		}
 	};
 
 	for (const node of nodes) {
-		collectFromNode(structuralFieldsOf(node), transportChildrenOf(node));
+		const slotModel = renderSlotModelOf(node);
+		collectFromNode(slotModel.named, slotModel);
 	}
 	// Transitive closure: supertype enums include sub-supertypes as variants.
 	// If PatternTransport has `KeywordIdentifier(Box<KeywordIdentifierTransport>)`,
@@ -3069,11 +3086,7 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	return lines;
 }
 
-function collectConcreteTransportKinds(
-	kind: string,
-	nodeMap: NodeMap,
-	seen: Set<string> = new Set()
-): string[] {
+function collectConcreteTransportKinds(kind: string, nodeMap: NodeMap, seen: Set<string> = new Set()): string[] {
 	if (seen.has(kind)) return [];
 	seen.add(kind);
 	const node = nodeMap.nodes.get(kind);
@@ -3157,12 +3170,12 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 	const entries: PerSlotChildEnum[] = [];
 	const seen = new Set<string>();
 
-	const consider = (typeName: string, children: readonly AssembledNonterminal[]): void => {
-		if (children.length === 0) return;
-		const allKinds = [...new Set(children.flatMap((c) => deriveChildrenKinds(c)))];
+	const consider = (typeName: string, slotModel: RenderSlotModel): void => {
+		if (slotModel.unnamed.length === 0) return;
+		const allKinds = slotModel.unnamedKinds;
 		const literalSet = new Set<string>();
 		const literals: TransportLiteral[] = [];
-		for (const child of children) {
+		for (const child of slotModel.unnamed) {
 			for (const text of slotLiteralValues(child)) {
 				const key = `${text}\0${text}`;
 				if (literalSet.has(key)) continue;
@@ -3183,7 +3196,7 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 	};
 
 	for (const node of nodes) {
-		consider(node.typeName, transportChildrenOf(node));
+		consider(node.typeName, renderSlotModelOf(node));
 	}
 	return entries;
 }
@@ -3351,7 +3364,9 @@ function emitPerSlotChildEnum(
 	for (const literal of entry.literals) {
 		const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 		if (variant !== undefined) {
-			lines.push(`            ${enumName}::${variant} => dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from),`);
+			lines.push(
+				`            ${enumName}::${variant} => dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from),`
+			);
 		}
 	}
 	lines.push(`        }`);
@@ -3673,19 +3688,20 @@ function renderTransportToNodeFns(
 	switch (node.modelType) {
 		case 'branch':
 		case 'group':
-		case 'polymorph':
+		case 'polymorph': {
+			const slotModel = renderSlotModelOf(node);
 			return renderTransportDataToNodeFn(
 				rustTransportToNodeFnName(node.typeName),
 				rustTransportStructName(node),
 				node.kind,
-				structuralFieldsOf(node),
-				transportChildrenOf(node),
+				slotModel,
 				true,
 				true,
 				kindIdByKind,
 				nodeMap,
 				node.typeName
 			);
+		}
 		case 'pattern':
 		case 'keyword':
 		case 'token':
@@ -3700,8 +3716,7 @@ function renderTransportDataToNodeFn(
 	fnName: string,
 	structName: string,
 	kind: string,
-	fields: readonly AssembledNonterminal[],
-	children: readonly AssembledNonterminal[],
+	slotModel: RenderSlotModel,
 	defaultNamed: boolean,
 	hasOptionalText: boolean,
 	kindIdByKind?: ReadonlyMap<string, number>,
@@ -3714,7 +3729,7 @@ function renderTransportDataToNodeFn(
 	const lines: string[] = [];
 	lines.push(`fn ${fnName}(transport: ${structName}) -> Result<TransportNodeData, ::askama::Error> {`);
 	lines.push('    let mut fields = TransportHashMap::new();');
-	for (const field of fields) {
+	for (const field of slotModel.named) {
 		const access = `transport.${rustFieldIdent(field.name)}`;
 		// When nodeMap is available and the field is a single-concrete-kind slot,
 		// the struct field type is a concrete transport type (not AnyTransport).
@@ -3748,7 +3763,7 @@ function renderTransportDataToNodeFn(
 		}
 	}
 	lines.push('    let fields = if fields.is_empty() { None } else { Some(fields) };');
-	lines.push(...renderTransportChildrenBinding(children, nodeMap, ownerTypeName));
+	lines.push(...renderTransportChildrenBinding(slotModel, nodeMap, ownerTypeName));
 	lines.push('    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());');
 	lines.push('    Ok(transport_node_data(');
 	lines.push(`        ${kindArg},`);
@@ -3868,20 +3883,20 @@ function buildBridgeOptionalList(field: AssembledNonterminal, valueExpr: string,
 }
 
 function renderTransportChildrenBinding(
-	children: readonly AssembledNonterminal[],
+	slotModel: RenderSlotModel,
 	nodeMap?: NodeMap,
 	/** PascalCase typeName of the owning struct — used for the per-slot
 	 *  child enum bridge function name when the slot is heterogeneous. */
 	ownerTypeName?: string
 ): string[] {
-	if (children.length === 0) return ['    let children = None;'];
+	if (slotModel.unnamed.length === 0) return ['    let children = None;'];
 	// Determine if children slot is typed (concrete/supertype) or erased (AnyTransport
 	// or per-slot child enum). For the bridge path, typed children need to be wrapped
 	// into AnyTransport via AnyTransport::Variant(child) or <supertype>_transport_to_any(child)
 	// before passing to transport_children().
-	const childrenCls = nodeMap !== undefined ? classifySlotFromChildren(children, nodeMap) : undefined;
-	const reqd = hasRequiredChild(children);
-	const isMultipleSlot = deriveChildrenTransportCardinality(children).multiple;
+	const childrenCls = nodeMap !== undefined ? classifyUnnamedSlot(slotModel, nodeMap) : undefined;
+	const reqd = slotModel.unnamedRequired;
+	const isMultipleSlot = slotModel.unnamedMultiple;
 
 	/** Wrap a single typed child value into `AnyTransport`. */
 	const wrapSingle = (expr: string): string => {
@@ -4088,9 +4103,7 @@ function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): stri
 			if (keywordPresenceValue(field, nodeMap) !== literal) continue;
 			if (
 				field.values.some(
-					(value) =>
-						isNodeRef(value) &&
-						(isUnresolvedRef(value.node) ? value.node.name : value.node.kind) === node.kind
+					(value) => isNodeRef(value) && (isUnresolvedRef(value.node) ? value.node.name : value.node.kind) === node.kind
 				)
 			) {
 				return literal;
@@ -4113,33 +4126,22 @@ function renderTransportStruct(
 	if (node.modelType === 'polymorph' && node.forms.length > 0) {
 		return renderPolymorphTransportDefs(node, nodeMap);
 	}
-	return renderTransportDataStruct(
-		rustTransportStructName(node),
-		node,
-		structuralFieldsOf(node),
-		structuralChildrenOf(node),
-		nodeMap
-	);
+	const slotModel = renderSlotModelOf(node);
+	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap);
 }
 
 function renderPolymorphTransportDefs(
 	node: Extract<AssembledNode, { modelType: 'polymorph' }>,
 	nodeMap: NodeMap
 ): string[] {
-	return renderTransportDataStruct(
-		rustTransportStructName(node),
-		node,
-		structuralFieldsOf(node),
-		transportChildrenOf(node),
-		nodeMap
-	);
+	const slotModel = renderSlotModelOf(node);
+	return renderTransportDataStruct(rustTransportStructName(node), node, slotModel, nodeMap);
 }
 
 function renderTransportDataStruct(
 	structName: string,
 	node: AssembledNode,
-	fields: readonly AssembledNonterminal[],
-	children: readonly AssembledNonterminal[],
+	slotModel: RenderSlotModel,
 	nodeMap: NodeMap
 ): string[] {
 	const isLeafNode = node.modelType === 'pattern' || node.modelType === 'keyword' || node.modelType === 'token';
@@ -4159,12 +4161,12 @@ function renderTransportDataStruct(
 		case 'group':
 		case 'polymorph':
 			lines.push(...renderTransportMetadataFields(true));
-			for (const field of fields) {
+			for (const field of slotModel.named) {
 				lines.push(...renderTransportField(field, nodeMap));
 			}
-			if (children.length > 0) {
+			if (slotModel.unnamed.length > 0) {
 				lines.push('    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]');
-				lines.push(`    pub children: ${rustTransportChildrenType(children, node.typeName, nodeMap)},`);
+				lines.push(`    pub children: ${rustTransportChildrenType(slotModel, node.typeName, nodeMap)},`);
 			}
 			break;
 		case 'pattern':
@@ -4208,13 +4210,7 @@ function renderTransportDataStruct(
 	if (isLeafNode) {
 		// Tokens are anonymous (named=false); patterns and keywords are named (named=true).
 		const leafNamed = node.modelType !== 'token';
-		lines.push(
-			...renderLeafTransportNapiImpls(
-				structName,
-				leafNamed,
-				leafBooleanPresenceLiteral(node, nodeMap)
-			)
-		);
+		lines.push(...renderLeafTransportNapiImpls(structName, leafNamed, leafBooleanPresenceLiteral(node, nodeMap)));
 	}
 	return lines;
 }
@@ -4244,11 +4240,7 @@ function renderTransportDataStruct(
  *   `.filter(|t| t.transport_named().unwrap_or(true))` works correctly without
  *   needing to read `$named` from the JS object.
  */
-function renderLeafTransportNapiImpls(
-	structName: string,
-	named: boolean,
-	booleanLiteral?: string
-): string[] {
+function renderLeafTransportNapiImpls(structName: string, named: boolean, booleanLiteral?: string): string[] {
 	const lines: string[] = [];
 
 	// Release mode: read plain JS string — no metadata round-trip.
@@ -4502,9 +4494,7 @@ function rustTransportFieldType(field: AssembledNonterminal, nodeMap: NodeMap): 
 	// `Vec<ExternModifierTransport>` instead of `OneOrMany<AnyTransport>`.
 	const namedKinds = kindsOf(field);
 	const hasMixedContent = namedKinds.length > 0 && slotLiteralValues(field).length > 0;
-	const cls = hasMixedContent
-		? ({ tag: 'heterogeneous' } as const)
-		: classifySlotForEmit(namedKinds, nodeMap);
+	const cls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(namedKinds, nodeMap);
 	switch (cls.tag) {
 		case 'concrete': {
 			const base = concreteTransportTypeName(cls.kind, nodeMap);
@@ -4556,18 +4546,13 @@ function rustTransportFieldType(field: AssembledNonterminal, nodeMap: NodeMap): 
  * - supertype → `SupertypeTransport`
  * - heterogeneous → `{TypeName}ChildTransport` per-slot enum
  *
- * @param children - The node's structural children list.
+ * @param slotModel - Canonical named/unnamed slot model for the node.
  * @param typeName - PascalCase typeName of the parent node (for per-slot enum name).
  * @param nodeMap  - For kind classification.
  */
-function rustTransportChildrenType(
-	children: readonly AssembledNonterminal[],
-	typeName: string,
-	nodeMap: NodeMap
-): string {
-	const allKinds = [...new Set(children.flatMap((c) => deriveChildrenKinds(c)))];
-	const cls = classifySlotForEmit(allKinds, nodeMap);
-	const { required, multiple } = deriveChildrenTransportCardinality(children);
+function rustTransportChildrenType(slotModel: RenderSlotModel, typeName: string, nodeMap: NodeMap): string {
+	const cls = classifySlotForEmit(slotModel.unnamedKinds, nodeMap);
+	const { unnamedKinds: allKinds, unnamedRequired: required, unnamedMultiple: multiple } = slotModel;
 	switch (cls.tag) {
 		case 'concrete': {
 			const base = concreteTransportTypeName(cls.kind, nodeMap);
@@ -4630,26 +4615,6 @@ function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | nul
 	return null;
 }
 
-function hasRequiredChild(children: readonly AssembledNonterminal[]): boolean {
-	return children.some((child) => isRequired(child));
-}
-
-function deriveChildrenTransportCardinality(
-	children: readonly AssembledNonterminal[]
-): { readonly required: boolean; readonly multiple: boolean } {
-	if (children.length === 0) {
-		return { required: false, multiple: false };
-	}
-	if (children.length === 1) {
-		const cardinality = deriveSlotCardinality(children[0]!);
-		return { required: cardinality.required, multiple: cardinality.multiple };
-	}
-	return {
-		required: hasRequiredChild(children),
-		multiple: true
-	};
-}
-
 /**
  * Name for a per-slot children enum for a heterogeneous children slot.
  * Format: `{TypeName}ChildTransport` (e.g., `SuiteChildTransport`).
@@ -4683,10 +4648,6 @@ function rustTransportFormStructName(form: AssembledGroup): string {
 
 function rustTransportFormVariantName(form: AssembledGroup): string {
 	return rustTypeIdent(form.typeName);
-}
-
-function transportChildrenOf(node: AssembledNode): readonly AssembledNonterminal[] {
-	return structuralChildrenOf(node);
 }
 
 function rustTransportToNodeFnName(typeName: string): string {

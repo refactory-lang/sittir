@@ -353,9 +353,7 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		expect(repeated.templatesRs.contents).toContain("    pub children: ListNonterminalView<'a>,");
 	});
 
-	it(
-		'keeps token-only singular children on direct transport views so jjjj does not widen',
-		() => {
+	it('keeps token-only singular children on direct transport views so jjjj does not widen', () => {
 		const emitted = emitRenderModule(
 			'rust',
 			[
@@ -373,9 +371,7 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		);
 		expect(emitted.transportRs.contents).not.toContain('let children_buf: Vec<::sittir_core::filters::Renderable');
 		assertRustRenderRuntimeBehavior();
-		},
-		20_000
-	);
+	}, 20_000);
 });
 
 describe('render pipeline optimization — level 3 direct render path', () => {
@@ -438,7 +434,9 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.bridgeRs.contents).toContain('fn resolve_optional');
 		expect(emitted.bridgeRs.contents).toContain('fn resolve_required');
 		expect(emitted.bridgeRs.contents).toContain('fn missing_required_field');
-		expect(emitted.bridgeRs.contents).toContain('fn resolve_children');
+		expect(emitted.bridgeRs.contents).toContain('fn resolve_unnamed_children');
+		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_children');
+		expect(emitted.bridgeRs.contents).not.toContain('consumed_fields');
 		// render_dispatch is a thin shim in dispatch.rs delegating to bridge::render_nodedata_into.
 		expect(emitted.dispatchRs.contents).toContain('pub fn render_dispatch(node: &NodeData)');
 		expect(emitted.dispatchRs.contents).toContain('render_nodedata_into(node, &mut buf)');
@@ -447,6 +445,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		// Phase D: dispatch inlined into bridge uses numeric KindId (42).
 		expect(emitted.bridgeRs.contents).toContain('42 =>');
 		expect(emitted.bridgeRs.contents).toContain('resolve_field(node, "name", true)');
+		expect(emitted.bridgeRs.contents).not.toContain('let children = resolve_unnamed_children(node)?;');
 		expect(emitted.bridgeRs.contents).toContain(
 			`format!("render_nodedata_into: missing required field '{}' on '{}'", name, node.type_)`
 		);
