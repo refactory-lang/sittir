@@ -44,12 +44,7 @@ import type {
 	TerminalRule
 } from './rule.ts';
 import { isSeq, isField } from './rule.ts';
-import {
-	renderRuleTemplate,
-	deriveWalkSlots,
-	findRepeatSeparator,
-	findRepeatFlag
-} from './template-walker.ts';
+import { renderRuleTemplate, deriveWalkSlots, findRepeatSeparator, findRepeatFlag } from './template-walker.ts';
 import type { WalkSlotUse } from './template-walker.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { findGeneratedKindEntry } from './generated-metadata.ts';
@@ -157,9 +152,7 @@ export function isTerminalValue(v: NodeOrTerminal): v is TerminalValue {
 }
 
 export function isUnresolvedRef(v: NodeRef['node']): v is UnresolvedRef {
-	return (
-		typeof v === 'object' && (v as { kind?: unknown }).kind === 'unresolved-ref'
-	);
+	return typeof v === 'object' && (v as { kind?: unknown }).kind === 'unresolved-ref';
 }
 
 // ---------------------------------------------------------------------------
@@ -174,26 +167,18 @@ export function isUnresolvedRef(v: NodeRef['node']): v is UnresolvedRef {
  * repeated field with zero occurrences is emitted as a missing slot, not
  * a present-empty collection.
  */
-export function isRequired(slot: {
-	values: readonly NodeOrTerminal[];
-}): boolean {
+export function isRequired(slot: { values: readonly NodeOrTerminal[] }): boolean {
 	return (
 		slot.values.length > 0 &&
-		slot.values.every(
-			(v) => v.multiplicity === 'single' || v.multiplicity === 'nonEmptyArray'
-		)
+		slot.values.every((v) => v.multiplicity === 'single' || v.multiplicity === 'nonEmptyArray')
 	);
 }
 
 /**
  * True when ANY value has multiplicity `array` or `nonEmptyArray`.
  */
-export function isMultiple(slot: {
-	values: readonly NodeOrTerminal[];
-}): boolean {
-	return slot.values.some(
-		(v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray'
-	);
+export function isMultiple(slot: { values: readonly NodeOrTerminal[] }): boolean {
+	return slot.values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 }
 
 /**
@@ -201,15 +186,9 @@ export function isMultiple(slot: {
  * least one multi-valued value). A mixed `array` + `nonEmptyArray` slot
  * returns `false` — the `array` form allows empty.
  */
-export function isNonEmpty(slot: {
-	values: readonly NodeOrTerminal[];
-}): boolean {
-	const multis = slot.values.filter(
-		(v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray'
-	);
-	return (
-		multis.length > 0 && multis.every((v) => v.multiplicity === 'nonEmptyArray')
-	);
+export function isNonEmpty(slot: { values: readonly NodeOrTerminal[] }): boolean {
+	const multis = slot.values.filter((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
+	return multis.length > 0 && multis.every((v) => v.multiplicity === 'nonEmptyArray');
 }
 
 export interface SlotCardinality {
@@ -218,14 +197,32 @@ export interface SlotCardinality {
 	readonly nonEmpty: boolean;
 }
 
-export function deriveSlotCardinality(slot: {
-	values: readonly NodeOrTerminal[];
-}): SlotCardinality {
+export function deriveSlotCardinality(slot: { values: readonly NodeOrTerminal[] }): SlotCardinality {
 	return {
 		required: isRequired(slot),
 		multiple: isMultiple(slot),
 		nonEmpty: isNonEmpty(slot)
 	};
+}
+
+export function mergeSlotValues(
+	slots: readonly {
+		values: readonly NodeOrTerminal[];
+	}[]
+): { readonly values: readonly NodeOrTerminal[] } | undefined {
+	if (slots.length === 0) return undefined;
+	return {
+		values: dedupeValues(slots.flatMap((slot) => [...slot.values]))
+	};
+}
+
+export function deriveMergedSlotCardinality(
+	slots: readonly {
+		values: readonly NodeOrTerminal[];
+	}[]
+): SlotCardinality {
+	const merged = mergeSlotValues(slots);
+	return merged ? deriveSlotCardinality(merged) : { required: false, multiple: false, nonEmpty: false };
 }
 
 export function deriveChildrenCardinality(
@@ -283,7 +280,8 @@ export function snakeToCamel(name: string): string {
  * stays singular (tree-sitter facing).
  */
 export function pluralize(name: string): string {
-	if (name.endsWith('s') || name.endsWith('List') || name.endsWith('children') || name.endsWith('Children')) return name;
+	if (name.endsWith('s') || name.endsWith('List') || name.endsWith('children') || name.endsWith('Children'))
+		return name;
 	if (/[Cc]hild$/.test(name)) return name.slice(0, -5) + (name.endsWith('Child') ? 'Children' : 'children');
 	if (name.endsWith('y') && !/[aeiou]y$/.test(name)) return name.slice(0, -1) + 'ies';
 	return name + 's';
@@ -435,10 +433,7 @@ let currentAuditKind: string | undefined;
 export function setAuditKindContext(kind: string | undefined): void {
 	currentAuditKind = kind;
 }
-function auditDerivationShape(
-	rule: Rule,
-	context: 'fields' | 'children'
-): void {
+function auditDerivationShape(rule: Rule, context: 'fields' | 'children'): void {
 	const mode = deriveAuditMode();
 	if (mode === 'off') return;
 	const shape = classifyTopLevelShape(rule);
@@ -494,8 +489,7 @@ function classifyTopLevelShape(rule: Rule): string {
 	//     missed it.
 	switch (rule.type) {
 		case 'seq': {
-			if (rule.members.some((m) => m.type === 'seq'))
-				return 'seq-with-nested-seq';
+			if (rule.members.some((m) => m.type === 'seq')) return 'seq-with-nested-seq';
 			for (const m of rule.members) {
 				const inner = classifyTopLevelShape(m);
 				if (inner !== 'canonical') return `seq-member-${inner}`;
@@ -538,9 +532,7 @@ function classifyTopLevelShape(rule: Rule): string {
 		case 'repeat':
 		case 'repeat1': {
 			const inner = classifyTopLevelShape(rule.content);
-			return inner === 'canonical'
-				? 'canonical'
-				: `${rule.type}-wrapping-${inner}`;
+			return inner === 'canonical' ? 'canonical' : `${rule.type}-wrapping-${inner}`;
 		}
 		case 'choice': {
 			// Every choice in the traversal must be a simple union — no
@@ -561,9 +553,7 @@ function classifyTopLevelShape(rule: Rule): string {
 			// "one-of-these-fields" shape, NOT a polymorph. The walker's
 			// choice case enumerates each branch and downgrades every
 			// field to `optional` multiplicity; that's correct behavior.
-			const allFieldOrToken = rule.members.every(
-				(m) => m.type === 'field' || isTokenLikeChoiceMember(m)
-			);
+			const allFieldOrToken = rule.members.every((m) => m.type === 'field' || isTokenLikeChoiceMember(m));
 			if (allFieldOrToken) return 'canonical';
 			// Polymorph surface: every branch wraps its content in a
 			// `variant()` tag (from override-declared variant() adoption).
@@ -577,9 +567,7 @@ function classifyTopLevelShape(rule: Rule): string {
 		}
 		case 'optional': {
 			const innerShape = classifyTopLevelShape(rule.content);
-			return innerShape === 'canonical'
-				? 'canonical'
-				: `optional-wrapping-${innerShape}`;
+			return innerShape === 'canonical' ? 'canonical' : `optional-wrapping-${innerShape}`;
 		}
 		case 'group':
 		case 'alias':
@@ -617,12 +605,7 @@ function isTokenLikeChoiceMember(m: Rule): boolean {
 					? peel(r.content)
 					: r;
 	const core = peel(m);
-	if (
-		core.type === 'symbol' ||
-		core.type === 'supertype' ||
-		core.type === 'enum'
-	)
-		return true;
+	if (core.type === 'symbol' || core.type === 'supertype' || core.type === 'enum') return true;
 	// Bare `string` / `pattern` members — token-literal alternatives.
 	// `_non_special_token` has a choice containing dozens of bare
 	// keyword strings alongside symbol refs; each contributes a
@@ -632,12 +615,7 @@ function isTokenLikeChoiceMember(m: Rule): boolean {
 	// These behave as anonymous token separators — they don't surface
 	// as addressable children, so they never contribute structural
 	// branching to a choice arm.
-	if (
-		core.type === 'indent' ||
-		core.type === 'dedent' ||
-		core.type === 'newline'
-	)
-		return true;
+	if (core.type === 'indent' || core.type === 'dedent' || core.type === 'newline') return true;
 	if (core.type === 'terminal') return true;
 	// `optional(token-like)` preserves the union shape — the branch
 	// contributes either the wrapped token or nothing. Rust's
@@ -650,15 +628,13 @@ function isTokenLikeChoiceMember(m: Rule): boolean {
 	// variant wrapper on the inner choice), the nested shape is still
 	// structurally a union of tokens. `_lhs_expression` hits this
 	// with a nested `choice(choice(sym, sym, ...), sym, ...)`.
-	if (core.type === 'choice' && core.members.every(isTokenLikeChoiceMember))
-		return true;
+	if (core.type === 'choice' && core.members.every(isTokenLikeChoiceMember)) return true;
 	if (core.type === 'repeat1' || core.type === 'repeat') {
 		const inner = peel(core.content);
 		if (inner.type === 'enum') return true;
 		if (inner.type === 'string' || inner.type === 'pattern') return true;
 		if (inner.type === 'symbol' || inner.type === 'supertype') return true;
-		if (inner.type === 'choice' && inner.members.every(isTokenLikeChoiceMember))
-			return true;
+		if (inner.type === 'choice' && inner.members.every(isTokenLikeChoiceMember)) return true;
 	}
 	return false;
 }
@@ -692,9 +668,7 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
 	console.error(`[${label}] non-canonical shapes reaching derivation:`);
 	for (const [key, n] of sorted) {
 		const kinds = auditKindsByShape.get(key) ?? [];
-		console.error(
-			`  ${n.toString().padStart(5)} ${key}  [${kinds.join(', ')}]`
-		);
+		console.error(`  ${n.toString().padStart(5)} ${key}  [${kinds.join(', ')}]`);
 	}
 	auditCounts.clear();
 	auditKindsByShape.clear();
@@ -704,10 +678,7 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
  * Internal — fields-side walk. The exported derivation surface is
  * `deriveSlots`; this helper is its fields-portion.
  */
-function _deriveFieldsInternal(
-	rule: Rule,
-	kindEntries?: readonly GeneratedKindEntry[]
-): AssembledNonterminal[] {
+function _deriveFieldsInternal(rule: Rule, kindEntries?: readonly GeneratedKindEntry[]): AssembledNonterminal[] {
 	auditDerivationShape(rule, 'fields');
 	return mergeFieldsByName(deriveFieldsRaw(rule, 'single', kindEntries));
 }
@@ -740,18 +711,13 @@ function mergeFieldsByName(fields: AssembledNonterminal[]): AssembledNonterminal
 		}
 		const mergedValues = dedupeValues([...existing.values, ...f.values]);
 		const mergedAliases =
-			existing.aliasSources || f.aliasSources
-				? { ...existing.aliasSources, ...f.aliasSources }
-				: undefined;
+			existing.aliasSources || f.aliasSources ? { ...existing.aliasSources, ...f.aliasSources } : undefined;
 		byName.set(f.name, {
 			...existing,
 			values: mergedValues,
 			hasTrailing: existing.hasTrailing || f.hasTrailing,
 			hasLeading: existing.hasLeading || f.hasLeading,
-			aliasSources:
-				mergedAliases && Object.keys(mergedAliases).length > 0
-					? mergedAliases
-					: undefined
+			aliasSources: mergedAliases && Object.keys(mergedAliases).length > 0 ? mergedAliases : undefined
 		});
 	}
 	return Array.from(byName.values());
@@ -787,10 +753,7 @@ function deriveFieldsRaw(
 			// field's own content rule (repeat/optional wrapper) takes
 			// precedence over any outer multiplicity from a surrounding
 			// repeat(field('x', ...)).
-			const innerMult = fieldContentMultiplicity(
-				rule.content,
-				outerMultiplicity
-			);
+			const innerMult = fieldContentMultiplicity(rule.content, outerMultiplicity);
 
 			// Derive values — each NodeOrTerminal entry carries its own multiplicity.
 			const rawValues = deriveValuesForRule(rule.content, innerMult, kindEntries);
@@ -799,11 +762,8 @@ function deriveFieldsRaw(
 			// Derive trailing/leading flags — only meaningful for array/nonEmptyArray
 			// slots (i.e. the field backs a repeat that carries the flag). Gate on
 			// multiplicity first so optional(repeat(...)) shapes don't pollute the flag.
-			const isMultiSlot = values.some(
-				(v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray'
-			);
-			const hasTrailing =
-				isMultiSlot && findRepeatFlag(rule.content, 'trailing');
+			const isMultiSlot = values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
+			const hasTrailing = isMultiSlot && findRepeatFlag(rule.content, 'trailing');
 			const hasLeading = isMultiSlot && findRepeatFlag(rule.content, 'leading');
 
 			const propertyName = isMultiSlot ? pluralize(basePropertyName) : basePropertyName;
@@ -817,8 +777,7 @@ function deriveFieldsRaw(
 				values,
 				hasTrailing,
 				hasLeading,
-				aliasSources:
-					Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
+				aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
 				source: rule.source ?? 'grammar'
 				// projection field eliminated — consumers use kindsOf(slot)
 			};
@@ -856,22 +815,12 @@ function deriveFieldsRaw(
 			// 'children' / 'child' keys lives in `buildSlotsRecord`
 			// per FR-T05 once the override migration enables strict
 			// enforcement.
-			const values = dedupeValues(
-				deriveValuesForRule(rule, outerMultiplicity, kindEntries)
-			);
+			const values = dedupeValues(deriveValuesForRule(rule, outerMultiplicity, kindEntries));
 			if (values.length === 0) return [];
-			const firstRef = values.find((v) => v.kind === 'node-ref') as
-				| NodeRef
-				| undefined;
-			const isMultiSlot = values.some(
-				(v) =>
-					v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray'
-			);
+			const firstRef = values.find((v) => v.kind === 'node-ref') as NodeRef | undefined;
+			const isMultiSlot = values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 			const baseName = firstRef
-				? ((firstRef.node as UnresolvedRef).name ?? '').replace(
-						/^_+/,
-						''
-				  ) || (isMultiSlot ? 'children' : 'child')
+				? ((firstRef.node as UnresolvedRef).name ?? '').replace(/^_+/, '') || (isMultiSlot ? 'children' : 'child')
 				: isMultiSlot
 					? 'children'
 					: 'child';
@@ -997,20 +946,14 @@ function deriveFieldsRaw(
  * `field('x', optional($.foo))` → content is `optional` → `'optional'`
  * `field('x', $.foo)` → content is `symbol`, outerMultiplicity is `single` → `'single'`
  */
-function fieldContentMultiplicity(
-	content: Rule,
-	outerMultiplicity: Multiplicity
-): Multiplicity {
+function fieldContentMultiplicity(content: Rule, outerMultiplicity: Multiplicity): Multiplicity {
 	switch (content.type) {
 		case 'repeat':
 			return 'array';
 		case 'repeat1':
 			return 'nonEmptyArray';
 		case 'optional': {
-			const inner = fieldContentMultiplicity(
-				content.content,
-				outerMultiplicity
-			);
+			const inner = fieldContentMultiplicity(content.content, outerMultiplicity);
 			// optional(repeat1(...)) → repeat (the optional makes nonEmpty drop)
 			if (inner === 'nonEmptyArray') return 'array';
 			return 'optional';
@@ -1064,10 +1007,7 @@ function fieldContentMultiplicity(
  * ordering. A future cleanup could rewrite the walk to preserve true
  * declared-order with one unified pass over the rule tree.
  */
-export function deriveSlots(
-	rule: Rule,
-	kindEntries?: readonly GeneratedKindEntry[]
-): readonly AssembledNonterminal[] {
+export function deriveSlots(rule: Rule, kindEntries?: readonly GeneratedKindEntry[]): readonly AssembledNonterminal[] {
 	// The field walker handles positional symbol/supertype/choice content
 	// too, so it produces every slot — no separate children walker needed.
 	return _deriveFieldsInternal(rule, kindEntries);
@@ -1524,10 +1464,7 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 		// `hidden: true` suppresses factoryName derivation (node has no factory).
 		// `factoryName: string` overrides the derived name.
 		// Default: use the derived factoryName.
-		this.factoryName =
-			opts?.hidden === true
-				? undefined
-				: (opts?.factoryName ?? derived.factoryName);
+		this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
 		this.irKey = opts?.irKey ?? derived.irKey;
 		this.source = opts?.source;
 	}
@@ -1549,11 +1486,7 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	 * AssembledNode subclasses reach into the raw rule.
 	 */
 	isTextTemplate(externals: ReadonlySet<string> | undefined): boolean {
-		if (
-			externals !== undefined &&
-			externals.size > 0 &&
-			hasHiddenExternalRef(this.rule, externals)
-		) {
+		if (externals !== undefined && externals.size > 0 && hasHiddenExternalRef(this.rule, externals)) {
 			return true;
 		}
 		if (isVerbatimTokenStream(this.rule)) return true;
@@ -1582,9 +1515,7 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	 *
 	 * @see isTextTemplate — the underlying classification.
 	 */
-	protected textTemplate(
-		externals: ReadonlySet<string> | undefined
-	): RenderTemplateEntry | undefined {
+	protected textTemplate(externals: ReadonlySet<string> | undefined): RenderTemplateEntry | undefined {
 		if (this.isTextTemplate(externals)) {
 			return {
 				template: '{{ text }}',
@@ -1606,9 +1537,7 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	 */
 	get rawFactoryName(): string | undefined {
 		if (this.factoryName === undefined) return undefined;
-		return JS_RESERVED_FACTORY_NAMES.has(this.factoryName)
-			? `${this.factoryName}_`
-			: this.factoryName;
+		return JS_RESERVED_FACTORY_NAMES.has(this.factoryName) ? `${this.factoryName}_` : this.factoryName;
 	}
 
 	/** Tree interface name: `${typeName}Tree`. */
@@ -1696,9 +1625,7 @@ export function kindsOf(slot: AssembledNonterminal): readonly string[] {
 	const out: string[] = [];
 	for (const v of slot.values) {
 		if (v.kind !== 'node-ref') continue;
-		const name = isUnresolvedRef(v.node)
-			? (v.node as UnresolvedRef).name
-			: (v.node as AssembledNode).kind;
+		const name = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind;
 		if (!seen.has(name)) {
 			seen.add(name);
 			out.push(name);
@@ -1720,10 +1647,7 @@ export function kindsOf(slot: AssembledNonterminal): readonly string[] {
  * returned template is Jinja-shaped (save for `$VAR`) — no separate
  * metadata record needs to travel downstream.
  */
-function inlineJinjaClauses(
-	template: string,
-	clauses: Record<string, string>
-): string {
+function inlineJinjaClauses(template: string, clauses: Record<string, string>): string {
 	if (Object.keys(clauses).length === 0) return template;
 	// Whether a lowercased `$NAME` placeholder refers to a walker-
 	// emitted clause. Membership in the `clauses` dict is the ONLY
@@ -1731,8 +1655,7 @@ function inlineJinjaClauses(
 	// grammars have real rule kinds named `for_in_clause` /
 	// `except_clause` / `case_clause` / etc. that would false-
 	// positive a `.endsWith('_clause')` check.
-	const isClauseName = (lowerName: string): boolean =>
-		clauses[lowerName] !== undefined;
+	const isClauseName = (lowerName: string): boolean => clauses[lowerName] !== undefined;
 	// Fixpoint loop so a clause body that itself references another
 	// `$FOO_CLAUSE` resolves after the outer clause it sits inside.
 	// Bounded — N clauses finish in ≤ N passes.
@@ -1744,86 +1667,75 @@ function inlineJinjaClauses(
 		// when the field is absent). Jinja's `{%-` / `-%}` markers
 		// strip that same whitespace from the outer template so the
 		// only place it appears is inside the conditional body.
-		const next = current.replace(
-			/\$([A-Z][A-Z0-9_]*_CLAUSE)/g,
-			(full, marker: string) => {
-				// Historically this regex captured `( *)\$CLAUSE( *)` and
-				// pulled outer whitespace INTO the clause body (with
-				// `{%- -%}` trim markers). That worked for clauses with
-				// flanking literals (`:type`, `=value` — the literal and
-				// space co-render), but silently broke for clauses whose
-				// only content is a placeholder: when absent, the body
-				// rendered empty, and the absorbed outer whitespace was
-				// gone — gluing the clause's outer neighbors. Example:
-				// `{{ vis }} $UNSAFE_CLAUSE trait` → absorbed both spaces
-				// → `{{ vis }}{% if unsafe %}...{% endif %}trait` →
-				// `pubtrait` on unsafe-absent. Leave outer whitespace
-				// in the outer template — when absent, the neighbors
-				// keep their ambient separator.
-				const leading = '';
-				const trailing = '';
-				const key = marker.toLowerCase();
-				const body = clauses[key];
-				if (body === undefined) return full; // not a clause we emitted — leave as-is
-				const stem = key.slice(0, -'_clause'.length);
-				// A `$NAME` inside the body that is NOT itself a clause
-				// reference names the optional field the clause gates on
-				// (clauses exist precisely because their field is
-				// optional). On the askama side optional fields are typed
-				// `Option<String>` — the `| value` filter unwraps to `""`
-				// when None, inner String when Some. The nunjucks
-				// `value` filter tolerates undefined/null and coerces
-				// NodeData/strings, so emission is cross-renderer
-				// identical.
-				//
-				// Pre-substitute here (rather than in `translateToJinja`)
-				// because translateToJinja doesn't know which
-				// placeholders sit inside a clause body. Multi-valued
-				// `$$$NAME` and specials (`$TEXT`, `$NEWLINE`, `$INDENT`,
-				// `$DEDENT`) stay raw and get handled by the later pass.
-				const convertedBody = body.replace(
-					/(?<!\$)\$([A-Z][A-Z0-9_]*)/g,
-					(m, name: string) => {
-						const lower = name.toLowerCase();
-						// Nested clause reference — leave raw, next
-						// fixpoint pass substitutes it.
-						if (isClauseName(lower)) return m;
-						// Specials handled by translateToJinja stay raw.
-						if (
-							lower === 'newline' ||
-							lower === 'indent' ||
-							lower === 'dedent' ||
-							lower === 'text'
-						) {
-							return m;
-						}
-						// `| value` was a cross-engine safety wrapper for
-						// `Option<String>`-typed fields (askama side) /
-						// undefined-tolerant nunjucks (TS side). Our struct
-						// fields are `String` (empty when absent) on both
-						// engines, so the wrap is a no-op — drop it to
-						// avoid the askama built-in `value::<T>` collision.
-						return `{{ ${lower} }}`;
-					}
-				);
-				// `isPresent` instead of `{% if stem %}`: nunjucks's
-				// truthy-check works fine, but askama rejects `{% if x %}`
-				// on `Option<String>`. The sittir-core filter returns
-				// bool in both engines.
-				//
-				// `{%- if ... -%}` / `{%- endif -%}` whitespace markers —
-				// used ONLY when there was ambient whitespace around the
-				// placeholder in the outer template. The `-` markers
-				// strip the adjacent whitespace the regex captured; the
-				// whitespace is re-emitted INSIDE the body so it only
-				// appears when the clause is present. This is the
-				// difference between `(parameter )` (trailing space leak)
-				// and `(parameter)` when an optional type is absent.
-				const leftTrim = leading.length > 0 ? '-' : '';
-				const rightTrim = trailing.length > 0 ? '-' : '';
-				return `{%${leftTrim} if ${stem} | isPresent %}${leading}${convertedBody}${trailing}{% endif ${rightTrim}%}`;
-			}
-		);
+		const next = current.replace(/\$([A-Z][A-Z0-9_]*_CLAUSE)/g, (full, marker: string) => {
+			// Historically this regex captured `( *)\$CLAUSE( *)` and
+			// pulled outer whitespace INTO the clause body (with
+			// `{%- -%}` trim markers). That worked for clauses with
+			// flanking literals (`:type`, `=value` — the literal and
+			// space co-render), but silently broke for clauses whose
+			// only content is a placeholder: when absent, the body
+			// rendered empty, and the absorbed outer whitespace was
+			// gone — gluing the clause's outer neighbors. Example:
+			// `{{ vis }} $UNSAFE_CLAUSE trait` → absorbed both spaces
+			// → `{{ vis }}{% if unsafe %}...{% endif %}trait` →
+			// `pubtrait` on unsafe-absent. Leave outer whitespace
+			// in the outer template — when absent, the neighbors
+			// keep their ambient separator.
+			const leading = '';
+			const trailing = '';
+			const key = marker.toLowerCase();
+			const body = clauses[key];
+			if (body === undefined) return full; // not a clause we emitted — leave as-is
+			const stem = key.slice(0, -'_clause'.length);
+			// A `$NAME` inside the body that is NOT itself a clause
+			// reference names the optional field the clause gates on
+			// (clauses exist precisely because their field is
+			// optional). On the askama side optional fields are typed
+			// `Option<String>` — the `| value` filter unwraps to `""`
+			// when None, inner String when Some. The nunjucks
+			// `value` filter tolerates undefined/null and coerces
+			// NodeData/strings, so emission is cross-renderer
+			// identical.
+			//
+			// Pre-substitute here (rather than in `translateToJinja`)
+			// because translateToJinja doesn't know which
+			// placeholders sit inside a clause body. Multi-valued
+			// `$$$NAME` and specials (`$TEXT`, `$NEWLINE`, `$INDENT`,
+			// `$DEDENT`) stay raw and get handled by the later pass.
+			const convertedBody = body.replace(/(?<!\$)\$([A-Z][A-Z0-9_]*)/g, (m, name: string) => {
+				const lower = name.toLowerCase();
+				// Nested clause reference — leave raw, next
+				// fixpoint pass substitutes it.
+				if (isClauseName(lower)) return m;
+				// Specials handled by translateToJinja stay raw.
+				if (lower === 'newline' || lower === 'indent' || lower === 'dedent' || lower === 'text') {
+					return m;
+				}
+				// `| value` was a cross-engine safety wrapper for
+				// `Option<String>`-typed fields (askama side) /
+				// undefined-tolerant nunjucks (TS side). Our struct
+				// fields are `String` (empty when absent) on both
+				// engines, so the wrap is a no-op — drop it to
+				// avoid the askama built-in `value::<T>` collision.
+				return `{{ ${lower} }}`;
+			});
+			// `isPresent` instead of `{% if stem %}`: nunjucks's
+			// truthy-check works fine, but askama rejects `{% if x %}`
+			// on `Option<String>`. The sittir-core filter returns
+			// bool in both engines.
+			//
+			// `{%- if ... -%}` / `{%- endif -%}` whitespace markers —
+			// used ONLY when there was ambient whitespace around the
+			// placeholder in the outer template. The `-` markers
+			// strip the adjacent whitespace the regex captured; the
+			// whitespace is re-emitted INSIDE the body so it only
+			// appears when the clause is present. This is the
+			// difference between `(parameter )` (trailing space leak)
+			// and `(parameter)` when an optional type is absent.
+			const leftTrim = leading.length > 0 ? '-' : '';
+			const rightTrim = trailing.length > 0 ? '-' : '';
+			return `{%${leftTrim} if ${stem} | isPresent %}${leading}${convertedBody}${trailing}{% endif ${rightTrim}%}`;
+		});
 		if (next === current) return next;
 		current = next;
 	}
@@ -2009,39 +1921,76 @@ function absorbFlankingChildrenSpaces(tmpl: string): string {
 	return result;
 }
 
-/** @internal — exported for direct unit testing. */
-export function translateToJinja(
+/**
+ * True when the aggregate `children` placeholder should render as a scalar
+ * value rather than a joined list.
+ *
+ * `$$$CHILDREN` originates in the walker as an aggregate placeholder for all
+ * unnamed child content. It should only stay list-shaped when the unnamed
+ * surface itself is list-shaped: either multiple inferred child slots are
+ * present, or the sole child slot is repeated. A single singular inferred slot
+ * (required or optional) should render as plain `{{ children }}`.
+ */
+function hasSingularChildrenSlot(
+	children: readonly {
+		values: readonly NodeOrTerminal[];
+	}[]
+): boolean {
+	return children.length === 1 && !deriveSlotCardinality(children[0]!).multiple;
+}
+
+function normalizeChildrenPlaceholderArity(
 	tmpl: string,
-	meta: JinjaTranslateMeta
+	children: readonly {
+		values: readonly NodeOrTerminal[];
+	}[]
 ): string {
+	if (!hasSingularChildrenSlot(children) || !tmpl.includes('$$$CHILDREN')) {
+		return tmpl;
+	}
+	return tmpl.replaceAll('$$$CHILDREN', '$CHILDREN');
+}
+
+function normalizeChildrenClausePlaceholderArity(
+	clauses: Record<string, string>,
+	children: readonly {
+		values: readonly NodeOrTerminal[];
+	}[]
+): Record<string, string> {
+	if (!hasSingularChildrenSlot(children)) return clauses;
+	let changed = false;
+	const normalized: Record<string, string> = {};
+	for (const [name, body] of Object.entries(clauses)) {
+		const next = normalizeChildrenPlaceholderArity(body, children);
+		normalized[name] = next;
+		changed ||= next !== body;
+	}
+	return changed ? normalized : clauses;
+}
+
+/** @internal — exported for direct unit testing. */
+export function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string {
 	const guarded = wrapOptionalFieldPlaceholders(tmpl, meta.optionalFields);
 	const varPattern = /(\$\$\$|\$\$|\$_|\$)([A-Z][A-Z0-9_]*)/g;
 	const defaultSep = meta.joinBy ?? ' ';
-	const translated = guarded.replace(
-		varPattern,
-		(_full, pfx: string, name: string) => {
-			const key = name.toLowerCase();
-			if (key === 'newline') return '\n';
-			if (key === 'indent') return '';
-			if (key === 'dedent') return '';
-			if (pfx === '$$$') {
-				// `joinByField['children']` IS honoured — the walker pins it
-				// to `""` for separator-less repeats over visible
-				// children (template_literal_type, template_string) so adjacent
-				// substitutions concatenate without a stray space.
-				const sep = meta.joinByField?.[key] ?? defaultSep;
-				const filter = filterForFlanks(key, meta);
-				return `{{ ${key} | ${filter}(${JSON.stringify(sep)}) }}`;
-			}
-			return `{{ ${key} }}`;
+	const translated = guarded.replace(varPattern, (_full, pfx: string, name: string) => {
+		const key = name.toLowerCase();
+		if (key === 'newline') return '\n';
+		if (key === 'indent') return '';
+		if (key === 'dedent') return '';
+		if (pfx === '$$$') {
+			// `joinByField['children']` IS honoured — the walker pins it
+			// to `""` for separator-less repeats over visible
+			// children (template_literal_type, template_string) so adjacent
+			// substitutions concatenate without a stray space.
+			const sep = meta.joinByField?.[key] ?? defaultSep;
+			const filter = filterForFlanks(key, meta);
+			return `{{ ${key} | ${filter}(${JSON.stringify(sep)}) }}`;
 		}
-	);
-	const postProcessed = meta.optionalChildren
-		? absorbFlankingChildrenSpaces(translated)
-		: translated;
-	return escapeJinjaBraceCollisions(
-		absorbHeadConditionalTrailingSpace(postProcessed)
-	);
+		return `{{ ${key} }}`;
+	});
+	const postProcessed = meta.optionalChildren ? absorbFlankingChildrenSpaces(translated) : translated;
+	return escapeJinjaBraceCollisions(absorbHeadConditionalTrailingSpace(postProcessed));
 }
 
 /**
@@ -2081,10 +2030,7 @@ function absorbHeadConditionalTrailingSpace(tmpl: string): string {
 		if (body.includes('{% if') || body.includes('{%- if')) break;
 		if (!body.endsWith(' ')) body = `${body} `;
 		const replacement = `${ifTag}${body}${endTag}`;
-		work =
-			work.slice(0, runStart) +
-			replacement +
-			work.slice(runStart + m[0].length);
+		work = work.slice(0, runStart) + replacement + work.slice(runStart + m[0].length);
 		runStart += replacement.length;
 	}
 	return work;
@@ -2114,56 +2060,38 @@ function absorbHeadConditionalTrailingSpace(tmpl: string): string {
  * `{% if %}` / `{% endif %}` markers and tracks nesting depth. Only
  * matches at depth 0 are wrapped.
  */
-function wrapOptionalFieldPlaceholders(
-	tmpl: string,
-	optionalFields: ReadonlySet<string> | undefined
-): string {
+function wrapOptionalFieldPlaceholders(tmpl: string, optionalFields: ReadonlySet<string> | undefined): string {
 	if (!optionalFields || optionalFields.size === 0) return tmpl;
 	// Match either `$NAME` (single dollar) or `$$$NAME` (list dollar).
 	// The capture distinguishes the two so the replacement preserves
 	// the dollar count.
 	const placeholder = /(?<lead> *)(\$\$\$|\$)([A-Z][A-Z0-9_]*)/g;
 	const guardedRanges = computeGuardedRanges(tmpl);
-	return tmpl.replace(
-		placeholder,
-		(
-			full: string,
-			lead: string,
-			dollars: string,
-			name: string,
-			offset: number
-		) => {
-			const key = name.toLowerCase();
-			if (!optionalFields.has(key)) return full;
-			// Special walker placeholders (`$NEWLINE`, `$INDENT`, `$DEDENT`,
-			// `$TEXT`) aren't real fields — `translateToJinja` converts them
-			// to literal characters or list joins. Even if a `newline` /
-			// `indent` / etc. field exists in the AssembledNonterminal list
-			// (e.g. python's decorator carries an empty-values `newline`
-			// slot from the walker's NEWLINE token wrapping), the placeholder
-			// is already structural and must not be gated.
-			//
-			if (SPECIAL_PLACEHOLDERS.has(key)) return full;
-			const dollarStart = offset + lead.length;
-			// Defensive: ensure no straggling `$` before the matched dollar
-			// run (i.e. the regex didn't truncate a `$$NAME` mid-dollars).
-			if (dollarStart > 0 && tmpl[dollarStart - 1] === '$') return full;
-			if (offset >= tmpl.length) return full;
-			// Skip placeholders enclosed in a walker-emitted Jinja
-			// conditional — the placeholder is already guarded.
-			if (isWithinGuardedRange(dollarStart, guardedRanges)) return full;
-			return `{% if ${key} | isPresent %}${lead}${dollars}${name}{% endif %}`;
-		}
-	);
+	return tmpl.replace(placeholder, (full: string, lead: string, dollars: string, name: string, offset: number) => {
+		const key = name.toLowerCase();
+		if (!optionalFields.has(key)) return full;
+		// Special walker placeholders (`$NEWLINE`, `$INDENT`, `$DEDENT`,
+		// `$TEXT`) aren't real fields — `translateToJinja` converts them
+		// to literal characters or list joins. Even if a `newline` /
+		// `indent` / etc. field exists in the AssembledNonterminal list
+		// (e.g. python's decorator carries an empty-values `newline`
+		// slot from the walker's NEWLINE token wrapping), the placeholder
+		// is already structural and must not be gated.
+		//
+		if (SPECIAL_PLACEHOLDERS.has(key)) return full;
+		const dollarStart = offset + lead.length;
+		// Defensive: ensure no straggling `$` before the matched dollar
+		// run (i.e. the regex didn't truncate a `$$NAME` mid-dollars).
+		if (dollarStart > 0 && tmpl[dollarStart - 1] === '$') return full;
+		if (offset >= tmpl.length) return full;
+		// Skip placeholders enclosed in a walker-emitted Jinja
+		// conditional — the placeholder is already guarded.
+		if (isWithinGuardedRange(dollarStart, guardedRanges)) return full;
+		return `{% if ${key} | isPresent %}${lead}${dollars}${name}{% endif %}`;
+	});
 }
 
-const SPECIAL_PLACEHOLDERS: ReadonlySet<string> = new Set([
-	'children',
-	'newline',
-	'indent',
-	'dedent',
-	'text'
-]);
+const SPECIAL_PLACEHOLDERS: ReadonlySet<string> = new Set(['children', 'newline', 'indent', 'dedent', 'text']);
 
 /**
  * Compute the half-open `[start, end)` byte ranges in `tmpl` that lie
@@ -2197,10 +2125,7 @@ function computeGuardedRanges(tmpl: string): Array<readonly [number, number]> {
 	return ranges;
 }
 
-function isWithinGuardedRange(
-	offset: number,
-	ranges: ReadonlyArray<readonly [number, number]>
-): boolean {
+function isWithinGuardedRange(offset: number, ranges: ReadonlyArray<readonly [number, number]>): boolean {
 	for (const [s, e] of ranges) {
 		if (offset >= s && offset < e) return true;
 	}
@@ -2250,9 +2175,7 @@ export function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
  * fallback when local member inspection can't see the enclosing
  * structural wrapper.
  */
-function deriveOptionalSlotNames(
-	slots: readonly { name: string; values: readonly NodeOrTerminal[] }[]
-): Set<string> {
+function deriveOptionalSlotNames(slots: readonly { name: string; values: readonly NodeOrTerminal[] }[]): Set<string> {
 	const out = new Set<string>();
 	for (const slot of slots) {
 		if (!isRequired(slot)) {
@@ -2269,9 +2192,7 @@ function deriveOptionalSlotNames(
 	return out;
 }
 
-function deriveOptionalFieldNames(
-	fields: readonly AssembledNonterminal[]
-): Set<string> {
+function deriveOptionalFieldNames(fields: readonly AssembledNonterminal[]): Set<string> {
 	return deriveOptionalSlotNames(fields);
 }
 
@@ -2283,15 +2204,11 @@ function buildRenderSurface(opts?: {
 	usesVariant?: boolean;
 	usesText?: boolean;
 }): RenderTemplateSurface {
-	const fieldsByName = new Map(
-		(opts?.fields ?? []).map((field) => [field.name, field] as const)
-	);
+	const fieldsByName = new Map((opts?.fields ?? []).map((field) => [field.name, field] as const));
 	const slots = (opts?.slots ?? []).map((slot) => {
 		const field = fieldsByName.get(slot.name);
-		const view =
-			field != null && slot.view === 'list' ? ('field' as const) : slot.view;
-		const required =
-			field != null ? !(opts?.optionalFields?.has(slot.name) ?? false) : false;
+		const view = field != null && slot.view === 'list' ? ('field' as const) : slot.view;
+		const required = field != null ? !(opts?.optionalFields?.has(slot.name) ?? false) : false;
 		return {
 			name: slot.name,
 			view,
@@ -2321,9 +2238,7 @@ function buildRenderSurface(opts?: {
  * `left_bare` forms but NOT in `prefix`. All three forms collapse to
  * `{% if left | isPresent %}{{ left }}{% endif %}{{ children | join("") }}`.
  */
-function deriveCrossFormOptionalFields(
-	forms: readonly AssembledGroup[]
-): Set<string> {
+function deriveCrossFormOptionalFields(forms: readonly AssembledGroup[]): Set<string> {
 	if (forms.length <= 1) return new Set();
 	const perForm = forms.map((f) => new Set(f.fields.map((ff: AssembledNonterminal) => ff.name)));
 	const allNames = new Set(perForm.flatMap((s) => [...s]));
@@ -2369,9 +2284,7 @@ function tryCrossFormOptionalCollapse(
 	// want to strip it from the BEGINNING of forms that have it so the
 	// remaining suffix is the common part. Strip leading occurrence only.
 	const fieldNames = [...crossFormOptional];
-	const stripPatterns = fieldNames.map(
-		(f) => new RegExp(`^\\$${f.toUpperCase()} ?`, 'i')
-	);
+	const stripPatterns = fieldNames.map((f) => new RegExp(`^\\$${f.toUpperCase()} ?`, 'i'));
 
 	// Strip cross-form optional field placeholders from the beginning of
 	// each form's raw template.
@@ -2388,9 +2301,7 @@ function tryCrossFormOptionalCollapse(
 	// for each cross-form optional field. No separator between the prefix
 	// and the suffix — the separator (range operator, etc.) is part of
 	// the variant child's own template.
-	const prefix = fieldNames
-		.map((f) => `{% if ${f} | isPresent %}$${f.toUpperCase()}{% endif %}`)
-		.join('');
+	const prefix = fieldNames.map((f) => `{% if ${f} | isPresent %}$${f.toUpperCase()}{% endif %}`).join('');
 
 	return prefix + suffixes[0]!;
 }
@@ -2434,9 +2345,7 @@ function inlineFixedParameterlessSlotPlaceholders(
 				? resolveStampedLiteral(value.node.stampExpression)
 				: undefined;
 		const renderedEntry =
-			stampedLiteral === undefined
-				? value.node.renderTemplate(rules, wordMatcher, externals)
-				: undefined;
+			stampedLiteral === undefined ? value.node.renderTemplate(rules, wordMatcher, externals) : undefined;
 		const replacement = stampedLiteral ?? renderedEntry?.template;
 		if (replacement === undefined) continue;
 		const slotName = slot.name.toUpperCase();
@@ -2482,10 +2391,7 @@ function tryChildrenPresenceCollapse(
 	if (childSuffixes.length !== 1 || literalSuffixes.length !== 1) return null;
 	const childSuffix = childSuffixes[0]!;
 	const literalSuffix = literalSuffixes[0]!;
-	if (
-		suffixes.some((suffix) => suffix !== childSuffix && suffix !== literalSuffix) ||
-		childSuffix === literalSuffix
-	) {
+	if (suffixes.some((suffix) => suffix !== childSuffix && suffix !== literalSuffix) || childSuffix === literalSuffix) {
 		return null;
 	}
 	return `${prefix}{% if children | isPresent %}${childSuffix}{% else %}${literalSuffix}{% endif %}`;
@@ -2572,9 +2478,7 @@ function buildSlotsRecord(
 								? v.node.name
 								: (v.node as AssembledNode).kind
 					);
-					const mult = s.values.length > 0
-						? s.values[0]!.multiplicity
-						: 'single';
+					const mult = s.values.length > 0 ? s.values[0]!.multiplicity : 'single';
 					return `    ${s.name} (source: ${s.source}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
 				});
 				process.stderr.write(
@@ -2588,9 +2492,7 @@ function buildSlotsRecord(
 	return Object.freeze(out);
 }
 
-function freezeSlotRecord(
-	slots: readonly AssembledNonterminal[]
-): Readonly<Record<string, AssembledNonterminal>> {
+function freezeSlotRecord(slots: readonly AssembledNonterminal[]): Readonly<Record<string, AssembledNonterminal>> {
 	const out: Record<string, AssembledNonterminal> = {};
 	for (const slot of slots) {
 		out[slot.name] = slot;
@@ -2707,8 +2609,7 @@ export class AssembledBranch<
 		super(kind, rule, opts);
 		this.simplifiedRule = simplifiedRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
-		this._slots =
-			opts?.slotRecord ?? buildSlotsRecord(kind, simplifiedRule, opts?.kindEntries);
+		this._slots = opts?.slotRecord ?? buildSlotsRecord(kind, simplifiedRule, opts?.kindEntries);
 	}
 
 	get slots(): Readonly<Record<string, AssembledNonterminal>> {
@@ -2803,17 +2704,17 @@ export class AssembledBranch<
 		// empty-body factory inputs.
 		const fields = this.fields;
 		const hasFields = fields.length > 0;
-		const optionalFields = hasFields
-			? deriveOptionalFieldNames(fields)
-			: new Set<string>();
+		const optionalFields = hasFields ? deriveOptionalFieldNames(fields) : new Set<string>();
 		if (hasFields && this.children.length > 0) optionalFields.add('children');
-		const { template, clauses, joinByField, usesChildren, slots } = renderRuleTemplate(
-			this.rule,
-			false,
-			rules,
-			wordMatcher,
-			optionalFields
-		);
+		const {
+			template: rawTemplate,
+			clauses: rawClauses,
+			joinByField,
+			usesChildren,
+			slots
+		} = renderRuleTemplate(this.rule, false, rules, wordMatcher, optionalFields);
+		const template = normalizeChildrenPlaceholderArity(rawTemplate, this.children);
+		const clauses = normalizeChildrenClausePlaceholderArity(rawClauses, this.children);
 		if (!template) {
 			throw new Error(
 				`AssembledBranch.renderTemplate: '${this.kind}' produced an empty template. ` +
@@ -2832,30 +2733,22 @@ export class AssembledBranch<
 		// non-empty.
 		const sep = this.separator ?? findRepeatSeparator(this.simplifiedRule);
 		if (sep) meta.joinBy = sep;
-		if (findRepeatFlag(this.simplifiedRule, 'trailing'))
-			meta.joinByTrailing = true;
-		if (findRepeatFlag(this.simplifiedRule, 'leading'))
-			meta.joinByLeading = true;
+		if (findRepeatFlag(this.simplifiedRule, 'trailing')) meta.joinByTrailing = true;
+		if (findRepeatFlag(this.simplifiedRule, 'leading')) meta.joinByLeading = true;
 		if (hasFields) {
-			const trailingFields = new Set(
-				fields.filter((f) => f.hasTrailing).map((f) => f.name)
-			);
-			const leadingFields = new Set(
-				fields.filter((f) => f.hasLeading).map((f) => f.name)
-			);
+			const trailingFields = new Set(fields.filter((f) => f.hasTrailing).map((f) => f.name));
+			const leadingFields = new Set(fields.filter((f) => f.hasLeading).map((f) => f.name));
 			if (trailingFields.size > 0) meta.trailingFields = trailingFields;
 			if (leadingFields.size > 0) meta.leadingFields = leadingFields;
 		}
 		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
-		if (optionalFields.size > 0)
-			meta.optionalFields = optionalFields;
+		if (optionalFields.size > 0) meta.optionalFields = optionalFields;
 		// Container-shape branches: empty children may collapse a flanking
 		// space pair into stray whitespace at render time. Set the meta
 		// flag so `translateToJinja` absorbs the spaces into an isPresent
 		// conditional (moved verbatim from the former
 		// `AssembledContainer.renderTemplate`).
-		if (!hasFields && childrenMayBeEmpty(this.simplifiedRule))
-			meta.optionalChildren = true;
+		if (!hasFields && childrenMayBeEmpty(this.simplifiedRule)) meta.optionalChildren = true;
 		return {
 			template: translateToJinja(withClauses, meta),
 			surface: buildRenderSurface({
@@ -3041,28 +2934,18 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
  * make the rule walkable via template text and disqualify the $TEXT
  * fallback.
  */
-function isExternalTerminalMember(
-	rule: Rule,
-	externals: ReadonlySet<string>
-): boolean {
+function isExternalTerminalMember(rule: Rule, externals: ReadonlySet<string>): boolean {
 	const core = unwrapStructuralPassthroughs(rule);
 	if (core.type === 'field') {
 		const inner = unwrapStructuralPassthroughs(core.content);
-		if (
-			inner.type === 'pattern' &&
-			inner.value === '' &&
-			(externals.has(core.name) || externals.has('_' + core.name))
-		)
+		if (inner.type === 'pattern' && inner.value === '' && (externals.has(core.name) || externals.has('_' + core.name)))
 			return true;
 		return isExternalTerminalMember(core.content, externals);
 	}
 	return core.type === 'symbol' && externals.has(core.name);
 }
 
-function hasHiddenExternalRef(
-	rule: Rule,
-	externals: ReadonlySet<string>
-): boolean {
+function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boolean {
 	// Unwrap transparent wrappers to find the structural core.
 	const core = unwrapStructuralPassthroughs(rule);
 	if (core.type !== 'seq') return false;
@@ -3074,9 +2957,7 @@ function hasHiddenExternalRef(
 	const isIgnorableBoundaryExternal = (r: Rule): boolean => {
 		if (r.type !== 'optional') return false;
 		const inner = r.content;
-		return (
-			inner.type === 'symbol' && externals.has((inner as { name: string }).name)
-		);
+		return inner.type === 'symbol' && externals.has((inner as { name: string }).name);
 	};
 	let hasContent = false;
 	for (const m of core.members) {
@@ -3130,19 +3011,13 @@ function hasHiddenExternalRef(
  * are external-scanner symbols. Fires for rules like python's `string`
  * where scanner tokens delimit but the interior is author-content.
  */
-function hasExternalBoundaries(
-	seqRule: Rule,
-	externals: ReadonlySet<string>
-): boolean {
+function hasExternalBoundaries(seqRule: Rule, externals: ReadonlySet<string>): boolean {
 	if (seqRule.type !== 'seq') return false;
 	if (seqRule.members.length < 2) return false;
 	const first = seqRule.members[0];
 	const last = seqRule.members[seqRule.members.length - 1];
 	if (!first || !last) return false;
-	return (
-		isExternalTerminalMember(first, externals) &&
-		isExternalTerminalMember(last, externals)
-	);
+	return isExternalTerminalMember(first, externals) && isExternalTerminalMember(last, externals);
 }
 
 export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
@@ -3277,28 +3152,13 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		// body honest about which fields are optional in THAT form.
 		const rawTemplates: Record<string, string> = {};
 		for (const form of this.#forms) {
-			const {
-				template,
-				clauses,
-				joinByField,
-				usesChildren: formUsesChildren
-			} = form.renderParts(
-				rules,
-				wordMatcher
-			);
+			const { template, clauses, joinByField, usesChildren: formUsesChildren } = form.renderParts(rules, wordMatcher);
 			if (!template) {
 				throw new Error(
-					`AssembledPolymorph.renderTemplate: '${this.kind}' form '${form.name}' ` +
-						`produced an empty template.`
+					`AssembledPolymorph.renderTemplate: '${this.kind}' form '${form.name}' ` + `produced an empty template.`
 				);
 			}
-			const normalizedTemplate = inlineSingleParameterlessChildTemplate(
-				form,
-				template,
-				rules,
-				wordMatcher,
-				externals
-			);
+			const normalizedTemplate = inlineSingleParameterlessChildTemplate(form, template, rules, wordMatcher, externals);
 			const normalizedWithFixedSlots = inlineFixedParameterlessSlotPlaceholders(
 				form,
 				normalizedTemplate,
@@ -3316,13 +3176,9 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 			variants[form.name] = wrapped;
 			usesChildren ||= formUsesChildren;
 			for (const slot of deriveWalkSlots(normalizedWithFixedSlots)) {
-				const guarded =
-					slot.guarded ||
-					localOptional.has(slot.name) ||
-					mergedOptionalFields.has(slot.name);
+				const guarded = slot.guarded || localOptional.has(slot.name) || mergedOptionalFields.has(slot.name);
 				const prev = mergedSlots.get(slot.name);
-				const view =
-					prev == null || prev.view === slot.view ? slot.view : 'field';
+				const view = prev == null || prev.view === slot.view ? slot.view : 'field';
 				mergedSlots.set(slot.name, {
 					name: slot.name,
 					view,
@@ -3341,14 +3197,11 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		// map — `translateToJinja` below just converts `$VAR` →
 		// `{{ var }}` without knowing about variants at all.
 		const formNames = Object.keys(variants);
-		const normalizeTrailingNewline = (s: string): string =>
-			s.endsWith('\n') ? s.slice(0, -1) : s;
+		const normalizeTrailingNewline = (s: string): string => (s.endsWith('\n') ? s.slice(0, -1) : s);
 		const allEqual =
 			formNames.length > 1 &&
 			formNames.every(
-				(n) =>
-					normalizeTrailingNewline(variants[n]!) ===
-					normalizeTrailingNewline(variants[formNames[0]!]!)
+				(n) => normalizeTrailingNewline(variants[n]!) === normalizeTrailingNewline(variants[formNames[0]!]!)
 			);
 		let templateStr: string;
 		let usesVariant = false;
@@ -3366,18 +3219,11 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 			// If so, collapse to that single prefix+suffix template. This avoids
 			// a `{% if variant == "X" %}` chain that fails for parsed nodes
 			// (where `$variant` is always null).
-			const crossFormCollapsed = tryCrossFormOptionalCollapse(
-				this.#forms,
-				rawTemplates,
-				formNames
-			);
+			const crossFormCollapsed = tryCrossFormOptionalCollapse(this.#forms, rawTemplates, formNames);
 			if (crossFormCollapsed) {
 				templateStr = crossFormCollapsed;
 			} else {
-				const childrenPresenceCollapsed = tryChildrenPresenceCollapse(
-					rawTemplates,
-					formNames
-				);
+				const childrenPresenceCollapsed = tryChildrenPresenceCollapse(rawTemplates, formNames);
 				if (childrenPresenceCollapsed) {
 					templateStr = childrenPresenceCollapsed;
 				} else {
@@ -3388,9 +3234,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 					for (let i = 0; i < formNames.length; i++) {
 						const formName = formNames[i]!;
 						const keyword = i === 0 ? 'if' : 'elif';
-						parts.push(
-							`{%- ${keyword} variant == ${JSON.stringify(formName)} -%}`
-						);
+						parts.push(`{%- ${keyword} variant == ${JSON.stringify(formName)} -%}`);
 						parts.push(variants[formName]!);
 					}
 					parts.push('{%- endif -%}');
@@ -3410,16 +3254,12 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		const mergedTrailingFields = new Set<string>();
 		const mergedLeadingFields = new Set<string>();
 		for (const form of this.#forms) {
-			for (const f of form.fields.filter((field) => field.hasTrailing))
-				mergedTrailingFields.add(f.name);
-			for (const f of form.fields.filter((field) => field.hasLeading))
-				mergedLeadingFields.add(f.name);
+			for (const f of form.fields.filter((field) => field.hasTrailing)) mergedTrailingFields.add(f.name);
+			for (const f of form.fields.filter((field) => field.hasLeading)) mergedLeadingFields.add(f.name);
 		}
-		if (mergedTrailingFields.size > 0)
-			meta.trailingFields = mergedTrailingFields;
+		if (mergedTrailingFields.size > 0) meta.trailingFields = mergedTrailingFields;
 		if (mergedLeadingFields.size > 0) meta.leadingFields = mergedLeadingFields;
-		if (Object.keys(mergedJoinByField).length > 0)
-			meta.joinByField = mergedJoinByField;
+		if (Object.keys(mergedJoinByField).length > 0) meta.joinByField = mergedJoinByField;
 		if (mergedOptionalFields.size > 0) meta.optionalFields = mergedOptionalFields;
 		return {
 			template: translateToJinja(withClauses, meta),
@@ -3470,24 +3310,16 @@ export abstract class AssembledLeaf<R extends Rule = Rule> extends AssembledNode
  * is now an abstract base (above); `AssembledPattern` is one of its
  * four concrete subclasses.
  */
-export class AssembledPattern extends AssembledLeaf<
-	PatternRule | TerminalRule
-> {
+export class AssembledPattern extends AssembledLeaf<PatternRule | TerminalRule> {
 	readonly modelType = 'pattern' as const;
 
-	constructor(
-		kind: string,
-		rule: PatternRule | TerminalRule,
-		opts?: { factoryName?: string; irKey?: string }
-	) {
+	constructor(kind: string, rule: PatternRule | TerminalRule, opts?: { factoryName?: string; irKey?: string }) {
 		super(kind, rule, opts);
 	}
 
 	/** The leaf's regex pattern value when the rule is a PatternRule; undefined for TerminalRule. */
 	get pattern(): string | undefined {
-		return this.rule.type === 'pattern'
-			? this.rule.value || undefined
-			: undefined;
+		return this.rule.type === 'pattern' ? this.rule.value || undefined : undefined;
 	}
 }
 
@@ -3539,16 +3371,10 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	readonly modelType = 'token' as const;
 	readonly resolvedKind?: string;
 
-	constructor(
-		kind: string,
-		rule: StringRule | TokenRule,
-		opts?: { kindEntries?: readonly GeneratedKindEntry[] }
-	) {
+	constructor(kind: string, rule: StringRule | TokenRule, opts?: { kindEntries?: readonly GeneratedKindEntry[] }) {
 		super(kind, rule, { hidden: true });
 		this.resolvedKind =
-			rule.type === 'string'
-				? findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind
-				: undefined;
+			rule.type === 'string' ? findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind : undefined;
 		// Single-literal tokens are parameterless — they stamp to the
 		// literal (as const) the same way keywords do. Pattern-based
 		// tokens (TokenRule) carry no single user-visible string and
@@ -3623,23 +3449,16 @@ export class AssembledEnum extends AssembledLeaf<EnumRule> {
 	get values(): string[] {
 		return this.rule.members.map((m) => m.value);
 	}
-
 }
 
-export class AssembledSupertype extends AssembledNodeBase<
-	SupertypeRule | ChoiceRule
-> {
+export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | ChoiceRule> {
 	readonly modelType = 'supertype' as const;
 	// #subtypes stores the RESOLVED subtype list (hidden names expanded to
 	// their concrete kinds) — this differs from rule.subtypes which carries
 	// the raw names as declared in the grammar. Do NOT replace with rule.subtypes.
 	readonly #subtypes: string[];
 
-	constructor(
-		kind: string,
-		rule: SupertypeRule | ChoiceRule,
-		subtypes: string[]
-	) {
+	constructor(kind: string, rule: SupertypeRule | ChoiceRule, subtypes: string[]) {
 		// Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
 		super(kind, rule as SupertypeRule, { hidden: true });
 		this.#subtypes = subtypes;
@@ -3676,19 +3495,13 @@ export class AssembledSupertype extends AssembledNodeBase<
  *   supertype — hidden choice of symbols (dispatch to one subtype)
  *   multi    — hidden repeat of union    (inline as multi child slot)
  */
-export class AssembledMulti extends AssembledNodeBase<
-	RepeatRule | Repeat1Rule
-> {
+export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> {
 	readonly modelType = 'multi' as const;
 	// rule narrowed — multis are hidden repeat helpers. Classifier
 	// routes repeat / repeat1 shapes here when the hidden rule's
 	// top-level content is a repeat.
 
-	constructor(
-		kind: string,
-		rule: RepeatRule | Repeat1Rule,
-		opts?: { irKey?: string }
-	) {
+	constructor(kind: string, rule: RepeatRule | Repeat1Rule, opts?: { irKey?: string }) {
 		// Multi nodes are always hidden (no factoryName)
 		super(kind, rule, { hidden: true, irKey: opts?.irKey });
 	}
@@ -3782,9 +3595,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		// the factory name so the emitted function is `_fooBar`, not `fooBar`.
 		// `nameNode` strips leading underscores via `prepareKindForPascalCase`; we
 		// re-derive and prefix here when no explicit factoryName was provided.
-		const factoryName =
-			opts?.factoryName ??
-			(kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
+		const factoryName = opts?.factoryName ?? (kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
 		super(kind, rule, { factoryName, irKey: opts?.irKey });
 		this.simplifiedRule = simplifiedRule;
 		this.detectToken = opts?.detectToken;
@@ -3820,13 +3631,15 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		// Template walking stays on RAW rule (needs literals); derivations
 		// and separator discovery use simplifiedRule.
 		const optionalFields = deriveOptionalFieldNames(this.fields);
-		const { template, clauses, joinByField, usesChildren, slots } = renderRuleTemplate(
-			this.rule,
-			false,
-			rules,
-			wordMatcher,
-			optionalFields
-		);
+		const {
+			template: rawTemplate,
+			clauses: rawClauses,
+			joinByField,
+			usesChildren,
+			slots
+		} = renderRuleTemplate(this.rule, false, rules, wordMatcher, optionalFields);
+		const template = normalizeChildrenPlaceholderArity(rawTemplate, this.children);
+		const clauses = normalizeChildrenClausePlaceholderArity(rawClauses, this.children);
 		if (!template) {
 			throw new Error(
 				`AssembledGroup.renderTemplate: '${this.kind}' produced an empty template. ` +
@@ -3837,16 +3650,10 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		const meta: JinjaTranslateMeta = {};
 		const sep = findRepeatSeparator(this.simplifiedRule);
 		if (sep) meta.joinBy = sep;
-		if (findRepeatFlag(this.simplifiedRule, 'trailing'))
-			meta.joinByTrailing = true;
-		if (findRepeatFlag(this.simplifiedRule, 'leading'))
-			meta.joinByLeading = true;
-		const trailingFields = new Set(
-			this.fields.filter((f) => f.hasTrailing).map((f) => f.name)
-		);
-		const leadingFields = new Set(
-			this.fields.filter((f) => f.hasLeading).map((f) => f.name)
-		);
+		if (findRepeatFlag(this.simplifiedRule, 'trailing')) meta.joinByTrailing = true;
+		if (findRepeatFlag(this.simplifiedRule, 'leading')) meta.joinByLeading = true;
+		const trailingFields = new Set(this.fields.filter((f) => f.hasTrailing).map((f) => f.name));
+		const leadingFields = new Set(this.fields.filter((f) => f.hasLeading).map((f) => f.name));
 		if (trailingFields.size > 0) meta.trailingFields = trailingFields;
 		if (leadingFields.size > 0) meta.leadingFields = leadingFields;
 		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
@@ -3882,13 +3689,12 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		slots: readonly WalkSlotUse[];
 	} {
 		const optionalFields = deriveOptionalFieldNames(this.fields);
-		return renderRuleTemplate(
-			this.rule,
-			false,
-			rules,
-			wordMatcher,
-			optionalFields
-		);
+		const parts = renderRuleTemplate(this.rule, false, rules, wordMatcher, optionalFields);
+		return {
+			...parts,
+			template: normalizeChildrenPlaceholderArity(parts.template, this.children),
+			clauses: normalizeChildrenClausePlaceholderArity(parts.clauses, this.children)
+		};
 	}
 }
 
@@ -3931,15 +3737,8 @@ export type AssembledNode =
  * "what fields does this kind have." For literal collection across
  * polymorph variants, see {@link allFormFieldsOf}.
  */
-export function structuralFieldsOf(
-	node: AssembledNode
-): readonly AssembledNonterminal[] {
-	if (
-		node.modelType === 'branch' ||
-		node.modelType === 'group' ||
-		node.modelType === 'polymorph'
-	)
-		return node.fields;
+export function structuralFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
+	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'polymorph') return node.fields;
 	return [];
 }
 
@@ -3949,15 +3748,8 @@ export function structuralFieldsOf(
  *
  * Use this for emitters that read child slots on the kind itself.
  */
-export function structuralChildrenOf(
-	node: AssembledNode
-): readonly AssembledNonterminal[] {
-	if (
-		node.modelType === 'branch' ||
-		node.modelType === 'group' ||
-		node.modelType === 'polymorph'
-	)
-		return node.children;
+export function structuralChildrenOf(node: AssembledNode): readonly AssembledNonterminal[] {
+	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'polymorph') return node.children;
 	return [];
 }
 
@@ -3971,13 +3763,9 @@ export function structuralChildrenOf(
  * structural view used by type and factory emitters, see
  * {@link structuralFieldsOf}.
  */
-export function allFormFieldsOf(
-	node: AssembledNode
-): readonly AssembledNonterminal[] {
-	if (node.modelType === 'polymorph')
-		return node.forms.flatMap((form) => form.fields);
-	if (node.modelType === 'branch' || node.modelType === 'group')
-		return node.fields;
+export function allFormFieldsOf(node: AssembledNode): readonly AssembledNonterminal[] {
+	if (node.modelType === 'polymorph') return node.forms.flatMap((form) => form.fields);
+	if (node.modelType === 'branch' || node.modelType === 'group') return node.fields;
 	return [];
 }
 
@@ -3989,13 +3777,9 @@ export function allFormFieldsOf(
  * Use this for transport projection. For structural-view children,
  * see {@link structuralChildrenOf}.
  */
-export function allFormChildrenOf(
-	node: AssembledNode
-): readonly AssembledNonterminal[] {
-	if (node.modelType === 'polymorph')
-		return node.forms.flatMap((form) => form.children);
-	if (node.modelType === 'branch' || node.modelType === 'group')
-		return node.children;
+export function allFormChildrenOf(node: AssembledNode): readonly AssembledNonterminal[] {
+	if (node.modelType === 'polymorph') return node.forms.flatMap((form) => form.children);
+	if (node.modelType === 'branch' || node.modelType === 'group') return node.children;
 	return [];
 }
 
@@ -4014,13 +3798,9 @@ export function allFormChildrenOf(
  * templates), keep {@link structuralFieldsOf} / {@link structuralChildrenOf}
  * for the typed-emission split.
  */
-export function allSlotsOf(
-	node: AssembledNode
-): readonly AssembledNonterminal[] {
-	if (node.modelType === 'polymorph')
-		return node.forms.flatMap((form) => Object.values(form.slots));
-	if (node.modelType === 'branch' || node.modelType === 'group')
-		return Object.values(node.slots);
+export function allSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
+	if (node.modelType === 'polymorph') return node.forms.flatMap((form) => Object.values(form.slots));
+	if (node.modelType === 'branch' || node.modelType === 'group') return Object.values(node.slots);
 	return [];
 }
 
@@ -4035,14 +3815,8 @@ export function allSlotsOf(
  * matters to the consumer (e.g. set-collecting where dupes inflate
  * count without changing meaning).
  */
-export function allStructuralSlotsOf(
-	node: AssembledNode
-): readonly AssembledNonterminal[] {
-	if (
-		node.modelType === 'branch' ||
-		node.modelType === 'group' ||
-		node.modelType === 'polymorph'
-	)
+export function allStructuralSlotsOf(node: AssembledNode): readonly AssembledNonterminal[] {
+	if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'polymorph')
 		return Object.values(node.slots);
 	return [];
 }

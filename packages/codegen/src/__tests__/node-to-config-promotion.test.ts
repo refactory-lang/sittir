@@ -147,7 +147,7 @@ describe('nodeToConfig field promotion', () => {
 		expect(repeatedConfig.items).toEqual([leaf]);
 	});
 
-	it('uses unnamed children metadata instead of payload shape and preserves multi-slot child lists', () => {
+	it('uses unnamed children metadata instead of payload shape for one-vs-many reconstruction', () => {
 		const left = { $type: 'identifier', $source: 0, $named: true, $text: 'x' };
 		const right = { $type: 'number_literal', $source: 0, $named: true, $text: '1' };
 
@@ -171,12 +171,12 @@ describe('nodeToConfig field promotion', () => {
 			}
 		);
 
-		const pairChildren = nodeToConfig(
+		const multiSlotSingularChildren = nodeToConfig(
 			{
 				$type: 'pair_parent',
 				$source: 0,
 				$named: true,
-				$children: [left, right]
+				$children: [left]
 			} as never,
 			{
 				factorySlots: makeFactorySlots('pair_parent', {
@@ -192,7 +192,28 @@ describe('nodeToConfig field promotion', () => {
 		);
 
 		expect(singularChildren.children).toEqual(left);
-		expect(pairChildren.children).toEqual([left, right]);
+		expect(multiSlotSingularChildren.children).toEqual(left);
+		expect(() =>
+			nodeToConfig(
+				{
+					$type: 'pair_parent',
+					$source: 0,
+					$named: true,
+					$children: [left, right]
+				} as never,
+				{
+					factorySlots: makeFactorySlots('pair_parent', {
+						children: {
+							unnamed: true,
+							slotCount: 2,
+							required: true,
+							multiple: false,
+							nonEmpty: false
+						}
+					})
+				}
+			)
+		).toThrow(/singular slot/i);
 	});
 
 	it('throws when singular slot metadata receives multiple realized values', () => {
@@ -289,31 +310,33 @@ describe('nodeToConfig field promotion', () => {
 		);
 
 		expect(config.children).toEqual(leaf);
-		expect(getChildFactoryArgs('direct_child', config, makeFactorySlots('direct_child', {
-			children: {
-				unnamed: true,
-				slotCount: 1,
-				required: true,
-				multiple: false,
-				nonEmpty: false
-			}
-		}))).toEqual([leaf]);
+		expect(
+			getChildFactoryArgs(
+				'direct_child',
+				config,
+				makeFactorySlots('direct_child', {
+					children: {
+						unnamed: true,
+						slotCount: 1,
+						required: true,
+						multiple: false,
+						nonEmpty: false
+					}
+				})
+			)
+		).toEqual([leaf]);
 	});
 
-	it(
-		'keeps python argument_list factory reconstruction from re-emitting double-wrapped unnamed children',
-		async () => {
-			const templatesPath = resolve(import.meta.dirname, '../../../python/templates');
-			const result = await validateFactoryRenderParse('python', templatesPath, 'native');
-			const regression = result.errors.find(
-				(error) =>
-					error.kind === 'argument_list' &&
-					error.entry === 'Matching specific values' &&
-					error.message === 're-parse error: "((,\\"Goodbye!\\",))"'
-			);
+	it('keeps python argument_list factory reconstruction from re-emitting double-wrapped unnamed children', async () => {
+		const templatesPath = resolve(import.meta.dirname, '../../../python/templates');
+		const result = await validateFactoryRenderParse('python', templatesPath, 'native');
+		const regression = result.errors.find(
+			(error) =>
+				error.kind === 'argument_list' &&
+				error.entry === 'Matching specific values' &&
+				error.message === 're-parse error: "((,\\"Goodbye!\\",))"'
+		);
 
-			expect(regression).toBeUndefined();
-		},
-		60000
-	);
+		expect(regression).toBeUndefined();
+	}, 60000);
 });

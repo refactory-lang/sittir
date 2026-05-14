@@ -26,6 +26,7 @@ import type { TreeHandle } from '@sittir/common';
 import { assertNever, type PolymorphVariantDescriptor, type PolymorphVariantMap } from '../polymorph-variant.ts';
 import type { FactoryShape, FactorySlotMeta } from '../emitters/factory-map.ts';
 import { createNamedSlotModel, createUnnamedChildrenSlotModel, type SlotModel } from '../compiler/slot-model.ts';
+import { pluralize, snakeToCamel } from '../compiler/node-map.ts';
 
 // ---------------------------------------------------------------------------
 // Corpus parser — tree-sitter test corpus format
@@ -803,13 +804,64 @@ export function walkWrappedTree(root: unknown, visit: (w: WrappedNodeData) => vo
 		}
 		visit(w);
 		for (const k of Object.keys(w)) {
-			if (k.startsWith('$')) continue;
-			const v = w[k];
+			if (k !== '$children' && !k.startsWith('_')) continue;
+			const v = resolveWrappedStorageValue(w, k);
 			if (isWrappedNodeData(v)) recurse(v);
 			else if (Array.isArray(v)) for (const x of v) if (isWrappedNodeData(x)) recurse(x);
 		}
 	};
 	recurse(root);
+}
+
+export function materializeWrappedNodeData(root: unknown): AnyNodeData {
+	return materializeWrappedValue(root) as AnyNodeData;
+}
+
+function materializeWrappedValue(value: unknown): unknown {
+	if (Array.isArray(value)) {
+		return value.map((entry) => materializeWrappedValue(entry));
+	}
+	if (!isWrappedNodeData(value)) return value;
+	const materialized: Record<string, unknown> = {};
+	for (const [key, raw] of Object.entries(value)) {
+		if (key === '$with' || typeof raw === 'function') continue;
+		if (key === '$children') {
+			const resolved = resolveWrappedStorageValue(value, key);
+			if (resolved === undefined) continue;
+			const childValue = materializeWrappedValue(resolved);
+			materialized.$children = Array.isArray(childValue) ? childValue : [childValue];
+			continue;
+		}
+		if (key.startsWith('_')) {
+			const resolved = resolveWrappedStorageValue(value, key);
+			if (resolved === undefined) continue;
+			materialized[key] = materializeWrappedValue(resolved);
+			continue;
+		}
+		materialized[key] = materializeWrappedValue(raw);
+	}
+	return materialized;
+}
+
+function resolveWrappedStorageValue(node: WrappedNodeData, storageKey: string): unknown {
+	if (storageKey !== '$children' && !storageKey.startsWith('_')) {
+		return node[storageKey];
+	}
+	for (const accessorName of accessorCandidatesForStorageKey(storageKey)) {
+		const accessor = node[accessorName];
+		if (typeof accessor === 'function' && accessor.length === 0) {
+			return (accessor as () => unknown).call(node);
+		}
+	}
+	return node[storageKey];
+}
+
+function accessorCandidatesForStorageKey(storageKey: string): readonly string[] {
+	if (storageKey === '$children') return ['children'];
+	if (!storageKey.startsWith('_')) return [];
+	const base = snakeToCamel(storageKey.slice(1));
+	const plural = pluralize(base);
+	return plural === base ? [base] : [base, plural];
 }
 
 export interface WrappedNodeData {
@@ -1154,9 +1206,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		const fieldNames = factoryFields?.[kind];
 		const rawName = fieldNames?.[0];
 		const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
-		const value = camelName
-			? (childConfig as Record<string, unknown>)[camelName]
-			: childArgs[0];
+		const value = camelName ? (childConfig as Record<string, unknown>)[camelName] : childArgs[0];
 		return factory(value);
 	}
 	return factory(childConfig);
@@ -1240,7 +1290,7 @@ function lookupFactorySlotMeta(opts: NodeToConfigOpts, slot: SlotModel): Factory
 
 function slotModelArityFromMeta(slotMeta: FactorySlotMeta | undefined, unnamed: boolean): 'one' | 'many' {
 	if (!slotMeta) return unnamed ? 'many' : 'one';
-	return slotMeta.multiple || (slotMeta.unnamed && slotMeta.slotCount !== 1) ? 'many' : 'one';
+	return slotMeta.multiple ? 'many' : 'one';
 }
 
 function createNamedConfigSlotModel(
@@ -1272,11 +1322,7 @@ function normalizeConfigSlotValue(
 ): unknown {
 	const resolved = resolveMemberValue(value, childOpts);
 	if (shouldNormalizeConfigSlotAsMany(slot, slotMeta)) {
-		const items: readonly unknown[] = Array.isArray(resolved)
-			? resolved
-			: resolved == null
-				? []
-				: [resolved];
+		const items: readonly unknown[] = Array.isArray(resolved) ? resolved : resolved == null ? [] : [resolved];
 		if (slotMeta?.nonEmpty && items.length === 0) {
 			throw new TypeError(`nodeToConfig: repeated slot ${JSON.stringify(slot.name)} requires at least one value`);
 		}
@@ -1411,12 +1457,7 @@ function promoteNamedChildrenToMissingFields(
 	if (missing.length === 0) return false;
 	if (missing.length === 1) {
 		const name = missing[0]!;
-		assignSlotToConfig(
-			createNamedSlotModel(name, 'many'),
-			namedChildren,
-			memberValueOpts(opts, parentKind, name),
-			out
-		);
+		assignSlotToConfig(createNamedSlotModel(name, 'many'), namedChildren, memberValueOpts(opts, parentKind, name), out);
 		return true;
 	}
 	if (namedChildren.length > missing.length) return false;
@@ -1488,9 +1529,20 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 	for (const [k, v] of namedSlotEntries) {
 		if (v === undefined) continue;
 		if (!isIdentifierShapedFieldKey(k)) continue;
-		assignSlotToConfig(createNamedConfigSlotModel(parentKind, k, opts.factorySlots), v, memberValueOpts(opts, parentKind, k), out);
+		assignSlotToConfig(
+			createNamedConfigSlotModel(parentKind, k, opts.factorySlots),
+			v,
+			memberValueOpts(opts, parentKind, k),
+			out
+		);
 	}
-	promoteAnonymousTokenFields(parentKind ? opts.factoryFields?.[parentKind] : undefined, namedSlotEntries, opts, parentKind, out);
+	promoteAnonymousTokenFields(
+		parentKind ? opts.factoryFields?.[parentKind] : undefined,
+		namedSlotEntries,
+		opts,
+		parentKind,
+		out
+	);
 	if (data.$children) {
 		const declaredFields = parentKind ? opts.factoryFields?.[parentKind] : undefined;
 		const namedChildren = data.$children.filter(
@@ -1710,11 +1762,7 @@ function inferFromStructuralMarkers(
 		const matched = variantTokens.reduce((sum, token) => sum + (actualTokens.get(token) ?? 0), 0);
 		if (matched <= 0) continue;
 		const coverage = matched / variantTokens.length;
-		if (
-			!best ||
-			matched > best.score ||
-			(matched === best.score && coverage > best.coverage)
-		) {
+		if (!best || matched > best.score || (matched === best.score && coverage > best.coverage)) {
 			best = { variant, score: matched, coverage };
 			ambiguous = false;
 			continue;

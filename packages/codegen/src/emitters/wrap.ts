@@ -16,9 +16,15 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type { AssembledEnum, AssembledNonterminal, AssembledNode, AssembledPolymorph, AssembledSupertype } from '../compiler/node-map.ts';
+import type {
+	AssembledEnum,
+	AssembledNonterminal,
+	AssembledNode,
+	AssembledPolymorph,
+	AssembledSupertype
+} from '../compiler/node-map.ts';
 import { createNamedSlotModel, createUnnamedChildrenSlotModel, type SlotModel } from '../compiler/slot-model.ts';
-import { deriveChildrenCardinality, deriveSlotCardinality } from '../compiler/node-map.ts';
+import { deriveMergedSlotCardinality } from '../compiler/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
 	isMultiple,
@@ -220,7 +226,8 @@ function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]> {
 		seen.add(kind);
 		const node = nodeMap.nodes.get(kind);
 		if (!node) return [kind];
-		if (node.modelType === 'enum') return (node as AssembledEnum).resolvedKinds.length > 0 ? [...(node as AssembledEnum).resolvedKinds] : [kind];
+		if (node.modelType === 'enum')
+			return (node as AssembledEnum).resolvedKinds.length > 0 ? [...(node as AssembledEnum).resolvedKinds] : [kind];
 		if (node.modelType !== 'supertype') return [kind];
 		const members = new Set<string>();
 		for (const subtype of (node as AssembledSupertype).subtypes) {
@@ -260,7 +267,7 @@ function buildWrapVariantDescriptors(nodeMap: NodeMap): Readonly<Record<string, 
 		}
 		const slots: Record<string, readonly string[]> = {};
 		for (const form of polymorph.forms) {
-			const requiredSlots = [...form.fields.map((field) => `_${field.name}`)];
+			const requiredSlots = form.fields.map((field) => `_${field.name}`);
 			if (form.children.length > 0) requiredSlots.push('$children');
 			slots[form.name] = requiredSlots;
 		}
@@ -292,7 +299,10 @@ interface ResolveSlotDrillConfig {
 	readonly allowedKinds?: readonly string[];
 }
 
-function resolveSlotDrillExprs(slot: SlotModel, config: ResolveSlotDrillConfig): {
+function resolveSlotDrillExprs(
+	slot: SlotModel,
+	config: ResolveSlotDrillConfig
+): {
 	storeExpr: string;
 	accessorBody: string;
 } {
@@ -304,7 +314,7 @@ function resolveSlotDrillExprs(slot: SlotModel, config: ResolveSlotDrillConfig):
 	const normalizedStoreExpr =
 		slot.arity === 'many'
 			? `normalizeRepeatedWrapSlot(${filteredStoreExpr}, ${config.nonEmpty ? 'true' : 'false'}, ${JSON.stringify(slot.name)})`
-			: `normalizeSingularWrapSlot(${filteredStoreExpr}, ${JSON.stringify(slot.name)}, ${config.required ? 'true' : 'false'})`;
+			: `normalizeSingularWrapSlot(${filteredStoreExpr}, ${JSON.stringify(slot.name)}, ${config.required ? 'true' : 'false'}, ${config.dataExpr}.$type)`;
 	const storageInfo = config.storageInfo;
 	if (storageInfo?.kind === 'boolean') {
 		return {
@@ -360,12 +370,9 @@ function resolveUnnamedSlotConfig(
 	nodeMap: NodeMap,
 	options?: { optional?: boolean }
 ): UnnamedChildrenSlotConfig {
-	const cardinality =
-		children.length === 1
-			? deriveSlotCardinality(children[0]!)
-			: deriveChildrenCardinality(children);
+	const cardinality = deriveMergedSlotCardinality(children);
 	return {
-		slot: createUnnamedChildrenSlotModel(children.length === 1 && !cardinality.multiple ? 'one' : 'many'),
+		slot: createUnnamedChildrenSlotModel(cardinality.multiple ? 'many' : 'one'),
 		elemType: childElementType({ children }, nodeMap),
 		required: options?.optional ? false : cardinality.required,
 		nonEmpty: cardinality.nonEmpty,
@@ -718,18 +725,37 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'',
 			...(usesNormalizeSingular
 				? [
-						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: true): T;',
-						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: false): T | undefined;',
-						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: boolean): T | undefined {',
+						'function describeWrapSlotItem(value: unknown): string {',
+						'  if (value == null) return String(value);',
+						'  if (typeof value !== "object") return `${typeof value}(${JSON.stringify(value)})`;',
+						'  const node = value as Partial<_NodeData>;',
+						'  if (typeof node.$type === "string" || typeof node.$type === "number") {',
+						'    const text = typeof node.$text === "string" ? `, $text=${JSON.stringify(node.$text)}` : "";',
+						'    return `node($type=${JSON.stringify(node.$type)}${text})`;',
+						'  }',
+						'  return `object(keys=${Object.keys(value as Record<string, unknown>).slice(0, 5).join(",")})`;',
+						'}',
+						'function describeWrapSlotValue(value: unknown): string {',
+						'  if (Array.isArray(value)) {',
+						'    const preview = value.slice(0, 3).map((item) => describeWrapSlotItem(item)).join(", ");',
+						'    const suffix = value.length > 3 ? ", …" : "";',
+						'    return `array(len=${value.length}, items=[${preview}${suffix}])`;',
+						'  }',
+						'  if (value == null) return String(value);',
+						'  return describeWrapSlotItem(value);',
+						'}',
+						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: true, nodeType: string | number): T;',
+						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: false, nodeType: string | number): T | undefined;',
+						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: boolean, nodeType: string | number): T | undefined {',
 						'  if (Array.isArray(value)) {',
 						'    if (value.length === 0) {',
-						'      if (required) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} requires one value`);',
+						'      if (required) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} requires one value; got ${describeWrapSlotValue(value)}`);',
 						'      return undefined;',
 						'    }',
-						'    if (value.length !== 1) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} received ${value.length} values`);',
+						'    if (value.length !== 1) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} received ${value.length} values; got ${describeWrapSlotValue(value)}`);',
 						'    return value[0] as T;',
 						'  }',
-						'  if (value == null && required) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} requires one value`);',
+						'  if (value == null && required) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} requires one value; got ${describeWrapSlotValue(value)}`);',
 						'  return value as T | undefined;',
 						'}'
 					]
@@ -755,6 +781,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  if (!entry) return undefined as unknown as T;',
 						'  const e = entry as unknown as _NodeData;',
 						'  if (e.$nodeHandle != null && e.$childIndex != null) return readTreeNode(tree, e.$nodeHandle, e.$childIndex) as unknown as T;',
+						'  if (typeof e === "object" && e !== null && e.$type != null) return wrapNode(e, tree) as unknown as T;',
 						'  return entry;',
 						'}'
 					]
@@ -780,7 +807,19 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'function drillAs<T>(entry: unknown, tree: TreeHandle, fromType: string, toType: string): T {',
 						'  if (!entry) return undefined as unknown as T;',
 						'  const e = entry as _NodeData;',
-						'  if (e.$nodeHandle == null || e.$childIndex == null) return entry as unknown as T;',
+						'  if (e.$nodeHandle == null || e.$childIndex == null) {',
+						'    if (typeof e === "object" && e !== null && e.$type != null) {',
+						'      const currentType = typeof e.$type === "number"',
+						'        ? KIND_NAMES.get(e.$type as never) ?? String(e.$type)',
+						'        : (e.$type as unknown as string);',
+						'      const hiddenCurrentType = currentType.startsWith("_") ? currentType.slice(1) : undefined;',
+						'      const next = currentType === fromType || hiddenCurrentType === fromType',
+						'        ? ({ ...e, $type: toType as unknown as number } as _NodeData)',
+						'        : e;',
+						'      return wrapNode(next, tree) as unknown as T;',
+						'    }',
+						'    return entry as unknown as T;',
+						'  }',
 						'  return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType }) as unknown as T;',
 						'}'
 					]
@@ -821,9 +860,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  const raw = (entry as { $type?: unknown }).$type;',
 						'  if (raw === undefined) return undefined;',
 						...(this.#kindEntries
-							? [
-									'  if (typeof raw === "number") return KIND_NAMES.get(raw as never) ?? String(raw);'
-								]
+							? ['  if (typeof raw === "number") return KIND_NAMES.get(raw as never) ?? String(raw);']
 							: []),
 						'  return typeof raw === "string" ? raw : undefined;',
 						'}',
@@ -870,9 +907,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  const raw = (entry as { $type?: unknown }).$type;',
 						'  if (raw === undefined) return undefined;',
 						...(this.#kindEntries
-							? [
-									'  if (typeof raw === "number") return KIND_NAMES.get(raw as never) ?? String(raw);'
-								]
+							? ['  if (typeof raw === "number") return KIND_NAMES.get(raw as never) ?? String(raw);']
 							: []),
 						'  return typeof raw === "string" ? raw : undefined;',
 						'}',

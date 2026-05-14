@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-	AssembledBranch,
-	AssembledPattern,
-	type AssembledNode
-} from '../compiler/node-map.ts';
+import { AssembledBranch, AssembledPattern, type AssembledNode } from '../compiler/node-map.ts';
 import type { SeqRule } from '../compiler/rule.ts';
 import { buildFactoryMap } from '../emitters/factory-map.ts';
 import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
@@ -34,20 +30,30 @@ function makeSlotArityNodeMap() {
 			}
 		]
 	};
+	const optionalThenRequiredChildRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'optional',
+				content: { type: 'symbol', name: 'identifier' }
+			},
+			{ type: 'symbol', name: 'number_literal' }
+		]
+	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('single_parent', new AssembledBranch('single_parent', singleChildRule, singleChildRule));
 	nodes.set('multi_parent', new AssembledBranch('multi_parent', multiSingularChildRule, multiSingularChildRule));
 	nodes.set('repeat_parent', new AssembledBranch('repeat_parent', repeatFieldRule, repeatFieldRule));
+	nodes.set(
+		'optional_then_required_parent',
+		new AssembledBranch('optional_then_required_parent', optionalThenRequiredChildRule, optionalThenRequiredChildRule)
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
 	nodes.set('number_literal', new AssembledPattern('number_literal', { type: 'pattern', value: '[0-9]+' }));
 	return makeNodeMapWith(nodes);
 }
 
-function expectFactorySlot(
-	data: ReturnType<typeof buildFactoryMap>,
-	kind: string,
-	slotName: string
-): FactorySlotMeta {
+function expectFactorySlot(data: ReturnType<typeof buildFactoryMap>, kind: string, slotName: string): FactorySlotMeta {
 	const slots = data.factorySlots[kind];
 	expect(slots).toBeDefined();
 	if (!slots) {
@@ -85,6 +91,13 @@ describe('factory-map slot arity metadata', () => {
 			required: true,
 			multiple: true,
 			nonEmpty: true
+		});
+		expect(expectFactorySlot(data, 'optional_then_required_parent', 'children')).toEqual({
+			unnamed: true,
+			slotCount: 2,
+			required: false,
+			multiple: false,
+			nonEmpty: false
 		});
 	});
 });

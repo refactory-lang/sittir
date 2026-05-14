@@ -68,19 +68,46 @@ function makeHiddenSupertypeChildrenNodeMap() {
 	};
 	const primitiveTypeRule: EnumRule = {
 		type: 'enum',
-		members: [{ type: 'string', value: 'u8' }, { type: 'string', value: 'bool' }]
+		members: [
+			{ type: 'string', value: 'u8' },
+			{ type: 'string', value: 'bool' }
+		]
 	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('tuple_type', new AssembledBranch('tuple_type', parentRule, parentRule));
 	nodes.set('_type', new AssembledSupertype('_type', typeRule, ['_primitive_type']));
-	nodes.set('_primitive_type', new AssembledEnum('_primitive_type', primitiveTypeRule, {
-		kindEntries: [
-			{ id: 1, kind: 'u8', parser: { parserName: 'u8', cSymbol: 'anon_sym_u8', anon: false, aux: false, alias: false, hidden: false } },
-			{ id: 2, kind: 'bool', parser: { parserName: 'bool', cSymbol: 'anon_sym_bool', anon: false, aux: false, alias: false, hidden: false } }
-		]
-	}));
+	nodes.set(
+		'_primitive_type',
+		new AssembledEnum('_primitive_type', primitiveTypeRule, {
+			kindEntries: [
+				{ id: 1, kind: 'u8', symbolName: 'anon_sym_u8', anon: false },
+				{ id: 2, kind: 'bool', symbolName: 'anon_sym_bool', anon: false }
+			]
+		})
+	);
 	nodes.set('u8', new AssembledPattern('u8', { type: 'pattern', value: 'u8' }));
 	nodes.set('bool', new AssembledPattern('bool', { type: 'pattern', value: 'bool' }));
+	return makeNodeMapWith(nodes);
+}
+
+function makeOptionalThenRequiredChildNodeMap() {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'optional',
+				content: { type: 'symbol', name: 'identifier' }
+			},
+			{ type: 'symbol', name: 'number_literal' }
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set(
+		'optional_then_required_parent',
+		new AssembledBranch('optional_then_required_parent', parentRule, parentRule)
+	);
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('number_literal', new AssembledPattern('number_literal', { type: 'pattern', value: '[0-9]+' }));
 	return makeNodeMapWith(nodes);
 }
 
@@ -89,7 +116,7 @@ describe('wrap emitter slot arity', () => {
 		const singularSource = emitWrap({ grammar: 'synth', nodeMap: makeRequiredSingleFieldNodeMap() });
 		const repeatedSource = emitWrap({ grammar: 'synth', nodeMap: makeRepeatFieldNodeMap() });
 
-		expect(singularSource).toContain('_value: normalizeSingularWrapSlot(data._value, "value", true),');
+		expect(singularSource).toContain('_value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),');
 		expect(repeatedSource).toContain('_items: normalizeRepeatedWrapSlot(data._items, true, "items"),');
 	});
 
@@ -99,14 +126,36 @@ describe('wrap emitter slot arity', () => {
 		expect(source).toContain('$children: normalizeSingularWrapSlot(');
 		expect(source).toContain('children() { return drillIn<');
 		expect(source).not.toContain('children() { return drillInAll<');
-		expect(source).toContain('$with: { $child: (v: T.Identifier) => wrapSingleParent({ ...data, $children: v }, tree) },');
+		expect(source).toContain(
+			'$with: { $child: (v: T.Identifier) => wrapSingleParent({ ...data, $children: v }, tree) },'
+		);
+	});
+
+	it('derives unnamed children optionality from merged slot values', () => {
+		const source = emitWrap({ grammar: 'synth', nodeMap: makeOptionalThenRequiredChildNodeMap() });
+
+		expect(source).toContain(
+			'$children: normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","number_literal"]), "children", false, data.$type),'
+		);
+		expect(source).toContain('children() { return drillIn<');
+		expect(source).not.toContain('children() { return drillInAll<');
+		expect(source).toContain(
+			'$with: { $child: (v: (T.Identifier | T.NumberLiteral)) => wrapOptionalThenRequiredParent({ ...data, $children: v }, tree) },'
+		);
 	});
 
 	it('emits singular-mismatch guards for wrapped children', () => {
 		const source = emitWrap({ grammar: 'synth', nodeMap: makeRequiredSingleChildNodeMap() });
 
+		expect(source).toContain('function describeWrapSlotItem(value: unknown): string {');
+		expect(source).toContain('function describeWrapSlotValue(value: unknown): string {');
+		expect(source).toContain(
+			'const text = typeof node.$text === "string" ? `, $text=${JSON.stringify(node.$text)}` : "";'
+		);
 		expect(source).toContain('function normalizeSingularWrapSlot<T>(');
-		expect(source).toContain("throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} received ${value.length} values`);");
+		expect(source).toContain(
+			'throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} received ${value.length} values; got ${describeWrapSlotValue(value)}`);'
+		);
 	});
 
 	it('expands hidden supertype members transitively for wrap child filtering', () => {

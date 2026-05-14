@@ -19,7 +19,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/node-map.ts';
 import {
 	allSlotsOf,
-	deriveChildrenCardinality,
+	deriveMergedSlotCardinality,
 	deriveSlotCardinality,
 	structuralChildrenOf,
 	structuralFieldsOf
@@ -104,7 +104,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		}
 		const children = structuralChildrenOf(node);
 		if (children.length > 0) {
-			slots.children = createFactorySlotMeta(true, children.length, deriveChildrenCardinality(children));
+			slots.children = createFactorySlotMeta(true, children.length, deriveMergedSlotCardinality(children));
 		}
 		if (Object.keys(slots).length > 0) factorySlots[kind] = slots;
 	}
@@ -227,10 +227,7 @@ function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	return out;
 }
 
-export function expandRuntimeDiscriminatorKinds(
-	discriminatorKinds: readonly string[],
-	nodeMap: NodeMap
-): string[] {
+export function expandRuntimeDiscriminatorKinds(discriminatorKinds: readonly string[], nodeMap: NodeMap): string[] {
 	const expanded: string[] = [];
 	const seen = new Set<string>();
 	const visiting = new Set<string>();
@@ -238,9 +235,7 @@ export function expandRuntimeDiscriminatorKinds(
 	function visit(discriminatorKind: string): void {
 		const normalized = discriminatorKind.startsWith('_') ? discriminatorKind.slice(1) : discriminatorKind;
 		if (seen.has(normalized) || visiting.has(normalized)) return;
-		const node =
-			nodeMap.nodes.get(discriminatorKind) ??
-			nodeMap.nodes.get(normalized);
+		const node = nodeMap.nodes.get(discriminatorKind) ?? nodeMap.nodes.get(normalized);
 		if (node?.modelType !== 'supertype') {
 			seen.add(normalized);
 			expanded.push(normalized);
