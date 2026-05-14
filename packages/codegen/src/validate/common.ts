@@ -1309,7 +1309,7 @@ export function getChildFactoryArgs(
 ): readonly unknown[] {
 	const childrenValue = childConfig.children;
 	const childrenMeta = factorySlots?.[kind]?.children;
-	if (childrenMeta && !childrenMeta.multiple && childrenMeta.slotCount === 1) {
+	if (slotModelArityFromMeta(childrenMeta, true) === 'one') {
 		return childrenValue == null ? [] : [childrenValue];
 	}
 	if (Array.isArray(childrenValue)) return childrenValue;

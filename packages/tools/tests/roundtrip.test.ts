@@ -1,8 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as common from '../../codegen/src/validate/common.ts';
-import { buildFactoryNode, loadFactoryArtifacts } from '../src/exercise/roundtrip.ts';
+import { buildFactoryNode, loadFactoryArtifacts, run } from '../src/exercise/roundtrip.ts';
 
 describe('exercise roundtrip helpers', () => {
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
 	it('loads factorySlots from factory-map metadata', async () => {
 		const artifacts = await loadFactoryArtifacts('rust');
 
@@ -76,5 +80,15 @@ describe('exercise roundtrip helpers', () => {
 		);
 
 		expect(result).toEqual({ $type: 'rebuilt_spread', args: [left, right] });
+	});
+
+	it('runs the real roundtrip path with metadata-driven child reconstruction', async () => {
+		const stdout = vi.spyOn(process.stdout, 'write').mockReturnValue(true);
+		const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+
+		await expect(run(['--grammar', 'rust', '--kinds', 'await_expression'])).resolves.toBe(0);
+
+		expect(stdout).toHaveBeenCalled();
+		expect(stderr).not.toHaveBeenCalled();
 	});
 });
