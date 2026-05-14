@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
 	AssembledBranch,
+	AssembledEnum,
 	AssembledPattern,
+	AssembledSupertype,
 	type AssembledNode
 } from '../compiler/node-map.ts';
-import type { SeqRule } from '../compiler/rule.ts';
+import type { ChoiceRule, EnumRule, SeqRule } from '../compiler/rule.ts';
 import { emitWrap } from '../emitters/wrap.ts';
 import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
 
@@ -50,6 +52,38 @@ function makeRepeatFieldNodeMap() {
 	return makeNodeMapWith(nodes);
 }
 
+function makeHiddenSupertypeChildrenNodeMap() {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'repeat1',
+				content: { type: 'symbol', name: '_type' }
+			}
+		]
+	};
+	const typeRule: ChoiceRule = {
+		type: 'choice',
+		members: [{ type: 'symbol', name: '_primitive_type' }]
+	};
+	const primitiveTypeRule: EnumRule = {
+		type: 'enum',
+		members: [{ type: 'string', value: 'u8' }, { type: 'string', value: 'bool' }]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('tuple_type', new AssembledBranch('tuple_type', parentRule, parentRule));
+	nodes.set('_type', new AssembledSupertype('_type', typeRule, ['_primitive_type']));
+	nodes.set('_primitive_type', new AssembledEnum('_primitive_type', primitiveTypeRule, {
+		kindEntries: [
+			{ id: 1, kind: 'u8', parser: { parserName: 'u8', cSymbol: 'anon_sym_u8', anon: false, aux: false, alias: false, hidden: false } },
+			{ id: 2, kind: 'bool', parser: { parserName: 'bool', cSymbol: 'anon_sym_bool', anon: false, aux: false, alias: false, hidden: false } }
+		]
+	}));
+	nodes.set('u8', new AssembledPattern('u8', { type: 'pattern', value: 'u8' }));
+	nodes.set('bool', new AssembledPattern('bool', { type: 'pattern', value: 'bool' }));
+	return makeNodeMapWith(nodes);
+}
+
 describe('wrap emitter slot arity', () => {
 	it('normalizes named singular and repeated slots from grammar-derived cardinality', () => {
 		const singularSource = emitWrap({ grammar: 'synth', nodeMap: makeRequiredSingleFieldNodeMap() });
@@ -73,5 +107,11 @@ describe('wrap emitter slot arity', () => {
 
 		expect(source).toContain('function normalizeSingularWrapSlot<T>(');
 		expect(source).toContain("throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} received ${value.length} values`);");
+	});
+
+	it('expands hidden supertype members transitively for wrap child filtering', () => {
+		const source = emitWrap({ grammar: 'synth', nodeMap: makeHiddenSupertypeChildrenNodeMap() });
+
+		expect(source).toContain('"_type": new Set(["_primitive_type","primitive_type","u8","bool"])');
 	});
 });

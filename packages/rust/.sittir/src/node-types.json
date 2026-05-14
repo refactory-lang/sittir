@@ -6439,13 +6439,9 @@
     "named": true,
     "fields": {
       "path": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "crate",
             "named": true

@@ -168,6 +168,21 @@ fn anonymous_leaf_children_do_not_invent_fields() {
     assert_eq!(params.get("$text").and_then(Value::as_str), Some("||"));
 }
 
+#[test]
+fn raw_native_children_payload_stays_array_shaped() {
+    let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+    let source = "fn f() { g(x); }";
+    let tree = parse_tree(lang, source);
+    let args = find_first_ts_node_by_kind(tree.root_node(), "arguments").expect("arguments node");
+    let node = read_node(&tree, source, Some(args), Some(0));
+    let json = serde_json::to_value(&node).expect("serialize");
+
+    assert!(
+        json.get("$children").is_some_and(Value::is_array),
+        "raw native read payload must stay realized-shape for children"
+    );
+}
+
 /// Pre-order walk over the JSON NodeData tree, collecting child stub
 /// `(childIndex, nodeHandle)` pairs. Recurses through `_<slot>` values
 /// and `$children`.

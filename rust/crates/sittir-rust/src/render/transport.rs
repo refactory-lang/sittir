@@ -9038,11 +9038,11 @@ pub struct ArrayExpressionListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Option<OneOrMany<AttributeItemTransport>>,
+    pub attributes: Option<Vec<AttributeItemTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
-    pub elements: Option<OneOrMany<ExpressionTransport>>,
+    pub elements: Option<Vec<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<AttributeItemTransport>>,
+    pub children: Option<Vec<AttributeItemTransport>>,
 }
 
 impl RenderableTransport for ArrayExpressionListTransport {
@@ -9072,7 +9072,7 @@ pub struct ArrayExpressionSemiTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Option<OneOrMany<AttributeItemTransport>>,
+    pub attributes: Option<Vec<AttributeItemTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
     pub elements: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_length"))]
@@ -9500,7 +9500,7 @@ pub struct _DelimTokenTreeBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<DelimTokensTransport>>,
+    pub children: Option<Vec<DelimTokensTransport>>,
 }
 
 impl RenderableTransport for _DelimTokenTreeBraceTransport {
@@ -9530,7 +9530,7 @@ pub struct _DelimTokenTreeBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<DelimTokensTransport>>,
+    pub children: Option<Vec<DelimTokensTransport>>,
 }
 
 impl RenderableTransport for _DelimTokenTreeBracketTransport {
@@ -9560,7 +9560,7 @@ pub struct _DelimTokenTreeParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<DelimTokensTransport>>,
+    pub children: Option<Vec<DelimTokensTransport>>,
 }
 
 impl RenderableTransport for _DelimTokenTreeParenTransport {
@@ -9590,7 +9590,7 @@ pub struct _ExpressionStatementBlockEndingTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ExpressionEndingWithBlockTransport>,
+    pub children: ExpressionEndingWithBlockTransport,
 }
 
 impl RenderableTransport for _ExpressionStatementBlockEndingTransport {
@@ -9620,7 +9620,7 @@ pub struct _ExpressionStatementWithSemiTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ExpressionTransport>,
+    pub children: ExpressionTransport,
 }
 
 impl RenderableTransport for _ExpressionStatementWithSemiTransport {
@@ -9902,7 +9902,7 @@ pub struct FunctionTypeFnFormTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<FunctionModifiersTransport>>,
+    pub children: Option<FunctionModifiersTransport>,
 }
 
 impl RenderableTransport for FunctionTypeFnFormTransport {
@@ -11062,7 +11062,7 @@ pub struct LetChainTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ConditionTransport>,
+    pub children: ConditionTransport,
 }
 
 impl RenderableTransport for LetChainTransport {
@@ -11174,7 +11174,7 @@ pub struct LineCommentDocTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_doc"))]
     pub doc: LineDocContentTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<LineCommentDocChildTransport>,
+    pub children: LineCommentDocChildTransport,
 }
 
 impl RenderableTransport for LineCommentDocTransport {
@@ -11284,7 +11284,7 @@ pub struct _MacroDefinitionBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<MacroRuleTransport>>,
+    pub children: Option<Vec<MacroRuleTransport>>,
 }
 
 impl RenderableTransport for _MacroDefinitionBraceTransport {
@@ -11314,7 +11314,7 @@ pub struct _MacroDefinitionBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<MacroRuleTransport>>,
+    pub children: Option<Vec<MacroRuleTransport>>,
 }
 
 impl RenderableTransport for _MacroDefinitionBracketTransport {
@@ -11344,7 +11344,7 @@ pub struct _MacroDefinitionParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<MacroRuleTransport>>,
+    pub children: Option<Vec<MacroRuleTransport>>,
 }
 
 impl RenderableTransport for _MacroDefinitionParenTransport {
@@ -11764,7 +11764,7 @@ pub struct NonSpecialTokenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<NonSpecialTokenChildTransport>,
+    pub children: Vec<NonSpecialTokenChildTransport>,
 }
 
 impl RenderableTransport for NonSpecialTokenTransport {
@@ -12096,7 +12096,7 @@ pub struct _PointerTypeMutTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<MutableSpecifierTransport>,
+    pub children: MutableSpecifierTransport,
 }
 
 impl RenderableTransport for _PointerTypeMutTransport {
@@ -12738,7 +12738,7 @@ pub struct ReferenceExpressionRawMutTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<MutableSpecifierTransport>,
+    pub children: MutableSpecifierTransport,
 }
 
 impl RenderableTransport for ReferenceExpressionRawMutTransport {
@@ -12840,7 +12840,7 @@ pub struct StructItemBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: FieldDeclarationListTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<WhereClauseTransport>>,
+    pub children: Option<WhereClauseTransport>,
 }
 
 impl RenderableTransport for StructItemBraceTransport {
@@ -12872,7 +12872,7 @@ pub struct StructItemTupleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: OrderedFieldDeclarationListTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<WhereClauseTransport>>,
+    pub children: Option<WhereClauseTransport>,
 }
 
 impl RenderableTransport for StructItemTupleTransport {
@@ -13124,7 +13124,7 @@ pub struct _TokenTreeBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokensTransport>>,
+    pub children: Option<Vec<TokensTransport>>,
 }
 
 impl RenderableTransport for _TokenTreeBraceTransport {
@@ -13154,7 +13154,7 @@ pub struct _TokenTreeBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokensTransport>>,
+    pub children: Option<Vec<TokensTransport>>,
 }
 
 impl RenderableTransport for _TokenTreeBracketTransport {
@@ -13184,7 +13184,7 @@ pub struct _TokenTreeParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokensTransport>>,
+    pub children: Option<Vec<TokensTransport>>,
 }
 
 impl RenderableTransport for _TokenTreeParenTransport {
@@ -13214,7 +13214,7 @@ pub struct _TokenTreePatternBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokenPatternTransport>>,
+    pub children: Option<Vec<TokenPatternTransport>>,
 }
 
 impl RenderableTransport for _TokenTreePatternBraceTransport {
@@ -13244,7 +13244,7 @@ pub struct _TokenTreePatternBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokenPatternTransport>>,
+    pub children: Option<Vec<TokenPatternTransport>>,
 }
 
 impl RenderableTransport for _TokenTreePatternBracketTransport {
@@ -13274,7 +13274,7 @@ pub struct _TokenTreePatternParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokenPatternTransport>>,
+    pub children: Option<Vec<TokenPatternTransport>>,
 }
 
 impl RenderableTransport for _TokenTreePatternParenTransport {
@@ -13564,7 +13564,7 @@ pub struct _VisibilityModifierCrateTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<CrateTransport>,
+    pub children: CrateTransport,
 }
 
 impl RenderableTransport for _VisibilityModifierCrateTransport {
@@ -13596,7 +13596,7 @@ pub struct VisibilityModifierInPathTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in"))]
     pub in_: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<PathTransport>,
+    pub children: PathTransport,
 }
 
 impl RenderableTransport for VisibilityModifierInPathTransport {
@@ -13628,7 +13628,7 @@ pub struct VisibilityModifierPubTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pub"))]
     pub pub_: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<VisibilityModifierPubChildTransport>>,
+    pub children: Option<VisibilityModifierPubChildTransport>,
 }
 
 impl RenderableTransport for VisibilityModifierPubTransport {
@@ -13770,7 +13770,7 @@ pub struct ArgumentsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Option<OneOrMany<AnyTransport>>,
+    pub attributes: Option<Vec<AnyTransport>>,
 }
 
 impl RenderableTransport for ArgumentsTransport {
@@ -13800,7 +13800,7 @@ pub struct ArrayExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ArrayExpressionChildTransport>,
+    pub children: Vec<ArrayExpressionChildTransport>,
 }
 
 impl RenderableTransport for ArrayExpressionTransport {
@@ -13964,7 +13964,7 @@ pub struct AttributeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_path"))]
     pub path: PathTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<AttributeChildTransport>>,
+    pub children: Option<AttributeChildTransport>,
 }
 
 impl RenderableTransport for AttributeTransport {
@@ -14024,7 +14024,7 @@ pub struct AwaitExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ExpressionTransport>,
+    pub children: ExpressionTransport,
 }
 
 impl RenderableTransport for AwaitExpressionTransport {
@@ -14054,7 +14054,7 @@ pub struct BaseFieldInitializerTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ExpressionTransport>,
+    pub children: ExpressionTransport,
 }
 
 impl RenderableTransport for BaseFieldInitializerTransport {
@@ -14122,7 +14122,7 @@ pub struct BlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trailing_expression"))]
     pub trailing_expression: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<StatementTransport>>,
+    pub children: Option<Vec<StatementTransport>>,
 }
 
 impl RenderableTransport for BlockTransport {
@@ -14154,7 +14154,7 @@ pub struct BlockCommentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_doc"))]
     pub doc: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<BlockCommentChildTransport>>,
+    pub children: Option<BlockCommentChildTransport>,
 }
 
 impl RenderableTransport for BlockCommentTransport {
@@ -14280,7 +14280,7 @@ pub struct BracketedTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<BracketedTypeChildTransport>,
+    pub children: BracketedTypeChildTransport,
 }
 
 impl RenderableTransport for BracketedTypeTransport {
@@ -14312,7 +14312,7 @@ pub struct BreakExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
     pub label: Option<LabelTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<ExpressionTransport>>,
+    pub children: Option<ExpressionTransport>,
 }
 
 impl RenderableTransport for BreakExpressionTransport {
@@ -14376,7 +14376,7 @@ pub struct CapturedPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
     pub identifier: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<PatternTransport>,
+    pub children: PatternTransport,
 }
 
 impl RenderableTransport for CapturedPatternTransport {
@@ -14524,7 +14524,7 @@ pub struct ClosureExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: ClosureParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ClosureExpressionChildTransport>,
+    pub children: Vec<ClosureExpressionChildTransport>,
 }
 
 impl RenderableTransport for ClosureExpressionTransport {
@@ -14554,7 +14554,7 @@ pub struct ClosureParametersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<ClosureParametersChildTransport>>,
+    pub children: Option<Vec<ClosureParametersChildTransport>>,
 }
 
 impl RenderableTransport for ClosureParametersTransport {
@@ -14584,7 +14584,7 @@ pub struct CommentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<CommentChildTransport>,
+    pub children: CommentChildTransport,
 }
 
 impl RenderableTransport for CommentTransport {
@@ -14858,7 +14858,7 @@ pub struct DeclarationListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<DeclarationStatementTransport>>,
+    pub children: Option<Vec<DeclarationStatementTransport>>,
 }
 
 impl RenderableTransport for DeclarationListTransport {
@@ -14888,7 +14888,7 @@ pub struct DelimTokenTreeParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<DelimTokensTransport>>,
+    pub children: Option<Vec<DelimTokensTransport>>,
 }
 
 impl RenderableTransport for DelimTokenTreeParenTransport {
@@ -14918,7 +14918,7 @@ pub struct DelimTokenTreeBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<DelimTokensTransport>>,
+    pub children: Option<Vec<DelimTokensTransport>>,
 }
 
 impl RenderableTransport for DelimTokenTreeBracketTransport {
@@ -14948,7 +14948,7 @@ pub struct DelimTokenTreeBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<DelimTokensTransport>>,
+    pub children: Option<Vec<DelimTokensTransport>>,
 }
 
 impl RenderableTransport for DelimTokenTreeBraceTransport {
@@ -14978,7 +14978,7 @@ pub struct DelimTokenTreeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<DelimTokenTreeChildTransport>,
+    pub children: Vec<DelimTokenTreeChildTransport>,
 }
 
 impl RenderableTransport for DelimTokenTreeTransport {
@@ -15038,7 +15038,7 @@ pub struct ElseClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ExpressionEndingWithBlockTransport>,
+    pub children: ExpressionEndingWithBlockTransport,
 }
 
 impl RenderableTransport for ElseClauseTransport {
@@ -15222,7 +15222,7 @@ pub struct EnumVariantListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<EnumVariantListChildTransport>>,
+    pub children: Option<Vec<EnumVariantListChildTransport>>,
 }
 
 impl RenderableTransport for EnumVariantListTransport {
@@ -15332,7 +15332,7 @@ pub struct ExpressionStatementWithSemiTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ExpressionTransport>,
+    pub children: ExpressionTransport,
 }
 
 impl RenderableTransport for ExpressionStatementWithSemiTransport {
@@ -15362,7 +15362,7 @@ pub struct ExpressionStatementBlockEndingTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ExpressionEndingWithBlockTransport>,
+    pub children: ExpressionEndingWithBlockTransport,
 }
 
 impl RenderableTransport for ExpressionStatementBlockEndingTransport {
@@ -15392,7 +15392,7 @@ pub struct ExpressionStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ExpressionStatementChildTransport>,
+    pub children: Vec<ExpressionStatementChildTransport>,
 }
 
 impl RenderableTransport for ExpressionStatementTransport {
@@ -15522,7 +15522,7 @@ pub struct FieldDeclarationListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<FieldDeclarationListChildTransport>>,
+    pub children: Option<Vec<FieldDeclarationListChildTransport>>,
 }
 
 impl RenderableTransport for FieldDeclarationListTransport {
@@ -15588,7 +15588,7 @@ pub struct FieldInitializerTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<AttributeItemTransport>>,
+    pub children: Option<Vec<AttributeItemTransport>>,
 }
 
 impl RenderableTransport for FieldInitializerTransport {
@@ -15618,7 +15618,7 @@ pub struct FieldInitializerListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<FieldInitializerListChildTransport>>,
+    pub children: Option<Vec<FieldInitializerListChildTransport>>,
 }
 
 impl RenderableTransport for FieldInitializerListTransport {
@@ -15682,7 +15682,7 @@ pub struct FieldPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
     pub mutable_specifier: Option<_MutableSpecifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<FieldPatternChildTransport>,
+    pub children: Vec<FieldPatternChildTransport>,
 }
 
 impl RenderableTransport for FieldPatternTransport {
@@ -15748,7 +15748,7 @@ pub struct ForLifetimesTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<LifetimeTransport>,
+    pub children: Vec<LifetimeTransport>,
 }
 
 impl RenderableTransport for ForLifetimesTransport {
@@ -15812,7 +15812,7 @@ pub struct ForeignModItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extern_modifier"))]
     pub extern_modifier: ExternModifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ForeignModItemChildTransport>,
+    pub children: Vec<ForeignModItemChildTransport>,
 }
 
 impl RenderableTransport for ForeignModItemTransport {
@@ -16028,7 +16028,7 @@ pub struct FunctionModifiersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_modifier"))]
-    pub modifier: OneOrMany<AnyTransport>,
+    pub modifier: Vec<AnyTransport>,
 }
 
 impl RenderableTransport for FunctionModifiersTransport {
@@ -16106,7 +16106,7 @@ pub struct FunctionTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<_TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<FunctionTypeChildTransport>,
+    pub children: FunctionTypeChildTransport,
 }
 
 impl RenderableTransport for FunctionTypeTransport {
@@ -16202,7 +16202,7 @@ pub struct GenericPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: TypeArgumentsTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<PathTransport>,
+    pub children: PathTransport,
 }
 
 impl RenderableTransport for GenericPatternTransport {
@@ -16486,7 +16486,7 @@ pub struct ImplItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_where_clause"))]
     pub where_clause: Option<WhereClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ImplItemChildTransport>,
+    pub children: Vec<ImplItemChildTransport>,
 }
 
 impl RenderableTransport for ImplItemTransport {
@@ -16692,7 +16692,7 @@ pub struct LastMatchArmTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<DeclarationStatementTransport>>,
+    pub children: Option<Vec<DeclarationStatementTransport>>,
 }
 
 impl RenderableTransport for LastMatchArmTransport {
@@ -16854,7 +16854,7 @@ pub struct LineCommentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<LineCommentChildTransport>,
+    pub children: Vec<LineCommentChildTransport>,
 }
 
 impl RenderableTransport for LineCommentTransport {
@@ -16916,7 +16916,7 @@ pub struct MacroDefinitionParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<MacroRuleTransport>>,
+    pub children: Option<Vec<MacroRuleTransport>>,
 }
 
 impl RenderableTransport for MacroDefinitionParenTransport {
@@ -16946,7 +16946,7 @@ pub struct MacroDefinitionBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<MacroRuleTransport>>,
+    pub children: Option<Vec<MacroRuleTransport>>,
 }
 
 impl RenderableTransport for MacroDefinitionBracketTransport {
@@ -16976,7 +16976,7 @@ pub struct MacroDefinitionBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<MacroRuleTransport>>,
+    pub children: Option<Vec<MacroRuleTransport>>,
 }
 
 impl RenderableTransport for MacroDefinitionBraceTransport {
@@ -17008,7 +17008,7 @@ pub struct MacroDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: PathTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<MacroDefinitionChildTransport>,
+    pub children: Vec<MacroDefinitionChildTransport>,
 }
 
 impl RenderableTransport for MacroDefinitionTransport {
@@ -17132,11 +17132,11 @@ pub struct MatchArmTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Option<OneOrMany<DeclarationStatementTransport>>,
+    pub attributes: Option<Vec<DeclarationStatementTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: MatchPatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<MatchArmChildTransport>,
+    pub children: Vec<MatchArmChildTransport>,
 }
 
 impl RenderableTransport for MatchArmTransport {
@@ -17166,7 +17166,7 @@ pub struct MatchBlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<MatchBlockChildTransport>>,
+    pub children: Option<Vec<MatchBlockChildTransport>>,
 }
 
 impl RenderableTransport for MatchBlockTransport {
@@ -17230,7 +17230,7 @@ pub struct MatchPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: Option<ConditionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<PatternTransport>,
+    pub children: PatternTransport,
 }
 
 impl RenderableTransport for MatchPatternTransport {
@@ -17374,7 +17374,7 @@ pub struct ModItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ModItemChildTransport>,
+    pub children: Vec<ModItemChildTransport>,
 }
 
 impl RenderableTransport for ModItemTransport {
@@ -17406,7 +17406,7 @@ pub struct MutPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
     pub mutable_specifier: _MutableSpecifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<PatternTransport>,
+    pub children: PatternTransport,
 }
 
 impl RenderableTransport for MutPatternTransport {
@@ -17626,7 +17626,7 @@ pub struct OrPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<OrPatternChildTransport>,
+    pub children: Vec<OrPatternChildTransport>,
 }
 
 impl RenderableTransport for OrPatternTransport {
@@ -17656,9 +17656,9 @@ pub struct OrderedFieldDeclarationListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Option<OneOrMany<_TypeTransport>>,
+    pub type_: Option<Vec<_TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<OrderedFieldDeclarationListChildTransport>>,
+    pub children: Option<Vec<OrderedFieldDeclarationListChildTransport>>,
 }
 
 impl RenderableTransport for OrderedFieldDeclarationListTransport {
@@ -17722,7 +17722,7 @@ pub struct ParametersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<ParametersChildTransport>>,
+    pub children: Option<Vec<ParametersChildTransport>>,
 }
 
 impl RenderableTransport for ParametersTransport {
@@ -17752,7 +17752,7 @@ pub struct ParenthesizedExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<ExpressionTransport>,
+    pub children: ExpressionTransport,
 }
 
 impl RenderableTransport for ParenthesizedExpressionTransport {
@@ -17782,7 +17782,7 @@ pub struct PointerTypeMutTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<MutableSpecifierTransport>,
+    pub children: MutableSpecifierTransport,
 }
 
 impl RenderableTransport for PointerTypeMutTransport {
@@ -17814,7 +17814,7 @@ pub struct PointerTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: _TypeTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<PointerTypeChildTransport>,
+    pub children: Vec<PointerTypeChildTransport>,
 }
 
 impl RenderableTransport for PointerTypeTransport {
@@ -17906,7 +17906,7 @@ pub struct RangeExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<RangeExpressionChildTransport>,
+    pub children: Vec<RangeExpressionChildTransport>,
 }
 
 impl RenderableTransport for RangeExpressionTransport {
@@ -17938,7 +17938,7 @@ pub struct RangePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<RangePatternChildTransport>,
+    pub children: Vec<RangePatternChildTransport>,
 }
 
 impl RenderableTransport for RangePatternTransport {
@@ -18002,7 +18002,7 @@ pub struct RefPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<PatternTransport>,
+    pub children: PatternTransport,
 }
 
 impl RenderableTransport for RefPatternTransport {
@@ -18034,7 +18034,7 @@ pub struct ReferenceExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<ReferenceExpressionChildTransport>>,
+    pub children: Option<ReferenceExpressionChildTransport>,
 }
 
 impl RenderableTransport for ReferenceExpressionTransport {
@@ -18210,7 +18210,7 @@ pub struct RemovedTraitBoundTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<_TypeTransport>,
+    pub children: _TypeTransport,
 }
 
 impl RenderableTransport for RemovedTraitBoundTransport {
@@ -18240,7 +18240,7 @@ pub struct ReturnExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<ExpressionTransport>>,
+    pub children: Option<ExpressionTransport>,
 }
 
 impl RenderableTransport for ReturnExpressionTransport {
@@ -18594,7 +18594,7 @@ pub struct ShorthandFieldInitializerTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Option<OneOrMany<AttributeItemTransport>>,
+    pub attributes: Option<Vec<AttributeItemTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
     pub identifier: IdentifierTransport,
 }
@@ -18626,7 +18626,7 @@ pub struct SlicePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<PatternTransport>>,
+    pub children: Option<Vec<PatternTransport>>,
 }
 
 impl RenderableTransport for SlicePatternTransport {
@@ -18658,7 +18658,7 @@ pub struct SourceFileTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_shebang"))]
     pub shebang: Option<ShebangTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
-    pub statements: Option<OneOrMany<StatementTransport>>,
+    pub statements: Option<Vec<StatementTransport>>,
 }
 
 impl RenderableTransport for SourceFileTransport {
@@ -18726,7 +18726,7 @@ pub struct StringLiteralTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<StringLiteralChildTransport>>,
+    pub children: Option<Vec<StringLiteralChildTransport>>,
 }
 
 impl RenderableTransport for StringLiteralTransport {
@@ -18794,7 +18794,7 @@ pub struct StructItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
     pub type_parameters: Option<TypeParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<StructItemChildTransport>,
+    pub children: Vec<StructItemChildTransport>,
 }
 
 impl RenderableTransport for StructItemTransport {
@@ -18826,7 +18826,7 @@ pub struct StructPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: _TypeTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<StructPatternChildTransport>>,
+    pub children: Option<Vec<StructPatternChildTransport>>,
 }
 
 impl RenderableTransport for StructPatternTransport {
@@ -18968,7 +18968,7 @@ pub struct TokenRepetitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokensTransport>>,
+    pub children: Option<Vec<TokensTransport>>,
 }
 
 impl RenderableTransport for TokenRepetitionTransport {
@@ -18998,7 +18998,7 @@ pub struct TokenRepetitionPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokenPatternTransport>>,
+    pub children: Option<Vec<TokenPatternTransport>>,
 }
 
 impl RenderableTransport for TokenRepetitionPatternTransport {
@@ -19028,7 +19028,7 @@ pub struct TokenTreeParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokensTransport>>,
+    pub children: Option<Vec<TokensTransport>>,
 }
 
 impl RenderableTransport for TokenTreeParenTransport {
@@ -19058,7 +19058,7 @@ pub struct TokenTreeBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokensTransport>>,
+    pub children: Option<Vec<TokensTransport>>,
 }
 
 impl RenderableTransport for TokenTreeBracketTransport {
@@ -19088,7 +19088,7 @@ pub struct TokenTreeBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokensTransport>>,
+    pub children: Option<Vec<TokensTransport>>,
 }
 
 impl RenderableTransport for TokenTreeBraceTransport {
@@ -19118,7 +19118,7 @@ pub struct TokenTreeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<TokenTreeChildTransport>,
+    pub children: Vec<TokenTreeChildTransport>,
 }
 
 impl RenderableTransport for TokenTreeTransport {
@@ -19148,7 +19148,7 @@ pub struct TokenTreePatternParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokenPatternTransport>>,
+    pub children: Option<Vec<TokenPatternTransport>>,
 }
 
 impl RenderableTransport for TokenTreePatternParenTransport {
@@ -19178,7 +19178,7 @@ pub struct TokenTreePatternBracketTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokenPatternTransport>>,
+    pub children: Option<Vec<TokenPatternTransport>>,
 }
 
 impl RenderableTransport for TokenTreePatternBracketTransport {
@@ -19208,7 +19208,7 @@ pub struct TokenTreePatternBraceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TokenPatternTransport>>,
+    pub children: Option<Vec<TokenPatternTransport>>,
 }
 
 impl RenderableTransport for TokenTreePatternBraceTransport {
@@ -19238,7 +19238,7 @@ pub struct TokenTreePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<TokenTreePatternChildTransport>,
+    pub children: Vec<TokenTreePatternChildTransport>,
 }
 
 impl RenderableTransport for TokenTreePatternTransport {
@@ -19268,7 +19268,7 @@ pub struct TraitBoundsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<TraitBoundsChildTransport>,
+    pub children: Vec<TraitBoundsChildTransport>,
 }
 
 impl RenderableTransport for TraitBoundsTransport {
@@ -19400,9 +19400,9 @@ pub struct TupleExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Option<OneOrMany<AttributeItemTransport>>,
+    pub attributes: Option<Vec<AttributeItemTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
-    pub elements: Option<OneOrMany<ExpressionTransport>>,
+    pub elements: Option<Vec<ExpressionTransport>>,
 }
 
 impl RenderableTransport for TupleExpressionTransport {
@@ -19432,7 +19432,7 @@ pub struct TuplePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<TuplePatternChildTransport>>,
+    pub children: Option<Vec<TuplePatternChildTransport>>,
 }
 
 impl RenderableTransport for TuplePatternTransport {
@@ -19464,7 +19464,7 @@ pub struct TupleStructPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<PatternTransport>>,
+    pub children: Option<Vec<PatternTransport>>,
 }
 
 impl RenderableTransport for TupleStructPatternTransport {
@@ -19494,7 +19494,7 @@ pub struct TupleTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<_TypeTransport>,
+    pub children: Vec<_TypeTransport>,
 }
 
 impl RenderableTransport for TupleTypeTransport {
@@ -19524,7 +19524,7 @@ pub struct TypeArgumentsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<TypeArgumentsChildTransport>,
+    pub children: Vec<TypeArgumentsChildTransport>,
 }
 
 impl RenderableTransport for TypeArgumentsTransport {
@@ -19694,7 +19694,7 @@ pub struct TypeParametersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
-    pub attributes: Option<OneOrMany<AnyTransport>>,
+    pub attributes: Option<Vec<AnyTransport>>,
 }
 
 impl RenderableTransport for TypeParametersTransport {
@@ -20016,7 +20016,7 @@ pub struct UseBoundsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<UseBoundsChildTransport>>,
+    pub children: Option<Vec<UseBoundsChildTransport>>,
 }
 
 impl RenderableTransport for UseBoundsTransport {
@@ -20078,7 +20078,7 @@ pub struct UseListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<UseClauseTransport>>,
+    pub children: Option<Vec<UseClauseTransport>>,
 }
 
 impl RenderableTransport for UseListTransport {
@@ -20170,7 +20170,7 @@ pub struct VisibilityModifierCrateTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<CrateTransport>,
+    pub children: CrateTransport,
 }
 
 impl RenderableTransport for VisibilityModifierCrateTransport {
@@ -20200,7 +20200,7 @@ pub struct VisibilityModifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OneOrMany<VisibilityModifierChildTransport>,
+    pub children: Vec<VisibilityModifierChildTransport>,
 }
 
 impl RenderableTransport for VisibilityModifierTransport {
@@ -20230,7 +20230,7 @@ pub struct WhereClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<WherePredicateTransport>>,
+    pub children: Option<Vec<WherePredicateTransport>>,
 }
 
 impl RenderableTransport for WhereClauseTransport {
@@ -20326,7 +20326,7 @@ pub struct YieldExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<OneOrMany<ExpressionTransport>>,
+    pub children: Option<ExpressionTransport>,
 }
 
 impl RenderableTransport for YieldExpressionTransport {
@@ -27224,31 +27224,15 @@ fn render__delim_token_tree_paren(node: &_DelimTokenTreeParenTransport, dest: &m
 }
 
 fn render__expression_statement_block_ending(node: &_ExpressionStatementBlockEndingTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _ExpressionStatementBlockEndingTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
 
 fn render__expression_statement_with_semi(node: &_ExpressionStatementWithSemiTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _ExpressionStatementWithSemiTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
@@ -27284,16 +27268,10 @@ fn render_foreign_mod_item_semi(t: &ForeignModItemSemiTransport, dest: &mut dyn 
 }
 
 fn render_function_type_fn_form(node: &FunctionTypeFnFormTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = FunctionTypeFnFormTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
+        children: match &node.children {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -27366,16 +27344,8 @@ fn render_kw_unsafe_marker(t: &KwUnsafeMarkerTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_let_chain(node: &LetChainTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = LetChainTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
@@ -27513,16 +27483,8 @@ fn render_pointer_type_const(t: &PointerTypeConstTransport, dest: &mut dyn ::std
 }
 
 fn render__pointer_type_mut(node: &_PointerTypeMutTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _PointerTypeMutTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
@@ -27590,16 +27552,8 @@ fn render_reference_expression_raw_const(t: &ReferenceExpressionRawConstTranspor
 }
 
 fn render_reference_expression_raw_mut(node: &ReferenceExpressionRawMutTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ReferenceExpressionRawMutTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
@@ -27609,16 +27563,10 @@ fn render_reserved_identifier(t: &ReservedIdentifierEnum, dest: &mut dyn ::std::
 }
 
 fn render_struct_item_brace(node: &StructItemBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = StructItemBraceTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
+        children: match &node.children {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
     };
@@ -27626,16 +27574,10 @@ fn render_struct_item_brace(node: &StructItemBraceTransport, dest: &mut dyn ::st
 }
 
 fn render_struct_item_tuple(node: &StructItemTupleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = StructItemTupleTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
+        children: match &node.children {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
     };
@@ -27759,47 +27701,25 @@ fn render_unsafe_marker(t: &UnsafeMarkerTransport, dest: &mut dyn ::std::fmt::Wr
 }
 
 fn render__visibility_modifier_crate(node: &_VisibilityModifierCrateTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _VisibilityModifierCrateTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
 
 fn render_visibility_modifier_in_path(node: &VisibilityModifierInPathTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = VisibilityModifierInPathTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
         in_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.in_.as_ref())),
     };
     template.render_into(dest)
 }
 
 fn render_visibility_modifier_pub(node: &VisibilityModifierPubTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = VisibilityModifierPubTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
+        children: match &node.children {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         pub_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.pub_.as_ref())),
     };
@@ -27918,31 +27838,15 @@ fn render_attribute_item(node: &AttributeItemTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_await_expression(node: &AwaitExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = AwaitExpressionTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
 
 fn render_base_field_initializer(node: &BaseFieldInitializerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = BaseFieldInitializerTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
@@ -27997,14 +27901,8 @@ fn render_boolean_literal(t: &BooleanLiteralEnum, dest: &mut dyn ::std::fmt::Wri
 }
 
 fn render_bounded_type(node: &BoundedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
     let template = BoundedTypeTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: OptionalNonterminalView::Missing,
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.left.as_ref())),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.right.as_ref())),
     };
@@ -28012,31 +27910,17 @@ fn render_bounded_type(node: &BoundedTypeTransport, dest: &mut dyn ::std::fmt::W
 }
 
 fn render_bracketed_type(node: &BracketedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = BracketedTypeTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
 
 fn render_break_expression(node: &BreakExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = BreakExpressionTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
+        children: match &node.children {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         label: match &node.label {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -28055,16 +27939,8 @@ fn render_call_expression(node: &CallExpressionTransport, dest: &mut dyn ::std::
 }
 
 fn render_captured_pattern(node: &CapturedPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = CapturedPatternTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
         identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
     };
     template.render_into(dest)
@@ -28126,16 +28002,8 @@ fn render_closure_parameters(node: &ClosureParametersTransport, dest: &mut dyn :
 }
 
 fn render_comment(node: &CommentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = CommentTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
@@ -28285,16 +28153,8 @@ fn render_dynamic_type(node: &DynamicTypeTransport, dest: &mut dyn ::std::fmt::W
 }
 
 fn render_else_clause(node: &ElseClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ElseClauseTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
@@ -28363,31 +28223,15 @@ fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt
 }
 
 fn render_expression_statement_with_semi(node: &ExpressionStatementWithSemiTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ExpressionStatementWithSemiTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
 
 fn render_expression_statement_block_ending(node: &ExpressionStatementBlockEndingTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ExpressionStatementBlockEndingTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
@@ -28622,17 +28466,11 @@ fn render_function_item(node: &FunctionItemTransport, dest: &mut dyn ::std::fmt:
 }
 
 fn render_function_modifiers(node: &FunctionModifiersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
     let modifier_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.modifier.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = FunctionModifiersTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: OptionalNonterminalView::Missing,
         modifier: ListNonterminalView {
             items: modifier_buf.as_slice(),
             separator: "",
@@ -28672,16 +28510,8 @@ fn render_function_signature_item(node: &FunctionSignatureItemTransport, dest: &
 }
 
 fn render_function_type(node: &FunctionTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = FunctionTypeTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
         for_lifetimes: match &node.for_lifetimes {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -28715,16 +28545,8 @@ fn render_generic_function(node: &GenericFunctionTransport, dest: &mut dyn ::std
 }
 
 fn render_generic_pattern(node: &GenericPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = GenericPatternTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
         type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_arguments)),
     };
     template.render_into(dest)
@@ -29071,16 +28893,8 @@ fn render_match_expression(node: &MatchExpressionTransport, dest: &mut dyn ::std
 }
 
 fn render_match_pattern(node: &MatchPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = MatchPatternTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
         condition: match &node.condition {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -29121,16 +28935,8 @@ fn render_mod_item(node: &ModItemTransport, dest: &mut dyn ::std::fmt::Write) ->
 }
 
 fn render_mut_pattern(node: &MutPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = MutPatternTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
         mutable_specifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.mutable_specifier)),
     };
     template.render_into(dest)
@@ -29141,14 +28947,8 @@ fn render_mutable_specifier(t: &MutableSpecifierTransport, dest: &mut dyn ::std:
 }
 
 fn render_negative_literal(node: &NegativeLiteralTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
     let template = NegativeLiteralTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: OptionalNonterminalView::Missing,
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.value.as_ref())),
     };
     template.render_into(dest)
@@ -29228,31 +29028,15 @@ fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Writ
 }
 
 fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ParenthesizedExpressionTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
 
 fn render_pointer_type_mut(node: &PointerTypeMutTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = PointerTypeMutTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
@@ -29331,31 +29115,17 @@ fn render_raw_string_literal(node: &RawStringLiteralTransport, dest: &mut dyn ::
 }
 
 fn render_ref_pattern(node: &RefPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = RefPatternTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
 
 fn render_reference_expression(node: &ReferenceExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ReferenceExpressionTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
+        children: match &node.children {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
@@ -29393,31 +29163,17 @@ fn render_remaining_field_pattern(t: &RemainingFieldPatternTransport, dest: &mut
 }
 
 fn render_removed_trait_bound(node: &RemovedTraitBoundTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = RemovedTraitBoundTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
 
 fn render_return_expression(node: &ReturnExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ReturnExpressionTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
+        children: match &node.children {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -30143,16 +29899,8 @@ fn render_variadic_parameter(node: &VariadicParameterTransport, dest: &mut dyn :
 }
 
 fn render_visibility_modifier_crate(node: &VisibilityModifierCrateTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = VisibilityModifierCrateTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
@@ -30211,16 +29959,10 @@ fn render_while_expression(node: &WhileExpressionTransport, dest: &mut dyn ::std
 }
 
 fn render_yield_expression(node: &YieldExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_owned = node.children.as_deref().unwrap_or(&[]);
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = YieldExpressionTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
+        children: match &node.children {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -32338,7 +32080,7 @@ fn transport_to_node__delim_token_tree_paren(transport: _DelimTokenTreeParenTran
 fn transport_to_node__expression_statement_block_ending(transport: _ExpressionStatementBlockEndingTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_ending_with_block_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![expression_ending_with_block_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(356) /* "_expression_statement_block_ending" */,
@@ -32358,7 +32100,7 @@ fn transport_to_node__expression_statement_block_ending(transport: _ExpressionSt
 fn transport_to_node__expression_statement_with_semi(transport: _ExpressionStatementWithSemiTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(355) /* "_expression_statement_with_semi" */,
@@ -32477,7 +32219,7 @@ fn transport_to_node_function_type_fn_form(transport: FunctionTypeFnFormTranspor
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(c) => Some(transport_children(c.into_iter().map(|v| AnyTransport::FunctionModifiers(v)).collect::<Vec<_>>())?),
+        Some(c) => Some(transport_children(vec![AnyTransport::FunctionModifiers(c)])?),
         None => None,
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -32762,7 +32504,7 @@ fn transport_to_node_kw_unsafe_marker(transport: KwUnsafeMarkerTransport) -> Res
 fn transport_to_node_let_chain(transport: LetChainTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| condition_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![condition_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(269) /* "_let_chain" */,
@@ -32800,7 +32542,7 @@ fn transport_to_node_line_comment_doc(transport: LineCommentDocTransport) -> Res
     let mut fields = TransportHashMap::new();
     fields.insert("doc".to_string(), transport_field_value(AnyTransport::LineDocContent(transport.doc))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| line_comment_doc_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![line_comment_doc_child_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(362) /* "_line_comment_doc" */,
@@ -33134,7 +32876,7 @@ fn transport_to_node_pointer_type_const(transport: PointerTypeConstTransport) ->
 fn transport_to_node__pointer_type_mut(transport: _PointerTypeMutTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::MutableSpecifier(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![AnyTransport::MutableSpecifier(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(352) /* "_pointer_type_mut" */,
@@ -33351,7 +33093,7 @@ fn transport_to_node_reference_expression_raw_const(transport: ReferenceExpressi
 fn transport_to_node_reference_expression_raw_mut(transport: ReferenceExpressionRawMutTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::MutableSpecifier(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![AnyTransport::MutableSpecifier(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(354) /* "_reference_expression_raw_mut" */,
@@ -33389,7 +33131,7 @@ fn transport_to_node_struct_item_brace(transport: StructItemBraceTransport) -> R
     fields.insert("body".to_string(), transport_field_value(AnyTransport::FieldDeclarationList(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(c) => Some(transport_children(c.into_iter().map(|v| AnyTransport::WhereClause(v)).collect::<Vec<_>>())?),
+        Some(c) => Some(transport_children(vec![AnyTransport::WhereClause(c)])?),
         None => None,
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -33413,7 +33155,7 @@ fn transport_to_node_struct_item_tuple(transport: StructItemTupleTransport) -> R
     fields.insert("body".to_string(), transport_field_value(AnyTransport::OrderedFieldDeclarationList(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(c) => Some(transport_children(c.into_iter().map(|v| AnyTransport::WhereClause(v)).collect::<Vec<_>>())?),
+        Some(c) => Some(transport_children(vec![AnyTransport::WhereClause(c)])?),
         None => None,
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -33656,7 +33398,7 @@ fn transport_to_node_unsafe_marker(transport: UnsafeMarkerTransport) -> Result<T
 fn transport_to_node__visibility_modifier_crate(transport: _VisibilityModifierCrateTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Crate(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![AnyTransport::Crate(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(348) /* "_visibility_modifier_crate" */,
@@ -33677,7 +33419,7 @@ fn transport_to_node_visibility_modifier_in_path(transport: VisibilityModifierIn
     let mut fields = TransportHashMap::new();
     fields.insert("in".to_string(), transport_field_value(*transport.in_)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| path_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![path_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(350) /* "_visibility_modifier_in_path" */,
@@ -33699,7 +33441,7 @@ fn transport_to_node_visibility_modifier_pub(transport: VisibilityModifierPubTra
     fields.insert("pub".to_string(), transport_field_value(*transport.pub_)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(c) => Some(transport_children(c.into_iter().map(|v| visibility_modifier_pub_child_transport_to_any(v)).collect::<Vec<_>>())?),
+        Some(c) => Some(transport_children(vec![visibility_modifier_pub_child_transport_to_any(c)])?),
         None => None,
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -33907,7 +33649,7 @@ fn transport_to_node_attribute(transport: AttributeTransport) -> Result<Transpor
     fields.insert("path".to_string(), transport_field_value(path_transport_to_any(transport.path))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(c) => Some(transport_children(c.into_iter().map(|v| attribute_child_transport_to_any(v)).collect::<Vec<_>>())?),
+        Some(c) => Some(transport_children(vec![attribute_child_transport_to_any(c)])?),
         None => None,
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -33950,7 +33692,7 @@ fn transport_to_node_attribute_item(transport: AttributeItemTransport) -> Result
 fn transport_to_node_await_expression(transport: AwaitExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(287) /* "await_expression" */,
@@ -33970,7 +33712,7 @@ fn transport_to_node_await_expression(transport: AwaitExpressionTransport) -> Re
 fn transport_to_node_base_field_initializer(transport: BaseFieldInitializerTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(266) /* "base_field_initializer" */,
@@ -34046,7 +33788,7 @@ fn transport_to_node_block_comment(transport: BlockCommentTransport) -> Result<T
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(c) => Some(transport_children(c.into_iter().map(|v| block_comment_child_transport_to_any(v)).collect::<Vec<_>>())?),
+        Some(c) => Some(transport_children(vec![block_comment_child_transport_to_any(c)])?),
         None => None,
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -34106,7 +33848,7 @@ fn transport_to_node_bounded_type(transport: BoundedTypeTransport) -> Result<Tra
 fn transport_to_node_bracketed_type(transport: BracketedTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| bracketed_type_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![bracketed_type_child_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(217) /* "bracketed_type" */,
@@ -34130,7 +33872,7 @@ fn transport_to_node_break_expression(transport: BreakExpressionTransport) -> Re
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(c) => Some(transport_children(c.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?),
+        Some(c) => Some(transport_children(vec![expression_transport_to_any(c)])?),
         None => None,
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -34175,7 +33917,7 @@ fn transport_to_node_captured_pattern(transport: CapturedPatternTransport) -> Re
     let mut fields = TransportHashMap::new();
     fields.insert("identifier".to_string(), transport_field_value(AnyTransport::Identifier(transport.identifier))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(305) /* "captured_pattern" */,
@@ -34286,7 +34028,7 @@ fn transport_to_node_closure_parameters(transport: ClosureParametersTransport) -
 fn transport_to_node_comment(transport: CommentTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| comment_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![comment_child_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(0) /* "comment" — no parser symbol */,
@@ -34576,7 +34318,7 @@ fn transport_to_node_dynamic_type(transport: DynamicTypeTransport) -> Result<Tra
 fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_ending_with_block_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![expression_ending_with_block_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(271) /* "else_clause" */,
@@ -34714,7 +34456,7 @@ fn transport_to_node_escape_sequence(transport: EscapeSequenceTransport) -> Resu
 fn transport_to_node_expression_statement_with_semi(transport: ExpressionStatementWithSemiTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(355) /* "expression_statement_with_semi" */,
@@ -34734,7 +34476,7 @@ fn transport_to_node_expression_statement_with_semi(transport: ExpressionStateme
 fn transport_to_node_expression_statement_block_ending(transport: ExpressionStatementBlockEndingTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_ending_with_block_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![expression_ending_with_block_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(356) /* "expression_statement_block_ending" */,
@@ -35200,7 +34942,7 @@ fn transport_to_node_function_type(transport: FunctionTypeTransport) -> Result<T
         fields.insert("return_type".to_string(), transport_field_value(_type_transport_to_any(value))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| function_type_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![function_type_child_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(222) /* "function_type" */,
@@ -35267,7 +35009,7 @@ fn transport_to_node_generic_pattern(transport: GenericPatternTransport) -> Resu
     let mut fields = TransportHashMap::new();
     fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(transport.type_arguments))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| path_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![path_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(295) /* "generic_pattern" */,
@@ -35930,7 +35672,7 @@ fn transport_to_node_match_pattern(transport: MatchPatternTransport) -> Result<T
         fields.insert("condition".to_string(), transport_field_value(condition_transport_to_any(value))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(276) /* "match_pattern" */,
@@ -36013,7 +35755,7 @@ fn transport_to_node_mut_pattern(transport: MutPatternTransport) -> Result<Trans
     let mut fields = TransportHashMap::new();
     fields.insert("mutable_specifier".to_string(), transport_field_value(AnyTransport::_MutableSpecifier(transport.mutable_specifier))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(302) /* "mut_pattern" */,
@@ -36182,7 +35924,7 @@ fn transport_to_node_parameters(transport: ParametersTransport) -> Result<Transp
 fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(259) /* "parenthesized_expression" */,
@@ -36202,7 +35944,7 @@ fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpression
 fn transport_to_node_pointer_type_mut(transport: PointerTypeMutTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::MutableSpecifier(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![AnyTransport::MutableSpecifier(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(352) /* "pointer_type_mut" */,
@@ -36354,7 +36096,7 @@ fn transport_to_node_raw_string_literal(transport: RawStringLiteralTransport) ->
 fn transport_to_node_ref_pattern(transport: RefPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(304) /* "ref_pattern" */,
@@ -36376,7 +36118,7 @@ fn transport_to_node_reference_expression(transport: ReferenceExpressionTranspor
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(c) => Some(transport_children(c.into_iter().map(|v| reference_expression_child_transport_to_any(v)).collect::<Vec<_>>())?),
+        Some(c) => Some(transport_children(vec![reference_expression_child_transport_to_any(c)])?),
         None => None,
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -36466,7 +36208,7 @@ fn transport_to_node_remaining_field_pattern(transport: RemainingFieldPatternTra
 fn transport_to_node_removed_trait_bound(transport: RemovedTraitBoundTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| _type_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![_type_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(198) /* "removed_trait_bound" */,
@@ -36487,7 +36229,7 @@ fn transport_to_node_return_expression(transport: ReturnExpressionTransport) -> 
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(c) => Some(transport_children(c.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?),
+        Some(c) => Some(transport_children(vec![expression_transport_to_any(c)])?),
         None => None,
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -37724,7 +37466,7 @@ fn transport_to_node_variadic_parameter(transport: VariadicParameterTransport) -
 fn transport_to_node_visibility_modifier_crate(transport: VisibilityModifierCrateTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Crate(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![AnyTransport::Crate(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(348) /* "visibility_modifier_crate" */,
@@ -37835,7 +37577,7 @@ fn transport_to_node_yield_expression(transport: YieldExpressionTransport) -> Re
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(c) => Some(transport_children(c.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?),
+        Some(c) => Some(transport_children(vec![expression_transport_to_any(c)])?),
         None => None,
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());

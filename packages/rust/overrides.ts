@@ -494,7 +494,7 @@ const config: WireConfig<RustGrammar> = {
 
 		// use_wildcard: 1 field(s)
 		use_wildcard: {
-			0: field('path') // crate | identifier | metavariable | scoped_identifier | self | super [struct=0]
+			'0/0/0': field('path') // optional($._path) inside the optional `path ::` prefix; excludes the `::` token
 		},
 
 		// variadic_parameter: 1 field(s)
