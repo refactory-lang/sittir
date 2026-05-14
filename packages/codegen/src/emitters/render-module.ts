@@ -279,8 +279,8 @@ function transportRsHeader(lang: Grammar): string {
 function bridgeRsHeader(lang: Grammar): string {
 	return `${generatedHeader(lang)}
 //
-// Field and child resolution helpers — ResolvedField, resolve_field,
-// resolve_unnamed_children, separator_for, variant_for, etc. Used by both
+// Field and child resolution helpers — ResolvedField, resolve_slot,
+// resolve_field, separator_for, variant_for, etc. Used by both
 // dispatch and templates modules.`;
 }
 
@@ -754,7 +754,7 @@ function requiredResolvedFieldViewLines(target: string, valueExpr: string, missi
  * and all field/children resolution functions (`render_node_value`,
  * `missing_required_field`, `resolve_text`, `resolve_leaf`, `resolve_optional`,
  * `resolve_required`, `is_join_flank_token`, `detect_field_trailing_sep`,
- * `resolve_field`, `resolve_unnamed_children`).
+ * `resolve_slot`, `resolve_field`).
  *
  * @returns Rust source lines for the field resolution helpers.
  */
@@ -827,6 +827,12 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
+	lines.push(`#[derive(Debug, Clone, Copy)]`);
+	lines.push(`pub(crate) enum SlotAccessor<'a> {`);
+	lines.push(`    Field(&'a str),`);
+	lines.push(`    Children,`);
+	lines.push(`}`);
+	lines.push('');
 	lines.push(`pub(crate) fn render_node_value(node: &NodeData) -> Result<String, ::askama::Error> {`);
 	lines.push(`    let mut buf = String::new();`);
 	lines.push(`    render_nodedata_into(node, &mut buf)?;`);
@@ -876,25 +882,14 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(
 		`pub(crate) fn resolve_optional(node: &NodeData, name: &str) -> Result<Option<String>, ::askama::Error> {`
 	);
-	lines.push(`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`);
-	lines.push(`        None => Ok(None),`);
-	lines.push(`        Some(FieldValue::Text(text)) => Ok((!text.is_empty()).then(|| text.to_owned())),`);
-	lines.push(`        Some(FieldValue::Single(child)) => {`);
-	lines.push(`            let rendered = render_node_value(child)?;`);
-	lines.push(`            Ok((!rendered.is_empty()).then_some(rendered))`);
-	lines.push(`        }`);
-	lines.push(`        Some(FieldValue::Multiple(_)) => {`);
-	lines.push(`            let resolved = resolve_field(node, name, false)?;`);
-	lines.push(`            Ok((!resolved.scalar.is_empty()).then_some(resolved.scalar))`);
-	lines.push(`        }`);
-	lines.push(`    }`);
+	lines.push(`    let resolved = resolve_slot(node, SlotAccessor::Field(name), false)?;`);
+	lines.push(
+		`    Ok((resolved.kind != ResolvedFieldKind::Missing && !resolved.scalar.is_empty()).then_some(resolved.scalar))`
+	);
 	lines.push(`}`);
 	lines.push('');
 	lines.push(`pub(crate) fn resolve_required(node: &NodeData, name: &str) -> Result<String, ::askama::Error> {`);
-	lines.push(`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`);
-	lines.push(`        None => Err(missing_required_field(node, name)),`);
-	lines.push(`        Some(_) => Ok(resolve_optional(node, name)?.unwrap_or_default()),`);
-	lines.push(`    }`);
+	lines.push(`    Ok(resolve_slot(node, SlotAccessor::Field(name), true)?.scalar)`);
 	lines.push(`}`);
 	lines.push('');
 	lines.push(`pub(crate) fn is_join_flank_token(text: &str) -> bool {`);
@@ -959,92 +954,106 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`    false`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(
-		`pub(crate) fn resolve_field(node: &NodeData, name: &str, required: bool) -> Result<ResolvedField, ::askama::Error> {`
-	);
-	lines.push(`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`);
-	lines.push(`        None => {`);
-	lines.push(`            if required {`);
-	lines.push(`                Err(missing_required_field(node, name))`);
-	lines.push(`            } else {`);
-	lines.push(`                Ok(ResolvedField::default())`);
-	lines.push(`            }`);
-	lines.push(`        }`);
-	lines.push(`        Some(FieldValue::Text(text)) => Ok(ResolvedField::from_scalar(text.to_owned())),`);
-	lines.push(`        Some(FieldValue::Single(child)) => {`);
-	lines.push(`            let rendered = render_node_value(child)?;`);
-	lines.push(`            Ok(ResolvedField::from_scalar(rendered))`);
-	lines.push(`        }`);
-	lines.push(`        Some(FieldValue::Multiple(items)) => {`);
-	lines.push(`            let mut rendered = Vec::new();`);
-	lines.push(`            for item in items {`);
-	lines.push(`                if !item.named {`);
-	lines.push(`                    continue;`);
+	lines.push(`pub(crate) fn resolve_slot(`);
+	lines.push(`    node: &NodeData,`);
+	lines.push(`    accessor: SlotAccessor<'_>,`);
+	lines.push(`    required: bool,`);
+	lines.push(`) -> Result<ResolvedField, ::askama::Error> {`);
+	lines.push(`    match accessor {`);
+	lines.push(`        SlotAccessor::Field(name) => match node.fields.as_ref().and_then(|fields| fields.get(name)) {`);
+	lines.push(`            None => {`);
+	lines.push(`                if required {`);
+	lines.push(`                    Err(missing_required_field(node, name))`);
+	lines.push(`                } else {`);
+	lines.push(`                    Ok(ResolvedField::default())`);
 	lines.push(`                }`);
-	lines.push(`                rendered.push(render_node_value(item)?);`);
+	lines.push(`            }`);
+	lines.push(`            Some(FieldValue::Text(text)) => Ok(ResolvedField::from_scalar(text.to_owned())),`);
+	lines.push(`            Some(FieldValue::Single(child)) => {`);
+	lines.push(`                let rendered = render_node_value(child)?;`);
+	lines.push(`                Ok(ResolvedField::from_scalar(rendered))`);
+	lines.push(`            }`);
+	lines.push(`            Some(FieldValue::Multiple(items)) => {`);
+	lines.push(`                let mut rendered = Vec::new();`);
+	lines.push(`                for item in items {`);
+	lines.push(`                    if !item.named {`);
+	lines.push(`                        continue;`);
+	lines.push(`                    }`);
+	lines.push(`                    rendered.push(render_node_value(item)?);`);
+	lines.push(`                }`);
+	lines.push(`                Ok(ResolvedField::from_items(`);
+	lines.push(`                    rendered,`);
+	lines.push(`                    separator_for(node.type_.0),`);
+	lines.push(`                    false,`);
+	lines.push(`                    detect_field_trailing_sep(node, name),`);
+	lines.push(`                ))`);
+	lines.push(`            }`);
+	lines.push(`        },`);
+	lines.push(`        SlotAccessor::Children => {`);
+	lines.push(`            let mut child_nodes: Vec<(u32, usize, &NodeData)> = Vec::new();`);
+	lines.push(`            let mut child_ordinal = 0usize;`);
+	lines.push(`            let mut first_named_idx: Option<usize> = None;`);
+	lines.push(`            let mut last_named_idx: Option<usize> = None;`);
+	lines.push(`            if let Some(items) = &node.children {`);
+	lines.push(`                for (index, child) in items.iter().enumerate() {`);
+	lines.push(`                    if !child.named {`);
+	lines.push(`                        continue;`);
+	lines.push(`                    }`);
+	lines.push(`                    if first_named_idx.is_none() {`);
+	lines.push(`                        first_named_idx = Some(index);`);
+	lines.push(`                    }`);
+	lines.push(`                    last_named_idx = Some(index);`);
+	lines.push(
+		`                    child_nodes.push((child.span.map_or(u32::MAX, |span| span.start), child_ordinal, child));`
+	);
+	lines.push(`                    child_ordinal += 1;`);
+	lines.push(`                }`);
+	lines.push(`            }`);
+	lines.push(`            child_nodes.sort_by(|left, right| left.0.cmp(&right.0).then(left.1.cmp(&right.1)));`);
+	lines.push(`            let mut children = Vec::new();`);
+	lines.push(`            for (_, _, child) in child_nodes {`);
+	lines.push(`                children.push(render_node_value(child)?);`);
+	lines.push(`            }`);
+	lines.push(`            if children.is_empty() {`);
+	lines.push(`                if required {`);
+	lines.push(`                    return Err(missing_required_field(node, "children"));`);
+	lines.push(`                }`);
+	lines.push(`                return Ok(ResolvedField::default());`);
+	lines.push(`            }`);
+	lines.push(`            let mut leading_sep = false;`);
+	lines.push(`            let mut trailing_sep = false;`);
+	lines.push(`            if let Some(items) = &node.children {`);
+	lines.push(`                if let Some(first) = first_named_idx {`);
+	lines.push(`                    if first > 0 {`);
+	lines.push(`                        if let Some(before) = items.get(first - 1) {`);
+	lines.push(
+		`                            leading_sep = !before.named && before.text.as_deref().map_or(false, is_join_flank_token);`
+	);
+	lines.push(`                        }`);
+	lines.push(`                    }`);
+	lines.push(`                }`);
+	lines.push(`                if let Some(last) = last_named_idx {`);
+	lines.push(`                    if let Some(after) = items.get(last + 1) {`);
+	lines.push(
+		`                        trailing_sep = !after.named && after.text.as_deref().map_or(false, is_join_flank_token);`
+	);
+	lines.push(`                    }`);
+	lines.push(`                }`);
 	lines.push(`            }`);
 	lines.push(`            Ok(ResolvedField::from_items(`);
-	lines.push(`                rendered,`);
+	lines.push(`                children,`);
 	lines.push(`                separator_for(node.type_.0),`);
-	lines.push(`                false,`);
-	lines.push(`                detect_field_trailing_sep(node, name),`);
+	lines.push(`                leading_sep,`);
+	lines.push(`                trailing_sep,`);
 	lines.push(`            ))`);
 	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(`pub(crate) fn resolve_unnamed_children(node: &NodeData) -> Result<ResolvedField, ::askama::Error> {`);
-	lines.push(`    let mut child_nodes: Vec<(u32, usize, &NodeData)> = Vec::new();`);
-	lines.push(`    let mut child_ordinal = 0usize;`);
-	lines.push(`    let mut first_named_idx: Option<usize> = None;`);
-	lines.push(`    let mut last_named_idx: Option<usize> = None;`);
-	lines.push(`    if let Some(items) = &node.children {`);
-	lines.push(`        for (index, child) in items.iter().enumerate() {`);
-	lines.push(`            if !child.named {`);
-	lines.push(`                continue;`);
-	lines.push(`            }`);
-	lines.push(`            if first_named_idx.is_none() {`);
-	lines.push(`                first_named_idx = Some(index);`);
-	lines.push(`            }`);
-	lines.push(`            last_named_idx = Some(index);`);
-	lines.push(`            child_nodes.push((child.span.map_or(u32::MAX, |span| span.start), child_ordinal, child));`);
-	lines.push(`            child_ordinal += 1;`);
-	lines.push(`        }`);
-	lines.push(`    }`);
-	lines.push(`    child_nodes.sort_by(|left, right| left.0.cmp(&right.0).then(left.1.cmp(&right.1)));`);
-	lines.push(`    let mut children = Vec::new();`);
-	lines.push(`    for (_, _, child) in child_nodes {`);
-	lines.push(`        children.push(render_node_value(child)?);`);
-	lines.push(`    }`);
-	lines.push(`    if children.is_empty() {`);
-	lines.push(`        return Ok(ResolvedField::default());`);
-	lines.push(`    }`);
-	lines.push(`    let mut leading_sep = false;`);
-	lines.push(`    let mut trailing_sep = false;`);
-	lines.push(`    if let Some(items) = &node.children {`);
-	lines.push(`        if let Some(first) = first_named_idx {`);
-	lines.push(`            if first > 0 {`);
-	lines.push(`                if let Some(before) = items.get(first - 1) {`);
 	lines.push(
-		`                    leading_sep = !before.named && before.text.as_deref().map_or(false, is_join_flank_token);`
+		`pub(crate) fn resolve_field(node: &NodeData, name: &str, required: bool) -> Result<ResolvedField, ::askama::Error> {`
 	);
-	lines.push(`                }`);
-	lines.push(`            }`);
-	lines.push(`        }`);
-	lines.push(`        if let Some(last) = last_named_idx {`);
-	lines.push(`            if let Some(after) = items.get(last + 1) {`);
-	lines.push(
-		`                trailing_sep = !after.named && after.text.as_deref().map_or(false, is_join_flank_token);`
-	);
-	lines.push(`            }`);
-	lines.push(`        }`);
-	lines.push(`    }`);
-	lines.push(`    Ok(ResolvedField::from_items(`);
-	lines.push(`        children,`);
-	lines.push(`        separator_for(node.type_.0),`);
-	lines.push(`        leading_sep,`);
-	lines.push(`        trailing_sep,`);
-	lines.push(`    ))`);
+	lines.push(`    resolve_slot(node, SlotAccessor::Field(name), required)`);
 	lines.push(`}`);
 	return lines;
 }
@@ -1251,10 +1260,12 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 	for (const s of structs) {
 		lines.push(`${PER_KIND_FN_VIS}fn ${renderFnName(s.kind)}(node: &NodeData) -> Result<String, ::askama::Error> {`);
 		if (s.hasChildren) {
-			lines.push(`    let children = resolve_unnamed_children(node)?;`);
+			lines.push(`    let children = resolve_slot(node, SlotAccessor::Children, ${String(s.childrenRequired)})?;`);
 		}
 		for (const [index, f] of s.fields.entries()) {
-			lines.push(`    let field_${index} = resolve_field(node, ${JSON.stringify(f.name)}, ${f.required})?;`);
+			lines.push(
+				`    let field_${index} = resolve_slot(node, SlotAccessor::Field(${JSON.stringify(f.name)}), ${f.required})?;`
+			);
 		}
 		if (s.hasVariant) {
 			lines.push(`    let variant = resolve_variant(node);`);
@@ -1389,10 +1400,12 @@ function renderInlinedMatchArm(s: EmittedStruct): string[] {
 	const lines: string[] = [];
 	const indent = '            ';
 	if (s.hasChildren) {
-		lines.push(`${indent}let children = resolve_unnamed_children(node)?;`);
+		lines.push(`${indent}let children = resolve_slot(node, SlotAccessor::Children, ${String(s.childrenRequired)})?;`);
 	}
 	for (const [index, f] of s.fields.entries()) {
-		lines.push(`${indent}let field_${index} = resolve_field(node, ${JSON.stringify(f.name)}, ${f.required})?;`);
+		lines.push(
+			`${indent}let field_${index} = resolve_slot(node, SlotAccessor::Field(${JSON.stringify(f.name)}), ${f.required})?;`
+		);
 	}
 	if (s.hasVariant) lines.push(`${indent}let variant = resolve_variant(node);`);
 	if (s.hasText) lines.push(`${indent}let text = resolve_text(node)?;`);

@@ -434,7 +434,9 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.bridgeRs.contents).toContain('fn resolve_optional');
 		expect(emitted.bridgeRs.contents).toContain('fn resolve_required');
 		expect(emitted.bridgeRs.contents).toContain('fn missing_required_field');
-		expect(emitted.bridgeRs.contents).toContain('fn resolve_unnamed_children');
+		expect(emitted.bridgeRs.contents).toContain("enum SlotAccessor<'a>");
+		expect(emitted.bridgeRs.contents).toContain('fn resolve_slot(');
+		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_unnamed_children');
 		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_children');
 		expect(emitted.bridgeRs.contents).not.toContain('consumed_fields');
 		// render_dispatch is a thin shim in dispatch.rs delegating to bridge::render_nodedata_into.
@@ -444,8 +446,8 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.bridgeRs.contents).toContain('fn render_nodedata_into(');
 		// Phase D: dispatch inlined into bridge uses numeric KindId (42).
 		expect(emitted.bridgeRs.contents).toContain('42 =>');
-		expect(emitted.bridgeRs.contents).toContain('resolve_field(node, "name", true)');
-		expect(emitted.bridgeRs.contents).not.toContain('let children = resolve_unnamed_children(node)?;');
+		expect(emitted.bridgeRs.contents).toContain('resolve_slot(node, SlotAccessor::Field("name"), true)');
+		expect(emitted.bridgeRs.contents).not.toContain('resolve_slot(node, SlotAccessor::Children');
 		expect(emitted.bridgeRs.contents).toContain(
 			`format!("render_nodedata_into: missing required field '{}' on '{}'", name, node.type_)`
 		);
@@ -489,7 +491,53 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap(), generatedIdTables);
 
 		// Per-kind render logic is inlined into bridge::render_nodedata_into.
-		expect(emitted.bridgeRs.contents).toContain('resolve_field(node, "name", true)');
+		expect(emitted.bridgeRs.contents).toContain('resolve_slot(node, SlotAccessor::Field("name"), true)');
+	});
+
+	it('routes unnamed children through the shared slot accessor path', () => {
+		const generatedIdTables: GeneratedIdTables = {
+			kindIds: {
+				required_child_parent: {
+					id: 7,
+					parser: {
+						cSymbol: 'sym_required_child_parent',
+						parserName: 'required_child_parent',
+						anon: false,
+						aux: false,
+						alias: false,
+						hidden: false
+					}
+				},
+				identifier: {
+					id: 1,
+					parser: {
+						cSymbol: 'sym_identifier',
+						parserName: 'identifier',
+						anon: false,
+						aux: false,
+						alias: false,
+						hidden: false
+					}
+				}
+			},
+			sourceArtifact: 'parser.wasm'
+		};
+
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'required_child_parent.jinja',
+					content: '{# @generated #}\n{{ children }}'
+				}
+			],
+			makeRequiredChildrenNodeMap(),
+			generatedIdTables
+		);
+
+		expect(emitted.bridgeRs.contents).toContain('resolve_slot(node, SlotAccessor::Children, true)');
+		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_unnamed_children');
+		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_children');
 	});
 
 	it('removes the shared prepare bridge while keeping the native render boundary unchanged', () => {
