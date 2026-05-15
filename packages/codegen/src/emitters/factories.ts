@@ -30,6 +30,7 @@ import {
 	resolveHoistedForm,
 	type HoistedForm,
 	fieldTypeComponents,
+	childTypeComponents,
 	isValidIdent,
 	resolveFieldStorageInfo,
 	resolveHiddenKeywordLiteral,
@@ -628,19 +629,18 @@ type FieldCarryingNode = Extract<AssembledNode, { modelType: 'branch' | 'group' 
 export function childElementType(node: { children: readonly AssembledNonterminal[] }, nodeMap: NodeMap): string {
 	const parts = new Set<string>();
 	for (const c of node.children) {
-		for (const t of slotKindNames(c)) {
-			// Hidden-keyword kinds (`_not_escape_sequence` → `'\\'`) inline
-			// their literal as a string type member — same rule types.ts
-			// applies to `fieldTypeComponents`. Avoids dangling references
-			// to `NotEscapeSequence` / `KwMove` etc.
-			const lit = resolveHiddenKeywordLiteral(t, nodeMap);
-			if (lit !== undefined) {
-				parts.add(JSON.stringify(lit));
+		for (const component of childTypeComponents(c, nodeMap)) {
+			if (component.kind === 'literal') {
+				parts.add(JSON.stringify(component.value));
 				continue;
 			}
-			let ref = nodeMap.nodes.get(t);
+			if (component.kind === 'missing') {
+				parts.add(JSON.stringify(component.rawKind));
+				continue;
+			}
+			let ref = nodeMap.nodes.get(component.rawKind);
 			if (!ref) {
-				parts.add(JSON.stringify(t));
+				parts.add(JSON.stringify(component.rawKind));
 				continue;
 			}
 			// Hidden kinds with `multi` or `token` modelType don't get
@@ -651,12 +651,12 @@ export function childElementType(node: { children: readonly AssembledNonterminal
 			// counterpart (strip leading `_`) which has a standalone
 			// exported interface. The runtime shapes are structurally
 			// compatible (same fields/children).
-			if (t.startsWith('_') && (ref.modelType === 'multi' || ref.modelType === 'token')) {
-				const visible = nodeMap.nodes.get(t.slice(1));
+			if (component.rawKind.startsWith('_') && (ref.modelType === 'multi' || ref.modelType === 'token')) {
+				const visible = nodeMap.nodes.get(component.rawKind.slice(1));
 				if (visible) ref = visible;
 			}
 			const name = ref.typeName;
-			parts.add(/^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(t));
+			parts.add(/^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(component.rawKind));
 		}
 	}
 	if (parts.size === 0) return 'never';

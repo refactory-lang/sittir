@@ -1900,7 +1900,7 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "def example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))",
-    "pattern": "module",
+    "pattern": "function_definition",
     "edits": [],
     "expectedSourceOut": "def example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))",
     "expectedReparseTree": "(module (function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (yield)) (expression_statement (yield (integer))) (expression_statement (assignment left: (identifier) (assignment_eq right: (yield (integer))))) (expression_statement (yield (identifier))) (expression_statement (yield (parenthesized_expression (yield (generator_expression body: (identifier) (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list (integer) (integer))))))))))))",
@@ -1986,7 +1986,7 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "def example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))",
-    "pattern": "module",
+    "pattern": "function_definition",
     "edits": [],
     "expectedSourceOut": "def example():\n  yield\n  yield 1\n  x = yield 2\n  yield from a\n  yield from (yield from (x for x in range(1, 10)))\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (yield)) (expression_statement (yield (integer))) (expression_statement (assignment left: (identifier) (assignment_eq right: (yield (integer))))) (expression_statement (yield (identifier))) (expression_statement (yield (parenthesized_expression (yield (generator_expression body: (identifier) (for_in_clause left: (identifier) right: (call function: (identifier) arguments: (argument_list (integer) (integer)))))))))))",
@@ -3066,7 +3066,7 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "def comp_args((a, b)=(3, 4)):\n    return a, b",
-    "pattern": "module",
+    "pattern": "function_definition",
     "edits": [],
     "expectedSourceOut": "def comp_args((a, b)=(3, 4)):\n    return a, b",
     "expectedReparseTree": "(module (function_definition name: (identifier) parameters: (parameters (default_parameter name: (tuple_pattern (identifier) (identifier)) value: (tuple (integer) (integer)))) body: (block (return_statement (expression_list (identifier) (identifier))))))",
@@ -3152,7 +3152,7 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "def comp_args((a, b)=(3, 4)):\n    return a, b",
-    "pattern": "module",
+    "pattern": "function_definition",
     "edits": [],
     "expectedSourceOut": "def comp_args((a, b)=(3, 4)):\n  return a, b\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (default_parameter name: (tuple_pattern (identifier) (identifier)) value: (tuple (integer) (integer)))) body: (block (return_statement (expression_list (identifier) (identifier)))))",
@@ -3344,74 +3344,12 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "async with a as b:\n  async for c in d:\n     [e async for f in g]",
-    "pattern": "module",
+    "pattern": "with_statement",
     "edits": [],
     "expectedSourceOut": "async with a as b:\n  async for c in d:\n     [e async for f in g]",
     "expectedReparseTree": "(module (with_statement with_clause: (with_clause (with_clause_bare (with_item value: (as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))))) body: (block (for_statement left: (identifier) right: (identifier) body: (block (expression_statement (list_comprehension body: (identifier) (for_in_clause left: (identifier) right: (identifier)))))))))",
     "wrappedText": "async with a as b:\n  async for c in d:\n     [e async for f in g]",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 185,
-      "$source": 0,
-      "$span": {
-        "start": 11,
-        "end": 17
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_expression": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "a",
-        "$span": {
-          "start": 11,
-          "end": 12
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": true
-      },
-      "_as": {
-        "$type": 10,
-        "$source": 0,
-        "$text": "as",
-        "$span": {
-          "start": 13,
-          "end": 15
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": false
-      },
-      "_alias": {
-        "$type": 281,
-        "$source": 0,
-        "$text": "b",
-        "$span": {
-          "start": 16,
-          "end": 17
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": true
-      }
-    },
-    "expectedOutput": "a as b"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "a as b",
-    "pattern": "as_pattern",
-    "edits": [],
-    "expectedSourceOut": "a as b",
-    "expectedReparseTree": "(as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))",
-    "wrappedText": "_ = a as b",
-    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3446,88 +3384,12 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "[e async for f in g]",
-    "pattern": "expression_statement",
+    "pattern": "block",
     "edits": [],
     "expectedSourceOut": "[e async for f in g]",
     "expectedReparseTree": "(expression_statement (list_comprehension body: (identifier) (for_in_clause left: (identifier) right: (identifier))))",
     "wrappedText": "[e async for f in g]",
     "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 220,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 227,
-          "$source": 0,
-          "$text": "async for f in g",
-          "$span": {
-            "start": 47,
-            "end": 63
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 2,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 44,
-        "end": 64
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_[": {
-        "$type": 45,
-        "$source": 0,
-        "$text": "[",
-        "$span": {
-          "start": 44,
-          "end": 45
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_body": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "e",
-        "$span": {
-          "start": 45,
-          "end": 46
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_]": {
-        "$type": 46,
-        "$source": 0,
-        "$text": "]",
-        "$span": {
-          "start": 63,
-          "end": 64
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": false
-      }
-    },
-    "expectedOutput": "[e async for f in g]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[e async for f in g]",
-    "pattern": "list_comprehension",
-    "edits": [],
-    "expectedSourceOut": "[e async for f in g]",
-    "expectedReparseTree": "(list_comprehension body: (identifier) (for_in_clause left: (identifier) right: (identifier)))",
-    "wrappedText": "_ = [e async for f in g]",
-    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -3562,7 +3424,7 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "def a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]",
-    "pattern": "module",
+    "pattern": "function_definition",
     "edits": [],
     "expectedSourceOut": "def a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]",
     "expectedReparseTree": "(module (function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (call function: (identifier) arguments: (argument_list (integer) (integer)))) (expression_statement (assignment left: (identifier) (assignment_eq right: (list (integer))))))))",
@@ -3648,7 +3510,7 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "def a():\n    b(\n1,\n2\n    )\n\n    c = [\n3\n    ]",
-    "pattern": "module",
+    "pattern": "function_definition",
     "edits": [],
     "expectedSourceOut": "def a():\n  b(\n1,\n2\n    )\n\n    c = [\n3\n    ]\n",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (call function: (identifier) arguments: (argument_list (integer) (integer)))) (expression_statement (assignment left: (identifier) (assignment_eq right: (list (integer)))))))",
@@ -10148,84 +10010,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here",
     "expectedReparseTree": "(module (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end))))) (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))))) alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier) (identifier)))))) alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))))) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))))) (comment)))))",
-    "wrappedText": "match command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 326
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 206,
-        "$source": 0,
-        "$text": "command.split()",
-        "$span": {
-          "start": 6,
-          "end": 21
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 21,
-          "end": 22
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here",
-        "$span": {
-          "start": 22,
-          "end": 326
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here",
-    "expectedReparseTree": "(match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end))))) (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))))) alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier) (identifier)))))) alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))))) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))))) (comment))))",
     "wrappedText": "match command.split():\n    case [\"quit\"]:\n        print(\"Goodbye!\")\n        quit_game()\n    case [\"look\"]:\n        current_room.describe()\n    case [\"get\", obj]:\n        character.get(obj, current_room)\n    case [\"go\", direction]:\n        current_room = current_room.neighbor(direction)\n    # The rest of your commands go here",
     "wrappedOffset": 0
   },
@@ -12122,84 +11910,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match command.split():\n    case [\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match command.split():\n    case [\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)",
     "expectedReparseTree": "(module (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (splat_pattern (identifier))))) consequence: (block (for_statement left: (identifier) right: (identifier) body: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier) (identifier))))))))))))",
-    "wrappedText": "match command.split():\n    case [\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 125
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 206,
-        "$source": 0,
-        "$text": "command.split()",
-        "$span": {
-          "start": 6,
-          "end": 21
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 21,
-          "end": 22
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case [\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)",
-        "$span": {
-          "start": 22,
-          "end": 125
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match command.split():\n    case [\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match command.split():\n    case [\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match command.split():\n    case [\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)",
-    "expectedReparseTree": "(match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (splat_pattern (identifier))))) consequence: (block (for_statement left: (identifier) right: (identifier) body: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier) (identifier)))))))))))",
     "wrappedText": "match command.split():\n    case [\"drop\", *objects]:\n        for obj in objects:\n            character.drop(obj, current_room)",
     "wrappedOffset": 0
   },
@@ -12788,84 +12502,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")",
     "expectedReparseTree": "(module (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block (comment) alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (block (expression_statement (ellipsis)) (comment))) alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (splat_pattern (identifier))))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end)))))))))))",
-    "wrappedText": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 226
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 206,
-        "$source": 0,
-        "$text": "command.split()",
-        "$span": {
-          "start": 6,
-          "end": 21
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 21,
-          "end": 22
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")",
-        "$span": {
-          "start": 22,
-          "end": 226
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")",
-    "expectedReparseTree": "(match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block (comment) alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (block (expression_statement (ellipsis)) (comment))) alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (splat_pattern (identifier))))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))))))))))",
     "wrappedText": "match command.split():\n# ^ conditional\n    case [\"quit\"]: ... # Code omitted for brevity\n    case [\"go\", direction]: pass\n    case [\"drop\", *objects]: pass\n    case _:\n        print(f\"Sorry, I couldn't understand {command!r}\")",
     "wrappedOffset": 0
   },
@@ -13800,84 +13440,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match command.split():\n    case [\"north\"] | [\"go\", \"north\"]:\n        current_room = current_room.neighbor(\"north\")\n    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match command.split():\n    case [\"north\"] | [\"go\", \"north\"]:\n        current_room = current_room.neighbor(\"north\")\n    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass",
     "expectedReparseTree": "(module (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (union_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end))))))))) alternative: (case_clause (case_pattern (union_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier)))) (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier)))) (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))) (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) consequence: (block (pass_statement)))))))",
-    "wrappedText": "match command.split():\n    case [\"north\"] | [\"go\", \"north\"]:\n        current_room = current_room.neighbor(\"north\")\n    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 194
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 206,
-        "$source": 0,
-        "$text": "command.split()",
-        "$span": {
-          "start": 6,
-          "end": 21
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 21,
-          "end": 22
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case [\"north\"] | [\"go\", \"north\"]:\n        current_room = current_room.neighbor(\"north\")\n    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass",
-        "$span": {
-          "start": 22,
-          "end": 194
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match command.split():\n    case [\"north\"] | [\"go\", \"north\"]:\n        current_room = current_room.neighbor(\"north\")\n    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match command.split():\n    case [\"north\"] | [\"go\", \"north\"]:\n        current_room = current_room.neighbor(\"north\")\n    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match command.split():\n    case [\"north\"] | [\"go\", \"north\"]:\n        current_room = current_room.neighbor(\"north\")\n    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass",
-    "expectedReparseTree": "(match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (union_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end))))))))) alternative: (case_clause (case_pattern (union_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier)))) (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier)))) (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))) (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) consequence: (block (pass_statement))))))",
     "wrappedText": "match command.split():\n    case [\"north\"] | [\"go\", \"north\"]:\n        current_room = current_room.neighbor(\"north\")\n    case [\"get\", obj] | [\"pick\", \"up\", obj] | [\"pick\", obj, \"up\"]:\n        pass",
     "wrappedOffset": 0
   },
@@ -15486,84 +15052,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match command.split():\n    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:\n        current_room = current_room.neighbor(direction)",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match command.split():\n    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:\n        current_room = current_room.neighbor(direction)",
     "expectedReparseTree": "(module (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (as_pattern (case_pattern (tuple_pattern (case_pattern (union_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) (identifier))))) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier))))))))))))",
-    "wrappedText": "match command.split():\n    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:\n        current_room = current_room.neighbor(direction)",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 147
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 206,
-        "$source": 0,
-        "$text": "command.split()",
-        "$span": {
-          "start": 6,
-          "end": 21
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 21,
-          "end": 22
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:\n        current_room = current_room.neighbor(direction)",
-        "$span": {
-          "start": 22,
-          "end": 147
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match command.split():\n    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:\n        current_room = current_room.neighbor(direction)"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match command.split():\n    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:\n        current_room = current_room.neighbor(direction)",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match command.split():\n    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:\n        current_room = current_room.neighbor(direction)",
-    "expectedReparseTree": "(match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (as_pattern (case_pattern (tuple_pattern (case_pattern (union_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) (identifier))))) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))))))))",
     "wrappedText": "match command.split():\n    case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]:\n        current_room = current_room.neighbor(direction)",
     "wrappedOffset": 0
   },
@@ -16914,84 +16406,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match 0:\n    case 0 if False:\n        x = False\n    case 0 if True:\n        x = True",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match 0:\n    case 0 if False:\n        x = False\n    case 0 if True:\n        x = True",
     "expectedReparseTree": "(module (match_statement subject: (integer) body: (block (match_block_block alternative: (case_clause (case_pattern (simple_pattern_negative (integer))) guard: (if_clause expression: (false)) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (false)))))) alternative: (case_clause (case_pattern (simple_pattern_negative (integer))) guard: (if_clause expression: (true)) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (true))))))))))",
-    "wrappedText": "match 0:\n    case 0 if False:\n        x = False\n    case 0 if True:\n        x = True",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 84
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 93,
-        "$source": 0,
-        "$text": "0",
-        "$span": {
-          "start": 6,
-          "end": 7
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 7,
-          "end": 8
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case 0 if False:\n        x = False\n    case 0 if True:\n        x = True",
-        "$span": {
-          "start": 8,
-          "end": 84
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match 0:\n    case 0 if False:\n        x = False\n    case 0 if True:\n        x = True"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match 0:\n    case 0 if False:\n        x = False\n    case 0 if True:\n        x = True",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match 0:\n    case 0 if False:\n        x = False\n    case 0 if True:\n        x = True",
-    "expectedReparseTree": "(match_statement subject: (integer) body: (block (match_block_block alternative: (case_clause (case_pattern (simple_pattern_negative (integer))) guard: (if_clause expression: (false)) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (false)))))) alternative: (case_clause (case_pattern (simple_pattern_negative (integer))) guard: (if_clause expression: (true)) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (true)))))))))",
     "wrappedText": "match 0:\n    case 0 if False:\n        x = False\n    case 0 if True:\n        x = True",
     "wrappedOffset": 0
   },
@@ -17212,84 +16630,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match xxx:\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match xxx:\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass",
     "expectedReparseTree": "(module (match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause (case_pattern (union_pattern (simple_pattern_negative (integer)) (simple_pattern_negative (integer)))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (concatenated_string (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (union_pattern (simple_pattern_negative (float)) (simple_pattern_negative (float)))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (union_pattern (true) (false))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (none)) consequence: (block (pass_statement)))))))",
-    "wrappedText": "match xxx:\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 203
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "xxx",
-        "$span": {
-          "start": 6,
-          "end": 9
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 9,
-          "end": 10
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass",
-        "$span": {
-          "start": 10,
-          "end": 203
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match xxx:\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match xxx:\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match xxx:\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass",
-    "expectedReparseTree": "(match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause (case_pattern (union_pattern (simple_pattern_negative (integer)) (simple_pattern_negative (integer)))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (concatenated_string (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (union_pattern (simple_pattern_negative (float)) (simple_pattern_negative (float)))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (union_pattern (true) (false))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (none)) consequence: (block (pass_statement))))))",
     "wrappedText": "match xxx:\n    case 3 | -3:\n      pass\n    case \"something\":\n      pass\n    case \"something\" \"else\":\n      pass\n    case 1.0 | -1.0:\n      pass\n    case True | False:\n      pass\n    case None:\n      pass",
     "wrappedOffset": 0
   },
@@ -17564,84 +16908,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match (0, 1, 2):\n    case 0,1:\n        x = 0\n    case 0, *x:\n        x = 0",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match (0, 1, 2):\n    case 0,1:\n        x = 0\n    case 0, *x:\n        x = 0",
     "expectedReparseTree": "(module (match_statement subject: (tuple (integer) (integer) (integer)) body: (block (match_block_block alternative: (case_clause (case_pattern (simple_pattern_negative (integer))) (case_pattern (simple_pattern_negative (integer))) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (integer)))))) alternative: (case_clause (case_pattern (simple_pattern_negative (integer))) (case_pattern (splat_pattern (identifier))) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (integer))))))))))",
-    "wrappedText": "match (0, 1, 2):\n    case 0,1:\n        x = 0\n    case 0, *x:\n        x = 0",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 74
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 217,
-        "$source": 0,
-        "$text": "(0, 1, 2)",
-        "$span": {
-          "start": 6,
-          "end": 15
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 15,
-          "end": 16
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case 0,1:\n        x = 0\n    case 0, *x:\n        x = 0",
-        "$span": {
-          "start": 16,
-          "end": 74
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match (0, 1, 2):\n    case 0,1:\n        x = 0\n    case 0, *x:\n        x = 0"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match (0, 1, 2):\n    case 0,1:\n        x = 0\n    case 0, *x:\n        x = 0",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match (0, 1, 2):\n    case 0,1:\n        x = 0\n    case 0, *x:\n        x = 0",
-    "expectedReparseTree": "(match_statement subject: (tuple (integer) (integer) (integer)) body: (block (match_block_block alternative: (case_clause (case_pattern (simple_pattern_negative (integer))) (case_pattern (simple_pattern_negative (integer))) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (integer)))))) alternative: (case_clause (case_pattern (simple_pattern_negative (integer))) (case_pattern (splat_pattern (identifier))) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (integer)))))))))",
     "wrappedText": "match (0, 1, 2):\n    case 0,1:\n        x = 0\n    case 0, *x:\n        x = 0",
     "wrappedOffset": 0
   },
@@ -17974,7 +17244,7 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match x,:\n    case *x,:\n        y = 0",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match x,:\n    case *x,:\n        y = 0",
     "expectedReparseTree": "(module (match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause (case_pattern (splat_pattern (identifier))) consequence: (block (expression_statement (assignment left: (identifier) (assignment_eq right: (integer))))))))))",
@@ -18106,111 +17376,11 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match ..., ...:\n    case a, b:\n        return locals()",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match ..., ...:\n    case a, b:\n        return locals()",
     "expectedReparseTree": "(module (match_statement subject: (ellipsis) subject: (ellipsis) body: (block (match_block_block alternative: (case_clause (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))) consequence: (block (return_statement (call function: (identifier) arguments: (argument_list)))))))))",
     "wrappedText": "match ..., ...:\n    case a, b:\n        return locals()",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 54
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": [
-        {
-          "$type": 87,
-          "$source": 0,
-          "$text": "...",
-          "$span": {
-            "start": 6,
-            "end": 9
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        },
-        {
-          "$type": 87,
-          "$source": 0,
-          "$text": "...",
-          "$span": {
-            "start": 11,
-            "end": 14
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 3,
-          "$named": true
-        }
-      ],
-      "_,": {
-        "$type": 9,
-        "$source": 0,
-        "$text": ",",
-        "$span": {
-          "start": 9,
-          "end": 10
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 14,
-          "end": 15
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 4,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case a, b:\n        return locals()",
-        "$span": {
-          "start": 15,
-          "end": 54
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 5,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match ...,...:\n    case a, b:\n        return locals()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match ..., ...:\n    case a, b:\n        return locals()",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match ...,...:\n    case a, b:\n        return locals()",
-    "expectedReparseTree": "(match_statement subject: (ellipsis) subject: (ellipsis) body: (block (match_block_block alternative: (case_clause (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))) consequence: (block (return_statement (call function: (identifier) arguments: (argument_list))))))))",
-    "wrappedText": "match ...,...:\n    case a, b:\n        return locals()",
     "wrappedOffset": 0
   },
   {
@@ -18426,85 +17596,11 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42",
-    "pattern": "module",
+    "pattern": "if_statement",
     "edits": [],
     "expectedSourceOut": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42",
     "expectedReparseTree": "(module (if_statement condition: (named_expression name: (identifier) value: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)) (identifier) (keyword_argument name: (identifier) value: (attribute object: (identifier) attribute: (identifier)))))) consequence: (block (return_statement (integer)))))",
     "wrappedText": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 131,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 95
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_if": {
-        "$type": 22,
-        "$source": 0,
-        "$text": "if",
-        "$span": {
-          "start": 0,
-          "end": 2
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_condition": {
-        "$type": 123,
-        "$source": 0,
-        "$text": "match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
-        "$span": {
-          "start": 3,
-          "end": 80
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 80,
-          "end": 81
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_consequence": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "return 42",
-        "$span": {
-          "start": 86,
-          "end": 95
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n  return 42\n"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n  return 42\n",
-    "expectedReparseTree": "(if_statement condition: (named_expression name: (identifier) value: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)) (identifier) (keyword_argument name: (identifier) value: (attribute object: (identifier) attribute: (identifier)))))) consequence: (block (return_statement (integer))))",
-    "wrappedText": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n  return 42\n",
     "wrappedOffset": 0
   },
   {
@@ -18950,84 +18046,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")",
     "expectedReparseTree": "(module (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier)))))))) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (identifier) (identifier)))))) alternative: (case_clause (case_pattern (union_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (string string_start: (string_start) content: (string_content) string_end: (string_end))))) (class_pattern dotted_name: (dotted_name (identifier))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) (expression_statement (ellipsis)))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)))) consequence: (block (pass_statement) (comment))) alternative: (case_clause (case_pattern (dotted_name (identifier))) consequence: (block (raise_statement (call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) string_end: (string_end)))))))))))",
-    "wrappedText": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 364
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 206,
-        "$source": 0,
-        "$text": "event.get()",
-        "$span": {
-          "start": 6,
-          "end": 17
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 17,
-          "end": 18
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")",
-        "$span": {
-          "start": 18,
-          "end": 364
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")",
-    "expectedReparseTree": "(match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier)))))))) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (identifier) (identifier)))))) alternative: (case_clause (case_pattern (union_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (string string_start: (string_start) content: (string_content) string_end: (string_end))))) (class_pattern dotted_name: (dotted_name (identifier))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))) (expression_statement (ellipsis)))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)))) consequence: (block (pass_statement) (comment))) alternative: (case_clause (case_pattern (dotted_name (identifier))) consequence: (block (raise_statement (call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) string_end: (string_end))))))))))",
     "wrappedText": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")",
     "wrappedOffset": 0
   },
@@ -20570,84 +19592,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)",
     "expectedReparseTree": "(module (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))))) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (identifier) (identifier))))))))))",
-    "wrappedText": "match event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 72
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 206,
-        "$source": 0,
-        "$text": "event.get()",
-        "$span": {
-          "start": 6,
-          "end": 17
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 17,
-          "end": 18
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case Click((x, y)):\n        handle_click_at(x, y)",
-        "$span": {
-          "start": 18,
-          "end": 72
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)",
-    "expectedReparseTree": "(match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))))) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (identifier) (identifier)))))))))",
     "wrappedText": "match event.get():\n    case Click((x, y)):\n        handle_click_at(x, y)",
     "wrappedOffset": 0
   },
@@ -21232,84 +20180,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match event.get():\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match event.get():\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks",
     "expectedReparseTree": "(module (match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (dotted_name (identifier) (identifier)))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (identifier) (identifier)))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)))) consequence: (block (pass_statement) (comment)))))))",
-    "wrappedText": "match event.get():\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 170
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 206,
-        "$source": 0,
-        "$text": "event.get()",
-        "$span": {
-          "start": 6,
-          "end": 17
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 17,
-          "end": 18
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks",
-        "$span": {
-          "start": 18,
-          "end": 170
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match event.get():\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match event.get():\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match event.get():\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks",
-    "expectedReparseTree": "(match_statement subject: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list)) body: (block (match_block_block alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (dotted_name (identifier) (identifier)))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (identifier) (identifier)))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)))) consequence: (block (pass_statement) (comment))))))",
     "wrappedText": "match event.get():\n    case Click((x, y), button=Button.LEFT):  # This is a left click\n        handle_click_at(x, y)\n    case Click():\n        pass  # ignore other clicks",
     "wrappedOffset": 0
   },
@@ -21998,109 +20872,11 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "for action in actions:\n    match action:\n        case {\"text\": message, \"color\": c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": duration}:\n            ui.wait(duration)\n        case {\"sound\": url, \"format\": \"ogg\"}:\n            ui.play(url)\n        case {a.b: c}:\n            action()\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
-    "pattern": "module",
+    "pattern": "for_statement",
     "edits": [],
     "expectedSourceOut": "for action in actions:\n    match action:\n        case {\"text\": message, \"color\": c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": duration}:\n            ui.wait(duration)\n        case {\"sound\": url, \"format\": \"ogg\"}:\n            ui.play(url)\n        case {a.b: c}:\n            action()\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
     "expectedReparseTree": "(module (for_statement left: (identifier) right: (identifier) body: (block (match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (dotted_name (identifier)))) key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (dotted_name (identifier))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))) (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (dotted_name (identifier)))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (dotted_name (identifier)))) key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (dotted_name (identifier) (identifier)) value: (case_pattern (dotted_name (identifier)))))) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern)) key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern))) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)))))))))))))",
     "wrappedText": "for action in actions:\n    match action:\n        case {\"text\": message, \"color\": c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": duration}:\n            ui.wait(duration)\n        case {\"sound\": url, \"format\": \"ogg\"}:\n            ui.play(url)\n        case {a.b: c}:\n            action()\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 137,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 416
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_for": {
-        "$type": 29,
-        "$source": 0,
-        "$text": "for",
-        "$span": {
-          "start": 0,
-          "end": 3
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_left": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "action",
-        "$span": {
-          "start": 4,
-          "end": 10
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_in": {
-        "$type": 30,
-        "$source": 0,
-        "$text": "in",
-        "$span": {
-          "start": 11,
-          "end": 13
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_right": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "actions",
-        "$span": {
-          "start": 14,
-          "end": 21
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 21,
-          "end": 22
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 4,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "match action:\n        case {\"text\": message, \"color\": c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": duration}:\n            ui.wait(duration)\n        case {\"sound\": url, \"format\": \"ogg\"}:\n            ui.play(url)\n        case {a.b: c}:\n            action()\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
-        "$span": {
-          "start": 27,
-          "end": 416
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 5,
-        "$named": true
-      }
-    },
-    "expectedOutput": "for action in actions:\n  match action:\n        case {\"text\": message, \"color\": c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": duration}:\n            ui.wait(duration)\n        case {\"sound\": url, \"format\": \"ogg\"}:\n            ui.play(url)\n        case {a.b: c}:\n            action()\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")\n"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "for action in actions:\n    match action:\n        case {\"text\": message, \"color\": c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": duration}:\n            ui.wait(duration)\n        case {\"sound\": url, \"format\": \"ogg\"}:\n            ui.play(url)\n        case {a.b: c}:\n            action()\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "for action in actions:\n  match action:\n        case {\"text\": message, \"color\": c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": duration}:\n            ui.wait(duration)\n        case {\"sound\": url, \"format\": \"ogg\"}:\n            ui.play(url)\n        case {a.b: c}:\n            action()\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")\n",
-    "expectedReparseTree": "(for_statement left: (identifier) right: (identifier) body: (block (match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (dotted_name (identifier)))) key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (dotted_name (identifier))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))) (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (dotted_name (identifier)))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (dotted_name (identifier)))) key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (dotted_name (identifier) (identifier)) value: (case_pattern (dotted_name (identifier)))))) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern)) key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern))) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end))))))))))))",
-    "wrappedText": "for action in actions:\n  match action:\n        case {\"text\": message, \"color\": c}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": duration}:\n            ui.wait(duration)\n        case {\"sound\": url, \"format\": \"ogg\"}:\n            ui.play(url)\n        case {a.b: c}:\n            action()\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")\n",
     "wrappedOffset": 0
   },
   {
@@ -24116,109 +22892,11 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "for action in actions:\n    match action:\n        case {\"text\": str(message), \"color\": str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": float(duration)}:\n            ui.wait(duration)\n        case {\"sound\": str(url), \"format\": \"ogg\"}:\n            ui.play(url)\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
-    "pattern": "module",
+    "pattern": "for_statement",
     "edits": [],
     "expectedSourceOut": "for action in actions:\n    match action:\n        case {\"text\": str(message), \"color\": str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": float(duration)}:\n            ui.wait(duration)\n        case {\"sound\": str(url), \"format\": \"ogg\"}:\n            ui.play(url)\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
     "expectedReparseTree": "(module (for_statement left: (identifier) right: (identifier) body: (block (match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (dotted_name (identifier)))))) key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (dotted_name (identifier))))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))) (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (dotted_name (identifier)))))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (dotted_name (identifier)))))) key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern)) key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern))) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)))))))))))))",
     "wrappedText": "for action in actions:\n    match action:\n        case {\"text\": str(message), \"color\": str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": float(duration)}:\n            ui.wait(duration)\n        case {\"sound\": str(url), \"format\": \"ogg\"}:\n            ui.play(url)\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 137,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 394
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_for": {
-        "$type": 29,
-        "$source": 0,
-        "$text": "for",
-        "$span": {
-          "start": 0,
-          "end": 3
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_left": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "action",
-        "$span": {
-          "start": 4,
-          "end": 10
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_in": {
-        "$type": 30,
-        "$source": 0,
-        "$text": "in",
-        "$span": {
-          "start": 11,
-          "end": 13
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_right": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "actions",
-        "$span": {
-          "start": 14,
-          "end": 21
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 21,
-          "end": 22
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 4,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "match action:\n        case {\"text\": str(message), \"color\": str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": float(duration)}:\n            ui.wait(duration)\n        case {\"sound\": str(url), \"format\": \"ogg\"}:\n            ui.play(url)\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
-        "$span": {
-          "start": 27,
-          "end": 394
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 5,
-        "$named": true
-      }
-    },
-    "expectedOutput": "for action in actions:\n  match action:\n        case {\"text\": str(message), \"color\": str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": float(duration)}:\n            ui.wait(duration)\n        case {\"sound\": str(url), \"format\": \"ogg\"}:\n            ui.play(url)\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")\n"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "for action in actions:\n    match action:\n        case {\"text\": str(message), \"color\": str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": float(duration)}:\n            ui.wait(duration)\n        case {\"sound\": str(url), \"format\": \"ogg\"}:\n            ui.play(url)\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "for action in actions:\n  match action:\n        case {\"text\": str(message), \"color\": str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": float(duration)}:\n            ui.wait(duration)\n        case {\"sound\": str(url), \"format\": \"ogg\"}:\n            ui.play(url)\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")\n",
-    "expectedReparseTree": "(for_statement left: (identifier) right: (identifier) body: (block (match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (dotted_name (identifier)))))) key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (dotted_name (identifier))))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))) (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (dotted_name (identifier)))))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (dotted_name (identifier)))))) key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))) consequence: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (identifier)))))) alternative: (case_clause (case_pattern (dict_pattern (dict_pattern_kv key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern)) key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (case_pattern))) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end))))))))))))",
-    "wrappedText": "for action in actions:\n  match action:\n        case {\"text\": str(message), \"color\": str(c)}:\n            ui.set_text_color(c)\n            ui.display(message)\n        case {\"sleep\": float(duration)}:\n            ui.wait(duration)\n        case {\"sound\": str(url), \"format\": \"ogg\"}:\n            ui.play(url)\n        case {\"sound\": _, \"format\": _}:\n            warning(\"Unsupported audio format\")\n",
     "wrappedOffset": 0
   },
   {
@@ -26150,84 +24828,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match x:\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match x:\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()",
     "expectedReparseTree": "(module (match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier) (identifier)))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (simple_pattern_negative (integer))) arguments: (case_pattern (simple_pattern_negative (integer))) arguments: (case_pattern (simple_pattern_negative (integer))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (simple_pattern_negative (integer))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (simple_pattern_negative (integer))) arguments: (case_pattern (simple_pattern_negative (integer))) arguments: (case_pattern (simple_pattern_negative (integer))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (simple_pattern_negative (integer))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list)))))))))",
-    "wrappedText": "match x:\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 544
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "x",
-        "$span": {
-          "start": 6,
-          "end": 7
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 7,
-          "end": 8
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()",
-        "$span": {
-          "start": 8,
-          "end": 544
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match x:\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match x:\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match x:\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()",
-    "expectedReparseTree": "(match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier) (identifier)))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (simple_pattern_negative (integer))) arguments: (case_pattern (simple_pattern_negative (integer))) arguments: (case_pattern (simple_pattern_negative (integer))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (simple_pattern_negative (integer))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (simple_pattern_negative (integer))) arguments: (case_pattern (simple_pattern_negative (integer))) arguments: (case_pattern (simple_pattern_negative (integer))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) alternative: (case_clause (case_pattern (class_pattern dotted_name: (dotted_name (identifier)) arguments: (case_pattern (simple_pattern_negative (integer))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))) arguments: (case_pattern (keyword_pattern identifier: (identifier) simple_pattern: (simple_pattern_negative (integer)))))) (comment) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))))))))",
     "wrappedText": "match x:\n    case Something(): # no args\n        foo1()\n    case Something.Else(): # more complex class name\n        foo2()\n    case Point2D(0, 1, 2): # three args\n        foo3()\n    case Point3D(x=0, y=0, z=0): # kw args\n        foo4()\n    case Point3D(34, x=0, y=0, z=0): # positional + kw args\n        foo5()\n    case Point2D(0, 1, 2,): # three args + trail comma\n        foo6()\n    case Point3D(x=0, y=0, z=0,): # kw args + trail comma\n        foo7()\n    case Point3D(34, x=0, y=0, z=0,): # positional + kw args + trail comma\n        foo8()",
     "wrappedOffset": 0
   },
@@ -27728,84 +26332,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match x:\n    case  -3 + 5j:\n        pass\n    case  -3 + 5j as b2:\n        pass\n    case 3j as b1, -3 + 5j as b2:\n        pass\n    case  -3. + 5j:\n        pass\n    case  3 - 5.j:\n        pass",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match x:\n    case  -3 + 5j:\n        pass\n    case  -3 + 5j as b2:\n        pass\n    case 3j as b1, -3 + 5j as b2:\n        pass\n    case  -3. + 5j:\n        pass\n    case  3 - 5.j:\n        pass",
     "expectedReparseTree": "(module (match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause (case_pattern (complex_pattern imaginary: (integer) (integer))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (as_pattern (case_pattern (complex_pattern imaginary: (integer) (integer))) (identifier))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (as_pattern (case_pattern (simple_pattern_negative (integer))) (identifier))) (case_pattern (as_pattern (case_pattern (complex_pattern imaginary: (integer) (integer))) (identifier))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (complex_pattern imaginary: (float) (integer))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (complex_pattern imaginary: (integer) (float))) consequence: (block (pass_statement)))))))",
-    "wrappedText": "match x:\n    case  -3 + 5j:\n        pass\n    case  -3 + 5j as b2:\n        pass\n    case 3j as b1, -3 + 5j as b2:\n        pass\n    case  -3. + 5j:\n        pass\n    case  3 - 5.j:\n        pass",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 190
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "x",
-        "$span": {
-          "start": 6,
-          "end": 7
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 7,
-          "end": 8
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case  -3 + 5j:\n        pass\n    case  -3 + 5j as b2:\n        pass\n    case 3j as b1, -3 + 5j as b2:\n        pass\n    case  -3. + 5j:\n        pass\n    case  3 - 5.j:\n        pass",
-        "$span": {
-          "start": 8,
-          "end": 190
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match x:\n    case  -3 + 5j:\n        pass\n    case  -3 + 5j as b2:\n        pass\n    case 3j as b1, -3 + 5j as b2:\n        pass\n    case  -3. + 5j:\n        pass\n    case  3 - 5.j:\n        pass"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match x:\n    case  -3 + 5j:\n        pass\n    case  -3 + 5j as b2:\n        pass\n    case 3j as b1, -3 + 5j as b2:\n        pass\n    case  -3. + 5j:\n        pass\n    case  3 - 5.j:\n        pass",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match x:\n    case  -3 + 5j:\n        pass\n    case  -3 + 5j as b2:\n        pass\n    case 3j as b1, -3 + 5j as b2:\n        pass\n    case  -3. + 5j:\n        pass\n    case  3 - 5.j:\n        pass",
-    "expectedReparseTree": "(match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause (case_pattern (complex_pattern imaginary: (integer) (integer))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (as_pattern (case_pattern (complex_pattern imaginary: (integer) (integer))) (identifier))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (as_pattern (case_pattern (simple_pattern_negative (integer))) (identifier))) (case_pattern (as_pattern (case_pattern (complex_pattern imaginary: (integer) (integer))) (identifier))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (complex_pattern imaginary: (float) (integer))) consequence: (block (pass_statement))) alternative: (case_clause (case_pattern (complex_pattern imaginary: (integer) (float))) consequence: (block (pass_statement))))))",
     "wrappedText": "match x:\n    case  -3 + 5j:\n        pass\n    case  -3 + 5j as b2:\n        pass\n    case 3j as b1, -3 + 5j as b2:\n        pass\n    case  -3. + 5j:\n        pass\n    case  3 - 5.j:\n        pass",
     "wrappedOffset": 0
   },
@@ -27842,84 +26372,10 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "match x:\n    case a1, *a2, a3:\n        pass",
-    "pattern": "module",
+    "pattern": "match_statement",
     "edits": [],
     "expectedSourceOut": "match x:\n    case a1, *a2, a3:\n        pass",
     "expectedReparseTree": "(module (match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause (case_pattern (dotted_name (identifier))) (case_pattern (splat_pattern (identifier))) (case_pattern (dotted_name (identifier))) consequence: (block (pass_statement)))))))",
-    "wrappedText": "match x:\n    case a1, *a2, a3:\n        pass",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 134,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 43
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_match": {
-        "$type": 26,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_subject": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "x",
-        "$span": {
-          "start": 6,
-          "end": 7
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 7,
-          "end": 8
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "\n    case a1, *a2, a3:\n        pass",
-        "$span": {
-          "start": 8,
-          "end": 43
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match x:\n    case a1, *a2, a3:\n        pass"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match x:\n    case a1, *a2, a3:\n        pass",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "match x:\n    case a1, *a2, a3:\n        pass",
-    "expectedReparseTree": "(match_statement subject: (identifier) body: (block (match_block_block alternative: (case_clause (case_pattern (dotted_name (identifier))) (case_pattern (splat_pattern (identifier))) (case_pattern (dotted_name (identifier))) consequence: (block (pass_statement))))))",
     "wrappedText": "match x:\n    case a1, *a2, a3:\n        pass",
     "wrappedOffset": 0
   },
@@ -28276,85 +26732,11 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "while true:\n  pass\n  break\n  continue",
-    "pattern": "module",
+    "pattern": "while_statement",
     "edits": [],
     "expectedSourceOut": "while true:\n  pass\n  break\n  continue",
     "expectedReparseTree": "(module (while_statement condition: (identifier) body: (block (pass_statement) (break_statement) (continue_statement))))",
     "wrappedText": "while true:\n  pass\n  break\n  continue",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 138,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 37
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_while": {
-        "$type": 31,
-        "$source": 0,
-        "$text": "while",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_condition": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "true",
-        "$span": {
-          "start": 6,
-          "end": 10
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 10,
-          "end": 11
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "pass\n  break\n  continue",
-        "$span": {
-          "start": 14,
-          "end": 37
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "while true:\n  pass\n  break\n  continue\n"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "while true:\n  pass\n  break\n  continue",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "while true:\n  pass\n  break\n  continue\n",
-    "expectedReparseTree": "(while_statement condition: (identifier) body: (block (pass_statement) (break_statement) (continue_statement)))",
-    "wrappedText": "while true:\n  pass\n  break\n  continue\n",
     "wrappedOffset": 0
   },
   {
@@ -28390,85 +26772,11 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "if a:\n  b\n  c",
-    "pattern": "module",
+    "pattern": "if_statement",
     "edits": [],
     "expectedSourceOut": "if a:\n  b\n  c",
     "expectedReparseTree": "(module (if_statement condition: (identifier) consequence: (block (expression_statement (identifier)) (expression_statement (identifier)))))",
     "wrappedText": "if a:\n  b\n  c",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 131,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 13
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_if": {
-        "$type": 22,
-        "$source": 0,
-        "$text": "if",
-        "$span": {
-          "start": 0,
-          "end": 2
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_condition": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "a",
-        "$span": {
-          "start": 3,
-          "end": 4
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 4,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_consequence": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "b\n  c",
-        "$span": {
-          "start": 8,
-          "end": 13
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "if a:\n  b\n  c\n"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "if a:\n  b\n  c",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "if a:\n  b\n  c\n",
-    "expectedReparseTree": "(if_statement condition: (identifier) consequence: (block (expression_statement (identifier)) (expression_statement (identifier))))",
-    "wrappedText": "if a:\n  b\n  c\n",
     "wrappedOffset": 0
   },
   {
@@ -28584,97 +26892,11 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "class A(B, C):\n  def d():\n    e",
-    "pattern": "module",
+    "pattern": "class_definition",
     "edits": [],
     "expectedSourceOut": "class A(B, C):\n  def d():\n    e",
     "expectedReparseTree": "(module (class_definition name: (identifier) superclasses: (argument_list (identifier) (identifier)) body: (block (function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (identifier)))))))",
     "wrappedText": "class A(B, C):\n  def d():\n    e",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 154,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 31
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_class": {
-        "$type": 44,
-        "$source": 0,
-        "$text": "class",
-        "$span": {
-          "start": 0,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_name": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "A",
-        "$span": {
-          "start": 6,
-          "end": 7
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_superclasses": {
-        "$type": 157,
-        "$source": 0,
-        "$text": "(B, C)",
-        "$span": {
-          "start": 7,
-          "end": 13
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 13,
-          "end": 14
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "def d():\n    e",
-        "$span": {
-          "start": 17,
-          "end": 31
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 4,
-        "$named": true
-      }
-    },
-    "expectedOutput": "class A(B, C):\n  def d():\n    e\n"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "class A(B, C):\n  def d():\n    e",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "class A(B, C):\n  def d():\n    e\n",
-    "expectedReparseTree": "(class_definition name: (identifier) superclasses: (argument_list (identifier) (identifier)) body: (block (function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (identifier))))))",
-    "wrappedText": "class A(B, C):\n  def d():\n    e\n",
     "wrappedOffset": 0
   },
   {
@@ -28934,7 +27156,7 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "e",
-    "pattern": "expression_statement",
+    "pattern": "block",
     "edits": [],
     "expectedSourceOut": "e",
     "expectedReparseTree": "(expression_statement (identifier))",
@@ -29001,130 +27223,6 @@
     "expectedSourceOut": "a.b",
     "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
     "wrappedText": "[a.b]",
-    "wrappedOffset": 1
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 203,
-      "$source": 0,
-      "$span": {
-        "start": 84,
-        "end": 110
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_object": {
-        "$type": 203,
-        "$source": 0,
-        "$text": "buttons[0].clicked",
-        "$span": {
-          "start": 84,
-          "end": 102
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": true
-      },
-      "_.": {
-        "$type": 4,
-        "$source": 0,
-        "$text": ".",
-        "$span": {
-          "start": 102,
-          "end": 103
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": false
-      },
-      "_attribute": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "connect",
-        "$span": {
-          "start": 103,
-          "end": 110
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": true
-      }
-    },
-    "expectedOutput": "buttons[0].clicked.connect"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "buttons[0].clicked.connect",
-    "pattern": "attribute",
-    "edits": [],
-    "expectedSourceOut": "buttons[0].clicked.connect",
-    "expectedReparseTree": "(attribute object: (attribute object: (subscript value: (identifier) subscript: (integer)) attribute: (identifier)) attribute: (identifier))",
-    "wrappedText": "[buttons[0].clicked.connect]",
-    "wrappedOffset": 1
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 203,
-      "$source": 0,
-      "$span": {
-        "start": 84,
-        "end": 102
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_object": {
-        "$type": 204,
-        "$source": 0,
-        "$text": "buttons[0]",
-        "$span": {
-          "start": 84,
-          "end": 94
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": true
-      },
-      "_.": {
-        "$type": 4,
-        "$source": 0,
-        "$text": ".",
-        "$span": {
-          "start": 94,
-          "end": 95
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": false
-      },
-      "_attribute": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "clicked",
-        "$span": {
-          "start": 95,
-          "end": 102
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": true
-      }
-    },
-    "expectedOutput": "buttons[0].clicked"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "buttons[0].clicked",
-    "pattern": "attribute",
-    "edits": [],
-    "expectedSourceOut": "buttons[0].clicked",
-    "expectedReparseTree": "(attribute object: (subscript value: (identifier) subscript: (integer)) attribute: (identifier))",
-    "wrappedText": "[buttons[0].clicked]",
     "wrappedOffset": 1
   },
   {
@@ -29249,6 +27347,130 @@
     "expectedSourceOut": "e[2].f",
     "expectedReparseTree": "(attribute object: (subscript value: (identifier) subscript: (integer)) attribute: (identifier))",
     "wrappedText": "[e[2].f]",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 203,
+      "$source": 0,
+      "$span": {
+        "start": 84,
+        "end": 110
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_object": {
+        "$type": 203,
+        "$source": 0,
+        "$text": "buttons[0].clicked",
+        "$span": {
+          "start": 84,
+          "end": 102
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_.": {
+        "$type": 4,
+        "$source": 0,
+        "$text": ".",
+        "$span": {
+          "start": 102,
+          "end": 103
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_attribute": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "connect",
+        "$span": {
+          "start": 103,
+          "end": 110
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "buttons[0].clicked.connect"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "buttons[0].clicked.connect",
+    "pattern": "attribute",
+    "edits": [],
+    "expectedSourceOut": "buttons[0].clicked.connect",
+    "expectedReparseTree": "(attribute object: (attribute object: (subscript value: (identifier) subscript: (integer)) attribute: (identifier)) attribute: (identifier))",
+    "wrappedText": "[buttons[0].clicked.connect]",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 203,
+      "$source": 0,
+      "$span": {
+        "start": 84,
+        "end": 102
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_object": {
+        "$type": 204,
+        "$source": 0,
+        "$text": "buttons[0]",
+        "$span": {
+          "start": 84,
+          "end": 94
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_.": {
+        "$type": 4,
+        "$source": 0,
+        "$text": ".",
+        "$span": {
+          "start": 94,
+          "end": 95
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_attribute": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "clicked",
+        "$span": {
+          "start": 95,
+          "end": 102
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "buttons[0].clicked"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "buttons[0].clicked",
+    "pattern": "attribute",
+    "edits": [],
+    "expectedSourceOut": "buttons[0].clicked",
+    "expectedReparseTree": "(attribute object: (subscript value: (identifier) subscript: (integer)) attribute: (identifier))",
+    "wrappedText": "[buttons[0].clicked]",
     "wrappedOffset": 1
   },
   {
@@ -29472,80 +27694,6 @@
       "$type": 204,
       "$source": 0,
       "$span": {
-        "start": 84,
-        "end": 94
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_value": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "buttons",
-        "$span": {
-          "start": 84,
-          "end": 91
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": true
-      },
-      "_[": {
-        "$type": 45,
-        "$source": 0,
-        "$text": "[",
-        "$span": {
-          "start": 91,
-          "end": 92
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": false
-      },
-      "_subscript": {
-        "$type": 93,
-        "$source": 0,
-        "$text": "0",
-        "$span": {
-          "start": 92,
-          "end": 93
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": true
-      },
-      "_]": {
-        "$type": 46,
-        "$source": 0,
-        "$text": "]",
-        "$span": {
-          "start": 93,
-          "end": 94
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": false
-      }
-    },
-    "expectedOutput": "buttons[0]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "buttons[0]",
-    "pattern": "subscript",
-    "edits": [],
-    "expectedSourceOut": "buttons[0]",
-    "expectedReparseTree": "(subscript value: (identifier) subscript: (integer))",
-    "wrappedText": "[buttons[0]]",
-    "wrappedOffset": 1
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 204,
-      "$source": 0,
-      "$span": {
         "start": 25,
         "end": 29
       },
@@ -29617,87 +27765,75 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 145,
+      "$type": 204,
       "$source": 0,
       "$span": {
-        "start": 111,
-        "end": 130
+        "start": 84,
+        "end": 94
       },
       "$nodeHandle": 0,
       "$named": true,
-      "_def": {
-        "$type": 37,
+      "_value": {
+        "$type": 1,
         "$source": 0,
-        "$text": "def",
+        "$text": "buttons",
         "$span": {
-          "start": 111,
-          "end": 114
+          "start": 84,
+          "end": 91
         },
         "$nodeHandle": 0,
         "$childIndex": 0,
-        "$named": false
+        "$named": true
       },
-      "_name": {
-        "$type": 1,
+      "_[": {
+        "$type": 45,
         "$source": 0,
-        "$text": "spam",
+        "$text": "[",
         "$span": {
-          "start": 115,
-          "end": 119
+          "start": 91,
+          "end": 92
         },
         "$nodeHandle": 0,
         "$childIndex": 1,
-        "$named": true
+        "$named": false
       },
-      "_parameters": {
-        "$type": 146,
+      "_subscript": {
+        "$type": 93,
         "$source": 0,
-        "$text": "()",
+        "$text": "0",
         "$span": {
-          "start": 119,
-          "end": 121
+          "start": 92,
+          "end": 93
         },
         "$nodeHandle": 0,
         "$childIndex": 2,
         "$named": true
       },
-      "_:": {
-        "$type": 23,
+      "_]": {
+        "$type": 46,
         "$source": 0,
-        "$text": ":",
+        "$text": "]",
         "$span": {
-          "start": 121,
-          "end": 122
+          "start": 93,
+          "end": 94
         },
         "$nodeHandle": 0,
         "$childIndex": 3,
         "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "...",
-        "$span": {
-          "start": 127,
-          "end": 130
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 4,
-        "$named": true
       }
     },
-    "expectedOutput": "def spam():\n  ...\n"
+    "expectedOutput": "buttons[0]"
   },
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "def spam():\n    ...",
-    "pattern": "function_definition",
+    "sourceIn": "buttons[0]",
+    "pattern": "subscript",
     "edits": [],
-    "expectedSourceOut": "def spam():\n  ...\n",
-    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (ellipsis))))",
-    "wrappedText": "def spam():\n  ...\n",
-    "wrappedOffset": 0
+    "expectedSourceOut": "buttons[0]",
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (integer))",
+    "wrappedText": "[buttons[0]]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -29789,51 +27925,87 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 146,
+      "$type": 145,
       "$source": 0,
       "$span": {
-        "start": 119,
-        "end": 121
+        "start": 111,
+        "end": 130
       },
       "$nodeHandle": 0,
       "$named": true,
-      "_(": {
-        "$type": 7,
+      "_def": {
+        "$type": 37,
         "$source": 0,
-        "$text": "(",
+        "$text": "def",
         "$span": {
-          "start": 119,
-          "end": 120
+          "start": 111,
+          "end": 114
         },
         "$nodeHandle": 0,
         "$childIndex": 0,
         "$named": false
       },
-      "_)": {
-        "$type": 8,
+      "_name": {
+        "$type": 1,
         "$source": 0,
-        "$text": ")",
+        "$text": "spam",
         "$span": {
-          "start": 120,
-          "end": 121
+          "start": 115,
+          "end": 119
         },
         "$nodeHandle": 0,
         "$childIndex": 1,
+        "$named": true
+      },
+      "_parameters": {
+        "$type": 146,
+        "$source": 0,
+        "$text": "()",
+        "$span": {
+          "start": 119,
+          "end": 121
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      },
+      "_:": {
+        "$type": 23,
+        "$source": 0,
+        "$text": ":",
+        "$span": {
+          "start": 121,
+          "end": 122
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
         "$named": false
+      },
+      "_body": {
+        "$type": 160,
+        "$source": 0,
+        "$text": "...",
+        "$span": {
+          "start": 127,
+          "end": 130
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": true
       }
     },
-    "expectedOutput": "()"
+    "expectedOutput": "def spam():\n  ...\n"
   },
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "()",
-    "pattern": "parameters",
+    "sourceIn": "def spam():\n    ...",
+    "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(parameters)",
-    "wrappedText": "def _f():\n    pass",
-    "wrappedOffset": 6
+    "expectedSourceOut": "def spam():\n  ...\n",
+    "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (ellipsis))))",
+    "wrappedText": "def spam():\n  ...\n",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -29939,6 +28111,56 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 146,
+      "$source": 0,
+      "$span": {
+        "start": 119,
+        "end": 121
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 119,
+          "end": 120
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 120,
+          "end": 121
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "def _f():\n    pass",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 122,
       "$source": 0,
       "$children": [
@@ -29968,7 +28190,7 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "...",
-    "pattern": "expression_statement",
+    "pattern": "block",
     "edits": [],
     "expectedSourceOut": "...",
     "expectedReparseTree": "(expression_statement (ellipsis))",
@@ -30008,7 +28230,7 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "g",
-    "pattern": "expression_statement",
+    "pattern": "block",
     "edits": [],
     "expectedSourceOut": "g",
     "expectedReparseTree": "(expression_statement (identifier))",
@@ -30048,7 +28270,7 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "g",
-    "pattern": "expression_statement",
+    "pattern": "block",
     "edits": [],
     "expectedSourceOut": "g",
     "expectedReparseTree": "(expression_statement (identifier))",
@@ -30176,123 +28398,11 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c",
-    "pattern": "module",
+    "pattern": "if_statement",
     "edits": [],
     "expectedSourceOut": "if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c",
     "expectedReparseTree": "(module (if_statement condition: (identifier) (comment) (comment) (comment) consequence: (block (expression_statement (identifier)) (comment) (expression_statement (identifier)))))",
     "wrappedText": "if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 131,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 99,
-          "$source": 0,
-          "$text": "# one",
-          "$span": {
-            "start": 8,
-            "end": 13
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 3,
-          "$named": true
-        },
-        {
-          "$type": 99,
-          "$source": 0,
-          "$text": "# two",
-          "$span": {
-            "start": 14,
-            "end": 19
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 4,
-          "$named": true
-        },
-        {
-          "$type": 99,
-          "$source": 0,
-          "$text": "# three",
-          "$span": {
-            "start": 24,
-            "end": 31
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 5,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 0,
-        "end": 50
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_if": {
-        "$type": 22,
-        "$source": 0,
-        "$text": "if",
-        "$span": {
-          "start": 0,
-          "end": 2
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_condition": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "a",
-        "$span": {
-          "start": 3,
-          "end": 4
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 4,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_consequence": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "b\n    # four\n  c",
-        "$span": {
-          "start": 34,
-          "end": 50
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 6,
-        "$named": true
-      }
-    },
-    "expectedOutput": "if a:\n  b\n    # four\n  c\n"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "if a:\n  # one\n# two\n    # three\n  b\n    # four\n  c",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "if a:\n  b\n    # four\n  c\n",
-    "expectedReparseTree": "(if_statement condition: (identifier) consequence: (block (expression_statement (identifier)) (comment) (expression_statement (identifier))))",
-    "wrappedText": "if a:\n  b\n    # four\n  c\n",
     "wrappedOffset": 0
   },
   {
@@ -30512,7 +28622,7 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "b",
-    "pattern": "expression_statement",
+    "pattern": "block",
     "edits": [],
     "expectedSourceOut": "b",
     "expectedReparseTree": "(expression_statement (identifier))",
@@ -31038,85 +29148,11 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "if a:\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()",
-    "pattern": "module",
+    "pattern": "if_statement",
     "edits": [],
     "expectedSourceOut": "if a:\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()",
     "expectedReparseTree": "(module (if_statement condition: (identifier) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))) (expression_statement (call function: (identifier) arguments: (argument_list))) (function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) (expression_statement (call function: (identifier) arguments: (argument_list))))))",
     "wrappedText": "if a:\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 131,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 64
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_if": {
-        "$type": 22,
-        "$source": 0,
-        "$text": "if",
-        "$span": {
-          "start": 0,
-          "end": 2
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_condition": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "a",
-        "$span": {
-          "start": 3,
-          "end": 4
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 4,
-          "end": 5
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_consequence": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()",
-        "$span": {
-          "start": 12,
-          "end": 64
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      }
-    },
-    "expectedOutput": "if a:\n  b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()\n"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "if a:\n\n\n    b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "if a:\n  b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()\n",
-    "expectedReparseTree": "(if_statement condition: (identifier) consequence: (block (expression_statement (call function: (identifier) arguments: (argument_list))) (expression_statement (call function: (identifier) arguments: (argument_list))) (function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (call function: (identifier) arguments: (argument_list))))) (expression_statement (call function: (identifier) arguments: (argument_list)))))",
-    "wrappedText": "if a:\n  b()\n\n\n    c()\n\n\n    def d():\n\n\n        e()\n\n\n    f()\n",
     "wrappedOffset": 0
   },
   {
@@ -31272,7 +29308,7 @@
     "kind": "roundtrip",
     "grammar": "python",
     "sourceIn": "e()",
-    "pattern": "expression_statement",
+    "pattern": "block",
     "edits": [],
     "expectedSourceOut": "e()",
     "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list)))",
@@ -31427,56 +29463,6 @@
     "expectedSourceOut": "f()",
     "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
     "wrappedText": "_ = f()",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 206,
-      "$source": 0,
-      "$span": {
-        "start": 51,
-        "end": 54
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_function": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "e",
-        "$span": {
-          "start": 51,
-          "end": 52
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": true
-      },
-      "_arguments": {
-        "$type": 157,
-        "$source": 0,
-        "$text": "()",
-        "$span": {
-          "start": 52,
-          "end": 54
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      }
-    },
-    "expectedOutput": "e()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "e()",
-    "pattern": "call",
-    "edits": [],
-    "expectedSourceOut": "e()",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
-    "wrappedText": "_ = e()",
     "wrappedOffset": 4
   },
   {
@@ -32322,913 +30308,5 @@
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
     "wrappedText": "_ = \"aa\"",
     "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 108,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 145,
-          "$source": 0,
-          "$text": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
-          "$span": {
-            "start": 0,
-            "end": 141
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 0,
-        "end": 141
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
-    "expectedReparseTree": "(module (function_definition name: (identifier) type_parameters: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))) (type (splat_type identifier: (identifier)))) parameters: (parameters) body: (block (type_alias_statement left: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))) (type (splat_type identifier: (identifier)))))) right: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))))) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))))))))) (return_statement (identifier)))))",
-    "wrappedText": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 145,
-      "$source": 0,
-      "$span": {
-        "start": 0,
-        "end": 141
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_def": {
-        "$type": 37,
-        "$source": 0,
-        "$text": "def",
-        "$span": {
-          "start": 0,
-          "end": 3
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_name": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "more_generic",
-        "$span": {
-          "start": 4,
-          "end": 16
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_type_parameters": {
-        "$type": 155,
-        "$source": 0,
-        "$text": "[T, *Ts, **P]",
-        "$span": {
-          "start": 16,
-          "end": 29
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": true
-      },
-      "_parameters": {
-        "$type": 146,
-        "$source": 0,
-        "$text": "()",
-        "$span": {
-          "start": 29,
-          "end": 31
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 3,
-        "$named": true
-      },
-      "_:": {
-        "$type": 23,
-        "$source": 0,
-        "$text": ":",
-        "$span": {
-          "start": 31,
-          "end": 32
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 4,
-        "$named": false
-      },
-      "_body": {
-        "$type": 160,
-        "$source": 0,
-        "$text": "type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
-        "$span": {
-          "start": 37,
-          "end": 141
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 5,
-        "$named": true
-      }
-    },
-    "expectedOutput": "def more_generic[T, *Ts, **P]():\n  type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
-    "pattern": "module",
-    "edits": [],
-    "expectedSourceOut": "def more_generic[T, *Ts, **P]():\n  type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n",
-    "expectedReparseTree": "(function_definition name: (identifier) type_parameters: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))) (type (splat_type identifier: (identifier)))) parameters: (parameters) body: (block (type_alias_statement left: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))) (type (splat_type identifier: (identifier)))))) right: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))))) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))))))))) (return_statement (identifier))))",
-    "wrappedText": "def more_generic[T, *Ts, **P]():\n  type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 1,
-          "$source": 0,
-          "$text": "T",
-          "$span": {
-            "start": 17,
-            "end": 18
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 17,
-        "end": 18
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "T"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "T",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "T",
-    "expectedReparseTree": "(type (identifier))",
-    "wrappedText": "_: T = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 209,
-          "$source": 0,
-          "$text": "*Ts",
-          "$span": {
-            "start": 20,
-            "end": 23
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 20,
-        "end": 23
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "*Ts"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "*Ts",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "*Ts",
-    "expectedReparseTree": "(type (splat_type identifier: (identifier)))",
-    "wrappedText": "_: *Ts = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 209,
-          "$source": 0,
-          "$text": "**P",
-          "$span": {
-            "start": 25,
-            "end": 28
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 25,
-        "end": 28
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "**P"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "**P",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "**P",
-    "expectedReparseTree": "(type (splat_type identifier: (identifier)))",
-    "wrappedText": "_: **P = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 210,
-          "$source": 0,
-          "$text": "TA[T2, *Ts2, **P2]",
-          "$span": {
-            "start": 42,
-            "end": 60
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 42,
-        "end": 60
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "TA[T2, *Ts2, **P2]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "TA[T2, *Ts2, **P2]",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "TA[T2, *Ts2, **P2]",
-    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))) (type (splat_type identifier: (identifier))))))",
-    "wrappedText": "_: TA[T2, *Ts2, **P2] = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 210,
-          "$source": 0,
-          "$text": "tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]",
-          "$span": {
-            "start": 63,
-            "end": 127
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 63,
-        "end": 127
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]",
-    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))))) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))))))))",
-    "wrappedText": "_: tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]] = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 1,
-          "$source": 0,
-          "$text": "T2",
-          "$span": {
-            "start": 45,
-            "end": 47
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 45,
-        "end": 47
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "T2"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "T2",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "T2",
-    "expectedReparseTree": "(type (identifier))",
-    "wrappedText": "_: T2 = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 209,
-          "$source": 0,
-          "$text": "*Ts2",
-          "$span": {
-            "start": 49,
-            "end": 53
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 49,
-        "end": 53
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "*Ts2"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "*Ts2",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "*Ts2",
-    "expectedReparseTree": "(type (splat_type identifier: (identifier)))",
-    "wrappedText": "_: *Ts2 = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 209,
-          "$source": 0,
-          "$text": "**P2",
-          "$span": {
-            "start": 55,
-            "end": 59
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 55,
-        "end": 59
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "**P2"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "**P2",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "**P2",
-    "expectedReparseTree": "(type (splat_type identifier: (identifier)))",
-    "wrappedText": "_: **P2 = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 210,
-          "$source": 0,
-          "$text": "Callable[P, tuple[T, *Ts]]",
-          "$span": {
-            "start": 69,
-            "end": 95
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 69,
-        "end": 95
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "Callable[P, tuple[T, *Ts]]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "Callable[P, tuple[T, *Ts]]",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "Callable[P, tuple[T, *Ts]]",
-    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier)))))))))",
-    "wrappedText": "_: Callable[P, tuple[T, *Ts]] = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 210,
-          "$source": 0,
-          "$text": "Callable[P2, tuple[T2, *Ts2]]",
-          "$span": {
-            "start": 97,
-            "end": 126
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 97,
-        "end": 126
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "Callable[P2, tuple[T2, *Ts2]]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "Callable[P2, tuple[T2, *Ts2]]",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "Callable[P2, tuple[T2, *Ts2]]",
-    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier)))))))))",
-    "wrappedText": "_: Callable[P2, tuple[T2, *Ts2]] = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 1,
-          "$source": 0,
-          "$text": "P",
-          "$span": {
-            "start": 78,
-            "end": 79
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 78,
-        "end": 79
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "P"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "P",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "P",
-    "expectedReparseTree": "(type (identifier))",
-    "wrappedText": "_: P = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 210,
-          "$source": 0,
-          "$text": "tuple[T, *Ts]",
-          "$span": {
-            "start": 81,
-            "end": 94
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 81,
-        "end": 94
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "tuple[T, *Ts]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "tuple[T, *Ts]",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "tuple[T, *Ts]",
-    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))",
-    "wrappedText": "_: tuple[T, *Ts] = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 1,
-          "$source": 0,
-          "$text": "P2",
-          "$span": {
-            "start": 106,
-            "end": 108
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 106,
-        "end": 108
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "P2"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "P2",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "P2",
-    "expectedReparseTree": "(type (identifier))",
-    "wrappedText": "_: P2 = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 210,
-          "$source": 0,
-          "$text": "tuple[T2, *Ts2]",
-          "$span": {
-            "start": 110,
-            "end": 125
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 110,
-        "end": 125
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "tuple[T2, *Ts2]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "tuple[T2, *Ts2]",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "tuple[T2, *Ts2]",
-    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))",
-    "wrappedText": "_: tuple[T2, *Ts2] = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 1,
-          "$source": 0,
-          "$text": "T",
-          "$span": {
-            "start": 87,
-            "end": 88
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 87,
-        "end": 88
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "T"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "T",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "T",
-    "expectedReparseTree": "(type (identifier))",
-    "wrappedText": "_: T = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 209,
-          "$source": 0,
-          "$text": "*Ts",
-          "$span": {
-            "start": 90,
-            "end": 93
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 90,
-        "end": 93
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "*Ts"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "*Ts",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "*Ts",
-    "expectedReparseTree": "(type (splat_type identifier: (identifier)))",
-    "wrappedText": "_: *Ts = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 1,
-          "$source": 0,
-          "$text": "T2",
-          "$span": {
-            "start": 116,
-            "end": 118
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 116,
-        "end": 118
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "T2"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "T2",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "T2",
-    "expectedReparseTree": "(type (identifier))",
-    "wrappedText": "_: T2 = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 208,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 209,
-          "$source": 0,
-          "$text": "*Ts2",
-          "$span": {
-            "start": 120,
-            "end": 124
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 120,
-        "end": 124
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "*Ts2"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "*Ts2",
-    "pattern": "type",
-    "edits": [],
-    "expectedSourceOut": "*Ts2",
-    "expectedReparseTree": "(type (splat_type identifier: (identifier)))",
-    "wrappedText": "_: *Ts2 = None",
-    "wrappedOffset": 3
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 146,
-      "$source": 0,
-      "$span": {
-        "start": 29,
-        "end": 31
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_(": {
-        "$type": 7,
-        "$source": 0,
-        "$text": "(",
-        "$span": {
-          "start": 29,
-          "end": 30
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_)": {
-        "$type": 8,
-        "$source": 0,
-        "$text": ")",
-        "$span": {
-          "start": 30,
-          "end": 31
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": false
-      }
-    },
-    "expectedOutput": "()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "()",
-    "pattern": "parameters",
-    "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(parameters)",
-    "wrappedText": "def _f():\n    pass",
-    "wrappedOffset": 6
   }
 ]

@@ -2152,7 +2152,7 @@ export interface _CallSignature {
 
 export interface ClassBodyMember {
   readonly $type: TSKindId.ClassBodyMember;
-  readonly $children: readonly [AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition | Semicolon | ","];
+  readonly $children: readonly [AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition | Semicolon];
 }
 
 export interface ClassBodyMethod {
@@ -2164,7 +2164,7 @@ export interface ClassBodyMethod {
 
 export interface ClassBodyMethodSig {
   readonly $type: TSKindId.ClassBodyMethodSig;
-  readonly $children: readonly [MethodSignature | FunctionSignatureAutomaticSemicolon | ","];
+  readonly $children: readonly [MethodSignature | FunctionSignatureAutomaticSemicolon];
 }
 
 export interface _ClassHeritageExtendsClause {
@@ -2174,26 +2174,26 @@ export interface _ClassHeritageExtendsClause {
 
 export interface _ClassHeritageImplementsClause {
   readonly $type: TSKindId._ClassHeritageImplementsClause;
-  readonly $children: readonly [ImplementsClause];
+  readonly $children: ImplementsClause;
 }
 
 export interface ExportStatementDefaultDeclArm {
   readonly $type: TSKindId.ExportStatementDefaultDeclArm;
   readonly _decorator?: readonly (Decorator)[];
   decorators(): readonly (Decorator)[];
-  readonly $children: readonly [Declaration | ExportStatementDefaultDeclArmDefaultKw];
+  readonly $children: Declaration | ExportStatementDefaultDeclArmDefaultKw;
 }
 
 export interface ExportStatementDefaultDeclArmDefaultKw {
   readonly $type: TSKindId.ExportStatementDefaultDeclArmDefaultKw;
-  readonly $children: readonly [Declaration | ExportStatementDefaultDeclArmDefaultKwValue];
+  readonly $children: Declaration | ExportStatementDefaultDeclArmDefaultKwValue;
 }
 
 export interface ExportStatementDefaultDeclArmDefaultKwValue {
   readonly $type: TSKindId.ExportStatementDefaultDeclArmDefaultKwValue;
   readonly _value: Expression;
   value(): Expression;
-  readonly $children: readonly [Semicolon];
+  readonly $children: Semicolon;
 }
 
 export interface ExportStatementDefaultFromArm {
@@ -2205,14 +2205,14 @@ export interface ExportStatementDefaultFromArmClauseFrom {
   readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom;
   readonly _source: String;
   source(): String;
-  readonly $children: readonly [ExportClause];
+  readonly $children: ExportClause;
 }
 
 export interface ExportStatementDefaultFromArmNsFrom {
   readonly $type: TSKindId.ExportStatementDefaultFromArmNsFrom;
   readonly _source: String;
   source(): String;
-  readonly $children: readonly [NamespaceExport];
+  readonly $children: NamespaceExport;
 }
 
 export interface ExportStatementDefaultFromArmStarFrom {
@@ -2255,7 +2255,7 @@ export interface ForHeader {
   };
   operator(): number;
   right(): Expressions;
-  readonly $children: readonly [ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind];
+  readonly $children: ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
 }
 
 export interface ForHeaderLetConstKind {
@@ -2267,7 +2267,7 @@ export interface ForHeaderLetConstKind {
   };
   kind(): number;
   left(): Identifier | DestructuringPattern;
-  readonly $children: readonly [AutomaticSemicolon];
+  readonly $children?: AutomaticSemicolon;
 }
 
 export interface ForHeaderLhs {
@@ -2285,7 +2285,7 @@ export interface ForHeaderVarKind {
   };
   kind(): number;
   left(): Identifier | DestructuringPattern;
-  readonly $children: readonly [Initializer];
+  readonly $children?: Initializer;
 }
 
 export interface FromClause {
@@ -2301,12 +2301,12 @@ export interface _ImportClauseDefaultImport {
 
 export interface _ImportClauseNamedImports {
   readonly $type: TSKindId._ImportClauseNamedImports;
-  readonly $children: readonly [NamedImports];
+  readonly $children: NamedImports;
 }
 
 export interface _ImportClauseNamespaceImport {
   readonly $type: TSKindId._ImportClauseNamespaceImport;
-  readonly $children: readonly [NamespaceImport];
+  readonly $children: NamespaceImport;
 }
 
 export interface ImportSpecifierAs {
@@ -2333,7 +2333,7 @@ export interface IndexSignatureColon {
 
 export interface _IndexSignatureMappedTypeClause {
   readonly $type: TSKindId._IndexSignatureMappedTypeClause;
-  readonly $children: readonly [MappedTypeClause];
+  readonly $children: MappedTypeClause;
 }
 
 export interface Initializer {
@@ -2359,7 +2359,7 @@ export interface JsxString {
 
 export interface LhsExpression {
   readonly $type: "_lhs_expression";
-  readonly $children: readonly [MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression];
+  readonly $children: MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
 }
 
 export interface _Module {
@@ -2397,14 +2397,14 @@ export interface ParameterName {
 
 export interface _ParenthesizedExpressionSequence {
   readonly $type: TSKindId._ParenthesizedExpressionSequence;
-  readonly $children: readonly [SequenceExpression];
+  readonly $children: SequenceExpression;
 }
 
 export interface ParenthesizedExpressionTyped {
   readonly $type: TSKindId.ParenthesizedExpressionTyped;
   readonly _type?: TypeAnnotation;
   type(): TypeAnnotation | undefined;
-  readonly $children: readonly [Expression];
+  readonly $children: Expression;
 }
 
 export interface PublicFieldDefinitionAbstractFirst {
@@ -2426,7 +2426,7 @@ export interface PublicFieldDefinitionAccessFirst {
     readonly declare_marker?: BooleanKeyword<"declare">;
   };
   declareMarker(): boolean | undefined;
-  readonly $children: readonly [AccessibilityModifier];
+  readonly $children: AccessibilityModifier;
 }
 
 export interface PublicFieldDefinitionAccessorOpt {
@@ -2440,7 +2440,7 @@ export interface PublicFieldDefinitionAccessorOpt {
 
 export interface PublicFieldDefinitionDeclareFirst {
   readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst;
-  readonly $children: readonly [AccessibilityModifier];
+  readonly $children?: AccessibilityModifier;
 }
 
 export interface PublicFieldDefinitionReadonlyFirst {
@@ -2465,7 +2465,7 @@ export interface PublicFieldDefinitionStaticMods {
   };
   staticMarker(): number;
   readonlyMarker(): boolean | undefined;
-  readonly $children: readonly [OverrideModifier];
+  readonly $children?: OverrideModifier;
 }
 
 export interface TypeQueryCallExpression {
@@ -2637,7 +2637,7 @@ export interface ArrowFunctionUFormParameter {
   };
   asyncMarker(): boolean | undefined;
   body(): Expression | StatementBlock;
-  readonly $children: readonly [_ArrowFunctionParameter];
+  readonly $children: _ArrowFunctionParameter;
 }
 
 export interface ArrowFunctionUFormUCallSignature {
@@ -2650,7 +2650,7 @@ export interface ArrowFunctionUFormUCallSignature {
   };
   asyncMarker(): boolean | undefined;
   body(): Expression | StatementBlock;
-  readonly $children: readonly [_ArrowFunctionUCallSignature];
+  readonly $children: _ArrowFunctionUCallSignature;
 }
 
 export type ArrowFunction = ArrowFunctionUFormParameter | ArrowFunctionUFormUCallSignature;
@@ -2664,7 +2664,7 @@ export interface AsExpression {
 
 export interface Asserts {
   readonly $type: TSKindId.Asserts;
-  readonly $children: readonly [TypePredicate | Identifier | This];
+  readonly $children: TypePredicate | Identifier | This;
 }
 
 export interface AssertsAnnotation {
@@ -2737,19 +2737,19 @@ export interface BreakStatement {
 export interface CallExpressionUFormCall {
   readonly $type: TSKindId.CallExpression;
   readonly $variant: 'call';
-  readonly $children: readonly [CallExpressionCall];
+  readonly $children: CallExpressionCall;
 }
 
 export interface CallExpressionUFormTemplateCall {
   readonly $type: TSKindId.CallExpression;
   readonly $variant: 'template_call';
-  readonly $children: readonly [CallExpressionTemplateCall];
+  readonly $children: CallExpressionTemplateCall;
 }
 
 export interface CallExpressionUFormMember {
   readonly $type: TSKindId.CallExpression;
   readonly $variant: 'member';
-  readonly $children: readonly [CallExpressionMember];
+  readonly $children: CallExpressionMember;
 }
 
 export type CallExpression = CallExpressionUFormCall | CallExpressionUFormTemplateCall | CallExpressionUFormMember;
@@ -2789,7 +2789,7 @@ export interface Class {
 
 export interface ClassBody {
   readonly $type: TSKindId.ClassBody;
-  readonly $children: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ";")[];
+  readonly $children: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember)[];
 }
 
 export interface ClassDeclaration {
@@ -2815,19 +2815,19 @@ export interface ClassHeritageExtendsClause {
 
 export interface ClassHeritageImplementsClause {
   readonly $type: "class_heritage_implements_clause";
-  readonly $children: readonly [ImplementsClause];
+  readonly $children: ImplementsClause;
 }
 
 export interface ClassHeritageUFormExtendsClause {
   readonly $type: TSKindId.ClassHeritage;
   readonly $variant: 'extends_clause';
-  readonly $children: readonly [_ClassHeritageExtendsClause];
+  readonly $children: _ClassHeritageExtendsClause;
 }
 
 export interface ClassHeritageUFormImplementsClause {
   readonly $type: TSKindId.ClassHeritage;
   readonly $variant: 'implements_clause';
-  readonly $children: readonly [_ClassHeritageImplementsClause];
+  readonly $children: _ClassHeritageImplementsClause;
 }
 
 export type ClassHeritage = ClassHeritageUFormExtendsClause | ClassHeritageUFormImplementsClause;
@@ -2835,7 +2835,7 @@ export interface ClassStaticBlock {
   readonly $type: TSKindId.ClassStaticBlock;
   readonly _body: StatementBlock;
   body(): StatementBlock;
-  readonly $children: readonly [AutomaticSemicolon];
+  readonly $children?: AutomaticSemicolon;
 }
 
 export interface ComputedPropertyName {
@@ -2908,7 +2908,7 @@ export interface DebuggerStatement {
 
 export interface Decorator {
   readonly $type: TSKindId.Decorator;
-  readonly $children: readonly [Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression];
+  readonly $children: Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression;
 }
 
 export interface DecoratorCallExpression {
@@ -2931,7 +2931,7 @@ export interface DecoratorMemberExpression {
 
 export interface DecoratorParenthesizedExpression {
   readonly $type: TSKindId.DecoratorParenthesizedExpression;
-  readonly $children: readonly [Identifier | DecoratorMemberExpression | DecoratorCallExpression];
+  readonly $children: Identifier | DecoratorMemberExpression | DecoratorCallExpression;
 }
 
 export interface DefaultType {
@@ -3020,25 +3020,25 @@ export interface ExportStatementNamespaceExport {
 export interface ExportStatementUFormDefault {
   readonly $type: TSKindId.ExportStatement;
   readonly $variant: 'default';
-  readonly $children: readonly [ExportStatementDefault];
+  readonly $children: ExportStatementDefault;
 }
 
 export interface ExportStatementUFormTypeExport {
   readonly $type: TSKindId.ExportStatement;
   readonly $variant: 'type_export';
-  readonly $children: readonly [_ExportStatementTypeExport];
+  readonly $children: _ExportStatementTypeExport;
 }
 
 export interface ExportStatementUFormEqualsExport {
   readonly $type: TSKindId.ExportStatement;
   readonly $variant: 'equals_export';
-  readonly $children: readonly [_ExportStatementEqualsExport];
+  readonly $children: _ExportStatementEqualsExport;
 }
 
 export interface ExportStatementUFormNamespaceExport {
   readonly $type: TSKindId.ExportStatement;
   readonly $variant: 'namespace_export';
-  readonly $children: readonly [_ExportStatementNamespaceExport];
+  readonly $children: _ExportStatementNamespaceExport;
 }
 
 export type ExportStatement = ExportStatementUFormDefault | ExportStatementUFormTypeExport | ExportStatementUFormEqualsExport | ExportStatementUFormNamespaceExport;
@@ -3046,7 +3046,7 @@ export interface ExpressionStatement {
   readonly $type: TSKindId.ExpressionStatement;
   readonly _semicolon: Semicolon;
   semicolon(): Semicolon;
-  readonly $children: readonly [Expressions];
+  readonly $children: Expressions;
 }
 
 export interface ExtendsClause {
@@ -3104,7 +3104,7 @@ export interface ForInStatement {
   operator(): number;
   right(): Expressions;
   body(): Statement;
-  readonly $children: readonly [ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind];
+  readonly $children: ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
 }
 
 export interface ForStatement {
@@ -3141,7 +3141,7 @@ export interface FunctionDeclaration {
   parameters(): FormalParameters;
   returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
   body(): StatementBlock;
-  readonly $children: readonly [AutomaticSemicolon];
+  readonly $children?: AutomaticSemicolon;
 }
 
 export interface FunctionExpression {
@@ -3228,7 +3228,7 @@ export interface GeneratorFunctionDeclaration {
   parameters(): FormalParameters;
   returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
   body(): StatementBlock;
-  readonly $children: readonly [AutomaticSemicolon];
+  readonly $children?: AutomaticSemicolon;
 }
 
 export interface GenericType {
@@ -3272,12 +3272,12 @@ export interface ImportAttribute {
 
 export interface ImportClauseNamespaceImport {
   readonly $type: "import_clause_namespace_import";
-  readonly $children: readonly [NamespaceImport];
+  readonly $children: NamespaceImport;
 }
 
 export interface ImportClauseNamedImports {
   readonly $type: "import_clause_named_imports";
-  readonly $children: readonly [NamedImports];
+  readonly $children: NamedImports;
 }
 
 export interface ImportClauseDefaultImport {
@@ -3288,19 +3288,19 @@ export interface ImportClauseDefaultImport {
 export interface ImportClauseUFormNamespaceImport {
   readonly $type: TSKindId.ImportClause;
   readonly $variant: 'namespace_import';
-  readonly $children: readonly [_ImportClauseNamespaceImport];
+  readonly $children: _ImportClauseNamespaceImport;
 }
 
 export interface ImportClauseUFormNamedImports {
   readonly $type: TSKindId.ImportClause;
   readonly $variant: 'named_imports';
-  readonly $children: readonly [_ImportClauseNamedImports];
+  readonly $children: _ImportClauseNamedImports;
 }
 
 export interface ImportClauseUFormDefaultImport {
   readonly $type: TSKindId.ImportClause;
   readonly $variant: 'default_import';
-  readonly $children: readonly [_ImportClauseDefaultImport];
+  readonly $children: _ImportClauseDefaultImport;
 }
 
 export type ImportClause = ImportClauseUFormNamespaceImport | ImportClauseUFormNamedImports | ImportClauseUFormDefaultImport;
@@ -3326,7 +3326,7 @@ export interface ImportSpecifierUFormName {
     readonly import_kind?: KindEnum<"type" | "typeof", TSKindId.Type | TSKindId.Typeof>;
   };
   importKind(): number | undefined;
-  readonly $children: readonly [_ImportSpecifierName];
+  readonly $children: _ImportSpecifierName;
 }
 
 export interface ImportSpecifierUFormAs {
@@ -3337,7 +3337,7 @@ export interface ImportSpecifierUFormAs {
     readonly import_kind?: KindEnum<"type" | "typeof", TSKindId.Type | TSKindId.Typeof>;
   };
   importKind(): number | undefined;
-  readonly $children: readonly [ImportSpecifierAs];
+  readonly $children: ImportSpecifierAs;
 }
 
 export type ImportSpecifier = ImportSpecifierUFormName | ImportSpecifierUFormAs;
@@ -3358,7 +3358,7 @@ export interface ImportStatement {
 
 export interface IndexSignatureMappedTypeClause {
   readonly $type: "index_signature_mapped_type_clause";
-  readonly $children: readonly [MappedTypeClause];
+  readonly $children: MappedTypeClause;
 }
 
 export interface IndexSignatureUFormColon {
@@ -3371,7 +3371,7 @@ export interface IndexSignatureUFormColon {
   };
   sign(): number | undefined;
   type(): TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
-  readonly $children: readonly [IndexSignatureColon];
+  readonly $children: IndexSignatureColon;
 }
 
 export interface IndexSignatureUFormMappedTypeClause {
@@ -3384,7 +3384,7 @@ export interface IndexSignatureUFormMappedTypeClause {
   };
   sign(): number | undefined;
   type(): TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
-  readonly $children: readonly [_IndexSignatureMappedTypeClause];
+  readonly $children: _IndexSignatureMappedTypeClause;
 }
 
 export type IndexSignature = IndexSignatureUFormColon | IndexSignatureUFormMappedTypeClause;
@@ -3460,12 +3460,12 @@ export interface JsxElement {
 
 export interface JsxExpression {
   readonly $type: "jsx_expression";
-  readonly $children: readonly [Expression | SequenceExpression | SpreadElement];
+  readonly $children?: Expression | SequenceExpression | SpreadElement;
 }
 
 export interface JsxNamespaceName {
   readonly $type: "jsx_namespace_name";
-  readonly $children: readonly [_JsxIdentifier];
+  readonly $children: _JsxIdentifier;
 }
 
 export interface JsxOpeningElement {
@@ -3511,7 +3511,7 @@ export interface LexicalDeclaration {
 
 export interface LiteralType {
   readonly $type: TSKindId.LiteralType;
-  readonly $children: readonly [_Number | Number | String | True | False | Null | Undefined];
+  readonly $children: _Number | Number | String | True | False | Null | Undefined;
 }
 
 export interface LookupType {
@@ -3538,7 +3538,7 @@ export interface MemberExpression {
   readonly _property: PrivatePropertyIdentifier | Identifier;
   object(): Expression | PrimaryExpression | Import;
   property(): PrivatePropertyIdentifier | Identifier;
-  readonly $children: readonly ["." | "?."];
+  readonly $children: "?.";
 }
 
 export interface MethodDefinition {
@@ -3628,7 +3628,7 @@ export interface NamedImports {
 
 export interface NamespaceExport {
   readonly $type: TSKindId.NamespaceExport;
-  readonly $children: readonly [ModuleExportName];
+  readonly $children: ModuleExportName;
 }
 
 export interface NamespaceImport {
@@ -3763,19 +3763,19 @@ export interface PairPattern {
 
 export interface ParenthesizedExpressionSequence {
   readonly $type: "parenthesized_expression_sequence";
-  readonly $children: readonly [SequenceExpression];
+  readonly $children: SequenceExpression;
 }
 
 export interface ParenthesizedExpressionUFormTyped {
   readonly $type: TSKindId.ParenthesizedExpression;
   readonly $variant: 'typed';
-  readonly $children: readonly [ParenthesizedExpressionTyped];
+  readonly $children: ParenthesizedExpressionTyped;
 }
 
 export interface ParenthesizedExpressionUFormSequence {
   readonly $type: TSKindId.ParenthesizedExpression;
   readonly $variant: 'sequence';
-  readonly $children: readonly [_ParenthesizedExpressionSequence];
+  readonly $children: _ParenthesizedExpressionSequence;
 }
 
 export type ParenthesizedExpression = ParenthesizedExpressionUFormTyped | ParenthesizedExpressionUFormSequence;
@@ -3870,7 +3870,7 @@ export interface RequiredParameter {
 
 export interface RestPattern {
   readonly $type: TSKindId.RestPattern;
-  readonly $children: readonly [LhsExpression];
+  readonly $children: LhsExpression;
 }
 
 export interface RestType {
@@ -3883,7 +3883,7 @@ export interface ReturnStatement {
   readonly $type: TSKindId.ReturnStatement;
   readonly _semicolon: Semicolon;
   semicolon(): Semicolon;
-  readonly $children: readonly [Expressions];
+  readonly $children?: Expressions;
 }
 
 export interface SatisfiesExpression {
@@ -3979,12 +3979,12 @@ export interface TemplateString {
 
 export interface TemplateSubstitution {
   readonly $type: TSKindId.TemplateSubstitution;
-  readonly $children: readonly [Expressions];
+  readonly $children: Expressions;
 }
 
 export interface TemplateType {
   readonly $type: TSKindId.TemplateType;
-  readonly $children: readonly [PrimaryType | InferType];
+  readonly $children: PrimaryType | InferType;
 }
 
 export interface TernaryExpression {
@@ -4001,7 +4001,7 @@ export interface ThrowStatement {
   readonly $type: TSKindId.ThrowStatement;
   readonly _semicolon: Semicolon;
   semicolon(): Semicolon;
-  readonly $children: readonly [Expressions];
+  readonly $children: Expressions;
 }
 
 export interface TryStatement {
@@ -4094,7 +4094,7 @@ export interface TypePredicateAnnotation {
 
 export interface TypeQuery {
   readonly $type: TSKindId.TypeQuery;
-  readonly $children: readonly [TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression | TypeQueryInstantiationExpression | Identifier | This];
+  readonly $children: TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression | TypeQueryInstantiationExpression | Identifier | This;
 }
 
 export interface UnaryExpression {
@@ -4119,13 +4119,13 @@ export interface UnionType {
 export interface UpdateExpressionUFormPostfix {
   readonly $type: TSKindId.UpdateExpression;
   readonly $variant: 'postfix';
-  readonly $children: readonly [UpdateExpressionPostfix];
+  readonly $children: UpdateExpressionPostfix;
 }
 
 export interface UpdateExpressionUFormPrefix {
   readonly $type: TSKindId.UpdateExpression;
   readonly $variant: 'prefix';
-  readonly $children: readonly [UpdateExpressionPrefix];
+  readonly $children: UpdateExpressionPrefix;
 }
 
 export type UpdateExpression = UpdateExpressionUFormPostfix | UpdateExpressionUFormPrefix;

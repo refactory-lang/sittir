@@ -1,0 +1,870 @@
+/**
+ * Read-render-parse validation (Checks 6 & 7) — parse → readNode → render → parse.
+ *
+ * Uses tree-sitter test corpus files (downloaded from grammar repos) as
+ * source fixtures. Each corpus entry is parsed, readNode'd, rendered, and
+ * re-parsed. Structural match is checked.
+ *
+ * Requires web-tree-sitter + language WASM files.
+ */
+import { readNode } from '@sittir/common';
+import { createRenderer } from '@sittir/core';
+import { deriveRuleKinds } from './templates-path.js';
+import { loadRawEntries } from './node-types-loader.js';
+import { loadCorpusEntries, loadLanguageForGrammar, loadKindNameFromId, loadKindNames, loadKindIdFromName, buildReadHandle, findFirst, findNativeNodeId, readNodeAt, adaptNode, collectKinds, buildKindToSupertypes, wrapForReparse, loadReadTreeNode, walkWrappedTree, materializeWrappedNodeData, emitValidatorMetrics } from './common.js';
+function _deepReadNode(tree, handle, childIndex, deepReadKinds) {
+    const data = readNode(tree, handle, childIndex);
+    // NodeMemberValue = AnyNodeData | string | number.
+    // Narrow to NodeData before reading $nodeHandle / $type.
+    const isNodeData = (v) => typeof v === 'object' && v !== null && '$type' in v;
+    const shouldDrill = (entry) => isNodeData(entry) &&
+        entry.$named === true &&
+        typeof entry.$nodeHandle === 'number' &&
+        typeof entry.$childIndex === 'number' &&
+        // $type is numeric for parser.c-derived kinds; hidden kinds have string $type.
+        // deepReadKinds is Set<number> — only numeric entries can be drilled.
+        typeof entry.$type === 'number' &&
+        deepReadKinds.has(entry.$type);
+    if (data.$children) {
+        const drilled = data.$children.map((c) => shouldDrill(c) ? _deepReadNode(tree, c.$nodeHandle, c.$childIndex, deepReadKinds) : c);
+        data.$children = drilled;
+    }
+    // Iterate `_<name>` top-level keys (de-hoisted storage).
+    const rec = data;
+    const namedSlotKeys = Object.keys(rec).filter((k) => k.startsWith('_'));
+    if (namedSlotKeys.length > 0) {
+        for (const rawKey of namedSlotKeys) {
+            const value = rec[rawKey];
+            if (Array.isArray(value)) {
+                rec[rawKey] = value.map((entry) => shouldDrill(entry) ? _deepReadNode(tree, entry.$nodeHandle, entry.$childIndex, deepReadKinds) : entry);
+            }
+            else if (shouldDrill(value)) {
+                rec[rawKey] = _deepReadNode(tree, value.$nodeHandle, value.$childIndex, deepReadKinds);
+            }
+        }
+    }
+    return data;
+}
+function stripMaterializedNodeText(root) {
+    const seen = new WeakSet();
+    const isNodeData = (value) => typeof value === 'object' && value !== null && '$type' in value;
+    const hasNamedFields = (record) => Object.keys(record).some((key) => key.startsWith('_'))
+        || (record.$fields != null && typeof record.$fields === 'object');
+    const recurse = (value) => {
+        if (!isNodeData(value))
+            return;
+        if (seen.has(value))
+            return;
+        seen.add(value);
+        const record = value;
+        if (hasNamedFields(record)) {
+            delete record.$text;
+        }
+        for (const [key, child] of Object.entries(record)) {
+            if (key === '$with')
+                continue;
+            if (key === '$children' && Array.isArray(child)) {
+                for (const entry of child)
+                    recurse(entry);
+                continue;
+            }
+            if (key.startsWith('_')) {
+                if (Array.isArray(child)) {
+                    for (const entry of child)
+                        recurse(entry);
+                }
+                else {
+                    recurse(child);
+                }
+            }
+        }
+    };
+    recurse(root);
+    return root;
+}
+function readValidatorNodeData(handle, node, nativeCoords, readTreeNodeFn, deepReadKinds, recursive) {
+    if (!recursive) {
+        return readNodeAt(handle, adaptNode(node), nativeCoords);
+    }
+    if (readTreeNodeFn) {
+        if (nativeCoords && handle.read) {
+            return stripMaterializedNodeText(materializeWrappedNodeData(readTreeNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex)));
+        }
+        const prev = handle.rootNode;
+        handle.rootNode = adaptNode(node);
+        try {
+            return materializeWrappedNodeData(readTreeNodeFn(handle));
+        }
+        finally {
+            handle.rootNode = prev;
+        }
+    }
+    if (nativeCoords && handle.read) {
+        return _deepReadNode(handle, nativeCoords.handle, nativeCoords.childIndex, deepReadKinds);
+    }
+    const prev = handle.rootNode;
+    handle.rootNode = adaptNode(node);
+    try {
+        return _deepReadNode(handle, undefined, undefined, deepReadKinds);
+    }
+    finally {
+        handle.rootNode = prev;
+    }
+}
+/**
+ * Build the set of `$type` values the validator should deep-read,
+ * scoped to kinds that participate in variant() adoption (parents and
+ * their child kinds). Other kinds stay on the shallow `$text`
+ * short-circuit to preserve baseline rtPass numbers.
+ *
+ * Sources the set from the grammar's emitted `factory-map.json5`
+ * polymorphVariants section (the codegen artifact that records which
+ * kinds went through Link's push-down). Returns an empty set when no
+ * variant adoption exists in the grammar.
+ */
+async function loadVariantAdoptedKinds(grammar) {
+    // factory-map.json5 lives at packages/<grammar>/factory-map.json5.
+    // 3x `..` resolves from .../packages/codegen/src/validate/read-render-parse.ts
+    // up to `packages/` (validate → src → codegen → packages). A
+    // previous `../../../../` overshoot landed at the repo root; with
+    // the 012-merge introducing a top-level `rust/` directory, that
+    // mis-path silently hit `rust/factory-map.json5` (non-existent) and
+    // the catch{} swallowed the ENOENT.
+    const factoryMapPath = new URL(`../../../${grammar}/factory-map.json5`, import.meta.url).pathname;
+    try {
+        const fs = await import('node:fs');
+        const content = fs.readFileSync(factoryMapPath, 'utf-8');
+        const kinds = new Set();
+        // Scan the WHOLE file for parent entries — the shape
+        // `"<name>": { "source": "override", "childKind": { ... } }`
+        // is distinctive enough to appear only inside polymorphVariants
+        // (no other factory-map section nests `source` + `childKind`),
+        // so we don't need to isolate the surrounding block (nested
+        // brace matching in regex is brittle and the outer non-greedy
+        // scan stops at the first `}` inside the inner object).
+        const parentEntryRe = /["'](\w+)["']\s*:\s*\{[^}]*["']source["']\s*:\s*["']override["'][^{]*["']childKind["']\s*:\s*\{([^}]*)\}/g;
+        let m;
+        while ((m = parentEntryRe.exec(content)) !== null) {
+            kinds.add(m[1]);
+            const childMap = m[2];
+            const childRe = /["']([^"']+)["']\s*:/g;
+            let cm;
+            while ((cm = childRe.exec(childMap)) !== null) {
+                kinds.add(cm[1]);
+            }
+        }
+        return kinds;
+    }
+    catch {
+        return new Set();
+    }
+}
+/**
+ * Parser-visible named kinds that require structural materialization for the
+ * native transport path.
+ *
+ * @remarks
+ * JS render can short-circuit any structureless named node to `$text`, even
+ * when that node is a non-leaf branch/supertype like `ambient_declaration`.
+ * Native render goes through the generated transport unions instead, so a
+ * shallow descendant with only `$text` will fail `FromNapiValue` when the
+ * transport expects fields/children. For native RT validation we therefore
+ * deep-read parser-visible named kinds that have structure in node-types
+ * (fields, children, or subtypes) so nested descendants arrive with the shape
+ * the native transport layer expects.
+ */
+function loadNativeStructuredKinds(rawEntries) {
+    return new Set(rawEntries
+        .filter((entry) => entry.named && (entry.fields !== undefined || entry.children !== undefined || entry.subtypes !== undefined))
+        .map((entry) => entry.type));
+}
+/**
+ * Find the first node of `kind` whose `startIndex` equals `offset`.
+ * Used to locate the rendered fragment inside a reparse wrapper —
+ * e.g. rust's `fn _f() { let _ = ${r}; }` wraps the rendered block
+ * inside an outer `fn_item`'s block, so plain `findFirst(tree, 'block')`
+ * returns the wrapper's body rather than the rendered one.
+ */
+/** Find a node anywhere in the tree by its numeric id. O(n); used when
+ * the wrap-walker discovered an alias-source kind at a specific nodeId
+ * and we need the matching TSNode to run reparse validation. */
+function findNodeById(node, nodeId) {
+    if (node.id === nodeId)
+        return node;
+    for (let i = 0; i < node.childCount; i++) {
+        const c = node.child(i);
+        if (!c)
+            continue;
+        const hit = findNodeById(c, nodeId);
+        if (hit)
+            return hit;
+    }
+    return null;
+}
+/**
+ * ADR-0017: find a tree-sitter node by its exact byte span (start + end).
+ * Using both start and end eliminates the collision that arises from
+ * start-only lookup: when a parent node and its first child share the same
+ * startIndex (e.g. `parameter` and its child `identifier` both start at
+ * the same offset), start-only lookup returns the outer parent first in DFS
+ * order, producing the wrong node. Requiring both bounds to match pins to
+ * exactly the intended node.
+ */
+function findNodeBySpan(node, startIndex, endIndex) {
+    if (node.startIndex === startIndex && node.endIndex === endIndex)
+        return node;
+    for (let i = 0; i < node.childCount; i++) {
+        const c = node.child(i);
+        if (!c)
+            continue;
+        // Prune: the target span must be contained within this child's range.
+        if (c.startIndex > startIndex || c.endIndex < endIndex)
+            continue;
+        const hit = findNodeBySpan(c, startIndex, endIndex);
+        if (hit)
+            return hit;
+    }
+    return null;
+}
+function findNodeAt(node, kind, offset) {
+    if (node.type === kind && node.startIndex === offset)
+        return node;
+    for (let i = 0; i < node.childCount; i++) {
+        const c = node.child(i);
+        if (!c)
+            continue;
+        // Quick prune: the rendered fragment must be inside this child's range.
+        if (offset < c.startIndex || offset >= c.endIndex)
+            continue;
+        const hit = findNodeAt(c, kind, offset);
+        if (hit)
+            return hit;
+    }
+    // Fallback: any node of the right kind whose range starts at offset.
+    if (node.type === kind && node.startIndex === offset)
+        return node;
+    return null;
+}
+/**
+ * Strict AST structural equality check between the original parse
+ * and the reparsed-after-render parse. Anonymous tokens (delimiters,
+ * keywords, operators) must match byte-exactly — that's how we catch
+ * silently dropped content like `;` statement terminators, since
+ * the renderer sometimes omits anonymous children that aren't
+ * promoted into a named field. Named children recurse.
+ *
+ * Returns `null` if the subtrees match, otherwise a short human-
+ * readable diff path explaining the first mismatch.
+ */
+/**
+ * Per-grammar set of `extras` kind names that are NAMED in tree-sitter's
+ * output (line continuations, comments) and therefore appear as children
+ * in the strict structural compare. Render reads NodeData fields/children
+ * — extras aren't part of the rule structure and don't surface there —
+ * so the rendered output can never re-emit them. Filtering them from
+ * BOTH sides keeps the compare focused on rule-structural content.
+ *
+ * Anonymous extras (whitespace regex patterns) are already invisible to
+ * the compare's named-child filter. Only NAMED extras need explicit
+ * exclusion. (016 Cluster I.)
+ */
+const NAMED_EXTRAS_BY_GRAMMAR = {
+    rust: new Set(['line_comment', 'block_comment']),
+    typescript: new Set(['comment', 'html_comment']),
+    python: new Set(['comment', 'line_continuation'])
+};
+function collectVisibleChildren(n, namedExtras) {
+    const out = [];
+    for (let i = 0; i < n.childCount; i++) {
+        const c = n.child(i);
+        if (!c)
+            continue;
+        if (c.isNamed && namedExtras.has(c.type))
+            continue;
+        out.push(c);
+    }
+    return out;
+}
+function astStructuralDiff(a, b, namedExtras, path = '') {
+    if (a.type !== b.type) {
+        return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
+    }
+    const aChildren = collectVisibleChildren(a, namedExtras);
+    const bChildren = collectVisibleChildren(b, namedExtras);
+    if (aChildren.length !== bChildren.length) {
+        const aDesc = aChildren.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text))).join(',');
+        const bDesc = bChildren.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text))).join(',');
+        return `${path || a.type}: childCount ${aChildren.length} ≠ ${bChildren.length} [${aDesc}] vs [${bDesc}]`;
+    }
+    for (let i = 0; i < aChildren.length; i++) {
+        const ac = aChildren[i];
+        const bc = bChildren[i];
+        if (ac.isNamed !== bc.isNamed) {
+            return `${path || a.type}[${i}]: named flag ${ac.isNamed} ≠ ${bc.isNamed}`;
+        }
+        if (!ac.isNamed) {
+            // Anonymous token — compare text directly.
+            if (ac.text !== bc.text) {
+                return `${path || a.type}[${i}]: anon ${JSON.stringify(ac.text)} ≠ ${JSON.stringify(bc.text)}`;
+            }
+            continue;
+        }
+        // Named child — recurse.
+        const sub = astStructuralDiff(ac, bc, namedExtras, `${path || a.type}[${i}].${ac.type}`);
+        if (sub)
+            return sub;
+    }
+    return null;
+}
+/**
+ * Discover alias-source kinds by walking the grammar's wrap layer over a parsed tree.
+ *
+ * @remarks
+ * When the grammar's wrap layer (readTreeNode) is available, walk each parsed
+ * tree upfront to discover nodes whose drillAs()-rewritten `$type` differs from
+ * tree-sitter's raw output. We can then test these kinds against the source
+ * template with a matching reparse wrapper, rather than relying on per-kind
+ * render-layer workarounds in the target's template (ADR-0006).
+ *
+ * @param readTreeNodeFn - The grammar-specific readTreeNode function, or null if unavailable.
+ * @param tree - The parsed tree-sitter tree to walk.
+ * @param kinds - Mutable set of kind names; alias-source kinds discovered during the walk are added here.
+ * @returns A map from composite span key (`"start:end"`) to the effective (alias-rewritten) type string.
+ */
+function discoverAliasSourceKinds(readTreeNodeFn, tree, kinds, grammar, source, kindNameFromId, backend, kindIdFromName) {
+    // ADR-0017: keyed by "${start}:${end}" composite span key. Using BOTH
+    // start and end byte offsets avoids the collision that arises from a
+    // start-only key: a parent node and its first child share the same
+    // startIndex (e.g. `parameter` at 7..12 and its child `identifier` at
+    // 7..8 both start at 7). A start-only key would map offset 7 to only
+    // ONE kind, causing the wrong node to be returned by lookup. The
+    // composite key is unique per node — no two distinct nodes can occupy
+    // exactly the same byte range.
+    const nodeIdToEffectiveType = new Map();
+    if (readTreeNodeFn) {
+        const handle = buildReadHandle(grammar, tree, source, backend, kindIdFromName);
+        const wrappedRoot = readTreeNodeFn(handle);
+        walkWrappedTree(wrappedRoot, (w) => {
+            // Cluster I (016): skip anonymous tokens. The wrap layer
+            // surfaces field-promoted anonymous tokens (e.g. python's
+            // `type_alias_statement` wraps the literal `'type'` keyword
+            // as `$fields.type`) with the same `$type` string as the
+            // named supertype `type`. Recording an anonymous keyword as
+            // "effective type=type" makes `resolveNodeForKind` pick the
+            // keyword node when the round-trip validator probes the
+            // supertype kind, producing nonsense reparse comparisons
+            // (anon-token text "type" reparses as `expression_statement`).
+            // Named-only filter aligns with `collectKinds` and
+            // `findFirst`, which both restrict to named nodes for the
+            // same reason.
+            if (w.$named === false)
+                return;
+            // Phase D: $type is numeric; resolve to string kind name.
+            const kindStr = kindNameFromId ? kindNameFromId(w.$type) : undefined;
+            if (kindStr === undefined)
+                return; // unknown id — skip
+            // ADR-0017: use "${start}:${end}" composite span as collision-free identity key.
+            const span = w.$span;
+            if (span != null) {
+                nodeIdToEffectiveType.set(`${span.start}:${span.end}`, kindStr);
+            }
+            kinds.add(kindStr);
+        });
+    }
+    return nodeIdToEffectiveType;
+}
+/**
+ * Resolve the tree-sitter TSNode instance for a kind that may be an alias-source.
+ *
+ * @remarks
+ * For alias-source kinds that tree-sitter doesn't emit directly, look up a
+ * tree-sitter node whose walker-reported effective-type matches. Falls back to
+ * findFirst for plain kinds.
+ *
+ * @param kind - The effective kind name (potentially alias-rewritten).
+ * @param nodeIdToEffectiveType - Map from node id to alias-rewritten type, from the wrap-walk.
+ * @param tree - The parsed tree-sitter tree to search in.
+ * @returns The matching TSNode, or null if none found.
+ */
+function _resolveNodeForKind(kind, nodeIdToEffectiveType, tree) {
+    // ADR-0017: map is keyed by "${start}:${end}" composite span; parse and
+    // use findNodeBySpan to locate the exact node (avoids start-only collisions).
+    for (const [spanKey, et] of nodeIdToEffectiveType) {
+        if (et === kind) {
+            const colon = spanKey.indexOf(':');
+            const startIdx = parseInt(spanKey.slice(0, colon), 10);
+            const endIdx = parseInt(spanKey.slice(colon + 1), 10);
+            const node = findNodeBySpan(tree.rootNode, startIdx, endIdx);
+            if (node)
+                return node;
+        }
+    }
+    return findFirst(tree.rootNode, kind);
+}
+/**
+ * Resolve every node of `kind` in the tree. Used by the round-trip
+ * loop so an entry-level pass is granted when ANY node of the kind
+ * round-trips, instead of failing on the first node the walker
+ * happened to visit. This matches the spec intent ("the entry
+ * exercises this kind successfully somewhere"); the per-node failure
+ * is still recorded in the kind-level error list when ALL nodes fail.
+ *
+ * Stable iteration: walker-discovered nodes (in walker visit order)
+ * come first, then any tree nodes the walker missed (in tree order).
+ *
+ * @remarks
+ * Canonical-hidden architecture (Option Y): the walker now visits
+ * every node — pre-architectural-fix the walker missed many subtree
+ * paths because the dispatch table was keyed on the hidden alias-
+ * source name while the parser emits the visible alias-target. With
+ * the wrap layer remapping visible→hidden on receipt, the dispatch
+ * table is hit and recursion fires on every accessor. That exposes
+ * more test cases per entry; treating any-node-passes as entry-pass
+ * preserves the pre-fix entry-level pass count while still surfacing
+ * the per-kind failures in the issue list.
+ */
+function resolveAllNodesForKind(kind, nodeIdToEffectiveType, tree) {
+    const nodes = [];
+    const seenIds = new Set();
+    // ADR-0017: map keyed by "${start}:${end}" composite span. Walker-found
+    // entries are only useful for alias-source kinds — kinds where the wrap
+    // layer rewrites $type to a canonical-hidden form (e.g. `_type_identifier`)
+    // that tree-sitter doesn't emit directly. For those kinds the direct-scan
+    // loop below finds nothing (wrong type name), so the walker path is the
+    // only way to locate them.
+    //
+    // For regular visible kinds (e.g. `binary_operator`), a parent node can
+    // share the same (start, end) span as its sole named child (e.g.
+    // `expression_statement` wrapping `binary_operator`). `findNodeBySpan`
+    // returns the outer parent in DFS order, causing the wrong node to be
+    // rendered. Since visible kinds are handled correctly by the direct-scan
+    // loop, skip walker entries where the located node's type mismatches the
+    // target kind AND the target kind is not a canonical-hidden alias-source
+    // (leading `_`).
+    for (const [spanKey, et] of nodeIdToEffectiveType) {
+        if (et !== kind)
+            continue;
+        const colon = spanKey.indexOf(':');
+        const startIdx = parseInt(spanKey.slice(0, colon), 10);
+        const endIdx = parseInt(spanKey.slice(colon + 1), 10);
+        const node = findNodeBySpan(tree.rootNode, startIdx, endIdx);
+        if (!node || seenIds.has(node.id))
+            continue;
+        // Skip when the found node's type doesn't match and kind is a visible
+        // (non-alias-source) kind — the direct-scan loop handles these.
+        const isAliasSrcKind = kind.startsWith('_');
+        if (node.type !== kind && !isAliasSrcKind)
+            continue;
+        seenIds.add(node.id);
+        nodes.push(node);
+    }
+    const queue = [tree.rootNode];
+    while (queue.length > 0) {
+        const n = queue.shift();
+        if (n.type === kind && !seenIds.has(n.id)) {
+            seenIds.add(n.id);
+            nodes.push(n);
+        }
+        for (let i = 0; i < n.childCount; i++) {
+            const c = n.child(i);
+            if (c)
+                queue.push(c);
+        }
+    }
+    return nodes;
+}
+/**
+ * Apply alias resolution to raw NodeData, overriding `$type` when the wrap
+ * layer reports a different effective type for the node's id.
+ *
+ * @remarks
+ * Three distinct kind names arise after alias resolution:
+ * - renderedKind: drives render-template + reparse-wrapper lookup (the source
+ *   kind when rewritten).
+ * - targetKind: tree-sitter's raw kind, used for post-reparse node location
+ *   (reparse produces the target kind since the alias applies again).
+ *
+ * @param rawData - The NodeData as returned by readNode (uses tree-sitter's raw $type).
+ * @param nodeStartIndex - The tree-sitter node's startIndex.
+ * @param nodeEndIndex - The tree-sitter node's endIndex (combined with start for collision-free lookup).
+ * @param nodeIdToEffectiveType - Map from composite span key to alias-rewritten type.
+ * @returns An object with `data` (possibly $type-overridden), `renderedKind`, and `targetKind`.
+ */
+function applyAliasResolution(rawData, nodeStartIndex, nodeEndIndex, nodeIdToEffectiveType, kindNameFromId, 
+/** The tree-sitter visible kind name (node.type). Used as targetKind
+ * for post-reparse node lookup, since tree-sitter strips leading
+ * underscores and uses the pre-alias name. When absent, falls back
+ * to resolving from rawData.$type via kindNameFromId. */
+tsVisibleKind) {
+    // $type may be numeric (TSKindId) or string (hidden/synthetic kind). Resolve to
+    // a string kind name for renderedKind / template lookup.
+    const canonicalKind = typeof rawData.$type === 'number' ? (kindNameFromId?.(rawData.$type) ?? String(rawData.$type)) : rawData.$type;
+    // ADR-0017: map keyed by "${start}:${end}" composite span (collision-free).
+    const effective = nodeIdToEffectiveType.get(`${nodeStartIndex}:${nodeEndIndex}`);
+    // Apply alias rewriting only when the effective kind differs from the canonical kind.
+    const data = effective && effective !== canonicalKind ? { ...rawData, $type: rawData.$type } : rawData;
+    const renderedKind = effective ?? canonicalKind;
+    // targetKind: used for post-reparse node.type lookup (tree-sitter visible form).
+    // Phase D: kindNameFromId may return canonical sittir forms that differ from
+    // tree-sitter's node.type (e.g. '_type_identifier' vs 'type_identifier',
+    // 'scoped_type_identifier_in_expression_position' vs 'scoped_type_identifier').
+    // Use the tree-sitter visible name as the ground truth when available.
+    const targetKind = tsVisibleKind ?? canonicalKind;
+    return { data, renderedKind, targetKind };
+}
+/**
+ * Locate the reparsed target node at the exact byte offset where the rendered
+ * fragment was spliced into the wrapper.
+ *
+ * @remarks
+ * Without offset-based lookup, `findFirst(tree2, kind)` matches the wrapper's
+ * own outer block / let / expression (e.g. rust's `fn _f() { let _ = ${r}; }`
+ * wraps an expression in an outer `block`, making the first `block` found the
+ * wrapper's body rather than the rendered fragment).
+ *
+ * @param tree2 - The reparsed tree-sitter tree after rendering.
+ * @param targetKind - The tree-sitter kind to search for (raw, pre-alias kind).
+ * @param wrapped - The wrap result carrying the splice offset.
+ * @returns The TSNode at the rendered offset, or null if not found.
+ */
+function findReparsedNodeAtOffset(tree2, targetKind, wrapped) {
+    return findNodeAt(tree2.rootNode, targetKind, wrapped.offset);
+}
+export async function validateReadRenderParse(grammar, templatesPath, options = {}) {
+    const { Parser, lang } = await loadLanguageForGrammar(grammar);
+    const parser = new Parser();
+    parser.setLanguage(lang);
+    const rawEntries = loadRawEntries(grammar);
+    const kindNameFromId = await loadKindNameFromId(grammar);
+    const kindNames = await loadKindNames(grammar);
+    const { backend } = options;
+    // When backend is 'native', render through the grammar's boundary.ts
+    // (which dispatches to the native Askama engine). Otherwise use the
+    // JS Nunjucks renderer. Both paths receive the same NodeData shape.
+    let render;
+    if (backend === 'native') {
+        const { loadBoundaryRender } = await import('../scripts/collect-baseline.js');
+        render = await loadBoundaryRender(grammar);
+    }
+    else {
+        ({ render } = createRenderer(templatesPath, { kindNames }));
+    }
+    // `ruleKinds` was historically derived from config.rules (from the
+    // YAML). For the Jinja path (directory of `.jinja` files), derive
+    // the kind set from the on-disk file listing. Works uniformly for
+    // both `.yaml` (use filesystem check) and directories.
+    const ruleKinds = deriveRuleKinds(templatesPath);
+    const kindToSupertypes = buildKindToSupertypes(rawEntries);
+    const readTreeNodeFn = await loadReadTreeNode(grammar);
+    const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
+    const nativeStructuredKindNames = backend === 'native' ? loadNativeStructuredKinds(rawEntries) : new Set();
+    const deepReadKindNames = new Set([...adoptedVariantKindNames, ...nativeStructuredKindNames]);
+    const rawKindIdFromName = await loadKindIdFromName(grammar);
+    // Wrap so unknown kind names return undefined (instead of throwing).
+    // The generated kindIdFromName throws on missing entries; readNode's
+    // resolveKindId falls back to the string kind only when the function
+    // returns undefined, not when it throws.
+    const kindIdFromName = rawKindIdFromName
+        ? (name) => {
+            try {
+                return rawKindIdFromName(name);
+            }
+            catch {
+                return undefined;
+            }
+        }
+        : rawKindIdFromName;
+    // Phase D: $type is numeric; translate string kind names to numeric IDs for
+    // _deepReadNode's Set<number> membership check.
+    // When `recursive: true`, deep-read ALL named kinds (not just variant-adopted).
+    const { recursive } = options;
+    const deepReadKinds = recursive
+        ? { has: (_id) => true }
+        : kindIdFromName
+            ? new Set([...deepReadKindNames].map((k) => kindIdFromName(k)).filter((id) => id !== undefined))
+            : new Set();
+    const entries = loadCorpusEntries(grammar);
+    const errors = [];
+    const astMismatches = [];
+    let pass = 0;
+    let astMatchPass = 0;
+    let skip = 0;
+    let total = 0;
+    let shouldStop = false;
+    for (const entry of entries) {
+        if (shouldStop)
+            break;
+        total++;
+        try {
+            // Parse original
+            const tree1 = parser.parse(entry.source);
+            if (tree1.rootNode.hasError) {
+                skip++;
+                continue; // Corpus entries with parse errors (intentional error tests)
+            }
+            const kinds = new Set(collectKinds(tree1.rootNode));
+            const nodeIdToEffectiveType = discoverAliasSourceKinds(readTreeNodeFn, tree1, kinds, grammar, entry.source, kindNameFromId, backend, kindIdFromName);
+            const testableKinds = [...kinds].filter((k) => ruleKinds.has(k));
+            if (testableKinds.length === 0) {
+                skip++;
+                continue;
+            }
+            // Test round-trip for each testable kind found
+            let entryOk = true;
+            let entryAstMatch = true;
+            for (const kind of testableKinds) {
+                if (shouldStop)
+                    break;
+                // Canonical-hidden architecture (Option Y): the wrap walker
+                // now reaches every subtree node — pre-fix it missed many
+                // because the wrap-table dispatch was keyed on the hidden
+                // alias-source name while parser-emitted `$type` was the
+                // visible alias-target. With the visible→hidden remap on
+                // receipt, dispatch fires reliably and recursion propagates
+                // through every accessor. That surfaces extra test cases
+                // per entry; iterate ALL nodes of a kind and treat the
+                // entry as passing when ANY node round-trips successfully.
+                // Per-node failures still land in the kind-level error
+                // list so genuine bugs remain visible.
+                const candidates = resolveAllNodesForKind(kind, nodeIdToEffectiveType, tree1);
+                if (candidates.length === 0)
+                    continue;
+                let kindOk = false;
+                let kindAstMatch = false;
+                let kindHadCandidate = false;
+                const kindErrors = [];
+                const kindAstMismatches = [];
+                for (const node1 of candidates) {
+                    const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+                    // Native engine handles differ from WASM handles; skip alias-
+                    // target kinds the native engine emits under a different
+                    // rule name rather than falling back to a mismatched handle.
+                    const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
+                    if (nativeCoords === null && handle.read)
+                        continue;
+                    const rawData = readValidatorNodeData(handle, node1, nativeCoords, readTreeNodeFn, deepReadKinds, recursive === true);
+                    const { data, renderedKind, targetKind } = applyAliasResolution(rawData, node1.startIndex, node1.endIndex, nodeIdToEffectiveType, kindNameFromId, node1.type);
+                    try {
+                        const inputSource = node1.text;
+                        const rendered = render(data);
+                        // Wrap for reparse using supertype context
+                        // Pass the original string-named deepReadKindNames to wrapForReparse
+                        // (which uses string kind names internally), not the numeric deepReadKinds.
+                        const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
+                            adoptedVariantKinds: adoptedVariantKindNames,
+                            targetKind
+                        });
+                        if (wrapped === null)
+                            continue; // no supertype - skip this candidate
+                        kindHadCandidate = true;
+                        // Re-parse
+                        const tree2 = parser.parse(wrapped.text);
+                        if (tree2.rootNode.hasError) {
+                            const failure = {
+                                name: `${entry.name} [${renderedKind}]`,
+                                message: `re-parse error: "${rendered.slice(0, 80)}"`,
+                                input: inputSource,
+                                rendered
+                            };
+                            kindErrors.push(failure);
+                            reportFailure(options, {
+                                grammar,
+                                backend: backend ?? 'typescript',
+                                recursive: recursive === true,
+                                entryName: entry.name,
+                                entrySource: entry.source,
+                                kind,
+                                renderedKind,
+                                targetKind,
+                                range: { start: node1.startIndex, end: node1.endIndex },
+                                input: inputSource,
+                                rendered,
+                                message: failure.message
+                            });
+                            shouldStop = options.stopOnFirstFailure === true;
+                            continue;
+                        }
+                        // Reparse produces either the alias target (wrapper
+                        // context re-triggers the alias) OR the alias source
+                        // (wrapper is a generic supertype context that
+                        // doesn't re-alias — ts's interface_body rendered as
+                        // object_type inside `type _X = …;`). Accept either
+                        // at the rendered offset.
+                        const node2 = findReparsedNodeAtOffset(tree2, targetKind, wrapped) ??
+                            (renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped) : null);
+                        if (!node2) {
+                            const failure = {
+                                name: `${entry.name} [${renderedKind}]`,
+                                message: `kind not found at rendered offset ${wrapped.offset}`,
+                                input: inputSource,
+                                rendered
+                            };
+                            kindErrors.push(failure);
+                            reportFailure(options, {
+                                grammar,
+                                backend: backend ?? 'typescript',
+                                recursive: recursive === true,
+                                entryName: entry.name,
+                                entrySource: entry.source,
+                                kind,
+                                renderedKind,
+                                targetKind,
+                                range: { start: node1.startIndex, end: node1.endIndex },
+                                input: inputSource,
+                                rendered,
+                                message: failure.message
+                            });
+                            shouldStop = options.stopOnFirstFailure === true;
+                            continue;
+                        }
+                        kindOk = true;
+                        const namedExtras = NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set();
+                        const diff = astStructuralDiff(node1, node2, namedExtras);
+                        if (diff) {
+                            kindAstMismatches.push({
+                                name: `${entry.name} [${renderedKind}]`,
+                                message: diff.slice(0, 160),
+                                input: inputSource,
+                                rendered
+                            });
+                        }
+                        else {
+                            kindAstMatch = true;
+                            if (options.onFixture) {
+                                // Success path (both re-parse OK + AST match OK) —
+                                // emit a render fixture (NodeData → rendered) and a
+                                // round-trip fixture (source → reparse s-exp). The
+                                // data we have matches both shapes; only the shape
+                                // type tag differs.
+                                options.onFixture({
+                                    kind: 'render',
+                                    grammar,
+                                    input: data,
+                                    expectedOutput: rendered
+                                });
+                                options.onFixture({
+                                    kind: 'roundtrip',
+                                    grammar,
+                                    sourceIn: inputSource,
+                                    pattern: renderedKind,
+                                    edits: [],
+                                    expectedSourceOut: rendered,
+                                    expectedReparseTree: node2.toString(),
+                                    wrappedText: wrapped.text,
+                                    wrappedOffset: wrapped.offset
+                                });
+                            }
+                        }
+                    }
+                    catch (e) {
+                        const failure = {
+                            name: `${entry.name} [${renderedKind}]`,
+                            message: `render: ${e.message.slice(0, 100)}`
+                        };
+                        kindErrors.push(failure);
+                        reportFailure(options, {
+                            grammar,
+                            backend: backend ?? 'typescript',
+                            recursive: recursive === true,
+                            entryName: entry.name,
+                            entrySource: entry.source,
+                            kind,
+                            renderedKind,
+                            targetKind,
+                            range: { start: node1.startIndex, end: node1.endIndex },
+                            message: failure.message
+                        });
+                        shouldStop = options.stopOnFirstFailure === true;
+                    }
+                    if (shouldStop)
+                        break;
+                }
+                // Per-kind aggregation: kind passes when ANY candidate
+                // node round-tripped; otherwise emit the FIRST per-node
+                // failure for the issue list. Strict-AST equality only
+                // counts when EVERY candidate node that round-tripped
+                // also matched structurally — surfacing partial AST
+                // regressions even when entry-pass survives.
+                if (!kindHadCandidate)
+                    continue; // every candidate skipped — neutral on this kind
+                if (!kindOk) {
+                    if (kindErrors.length > 0)
+                        errors.push(kindErrors[0]);
+                    entryOk = false;
+                    entryAstMatch = false;
+                    break;
+                }
+                if (!kindAstMatch) {
+                    if (kindAstMismatches.length > 0)
+                        astMismatches.push(kindAstMismatches[0]);
+                    entryAstMatch = false;
+                }
+            }
+            if (entryOk)
+                pass++;
+            if (entryAstMatch)
+                astMatchPass++;
+        }
+        catch (e) {
+            errors.push({
+                name: entry.name,
+                message: `${e.message.slice(0, 100)}`
+            });
+            if (options.stopOnFirstFailure === true)
+                break;
+        }
+    }
+    // Check 7 (anonymous-token override round-trip) removed. It was a
+    // legacy check that iterated `overrides.json` anonymous-token fields
+    // and verified they survived render→reparse. Overrides now flow
+    // through grammar extensions and anonymous tokens are real rule-tree
+    // fields already tested by Check 6 (the end-to-end corpus loop).
+    // Duplicate work checking a stale invariant.
+    emitValidatorMetrics();
+    return {
+        grammar,
+        total,
+        pass,
+        fail: total - pass - skip,
+        skip,
+        astMatchPass,
+        errors,
+        astMismatches
+    };
+}
+function reportFailure(options, failure) {
+    options.onFailure?.(failure);
+}
+export function formatReadRenderParseReport(result) {
+    const lines = [];
+    const icon = result.fail === 0 ? 'v' : 'x';
+    lines.push(`  ${icon} ${result.pass}/${result.total} read render parse (${result.skip} skipped, ${result.errors.length} errors)`);
+    lines.push(`    ast-match ${result.astMatchPass}/${result.total} (${result.astMismatches.length} structural mismatches)`);
+    if (result.errors.length > 0) {
+        lines.push('');
+        lines.push('    Failures:');
+        for (const e of result.errors) {
+            lines.push(`    x ${e.name}: ${e.message}`);
+            if (e.input)
+                lines.push(`      source:   ${JSON.stringify(e.input.slice(0, 80))}`);
+            if (e.rendered)
+                lines.push(`      rendered: ${JSON.stringify(e.rendered.slice(0, 80))}`);
+        }
+    }
+    if (result.astMismatches.length > 0) {
+        lines.push('');
+        lines.push('    AST mismatches:');
+        for (const e of result.astMismatches.slice(0, 20)) {
+            lines.push(`    ~ ${e.name}: ${e.message}`);
+            if (e.input)
+                lines.push(`      source:   ${JSON.stringify(e.input.slice(0, 80))}`);
+            if (e.rendered)
+                lines.push(`      rendered: ${JSON.stringify(e.rendered.slice(0, 80))}`);
+        }
+        if (result.astMismatches.length > 20) {
+            lines.push(`    … and ${result.astMismatches.length - 20} more`);
+        }
+    }
+    return lines.join('\n');
+}
+//# sourceMappingURL=read-render-parse.js.map

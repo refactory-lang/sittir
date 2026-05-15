@@ -65,8 +65,17 @@ function assertNativeChildren(value: unknown, path: string): void {
 		throw new TypeError(`${path} must be an array, got ${describe(value)}`);
 	}
 	for (const [index, child] of value.entries()) {
-		assertNativeNodeDataInternal(child, `${path}[${index}]`);
+		assertNativeChildValue(child, `${path}[${index}]`);
 	}
+}
+
+function assertNativeChildValue(value: unknown, path: string): asserts value is NodeMemberValue {
+	if (typeof value === 'string') return;
+	if (typeof value === 'number') {
+		assertFiniteNumber(value, path);
+		return;
+	}
+	assertNativeNodeDataInternal(value, path);
 }
 
 /**

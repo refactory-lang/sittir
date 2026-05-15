@@ -80,6 +80,7 @@ import {
 	resolveHiddenKeywordLiteral,
 	referencedKinds,
 	fieldTypeComponents,
+	childTypeComponents,
 	isValidIdent,
 	resolveFieldStorageInfo,
 	collectPolymorphLiteralDispatchCases
@@ -1168,33 +1169,18 @@ function _fieldTypeParts(field: AssembledNonterminal, nodeMap?: NodeMap): string
 }
 
 function childContentParts(child: AssembledNonterminal, nodeMap: NodeMap): string[] {
-	// Inline pure-literal values as string-literal types, mirroring
-	// `fieldTypeComponents`. A child slot that carries terminal values
-	// alongside node refs (e.g. `children` on a union) would surface the
-	// literal text as a string-literal union member.
 	const parts: string[] = [];
-	for (const v of child.values) {
-		if (isTerminalValue(v)) {
-			parts.push(JSON.stringify(v.value));
+	for (const component of childTypeComponents(child, nodeMap)) {
+		if (component.kind === 'literal') {
+			parts.push(JSON.stringify(component.value));
 			continue;
 		}
-		if (!isNodeRef(v)) continue;
-		const t = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-		// Hidden-keyword kinds (`_not_escape_sequence` → `'\\'`) inline
-		// their literal text — same rule as `fieldTypeComponents`. Avoids
-		// the dangling `NotEscapeSequence` reference that would otherwise
-		// require an extra stub alias.
-		const lit = resolveHiddenKeywordLiteral(t, nodeMap);
-		if (lit !== undefined) {
-			parts.push(JSON.stringify(lit));
+		if (component.kind === 'missing') {
+			missingKindTypes.set(component.rawKind, component.value);
+			parts.push(component.value);
 			continue;
 		}
-		const n = nodeMap.nodes.get(t);
-		if (!n) {
-			throw new Error(`types: child references kind '${t}' which is not in NodeMap.`);
-		}
-		const name = n.typeName;
-		parts.push(/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t));
+		parts.push(isValidIdent(component.value) ? component.value : JSON.stringify(component.rawKind));
 	}
 	return parts;
 }

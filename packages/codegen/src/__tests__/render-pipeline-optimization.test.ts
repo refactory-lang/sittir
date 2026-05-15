@@ -5,7 +5,13 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { AssembledBranch, AssembledGroup, AssembledKeyword, AssembledPattern, AssembledPolymorph } from '../compiler/node-map.ts';
+import {
+	AssembledBranch,
+	AssembledGroup,
+	AssembledKeyword,
+	AssembledPattern,
+	AssembledPolymorph
+} from '../compiler/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { ChoiceRule, SeqRule } from '../compiler/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -175,18 +181,12 @@ function makePolymorphSingularChildrenNodeMap(): NodeMap {
 		name: 'integer',
 		parentKind: 'expression'
 	});
-	const nodes = new Map([
-		[
-			'expression',
-			new AssembledPolymorph('expression', parentRule, [identifierForm, integerForm])
-		],
+	const nodes = new Map<string, AssembledPolymorph | AssembledPattern>([
+		['expression', new AssembledPolymorph('expression', parentRule, [identifierForm, integerForm])],
 		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })],
 		['integer', new AssembledPattern('integer', { type: 'pattern', value: '[0-9]+' })]
 	]);
-	return makeNodeMapWith(
-		nodes,
-		new Set(['expression__form_identifier', 'expression__form_integer'])
-	);
+	return makeNodeMapWith(nodes, new Set(['expression__form_identifier', 'expression__form_integer']));
 }
 
 function makeTokenOnlyGeneratedIdTables(): GeneratedIdTables {
@@ -477,8 +477,40 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 
 		expect(emitted.templatesRs.contents).toContain("pub struct OptionalRepeatedChildParentTemplate<'a> {");
 		expect(emitted.templatesRs.contents).toContain("    pub children: ListNonterminalView<'a>,");
-		expect(renderBody).toContain("let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()");
+		expect(renderBody).toContain(
+			"let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()"
+		);
 		expect(renderBody).not.toContain('node.children.as_deref().unwrap_or(&[])');
+	});
+
+	it('keeps fallback repeated unnamed children on direct Vec-backed transport views', () => {
+		const emitted = emitRenderModule('rust', [], makeOptionalRepeatedChildrenNodeMap());
+		const renderStart = emitted.transportRs.contents.indexOf('fn render_optional_repeated_child_parent(');
+		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
+		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
+
+		expect(renderBody).toContain('for child in node.children.iter() {');
+		expect(renderBody).not.toContain('if let Some(children) = &node.children {');
+	});
+
+	it('renders polymorphs through the parent helper without per-form typed helpers', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'expression.jinja',
+					content: '{{ children }}'
+				}
+			],
+			makePolymorphSingularChildrenNodeMap()
+		);
+		const source = readFileSync(resolve(repoRoot, 'packages/codegen/src/emitters/render-module.ts'), 'utf8');
+
+		expect(emitted.transportRs.contents).toContain('fn render_expression(');
+		expect(emitted.transportRs.contents).not.toContain('fn render_expression__form_identifier(');
+		expect(emitted.transportRs.contents).not.toContain('fn render_expression__form_integer(');
+		expect(source).not.toContain('function renderTypedPolymorphFn(');
+		expect(source).not.toContain('function renderTypedFormFn(');
 	});
 });
 

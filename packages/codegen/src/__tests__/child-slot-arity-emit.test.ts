@@ -56,6 +56,36 @@ function makeMultiSingularChildNodeMap(): NodeMap {
 	return nodeMapWith(nodes);
 }
 
+function makeOptionalKeywordChildNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{ type: 'string', value: 'yield' },
+			{
+				type: 'optional',
+				content: {
+					type: 'choice',
+					members: [
+						{
+							type: 'seq',
+							members: [
+								{ type: 'string', value: 'from' },
+								{ type: 'symbol', name: 'expression' }
+							]
+						},
+						{ type: 'symbol', name: 'expression_list' }
+					]
+				}
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('yield', new AssembledBranch('yield', parentRule, parentRule));
+	nodes.set('expression', new AssembledPattern('expression', { type: 'pattern', value: '.+' }));
+	nodes.set('expression_list', new AssembledPattern('expression_list', { type: 'pattern', value: '.+' }));
+	return nodeMapWith(nodes);
+}
+
 describe('types emitter child slot arity', () => {
 	it('emits singular unnamed children as single values instead of singleton tuples', () => {
 		const requiredSrc = emitTypes({ grammar: 'synth', nodeMap: makeRequiredSingleChildNodeMap() });
@@ -71,5 +101,12 @@ describe('types emitter child slot arity', () => {
 
 		expect(src).toContain('readonly $children: readonly [Identifier | NumberLiteral];');
 		expect(src).not.toContain('readonly $children: Identifier | NumberLiteral;');
+	});
+
+	it('drops inline terminal literals from child slot types', () => {
+		const src = emitTypes({ grammar: 'synth', nodeMap: makeOptionalKeywordChildNodeMap() });
+
+		expect(src).toContain('readonly $children?: Expression | ExpressionList;');
+		expect(src).not.toContain('readonly $children?: "from" | Expression | ExpressionList;');
 	});
 });

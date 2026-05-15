@@ -3559,7 +3559,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 2,
-        "required": true,
+        "required": false,
         "multiple": true,
         "nonEmpty": true
       }

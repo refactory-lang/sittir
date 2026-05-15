@@ -12,29 +12,29 @@ import { fileURLToPath } from 'node:url';
 import {
 	validateFrom,
 	formatFromReport,
-} from '@sittir/codegen/validate/from';
+} from '../../codegen/src/validate/from.ts';
 import {
 	validateFactoryRenderParse,
 	formatFactoryRenderParseReport,
-} from '@sittir/codegen/validate/factory-render-parse';
+} from '../../codegen/src/validate/factory-render-parse.ts';
 import {
 	validateReadRenderParse,
 	formatReadRenderParseReport,
-} from '@sittir/codegen/validate/read-render-parse';
-import type { ValidateReadRenderParseOptions } from '@sittir/codegen/validate/read-render-parse';
-import { validateTemplateCoverage } from '@sittir/codegen/validate/template-coverage';
+} from '../../codegen/src/validate/read-render-parse.ts';
+import type { ValidateReadRenderParseOptions } from '../../codegen/src/validate/read-render-parse.ts';
+import { validateTemplateCoverage } from '../../codegen/src/validate/template-coverage.ts';
 
 export type Grammar = 'rust' | 'typescript' | 'python';
 export type Backend = 'native' | 'typescript';
 
 // Re-export result types so callers only need @sittir/validator.
-export type { FromValidationResult, FromValidationError } from '@sittir/codegen/validate/from';
-export type { FactoryRenderParseResult } from '@sittir/codegen/validate/factory-render-parse';
-export type { ReadRenderParseResult, ValidateReadRenderParseOptions } from '@sittir/codegen/validate/read-render-parse';
+export type { FromValidationResult, FromValidationError } from '../../codegen/src/validate/from.ts';
+export type { FactoryRenderParseResult } from '../../codegen/src/validate/factory-render-parse.ts';
+export type { ReadRenderParseResult, ValidateReadRenderParseOptions } from '../../codegen/src/validate/read-render-parse.ts';
 export type {
 	TemplateCoverageResult,
 	CoverageIssue,
-} from '@sittir/codegen/validate/template-coverage';
+} from '../../codegen/src/validate/template-coverage.ts';
 
 // Re-export formatting helpers.
 export { formatFromReport, formatFactoryRenderParseReport, formatReadRenderParseReport };

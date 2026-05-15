@@ -1392,7 +1392,7 @@ export interface _ListPattern {
 
 export interface MatchBlock {
   readonly $type: TSKindId.MatchBlock;
-  readonly $children: readonly [MatchBlockBlock];
+  readonly $children: MatchBlockBlock;
 }
 
 export interface MatchBlockBlock {
@@ -1403,7 +1403,7 @@ export interface MatchBlockBlock {
 
 export interface SimplePatternNegative {
   readonly $type: TSKindId.SimplePatternNegative;
-  readonly $children: readonly [Integer | Float];
+  readonly $children: Integer | Float;
 }
 
 export interface SimpleStatements {
@@ -1413,7 +1413,7 @@ export interface SimpleStatements {
 
 export interface Suite {
   readonly $type: "_suite";
-  readonly $children: readonly [SimpleStatements | Block | Newline];
+  readonly $children: SimpleStatements | Block | Newline;
 }
 
 export interface _TuplePattern {
@@ -1457,7 +1457,7 @@ export interface AssignmentUFormEq {
   readonly $variant: 'eq';
   readonly _left: LeftHandSide;
   left(): LeftHandSide;
-  readonly $children: readonly [AssignmentEq];
+  readonly $children: AssignmentEq;
 }
 
 export interface AssignmentUFormType {
@@ -1465,7 +1465,7 @@ export interface AssignmentUFormType {
   readonly $variant: 'type';
   readonly _left: LeftHandSide;
   left(): LeftHandSide;
-  readonly $children: readonly [AssignmentType];
+  readonly $children: AssignmentType;
 }
 
 export interface AssignmentUFormTyped {
@@ -1473,7 +1473,7 @@ export interface AssignmentUFormTyped {
   readonly $variant: 'typed';
   readonly _left: LeftHandSide;
   left(): LeftHandSide;
-  readonly $children: readonly [AssignmentTyped];
+  readonly $children: AssignmentTyped;
 }
 
 export type Assignment = AssignmentUFormEq | AssignmentUFormType | AssignmentUFormTyped;
@@ -1554,7 +1554,7 @@ export interface CaseClause {
 
 export interface CasePattern {
   readonly $type: TSKindId.CasePattern;
-  readonly $children: readonly [_AsPattern | KeywordPattern | SimplePattern];
+  readonly $children: _AsPattern | KeywordPattern | SimplePattern;
 }
 
 export interface Chevron {
@@ -1601,7 +1601,7 @@ export interface ComplexPattern {
   };
   real(): boolean | undefined;
   imaginary(): Integer | Float;
-  readonly $children: readonly [Integer | Float];
+  readonly $children: Integer | Float;
 }
 
 export interface ConcatenatedString {
@@ -1652,7 +1652,7 @@ export interface DefaultParameter {
 
 export interface DeleteStatement {
   readonly $type: TSKindId.DeleteStatement;
-  readonly $children: readonly [Expressions];
+  readonly $children: Expressions;
 }
 
 export interface DictPattern {
@@ -1669,7 +1669,7 @@ export interface DictionaryComprehension {
   readonly $type: TSKindId.DictionaryComprehension;
   readonly _body: Pair;
   body(): Pair;
-  readonly $children: readonly [ComprehensionClauses];
+  readonly $children: ComprehensionClauses;
 }
 
 export interface DictionarySplat {
@@ -1680,7 +1680,7 @@ export interface DictionarySplat {
 
 export interface DictionarySplatPattern {
   readonly $type: TSKindId.DictionarySplatPattern;
-  readonly $children: readonly [Identifier | KeywordIdentifier | Subscript | Attribute];
+  readonly $children: Identifier | KeywordIdentifier | Subscript | Attribute;
 }
 
 export interface DottedName {
@@ -1708,7 +1708,7 @@ export interface ExceptClause {
   readonly _alias?: Expression;
   values(): NonEmptyArray<Expression>;
   alias(): Expression | undefined;
-  readonly $children: readonly [Suite];
+  readonly $children: Suite;
 }
 
 export interface ExecStatement {
@@ -1721,7 +1721,7 @@ export interface ExecStatement {
 
 export interface ExpressionList {
   readonly $type: TSKindId.ExpressionList;
-  readonly $children: NonEmptyArray<Expression | "," | Expression>;
+  readonly $children: NonEmptyArray<Expression | Expression>;
 }
 
 export interface ExpressionStatementTuple {
@@ -1732,7 +1732,7 @@ export interface ExpressionStatementTuple {
 export interface ExpressionStatementUFormExpression {
   readonly $type: TSKindId.ExpressionStatement;
   readonly $variant: 'expression';
-  readonly $children: readonly [Expression];
+  readonly $children: Expression;
 }
 
 export interface ExpressionStatementUFormTuple {
@@ -1743,19 +1743,19 @@ export interface ExpressionStatementUFormTuple {
 export interface ExpressionStatementUFormAssignment {
   readonly $type: TSKindId.ExpressionStatement;
   readonly $variant: 'assignment';
-  readonly $children: readonly [Assignment];
+  readonly $children: Assignment;
 }
 
 export interface ExpressionStatementUFormAugmentedAssignment {
   readonly $type: TSKindId.ExpressionStatement;
   readonly $variant: 'augmented_assignment';
-  readonly $children: readonly [AugmentedAssignment];
+  readonly $children: AugmentedAssignment;
 }
 
 export interface ExpressionStatementUFormYield {
   readonly $type: TSKindId.ExpressionStatement;
   readonly $variant: 'yield';
-  readonly $children: readonly [Yield];
+  readonly $children: Yield;
 }
 
 export type ExpressionStatement = ExpressionStatementUFormExpression | ExpressionStatementUFormTuple | ExpressionStatementUFormAssignment | ExpressionStatementUFormAugmentedAssignment | ExpressionStatementUFormYield;
@@ -1829,7 +1829,7 @@ export interface GeneratorExpression {
   readonly $type: TSKindId.GeneratorExpression;
   readonly _body: Expression;
   body(): Expression;
-  readonly $children: readonly [ComprehensionClauses];
+  readonly $children: ComprehensionClauses;
 }
 
 export interface GenericType {
@@ -1894,7 +1894,7 @@ export interface KeywordArgument {
 
 export interface KeywordIdentifier {
   readonly $type: "keyword_identifier";
-  readonly $children: readonly [Identifier];
+  readonly $children: Identifier;
 }
 
 export interface KeywordPattern {
@@ -1935,7 +1935,7 @@ export interface ListComprehension {
   readonly $type: TSKindId.ListComprehension;
   readonly _body: Expression;
   body(): Expression;
-  readonly $children: readonly [ComprehensionClauses];
+  readonly $children: ComprehensionClauses;
 }
 
 export interface ListPattern {
@@ -1951,7 +1951,7 @@ export interface ListSplat {
 
 export interface ListSplatPattern {
   readonly $type: TSKindId.ListSplatPattern;
-  readonly $children: readonly [Identifier | KeywordIdentifier | Subscript | Attribute];
+  readonly $children: Identifier | KeywordIdentifier | Subscript | Attribute;
 }
 
 export interface MatchStatement {
@@ -2009,31 +2009,31 @@ export interface Parameters {
 
 export interface ParenthesizedExpression {
   readonly $type: TSKindId.ParenthesizedExpression;
-  readonly $children: readonly [Expression | Yield];
+  readonly $children: Expression | Yield;
 }
 
 export interface ParenthesizedListSplat {
   readonly $type: TSKindId.ParenthesizedListSplat;
-  readonly $children: readonly [ParenthesizedListSplat | ListSplat];
+  readonly $children: ParenthesizedListSplat | ListSplat;
 }
 
 export interface PatternList {
   readonly $type: TSKindId.PatternList;
-  readonly $children: NonEmptyArray<Pattern | "," | Pattern>;
+  readonly $children: NonEmptyArray<Pattern | Pattern>;
 }
 
 export interface PrintStatement {
   readonly $type: TSKindId.PrintStatement;
   readonly _argument?: readonly (Expression)[];
   arguments(): readonly (Expression)[];
-  readonly $children: readonly [Chevron];
+  readonly $children?: Chevron;
 }
 
 export interface RaiseStatement {
   readonly $type: TSKindId.RaiseStatement;
   readonly _cause?: Expression;
   cause(): Expression | undefined;
-  readonly $children: readonly [Expressions];
+  readonly $children?: Expressions;
 }
 
 export interface RelativeImport {
@@ -2046,7 +2046,7 @@ export interface RelativeImport {
 
 export interface ReturnStatement {
   readonly $type: TSKindId.ReturnStatement;
-  readonly $children: readonly [Expressions];
+  readonly $children?: Expressions;
 }
 
 export interface Set {
@@ -2058,7 +2058,7 @@ export interface SetComprehension {
   readonly $type: TSKindId.SetComprehension;
   readonly _body: Expression;
   body(): Expression;
-  readonly $children: readonly [ComprehensionClauses];
+  readonly $children: ComprehensionClauses;
 }
 
 export interface Slice {
@@ -2130,7 +2130,7 @@ export interface TuplePattern {
 
 export interface Type {
   readonly $type: TSKindId.Type;
-  readonly $children: readonly [Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType];
+  readonly $children: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
 }
 
 export interface TypeAliasStatement {
@@ -2165,7 +2165,7 @@ export interface TypedParameter {
   readonly $type: TSKindId.TypedParameter;
   readonly _type: Type;
   type(): Type;
-  readonly $children: readonly [Identifier | ListSplatPattern | DictionarySplatPattern];
+  readonly $children: Identifier | ListSplatPattern | DictionarySplatPattern;
 }
 
 export interface UnaryOperator {
@@ -2220,7 +2220,7 @@ export interface WithClauseUFormBare {
 export interface WithClauseUFormParen {
   readonly $type: TSKindId.WithClause;
   readonly $variant: 'paren';
-  readonly $children: readonly [_WithClauseParen];
+  readonly $children: _WithClauseParen;
 }
 
 export type WithClause = WithClauseUFormBare | WithClauseUFormParen;
@@ -2245,7 +2245,7 @@ export interface WithStatement {
 
 export interface Yield {
   readonly $type: TSKindId.Yield;
-  readonly $children: readonly ["from" | Expression | Expressions];
+  readonly $children?: Expression | Expressions;
 }
 
 

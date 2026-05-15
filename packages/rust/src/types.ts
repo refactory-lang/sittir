@@ -2245,7 +2245,7 @@ export interface _ModItemInline {
 
 export interface NonSpecialToken {
   readonly $type: "_non_special_token";
-  readonly $children: NonEmptyArray<Literal | Identifier | MutableSpecifier | Self | Super | Crate | PrimitiveType | "+" | "-" | "*" | "/" | "%" | "^" | "!" | "&" | "|" | "&&" | "||" | "<<" | ">>" | "+=" | "-=" | "*=" | "/=" | "%=" | "^=" | "&=" | "|=" | "<<=" | ">>=" | "=" | "==" | "!=" | ">" | "<" | ">=" | "<=" | "@" | "_" | "." | ".." | "..." | "..=" | "," | ";" | ":" | "::" | "->" | "=>" | "#" | "?" | "'" | "as" | "async" | "await" | "break" | "const" | "continue" | "default" | "enum" | "fn" | "for" | "gen" | "if" | "impl" | "let" | "loop" | "match" | "mod" | "pub" | "return" | "static" | "struct" | "trait" | "type" | "union" | "unsafe" | "use" | "where" | "while">;
+  readonly $children: NonEmptyArray<Literal | Identifier | MutableSpecifier | Self | Super | Crate | PrimitiveType>;
 }
 
 export interface OrPatternBinary {
@@ -3365,7 +3365,7 @@ export interface Parameter {
 
 export interface Parameters {
   readonly $type: TSKindId.Parameters;
-  readonly $children: readonly (AttributeItem | Parameter | SelfParameter | VariadicParameter | "_" | _Type)[];
+  readonly $children: readonly (AttributeItem | Parameter | SelfParameter | VariadicParameter | _Type)[];
 }
 
 export interface ParenthesizedExpression {

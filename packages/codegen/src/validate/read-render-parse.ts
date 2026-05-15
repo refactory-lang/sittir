@@ -30,6 +30,7 @@ import {
 	wrapForReparse,
 	loadReadTreeNode,
 	walkWrappedTree,
+	materializeWrappedNodeData,
 	emitValidatorMetrics,
 	type TSNode,
 	type TSTree,
@@ -108,19 +109,6 @@ function _deepReadNode(
 		}
 	}
 	return data;
-}
-
-/**
- * Force evaluation of every wrapped-node getter before render.
- *
- * @remarks
- * `readTreeNode()` returns a lazy wrapped view. Recursive RT mode is
- * documented as full recursive materialization before render, so force a
- * complete walk here rather than relying on templates to touch every getter.
- */
-function materializeWrappedNodeData(root: unknown): AnyNodeData {
-	walkWrappedTree(root, () => {});
-	return root as AnyNodeData;
 }
 
 function stripMaterializedNodeText(root: AnyNodeData): AnyNodeData {
@@ -677,8 +665,9 @@ export interface RenderFixture {
 	kind: 'render';
 	grammar: string;
 	/** NodeData input — the deep-read result from readTreeNode, ready
-	 *  for the Rust engine's `render_dispatch` or the TS engine's
-	 *  `render()`. Serialized to JSON verbatim. */
+	 *  for the grammar boundary render path (native transport when
+	 *  `backend === 'native'`, TS `render()` otherwise). Serialized to
+	 *  JSON verbatim. */
 	input: unknown;
 	/** The string the TS engine produced for `input`. Parity gate
 	 *  asserts the Rust engine produces the same bytes. */

@@ -272,32 +272,41 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 			const node1 = findFirst(tree1.rootNode, kind);
 			if (!node1) continue;
 
-			const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
-			// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
-			// Resolve via the native data tree; if the kind is an alias target
-			// the native engine emits under a different rule name, skip rather
-			// than fall back to a mismatched WASM ID.
-			const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
-			if (nativeCoords === null && handle.read) continue;
-			// Use readTreeNode (wrapped via per-kind dispatch) when available,
-			// so `.from()` sees a fluent NodeData — the supported input shape
-			// per spec 008 US3. Fall back to raw readNode if the wrap module
-			// isn't loaded (bootstrap scenarios).
-			// ADR-0017: for WASM/JS path, temporarily swap rootNode to target
-			// then call with no navigation coords (reads rootNode).
 			let readData: AnyNodeData;
-			if (nativeCoords && handle.read) {
-				readData = readTreeNode
-					? (readTreeNode(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyNodeData)
-					: readNodeAt(handle, adaptNode(node1), nativeCoords);
-			} else {
-				const prev = handle.rootNode;
-				(handle as { rootNode: typeof prev }).rootNode = adaptNode(node1);
-				try {
-					readData = readTreeNode ? (readTreeNode(handle) as AnyNodeData) : readNodeAt(handle, adaptNode(node1), null);
-				} finally {
-					(handle as { rootNode: typeof prev }).rootNode = prev;
+			try {
+				const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+				// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
+				// Resolve via the native data tree; if the kind is an alias target
+				// the native engine emits under a different rule name, skip rather
+				// than fall back to a mismatched WASM ID.
+				const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
+				if (nativeCoords === null && handle.read) continue;
+				// Use readTreeNode (wrapped via per-kind dispatch) when available,
+				// so `.from()` sees a fluent NodeData — the supported input shape
+				// per spec 008 US3. Fall back to raw readNode if the wrap module
+				// isn't loaded (bootstrap scenarios).
+				// ADR-0017: for WASM/JS path, temporarily swap rootNode to target
+				// then call with no navigation coords (reads rootNode).
+				if (nativeCoords && handle.read) {
+					readData = readTreeNode
+						? (readTreeNode(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyNodeData)
+						: readNodeAt(handle, adaptNode(node1), nativeCoords);
+				} else {
+					const prev = handle.rootNode;
+					(handle as { rootNode: typeof prev }).rootNode = adaptNode(node1);
+					try {
+						readData = readTreeNode ? (readTreeNode(handle) as AnyNodeData) : readNodeAt(handle, adaptNode(node1), null);
+					} finally {
+						(handle as { rootNode: typeof prev }).rootNode = prev;
+					}
 				}
+			} catch (e) {
+				errors.push({
+					kind,
+					severity: 'error',
+					message: `read/wrap throws: ${(e as Error).message.slice(0, 120)}`
+				});
+				continue;
 			}
 
 			try {

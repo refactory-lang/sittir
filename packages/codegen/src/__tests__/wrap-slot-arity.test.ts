@@ -90,6 +90,22 @@ function makeHiddenSupertypeChildrenNodeMap() {
 	return makeNodeMapWith(nodes);
 }
 
+function makeVisibleSupertypeChildrenNodeMap() {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'expression' }]
+	};
+	const expressionRule: ChoiceRule = {
+		type: 'choice',
+		members: [{ type: 'symbol', name: 'identifier' }]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('typed_value', new AssembledBranch('typed_value', parentRule, parentRule));
+	nodes.set('expression', new AssembledSupertype('expression', expressionRule, ['identifier']));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	return makeNodeMapWith(nodes);
+}
+
 function makeOptionalThenRequiredChildNodeMap() {
 	const parentRule: SeqRule = {
 		type: 'seq',
@@ -162,5 +178,19 @@ describe('wrap emitter slot arity', () => {
 		const source = emitWrap({ grammar: 'synth', nodeMap: makeHiddenSupertypeChildrenNodeMap() });
 
 		expect(source).toContain('"_type": new Set(["_primitive_type","primitive_type","u8","bool"])');
+	});
+
+	it('matches visible supertypes against concrete child kinds during wrap filtering', () => {
+		const source = emitWrap({ grammar: 'synth', nodeMap: makeVisibleSupertypeChildrenNodeMap() });
+
+		expect(source).toContain('"expression": new Set(["identifier"])');
+		expect(source).toContain(
+			'const members = SUPERTYPE_MEMBERS[allowed] ?? SUPERTYPE_MEMBERS[allowed.startsWith("_") ? allowed.slice(1) : allowed];'
+		);
+		expect(source).toContain('if (members?.has(kind)) return true;');
+		expect(source).toContain('if (stripped !== undefined && members?.has(stripped)) return true;');
+		expect(source).toContain(
+			'$children: normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["expression"]), "children", true, data.$type),'
+		);
 	});
 });

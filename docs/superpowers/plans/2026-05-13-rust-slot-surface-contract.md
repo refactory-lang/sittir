@@ -4,7 +4,7 @@
 
 **Goal:** Make the Rust path obey the approved slot-surface contract by deriving slot arity from `AssembledNonterminal.values`, normalizing wrap and validator behavior from that derivation, and emitting Rust transport/template surfaces that match the target matrix without changing the raw native read payload. Preserve token-rule whitespace fidelity while doing so: token-only output must not widen from `jjjj` to ` jjjj ` as render wiring changes.
 
-**Architecture:** Keep the raw native boundary unchanged and push schema-aware arity handling into generated layers. The single source of truth for arity is the `values` multiplicity on each `AssembledNonterminal`; codegen should derive storage, validator metadata, wrap normalization, and Rust render transport/template shapes from that source instead of inferring from realized payload shape.
+**Architecture:** Keep the raw native boundary unchanged and push schema-aware arity handling into generated layers. The single source of truth for arity is the `values` multiplicity on each `AssembledNonterminal`; codegen should derive storage, validator metadata, wrap normalization, and Rust render transport/template shapes from that source instead of inferring from realized payload shape. The unnamed slot is not a special pipeline: named and unnamed slots must share the same canonical slot model and the same derivation path. Any separate `children`-only derivation or render-time reconstruction is drift and breaks the matrix contract.
 
 **Tech Stack:** TypeScript 6 ESM, pnpm workspaces, Vitest, tsgo, tree-sitter grammar codegen, Rust napi render crates, validator CLI
 
@@ -35,7 +35,7 @@
 - Modify: `packages/codegen/src/__tests__/node-to-config-promotion.test.ts`
   - Lock the validator contract for singular vs repeated named and unnamed slots.
 - Modify: `packages/codegen/src/emitters/render-module.ts`
-  - Emit Rust transport fields as `T | Option<T> | Vec<T>` and Askama views as `Single/Optional/List`.
+  - Emit Rust transport fields as `T | Option<T> | Vec<T>` and Askama views as `Single/Optional/List`, while keeping unnamed-slot derivation on the same canonical path as named slots rather than a separate `children` pipeline.
 - Modify: `packages/codegen/src/__tests__/native-transport-emit.test.ts`
   - Lock Rust transport field shapes for singular and repeated slots.
 - Modify: `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts`
@@ -823,6 +823,51 @@ git add packages/codegen/src/compiler/node-map.ts \
         rust/crates/sittir-rust/src/render/mod.rs
 git commit -m "fix: align rust slot surfaces with grammar-derived arity"
 ```
+
+## 024 Closeout Addendum (2026-05-13)
+
+Current frozen baseline before the next fix:
+
+- committed snapshot: `f0ad5518` — `fix: baseline rust regen recovery`
+- native counts baseline:
+  - rust: `from 122/168`, `cov 176/180`, `rt 134/136`, `rt-shallow 134/136`, `factory 551/1221`
+  - typescript: `from 98/113`, `cov 175/179`, `rt 83/112`, `rt-shallow 83/112`, `factory 369/654`
+  - python: `from 97/118`, `cov 106/108`, `rt 115/115`, `rt-shallow 114/115`, `factory 360/853`
+
+Exact remaining items to close out branch `024-rust-slot-surface-contract`:
+
+1. **Remove render-side unnamed-slot special casing from `render-module.ts`.**
+   - Eliminate `resolve_children()`-style reconstruction.
+   - Treat the unnamed slot exactly like named slots: one canonical grammar-derived slot model, one derivation path.
+   - Do not re-derive slot shape from `fields` + `children` at render time.
+
+2. **Remove alternate unnamed-slot derivations in the Rust render pipeline.**
+   - Stop relying on helper families such as `structuralChildrenOf`, `transportChildrenOf`, and `deriveChildrenTransportCardinality` as independent derivations of the unnamed slot.
+   - Replace them with a single canonical slot-model read shared by named and unnamed slots.
+
+3. **Keep native render transport widening within the approved rule.**
+   - Only widen when the grammar truly gives a slot multiple shapes.
+   - In that case, use either a dedicated per-slot enum or `Box<AnyTransport>`.
+   - Otherwise keep the slot single-shape and do not widen/reconstruct it at runtime.
+
+4. **Do not redesign the raw native read payload.**
+   - Keep `read_node` output realized-shape/raw.
+   - All schema-aware shaping must stay in generated layers, not runtime coercion.
+
+5. **After the slot-model/render fix, regenerate all affected grammars and verify against the frozen baseline.**
+   - Regenerate `rust`, `typescript`, and `python` outputs for the final shared codegen fix.
+   - Re-run the focused Rust/codegen checks plus `counts --backend native rust typescript python`.
+   - Compare counts to the frozen baseline above; any delta must be explained or fixed before closeout.
+
+6. **Include `pattern-string-hoist` in the 024 closeout diff.**
+   - Hoist pattern-config surfaces to strings where required by the approved follow-up.
+   - Keep factory validation by routing those strings through the pattern factory before storing `$text`.
+   - This is in-scope for `024` closeout because otherwise factory-generated nodes can crash.
+
+7. **Commit the final 024 closeout diff.**
+   - Commit only the intentional `024` closeout changes.
+   - Leave unrelated graph/history noise out of the commit.
+   - After that commit, branch `024` is ready for finish/merge handling.
 
 ## Spec Coverage Check
 

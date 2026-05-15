@@ -555,14 +555,16 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 					? {
 							...merged.aliasSources,
 							...slot.aliasSources
-					  }
+						}
 					: undefined
 		}),
 		{ ...first, values: [...first.values] }
 	);
 }
 
-function renderSlotAuditVariantsOf(node: Extract<AssembledNode, { modelType: 'branch' | 'group' | 'polymorph' }>): readonly (readonly AssembledNonterminal[])[] {
+function renderSlotAuditVariantsOf(
+	node: Extract<AssembledNode, { modelType: 'branch' | 'group' | 'polymorph' }>
+): readonly (readonly AssembledNonterminal[])[] {
 	if (node.modelType === 'polymorph') {
 		return node.forms.map((form) => Object.values(form.slots));
 	}
@@ -611,10 +613,7 @@ function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
 		if (children.length === 0) return undefined;
 		const merged = mergeRenderSlots(children);
 		if (!merged) return undefined;
-		const cardinality =
-			children.length === 1
-				? deriveSlotCardinality(merged)
-				: deriveChildrenCardinality(children);
+		const cardinality = children.length === 1 ? deriveSlotCardinality(merged) : deriveChildrenCardinality(children);
 		return {
 			required: cardinality.required,
 			multiple: cardinality.multiple || children.length > 1
@@ -745,18 +744,6 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 	}
 	return lines.join('\n');
 }
-
-function renderFnName(kind: string): string {
-	const base = kind.replace(/^_+/, 'hidden_').replace(/[^a-zA-Z0-9]+/g, '_');
-	return `render_${base}`;
-}
-
-/**
- * Per-kind render functions need `pub(crate)` visibility so that
- * `dispatch.rs` (sibling module) can call them. This prefix is
- * applied during emission of per-kind functions.
- */
-const PER_KIND_FN_VIS = 'pub(crate) ';
 
 /**
  * Pick the per-cardinality nonterminal-view type for an emitted slot.
@@ -1300,97 +1287,6 @@ function renderDirectSupport(meta: MetaData, kindIdByKind?: ReadonlyMap<string, 
 	].join('\n');
 }
 
-function renderPerKindFns(structs: EmittedStruct[]): string {
-	const lines: string[] = [];
-	for (const s of structs) {
-		lines.push(`${PER_KIND_FN_VIS}fn ${renderFnName(s.kind)}(node: &NodeData) -> Result<String, ::askama::Error> {`);
-		if (s.hasChildren) {
-			lines.push(`    let children = resolve_slot(node, SlotAccessor::Children, ${String(s.childrenRequired)})?;`);
-		}
-		for (const [index, f] of s.fields.entries()) {
-			lines.push(
-				`    let field_${index} = resolve_slot(node, SlotAccessor::Field(${JSON.stringify(f.name)}), ${f.required})?;`
-			);
-		}
-		if (s.hasVariant) {
-			lines.push(`    let variant = resolve_variant(node);`);
-		}
-		if (s.hasText) {
-			lines.push(`    let text = resolve_text(node)?;`);
-		}
-		// Build stack-local renderable buffers so the template can borrow
-		// `Renderable::Text(&str)` views over the resolved string items.
-		// `ResolvedField::items: Vec<String>` lives in this stack frame, so the
-		// renderable vec borrowing from it is sound for the template's
-		// lifetime.
-		if (s.hasChildren && s.childrenMultiple) {
-			lines.push(`    let children_renderables = children.renderable_items();`);
-		}
-		for (const [index, f] of s.fields.entries()) {
-			if (f.view === 'scalar') continue;
-			lines.push(`    let field_${index}_renderables = field_${index}.renderable_items();`);
-		}
-		lines.push(`    let template = ${s.name} {`);
-		if (s.hasChildren) {
-			if (s.childrenMultiple) {
-				lines.push(`        children: ListNonterminalView {`);
-				lines.push(`            items: children_renderables.as_slice(),`);
-				lines.push(`            separator: children.separator,`);
-				lines.push(`            leading: children.leading_sep,`);
-				lines.push(`            trailing: children.trailing_sep,`);
-				lines.push(`        },`);
-			} else if (s.childrenRequired) {
-				lines.push(
-					...requiredResolvedFieldViewLines('        children', 'children', 'missing_required_field(node, "children")')
-				);
-			} else {
-				lines.push(`        children: match children.kind {`);
-				lines.push(`            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,`);
-				lines.push(
-					`            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),`
-				);
-				lines.push(`        },`);
-			}
-		}
-		if (s.hasVariant) {
-			lines.push(`        variant,`);
-		}
-		if (s.hasText) {
-			lines.push(`        text: text.as_str(),`);
-		}
-		for (const [index, f] of s.fields.entries()) {
-			const rIdent = rustFieldIdent(f.name);
-			if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
-				// Always-list slot.
-				lines.push(`        ${rIdent}: ListNonterminalView {`);
-				lines.push(`            items: field_${index}_renderables.as_slice(),`);
-				lines.push(`            separator: field_${index}.separator,`);
-				lines.push(`            leading: field_${index}.leading_sep,`);
-				lines.push(`            trailing: field_${index}.trailing_sep,`);
-				lines.push(`        },`);
-			} else if (f.required) {
-				// Required scalar (view='scalar' or single-valued field-view).
-				lines.push(
-					`        ${rIdent}: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`
-				);
-			} else {
-				// Optional scalar — use ResolvedField.kind to gate Missing vs Present.
-				lines.push(`        ${rIdent}: match field_${index}.kind {`);
-				lines.push(`            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,`);
-				lines.push(
-					`            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`
-				);
-				lines.push(`        },`);
-			}
-		}
-		lines.push(`    };`);
-		lines.push(`    template.render()`);
-		lines.push(`}`);
-		lines.push('');
-	}
-	return lines.join('\n');
-}
-
 function renderDispatchFn(_structs: EmittedStruct[], _kindIdByKind?: ReadonlyMap<string, number>): string {
 	const lines: string[] = [];
 	lines.push(`/// Legacy direct NodeData render entrypoint.`);
@@ -1647,40 +1543,6 @@ function classifySlotForEmit(kinds: readonly string[], nodeMap: NodeMap): SlotCl
 }
 
 /**
- * Build a Rust expression that renders a single transport value to `String`.
- * Single source for all render call sites — field scalar, field list item,
- * children item.
- *
- * @param cls  - slot classification from `classifySlot` or `classifySlotForEmit`
- * @param expr - Rust expression yielding the reference to render.
- *               For concrete: `&node.field` (no Box deref needed).
- *               For supertype: `&node.field` (reference to enum, no Box deref).
- *               For heterogeneous: `t.as_ref()` (Box deref).
- */
-function buildSlotRenderCall(cls: SlotClass, expr: string): string {
-	switch (cls.tag) {
-		case 'concrete':
-			// Use typeName (PascalCase, no leading underscore) so the generated
-			// fn call matches what renderTypedLeafFn/renderTypedBranchFn emit.
-			// Example: _kw_abstract_marker → typeName=KwAbstractMarker →
-			// render_kw_abstract_marker (NOT render__kw_…).
-			return `render_${rustSnakeIdent(cls.typeName)}(${expr})`;
-		case 'supertype':
-			return `render_${rustSnakeIdent(cls.supertypeName)}(${expr})`;
-		case 'heterogeneous':
-			if (cls.useBox === true) {
-				// Box<AnyTransport> single-value fallback — deref through Box to reach
-				// &AnyTransport: &dyn RenderableTransport.
-				return `${expr}.as_ref().render_to_string()`;
-			}
-			// Per-slot child enum — implements RenderableTransport directly.
-			return `${expr}.render_to_string()`;
-		default:
-			return assertNever(cls);
-	}
-}
-
-/**
  * Like `buildSlotRenderCall` but emits a `write`-to-dest statement
  * instead of a String-returning expression. Used by the streaming
  * fallback branch render fn.
@@ -1899,20 +1761,13 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 		// RenderableTransport — use `child` directly as the expression.
 		const childWriteCall = buildSlotWriteCall(childrenCls, 'child');
 		if (childrenIsMultiple) {
-			// Vec<T> — iterate, writing each child directly to dest.
-			if (childrenIsRequired) {
-				lines.push(`    for child in node.children.iter() {`);
-				lines.push(`        ${childWriteCall}`);
-				lines.push(`    }`);
-				lines.push(`    Ok(())`);
-			} else {
-				lines.push(`    if let Some(children) = &node.children {`);
-				lines.push(`        for child in children.iter() {`);
-				lines.push(`            ${childWriteCall}`);
-				lines.push(`        }`);
-				lines.push(`    }`);
-				lines.push(`    Ok(())`);
-			}
+			// Repeated unnamed children are always stored as Vec<T> on the transport
+			// surface, even for 0-many grammar slots. Keep fallback render helpers
+			// aligned with that struct shape.
+			lines.push(`    for child in node.children.iter() {`);
+			lines.push(`        ${childWriteCall}`);
+			lines.push(`    }`);
+			lines.push(`    Ok(())`);
 		} else if (childrenIsRequired) {
 			// Required bare T — render single child directly into dest.
 			const singleExpr = childrenCls.tag === 'heterogeneous' ? 'node.children' : '&node.children';
@@ -1956,42 +1811,6 @@ function renderTypedLeafFn(node: AssembledNode): string[] {
 		`}`,
 		``
 	];
-}
-
-/**
- * Emit a polymorph typed render fn that matches on the enum variant and
- * delegates to per-form fns, then emits each per-form fn.
- */
-function renderTypedPolymorphFn(
-	node: Extract<AssembledNode, { modelType: 'polymorph' }>,
-	structsByKind: Map<string, EmittedStruct>,
-	meta: MetaData,
-	nodeMap: NodeMap
-): string[] {
-	const lines: string[] = [];
-	const fnName = rustTypedRenderFnName(node.typeName);
-	const structName = rustTransportStructName(node);
-
-	lines.push(`fn ${fnName}(t: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
-	lines.push(`    match t {`);
-	for (const form of node.forms) {
-		const formVariant = rustTransportFormVariantName(form);
-		const formFn = rustTypedRenderFnName(form.typeName);
-		lines.push(`        ${structName}::${formVariant}(data) => ${formFn}(data, dest),`);
-	}
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push('');
-
-	// Per-form fns — look up the form's kind in structsByKind
-	for (const form of node.forms) {
-		const formStruct = structsByKind.get(node.kind) ?? undefined;
-		// Forms share the parent's template struct (same kind → same template)
-		// so we build using the form's fields against the parent struct.
-		lines.push(...renderTypedFormFn(node.kind, form, formStruct, meta, nodeMap));
-	}
-
-	return lines;
 }
 
 /**
@@ -2054,116 +1873,6 @@ function renderTypedBranchFn(node: AssembledNode, struct: EmittedStruct, meta: M
 
 	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(...buildTypedTemplateBody(struct, separator, fieldKindsByName, fieldMixedByName, childrenCls, nodeMap));
-	lines.push(`}`);
-	lines.push('');
-
-	return lines;
-}
-
-/**
- * Emit a polymorph-form typed render fn that builds the parent kind's
- * template struct from the form's typed transport fields.
- *
- * Forms always render through the PARENT kind's jinja template (there is one
- * `.jinja` file per kind, not per form). The `parentStruct` gives us the
- * correct template struct name and surface (slots / hasChildren / etc.)
- * for the instantiation; the form's fields populate the slots.
- */
-function renderTypedFormFn(
-	parentKind: string,
-	form: AssembledGroup,
-	parentStruct: EmittedStruct | undefined,
-	meta: MetaData,
-	nodeMap: NodeMap
-): string[] {
-	const lines: string[] = [];
-	const fnName = rustTypedRenderFnName(form.typeName);
-	const structName = rustTransportFormStructName(form);
-	const separator = meta.separators.get(parentKind) ?? '';
-
-	if (parentStruct === undefined) {
-		// No template for this parent kind — write nothing.
-		lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
-		lines.push(`    // No template for parent kind ${JSON.stringify(parentKind)} — nothing to write.`);
-		lines.push(`    let _ = (node, dest);`);
-		lines.push(`    Ok(())`);
-		lines.push(`}`);
-		lines.push('');
-		return lines;
-	}
-
-	// Build an EmittedStruct that uses the PARENT template struct name but the
-	// FORM's field list (so buildTypedTemplateBody instantiates the right struct
-	// with the fields actually present on the form's transport type).
-	//
-	// Strategy: start from ALL parent template slots (every slot the template
-	// struct requires must be populated). For each slot, check whether the FORM
-	// has a corresponding field in its structuralFields. If yes, use the form's
-	// `required` and `multiple` flags; if no, mark `hasTransportField: false` so
-	// the emitter defaults that slot to empty/Missing.
-	//
-	// The view for each slot always comes from the PARENT struct — that
-	// determines the Rust struct field type (&'a str vs NonterminalView vs ListNonterminalView).
-	const formFieldByName = new Map(form.fields.map((f) => [f.name, f]));
-	const formSlotModel = renderSlotModelOf(form);
-	const formEmittedStruct: EmittedStruct = {
-		name: parentStruct.name, // e.g. ClosureExpressionTemplate
-		kind: parentKind,
-		fields: parentStruct.fields.map((parentField) => {
-			const formField = formFieldByName.get(parentField.name);
-			if (formField !== undefined) {
-				return {
-					name: formField.name,
-					// Use the parent template's view — that determines the Rust struct type.
-					view: parentField.view,
-					required: isRequired(formField),
-					multiple: isMultiple(formField),
-					hasTransportField: true,
-					hasLeading: formField.hasLeading,
-					hasTrailing: formField.hasTrailing
-				};
-			}
-			// Slot present in parent template but not in this form — default
-			// it. CRITICAL: inherit `required` and `multiple` from the parent
-			// so the construction picks the same per-cardinality view type
-			// the parent template struct declares (SingleNonterminalView /
-			// OptionalNonterminalView / ListNonterminalView). The slot's
-			// runtime value will be empty text / Missing / empty list — the
-			// concrete cardinality wrapper just has to match.
-			return {
-				name: parentField.name,
-				view: parentField.view,
-				required: parentField.required,
-				multiple: parentField.multiple,
-				hasTransportField: false,
-				hasLeading: false,
-				hasTrailing: false
-			};
-		}),
-		hasChildren: parentStruct.hasChildren,
-		transportHasChildren: formSlotModel.unnamed.length > 0,
-		childrenRequired: parentStruct.childrenRequired,
-		childrenMultiple: parentStruct.childrenMultiple,
-		hasVariant: parentStruct.hasVariant,
-		hasText: parentStruct.hasText
-	};
-
-	// Build per-field kind maps for typed render call selection (Phase 1).
-	const formFieldKindsByName = buildFieldKindsByName(form.fields);
-	const formFieldMixedByName = buildFieldMixedByName(form.fields);
-	const formChildrenCls = classifyUnnamedSlot(formSlotModel, nodeMap);
-
-	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
-	lines.push(
-		...buildTypedTemplateBody(
-			formEmittedStruct,
-			separator,
-			formFieldKindsByName,
-			formFieldMixedByName,
-			formChildrenCls,
-			nodeMap
-		)
-	);
 	lines.push(`}`);
 	lines.push('');
 
@@ -2872,44 +2581,6 @@ function renderAnyTransportWithStringTag(
 }
 
 /**
- * Emit a custom `impl ::napi::bindgen_prelude::FromNapiValue for XxxTransport`
- * for a polymorph transport enum. Reads the `$variant` property from the JS
- * object and dispatches to the appropriate form struct.
- *
- * @param node - the assembled polymorph node
- */
-function renderPolymorphTransportFromNapiValue(node: Extract<AssembledNode, { modelType: 'polymorph' }>): string[] {
-	const enumName = rustTransportStructName(node);
-	const lines: string[] = [];
-	lines.push(`#[cfg(feature = "napi-bindings")]`);
-	lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${enumName} {`);
-	lines.push(`    unsafe fn from_napi_value(`);
-	lines.push(`        env: ::napi::sys::napi_env,`);
-	lines.push(`        napi_val: ::napi::sys::napi_value,`);
-	lines.push(`    ) -> ::napi::Result<Self> {`);
-	lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-	lines.push(`        let variant: String = obj.get("$variant")?`);
-	lines.push(`            .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;`);
-	lines.push(`        match variant.as_str() {`);
-	for (const form of node.forms) {
-		const formStructName = rustTransportFormStructName(form);
-		const formVariantName = rustTransportFormVariantName(form);
-		lines.push(`            ${JSON.stringify(form.name)} => Ok(Self::${formVariantName}(`);
-		lines.push(`                ${formStructName}::from_napi_value(env, napi_val)?`);
-		lines.push(`            )),`);
-	}
-	lines.push(`            other => Err(::napi::Error::from_reason(format!(`);
-	lines.push(`                "unknown $variant {:?} for ${enumName}",`);
-	lines.push(`                other`);
-	lines.push(`            ))),`);
-	lines.push(`        }`);
-	lines.push(`    }`);
-	lines.push(`}`);
-	lines.push('');
-	return lines;
-}
-
-/**
  * Emit a per-supertype transport enum, its `Debug + Clone` body,
  * a custom `FromNapiValue` impl that reads `$type` as u16 and dispatches
  * to the appropriate concrete variant, a stub `ToNapiValue`, and a
@@ -3049,9 +2720,7 @@ function emitSupertypeTransportEnum(
 		lines.push(`        if String::from_napi_value(env, napi_val).is_ok() {`);
 		emitDecodeTrials(false, '            ');
 		lines.push(`        }`);
-		lines.push(
-			`        Err(::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))`
-		);
+		lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))`);
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -3134,8 +2803,8 @@ function emitSupertypeTransportEnum(
  * Emit `render_<supertype>(t: &<Supertype>Transport, dest: &mut dyn fmt::Write) -> Result<(), ::askama::Error>`
  * as a bounded match over the enum variants.
  *
- * Each arm delegates to the concrete kind's render fn — same pattern as
- * `renderTypedPolymorphFn`. Arm count is bounded by the supertype's subtype
+ * Each arm delegates to the concrete kind's render fn through the parent
+ * typed helper. Arm count is bounded by the supertype's subtype
  * count (~5–40), not the full grammar (~1040 for rust).
  *
  * @param supertypeNode - the assembled supertype node
@@ -3394,9 +3063,7 @@ function emitPerSlotChildEnum(
 			}
 		}
 		lines.push(`        }`);
-		lines.push(
-			`        Err(::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))`
-		);
+		lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))`);
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -4737,14 +4404,6 @@ function rustTransportStructName(node: AssembledNode): string {
 
 function rustTransportVariantName(node: AssembledNode): string {
 	return rustTypeIdent(node.typeName);
-}
-
-function rustTransportFormStructName(form: AssembledGroup): string {
-	return `${rustTypeIdent(form.typeName)}Transport`;
-}
-
-function rustTransportFormVariantName(form: AssembledGroup): string {
-	return rustTypeIdent(form.typeName);
 }
 
 function rustTransportToNodeFnName(typeName: string): string {

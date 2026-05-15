@@ -501,6 +501,36 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 	return out;
 }
 
+/**
+ * Compute the shared {@link TypeComponent} list for a children slot.
+ *
+ * Child slots intentionally project only constructible / drillable node refs.
+ * Inline terminal values in the grammar (separator commas, keywords like
+ * `"from"`, etc.) are filtered out by the wrap layer and never appear in the
+ * public children accessor surface, so the type projection must ignore them too.
+ *
+ * Hidden keyword refs are still inlined to string literals because they are
+ * node-backed slots the public surface can carry.
+ */
+export function childTypeComponents(child: AssembledNonterminal, nodeMap: NodeMap): TypeComponent[] {
+	const out: TypeComponent[] = [];
+	for (const rawKind of slotKindNames(child)) {
+		const lit = resolveHiddenKeywordLiteral(rawKind, nodeMap);
+		if (lit !== undefined) {
+			out.push({ kind: 'literal', value: lit });
+			continue;
+		}
+		const node = nodeMap.nodes.get(rawKind);
+		if (!node) {
+			const fallback = rawKind.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase());
+			out.push({ kind: 'missing', value: fallback, rawKind });
+			continue;
+		}
+		out.push({ kind: 'nodeKind', value: node.typeName, rawKind });
+	}
+	return out;
+}
+
 // ---------------------------------------------------------------------------
 // Polymorph UForm Config hoisting
 // ---------------------------------------------------------------------------

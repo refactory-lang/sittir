@@ -1,8 +1,9 @@
 // @generated from packages/typescript/node-model.json5 and packages/typescript/templates/*.jinja — do not hand-edit.
 // Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
 //
-// render_dispatch match table — routes KindId to per-kind render functions
-// in the sibling templates module.
+// Legacy direct NodeData render shim. Normal native package flow renders
+// typed transport payloads through render_transport_dispatch; this module
+// remains for compatibility with internal NodeData-based engine paths.
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
 
@@ -19,6 +20,11 @@ use ::napi_derive::napi;
 
 use super::bridge::render_nodedata_into;
 
+/// Legacy direct NodeData render entrypoint.
+///
+/// Normal native package flow uses typed transport plus
+/// `render_transport_dispatch`; keep this only for compatibility
+/// with internal NodeData-based engine paths.
 pub fn render_dispatch(node: &NodeData) -> Result<String, ::askama::Error> {
     let mut buf = String::new();
     render_nodedata_into(node, &mut buf)?;

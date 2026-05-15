@@ -872,10 +872,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  for (const allowed of allowedKinds) {',
 						...(supertypeMembers.size > 0
 							? [
-									'    if (allowed.startsWith("_")) {',
-									'      const members = SUPERTYPE_MEMBERS[allowed];',
-									'      if (members?.has(kind)) return true;',
-									'    }'
+									'    const members = SUPERTYPE_MEMBERS[allowed] ?? SUPERTYPE_MEMBERS[allowed.startsWith("_") ? allowed.slice(1) : allowed];',
+									'    if (members?.has(kind)) return true;',
+									'    if (stripped !== undefined && members?.has(stripped)) return true;'
 								]
 							: []),
 						'    const allowedStripped = allowed.startsWith("_") ? allowed.slice(1) : allowed;',
