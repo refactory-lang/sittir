@@ -20284,10 +20284,8 @@ fn render_kw_type(t: &KwTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
 }
 
 fn render__list_pattern(node: &_ListPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(children) = &node.children {
-        for child in children.iter() {
-            render_case_pattern(child, dest)?;
-        }
+    for child in node.children.iter() {
+        render_case_pattern(child, dest)?;
     }
     Ok(())
 }
@@ -20353,10 +20351,8 @@ fn render_suite(node: &SuiteTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
 }
 
 fn render__tuple_pattern(node: &_TuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(children) = &node.children {
-        for child in children.iter() {
-            render_case_pattern(child, dest)?;
-        }
+    for child in node.children.iter() {
+        render_case_pattern(child, dest)?;
     }
     Ok(())
 }

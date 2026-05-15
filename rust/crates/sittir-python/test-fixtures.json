@@ -17571,456 +17571,6 @@
       "$source": 0,
       "$children": [
         {
-          "$type": 131,
-          "$source": 0,
-          "$text": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42",
-          "$span": {
-            "start": 0,
-            "end": 95
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 0,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 0,
-        "end": 95
-      },
-      "$nodeHandle": 0,
-      "$named": true
-    },
-    "expectedOutput": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42",
-    "pattern": "if_statement",
-    "edits": [],
-    "expectedSourceOut": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42",
-    "expectedReparseTree": "(module (if_statement condition: (named_expression name: (identifier) value: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)) (identifier) (keyword_argument name: (identifier) value: (attribute object: (identifier) attribute: (identifier)))))) consequence: (block (return_statement (integer)))))",
-    "wrappedText": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 123,
-      "$source": 0,
-      "$span": {
-        "start": 3,
-        "end": 80
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_name": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "match",
-        "$span": {
-          "start": 3,
-          "end": 8
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": true
-      },
-      "_:=": {
-        "$type": 15,
-        "$source": 0,
-        "$text": ":=",
-        "$span": {
-          "start": 9,
-          "end": 11
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": false
-      },
-      "_value": {
-        "$type": 206,
-        "$source": 0,
-        "$text": "re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
-        "$span": {
-          "start": 12,
-          "end": 80
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": true
-      }
-    },
-    "expectedOutput": "match:=re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
-    "pattern": "named_expression",
-    "edits": [],
-    "expectedSourceOut": "match:=re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
-    "expectedReparseTree": "(named_expression name: (identifier) value: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)) (identifier) (keyword_argument name: (identifier) value: (attribute object: (identifier) attribute: (identifier))))))",
-    "wrappedText": "_ = match:=re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 206,
-      "$source": 0,
-      "$span": {
-        "start": 12,
-        "end": 80
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_function": {
-        "$type": 203,
-        "$source": 0,
-        "$text": "re.fullmatch",
-        "$span": {
-          "start": 12,
-          "end": 24
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": true
-      },
-      "_arguments": {
-        "$type": 157,
-        "$source": 0,
-        "$text": "(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
-        "$span": {
-          "start": 24,
-          "end": 80
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      }
-    },
-    "expectedOutput": "re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
-    "pattern": "call",
-    "edits": [],
-    "expectedSourceOut": "re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)) (identifier) (keyword_argument name: (identifier) value: (attribute object: (identifier) attribute: (identifier)))))",
-    "wrappedText": "_ = re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 203,
-      "$source": 0,
-      "$span": {
-        "start": 12,
-        "end": 24
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_object": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "re",
-        "$span": {
-          "start": 12,
-          "end": 14
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": true
-      },
-      "_.": {
-        "$type": 4,
-        "$source": 0,
-        "$text": ".",
-        "$span": {
-          "start": 14,
-          "end": 15
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": false
-      },
-      "_attribute": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "fullmatch",
-        "$span": {
-          "start": 15,
-          "end": 24
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": true
-      }
-    },
-    "expectedOutput": "re.fullmatch"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "re.fullmatch",
-    "pattern": "attribute",
-    "edits": [],
-    "expectedSourceOut": "re.fullmatch",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
-    "wrappedText": "[re.fullmatch]",
-    "wrappedOffset": 1
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 203,
-      "$source": 0,
-      "$span": {
-        "start": 71,
-        "end": 79
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_object": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "re",
-        "$span": {
-          "start": 71,
-          "end": 73
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": true
-      },
-      "_.": {
-        "$type": 4,
-        "$source": 0,
-        "$text": ".",
-        "$span": {
-          "start": 73,
-          "end": 74
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": false
-      },
-      "_attribute": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "ASCII",
-        "$span": {
-          "start": 74,
-          "end": 79
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": true
-      }
-    },
-    "expectedOutput": "re.ASCII"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "re.ASCII",
-    "pattern": "attribute",
-    "edits": [],
-    "expectedSourceOut": "re.ASCII",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
-    "wrappedText": "[re.ASCII]",
-    "wrappedOffset": 1
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 157,
-      "$source": 0,
-      "$children": [
-        {
-          "$type": 231,
-          "$source": 0,
-          "$text": "r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\"",
-          "$span": {
-            "start": 25,
-            "end": 57
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        },
-        {
-          "$type": 1,
-          "$source": 0,
-          "$text": "time",
-          "$span": {
-            "start": 59,
-            "end": 63
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 3,
-          "$named": true
-        },
-        {
-          "$type": 9,
-          "$source": 0,
-          "$text": ",",
-          "$span": {
-            "start": 63,
-            "end": 64
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 4,
-          "$named": false
-        },
-        {
-          "$type": 214,
-          "$source": 0,
-          "$text": "flags=re.ASCII",
-          "$span": {
-            "start": 65,
-            "end": 79
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 5,
-          "$named": true
-        }
-      ],
-      "$span": {
-        "start": 24,
-        "end": 80
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_(": {
-        "$type": 7,
-        "$source": 0,
-        "$text": "(",
-        "$span": {
-          "start": 24,
-          "end": 25
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_,": {
-        "$type": 9,
-        "$source": 0,
-        "$text": ",",
-        "$span": {
-          "start": 57,
-          "end": 58
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": false
-      },
-      "_)": {
-        "$type": 8,
-        "$source": 0,
-        "$text": ")",
-        "$span": {
-          "start": 79,
-          "end": 80
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 6,
-        "$named": false
-      }
-    },
-    "expectedOutput": "(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\",time,flags=re.ASCII)"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII)",
-    "pattern": "argument_list",
-    "edits": [],
-    "expectedSourceOut": "(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\",time,flags=re.ASCII)",
-    "expectedReparseTree": "(argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)) (identifier) (keyword_argument name: (identifier) value: (attribute object: (identifier) attribute: (identifier))))",
-    "wrappedText": "_f(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\",time,flags=re.ASCII)",
-    "wrappedOffset": 2
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 231,
-      "$source": 0,
-      "$span": {
-        "start": 25,
-        "end": 57
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_string_start": {
-        "$type": 104,
-        "$source": 0,
-        "$text": "r\"",
-        "$span": {
-          "start": 25,
-          "end": 27
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": true
-      },
-      "_content": {
-        "$type": 232,
-        "$source": 0,
-        "$text": "(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?",
-        "$span": {
-          "start": 27,
-          "end": 56
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      },
-      "_string_end": {
-        "$type": 107,
-        "$source": 0,
-        "$text": "\"",
-        "$span": {
-          "start": 56,
-          "end": 57
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 2,
-        "$named": true
-      }
-    },
-    "expectedOutput": "r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\""
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\"",
-    "pattern": "string",
-    "edits": [],
-    "expectedSourceOut": "r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\"",
-    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\"",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 108,
-      "$source": 0,
-      "$children": [
-        {
           "$type": 134,
           "$source": 0,
           "$text": "match event.get():\n    case Click(position=(x, y)):\n        handle_click_at(x, y)\n    case KeyPress(key_name=\"Q\") | Quit():\n        game.quit()\n    case KeyPress(key_name=\"up arrow\"):\n        game.go_north()\n        ...\n    case KeyPress():\n        pass # Ignore other keystrokes\n    case other_event:\n        raise ValueError(f\"Unrecognized event: {other_event}\")",
@@ -30308,5 +29858,913 @@
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
     "wrappedText": "_ = \"aa\"",
     "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 108,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 145,
+          "$source": 0,
+          "$text": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
+          "$span": {
+            "start": 0,
+            "end": 141
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 141
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
+    "pattern": "function_definition",
+    "edits": [],
+    "expectedSourceOut": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
+    "expectedReparseTree": "(module (function_definition name: (identifier) type_parameters: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))) (type (splat_type identifier: (identifier)))) parameters: (parameters) body: (block (type_alias_statement left: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))) (type (splat_type identifier: (identifier)))))) right: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))))) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))))))))) (return_statement (identifier)))))",
+    "wrappedText": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 145,
+      "$source": 0,
+      "$span": {
+        "start": 0,
+        "end": 141
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_def": {
+        "$type": 37,
+        "$source": 0,
+        "$text": "def",
+        "$span": {
+          "start": 0,
+          "end": 3
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_name": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "more_generic",
+        "$span": {
+          "start": 4,
+          "end": 16
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_type_parameters": {
+        "$type": 155,
+        "$source": 0,
+        "$text": "[T, *Ts, **P]",
+        "$span": {
+          "start": 16,
+          "end": 29
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      },
+      "_parameters": {
+        "$type": 146,
+        "$source": 0,
+        "$text": "()",
+        "$span": {
+          "start": 29,
+          "end": 31
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
+        "$named": true
+      },
+      "_:": {
+        "$type": 23,
+        "$source": 0,
+        "$text": ":",
+        "$span": {
+          "start": 31,
+          "end": 32
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": false
+      },
+      "_body": {
+        "$type": 160,
+        "$source": 0,
+        "$text": "type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
+        "$span": {
+          "start": 37,
+          "end": 141
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 5,
+        "$named": true
+      }
+    },
+    "expectedOutput": "def more_generic[T, *Ts, **P]():\n  type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "def more_generic[T, *Ts, **P]():\n    type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA",
+    "pattern": "function_definition",
+    "edits": [],
+    "expectedSourceOut": "def more_generic[T, *Ts, **P]():\n  type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n",
+    "expectedReparseTree": "(function_definition name: (identifier) type_parameters: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))) (type (splat_type identifier: (identifier)))) parameters: (parameters) body: (block (type_alias_statement left: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))) (type (splat_type identifier: (identifier)))))) right: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))))) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))))))))) (return_statement (identifier))))",
+    "wrappedText": "def more_generic[T, *Ts, **P]():\n  type TA[T2, *Ts2, **P2] = tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]\n    return TA\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "T",
+          "$span": {
+            "start": 17,
+            "end": 18
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 17,
+        "end": 18
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "T"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "T",
+    "pattern": "identifier",
+    "edits": [],
+    "expectedSourceOut": "T",
+    "expectedReparseTree": "(type (identifier))",
+    "wrappedText": "_: T = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 209,
+          "$source": 0,
+          "$text": "*Ts",
+          "$span": {
+            "start": 20,
+            "end": 23
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 20,
+        "end": 23
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "*Ts"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*Ts",
+    "pattern": "splat_type",
+    "edits": [],
+    "expectedSourceOut": "*Ts",
+    "expectedReparseTree": "(type (splat_type identifier: (identifier)))",
+    "wrappedText": "_: *Ts = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 209,
+          "$source": 0,
+          "$text": "**P",
+          "$span": {
+            "start": 25,
+            "end": 28
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 25,
+        "end": 28
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "**P"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "**P",
+    "pattern": "splat_type",
+    "edits": [],
+    "expectedSourceOut": "**P",
+    "expectedReparseTree": "(type (splat_type identifier: (identifier)))",
+    "wrappedText": "_: **P = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 210,
+          "$source": 0,
+          "$text": "TA[T2, *Ts2, **P2]",
+          "$span": {
+            "start": 42,
+            "end": 60
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 42,
+        "end": 60
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "TA[T2, *Ts2, **P2]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "TA[T2, *Ts2, **P2]",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "TA[T2, *Ts2, **P2]",
+    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))) (type (splat_type identifier: (identifier))))))",
+    "wrappedText": "_: TA[T2, *Ts2, **P2] = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 210,
+          "$source": 0,
+          "$text": "tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]",
+          "$span": {
+            "start": 63,
+            "end": 127
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 63,
+        "end": 127
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]]",
+    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))))) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))))))))",
+    "wrappedText": "_: tuple[Callable[P, tuple[T, *Ts]], Callable[P2, tuple[T2, *Ts2]]] = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "T2",
+          "$span": {
+            "start": 45,
+            "end": 47
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 45,
+        "end": 47
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "T2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "T2",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "T2",
+    "expectedReparseTree": "(type (identifier))",
+    "wrappedText": "_: T2 = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 209,
+          "$source": 0,
+          "$text": "*Ts2",
+          "$span": {
+            "start": 49,
+            "end": 53
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 49,
+        "end": 53
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "*Ts2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*Ts2",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "*Ts2",
+    "expectedReparseTree": "(type (splat_type identifier: (identifier)))",
+    "wrappedText": "_: *Ts2 = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 209,
+          "$source": 0,
+          "$text": "**P2",
+          "$span": {
+            "start": 55,
+            "end": 59
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 55,
+        "end": 59
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "**P2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "**P2",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "**P2",
+    "expectedReparseTree": "(type (splat_type identifier: (identifier)))",
+    "wrappedText": "_: **P2 = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 210,
+          "$source": 0,
+          "$text": "Callable[P, tuple[T, *Ts]]",
+          "$span": {
+            "start": 69,
+            "end": 95
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 69,
+        "end": 95
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "Callable[P, tuple[T, *Ts]]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "Callable[P, tuple[T, *Ts]]",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "Callable[P, tuple[T, *Ts]]",
+    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier)))))))))",
+    "wrappedText": "_: Callable[P, tuple[T, *Ts]] = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 210,
+          "$source": 0,
+          "$text": "Callable[P2, tuple[T2, *Ts2]]",
+          "$span": {
+            "start": 97,
+            "end": 126
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 97,
+        "end": 126
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "Callable[P2, tuple[T2, *Ts2]]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "Callable[P2, tuple[T2, *Ts2]]",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "Callable[P2, tuple[T2, *Ts2]]",
+    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier)))))))))",
+    "wrappedText": "_: Callable[P2, tuple[T2, *Ts2]] = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "P",
+          "$span": {
+            "start": 78,
+            "end": 79
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 78,
+        "end": 79
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "P"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "P",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "P",
+    "expectedReparseTree": "(type (identifier))",
+    "wrappedText": "_: P = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 210,
+          "$source": 0,
+          "$text": "tuple[T, *Ts]",
+          "$span": {
+            "start": 81,
+            "end": 94
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 81,
+        "end": 94
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "tuple[T, *Ts]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "tuple[T, *Ts]",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "tuple[T, *Ts]",
+    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))",
+    "wrappedText": "_: tuple[T, *Ts] = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "P2",
+          "$span": {
+            "start": 106,
+            "end": 108
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 106,
+        "end": 108
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "P2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "P2",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "P2",
+    "expectedReparseTree": "(type (identifier))",
+    "wrappedText": "_: P2 = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 210,
+          "$source": 0,
+          "$text": "tuple[T2, *Ts2]",
+          "$span": {
+            "start": 110,
+            "end": 125
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 110,
+        "end": 125
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "tuple[T2, *Ts2]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "tuple[T2, *Ts2]",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "tuple[T2, *Ts2]",
+    "expectedReparseTree": "(type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier)) (type (splat_type identifier: (identifier))))))",
+    "wrappedText": "_: tuple[T2, *Ts2] = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "T",
+          "$span": {
+            "start": 87,
+            "end": 88
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 87,
+        "end": 88
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "T"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "T",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "T",
+    "expectedReparseTree": "(type (identifier))",
+    "wrappedText": "_: T = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 209,
+          "$source": 0,
+          "$text": "*Ts",
+          "$span": {
+            "start": 90,
+            "end": 93
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 90,
+        "end": 93
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "*Ts"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*Ts",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "*Ts",
+    "expectedReparseTree": "(type (splat_type identifier: (identifier)))",
+    "wrappedText": "_: *Ts = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "T2",
+          "$span": {
+            "start": 116,
+            "end": 118
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 116,
+        "end": 118
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "T2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "T2",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "T2",
+    "expectedReparseTree": "(type (identifier))",
+    "wrappedText": "_: T2 = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 208,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 209,
+          "$source": 0,
+          "$text": "*Ts2",
+          "$span": {
+            "start": 120,
+            "end": 124
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 0,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 120,
+        "end": 124
+      },
+      "$nodeHandle": 0,
+      "$named": true
+    },
+    "expectedOutput": "*Ts2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*Ts2",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "*Ts2",
+    "expectedReparseTree": "(type (splat_type identifier: (identifier)))",
+    "wrappedText": "_: *Ts2 = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 146,
+      "$source": 0,
+      "$span": {
+        "start": 29,
+        "end": 31
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 29,
+          "end": 30
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 30,
+          "end": 31
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "def _f():\n    pass",
+    "wrappedOffset": 6
   }
 ]

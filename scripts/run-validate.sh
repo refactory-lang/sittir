@@ -22,21 +22,15 @@ regenerate_grammars() {
     npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
 }
 
-build_grammar_packages() {
-    pnpm --filter @sittir/rust run build
-    pnpm --filter @sittir/typescript run build
-    pnpm --filter @sittir/python run build
-}
-
 build_prereqs
-build_grammar_packages
 regenerate_grammars
-build_grammar_packages
 
 if [ -n "${NODE_OPTIONS:-}" ]; then
     export NODE_OPTIONS="${NODE_OPTIONS} --conditions=source"
 else
     export NODE_OPTIONS="--conditions=source"
 fi
+
+export SITTIR_WRAP_WARNING_MODE=1
 
 exec pnpm exec tsx packages/validator/src/cli.ts "$@"

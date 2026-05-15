@@ -455,6 +455,9 @@
     "closure_expression_expr": [
       "body"
     ],
+    "closure_expression": [
+      "parameters"
+    ],
     "compound_assignment_expr": [
       "left",
       "operator",
@@ -526,6 +529,10 @@
     "foreign_mod_item_body": [
       "body"
     ],
+    "foreign_mod_item": [
+      "visibility_modifier",
+      "extern_modifier"
+    ],
     "function_item": [
       "visibility_modifier",
       "function_modifiers",
@@ -575,6 +582,12 @@
     "impl_item_body": [
       "body"
     ],
+    "impl_item": [
+      "type_parameters",
+      "trait",
+      "type",
+      "where_clause"
+    ],
     "index_expression": [
       "object",
       "index"
@@ -610,6 +623,9 @@
       "label",
       "body"
     ],
+    "macro_definition": [
+      "name"
+    ],
     "macro_invocation": [
       "macro",
       "token_tree"
@@ -621,12 +637,20 @@
     "match_arm_block_ending": [
       "value"
     ],
+    "match_arm": [
+      "attributes",
+      "pattern"
+    ],
     "match_expression": [
       "value",
       "body"
     ],
     "mod_item_inline": [
       "body"
+    ],
+    "mod_item": [
+      "visibility_modifier",
+      "name"
     ],
     "negative_literal": [
       "value"
@@ -644,6 +668,9 @@
     "qualified_type": [
       "type",
       "alias"
+    ],
+    "range_pattern": [
+      "left"
     ],
     "raw_string_literal": [
       "raw_string_literal_start",
@@ -696,6 +723,11 @@
     "struct_expression": [
       "name",
       "body"
+    ],
+    "struct_item": [
+      "visibility_modifier",
+      "name",
+      "type_parameters"
     ],
     "struct_pattern": [
       "type"
@@ -1326,7 +1358,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 2,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1628,7 +1660,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 2,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1785,7 +1817,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 3,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1906,7 +1938,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 2,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2057,7 +2089,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 2,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2128,7 +2160,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 2,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2462,7 +2494,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 2,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2606,7 +2638,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 3,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2665,7 +2697,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 3,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2729,7 +2761,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 2,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2802,7 +2834,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 2,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2836,7 +2868,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 2,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2918,7 +2950,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 2,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2952,7 +2984,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 4,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2961,14 +2993,14 @@
       "left": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       },
       "children": {
         "unnamed": true,
         "slotCount": 3,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3300,7 +3332,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 3,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3386,7 +3418,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 3,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3422,7 +3454,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 3,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3829,7 +3861,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 3,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }

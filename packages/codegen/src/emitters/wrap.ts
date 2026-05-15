@@ -717,7 +717,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'// Import _NodeData (== AnyNodeData) from @sittir/types',
 			'// instead of re-declaring locally. Single source of truth.',
 			"import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';",
-			...(this.#kindEntries ? ["import { TSKindId } from './types.js';"] : []),
+			...(this.#kindEntries ? ["import { TSKindId, KIND_NAMES } from './types.js';"] : []),
 			"import type * as T from './types.js';",
 			...(this.#typeImportLine ? [this.#typeImportLine] : []),
 			`import { ${utilsImports.join(', ')} } from './utils.js';`,
@@ -725,6 +725,18 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'',
 			...(usesNormalizeSingular
 				? [
+						'const WRAP_WARNING_MODE = typeof process !== "undefined" && process.env?.SITTIR_WRAP_WARNING_MODE === "1";',
+						'function describeWrapNodeType(nodeType: string | number): string {',
+						'  if (typeof nodeType === "number") return KIND_NAMES.get(nodeType) ?? String(nodeType);',
+						'  return nodeType;',
+						'}',
+						'function handleWrapViolation<T>(message: string, fallback: T): T {',
+						'  if (WRAP_WARNING_MODE) {',
+						'    console.warn(`[wrapNode warning] ${message}`);',
+						'    return fallback;',
+						'  }',
+						'  throw new TypeError(message);',
+						'}',
 						'function describeWrapSlotItem(value: unknown): string {',
 						'  if (value == null) return String(value);',
 						'  if (typeof value !== "object") return `${typeof value}(${JSON.stringify(value)})`;',
@@ -749,13 +761,13 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: boolean, nodeType: string | number): T | undefined {',
 						'  if (Array.isArray(value)) {',
 						'    if (value.length === 0) {',
-						'      if (required) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} requires one value; got ${describeWrapSlotValue(value)}`);',
+						'      if (required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined);',
 						'      return undefined;',
 						'    }',
-						'    if (value.length !== 1) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} received ${value.length} values; got ${describeWrapSlotValue(value)}`);',
+						'    if (value.length !== 1) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T);',
 						'    return value[0] as T;',
 						'  }',
-						'  if (value == null && required) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} requires one value; got ${describeWrapSlotValue(value)}`);',
+						'  if (value == null && required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined);',
 						'  return value as T | undefined;',
 						'}'
 					]
@@ -764,7 +776,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				? [
 						'function normalizeRepeatedWrapSlot<T>(value: T | readonly T[] | undefined, nonEmpty: boolean, slotName: string): readonly T[] {',
 						'  const items: readonly T[] = Array.isArray(value) ? (value as readonly T[]) : value == null ? ([] as readonly T[]) : ([value] as readonly T[]);',
-						'  if (nonEmpty && items.length === 0) throw new TypeError(`wrapNode: repeated slot ${JSON.stringify(slotName)} requires at least one value`);',
+						'  if (nonEmpty && items.length === 0) return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items);',
 						'  return items;',
 						'}'
 					]

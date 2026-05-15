@@ -6,11 +6,23 @@ import type { TreeHandle } from '@sittir/common';
 // Import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
-import { TSKindId } from './types.js';
+import { TSKindId, KIND_NAMES } from './types.js';
 import type * as T from './types.js';
 import { withMethods, methodsEngine, coerceBooleanKeywordStorage } from './utils.js';
 import * as _factories from './factories.js';
 
+const WRAP_WARNING_MODE = typeof process !== "undefined" && process.env?.SITTIR_WRAP_WARNING_MODE === "1";
+function describeWrapNodeType(nodeType: string | number): string {
+  if (typeof nodeType === "number") return KIND_NAMES.get(nodeType) ?? String(nodeType);
+  return nodeType;
+}
+function handleWrapViolation<T>(message: string, fallback: T): T {
+  if (WRAP_WARNING_MODE) {
+    console.warn(`[wrapNode warning] ${message}`);
+    return fallback;
+  }
+  throw new TypeError(message);
+}
 function describeWrapSlotItem(value: unknown): string {
   if (value == null) return String(value);
   if (typeof value !== "object") return `${typeof value}(${JSON.stringify(value)})`;
@@ -35,18 +47,18 @@ function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotN
 function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: boolean, nodeType: string | number): T | undefined {
   if (Array.isArray(value)) {
     if (value.length === 0) {
-      if (required) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} requires one value; got ${describeWrapSlotValue(value)}`);
+      if (required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined);
       return undefined;
     }
-    if (value.length !== 1) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} received ${value.length} values; got ${describeWrapSlotValue(value)}`);
+    if (value.length !== 1) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T);
     return value[0] as T;
   }
-  if (value == null && required) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} requires one value; got ${describeWrapSlotValue(value)}`);
+  if (value == null && required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined);
   return value as T | undefined;
 }
 function normalizeRepeatedWrapSlot<T>(value: T | readonly T[] | undefined, nonEmpty: boolean, slotName: string): readonly T[] {
   const items: readonly T[] = Array.isArray(value) ? (value as readonly T[]) : value == null ? ([] as readonly T[]) : ([value] as readonly T[]);
-  if (nonEmpty && items.length === 0) throw new TypeError(`wrapNode: repeated slot ${JSON.stringify(slotName)} requires at least one value`);
+  if (nonEmpty && items.length === 0) return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items);
   return items;
 }
 // Drill-in helpers — call back through `readTreeNode` so the same
@@ -429,10 +441,10 @@ export function wrapAssignment(data: T.Assignment, tree: TreeHandle) {
     ...data,
     $type: TSKindId.Assignment as const,
     _left: normalizeSingularWrapSlot((data as any)._left, "left", true, (data as any).$type),
-    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_assignment_eq","_assignment_type","_assignment_typed"]), "children", true, (data as any).$type),
+    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_assignment_eq","_assignment_type","_assignment_typed"]), "children", false, (data as any).$type),
 
     left() { return drillIn<T.LeftHandSide>(this._left, tree); },
-    children() { return drillIn<(T.AssignmentEq | T.AssignmentType | T.AssignmentTyped)>(this.$children, tree); },
+    children() { return drillIn<(T.AssignmentEq | T.AssignmentType | T.AssignmentTyped) | undefined>(this.$children, tree); },
     $with: {
       left: (v: T.LeftHandSide) => wrapAssignment({ ...(data as any), _left: v }, tree),
       children: (item: (T.AssignmentEq | T.AssignmentType | T.AssignmentTyped)) => wrapAssignment({ ...(data as any), $children: item }, tree),
@@ -979,9 +991,9 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExpressionStatement as const,
-    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["expression","_expression_statement_tuple","assignment","augmented_assignment","yield"]), "children", true, (data as any).$type),
+    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["expression","_expression_statement_tuple","assignment","augmented_assignment","yield"]), "children", false, (data as any).$type),
 
-    children() { return drillIn<(T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield)>(this.$children, tree); },
+    children() { return drillIn<(T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield) | undefined>(this.$children, tree); },
     $with: {
       children: (item: (T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield)) => wrapExpressionStatement({ ...(data as any), $children: item }, tree),
     },
@@ -1961,9 +1973,9 @@ export function wrapWithClause(data: T.WithClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.WithClause as const,
-    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_with_clause_bare","_with_clause_paren"]), "children", true, (data as any).$type),
+    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_with_clause_bare","_with_clause_paren"]), "children", false, (data as any).$type),
 
-    children() { return drillIn<(T.WithClauseBare | T._WithClauseParen)>(this.$children, tree); },
+    children() { return drillIn<(T.WithClauseBare | T._WithClauseParen) | undefined>(this.$children, tree); },
     $with: {
       children: (item: (T.WithClauseBare | T._WithClauseParen)) => wrapWithClause({ ...(data as any), $children: item }, tree),
     },

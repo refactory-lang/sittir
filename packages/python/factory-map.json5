@@ -209,6 +209,9 @@
       "expression",
       "alias"
     ],
+    "assignment": [
+      "left"
+    ],
     "attribute": [
       "object",
       "attribute"
@@ -594,7 +597,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 3,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1103,7 +1106,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 5,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2006,7 +2009,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 2,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }

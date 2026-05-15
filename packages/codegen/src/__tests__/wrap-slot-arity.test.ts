@@ -163,6 +163,9 @@ describe('wrap emitter slot arity', () => {
 	it('emits singular-mismatch guards for wrapped children', () => {
 		const source = emitWrap({ grammar: 'synth', nodeMap: makeRequiredSingleChildNodeMap() });
 
+		expect(source).toContain('const WRAP_WARNING_MODE = typeof process !== "undefined" && process.env?.SITTIR_WRAP_WARNING_MODE === "1";');
+		expect(source).toContain('function describeWrapNodeType(nodeType: string | number): string {');
+		expect(source).toContain('function handleWrapViolation<T>(message: string, fallback: T): T {');
 		expect(source).toContain('function describeWrapSlotItem(value: unknown): string {');
 		expect(source).toContain('function describeWrapSlotValue(value: unknown): string {');
 		expect(source).toContain(
@@ -170,7 +173,7 @@ describe('wrap emitter slot arity', () => {
 		);
 		expect(source).toContain('function normalizeSingularWrapSlot<T>(');
 		expect(source).toContain(
-			'throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} received ${value.length} values; got ${describeWrapSlotValue(value)}`);'
+			'return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T);'
 		);
 	});
 

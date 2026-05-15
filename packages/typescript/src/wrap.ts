@@ -6,11 +6,23 @@ import type { TreeHandle } from '@sittir/common';
 // Import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
-import { TSKindId } from './types.js';
+import { TSKindId, KIND_NAMES } from './types.js';
 import type * as T from './types.js';
 import { withMethods, methodsEngine, coerceBooleanKeywordStorage } from './utils.js';
 import * as _factories from './factories.js';
 
+const WRAP_WARNING_MODE = typeof process !== "undefined" && process.env?.SITTIR_WRAP_WARNING_MODE === "1";
+function describeWrapNodeType(nodeType: string | number): string {
+  if (typeof nodeType === "number") return KIND_NAMES.get(nodeType) ?? String(nodeType);
+  return nodeType;
+}
+function handleWrapViolation<T>(message: string, fallback: T): T {
+  if (WRAP_WARNING_MODE) {
+    console.warn(`[wrapNode warning] ${message}`);
+    return fallback;
+  }
+  throw new TypeError(message);
+}
 function describeWrapSlotItem(value: unknown): string {
   if (value == null) return String(value);
   if (typeof value !== "object") return `${typeof value}(${JSON.stringify(value)})`;
@@ -35,18 +47,18 @@ function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotN
 function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: boolean, nodeType: string | number): T | undefined {
   if (Array.isArray(value)) {
     if (value.length === 0) {
-      if (required) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} requires one value; got ${describeWrapSlotValue(value)}`);
+      if (required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined);
       return undefined;
     }
-    if (value.length !== 1) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} received ${value.length} values; got ${describeWrapSlotValue(value)}`);
+    if (value.length !== 1) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T);
     return value[0] as T;
   }
-  if (value == null && required) throw new TypeError(`wrapNode: singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(nodeType)} requires one value; got ${describeWrapSlotValue(value)}`);
+  if (value == null && required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined);
   return value as T | undefined;
 }
 function normalizeRepeatedWrapSlot<T>(value: T | readonly T[] | undefined, nonEmpty: boolean, slotName: string): readonly T[] {
   const items: readonly T[] = Array.isArray(value) ? (value as readonly T[]) : value == null ? ([] as readonly T[]) : ([value] as readonly T[]);
-  if (nonEmpty && items.length === 0) throw new TypeError(`wrapNode: repeated slot ${JSON.stringify(slotName)} requires at least one value`);
+  if (nonEmpty && items.length === 0) return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items);
   return items;
 }
 // Drill-in helpers — call back through `readTreeNode` so the same
@@ -772,11 +784,11 @@ export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle) {
     $type: TSKindId.ArrowFunction as const,
     _async_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot((data as any)._async_marker, "async_marker", false, (data as any).$type)),
     _body: normalizeSingularWrapSlot((data as any)._body, "body", true, (data as any).$type),
-    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_arrow_function_parameter","_arrow_function__call_signature"]), "children", true, (data as any).$type),
+    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_arrow_function_parameter","_arrow_function__call_signature"]), "children", false, (data as any).$type),
 
     asyncMarker() { return this._async_marker; },
     body() { return drillIn<T.Expression | T.StatementBlock>(this._body, tree); },
-    children() { return drillIn<(T._ArrowFunctionParameter | T._ArrowFunctionUCallSignature)>(this.$children, tree); },
+    children() { return drillIn<(T._ArrowFunctionParameter | T._ArrowFunctionUCallSignature) | undefined>(this.$children, tree); },
     $with: {
       asyncMarker: (v: boolean) => wrapArrowFunction({ ...(data as any), _async_marker: v }, tree),
       body: (v: T.Expression | T.StatementBlock) => wrapArrowFunction({ ...(data as any), _body: v }, tree),
@@ -941,9 +953,9 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.CallExpression as const,
-    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_call_expression_call","_call_expression_template_call","_call_expression_member"]), "children", true, (data as any).$type),
+    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_call_expression_call","_call_expression_template_call","_call_expression_member"]), "children", false, (data as any).$type),
 
-    children() { return drillIn<(T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember)>(this.$children, tree); },
+    children() { return drillIn<(T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember) | undefined>(this.$children, tree); },
     $with: {
       children: (item: (T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember)) => wrapCallExpression({ ...(data as any), $children: item }, tree),
     },
@@ -1086,9 +1098,9 @@ export function wrapClassHeritage(data: T.ClassHeritage, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassHeritage as const,
-    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_class_heritage_extends_clause","_class_heritage_implements_clause"]), "children", true, (data as any).$type),
+    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_class_heritage_extends_clause","_class_heritage_implements_clause"]), "children", false, (data as any).$type),
 
-    children() { return drillIn<(T._ClassHeritageExtendsClause | T._ClassHeritageImplementsClause)>(this.$children, tree); },
+    children() { return drillIn<(T._ClassHeritageExtendsClause | T._ClassHeritageImplementsClause) | undefined>(this.$children, tree); },
     $with: {
       children: (item: (T._ClassHeritageExtendsClause | T._ClassHeritageImplementsClause)) => wrapClassHeritage({ ...(data as any), $children: item }, tree),
     },
@@ -1477,9 +1489,9 @@ export function wrapExportStatement(data: T.ExportStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatement as const,
-    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_export_statement_default","_export_statement_type_export","_export_statement_equals_export","_export_statement_namespace_export"]), "children", true, (data as any).$type),
+    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_export_statement_default","_export_statement_type_export","_export_statement_equals_export","_export_statement_namespace_export"]), "children", false, (data as any).$type),
 
-    children() { return drillIn<(T.ExportStatementDefault | T._ExportStatementTypeExport | T._ExportStatementEqualsExport | T._ExportStatementNamespaceExport)>(this.$children, tree); },
+    children() { return drillIn<(T.ExportStatementDefault | T._ExportStatementTypeExport | T._ExportStatementEqualsExport | T._ExportStatementNamespaceExport) | undefined>(this.$children, tree); },
     $with: {
       children: (item: (T.ExportStatementDefault | T._ExportStatementTypeExport | T._ExportStatementEqualsExport | T._ExportStatementNamespaceExport)) => wrapExportStatement({ ...(data as any), $children: item }, tree),
     },
@@ -1917,9 +1929,9 @@ export function wrapImportClause(data: T.ImportClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportClause as const,
-    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_import_clause_namespace_import","_import_clause_named_imports","_import_clause_default_import"]), "children", true, (data as any).$type),
+    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_import_clause_namespace_import","_import_clause_named_imports","_import_clause_default_import"]), "children", false, (data as any).$type),
 
-    children() { return drillIn<(T._ImportClauseNamespaceImport | T._ImportClauseNamedImports | T._ImportClauseDefaultImport)>(this.$children, tree); },
+    children() { return drillIn<(T._ImportClauseNamespaceImport | T._ImportClauseNamedImports | T._ImportClauseDefaultImport) | undefined>(this.$children, tree); },
     $with: {
       children: (item: (T._ImportClauseNamespaceImport | T._ImportClauseNamedImports | T._ImportClauseDefaultImport)) => wrapImportClause({ ...(data as any), $children: item }, tree),
     },
@@ -1962,10 +1974,10 @@ export function wrapImportSpecifier(data: T.ImportSpecifier, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ImportSpecifier as const,
     _import_kind: projectKindEnumStorage(normalizeSingularWrapSlot((data as any)._import_kind, "import_kind", false, (data as any).$type)),
-    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_import_specifier_name","_import_specifier_as"]), "children", true, (data as any).$type),
+    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_import_specifier_name","_import_specifier_as"]), "children", false, (data as any).$type),
 
     importKind() { return this._import_kind; },
-    children() { return drillIn<(T._ImportSpecifierName | T.ImportSpecifierAs)>(this.$children, tree); },
+    children() { return drillIn<(T._ImportSpecifierName | T.ImportSpecifierAs) | undefined>(this.$children, tree); },
     $with: {
       importKind: (v: number) => wrapImportSpecifier({ ...(data as any), _import_kind: v }, tree),
       children: (item: (T._ImportSpecifierName | T.ImportSpecifierAs)) => wrapImportSpecifier({ ...(data as any), $children: item }, tree),
@@ -2014,11 +2026,11 @@ export function wrapIndexSignature(data: T.IndexSignature, tree: TreeHandle) {
     $type: TSKindId.IndexSignature as const,
     _sign: projectKindEnumStorage(normalizeSingularWrapSlot((data as any)._sign, "sign", false, (data as any).$type)),
     _type: normalizeSingularWrapSlot((data as any)._type, "type", true, (data as any).$type),
-    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_index_signature_colon","_index_signature_mapped_type_clause"]), "children", true, (data as any).$type),
+    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_index_signature_colon","_index_signature_mapped_type_clause"]), "children", false, (data as any).$type),
 
     sign() { return this._sign; },
     type() { return drillIn<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(this._type, tree); },
-    children() { return drillIn<(T.IndexSignatureColon | T._IndexSignatureMappedTypeClause)>(this.$children, tree); },
+    children() { return drillIn<(T.IndexSignatureColon | T._IndexSignatureMappedTypeClause) | undefined>(this.$children, tree); },
     $with: {
       sign: (v: number) => wrapIndexSignature({ ...(data as any), _sign: v }, tree),
       type: (v: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) => wrapIndexSignature({ ...(data as any), _type: v }, tree),
@@ -2657,9 +2669,9 @@ export function wrapParenthesizedExpression(data: T.ParenthesizedExpression, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.ParenthesizedExpression as const,
-    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_parenthesized_expression_typed","_parenthesized_expression_sequence"]), "children", true, (data as any).$type),
+    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_parenthesized_expression_typed","_parenthesized_expression_sequence"]), "children", false, (data as any).$type),
 
-    children() { return drillIn<(T.ParenthesizedExpressionTyped | T._ParenthesizedExpressionSequence)>(this.$children, tree); },
+    children() { return drillIn<(T.ParenthesizedExpressionTyped | T._ParenthesizedExpressionSequence) | undefined>(this.$children, tree); },
     $with: {
       children: (item: (T.ParenthesizedExpressionTyped | T._ParenthesizedExpressionSequence)) => wrapParenthesizedExpression({ ...(data as any), $children: item }, tree),
     },
@@ -3346,9 +3358,9 @@ export function wrapUpdateExpression(data: T.UpdateExpression, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.UpdateExpression as const,
-    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_update_expression_postfix","_update_expression_prefix"]), "children", true, (data as any).$type),
+    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind((data as any).$children, ["_update_expression_postfix","_update_expression_prefix"]), "children", false, (data as any).$type),
 
-    children() { return drillIn<(T.UpdateExpressionPostfix | T.UpdateExpressionPrefix)>(this.$children, tree); },
+    children() { return drillIn<(T.UpdateExpressionPostfix | T.UpdateExpressionPrefix) | undefined>(this.$children, tree); },
     $with: {
       children: (item: (T.UpdateExpressionPostfix | T.UpdateExpressionPrefix)) => wrapUpdateExpression({ ...(data as any), $children: item }, tree),
     },

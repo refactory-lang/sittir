@@ -2500,12 +2500,40 @@ function freezeSlotRecord(slots: readonly AssembledNonterminal[]): Readonly<Reco
 	return Object.freeze(out);
 }
 
+function relaxMultiplicityForCrossFormAbsence(multiplicity: Multiplicity): Multiplicity {
+	switch (multiplicity) {
+		case 'single':
+			return 'optional';
+		case 'nonEmptyArray':
+			return 'array';
+		case 'optional':
+		case 'array':
+			return multiplicity;
+		default:
+			return assertNever(multiplicity);
+	}
+}
+
+function relaxSlotForCrossFormAbsence(slot: AssembledNonterminal): AssembledNonterminal {
+	return {
+		...slot,
+		values: dedupeValues(
+			slot.values.map((value) => ({
+				...value,
+				multiplicity: relaxMultiplicityForCrossFormAbsence(value.multiplicity)
+			}))
+		)
+	};
+}
+
 function structuralSlotRecordFromForms(
 	forms: readonly AssembledGroup[]
 ): Readonly<Record<string, AssembledNonterminal>> {
 	const slots = new Map<string, AssembledNonterminal>();
+	const slotPresence = new Map<string, number>();
 	for (const form of forms) {
 		for (const slot of Object.values(form.slots)) {
+			slotPresence.set(slot.name, (slotPresence.get(slot.name) ?? 0) + 1);
 			const existing = slots.get(slot.name);
 			if (!existing) {
 				slots.set(slot.name, slot);
@@ -2526,7 +2554,11 @@ function structuralSlotRecordFromForms(
 			});
 		}
 	}
-	return freezeSlotRecord([...slots.values()]);
+	return freezeSlotRecord(
+		[...slots.values()].map((slot) =>
+			(slotPresence.get(slot.name) ?? 0) < forms.length ? relaxSlotForCrossFormAbsence(slot) : slot
+		)
+	);
 }
 
 export class AssembledBranch<

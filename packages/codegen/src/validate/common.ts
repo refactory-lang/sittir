@@ -738,11 +738,11 @@ export const WASM_PATHS: Record<string, string> = {
 	python: 'tree-sitter-python/tree-sitter-python.wasm'
 };
 
-/** Relative path from codegen/src/validators to built language package wrap.js */
+/** Relative path from codegen validators to grammar source wrap modules. */
 export const WRAP_MODULE_PATHS: Record<string, string> = {
-	rust: '../../../rust/dist/wrap.js',
-	typescript: '../../../typescript/dist/wrap.js',
-	python: '../../../python/dist/wrap.js'
+	rust: '../../../rust/src/wrap.ts',
+	typescript: '../../../typescript/src/wrap.ts',
+	python: '../../../python/src/wrap.ts'
 };
 
 /**
