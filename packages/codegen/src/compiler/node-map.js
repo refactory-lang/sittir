@@ -577,6 +577,36 @@ function mergeFieldsByName(fields) {
     }
     return Array.from(byName.values());
 }
+function mergeChoiceArmSlots(arms) {
+    if (arms.length === 0)
+        return [];
+    const merged = new Map();
+    const presence = new Map();
+    for (const arm of arms) {
+        const normalizedArm = mergeFieldsByName([...arm]);
+        for (const slot of normalizedArm) {
+            presence.set(slot.name, (presence.get(slot.name) ?? 0) + 1);
+            const existing = merged.get(slot.name);
+            if (!existing) {
+                merged.set(slot.name, slot);
+                continue;
+            }
+            merged.set(slot.name, {
+                ...existing,
+                values: dedupeValues([...existing.values, ...slot.values]),
+                hasTrailing: existing.hasTrailing || slot.hasTrailing,
+                hasLeading: existing.hasLeading || slot.hasLeading,
+                aliasSources: existing.aliasSources || slot.aliasSources
+                    ? {
+                        ...existing.aliasSources,
+                        ...slot.aliasSources
+                    }
+                    : undefined
+            });
+        }
+    }
+    return [...merged.values()].map((slot) => (presence.get(slot.name) ?? 0) < arms.length ? relaxSlotForCrossFormAbsence(slot) : slot);
+}
 /**
  * Raw field derivation — produces one AssembledNonterminal per `field()` encounter.
  * Duplicates are merged by `deriveFields`. The `outerMultiplicity` threads
@@ -648,6 +678,10 @@ function deriveFieldsRaw(rule, outerMultiplicity, kindEntries) {
         case 'repeat1':
             return deriveFieldsRaw(rule.content, 'nonEmptyArray', kindEntries);
         case 'choice': {
+            const armSlots = rule.members.map((member) => deriveFieldsRaw(member, outerMultiplicity, kindEntries));
+            const hasDeclaredFieldArm = armSlots.some((slots) => slots.some((slot) => slot.source !== 'inferred'));
+            if (hasDeclaredFieldArm)
+                return mergeChoiceArmSlots(armSlots);
             // Choice at a position contributes ONE slot whose `values`
             // array is the union of all arms (the field walker handles
             // every position, so a positional choice no longer explodes
@@ -1952,6 +1986,16 @@ function deriveOptionalSlotNames(slots) {
 function deriveOptionalFieldNames(fields) {
     return deriveOptionalSlotNames(fields);
 }
+/** @internal — repeated slots that already carry literal members must concatenate directly. */
+export function applySelfDelimitedJoinOverrides(joinByField, slots) {
+    for (const slot of slots) {
+        if (!isMultiple(slot))
+            continue;
+        if (!slot.values.some((value) => value.kind === 'terminal'))
+            continue;
+        joinByField[slot.name] = '';
+    }
+}
 function buildRenderSurface(opts) {
     const fieldsByName = new Map((opts?.fields ?? []).map((field) => [field.name, field]));
     const slots = (opts?.slots ?? []).map((slot) => {
@@ -2451,6 +2495,7 @@ export class AssembledBranch extends AssembledNodeBase {
             if (leadingFields.size > 0)
                 meta.leadingFields = leadingFields;
         }
+        applySelfDelimitedJoinOverrides(joinByField, [...fields, ...this.children]);
         if (Object.keys(joinByField).length > 0)
             meta.joinByField = joinByField;
         if (optionalFields.size > 0)
@@ -3281,6 +3326,7 @@ export class AssembledGroup extends AssembledNodeBase {
             meta.trailingFields = trailingFields;
         if (leadingFields.size > 0)
             meta.leadingFields = leadingFields;
+        applySelfDelimitedJoinOverrides(joinByField, [...this.fields, ...this.children]);
         if (Object.keys(joinByField).length > 0)
             meta.joinByField = joinByField;
         if (optionalFields.size > 0)

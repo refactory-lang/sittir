@@ -259,6 +259,11 @@ export function readNodeAt(handle, node, nativeCoords) {
         handle.rootNode = prev;
     }
 }
+function childEntries(value) {
+    if (value === undefined)
+        return [];
+    return Array.isArray(value) ? value : [value];
+}
 /**
  * For a native TreeHandle (`handle.read` is present), walk the native
  * NodeData tree to find the parent-handle + child-index pair for the
@@ -305,7 +310,7 @@ export function findNativeNodeId(handle, kind, kindNameFromId) {
         return out;
     }
     function hasEmbeddedNativeChildren(d) {
-        if ((d.$children?.length ?? 0) > 0)
+        if (d.$children !== undefined)
             return true;
         const rec = d;
         for (const key of Object.keys(rec)) {
@@ -731,6 +736,49 @@ export function walkWrappedTree(root, visit) {
 export function materializeWrappedNodeData(root) {
     return materializeWrappedValue(root);
 }
+export function stripStructuralNodeText(root) {
+    const seen = new WeakSet();
+    const isNodeData = (value) => typeof value === 'object' && value !== null && '$type' in value;
+    const hasStructure = (record) => Object.keys(record).some((key) => key.startsWith('_'))
+        || (record.$fields != null && typeof record.$fields === 'object')
+        || record.$children != null;
+    const recurse = (value) => {
+        if (!isNodeData(value))
+            return;
+        if (seen.has(value))
+            return;
+        seen.add(value);
+        const record = value;
+        if (hasStructure(record)) {
+            delete record.$text;
+        }
+        for (const [key, child] of Object.entries(record)) {
+            if (key === '$with')
+                continue;
+            if (key === '$children') {
+                if (Array.isArray(child)) {
+                    for (const entry of child)
+                        recurse(entry);
+                }
+                else {
+                    recurse(child);
+                }
+                continue;
+            }
+            if (key.startsWith('_')) {
+                if (Array.isArray(child)) {
+                    for (const entry of child)
+                        recurse(entry);
+                }
+                else {
+                    recurse(child);
+                }
+            }
+        }
+    };
+    recurse(root);
+    return root;
+}
 function materializeWrappedValue(value) {
     if (Array.isArray(value)) {
         return value.map((entry) => materializeWrappedValue(entry));
@@ -745,8 +793,7 @@ function materializeWrappedValue(value) {
             const resolved = resolveWrappedStorageValue(value, key);
             if (resolved === undefined)
                 continue;
-            const childValue = materializeWrappedValue(resolved);
-            materialized.$children = Array.isArray(childValue) ? childValue : [childValue];
+            materialized.$children = materializeWrappedValue(resolved);
             continue;
         }
         if (key.startsWith('_')) {
@@ -1203,7 +1250,7 @@ function isAnonymousTokenNode(value) {
     return value != null && typeof value === 'object' && value.$named === false;
 }
 function filterStructuralChildren(children) {
-    return children.filter((child) => child != null && typeof child === 'object' && !isAnonymousTokenNode(child));
+    return childEntries(children).filter((child) => child != null && typeof child === 'object' && !isAnonymousTokenNode(child));
 }
 function shouldOmitResidualScalarChildren(parentKind, structuralChildren, opts, out) {
     if (!parentKind || structuralChildren.length === 0)
@@ -1237,7 +1284,7 @@ function resolveOverrideVariantFromKind(childKind, candidate) {
     return bestVariant;
 }
 function namedChildNodes(value) {
-    return (value?.filter((child) => child != null && typeof child === 'object' && child.$named !== false) ?? []);
+    return (childEntries(value).filter((child) => child != null && typeof child === 'object' && child.$named !== false));
 }
 function findOverrideVariantChildNode(data, childKind, variant, kindNameFromId) {
     const matches = [];
@@ -1407,7 +1454,7 @@ function assignPositionPromotedChildren(declaredFields, parentKind, namedChildre
 function promoteAnonymousChildrenToMissingFields(declaredFields, parentKind, children, opts, out) {
     if (!declaredFields || !parentKind)
         return false;
-    const anonymousChildren = children.filter((child) => child != null && typeof child === 'object' && child.$named === false);
+    const anonymousChildren = childEntries(children).filter((child) => child != null && typeof child === 'object' && child.$named === false);
     if (anonymousChildren.length === 0)
         return false;
     const missingFields = declaredFields.filter((name) => {
@@ -1535,7 +1582,7 @@ function inferPolymorphVariant(desc, data, derivedConfig, parentKind, kindNameFr
  * distinct child node kind (source='override').
  */
 function inferFromChildKind(childKind, helperChildKind, data, derivedConfig, parentKind, kindNameFromId, cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints) {
-    const firstChild = data.$children?.find((c) => c != null && typeof c === 'object' && c.$named !== false);
+    const firstChild = namedChildNodes(data.$children)[0];
     const rawType = firstChild?.$type;
     // Phase D: $type is numeric (TSKindId) or string (hidden/synthetic kind).
     // Resolve to a kind-name string for childKind map lookup.
@@ -1567,7 +1614,7 @@ function inferFromChildKind(childKind, helperChildKind, data, derivedConfig, par
         const seen = new Set();
         while (current && !seen.has(current)) {
             seen.add(current);
-            const namedChildren = current.$children?.filter((child) => child != null && typeof child === 'object' && child.$named !== false) ?? [];
+            const namedChildren = namedChildNodes(current.$children);
             if (namedChildren.length !== 1)
                 return undefined;
             const onlyChild = namedChildren[0];
@@ -1674,7 +1721,7 @@ function collectStructuralTokens(data, derivedConfig, kindNameFromId, parentKind
     add(firstNamedChildKindHint, 2, true);
     for (const hint of namedChildKindHints ?? [])
         add(hint, 2, true);
-    for (const child of data.$children ?? [])
+    for (const child of childEntries(data.$children))
         addNodeKind(child, 2);
     const raw = data;
     for (const key of Object.keys(raw)) {

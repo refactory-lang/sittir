@@ -37,6 +37,22 @@ export interface ReadRenderParseResult {
     }[];
 }
 /**
+ * Discover alias-source kinds by walking the grammar's wrap layer over a parsed tree.
+ *
+ * @remarks
+ * When the grammar's wrap layer (readTreeNode) is available, walk each parsed
+ * tree upfront to discover nodes whose drillAs()-rewritten `$type` differs from
+ * tree-sitter's raw output. We can then test these kinds against the source
+ * template with a matching reparse wrapper, rather than relying on per-kind
+ * render-layer workarounds in the target's template (ADR-0006).
+ *
+ * @param readTreeNodeFn - The grammar-specific readTreeNode function, or null if unavailable.
+ * @param tree - The parsed tree-sitter tree to walk.
+ * @param kinds - Mutable set of kind names; alias-source kinds discovered during the walk are added here.
+ * @returns A map from composite span key (`"start:end"`) to the effective (alias-rewritten) type string.
+ */
+export declare function chooseEffectiveKindForSpan(existing: string | undefined, next: string): string;
+/**
  * Run read-render-parse validation for a grammar using corpus fixtures.
  */
 /**

@@ -1110,11 +1110,11 @@ export function classifyFromEmission(kind, node, context) {
         return parserSymbolEmission;
     return node.rawFactoryName && node.fromFunctionName ? 'emit' : 'skip-no-from-surface';
 }
-export function classifyWrapEmission(kind, node, context) {
+export function classifyWrapEmission(kind, _node, context) {
     const parserSymbolEmission = classifyParserSymbolEmission(kind, context);
     if (parserSymbolEmission !== 'emit')
         return parserSymbolEmission;
-    return node.rawFactoryName ? 'emit' : 'skip-no-factory-name';
+    return 'emit';
 }
 export function classifyTemplateEmission(node) {
     if (!node.userFacing)

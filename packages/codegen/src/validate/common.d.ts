@@ -138,6 +138,7 @@ export declare function loadWrapNode(grammar: string): Promise<((data: AnyNodeDa
  */
 export declare function walkWrappedTree(root: unknown, visit: (w: WrappedNodeData) => void): void;
 export declare function materializeWrappedNodeData(root: unknown): AnyNodeData;
+export declare function stripStructuralNodeText<T>(root: T): T;
 export interface WrappedNodeData {
     readonly $type: number;
     readonly $nodeHandle?: number;
@@ -235,7 +236,7 @@ interface ReadNodeLike {
     readonly $text?: string;
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children?: readonly unknown[];
+    readonly $children?: unknown | readonly unknown[];
     readonly $named?: boolean;
 }
 export declare function getChildFactoryArgs(kind: string, childConfig: Record<string, unknown>, factorySlots: NodeToConfigOpts['factorySlots']): readonly unknown[];

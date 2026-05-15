@@ -142,9 +142,14 @@ function stripToFactory(data) {
         result[rawKey] = stripMemberValue(value);
     }
     if (data.$children) {
+        const childEntries = Array.isArray(data.$children) ? data.$children : [data.$children];
         // Factory nodes only have named children — filter anonymous
-        const namedChildren = data.$children.filter((c) => typeof c !== 'object' || c === null || c.$named !== false);
-        result.$children = stripMemberValue(namedChildren);
+        const namedChildren = childEntries.filter((c) => typeof c !== 'object' || c === null || c.$named !== false);
+        if (namedChildren.length > 0) {
+            result.$children = (Array.isArray(data.$children)
+                ? stripMemberValue(namedChildren)
+                : stripMemberValue(namedChildren[0]));
+        }
     }
     return result;
 }
@@ -398,10 +403,15 @@ function matchesRenderedKind(node, renderedKind, kindNameFromId) {
 function alignReadDataToRenderedKind(rawReadData, renderedKind, kindNameFromId) {
     if (matchesRenderedKind(rawReadData, renderedKind, kindNameFromId))
         return rawReadData;
-    const matchingChildren = rawReadData.$children?.filter((child) => child != null &&
+    const childEntries = rawReadData.$children === undefined
+        ? []
+        : Array.isArray(rawReadData.$children)
+            ? rawReadData.$children
+            : [rawReadData.$children];
+    const matchingChildren = childEntries.filter((child) => child != null &&
         typeof child === 'object' &&
         child.$named !== false &&
-        matchesRenderedKind(child, renderedKind, kindNameFromId)) ?? [];
+        matchesRenderedKind(child, renderedKind, kindNameFromId));
     if (matchingChildren.length === 1)
         return matchingChildren[0];
     return { ...rawReadData, $type: renderedKind };

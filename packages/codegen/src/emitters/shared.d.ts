@@ -452,8 +452,8 @@ export interface FromDispatchContext {
 }
 export type FromEmission = 'emit' | Exclude<ParserSymbolEmission, 'emit'> | 'skip-hidden-kind' | 'skip-polymorph-form' | 'skip-no-from-surface';
 export declare function classifyFromEmission(kind: string, node: AssembledNode, context: FromDispatchContext): FromEmission;
-export type WrapEmission = 'emit' | Exclude<ParserSymbolEmission, 'emit'> | 'skip-no-factory-name';
-export declare function classifyWrapEmission(kind: string, node: AssembledNode, context: ParserSymbolDispatchContext): WrapEmission;
+export type WrapEmission = 'emit' | Exclude<ParserSymbolEmission, 'emit'>;
+export declare function classifyWrapEmission(kind: string, _node: AssembledNode, context: ParserSymbolDispatchContext): WrapEmission;
 export type TemplateEmission = 'emit' | 'skip-non-user-facing' | 'skip-polymorph-form-group';
 export declare function classifyTemplateEmission(node: AssembledNode): TemplateEmission;
 //# sourceMappingURL=shared.d.ts.map

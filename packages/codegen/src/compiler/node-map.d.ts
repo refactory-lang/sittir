@@ -546,6 +546,8 @@ export declare function translateToJinja(tmpl: string, meta: JinjaTranslateMeta)
 /** `$$$CHILDREN` is the only slot that carries flank permission. */
 /** @internal — exported for direct unit testing. */
 export declare function filterForFlanks(key: string, meta: JinjaTranslateMeta): string;
+/** @internal — repeated slots that already carry literal members must concatenate directly. */
+export declare function applySelfDelimitedJoinOverrides(joinByField: Record<string, string>, slots: readonly AssembledNonterminal[]): void;
 export declare class AssembledBranch<R extends SeqRule | ChoiceRule | RepeatRule | Repeat1Rule | PolymorphRule = SeqRule | ChoiceRule | RepeatRule | Repeat1Rule> extends AssembledNodeBase<R> {
     readonly modelType: 'branch';
     /**
