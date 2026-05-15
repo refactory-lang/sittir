@@ -641,10 +641,9 @@ describe('native transport emission', () => {
 
 	it('emits per-slot typed enum for named heterogeneous fields (cleanup-rules §E1)', () => {
 		// Named heterogeneous field gets its own typed enum
-		// `<ParentTypeName><FieldName>Transport` — symmetry with unnamed `$children`
-		// slots. Under option (c), the enum is emitted alongside the existing
-		// `Box<AnyTransport>` field type so it is present for future use without
-		// changing field types yet.
+		// `<ParentTypeName><FieldName>TransportSlot` — symmetry with unnamed `$children`
+		// slots. After spec 024 cleanup-§E1, the per-slot enum is load-bearing:
+		// the struct field type IS the enum (no longer `Box<AnyTransport>`).
 		const generatedIdTables: GeneratedIdTables = {
 			kindIds: {
 				field_expression: 600,
@@ -668,14 +667,15 @@ describe('native transport emission', () => {
 		expect(emitted).toContain('pub enum FieldExpressionFieldTransportSlot {');
 		expect(emitted).toContain('FieldIdentifier(FieldIdentifierTransport),');
 		expect(emitted).toContain('IntegerLiteral(IntegerLiteralTransport),');
-		// Bridge fn naming follows `<typeSnake>_<fieldSnake>_transport_slot_to_any` for named slots.
+		// Bridge fn naming follows `<typeSnake>_<fieldSnake>_transport_slot_to_any` for named slots —
+		// still emitted because the NodeData bridge (`render_nodedata_into`) uses it
+		// to convert the per-slot enum back to `AnyTransport`.
 		expect(emitted).toContain(
 			'fn field_expression_field_transport_slot_to_any(t: FieldExpressionFieldTransportSlot) -> AnyTransport {'
 		);
-		// Option (c) deferral: the struct field type remains `Box<AnyTransport>`
-		// until the legacy `render_dispatch` bridge path is removed. Once Edits
-		// 3 + 5 land, this assertion should flip to expect `FieldExpressionFieldTransportSlot`.
-		expect(emitted).toContain('pub field: Box<AnyTransport>');
+		// Per-slot enum is now load-bearing — struct field type IS the enum.
+		expect(emitted).toContain('pub field: FieldExpressionFieldTransportSlot');
+		expect(emitted).not.toContain('pub field: Box<AnyTransport>');
 	});
 
 	it('emits repeated named fields as Vec transport instead of OneOrMany', () => {

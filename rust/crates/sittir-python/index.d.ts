@@ -189,7 +189,7 @@ export interface BinaryOperatorTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _left: PrimaryExpressionTransport
-  _operator: Box<AnyTransport>
+  _operator: BinaryOperatorOperatorTransportSlot
   _right: PrimaryExpressionTransport
 }
 
@@ -213,7 +213,7 @@ export interface BooleanOperatorTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _left: ExpressionTransport
-  _operator: Box<AnyTransport>
+  _operator: BooleanOperatorOperatorTransportSlot
   _right: ExpressionTransport
 }
 
@@ -226,7 +226,7 @@ export interface CallTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _function: PrimaryExpressionTransport
-  _arguments: Box<AnyTransport>
+  _arguments: CallArgumentsTransportSlot
 }
 
 export interface CaseClauseTransport {
@@ -299,7 +299,7 @@ export interface ComparisonOperatorTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _left: PrimaryExpressionTransport
-  _operators: Array<AnyTransport>
+  _operators: Array<ComparisonOperatorOperatorsTransportSlot>
   '$children': Array<PrimaryExpressionTransport>
 }
 
@@ -526,7 +526,7 @@ export interface ExecStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _code: PrimaryExpressionTransport
-  _in_clause?: Array<AnyTransport>
+  _in_clause?: Array<ExecStatementInClauseTransportSlot>
 }
 
 export interface ExpressionListTransport {
@@ -636,7 +636,7 @@ export interface FutureImportStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: Array<AnyTransport>
+  _name: Array<FutureImportStatementNameTransportSlot>
 }
 
 export interface GeneratorExpressionTransport {
@@ -695,7 +695,7 @@ export interface IfStatementTransport {
   '$triviaData'?: TransportTrivia
   _condition: ExpressionTransport
   _consequence: SuiteTransport
-  _alternative?: Array<AnyTransport>
+  _alternative?: Array<IfStatementAlternativeTransportSlot>
 }
 
 export interface ImportFromStatementTransport {
@@ -706,8 +706,8 @@ export interface ImportFromStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _module_name: Box<AnyTransport>
-  _name?: Array<AnyTransport>
+  _module_name: ImportFromStatementModuleNameTransportSlot
+  _name?: Array<ImportFromStatementNameTransportSlot>
   '$children'?: WildcardImportTransport
 }
 
@@ -719,7 +719,7 @@ export interface ImportListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: Array<AnyTransport>
+  _name: Array<ImportListNameTransportSlot>
 }
 
 export interface ImportStatementTransport {
@@ -730,7 +730,7 @@ export interface ImportStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: Array<AnyTransport>
+  _name: Array<ImportStatementNameTransportSlot>
 }
 
 export interface InterpolationTransport {
@@ -1155,7 +1155,7 @@ export interface SplatPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _identifier: Box<AnyTransport>
+  _identifier: SplatPatternIdentifierTransportSlot
 }
 
 export interface SplatTypeTransport {
@@ -1166,7 +1166,7 @@ export interface SplatTypeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _identifier: Box<AnyTransport>
+  _identifier: SplatTypeIdentifierTransportSlot
 }
 
 export interface StringContentTransport {
@@ -1189,7 +1189,7 @@ export interface StringTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _string_start: StringStartTransport
-  _content?: Array<AnyTransport>
+  _content?: Array<StringContentTransportSlot>
   _string_end: StringEndTransport
 }
 
@@ -1202,7 +1202,7 @@ export interface SubscriptTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _value: PrimaryExpressionTransport
-  _subscript: Array<AnyTransport>
+  _subscript: Array<SubscriptSubscriptTransportSlot>
 }
 
 export interface SuiteTransport {
