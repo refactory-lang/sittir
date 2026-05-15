@@ -315,6 +315,37 @@ function makeTransparentStatementWrapperNodeMap(): NodeMap {
 	return nodeMapWith(nodes);
 }
 
+// Mirrors `field_expression.field` from tree-sitter-rust: a named field whose
+// `types` list is `field_identifier | integer_literal` — two distinct concrete
+// kinds with no grammar supertype covering both. Under cleanup-rules §E1, such
+// a named heterogeneous field should also get a per-slot typed enum.
+function makeNamedHeterogeneousFieldNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'field',
+				name: 'field',
+				content: {
+					type: 'choice',
+					members: [
+						{ type: 'symbol', name: 'field_identifier' },
+						{ type: 'symbol', name: 'integer_literal' }
+					]
+				}
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('field_expression', new AssembledBranch('field_expression', parentRule, parentRule));
+	nodes.set(
+		'field_identifier',
+		new AssembledPattern('field_identifier', { type: 'pattern', value: '[a-zA-Z_][a-zA-Z0-9_]*' })
+	);
+	nodes.set('integer_literal', new AssembledPattern('integer_literal', { type: 'pattern', value: '[0-9]+' }));
+	return nodeMapWith(nodes);
+}
+
 function makeSupertypeBackedChildEnumNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
 		type: 'seq',
@@ -452,7 +483,7 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: ExpressionChildTransport,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: ExpressionChildTransportSlot,'
 		);
 		expect(structBody).not.toContain('pub children: Option<');
 		expect(structBody).not.toContain('pub children: Vec<');
@@ -476,7 +507,7 @@ describe('native transport emission', () => {
 		expect(structBody).toContain(
 			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: ExpressionTransport,'
 		);
-		expect(emitted.transportRs.contents).not.toContain('pub enum SupertypeAliasParentChildTransport');
+		expect(emitted.transportRs.contents).not.toContain('pub enum SupertypeAliasParentChildTransportSlot');
 	});
 
 	it('emits repeated children as Vec transport instead of OneOrMany', () => {
@@ -569,7 +600,7 @@ describe('native transport emission', () => {
 			generatedIdTables
 		).transportRs.contents;
 
-		expect(emitted).toContain('pub enum HiddenWrapperParentChildTransport {');
+		expect(emitted).toContain('pub enum HiddenWrapperParentChildTransportSlot {');
 		expect(emitted).toContain('410 => return Ok(Self::WrappedItem(Box::new(');
 		expect(emitted).toContain('411 => return Ok(Self::Integer(');
 	});
@@ -597,7 +628,7 @@ describe('native transport emission', () => {
 			generatedIdTables
 		).transportRs.contents;
 
-		expect(emitted).toContain('pub enum ObjectLikeChildTransport {');
+		expect(emitted).toContain('pub enum ObjectLikeChildTransportSlot {');
 		expect(emitted).toContain('Pair(Box<PairTransport>),');
 		expect(emitted).toContain('Identifier(IdentifierTransport),');
 		expect(emitted).toContain('ReservedIdentifier(ReservedIdentifierTransport),');
@@ -605,7 +636,46 @@ describe('native transport emission', () => {
 			'if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {'
 		);
 		expect(emitted).toContain('if let Some(other) = kind_id {');
-		expect(emitted).toContain('"unknown kind id {{other}} in ObjectLikeChildTransport"');
+		expect(emitted).toContain('"unknown kind id {{other}} in ObjectLikeChildTransportSlot"');
+	});
+
+	it('emits per-slot typed enum for named heterogeneous fields (cleanup-rules §E1)', () => {
+		// Named heterogeneous field gets its own typed enum
+		// `<ParentTypeName><FieldName>Transport` — symmetry with unnamed `$children`
+		// slots. Under option (c), the enum is emitted alongside the existing
+		// `Box<AnyTransport>` field type so it is present for future use without
+		// changing field types yet.
+		const generatedIdTables: GeneratedIdTables = {
+			kindIds: {
+				field_expression: 600,
+				field_identifier: 601,
+				integer_literal: 602
+			},
+			sourceArtifact: 'test'
+		};
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'field_expression.jinja',
+					content: '{# @generated #}\n{{ field }}'
+				}
+			],
+			makeNamedHeterogeneousFieldNodeMap(),
+			generatedIdTables
+		).transportRs.contents;
+
+		expect(emitted).toContain('pub enum FieldExpressionFieldTransportSlot {');
+		expect(emitted).toContain('FieldIdentifier(FieldIdentifierTransport),');
+		expect(emitted).toContain('IntegerLiteral(IntegerLiteralTransport),');
+		// Bridge fn naming follows `<typeSnake>_<fieldSnake>_transport_slot_to_any` for named slots.
+		expect(emitted).toContain(
+			'fn field_expression_field_transport_slot_to_any(t: FieldExpressionFieldTransportSlot) -> AnyTransport {'
+		);
+		// Option (c) deferral: the struct field type remains `Box<AnyTransport>`
+		// until the legacy `render_dispatch` bridge path is removed. Once Edits
+		// 3 + 5 land, this assertion should flip to expect `FieldExpressionFieldTransportSlot`.
+		expect(emitted).toContain('pub field: Box<AnyTransport>');
 	});
 
 	it('emits repeated named fields as Vec transport instead of OneOrMany', () => {

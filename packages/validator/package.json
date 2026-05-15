@@ -14,8 +14,7 @@
     }
   },
   "scripts": {
-    "build": "pnpm run clean && tsgo -p tsconfig.build.json --noCheck",
-    "//build": "TEMPORARY: --noCheck bypasses TS6307 cross-package source imports (validator imports codegen via ../../codegen/src/* paths that drag in transitive files not listed in validator's tsconfig). Validator's CLI normally runs via tsx, so dist is consumed only by codegen/cli.ts and tools/profile. Proper fix: replace source-path imports with @sittir/codegen package exports. See memory: project-wrap-emitter-children-typing-followup (same temporary-bypass family).",
+    "build": "pnpm run clean && tsgo -p tsconfig.build.json",
     "clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
     "test": "vitest run",
     "type-check": "tsgo --noEmit"

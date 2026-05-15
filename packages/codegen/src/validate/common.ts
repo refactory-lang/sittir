@@ -1005,6 +1005,14 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 	lang: TS.Language;
 	isOverride: boolean;
 }> {
+	// Hash-verify the grammar's generated content before any consumer touches
+	// it. This is the universal choke point — every validator, every probe,
+	// every dev tool that loads a grammar funnels through here. See A5 in
+	// docs/superpowers/conventions/2026-05-15-024-cleanup-rules.md.
+	const { assertGeneratedManifestsClean } = await import('../scripts/generated-manifest.ts');
+	if (grammar === 'rust' || grammar === 'typescript' || grammar === 'python') {
+		assertGeneratedManifestsClean([grammar]);
+	}
 	const { Parser, Language } = await loadWebTreeSitter();
 
 	const thisDir = fileURLToPath(new URL('.', import.meta.url));

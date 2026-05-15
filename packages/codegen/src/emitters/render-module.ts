@@ -2033,7 +2033,7 @@ function buildTypedTemplateBody(
 	if (struct.hasChildren && struct.childrenMultiple) {
 		if (struct.transportHasChildren) {
 			// Filter anonymous fill items only when the children slot is Vec<AnyTransport>
-			// (useBox !== false). Per-slot enum children ({TypeName}ChildTransport) do not
+			// (useBox !== false). Per-slot enum children ({TypeName}ChildTransportSlot) do not
 			// have transport_named() and must not be filtered.
 			const filterAnon = childrenCls.tag === 'heterogeneous' && childrenCls.useBox !== false;
 			lines.push(...emitListSlotBuffer('children', true, filterAnon));
@@ -2920,30 +2920,26 @@ function expandConcreteTransportKinds(
 }
 
 /**
- * Per-slot children enum entry: the parent node typeName and the set of
- * concrete child kinds that the slot accepts.
+ * Per-slot children enum entry: identifies a heterogeneous slot (named or
+ * unnamed) on a parent node, plus the set of concrete kinds it accepts.
+ *
+ * Per cleanup-rules.md §E1 (no special treatment for unnamed vs named slots):
+ * BOTH kinds of heterogeneous slots get per-slot typed enums. Per-slot enums
+ * give us Box-elision (non-recursive variants stay inline in the parent
+ * struct) that `Box<AnyTransport>` cannot.
  */
 interface PerSlotChildEnum {
-	/** PascalCase typeName of the parent node (used to derive the enum name). */
+	/** PascalCase typeName of the parent node. */
 	typeName: string;
-	/** Concrete child kinds in this slot. */
+	/** Field name — set for named-slot enums (e.g. `body` for `mod_item.body`).
+	 *  Undefined for unnamed-slot (`$children`) enums. */
+	fieldName?: string;
+	/** Concrete kinds in this slot. */
 	kinds: readonly string[];
 	/** Terminal literal children that may appear in runtime `$children`. */
 	literals: readonly TransportLiteral[];
 }
 
-/**
- * Collect all nodes whose `structuralChildren` classify as `heterogeneous`
- * (multiple distinct kinds, no grammar supertype covering them) — these need
- * a `{TypeName}ChildTransport` per-slot enum emitted before the struct.
- *
- * Polymorph forms are also covered: each form that has heterogeneous children
- * contributes its own entry (keyed by `formTypeName` so the enum name is
- * distinct from the parent struct).
- *
- * @param nodes   - assembled nodes from the transport projection
- * @param nodeMap - for classification
- */
 /**
  * Returns `true` when at least one kind in `kinds` can produce a concrete
  * transport type (i.e. `concreteTransportTypeName` returns non-null).
@@ -2954,9 +2950,40 @@ function hasAnyConcreteChildKind(kinds: readonly string[], nodeMap: NodeMap): bo
 	return expandConcreteTransportKinds(kinds, nodeMap).length > 0;
 }
 
+/**
+ * Collect all nodes whose `structuralChildren` classify as `heterogeneous`
+ * (multiple distinct kinds, no grammar supertype covering them) — these need
+ * a `{TypeName}ChildTransportSlot` per-slot enum emitted before the struct.
+ *
+ * Polymorph forms are also covered: each form that has heterogeneous children
+ * contributes its own entry (keyed by `formTypeName` so the enum name is
+ * distinct from the parent struct).
+ *
+ * Per cleanup-rules §E1, named heterogeneous fields ALSO get per-slot enums
+ * (`{TypeName}{FieldName}TransportSlot`). Under option (c) of the task, the
+ * enum is emitted alongside the existing `Box<AnyTransport>` field type so
+ * the enum is available for future use without changing field types yet.
+ *
+ * @param nodes   - assembled nodes from the transport projection
+ * @param nodeMap - for classification
+ */
 function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: NodeMap): PerSlotChildEnum[] {
 	const entries: PerSlotChildEnum[] = [];
 	const seen = new Set<string>();
+	// All existing transport struct / enum names — used ONLY by the named-slot
+	// pass below to guard against any naming collision between named-slot enum
+	// names (`<TypeName><FieldName>TransportSlot`) and existing struct names.
+	// One observed collision class is polymorph-form-derived names (e.g.
+	// `AssertsAnnotationAssertsTransport` from form `asserts_annotation__form_asserts`
+	// coincides with parent `asserts_annotation` + named field `asserts`), but
+	// the set covers ALL transport struct names — branch, group, polymorph,
+	// supertype enum, etc. — so we catch every collision class, not just
+	// polymorph forms. Pre-populating from every `rustTransportStructName(node)`
+	// is the single, scope-correct guard.
+	const reservedTransportNames = new Set<string>();
+	for (const node of nodes) {
+		reservedTransportNames.add(rustTransportStructName(node));
+	}
 
 	const consider = (typeName: string, slotModel: RenderSlotModel): void => {
 		if (slotModel.unnamed.length === 0) return;
@@ -2983,14 +3010,49 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 		entries.push({ typeName, kinds: allKinds, literals });
 	};
 
+	// Per cleanup-rules §E1, named heterogeneous fields ALSO get per-slot typed
+	// enums (symmetry with unnamed `$children`). Per §E6, only genuinely
+	// multi-shape slots widen — single-shape stays single-shape. This pass mirrors
+	// the unnamed pass above for named fields, deduping via the same `seen` set.
+	const considerNamed = (typeName: string, field: AssembledNonterminal): void => {
+		const namedKinds = kindsOf(field);
+		const literalSet = new Set<string>();
+		const literals: TransportLiteral[] = [];
+		for (const text of slotLiteralValues(field)) {
+			const key = `${text}\0${text}`;
+			if (literalSet.has(key)) continue;
+			literalSet.add(key);
+			literals.push({ kind: text, text });
+		}
+		// Mixed-content override: a field with named kinds AND anonymous literal
+		// content is heterogeneous regardless of classifier (mirror the same logic
+		// used in `rustTransportFieldType` and `bridgeClassForField`).
+		const hasMixedContent = namedKinds.length > 0 && literals.length > 0;
+		const cls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(namedKinds, nodeMap);
+		if (cls.tag !== 'heterogeneous') return;
+		// Empty-enum guard: bail if no kind maps to a concrete transport struct.
+		if (!hasAnyConcreteChildKind(namedKinds, nodeMap)) return;
+		const enumName = perSlotEnumName(typeName, field.name);
+		if (seen.has(enumName)) return;
+		// Collision guard: refuse to emit when the synthesized name shadows an
+		// existing transport struct or enum (e.g. polymorph-form-derived names).
+		if (reservedTransportNames.has(enumName)) return;
+		seen.add(enumName);
+		entries.push({ typeName, fieldName: field.name, kinds: namedKinds, literals });
+	};
+
 	for (const node of nodes) {
-		consider(node.typeName, renderSlotModelOf(node));
+		const slotModel = renderSlotModelOf(node);
+		consider(node.typeName, slotModel);
+		for (const field of slotModel.named) {
+			considerNamed(node.typeName, field);
+		}
 	}
 	return entries;
 }
 
 /**
- * Emit a `{TypeName}ChildTransport` per-slot children enum for a heterogeneous
+ * Emit a `{TypeName}ChildTransportSlot` per-slot children enum for a heterogeneous
  * children slot. The enum has one variant per concrete child kind; each variant
  * wraps the concrete transport struct (boxed for non-leaf kinds).
  *
@@ -3007,7 +3069,7 @@ function emitPerSlotChildEnum(
 	nodeMap: NodeMap,
 	literalVariantByKey: ReadonlyMap<string, string>
 ): string[] {
-	const enumName = perSlotEnumName(entry.typeName);
+	const enumName = perSlotEnumName(entry.typeName, entry.fieldName);
 	const lines: string[] = [];
 	const hasSupertypeSourceKinds = entry.kinds.some((kind) => nodeMap.nodes.get(kind)?.modelType === 'supertype');
 
@@ -3020,6 +3082,16 @@ function emitPerSlotChildEnum(
 	const isLeafLike = (n: AssembledNode): boolean =>
 		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
 
+	// Option (c) implementation note: when this is a named-slot per-slot enum we
+	// emit it alongside the existing `Box<AnyTransport>` field type so the enum
+	// exists for future use without changing field types yet (keeps the bridge
+	// helpers and `render_dispatch` path working unchanged). Mark named-slot
+	// enums as `#[allow(dead_code)]` since they are not load-bearing yet —
+	// `rustTransportFieldType` still produces `Box<AnyTransport>` for named
+	// heterogeneous fields.
+	if (entry.fieldName !== undefined) {
+		lines.push(`#[allow(dead_code)]`);
+	}
 	lines.push(`#[derive(Debug, Clone)]`);
 	lines.push(`pub enum ${enumName} {`);
 	for (const { node, concreteName } of validKinds) {
@@ -3149,7 +3221,15 @@ function emitPerSlotChildEnum(
 
 	// Bridge helper: converts per-slot enum → AnyTransport for the NodeData bridge.
 	// AnyTransport is a sized enum — no Box needed.
-	const bridgeFnName = `${rustSnakeIdent(entry.typeName)}_child_transport_to_any`;
+	// For named-slot enums, the bridge fn is unused under option (c) (field type
+	// stays `Box<AnyTransport>`), so mark it dead-code-allowed.
+	const bridgeFnName =
+		entry.fieldName !== undefined
+			? `${rustSnakeIdent(entry.typeName)}_${rustSnakeIdent(entry.fieldName)}_transport_slot_to_any`
+			: `${rustSnakeIdent(entry.typeName)}_child_transport_slot_to_any`;
+	if (entry.fieldName !== undefined) {
+		lines.push(`#[allow(dead_code)]`);
+	}
 	lines.push(`fn ${bridgeFnName}(t: ${enumName}) -> AnyTransport {`);
 	lines.push(`    match t {`);
 	for (const { node } of validKinds) {
@@ -3743,7 +3823,7 @@ function renderTransportChildrenBinding(
 			}
 			// Per-slot child enum: use the bridge fn to convert to AnyTransport.
 			if (ownerTypeName !== undefined) {
-				const bridgeFn = `${rustSnakeIdent(ownerTypeName)}_child_transport_to_any`;
+				const bridgeFn = `${rustSnakeIdent(ownerTypeName)}_child_transport_slot_to_any`;
 				return `${bridgeFn}(${expr})`;
 			}
 			// No typeName known — this shouldn't happen for per-slot enum path.
@@ -3768,7 +3848,7 @@ function renderTransportChildrenBinding(
 			}
 			// Per-slot child enum: convert each variant to AnyTransport.
 			if (ownerTypeName !== undefined) {
-				const bridgeFn = `${rustSnakeIdent(ownerTypeName)}_child_transport_to_any`;
+				const bridgeFn = `${rustSnakeIdent(ownerTypeName)}_child_transport_slot_to_any`;
 				return `${expr}.into_iter().map(|v| ${bridgeFn}(v)).collect::<Vec<_>>()`;
 			}
 			return expr;
@@ -4391,7 +4471,7 @@ function rustTransportFieldType(field: AssembledNonterminal, nodeMap: NodeMap): 
  * Classification:
  * - concrete  → `ConcreteTransport` (or `Box<AnyTransport>` fallback)
  * - supertype → `SupertypeTransport`
- * - heterogeneous → `{TypeName}ChildTransport` per-slot enum
+ * - heterogeneous → `{TypeName}ChildTransportSlot` per-slot enum
  *
  * @param slotModel - Canonical named/unnamed slot model for the node.
  * @param typeName - PascalCase typeName of the parent node (for per-slot enum name).
@@ -4464,12 +4544,30 @@ function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | nul
 
 /**
  * Name for a per-slot children enum for a heterogeneous children slot.
- * Format: `{TypeName}ChildTransport` (e.g., `SuiteChildTransport`).
+ * Format: `{TypeName}ChildTransportSlot` (e.g., `SuiteChildTransportSlot`)
+ * for the unnamed `$children` slot, and `{TypeName}{FieldName}TransportSlot`
+ * for named heterogeneous fields. The `TransportSlot` suffix marks the enum
+ * as a synthetic codegen wrapper that does NOT correspond to a real
+ * tree-sitter kind with a KindId.
  *
  * @param typeName - The parent node's typeName (PascalCase).
+ * @param fieldName - Optional named-slot field name (snake_case / lowercase).
  */
-function perSlotEnumName(typeName: string): string {
-	return `${rustTypeIdent(typeName)}ChildTransport`;
+function perSlotEnumName(typeName: string, fieldName?: string): string {
+	const base = rustTypeIdent(typeName);
+	if (fieldName !== undefined) {
+		// Named slot: e.g. ModItem.body → `ModItemBodyTransportSlot`.
+		// Field names are typically snake_case / lowercase (e.g. `body`, `type_arguments`).
+		// PascalCase them so the resulting enum name reads correctly.
+		const segments = fieldName.split(/[^A-Za-z0-9]+/).filter((s) => s.length > 0);
+		const pascalField = segments
+			.map((s) => (s.length === 0 ? s : s[0]!.toUpperCase() + s.slice(1)))
+			.join('');
+		const sanitized = rustTypeIdent(pascalField);
+		return `${base}${sanitized}TransportSlot`;
+	}
+	// Unnamed slot ($children): e.g. Suite → `SuiteChildTransportSlot`.
+	return `${base}ChildTransportSlot`;
 }
 
 /**

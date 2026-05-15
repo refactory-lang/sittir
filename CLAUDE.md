@@ -25,24 +25,22 @@ Generate typed factories, render templates, and native bindings from tree-sitter
 ## Current investigation handoff (`023-native-read-parity`)
 
 - Session handoff doc: `/Users/pmouli/.copilot/session-state/6bcf5246-449f-4d2d-9c9f-50b5b3d675c9/plan.md`
-- Current branch state:
-  - rust/native recursive RT: `134/136`, `fail=0`, `skip=2`, `ast=134`
-  - typescript/native recursive RT: `83/112`, `fail=0`, `skip=29`, `ast=83`
-  - python/native recursive RT: `115/115`, `fail=0`, `skip=0`, `ast=115`
+- Current branch state (honest, post-`$text`-fastpath-unmask; supersedes the masked 134/136 number recorded earlier):
+  - rust/native read-render-parse: `81/136 pass, ast=45` (factory-render-parse `726/1425, ast=710`; cov `174/180`; from `137/168`)
+  - typescript/native recursive RT: re-measure with restored sittir-8 wiring before trusting any stored number
+  - python/native recursive RT: re-measure with restored sittir-8 wiring before trusting any stored number
   - the frozen reference worktree is `/Users/pmouli/GitHub.nosync/refactory-lang/sittir-polymorph-rollback-sonnet`
   - do **not** modify that frozen worktree unless explicitly reactivated
-- Measurement rule:
-  - trust counts only after a full rebuild: `pnpm -r run build`
-  - then run counts, e.g. `npx tsx packages/codegen/src/scripts/counts.ts rust --recursive`
+- Measurement rule (per cleanup-rules §B1 / §D2):
+  - no `pnpm -r run build` needed — tsx + tsconfig paths resolve to source
+  - run counts via the validator CLI: `pnpm exec tsx packages/validator/src/cli.ts counts --backend native <grammar>`
+  - validator output now appends the first 5 failing entries per stage with entry name — feeds straight into `pnpm probe:validate --first-failing`
+  - trust cov over RT; the `134/136` baseline previously recorded here was `$text`-fastpath-masked and should not be chased
 
 ### Cross-grammar skip audit
 
-- Current native recursive RT counts:
-  - rust: `134/136`, `skip=2`, `fail=0`
-  - typescript: `83/112`, `skip=29`, `fail=0`
-  - python: `115/115`, `skip=0`, `fail=0`
-- Important: the current RT gap is **all skip debt**, not runtime RT failures
-- Every current skip is a **parse-error skip**
+- The earlier per-grammar numbers in this section were all `$text`-fastpath-masked. Re-measure with `pnpm exec tsx packages/validator/src/cli.ts counts --backend native <grammar>` before treating them as ground truth. Cleanup-rules §D2 governs.
+- The rust read-render-parse honest number is currently `81/136`, with 53 failing entries in the first list (validator emits the first 5 with corpus entry names).
 
 ### Override parser comparison
 

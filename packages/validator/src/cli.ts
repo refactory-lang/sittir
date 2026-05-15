@@ -117,14 +117,52 @@ async function collectGrammarCounts(
 
 function formatGrammarCounts(counts: GrammarCounts): string {
 	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse } = counts;
-	return [
+	const lines = [
 		`${grammar}/${formatBackendLabel(backend)}:`,
 		`  fromPass=${from.pass}    fromTotal=${from.total}`,
 		`  covPass=${coverage.pass}    covTotal=${coverage.total}`,
 		`  read-render-parsePass=${readRenderParse.pass}    read-render-parseTotal=${readRenderParse.total}    read-render-parseAstMatchPass=${readRenderParse.astMatchPass}`,
 		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}`,
 		`  factory-render-parsePass=${factoryRenderParse.pass}    factory-render-parseTotal=${factoryRenderParse.total}    factory-render-parseAstMatchPass=${factoryRenderParse.astMatchPass}`,
-	].join('\n');
+	];
+	const rtFails = formatFirstFailures(
+		'read-render-parse',
+		readRenderParse.errors.map((e) => ({ label: e.name, message: e.message })),
+	);
+	if (rtFails) lines.push(rtFails);
+	const rtShallowFails = formatFirstFailures(
+		'read-render-parse-shallow',
+		readRenderParseShallow.errors.map((e) => ({ label: e.name, message: e.message })),
+	);
+	if (rtShallowFails) lines.push(rtShallowFails);
+	const factoryFails = formatFirstFailures(
+		'factory-render-parse',
+		factoryRenderParse.errors.map((e) => ({ label: e.entry ? `${e.entry} (${e.kind})` : e.kind, message: e.message })),
+	);
+	if (factoryFails) lines.push(factoryFails);
+	const fromFails = formatFirstFailures(
+		'from',
+		from.errors.map((e) => ({ label: e.kind, message: e.message })),
+	);
+	if (fromFails) lines.push(fromFails);
+	return lines.join('\n');
+}
+
+function formatFirstFailures(
+	stage: string,
+	failures: ReadonlyArray<{ label: string; message: string }>,
+	max = 5,
+): string | null {
+	if (failures.length === 0) return null;
+	const shown = failures.slice(0, max);
+	const header = failures.length > max
+		? `  ${stage} first failures (${max} of ${failures.length}):`
+		: `  ${stage} failures (${failures.length}):`;
+	const items = shown.map(({ label, message }) => {
+		const oneLine = message.replace(/\s+/g, ' ').slice(0, 100);
+		return `    ${JSON.stringify(label)} — ${oneLine}`;
+	});
+	return [header, ...items].join('\n');
 }
 
 function toValidationRun(counts: GrammarCounts): ValidationRun {

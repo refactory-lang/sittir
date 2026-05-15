@@ -10,25 +10,10 @@ if [ "$#" -eq 0 ]; then
     exit 1
 fi
 
-build_prereqs() {
-    pnpm --filter @sittir/types run build
-    pnpm --filter @sittir/common run build
-    pnpm --filter @sittir/core run build
-}
-
-regenerate_grammars() {
-    npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
-    npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
-    npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
-}
-
-build_prereqs
-regenerate_grammars
-
-if [ -n "${NODE_OPTIONS:-}" ]; then
-    export NODE_OPTIONS="${NODE_OPTIONS} --conditions=source"
-else
-    export NODE_OPTIONS="--conditions=source"
-fi
+# tsconfig paths resolve @sittir/* to source, so no dist build is required.
+# Regenerate grammars from current codegen source for a fresh measurement.
+npx tsx packages/codegen/src/cli.ts --grammar rust --all --output packages/rust/src
+npx tsx packages/codegen/src/cli.ts --grammar typescript --all --output packages/typescript/src
+npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/python/src
 
 exec pnpm exec tsx packages/validator/src/cli.ts "$@"

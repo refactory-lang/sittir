@@ -36,8 +36,7 @@
 	"scripts": {
 		"generate": "rm -f src/factories.ts src/from.ts src/ir.ts src/utils.ts src/types.ts src/consts.ts src/index.ts templates.yaml tests/nodes.test.ts && node --experimental-strip-types ../codegen/src/cli.ts --grammar python --all --output src/",
 		"regenerate": "pnpm generate && pnpm build && pnpm test",
-		"build": "tsgo -p tsconfig.build.json --noCheck",
-		"//build": "TEMPORARY: --noCheck bypasses generated wrap.ts type errors (TS2339/TS2345) introduced by AnyNodeData.$children typing widening. Remove once wrap emitter is updated to emit type-correct code for singular-or-array $children. See memory: project-wrap-emitter-children-typing-followup.",
+		"build": "tsgo -p tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
 		"dev": "tsgo -p tsconfig.build.json --watch",
 		"test": "vitest run",
