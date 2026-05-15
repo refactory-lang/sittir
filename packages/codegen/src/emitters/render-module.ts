@@ -2762,7 +2762,7 @@ function emitSupertypeTransportEnum(
 			}
 		}
 		lines.push(`                other => Err(::napi::Error::from_reason(format!(`);
-		lines.push(`                    "unknown kind id {{other}} in ${enumName}",`);
+		lines.push(`                    "unknown kind id {other} in ${enumName}",`);
 		lines.push(`                ))),`);
 		lines.push(`            };`);
 		lines.push(`        }`);
@@ -3165,7 +3165,7 @@ function emitPerSlotChildEnum(
 			lines.push(`                _ => {}`);
 		} else {
 			lines.push(`                other => return Err(::napi::Error::from_reason(format!(`);
-			lines.push(`                    "unknown kind id {{other}} in ${enumName}",`);
+			lines.push(`                    "unknown kind id {other} in ${enumName}",`);
 			lines.push(`                ))),`);
 		}
 		lines.push(`            }`);
@@ -3190,7 +3190,7 @@ function emitPerSlotChildEnum(
 		if (hasSupertypeSourceKinds) {
 			lines.push(`        if let Some(other) = kind_id {`);
 			lines.push(`            return Err(::napi::Error::from_reason(format!(`);
-			lines.push(`                "unknown kind id {{other}} in ${enumName}",`);
+			lines.push(`                "unknown kind id {other} in ${enumName}",`);
 			lines.push(`            )));`);
 			lines.push(`        }`);
 		}
