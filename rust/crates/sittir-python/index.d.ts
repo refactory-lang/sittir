@@ -707,7 +707,8 @@ export interface ImportFromStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _module_name: Box<AnyTransport>
-  '$children': Array<ImportFromStatementChildTransport>
+  _name?: Array<AnyTransport>
+  '$children'?: WildcardImportTransport
 }
 
 export interface ImportListTransport {
@@ -1446,5 +1447,5 @@ export interface YieldTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children'?: YieldChildTransport
+  '$children'?: ExpressionsTransport
 }

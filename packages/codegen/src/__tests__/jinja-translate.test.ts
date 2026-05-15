@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { translateToJinja, filterForFlanks, type JinjaTranslateMeta } from '../compiler/node-map.ts';
+import {
+	applySelfDelimitedJoinOverrides,
+	filterForFlanks,
+	translateToJinja,
+	type JinjaTranslateMeta
+} from '../compiler/node-map.ts';
 
 // Unit coverage for the final `$VAR → {{ var }}` translation stage that
 // AssembledBranch.renderTemplate runs after clause inlining. These
@@ -31,6 +36,13 @@ describe('translateToJinja — simple placeholders', () => {
 	it('lowercases the variable name', () => {
 		expect(translateToJinja('$RETURN_TYPE', {})).toBe('{{ return_type }}');
 	});
+
+	it('moves chained head-conditional spacing behind the preceding optional field', () => {
+		const meta: JinjaTranslateMeta = { optionalFields: new Set(['a', 'b']) };
+		expect(translateToJinja('$A $B', meta)).toBe(
+			'{% if a | isPresent %}{{ a }} {% endif %}{% if b | isPresent %}{{ b }}{% endif %}'
+		);
+	});
 });
 
 describe('translateToJinja — $$$ repeat placeholders', () => {
@@ -51,6 +63,20 @@ describe('translateToJinja — $$$ repeat placeholders', () => {
 	it('$$$NAME falls back to meta.joinBy when joinByField missing the key', () => {
 		const meta: JinjaTranslateMeta = { joinBy: '|' };
 		expect(translateToJinja('$$$NAME', meta)).toBe('{{ name | join("|") }}');
+	});
+
+	it('uses empty join when a repeated slot already carries literal members', () => {
+		const joinByField = { members: ',' };
+		applySelfDelimitedJoinOverrides(joinByField, [
+			{
+				name: 'members',
+				values: [
+					{ kind: 'node-ref', node: { kind: 'unresolved-ref', name: 'property_signature' }, multiplicity: 'array' },
+					{ kind: 'terminal', value: ';', multiplicity: 'array' }
+				]
+			}
+		] as never);
+		expect(translateToJinja('$$$MEMBERS', { joinByField })).toBe('{{ members | join("") }}');
 	});
 
 	it('does not wrap $$$CHILDREN in translateToJinja when children is explicitly marked optional', () => {

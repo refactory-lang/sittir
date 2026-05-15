@@ -290,14 +290,22 @@ export function lineCommentContent(text: string) {
 }
 
 export function _lineCommentDoc(config: T.LineCommentDoc.Config) {
+  const _outer = coerceBooleanKeywordStorage(config.outer);
+  const _inner = coerceBooleanKeywordStorage(config.inner);
   const _doc = config.doc;
   return withMethods({
     $type: TSKindId.LineCommentDoc as const,
     $source: 2 as const,
     $named: true as const,
+    _outer,
+    _inner,
     _doc,
+    outer() { return _outer; },
+    inner() { return _inner; },
     doc() { return _doc; },
     $with: {
+      outer: (value?: NonNullable<Parameters<typeof _lineCommentDoc>[0]>['outer']) => _lineCommentDoc({ ...config, outer: value }),
+      inner: (value?: NonNullable<Parameters<typeof _lineCommentDoc>[0]>['inner']) => _lineCommentDoc({ ...config, inner: value }),
       doc: (value: T.LineDocContent) => _lineCommentDoc({ ...config, doc: value }),
     },
   }, methodsEngine);
@@ -898,19 +906,23 @@ export function asyncBlock(config: T.AsyncBlock.Config) {
 }
 
 export function attribute(config: T.Attribute.Config) {
-  const children = _configChildren<T.Attribute['$children']>(config, [] as unknown as T.Attribute['$children']);
   const _path = config.path;
+  const _value = config.value;
+  const _arguments = config.arguments;
   return withMethods({
     $type: TSKindId.Attribute as const,
     $source: 2 as const,
     $named: true as const,
     _path,
-    $children: children,
+    _value,
+    _arguments,
     path() { return _path; },
-    children() { return children; },
+    value() { return _value; },
+    arguments() { return _arguments; },
     $with: {
       path: (value: T.Path) => attribute({ ...config, path: value }),
-      children: (...items: readonly [((T.Expression | T.DelimTokenTree))]) => attribute({ ...config, children: items } as unknown as Parameters<typeof attribute>[0]),
+      value: (value?: T.Expression) => attribute({ ...config, value: value }),
+      arguments: (value?: T.DelimTokenTree) => attribute({ ...config, arguments: value }),
     },
   }, methodsEngine);
 }
@@ -998,19 +1010,23 @@ export function block(config: Partial<T.Block.Config> = {}) {
 }
 
 export function blockComment(config: Partial<T.BlockComment.Config> = {}) {
-  const children = _configChildren<T.BlockComment['$children']>(config, [] as unknown as T.BlockComment['$children']);
+  const _outer = config.outer;
+  const _inner = config.inner;
   const _doc = config.doc;
   return withMethods({
     $type: TSKindId.BlockComment as const,
     $source: 2 as const,
     $named: true as const,
+    _outer,
+    _inner,
     _doc,
-    $children: children,
+    outer() { return _outer; },
+    inner() { return _inner; },
     doc() { return _doc; },
-    children() { return children; },
     $with: {
+      outer: (value?: T.OuterBlockDocCommentMarker) => blockComment({ ...config, outer: value }),
+      inner: (value?: T.InnerBlockDocCommentMarker) => blockComment({ ...config, inner: value }),
       doc: (value?: T.BlockCommentContent) => blockComment({ ...config, doc: value }),
-      children: (...items: readonly [((T.OuterBlockDocCommentMarker | T.InnerBlockDocCommentMarker))]) => blockComment({ ...config, children: items } as unknown as Parameters<typeof blockComment>[0]),
     },
   }, methodsEngine);
 }
@@ -2462,8 +2478,12 @@ export function lineCommentUFormDoc(config: Omit<ConfigOf<T.LineCommentUFormDoc>
     $named: true as const,
     $variant: 'doc' as const,
     $children: children,
+    outer() { return inner.outer(); },
+    inner() { return inner.inner(); },
     doc() { return inner.doc(); },
     $with: {
+      outer: (value?: NonNullable<Parameters<typeof lineCommentUFormDoc>[0]>['outer']) => lineCommentUFormDoc({ ...config, outer: value } as Parameters<typeof lineCommentUFormDoc>[0]),
+      inner: (value?: NonNullable<Parameters<typeof lineCommentUFormDoc>[0]>['inner']) => lineCommentUFormDoc({ ...config, inner: value } as Parameters<typeof lineCommentUFormDoc>[0]),
       doc: (value: T.LineDocContent) => lineCommentUFormDoc({ ...config, doc: value } as Parameters<typeof lineCommentUFormDoc>[0]),
     },
   }, methodsEngine);

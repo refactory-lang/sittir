@@ -85,6 +85,52 @@ export interface AddingTypeAnnotationTransport {
   _type: TypeTransport
 }
 
+export interface AmbientDeclarationDeclarationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  '$children': DeclarationTransport
+}
+
+export interface AmbientDeclarationDeclarationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  '$children': DeclarationTransport
+}
+
+export interface AmbientDeclarationGlobalTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _body: StatementBlockTransport
+}
+
+export interface AmbientDeclarationModuleTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _name: IdentifierTransport
+  _type: TypeTransport
+  _semicolon?: SemicolonTransport
+}
+
 export interface AmbientDeclarationTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -93,7 +139,7 @@ export interface AmbientDeclarationTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _declaration: Box<AnyTransport>
+  '$children': AmbientDeclarationChildTransport
 }
 
 export interface ArgumentsTransport {
@@ -733,7 +779,8 @@ export interface EnumBodyTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': Array<EnumBodyChildTransport>
+  _name?: Array<PropertyNameTransport>
+  '$children': Array<EnumAssignmentTransport>
 }
 
 export interface EnumDeclarationTransport {
@@ -781,7 +828,8 @@ export interface ExportStatementDefaultDeclArmDefaultKwTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': ExportStatementDefaultDeclArmDefaultKwChildTransport
+  _declaration?: DeclarationTransport
+  '$children'?: ExportStatementDefaultDeclArmDefaultKwValueTransport
 }
 
 export interface ExportStatementDefaultDeclArmDefaultKwValueTransport {
@@ -805,7 +853,8 @@ export interface ExportStatementDefaultDeclArmTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _decorator?: Array<DecoratorTransport>
-  '$children': ExportStatementDefaultDeclArmChildTransport
+  _declaration?: DeclarationTransport
+  '$children'?: ExportStatementDefaultDeclArmDefaultKwTransport
 }
 
 export interface ExportStatementDefaultFromArmClauseFromTransport {
@@ -1163,7 +1212,7 @@ export interface FunctionSignatureTransport {
   _type_parameters?: TypeParametersTransport
   _parameters: FormalParametersTransport
   _return_type?: Box<AnyTransport>
-  _semicolon: Box<AnyTransport>
+  '$children': FunctionSignatureChildTransport
 }
 
 export interface FunctionTypeTransport {
@@ -1369,7 +1418,7 @@ export interface ImportSpecifierAsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: Box<AnyTransport>
+  _name: ModuleExportNameTransport
   _alias: ImportIdentifierTransport
 }
 
@@ -1416,7 +1465,7 @@ export interface ImportStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _import_clause?: Box<AnyTransport>
-  _from_clause: Box<AnyTransport>
+  _from_clause: Array<AnyTransport>
   _import_attribute?: ImportAttributeTransport
   _semicolon: SemicolonTransport
 }
@@ -1740,8 +1789,8 @@ export interface MemberExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _object: Box<AnyTransport>
+  _optional_chain?: OptionalChainTransport
   _property: PropertyNameTransport
-  '$children': OptionalChainTransport
 }
 
 export interface MethodDefinitionTransport {
@@ -2362,7 +2411,7 @@ export interface SubscriptExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _object: Box<AnyTransport>
+  _object: ExpressionTransport
   _optional_chain?: OptionalChainTransport
   _index: ExpressionsTransport
 }

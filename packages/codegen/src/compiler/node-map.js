@@ -31,6 +31,7 @@ import { renderRuleTemplate, deriveWalkSlots, findRepeatSeparator, findRepeatFla
 import { findGeneratedKindEntry } from './generated-metadata.js';
 import { tokenToName } from './optimize.js';
 import { assertNever } from '../polymorph-variant.js';
+import { fieldContentIsMultiSibling } from './field-shape.js';
 export function isNodeRef(v) {
     return v.kind === 'node-ref';
 }
@@ -38,7 +39,7 @@ export function isTerminalValue(v) {
     return v.kind === 'terminal';
 }
 export function isUnresolvedRef(v) {
-    return (typeof v === 'object' && v.kind === 'unresolved-ref');
+    return typeof v === 'object' && v.kind === 'unresolved-ref';
 }
 // ---------------------------------------------------------------------------
 // Derived slot-level helpers (DRY: one derivation, not stored flags)
@@ -68,7 +69,7 @@ export function isMultiple(slot) {
  */
 export function isNonEmpty(slot) {
     const multis = slot.values.filter((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
-    return (multis.length > 0 && multis.every((v) => v.multiplicity === 'nonEmptyArray'));
+    return multis.length > 0 && multis.every((v) => v.multiplicity === 'nonEmptyArray');
 }
 export function deriveSlotCardinality(slot) {
     return {
@@ -86,9 +87,13 @@ export function mergeSlotValues(slots) {
 }
 export function deriveMergedSlotCardinality(slots) {
     const merged = mergeSlotValues(slots);
-    return merged
-        ? deriveSlotCardinality(merged)
-        : { required: false, multiple: false, nonEmpty: false };
+    return merged ? deriveSlotCardinality(merged) : { required: false, multiple: false, nonEmpty: false };
+}
+export function deriveUnnamedChildrenCardinality(children) {
+    if (children.length === 0) {
+        return { required: false, multiple: false, nonEmpty: false };
+    }
+    return children.length === 1 ? deriveSlotCardinality(children[0]) : deriveChildrenCardinality(children);
 }
 export function deriveChildrenCardinality(children) {
     if (children.length === 0) {
@@ -372,9 +377,7 @@ function classifyTopLevelShape(rule) {
         case 'repeat':
         case 'repeat1': {
             const inner = classifyTopLevelShape(rule.content);
-            return inner === 'canonical'
-                ? 'canonical'
-                : `${rule.type}-wrapping-${inner}`;
+            return inner === 'canonical' ? 'canonical' : `${rule.type}-wrapping-${inner}`;
         }
         case 'choice': {
             // Every choice in the traversal must be a simple union — no
@@ -413,9 +416,7 @@ function classifyTopLevelShape(rule) {
         }
         case 'optional': {
             const innerShape = classifyTopLevelShape(rule.content);
-            return innerShape === 'canonical'
-                ? 'canonical'
-                : `optional-wrapping-${innerShape}`;
+            return innerShape === 'canonical' ? 'canonical' : `optional-wrapping-${innerShape}`;
         }
         case 'group':
         case 'alias':
@@ -452,9 +453,7 @@ function isTokenLikeChoiceMember(m) {
                 ? peel(r.content)
                 : r;
     const core = peel(m);
-    if (core.type === 'symbol' ||
-        core.type === 'supertype' ||
-        core.type === 'enum')
+    if (core.type === 'symbol' || core.type === 'supertype' || core.type === 'enum')
         return true;
     // Bare `string` / `pattern` members — token-literal alternatives.
     // `_non_special_token` has a choice containing dozens of bare
@@ -466,9 +465,7 @@ function isTokenLikeChoiceMember(m) {
     // These behave as anonymous token separators — they don't surface
     // as addressable children, so they never contribute structural
     // branching to a choice arm.
-    if (core.type === 'indent' ||
-        core.type === 'dedent' ||
-        core.type === 'newline')
+    if (core.type === 'indent' || core.type === 'dedent' || core.type === 'newline')
         return true;
     if (core.type === 'terminal')
         return true;
@@ -569,17 +566,13 @@ function mergeFieldsByName(fields) {
             continue;
         }
         const mergedValues = dedupeValues([...existing.values, ...f.values]);
-        const mergedAliases = existing.aliasSources || f.aliasSources
-            ? { ...existing.aliasSources, ...f.aliasSources }
-            : undefined;
+        const mergedAliases = existing.aliasSources || f.aliasSources ? { ...existing.aliasSources, ...f.aliasSources } : undefined;
         byName.set(f.name, {
             ...existing,
             values: mergedValues,
             hasTrailing: existing.hasTrailing || f.hasTrailing,
             hasLeading: existing.hasLeading || f.hasLeading,
-            aliasSources: mergedAliases && Object.keys(mergedAliases).length > 0
-                ? mergedAliases
-                : undefined
+            aliasSources: mergedAliases && Object.keys(mergedAliases).length > 0 ? mergedAliases : undefined
         });
     }
     return Array.from(byName.values());
@@ -808,6 +801,13 @@ function fieldContentMultiplicity(content, outerMultiplicity) {
             return 'optional';
         }
         default:
+            if (fieldContentIsMultiSibling(content)) {
+                if (outerMultiplicity === 'optional')
+                    return 'array';
+                return outerMultiplicity === 'array' || outerMultiplicity === 'nonEmptyArray'
+                    ? outerMultiplicity
+                    : 'nonEmptyArray';
+            }
             return outerMultiplicity;
     }
 }
@@ -1279,10 +1279,7 @@ export class AssembledNodeBase {
         // `hidden: true` suppresses factoryName derivation (node has no factory).
         // `factoryName: string` overrides the derived name.
         // Default: use the derived factoryName.
-        this.factoryName =
-            opts?.hidden === true
-                ? undefined
-                : (opts?.factoryName ?? derived.factoryName);
+        this.factoryName = opts?.hidden === true ? undefined : (opts?.factoryName ?? derived.factoryName);
         this.irKey = opts?.irKey ?? derived.irKey;
         this.source = opts?.source;
     }
@@ -1302,9 +1299,7 @@ export class AssembledNodeBase {
      * AssembledNode subclasses reach into the raw rule.
      */
     isTextTemplate(externals) {
-        if (externals !== undefined &&
-            externals.size > 0 &&
-            hasHiddenExternalRef(this.rule, externals)) {
+        if (externals !== undefined && externals.size > 0 && hasHiddenExternalRef(this.rule, externals)) {
             return true;
         }
         if (isVerbatimTokenStream(this.rule))
@@ -1355,9 +1350,7 @@ export class AssembledNodeBase {
     get rawFactoryName() {
         if (this.factoryName === undefined)
             return undefined;
-        return JS_RESERVED_FACTORY_NAMES.has(this.factoryName)
-            ? `${this.factoryName}_`
-            : this.factoryName;
+        return JS_RESERVED_FACTORY_NAMES.has(this.factoryName) ? `${this.factoryName}_` : this.factoryName;
     }
     /** Tree interface name: `${typeName}Tree`. */
     get treeTypeName() {
@@ -1412,9 +1405,7 @@ export function kindsOf(slot) {
     for (const v of slot.values) {
         if (v.kind !== 'node-ref')
             continue;
-        const name = isUnresolvedRef(v.node)
-            ? v.node.name
-            : v.node.kind;
+        const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
         if (!seen.has(name)) {
             seen.add(name);
             out.push(name);
@@ -1498,10 +1489,7 @@ function inlineJinjaClauses(template, clauses) {
                 if (isClauseName(lower))
                     return m;
                 // Specials handled by translateToJinja stay raw.
-                if (lower === 'newline' ||
-                    lower === 'indent' ||
-                    lower === 'dedent' ||
-                    lower === 'text') {
+                if (lower === 'newline' || lower === 'indent' || lower === 'dedent' || lower === 'text') {
                     return m;
                 }
                 // `| value` was a cross-engine safety wrapper for
@@ -1707,10 +1695,9 @@ export function translateToJinja(tmpl, meta) {
         }
         return `{{ ${key} }}`;
     });
-    const postProcessed = meta.optionalChildren
-        ? absorbFlankingChildrenSpaces(translated)
-        : translated;
-    return escapeJinjaBraceCollisions(absorbHeadConditionalTrailingSpace(postProcessed));
+    const postProcessed = meta.optionalChildren ? absorbFlankingChildrenSpaces(translated) : translated;
+    const headSpacingNormalized = absorbHeadConditionalLeadingSpace(absorbHeadConditionalTrailingSpace(postProcessed));
+    return escapeJinjaBraceCollisions(headSpacingNormalized);
 }
 /**
  * Leading-list-conditional space absorption.
@@ -1752,13 +1739,49 @@ function absorbHeadConditionalTrailingSpace(tmpl) {
         if (!body.endsWith(' '))
             body = `${body} `;
         const replacement = `${ifTag}${body}${endTag}`;
-        work =
-            work.slice(0, runStart) +
-                replacement +
-                work.slice(runStart + m[0].length);
+        work = work.slice(0, runStart) + replacement + work.slice(runStart + m[0].length);
         runStart += replacement.length;
     }
     return work;
+}
+function absorbHeadConditionalLeadingSpace(tmpl) {
+    let work = tmpl;
+    let runStart = 0;
+    const commentMatch = work.match(/^\{#-?[^#]*-?#\}/);
+    if (commentMatch)
+        runStart = commentMatch[0].length;
+    const condFull = /^(\{%-? if [^%]+-?%\})(.*?)(\{%-? endif -?%\})/s;
+    const parts = [];
+    let cursor = runStart;
+    while (true) {
+        const head = work.slice(cursor);
+        const m = head.match(condFull);
+        if (!m)
+            break;
+        const ifTag = m[1];
+        const body = m[2];
+        const endTag = m[3];
+        if (body.includes('{% if') || body.includes('{%- if'))
+            break;
+        parts.push({ ifTag, body, endTag });
+        cursor += m[0].length;
+    }
+    if (parts.length === 0)
+        return work;
+    for (let index = 0; index < parts.length; index++) {
+        const part = parts[index];
+        const leading = part.body.match(/^ +/)?.[0];
+        if (!leading)
+            continue;
+        part.body = part.body.slice(leading.length);
+        if (index === 0)
+            continue;
+        const previous = parts[index - 1];
+        if (!/\s$/.test(previous.body))
+            previous.body += leading;
+    }
+    const replacement = parts.map(({ ifTag, body, endTag }) => `${ifTag}${body}${endTag}`).join('');
+    return work.slice(0, runStart) + replacement + work.slice(cursor);
 }
 /**
  * Wrap each unguarded `$NAME` placeholder whose lower-cased name is in
@@ -1820,13 +1843,7 @@ function wrapOptionalFieldPlaceholders(tmpl, optionalFields) {
         return `{% if ${key} | isPresent %}${lead}${dollars}${name}{% endif %}`;
     });
 }
-const SPECIAL_PLACEHOLDERS = new Set([
-    'children',
-    'newline',
-    'indent',
-    'dedent',
-    'text'
-]);
+const SPECIAL_PLACEHOLDERS = new Set(['children', 'newline', 'indent', 'dedent', 'text']);
 /**
  * Compute the half-open `[start, end)` byte ranges in `tmpl` that lie
  * INSIDE a top-level `{% if … %}…{% endif %}` block. Nested `{% if %}`
@@ -2028,9 +2045,7 @@ function tryCrossFormOptionalCollapse(forms, rawTemplates, formNames) {
     // for each cross-form optional field. No separator between the prefix
     // and the suffix — the separator (range operator, etc.) is part of
     // the variant child's own template.
-    const prefix = fieldNames
-        .map((f) => `{% if ${f} | isPresent %}$${f.toUpperCase()}{% endif %}`)
-        .join('');
+    const prefix = fieldNames.map((f) => `{% if ${f} | isPresent %}$${f.toUpperCase()}{% endif %}`).join('');
     return prefix + suffixes[0];
 }
 function inlineSingleParameterlessChildTemplate(form, rawTemplate, rules, wordMatcher, externals) {
@@ -2063,9 +2078,7 @@ function inlineFixedParameterlessSlotPlaceholders(form, rawTemplate, rules, word
         const stampedLiteral = value.node.modelType === 'keyword' || value.node.modelType === 'token' || value.node.modelType === 'enum'
             ? resolveStampedLiteral(value.node.stampExpression)
             : undefined;
-        const renderedEntry = stampedLiteral === undefined
-            ? value.node.renderTemplate(rules, wordMatcher, externals)
-            : undefined;
+        const renderedEntry = stampedLiteral === undefined ? value.node.renderTemplate(rules, wordMatcher, externals) : undefined;
         const replacement = stampedLiteral ?? renderedEntry?.template;
         if (replacement === undefined)
             continue;
@@ -2114,8 +2127,7 @@ function tryChildrenPresenceCollapse(rawTemplates, formNames) {
         return null;
     const childSuffix = childSuffixes[0];
     const literalSuffix = literalSuffixes[0];
-    if (suffixes.some((suffix) => suffix !== childSuffix && suffix !== literalSuffix) ||
-        childSuffix === literalSuffix) {
+    if (suffixes.some((suffix) => suffix !== childSuffix && suffix !== literalSuffix) || childSuffix === literalSuffix) {
         return null;
     }
     return `${prefix}{% if children | isPresent %}${childSuffix}{% else %}${literalSuffix}{% endif %}`;
@@ -2194,9 +2206,7 @@ function buildSlotsRecord(kind, rule, kindEntries) {
                         : isUnresolvedRef(v.node)
                             ? v.node.name
                             : v.node.kind);
-                    const mult = s.values.length > 0
-                        ? s.values[0].multiplicity
-                        : 'single';
+                    const mult = s.values.length > 0 ? s.values[0].multiplicity : 'single';
                     return `    ${s.name} (source: ${s.source}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
                 });
                 process.stderr.write(`[assemble] storageName collision: kind '${kind}' has ${slots.length} slots ` +
@@ -2213,10 +2223,34 @@ function freezeSlotRecord(slots) {
     }
     return Object.freeze(out);
 }
+function relaxMultiplicityForCrossFormAbsence(multiplicity) {
+    switch (multiplicity) {
+        case 'single':
+            return 'optional';
+        case 'nonEmptyArray':
+            return 'array';
+        case 'optional':
+        case 'array':
+            return multiplicity;
+        default:
+            return assertNever(multiplicity);
+    }
+}
+function relaxSlotForCrossFormAbsence(slot) {
+    return {
+        ...slot,
+        values: dedupeValues(slot.values.map((value) => ({
+            ...value,
+            multiplicity: relaxMultiplicityForCrossFormAbsence(value.multiplicity)
+        })))
+    };
+}
 function structuralSlotRecordFromForms(forms) {
     const slots = new Map();
+    const slotPresence = new Map();
     for (const form of forms) {
         for (const slot of Object.values(form.slots)) {
+            slotPresence.set(slot.name, (slotPresence.get(slot.name) ?? 0) + 1);
             const existing = slots.get(slot.name);
             if (!existing) {
                 slots.set(slot.name, slot);
@@ -2236,7 +2270,7 @@ function structuralSlotRecordFromForms(forms) {
             });
         }
     }
-    return freezeSlotRecord([...slots.values()]);
+    return freezeSlotRecord([...slots.values()].map((slot) => (slotPresence.get(slot.name) ?? 0) < forms.length ? relaxSlotForCrossFormAbsence(slot) : slot));
 }
 export class AssembledBranch extends AssembledNodeBase {
     modelType = 'branch';
@@ -2297,8 +2331,7 @@ export class AssembledBranch extends AssembledNodeBase {
         super(kind, rule, opts);
         this.simplifiedRule = simplifiedRule;
         this.variantChildKinds = opts?.variantChildKinds ?? [];
-        this._slots =
-            opts?.slotRecord ?? buildSlotsRecord(kind, simplifiedRule, opts?.kindEntries);
+        this._slots = opts?.slotRecord ?? buildSlotsRecord(kind, simplifiedRule, opts?.kindEntries);
     }
     get slots() {
         return this._slots;
@@ -2383,9 +2416,7 @@ export class AssembledBranch extends AssembledNodeBase {
         // empty-body factory inputs.
         const fields = this.fields;
         const hasFields = fields.length > 0;
-        const optionalFields = hasFields
-            ? deriveOptionalFieldNames(fields)
-            : new Set();
+        const optionalFields = hasFields ? deriveOptionalFieldNames(fields) : new Set();
         if (hasFields && this.children.length > 0)
             optionalFields.add('children');
         const { template: rawTemplate, clauses: rawClauses, joinByField, usesChildren, slots } = renderRuleTemplate(this.rule, false, rules, wordMatcher, optionalFields);
@@ -2623,9 +2654,7 @@ function isExternalTerminalMember(rule, externals) {
     const core = unwrapStructuralPassthroughs(rule);
     if (core.type === 'field') {
         const inner = unwrapStructuralPassthroughs(core.content);
-        if (inner.type === 'pattern' &&
-            inner.value === '' &&
-            (externals.has(core.name) || externals.has('_' + core.name)))
+        if (inner.type === 'pattern' && inner.value === '' && (externals.has(core.name) || externals.has('_' + core.name)))
             return true;
         return isExternalTerminalMember(core.content, externals);
     }
@@ -2645,7 +2674,7 @@ function hasHiddenExternalRef(rule, externals) {
         if (r.type !== 'optional')
             return false;
         const inner = r.content;
-        return (inner.type === 'symbol' && externals.has(inner.name));
+        return inner.type === 'symbol' && externals.has(inner.name);
     };
     let hasContent = false;
     for (const m of core.members) {
@@ -2707,8 +2736,7 @@ function hasExternalBoundaries(seqRule, externals) {
     const last = seqRule.members[seqRule.members.length - 1];
     if (!first || !last)
         return false;
-    return (isExternalTerminalMember(first, externals) &&
-        isExternalTerminalMember(last, externals));
+    return isExternalTerminalMember(first, externals) && isExternalTerminalMember(last, externals);
 }
 export class AssembledPolymorph extends AssembledNodeBase {
     modelType = 'polymorph';
@@ -2819,8 +2847,7 @@ export class AssembledPolymorph extends AssembledNodeBase {
         for (const form of this.#forms) {
             const { template, clauses, joinByField, usesChildren: formUsesChildren } = form.renderParts(rules, wordMatcher);
             if (!template) {
-                throw new Error(`AssembledPolymorph.renderTemplate: '${this.kind}' form '${form.name}' ` +
-                    `produced an empty template.`);
+                throw new Error(`AssembledPolymorph.renderTemplate: '${this.kind}' form '${form.name}' ` + `produced an empty template.`);
             }
             const normalizedTemplate = inlineSingleParameterlessChildTemplate(form, template, rules, wordMatcher, externals);
             const normalizedWithFixedSlots = inlineFixedParameterlessSlotPlaceholders(form, normalizedTemplate, rules, wordMatcher, externals);
@@ -2834,9 +2861,7 @@ export class AssembledPolymorph extends AssembledNodeBase {
             variants[form.name] = wrapped;
             usesChildren ||= formUsesChildren;
             for (const slot of deriveWalkSlots(normalizedWithFixedSlots)) {
-                const guarded = slot.guarded ||
-                    localOptional.has(slot.name) ||
-                    mergedOptionalFields.has(slot.name);
+                const guarded = slot.guarded || localOptional.has(slot.name) || mergedOptionalFields.has(slot.name);
                 const prev = mergedSlots.get(slot.name);
                 const view = prev == null || prev.view === slot.view ? slot.view : 'field';
                 mergedSlots.set(slot.name, {
@@ -2858,10 +2883,9 @@ export class AssembledPolymorph extends AssembledNodeBase {
         // map — `translateToJinja` below just converts `$VAR` →
         // `{{ var }}` without knowing about variants at all.
         const formNames = Object.keys(variants);
-        const normalizeTrailingNewline = (s) => s.endsWith('\n') ? s.slice(0, -1) : s;
+        const normalizeTrailingNewline = (s) => (s.endsWith('\n') ? s.slice(0, -1) : s);
         const allEqual = formNames.length > 1 &&
-            formNames.every((n) => normalizeTrailingNewline(variants[n]) ===
-                normalizeTrailingNewline(variants[formNames[0]]));
+            formNames.every((n) => normalizeTrailingNewline(variants[n]) === normalizeTrailingNewline(variants[formNames[0]]));
         let templateStr;
         let usesVariant = false;
         if (allEqual) {
@@ -2984,9 +3008,7 @@ export class AssembledPattern extends AssembledLeaf {
     }
     /** The leaf's regex pattern value when the rule is a PatternRule; undefined for TerminalRule. */
     get pattern() {
-        return this.rule.type === 'pattern'
-            ? this.rule.value || undefined
-            : undefined;
+        return this.rule.type === 'pattern' ? this.rule.value || undefined : undefined;
     }
 }
 export class AssembledKeyword extends AssembledLeaf {
@@ -3026,9 +3048,7 @@ export class AssembledToken extends AssembledLeaf {
     constructor(kind, rule, opts) {
         super(kind, rule, { hidden: true });
         this.resolvedKind =
-            rule.type === 'string'
-                ? findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind
-                : undefined;
+            rule.type === 'string' ? findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind : undefined;
         // Single-literal tokens are parameterless — they stamp to the
         // literal (as const) the same way keywords do. Pattern-based
         // tokens (TokenRule) carry no single user-visible string and
@@ -3209,8 +3229,7 @@ export class AssembledGroup extends AssembledNodeBase {
         // the factory name so the emitted function is `_fooBar`, not `fooBar`.
         // `nameNode` strips leading underscores via `prepareKindForPascalCase`; we
         // re-derive and prefix here when no explicit factoryName was provided.
-        const factoryName = opts?.factoryName ??
-            (kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
+        const factoryName = opts?.factoryName ?? (kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
         super(kind, rule, { factoryName, irKey: opts?.irKey });
         this.simplifiedRule = simplifiedRule;
         this.detectToken = opts?.detectToken;
@@ -3323,9 +3342,7 @@ export class AssembledGroup extends AssembledNodeBase {
  * polymorph variants, see {@link allFormFieldsOf}.
  */
 export function structuralFieldsOf(node) {
-    if (node.modelType === 'branch' ||
-        node.modelType === 'group' ||
-        node.modelType === 'polymorph')
+    if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'polymorph')
         return node.fields;
     return [];
 }
@@ -3336,9 +3353,7 @@ export function structuralFieldsOf(node) {
  * Use this for emitters that read child slots on the kind itself.
  */
 export function structuralChildrenOf(node) {
-    if (node.modelType === 'branch' ||
-        node.modelType === 'group' ||
-        node.modelType === 'polymorph')
+    if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'polymorph')
         return node.children;
     return [];
 }
@@ -3408,9 +3423,7 @@ export function allSlotsOf(node) {
  * count without changing meaning).
  */
 export function allStructuralSlotsOf(node) {
-    if (node.modelType === 'branch' ||
-        node.modelType === 'group' ||
-        node.modelType === 'polymorph')
+    if (node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'polymorph')
         return Object.values(node.slots);
     return [];
 }

@@ -2205,9 +2205,16 @@ export interface LetChain {
 
 export interface LineCommentDoc {
   readonly $type: TSKindId.LineCommentDoc;
+  readonly _outer?: boolean;
+  readonly _inner?: boolean;
   readonly _doc: LineDocContent;
+  readonly __inputHints__?: {
+    readonly outer?: BooleanKeyword<"/">;
+    readonly inner?: BooleanKeyword<"!">;
+  };
+  outer(): boolean | undefined;
+  inner(): boolean | undefined;
   doc(): LineDocContent;
-  readonly $children: "/" | "!";
 }
 
 export interface _MacroDefinitionBrace {
@@ -2466,8 +2473,11 @@ export interface AsyncBlock {
 export interface Attribute {
   readonly $type: TSKindId.Attribute;
   readonly _path: Path;
+  readonly _value?: Expression;
+  readonly _arguments?: DelimTokenTree;
   path(): Path;
-  readonly $children?: Expression | DelimTokenTree;
+  value(): Expression | undefined;
+  arguments(): DelimTokenTree | undefined;
 }
 
 export interface AttributeItem {
@@ -2510,9 +2520,12 @@ export interface Block {
 
 export interface BlockComment {
   readonly $type: TSKindId.BlockComment;
+  readonly _outer?: OuterBlockDocCommentMarker;
+  readonly _inner?: InnerBlockDocCommentMarker;
   readonly _doc?: BlockCommentContent;
+  outer(): OuterBlockDocCommentMarker | undefined;
+  inner(): InnerBlockDocCommentMarker | undefined;
   doc(): BlockCommentContent | undefined;
-  readonly $children?: OuterBlockDocCommentMarker | InnerBlockDocCommentMarker;
 }
 
 export interface BoundedType {

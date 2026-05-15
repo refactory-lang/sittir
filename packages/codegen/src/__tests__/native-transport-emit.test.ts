@@ -9,6 +9,7 @@ import {
 	AssembledPolymorph,
 	AssembledSupertype
 } from '../compiler/node-map.ts';
+import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode } from '../compiler/node-map.ts';
 import type { ChoiceRule, SeqRule } from '../compiler/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -220,6 +221,53 @@ function makePolymorphSingularChildrenNodeMap(): NodeMap {
 	);
 }
 
+function makeSupertypeAndSubtypeChildrenNodeMap(): NodeMap {
+	const parentRule: ChoiceRule = {
+		type: 'choice',
+		members: [
+			{ type: 'symbol', name: '_expression' },
+			{ type: 'symbol', name: 'identifier' }
+		]
+	};
+	const expressionRule: ChoiceRule = {
+		type: 'choice',
+		members: [
+			{ type: 'symbol', name: 'identifier' },
+			{ type: 'symbol', name: 'call_expression' }
+		]
+	};
+	const callRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'identifier' }]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('supertype_alias_parent', new AssembledBranch('supertype_alias_parent', parentRule, parentRule));
+	nodes.set('_expression', new AssembledSupertype('_expression', expressionRule, ['identifier', 'call_expression']));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('call_expression', new AssembledBranch('call_expression', callRule, callRule));
+	return nodeMapWith(nodes);
+}
+
+function makeHiddenWrapperChildEnumNodeMap(): NodeMap {
+	const wrapperRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'identifier' }]
+	};
+	const parentRule: ChoiceRule = {
+		type: 'choice',
+		members: [
+			{ type: 'symbol', name: '_wrapped_item' },
+			{ type: 'symbol', name: 'integer' }
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('hidden_wrapper_parent', new AssembledBranch('hidden_wrapper_parent', parentRule, parentRule));
+	nodes.set('_wrapped_item', new AssembledBranch('_wrapped_item', wrapperRule, wrapperRule));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('integer', new AssembledPattern('integer', { type: 'pattern', value: '[0-9]+' }));
+	return nodeMapWith(nodes);
+}
+
 function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
 	const parentRule: SeqRule = {
 		type: 'seq',
@@ -233,6 +281,82 @@ function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('optional_repeated_parent', new AssembledBranch('optional_repeated_parent', parentRule, parentRule));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	return nodeMapWith(nodes);
+}
+
+function makeTransparentStatementWrapperNodeMap(): NodeMap {
+	const wrapperRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: '_simple_statement' }]
+	};
+	const moduleRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'repeat1',
+				content: { type: 'symbol', name: '_statement' }
+			}
+		]
+	};
+	const simpleStatementRule: ChoiceRule = {
+		type: 'choice',
+		members: [{ type: 'symbol', name: 'expression_statement' }]
+	};
+	const statementRule: ChoiceRule = {
+		type: 'choice',
+		members: [{ type: 'symbol', name: '_simple_statements' }]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('_simple_statement', new AssembledSupertype('_simple_statement', simpleStatementRule, ['expression_statement']));
+	nodes.set('_statement', new AssembledSupertype('_statement', statementRule, ['_simple_statements']));
+	nodes.set('_simple_statements', new AssembledBranch('_simple_statements', wrapperRule, wrapperRule));
+	nodes.set('expression_statement', new AssembledPattern('expression_statement', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('module', new AssembledBranch('module', moduleRule, moduleRule));
+	return nodeMapWith(nodes);
+}
+
+function makeSupertypeBackedChildEnumNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'repeat1',
+				content: {
+					type: 'choice',
+					members: [
+						{ type: 'symbol', name: 'pair' },
+						{ type: 'symbol', name: '_shorthand_property_identifier' }
+					]
+				}
+			}
+		]
+	};
+	const pairRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'identifier' }]
+	};
+	const shorthandRule: ChoiceRule = {
+		type: 'choice',
+		members: [
+			{ type: 'symbol', name: 'identifier' },
+			{ type: 'symbol', name: '_reserved_identifier' }
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('object_like', new AssembledBranch('object_like', parentRule, parentRule));
+	nodes.set('pair', new AssembledBranch('pair', pairRule, pairRule));
+	nodes.set(
+		'_shorthand_property_identifier',
+		new AssembledSupertype('_shorthand_property_identifier', shorthandRule, [
+			'identifier',
+			'_reserved_identifier'
+		])
+	);
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set(
+		'_reserved_identifier',
+		new AssembledPattern('_reserved_identifier', { type: 'pattern', value: '[a-z]+' })
+	);
 	return nodeMapWith(nodes);
 }
 
@@ -334,6 +458,27 @@ describe('native transport emission', () => {
 		expect(structBody).not.toContain('pub children: Vec<');
 	});
 
+	it('collapses supertype-plus-subtype unnamed children to the supertype transport directly', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'supertype_alias_parent.jinja',
+					content: '{# @generated #}\n{{ children }}'
+				}
+			],
+			makeSupertypeAndSubtypeChildrenNodeMap()
+		);
+		const start = emitted.transportRs.contents.indexOf('pub struct SupertypeAliasParentTransport');
+		const end = emitted.transportRs.contents.indexOf('}', start);
+		const structBody = emitted.transportRs.contents.slice(start, end);
+
+		expect(structBody).toContain(
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: ExpressionTransport,'
+		);
+		expect(emitted.transportRs.contents).not.toContain('pub enum SupertypeAliasParentChildTransport');
+	});
+
 	it('emits repeated children as Vec transport instead of OneOrMany', () => {
 		const emitted = emitRenderModule(
 			'rust',
@@ -374,6 +519,93 @@ describe('native transport emission', () => {
 			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Vec<IdentifierTransport>,'
 		);
 		expect(structBody).not.toContain('pub children: Option<Vec<IdentifierTransport>>');
+	});
+
+	it('widens statement unions through transparent hidden wrappers', () => {
+		const generatedIdTables: GeneratedIdTables = {
+			kindIds: {
+				_statement: 109,
+				_simple_statements: 110,
+				expression_statement: 122
+			},
+			sourceArtifact: 'test'
+		};
+		const emitted = emitRenderModule(
+			'python',
+			[
+				{
+					filename: 'module.jinja',
+					content: '{# @generated #}\n{{ children | join("\\n") }}'
+				}
+			],
+			makeTransparentStatementWrapperNodeMap(),
+			generatedIdTables
+		).transportRs.contents;
+
+		expect(emitted).toContain('pub enum StatementTransport {');
+		expect(emitted).toContain('SimpleStatements(Box<SimpleStatementsTransport>),');
+		expect(emitted).toContain('ExpressionStatement(ExpressionStatementTransport),');
+		expect(emitted).toContain('122 => Ok(Self::ExpressionStatement(');
+	});
+
+	it('accepts visible alias kind ids for hidden-wrapper child enums', () => {
+		const generatedIdTables: GeneratedIdTables = {
+			kindIds: {
+				wrapped_item: 410,
+				integer: 411,
+				identifier: 412
+			},
+			sourceArtifact: 'test'
+		};
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'hidden_wrapper_parent.jinja',
+					content: '{# @generated #}\n{{ children }}'
+				}
+			],
+			makeHiddenWrapperChildEnumNodeMap(),
+			generatedIdTables
+		).transportRs.contents;
+
+		expect(emitted).toContain('pub enum HiddenWrapperParentChildTransport {');
+		expect(emitted).toContain('410 => return Ok(Self::WrappedItem(Box::new(');
+		expect(emitted).toContain('411 => return Ok(Self::Integer(');
+	});
+
+	it('lets supertype-backed child enums fall back to object parsing before unknown-kind errors', () => {
+		const generatedIdTables: GeneratedIdTables = {
+			kindIds: {
+				object_like: 500,
+				pair: 501,
+				identifier: 502,
+				_reserved_identifier: 503,
+				_shorthand_property_identifier: 422
+			},
+			sourceArtifact: 'test'
+		};
+		const emitted = emitRenderModule(
+			'typescript',
+			[
+				{
+					filename: 'object_like.jinja',
+					content: '{# @generated #}\n{{ children | join(", ") }}'
+				}
+			],
+			makeSupertypeBackedChildEnumNodeMap(),
+			generatedIdTables
+		).transportRs.contents;
+
+		expect(emitted).toContain('pub enum ObjectLikeChildTransport {');
+		expect(emitted).toContain('Pair(Box<PairTransport>),');
+		expect(emitted).toContain('Identifier(IdentifierTransport),');
+		expect(emitted).toContain('ReservedIdentifier(ReservedIdentifierTransport),');
+		expect(emitted).toContain(
+			'if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {'
+		);
+		expect(emitted).toContain('if let Some(other) = kind_id {');
+		expect(emitted).toContain('"unknown kind id {{other}} in ObjectLikeChildTransport"');
 	});
 
 	it('emits repeated named fields as Vec transport instead of OneOrMany', () => {

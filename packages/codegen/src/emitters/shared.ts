@@ -1275,16 +1275,16 @@ export function classifyFromEmission(kind: string, node: AssembledNode, context:
 	return node.rawFactoryName && node.fromFunctionName ? 'emit' : 'skip-no-from-surface';
 }
 
-export type WrapEmission = 'emit' | Exclude<ParserSymbolEmission, 'emit'> | 'skip-no-factory-name';
+export type WrapEmission = 'emit' | Exclude<ParserSymbolEmission, 'emit'>;
 
 export function classifyWrapEmission(
 	kind: string,
-	node: AssembledNode,
+	_node: AssembledNode,
 	context: ParserSymbolDispatchContext
 ): WrapEmission {
 	const parserSymbolEmission = classifyParserSymbolEmission(kind, context);
 	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;
-	return node.rawFactoryName ? 'emit' : 'skip-no-factory-name';
+	return 'emit';
 }
 
 export type TemplateEmission = 'emit' | 'skip-non-user-facing' | 'skip-polymorph-form-group';

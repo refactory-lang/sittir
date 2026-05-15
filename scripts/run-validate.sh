@@ -31,6 +31,4 @@ else
     export NODE_OPTIONS="--conditions=source"
 fi
 
-export SITTIR_WRAP_WARNING_MODE=1
-
 exec pnpm exec tsx packages/validator/src/cli.ts "$@"

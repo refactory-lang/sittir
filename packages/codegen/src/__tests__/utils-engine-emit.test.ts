@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { emitClientUtils } from '../emitters/client-utils.ts';
 import { emitFactories } from '../emitters/factories.ts';
 import { emitWrap } from '../emitters/wrap.ts';
-import { makeMinimalNodeMap } from './helpers/node-map-fixtures.ts';
+import { AssembledBranch, AssembledPattern } from '../compiler/node-map.ts';
+import type { AssembledNode } from '../compiler/node-map.ts';
+import type { SeqRule } from '../compiler/rule.ts';
+import { makeMinimalNodeMap, makeNodeMapWith } from './helpers/node-map-fixtures.ts';
 
 describe('utils engine facade emission', () => {
 	it('emits a grammar-local methodsEngine plus explicit withMethods(node, engine)', () => {
@@ -26,5 +29,25 @@ describe('utils engine facade emission', () => {
 		expect(factoriesSrc).toContain('}, methodsEngine);');
 		expect(wrapSrc).toContain('import { withMethods, methodsEngine');
 		expect(wrapSrc).toContain('}, methodsEngine);');
+	});
+
+	it('emits a deprecated no-op native transport seam', () => {
+		const wrapperRule: SeqRule = {
+			type: 'seq',
+			members: [{ type: 'symbol', name: 'identifier' }]
+		};
+		const nodes = new Map<string, AssembledNode>();
+		nodes.set('wrapper', new AssembledBranch('wrapper', wrapperRule, wrapperRule));
+		nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+		const contents = emitClientUtils({ nodeMap: makeNodeMapWith(nodes) });
+
+		expect(contents).toContain('* @deprecated Native transport projection is a no-op.');
+		expect(contents).toContain('Wrap already projects');
+		expect(contents).toContain('read nodes into transport shape, and factories already store transport-shaped');
+		expect(contents).toContain('export function toNativeRenderTransport(node: unknown): unknown {');
+		expect(contents).toContain('  return node;');
+		expect(contents).not.toContain('projectNativeRenderTransport');
+		expect(contents).not.toContain('resolveTransportStorageValue');
+		expect(contents).not.toContain('_SINGULAR_NATIVE_CHILDREN_KIND_IDS');
 	});
 });

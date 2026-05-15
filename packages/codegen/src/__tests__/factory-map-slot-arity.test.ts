@@ -40,6 +40,30 @@ function makeSlotArityNodeMap() {
 			{ type: 'symbol', name: 'number_literal' }
 		]
 	};
+	const multiSiblingFieldRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'field',
+				name: 'declaration',
+				content: {
+					type: 'choice',
+					members: [
+						{ type: 'symbol', name: 'identifier' },
+						{
+							type: 'seq',
+							members: [
+								{ type: 'string', value: 'module' },
+								{ type: 'symbol', name: 'property_identifier' },
+								{ type: 'string', value: ':' },
+								{ type: 'symbol', name: 'object_type' }
+							]
+						}
+					]
+				}
+			}
+		]
+	};
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('single_parent', new AssembledBranch('single_parent', singleChildRule, singleChildRule));
 	nodes.set('multi_parent', new AssembledBranch('multi_parent', multiSingularChildRule, multiSingularChildRule));
@@ -48,8 +72,11 @@ function makeSlotArityNodeMap() {
 		'optional_then_required_parent',
 		new AssembledBranch('optional_then_required_parent', optionalThenRequiredChildRule, optionalThenRequiredChildRule)
 	);
+	nodes.set('ambient_like_parent', new AssembledBranch('ambient_like_parent', multiSiblingFieldRule, multiSiblingFieldRule));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
 	nodes.set('number_literal', new AssembledPattern('number_literal', { type: 'pattern', value: '[0-9]+' }));
+	nodes.set('property_identifier', new AssembledPattern('property_identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('object_type', new AssembledPattern('object_type', { type: 'pattern', value: '\\{\\}' }));
 	return makeNodeMapWith(nodes);
 }
 
@@ -95,9 +122,16 @@ describe('factory-map slot arity metadata', () => {
 		expect(expectFactorySlot(data, 'optional_then_required_parent', 'children')).toEqual({
 			unnamed: true,
 			slotCount: 2,
-			required: false,
+			required: true,
 			multiple: false,
 			nonEmpty: false
+		});
+		expect(expectFactorySlot(data, 'ambient_like_parent', 'declaration')).toEqual({
+			unnamed: false,
+			slotCount: 1,
+			required: true,
+			multiple: true,
+			nonEmpty: true
 		});
 	});
 });

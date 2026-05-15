@@ -340,14 +340,14 @@ var PREC_VARIANT_MAP = {
 function reconstructPrec(rule, newContent) {
   const t = rule.type.toLowerCase();
   const value = rule.value ?? 0;
-  const prec = nativeRequired("prec");
+  const prec2 = nativeRequired("prec");
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
-    const fn = prec[variant2];
+    const fn = prec2[variant2];
     if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
-  return prec(value, newContent);
+  return prec2(value, newContent);
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {
   if (!precStack?.length) return content;
@@ -1013,13 +1013,13 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
     value: aliasValue
   };
   if (factored) {
-    const optional = globalThis.optional;
-    if (typeof optional !== "function") {
+    const optional2 = globalThis.optional;
+    if (typeof optional2 !== "function") {
       throw new Error(
         "transform: no global optional() found \u2014 variant()/alias() on empty-matching content needs runtime optional()"
       );
     }
-    return optional(aliasNode);
+    return optional2(aliasNode);
   }
   return aliasNode;
 }
@@ -1769,6 +1769,11 @@ var overrides_default = grammar(
       },
       import_specifier: { "1/0": "name", "1/1": "as" },
       index_signature: { "2/0": "colon", "2/1": "mapped_type_clause" },
+      ambient_declaration: {
+        "1/0": "declaration",
+        "1/1": "global",
+        "1/2": "module"
+      },
       // _export_statement_default — synthesized by
       // `export_statement: { 0: variant('default') }` transform. Body
       // is a two-arm heterogeneous choice:
@@ -1883,11 +1888,17 @@ var overrides_default = grammar(
         "3/0": field("accessor_kind"),
         "5/0": field("optional_marker")
       },
-      // ambient_declaration: 3 field(s)
-      ambient_declaration: {
-        1: field("declaration")
-        // declaration | statement_block | property_identifier [struct=0]
-      },
+      // ambient_declaration: split the heterogeneous declaration choice
+      // so each arm owns its own literal scaffold (`declare global …`,
+      // `declare module.<name>: <type>;`, or direct declaration).
+      ambient_declaration: ($, original) => transform(
+        original,
+        {
+          "1/0": variant("declaration"),
+          "1/1": variant("global"),
+          "1/2": variant("module")
+        }
+      ),
       // array_type: 1 field(s)
       array_type: {},
       // as_expression: 2 field(s)
@@ -2129,20 +2140,34 @@ var overrides_default = grammar(
         2: field("semicolon")
       },
       // function_signature: seq(
-      //   optional('async'),  // pos 0  →  '0/0'  (async_marker)
-      //   'function', field('name'), _call_signature,
+      //   optional('async'),
+      //   'function',
+      //   field('name'),
+      //   _call_signature,
       //   choice(_semicolon, _function_signature_automatic_semicolon))
-      // The trailing choice carries the semi (either explicit or auto);
-      // labeling pos 4 as a semicolon field lets it render.
-      // Wave-3 follow-up (016 task #28): adds `async_marker` along with
-      // the JS-inherited function family — see the inline declaration
-      // above for `_kw_async_marker`. Kept hand-promoted because the
-      // factoryRoundtrip AST match fails when only enrich auto-promotes
-      // (the synthesized `_kw_async_marker` content shape diverges).
-      function_signature: {
-        "0/0": field("async_marker"),
-        4: field("semicolon")
-      },
+      // Keep the trailing semicolon field optional in the override
+      // surface. The declarations corpus includes EOF-terminated
+      // ambient exports like `export async function …` that parse as a
+      // function_signature without surfacing either semicolon token.
+      // Model the real read surface instead of forcing a missing slot.
+      function_signature: ($) => choice(
+        seq(
+          optional(field("async_marker", "async")),
+          "function",
+          field("name", $.identifier),
+          $._call_signature,
+          choice(
+            field("semicolon", $._semicolon),
+            field("semicolon", $._function_signature_automatic_semicolon)
+          )
+        ),
+        seq(
+          optional(field("async_marker", "async")),
+          "function",
+          field("name", $.identifier),
+          $._call_signature
+        )
+      ),
       // JS-inherited function family — all start with `optional('async')` at pos 0.
       //
       // Wave-3 follow-up (016 task #28): label pos 0/0 in each as
@@ -2378,6 +2403,17 @@ var overrides_default = grammar(
       // doesn't exist at runtime, clobbering all five declared fields.
       // Positions 1/2/3 (the `?`, the type field, and the initializer)
       // are already correctly structured in the base rule.
+      _ambient_declaration_global: ($) => seq("global", field("body", $.statement_block)),
+      _ambient_declaration_module: ($) => prec.right(
+        seq(
+          "module",
+          ".",
+          field("name", alias($.identifier, $.property_identifier)),
+          ":",
+          field("type", $.type),
+          optional(field("semicolon", $._semicolon))
+        )
+      ),
       optional_parameter: ($, original) => original,
       // public_field_definition: pos 0 is decorator repeat (real base
       // field). The original override labeled pos 0 as

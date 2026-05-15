@@ -38,6 +38,7 @@ import type {
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
+    AmbientDeclarationDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._AmbientDeclarationDeclaration };
     ArrowFunction_CallSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ArrowFunctionUCallSignature };
     ArrowFunctionParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ArrowFunctionParameter };
     ClassBodyMember<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassBodyMember };
@@ -243,6 +244,7 @@ export interface IsGuards {
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
+    AmbientDeclarationDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._AmbientDeclarationDeclaration };
     ArrowFunction_CallSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ArrowFunctionUCallSignature };
     ArrowFunctionParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ArrowFunctionParameter };
     ClassBodyMember(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBodyMember };
@@ -455,7 +457,7 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 }
 
 const _supertype_destructuringPattern_ids = new Set<number>([214, 218]);
-const _supertype_exportStatementDefault_ids = new Set<number>([353, 354]);
+const _supertype_exportStatementDefault_ids = new Set<number>([355, 356]);
 const _supertype_expressions_ids = new Set<number>([246]);
 const _supertype_formalParameter_ids = new Set<number>([296, 297]);
 const _supertype_identifier_ids = new Set<number>([114, 1]);
@@ -476,7 +478,7 @@ const _supertype_declaration_ids = new Set<number>([224, 226, 221, 184, 183, 271
 const _supertype_expression_ids = new Set<number>([274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212]);
 const _supertype_pattern_ids = new Set<number>([234, 235, 114, 1, 214, 218, 268, 260]);
 const _supertype_primaryExpression_ids = new Set<number>([235, 234, 209, 114, 1, 109, 110, 105, 247, 248, 250, 111, 112, 113, 213, 217, 223, 227, 225, 220, 251, 231, 268]);
-const _supertype_primaryType_ids = new Set<number>([334, 335, 423, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
+const _supertype_primaryType_ids = new Set<number>([334, 335, 426, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
 const _supertype_statement_ids = new Set<number>([167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203]);
 const _supertype_type_ids = new Set<number>([351, 348, 313, 317, 303, 304]);
 
@@ -537,12 +539,12 @@ const _kindIdByKind = new Map<string, number>([
     ["require", TSKindId.Require],
     ["extends", TSKindId.Extends],
     ["implements", TSKindId.Implements],
-    ["global", TSKindId.Global],
     ["interface", TSKindId.Interface],
     ["enum", TSKindId.Enum],
     ["infer", TSKindId.Infer],
     ["is", TSKindId.Is],
     ["keyof", TSKindId.Keyof],
+    ["global", TSKindId.Global],
     ["accessor", TSKindId.Accessor],
     ["using", TSKindId.Using],
     ["_automatic_semicolon", TSKindId.AutomaticSemicolon],
@@ -721,6 +723,8 @@ const _kindIdByKind = new Map<string, number>([
     ["union_type", TSKindId.UnionType],
     ["intersection_type", TSKindId.IntersectionType],
     ["function_type", TSKindId.FunctionType],
+    ["_ambient_declaration_global", TSKindId.AmbientDeclarationGlobal],
+    ["_ambient_declaration_module", TSKindId.AmbientDeclarationModule],
     ["_export_statement_default_from_arm", TSKindId.ExportStatementDefaultFromArm],
     ["_export_statement_default_decl_arm", TSKindId.ExportStatementDefaultDeclArm],
     ["_export_statement_default_decl_arm_default_kw", TSKindId.ExportStatementDefaultDeclArmDefaultKw],
@@ -735,6 +739,7 @@ const _kindIdByKind = new Map<string, number>([
     ["_import_specifier_as", TSKindId.ImportSpecifierAs],
     ["_index_signature_colon", TSKindId.IndexSignatureColon],
     ["_index_signature_mapped_type_clause", TSKindId._IndexSignatureMappedTypeClause],
+    ["_ambient_declaration_declaration", TSKindId._AmbientDeclarationDeclaration],
     ["_export_statement_default_from_arm_star_from", TSKindId.ExportStatementDefaultFromArmStarFrom],
     ["_export_statement_default_from_arm_ns_from", TSKindId.ExportStatementDefaultFromArmNsFrom],
     ["_export_statement_default_from_arm_clause_from", TSKindId.ExportStatementDefaultFromArmClauseFrom],
@@ -765,6 +770,7 @@ const _kindIdByKind = new Map<string, number>([
 ]);
 
 export const is = {
+    AmbientDeclarationDeclaration: _g(TSKindId._AmbientDeclarationDeclaration),
     ArrowFunction_CallSignature: _g(TSKindId._ArrowFunctionUCallSignature),
     ArrowFunctionParameter: _g(TSKindId._ArrowFunctionParameter),
     ClassBodyMember: _g(TSKindId.ClassBodyMember),
@@ -994,6 +1000,7 @@ function _makeAssertKind(guard: _AnyGuard) {
 }
 
 export const assert = {
+    AmbientDeclarationDeclaration: _makeAssert('AmbientDeclarationDeclaration', is.AmbientDeclarationDeclaration as _AnyGuard),
     ArrowFunction_CallSignature: _makeAssert('ArrowFunction_CallSignature', is.ArrowFunction_CallSignature as _AnyGuard),
     ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
     ClassBodyMember: _makeAssert('ClassBodyMember', is.ClassBodyMember as _AnyGuard),

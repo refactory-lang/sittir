@@ -197,6 +197,11 @@ export default grammar(
 			},
 			import_specifier: { '1/0': 'name', '1/1': 'as' },
 			index_signature: { '2/0': 'colon', '2/1': 'mapped_type_clause' },
+			ambient_declaration: {
+				'1/0': 'declaration',
+				'1/1': 'global',
+				'1/2': 'module'
+			},
 
 			// _export_statement_default — synthesized by
 			// `export_statement: { 0: variant('default') }` transform. Body
@@ -311,10 +316,18 @@ export default grammar(
 				'5/0': field('optional_marker')
 			},
 
-			// ambient_declaration: 3 field(s)
-			ambient_declaration: {
-				1: field('declaration') // declaration | statement_block | property_identifier [struct=0]
-			},
+			// ambient_declaration: split the heterogeneous declaration choice
+			// so each arm owns its own literal scaffold (`declare global …`,
+			// `declare module.<name>: <type>;`, or direct declaration).
+			ambient_declaration: ($, original) =>
+				transform(
+					original,
+					{
+						'1/0': variant('declaration'),
+						'1/1': variant('global'),
+						'1/2': variant('module')
+					}
+				),
 
 			// array_type: 1 field(s)
 			array_type: {},
@@ -566,20 +579,35 @@ export default grammar(
 			},
 
 			// function_signature: seq(
-			//   optional('async'),  // pos 0  →  '0/0'  (async_marker)
-			//   'function', field('name'), _call_signature,
+			//   optional('async'),
+			//   'function',
+			//   field('name'),
+			//   _call_signature,
 			//   choice(_semicolon, _function_signature_automatic_semicolon))
-			// The trailing choice carries the semi (either explicit or auto);
-			// labeling pos 4 as a semicolon field lets it render.
-			// Wave-3 follow-up (016 task #28): adds `async_marker` along with
-			// the JS-inherited function family — see the inline declaration
-			// above for `_kw_async_marker`. Kept hand-promoted because the
-			// factoryRoundtrip AST match fails when only enrich auto-promotes
-			// (the synthesized `_kw_async_marker` content shape diverges).
-			function_signature: {
-				'0/0': field('async_marker'),
-				4: field('semicolon')
-			},
+			// Keep the trailing semicolon field optional in the override
+			// surface. The declarations corpus includes EOF-terminated
+			// ambient exports like `export async function …` that parse as a
+			// function_signature without surfacing either semicolon token.
+			// Model the real read surface instead of forcing a missing slot.
+			function_signature: ($) =>
+				choice(
+					seq(
+						optional(field('async_marker', 'async')),
+						'function',
+						field('name', $.identifier),
+						$._call_signature,
+						choice(
+							field('semicolon', $._semicolon),
+							field('semicolon', $._function_signature_automatic_semicolon)
+						)
+					),
+					seq(
+						optional(field('async_marker', 'async')),
+						'function',
+						field('name', $.identifier),
+						$._call_signature
+					)
+				),
 
 			// JS-inherited function family — all start with `optional('async')` at pos 0.
 			//
@@ -841,6 +869,18 @@ export default grammar(
 			// doesn't exist at runtime, clobbering all five declared fields.
 			// Positions 1/2/3 (the `?`, the type field, and the initializer)
 			// are already correctly structured in the base rule.
+			_ambient_declaration_global: ($) => seq('global', field('body', $.statement_block)),
+			_ambient_declaration_module: ($) =>
+				prec.right(
+					seq(
+						'module',
+						'.',
+						field('name', alias($.identifier, $.property_identifier)),
+						':',
+						field('type', $.type),
+						optional(field('semicolon', $._semicolon))
+					)
+				),
 			optional_parameter: ($, original) => original,
 
 			// public_field_definition: pos 0 is decorator repeat (real base

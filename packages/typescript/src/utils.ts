@@ -64,6 +64,11 @@ export function hasKindOf<K extends keyof NamespaceMap>(
   return 'kind' in v && (v as Record<string, unknown>).kind === kind;
 }
 
+/**
+ * @deprecated Native transport projection is a no-op. Wrap already projects
+ * read nodes into transport shape, and factories already store transport-shaped
+ * data at construction time.
+ */
 export function toNativeRenderTransport(node: unknown): unknown {
   return node;
 }

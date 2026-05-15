@@ -320,6 +320,11 @@ export interface NativeNodeCoords {
 	childIndex?: number;
 }
 
+function childEntries(value: unknown | readonly unknown[] | undefined): readonly unknown[] {
+	if (value === undefined) return [];
+	return Array.isArray(value) ? value : [value];
+}
+
 /**
  * For a native TreeHandle (`handle.read` is present), walk the native
  * NodeData tree to find the parent-handle + child-index pair for the
@@ -371,7 +376,7 @@ export function findNativeNodeId(
 	}
 
 	function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
-		if ((d.$children?.length ?? 0) > 0) return true;
+		if (d.$children !== undefined) return true;
 		const rec = d as unknown as Record<string, unknown>;
 		for (const key of Object.keys(rec)) {
 			if (key.startsWith('_')) return true;
@@ -380,8 +385,8 @@ export function findNativeNodeId(
 		if (legacyFields != null && typeof legacyFields === 'object') {
 			return Object.keys(legacyFields as Record<string, unknown>).length > 0;
 		}
-		return false;
-	}
+	return false;
+}
 
 	function kindOf(d: AnyNodeData): string {
 		return typeof d.$type === 'number' ? (kindNameFromId?.(d.$type) ?? String(d.$type)) : d.$type;
@@ -817,6 +822,45 @@ export function materializeWrappedNodeData(root: unknown): AnyNodeData {
 	return materializeWrappedValue(root) as AnyNodeData;
 }
 
+export function stripStructuralNodeText<T>(root: T): T {
+	const seen = new WeakSet<object>();
+	const isNodeData = (value: unknown): value is AnyNodeData =>
+		typeof value === 'object' && value !== null && '$type' in value;
+	const hasStructure = (record: Record<string, unknown>): boolean =>
+		Object.keys(record).some((key) => key.startsWith('_'))
+		|| (record.$fields != null && typeof record.$fields === 'object')
+		|| record.$children != null;
+	const recurse = (value: unknown): void => {
+		if (!isNodeData(value)) return;
+		if (seen.has(value)) return;
+		seen.add(value);
+		const record = value as unknown as Record<string, unknown>;
+		if (hasStructure(record)) {
+			delete record.$text;
+		}
+		for (const [key, child] of Object.entries(record)) {
+			if (key === '$with') continue;
+			if (key === '$children') {
+				if (Array.isArray(child)) {
+					for (const entry of child) recurse(entry);
+				} else {
+					recurse(child);
+				}
+				continue;
+			}
+			if (key.startsWith('_')) {
+				if (Array.isArray(child)) {
+					for (const entry of child) recurse(entry);
+				} else {
+					recurse(child);
+				}
+			}
+		}
+	};
+	recurse(root);
+	return root;
+}
+
 function materializeWrappedValue(value: unknown): unknown {
 	if (Array.isArray(value)) {
 		return value.map((entry) => materializeWrappedValue(entry));
@@ -828,8 +872,7 @@ function materializeWrappedValue(value: unknown): unknown {
 		if (key === '$children') {
 			const resolved = resolveWrappedStorageValue(value, key);
 			if (resolved === undefined) continue;
-			const childValue = materializeWrappedValue(resolved);
-			materialized.$children = Array.isArray(childValue) ? childValue : [childValue];
+			materialized.$children = materializeWrappedValue(resolved);
 			continue;
 		}
 		if (key.startsWith('_')) {
@@ -850,7 +893,11 @@ function resolveWrappedStorageValue(node: WrappedNodeData, storageKey: string): 
 	for (const accessorName of accessorCandidatesForStorageKey(storageKey)) {
 		const accessor = node[accessorName];
 		if (typeof accessor === 'function' && accessor.length === 0) {
-			return (accessor as () => unknown).call(node);
+			try {
+				return (accessor as () => unknown).call(node);
+			} catch {
+				return node[storageKey];
+			}
 		}
 	}
 	return node[storageKey];
@@ -1057,7 +1104,7 @@ interface ReadNodeLike {
 	readonly $text?: string;
 	readonly $nodeHandle?: number;
 	readonly $childIndex?: number;
-	readonly $children?: readonly unknown[];
+	readonly $children?: unknown | readonly unknown[];
 	readonly $named?: boolean;
 }
 
@@ -1290,6 +1337,7 @@ function lookupFactorySlotMeta(opts: NodeToConfigOpts, slot: SlotModel): Factory
 
 function slotModelArityFromMeta(slotMeta: FactorySlotMeta | undefined, unnamed: boolean): 'one' | 'many' {
 	if (!slotMeta) return unnamed ? 'many' : 'one';
+	if (unnamed && slotMeta.slotCount > 1) return 'many';
 	return slotMeta.multiple ? 'many' : 'one';
 }
 
@@ -1310,8 +1358,54 @@ function createChildrenConfigSlotModel(
 	return createUnnamedChildrenSlotModel(slotModelArityFromMeta(slotMeta, true));
 }
 
+function hasDeclaredFactorySlot(
+	parentKind: string | undefined,
+	name: string,
+	opts: NodeToConfigOpts
+): boolean {
+	if (!parentKind) return false;
+	if (opts.factorySlots?.[parentKind]?.[name] !== undefined) return true;
+	return opts.factoryFields?.[parentKind]?.includes(name) ?? false;
+}
+
 function shouldNormalizeConfigSlotAsMany(slot: SlotModel, slotMeta: FactorySlotMeta | undefined): boolean {
 	return slotModelArityFromMeta(slotMeta, slot.unnamed) === 'many';
+}
+
+function rawChildKindName(
+	value: unknown,
+	kindNameFromId: ((id: number) => string | undefined) | undefined
+): string | undefined {
+	if (value == null || typeof value !== 'object') return undefined;
+	const rawType = (value as ReadNodeLike).$type;
+	if (typeof rawType === 'string') return rawType;
+	if (typeof rawType === 'number') return kindNameFromId?.(rawType);
+	return undefined;
+}
+
+function narrowSingularUnnamedChildrenValue(
+	slot: SlotModel,
+	value: readonly unknown[] | unknown,
+	childOpts: NodeToConfigOpts,
+	slotMeta: FactorySlotMeta | undefined
+): readonly unknown[] | unknown {
+	if (!slot.unnamed || slot.name !== 'children' || !slotMeta || slotMeta.multiple || slotMeta.slotCount !== 1) {
+		return value;
+	}
+	if (!Array.isArray(value) || value.length <= 1) return value;
+	const hintedKind =
+		childOpts.namedChildKindHints?.length === 1
+			? childOpts.namedChildKindHints[0]
+			: childOpts.firstNamedChildKindHint;
+	if (hintedKind) {
+		const hinted = value.filter((item) => rawChildKindName(item, childOpts.kindNameFromId) === hintedKind);
+		if (hinted.length === 1) return hinted[0]!;
+	}
+	const named = value.filter(
+		(item): item is ReadNodeLike => item != null && typeof item === 'object' && (item as ReadNodeLike).$named !== false
+	);
+	if (named.length === 1) return named[0];
+	return value;
 }
 
 function normalizeConfigSlotValue(
@@ -1320,7 +1414,8 @@ function normalizeConfigSlotValue(
 	childOpts: NodeToConfigOpts,
 	slotMeta: FactorySlotMeta | undefined
 ): unknown {
-	const resolved = resolveMemberValue(value, childOpts);
+	const narrowed = narrowSingularUnnamedChildrenValue(slot, value, childOpts, slotMeta);
+	const resolved = resolveMemberValue(narrowed, childOpts);
 	if (shouldNormalizeConfigSlotAsMany(slot, slotMeta)) {
 		const items: readonly unknown[] = Array.isArray(resolved) ? resolved : resolved == null ? [] : [resolved];
 		if (slotMeta?.nonEmpty && items.length === 0) {
@@ -1368,7 +1463,10 @@ function assignSlotToConfig(
 	childOpts: NodeToConfigOpts,
 	out: Record<string, unknown>
 ): void {
-	out[slotConfigKey(slot)] = normalizeConfigSlotValue(slot, value, childOpts, lookupFactorySlotMeta(childOpts, slot));
+	const normalized = normalizeConfigSlotValue(slot, value, childOpts, lookupFactorySlotMeta(childOpts, slot));
+	if (normalized !== undefined) {
+		out[slotConfigKey(slot)] = normalized;
+	}
 }
 
 function isAnonymousPromotableField(name: string): boolean {
@@ -1388,6 +1486,173 @@ function getMissingDeclaredFields(
 
 function isAnonymousTokenNode(value: unknown): value is ReadNodeLike {
 	return value != null && typeof value === 'object' && (value as ReadNodeLike).$named === false;
+}
+
+function filterStructuralChildren(children: unknown | readonly unknown[] | undefined): readonly unknown[] {
+	return childEntries(children).filter((child) => child != null && typeof child === 'object' && !isAnonymousTokenNode(child));
+}
+
+function shouldOmitResidualScalarChildren(
+	parentKind: string | undefined,
+	structuralChildren: readonly unknown[],
+	opts: NodeToConfigOpts,
+	out: Record<string, unknown>
+): boolean {
+	if (!parentKind || structuralChildren.length === 0) return false;
+	if (Object.keys(out).length === 0) return false;
+	const slotMeta = opts.factorySlots?.[parentKind]?.children;
+	if (!slotMeta || slotMeta.required || slotMeta.multiple) return false;
+	return structuralChildren.every((child) => child == null || typeof child !== 'object');
+}
+
+function resolveOverrideVariantFromKind(
+	childKind: Readonly<Record<string, string>>,
+	candidate: string | undefined
+): string | undefined {
+	if (!candidate) return undefined;
+	if (candidate in childKind) return childKind[candidate];
+	const stripped = candidate.startsWith('_') ? candidate.slice(1) : undefined;
+	if (stripped && stripped in childKind) return childKind[stripped];
+	let bestVariant: string | undefined;
+	let bestSpecificity = -1;
+	for (const [, variant] of Object.entries(childKind)) {
+		const suffix = `_${variant}`;
+		if (candidate.endsWith(suffix) || stripped?.endsWith(suffix)) {
+			if (variant.length > bestSpecificity) {
+				bestVariant = variant;
+				bestSpecificity = variant.length;
+			}
+		}
+	}
+	return bestVariant;
+}
+
+function namedChildNodes(value: unknown | readonly unknown[] | undefined): ReadNodeLike[] {
+	return (
+		childEntries(value).filter(
+			(child): child is ReadNodeLike =>
+				child != null && typeof child === 'object' && (child as { $named?: boolean }).$named !== false
+		)
+	);
+}
+
+function findOverrideVariantChildNode(
+	data: ReadNodeLike,
+	childKind: Readonly<Record<string, string>>,
+	variant: string,
+	kindNameFromId?: (id: number) => string | undefined
+): ReadNodeLike | undefined {
+	const matches: ReadNodeLike[] = [];
+	for (const child of namedChildNodes(data.$children)) {
+		let current: ReadNodeLike | undefined = child;
+		const seen = new Set<ReadNodeLike>();
+		while (current && !seen.has(current)) {
+			seen.add(current);
+			if (resolveOverrideVariantFromKind(childKind, rawChildKindName(current, kindNameFromId)) === variant) {
+				matches.push(current);
+				break;
+			}
+			const descendants = namedChildNodes(current.$children);
+			if (descendants.length !== 1) break;
+			current = descendants[0]!;
+		}
+	}
+	return matches.length === 1 ? matches[0] : undefined;
+}
+
+function buildVariantHelperData(data: ReadNodeLike, helperKind: string): ReadNodeLike {
+	return {
+		...(data as Record<string, unknown>),
+		$type: helperKind
+	} as unknown as ReadNodeLike;
+}
+
+function helperDeclaredConfigKeys(helperKind: string, opts: NodeToConfigOpts): string[] {
+	const fieldKeys =
+		opts.factoryFields?.[helperKind]?.map((name) => name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())) ?? [];
+	const slotKeys =
+		Object.keys(opts.factorySlots?.[helperKind] ?? {})
+			.filter((name) => name !== 'children')
+			.map((name) => name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase()));
+	return [...new Set([...fieldKeys, ...slotKeys])];
+}
+
+function projectsHelperOwnedSurface(
+	projected: Record<string, unknown>,
+	helperKind: string,
+	opts: NodeToConfigOpts
+): boolean {
+	const helperKeys = helperDeclaredConfigKeys(helperKind, opts);
+	if (helperKeys.length === 0) {
+		return Object.keys(projected).some((key) => key !== '$variant' && key !== 'children');
+	}
+	return helperKeys.some((key) => projected[key] !== undefined);
+}
+
+function projectOverrideVariantConfig(
+	data: ReadNodeLike,
+	childKind: Readonly<Record<string, string>>,
+	helperKind: string | undefined,
+	variant: string,
+	opts: NodeToConfigOpts
+): Record<string, unknown> | undefined {
+	if (helperKind) {
+		const projected = nodeToConfig(buildVariantHelperData(data, helperKind), opts);
+		if (projectsHelperOwnedSurface(projected, helperKind, opts)) {
+			return projected;
+		}
+	}
+	const variantChild = findOverrideVariantChildNode(data, childKind, variant, opts.kindNameFromId);
+	if (!variantChild) return undefined;
+	if (helperKind) {
+		const projected = nodeToConfig(buildVariantHelperData(variantChild, helperKind), opts);
+		if (Object.keys(projected).length > 0) return projected;
+	}
+	return nodeToConfig(variantChild, opts);
+}
+
+function inferOverrideVariantFromHelperChildKinds(
+	helperChildKind: Readonly<Record<string, readonly string[]>> | undefined,
+	candidates: readonly (string | undefined)[]
+): string | undefined {
+	if (!helperChildKind) return undefined;
+	for (const candidate of candidates) {
+		if (!candidate) continue;
+		const matches = Object.entries(helperChildKind)
+			.filter(([, kinds]) => kinds.includes(candidate))
+			.map(([variant]) => variant);
+		if (matches.length === 1) return matches[0];
+	}
+	return undefined;
+}
+
+function promoteOverrideVariantChildSurface(
+	data: ReadNodeLike,
+	childKind: Readonly<Record<string, string>>,
+	helperKind: string | undefined,
+	variant: string,
+	opts: NodeToConfigOpts,
+	out: Record<string, unknown>
+): void {
+	const childConfig = projectOverrideVariantConfig(data, childKind, helperKind, variant, opts);
+	if (!childConfig) return;
+	let mergedAny = false;
+	let promotedChildren = false;
+	for (const [key, value] of Object.entries(childConfig)) {
+		if (key === '$variant') continue;
+		if (key === 'children') {
+			out.children = value;
+			mergedAny = true;
+			promotedChildren = true;
+			continue;
+		}
+		if (out[key] !== undefined) continue;
+		out[key] = value;
+		mergedAny = true;
+	}
+	if (mergedAny && !promotedChildren) {
+		delete out.children;
+	}
 }
 
 function isOpeningDelimiter(text: string | undefined): boolean {
@@ -1457,8 +1722,16 @@ function promoteNamedChildrenToMissingFields(
 	if (missing.length === 0) return false;
 	if (missing.length === 1) {
 		const name = missing[0]!;
-		assignSlotToConfig(createNamedSlotModel(name, 'many'), namedChildren, memberValueOpts(opts, parentKind, name), out);
-		return true;
+		const slot = createNamedConfigSlotModel(parentKind, name, opts.factorySlots);
+		if (slot.arity === 'many') {
+			assignSlotToConfig(slot, namedChildren, memberValueOpts(opts, parentKind, name), out);
+			return true;
+		}
+		if (namedChildren.length === 1) {
+			assignSlotToConfig(slot, namedChildren[0]!, memberValueOpts(opts, parentKind, name), out);
+			return true;
+		}
+		return false;
 	}
 	if (namedChildren.length > missing.length) return false;
 	namedChildren.forEach((child, index) => {
@@ -1484,12 +1757,12 @@ function assignPositionPromotedChildren(
 function promoteAnonymousChildrenToMissingFields(
 	declaredFields: readonly string[] | undefined,
 	parentKind: string | undefined,
-	children: readonly unknown[],
+	children: unknown | readonly unknown[] | undefined,
 	opts: NodeToConfigOpts,
 	out: Record<string, unknown>
 ): boolean {
 	if (!declaredFields || !parentKind) return false;
-	const anonymousChildren = children.filter(
+	const anonymousChildren = childEntries(children).filter(
 		(child): child is ReadNodeLike =>
 			child != null && typeof child === 'object' && (child as ReadNodeLike).$named === false
 	);
@@ -1505,6 +1778,30 @@ function promoteAnonymousChildrenToMissingFields(
 		assignSlotToConfig(createNamedSlotModel(name, 'one'), child, memberValueOpts(opts, parentKind, name), out);
 	});
 	return true;
+}
+
+function inferOverrideHelperVariant(
+	parentKind: string | undefined,
+	data: ReadNodeLike,
+	opts: NodeToConfigOpts,
+	out: Record<string, unknown>
+): { variant: string; helperKind: string } | undefined {
+	if (!parentKind) return undefined;
+	const desc = opts.polymorphVariants?.[parentKind];
+	if (!desc || desc.source !== 'override') return undefined;
+	const variant = inferPolymorphVariant(
+		desc,
+		data,
+		out,
+		parentKind,
+		opts.kindNameFromId,
+		opts.cstNodeKindHint,
+		opts.firstNamedChildKindHint,
+		opts.namedChildKindHints
+	);
+	if (!variant) return undefined;
+	const helperKind = desc.helperKind?.[variant];
+	return helperKind ? { variant, helperKind } : undefined;
 }
 
 export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): Record<string, unknown> {
@@ -1529,6 +1826,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 	for (const [k, v] of namedSlotEntries) {
 		if (v === undefined) continue;
 		if (!isIdentifierShapedFieldKey(k)) continue;
+		if (!hasDeclaredFactorySlot(parentKind, k, opts)) continue;
 		assignSlotToConfig(
 			createNamedConfigSlotModel(parentKind, k, opts.factorySlots),
 			v,
@@ -1543,21 +1841,29 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 		parentKind,
 		out
 	);
+	const overrideHelperVariant = inferOverrideHelperVariant(parentKind, data, opts, out);
 	if (data.$children) {
 		const declaredFields = parentKind ? opts.factoryFields?.[parentKind] : undefined;
-		const namedChildren = data.$children.filter(
+		const structuralChildren = filterStructuralChildren(data.$children);
+		const namedChildren = structuralChildren.filter(
 			(c) => c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false
 		);
 		const childOpts = memberValueOpts(opts, parentKind, undefined);
-		if (promoteNamedChildrenToMissingFields(declaredFields, parentKind, namedChildren, opts, out)) {
+		if (!overrideHelperVariant && promoteNamedChildrenToMissingFields(declaredFields, parentKind, namedChildren, opts, out)) {
 			// Missing declared fields were recovered from surviving named children.
-		} else if (shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
+		} else if (!overrideHelperVariant && shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
 			// Assign by position: first N named children → first N declared fields.
 			assignPositionPromotedChildren(declaredFields!, parentKind!, namedChildren, opts, out);
-		} else if (promoteAnonymousChildrenToMissingFields(declaredFields, parentKind, data.$children, opts, out)) {
+		} else if (
+			!overrideHelperVariant &&
+			promoteAnonymousChildrenToMissingFields(declaredFields, parentKind, data.$children, opts, out)
+		) {
 			// Ambiguous-free anonymous-token fill completed above.
+		} else if (shouldOmitResidualScalarChildren(parentKind, structuralChildren, opts, out)) {
+			// Residual scalar children on optional singular `children` slots are token
+			// baggage from the native read path, not structural children for the factory surface.
 		} else {
-			assignSlotToConfig(createChildrenConfigSlotModel(parentKind, opts.factorySlots), data.$children, childOpts, out);
+			assignSlotToConfig(createChildrenConfigSlotModel(parentKind, opts.factorySlots), structuralChildren, childOpts, out);
 		}
 	}
 	// Polymorph $variant stamping — the dispatcher's `switch
@@ -1577,7 +1883,12 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 				opts.firstNamedChildKindHint,
 				opts.namedChildKindHints
 			);
-			if (v !== undefined) out.$variant = v;
+			if (v !== undefined) {
+				out.$variant = v;
+				if (desc.source === 'override') {
+					promoteOverrideVariantChildSurface(data, desc.childKind, desc.helperKind?.[v], v, opts, out);
+				}
+			}
 		}
 	}
 	return out;
@@ -1609,6 +1920,7 @@ function inferPolymorphVariant(
 		case 'override':
 			return inferFromChildKind(
 				desc.childKind,
+				desc.helperChildKind,
 				data,
 				derivedConfig,
 				parentKind,
@@ -1631,6 +1943,7 @@ function inferPolymorphVariant(
  */
 function inferFromChildKind(
 	childKind: Readonly<Record<string, string>>,
+	helperChildKind: Readonly<Record<string, readonly string[]>> | undefined,
 	data: ReadNodeLike,
 	derivedConfig: Record<string, unknown>,
 	parentKind: string,
@@ -1639,9 +1952,7 @@ function inferFromChildKind(
 	firstNamedChildKindHint?: string,
 	namedChildKindHints?: readonly string[]
 ): string | undefined {
-	const firstChild = data.$children?.find(
-		(c) => c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false
-	) as { $type?: string | number } | undefined;
+	const firstChild = namedChildNodes(data.$children)[0] as { $type?: string | number } | undefined;
 	const rawType = firstChild?.$type;
 	// Phase D: $type is numeric (TSKindId) or string (hidden/synthetic kind).
 	// Resolve to a kind-name string for childKind map lookup.
@@ -1658,45 +1969,47 @@ function inferFromChildKind(
 		// underscore for the childKind map lookup, which uses the visible name.
 		kind = rawType;
 	}
-	const resolveVariantFromKind = (candidate: string | undefined): string | undefined => {
-		if (!candidate) return undefined;
-		// Try exact match first (e.g. for visible kinds or already-stripped names).
-		if (candidate in childKind) return childKind[candidate];
-		// Tree-sitter strips leading underscore from hidden rule names when
-		// reporting node.type, but kindNameFromId may have already returned the
-		// canonical form with underscore. Try stripping the leading underscore
-		// as a fallback.
-		const stripped = candidate.startsWith('_') ? candidate.slice(1) : undefined;
-		if (stripped && stripped in childKind) return childKind[stripped];
-		// Some override-polymorph children arrive under a hidden helper kind
-		// whose visible variant child differs only in the prefix family
-		// (`_delim_token_tree_paren` → `token_tree_paren`). Fall back to the
-		// variant suffix when an exact kind-name match fails.
-		let bestVariant: string | undefined;
-		let bestSpecificity = -1;
-		for (const [, variant] of Object.entries(childKind)) {
-			const suffix = `_${variant}`;
-			if (candidate.endsWith(suffix) || stripped?.endsWith(suffix)) {
-				if (variant.length > bestSpecificity) {
-					bestVariant = variant;
-					bestSpecificity = variant.length;
-				}
-			}
-		}
-		return bestVariant;
-	};
 	const resolvedFromHints = (candidates: readonly (string | undefined)[]): string | undefined => {
 		for (const candidate of candidates) {
-			const resolved = resolveVariantFromKind(candidate);
+			const resolved = resolveOverrideVariantFromKind(childKind, candidate);
 			if (resolved !== undefined) return resolved;
 		}
 		return undefined;
 	};
+	const resolveFromSingleChildSpine = (): string | undefined => {
+		let current: ReadNodeLike | undefined = data;
+		const seen = new Set<ReadNodeLike>();
+		while (current && !seen.has(current)) {
+			seen.add(current);
+			const namedChildren: ReadNodeLike[] = namedChildNodes(current.$children);
+			if (namedChildren.length !== 1) return undefined;
+			const onlyChild: ReadNodeLike = namedChildren[0]!;
+			const onlyChildType = onlyChild.$type;
+				const onlyChildKind =
+					onlyChildType === undefined
+						? undefined
+						: typeof onlyChildType === 'number'
+							? kindNameFromId?.(onlyChildType) ?? String(onlyChildType)
+							: onlyChildType;
+			const resolved = resolveOverrideVariantFromKind(childKind, onlyChildKind);
+			if (resolved !== undefined) return resolved;
+			current = onlyChild;
+		}
+		return undefined;
+	};
+	const helperResolved = inferOverrideVariantFromHelperChildKinds(helperChildKind, [
+		kind,
+		cstNodeKindHint,
+		...(namedChildKindHints ?? []),
+		firstNamedChildKindHint
+	]);
 	const resolved =
-		resolveVariantFromKind(kind) ??
-		resolveVariantFromKind(cstNodeKindHint) ??
+		resolveOverrideVariantFromKind(childKind, kind) ??
+		resolveOverrideVariantFromKind(childKind, cstNodeKindHint) ??
 		resolvedFromHints(namedChildKindHints ?? []) ??
-		resolveVariantFromKind(firstNamedChildKindHint) ??
+		resolveOverrideVariantFromKind(childKind, firstNamedChildKindHint) ??
+		helperResolved ??
+		resolveFromSingleChildSpine() ??
 		inferFromStructuralMarkers(
 			childKind,
 			data,
@@ -1816,7 +2129,7 @@ function collectStructuralTokens(
 	add(cstNodeKindHint, 1, true);
 	add(firstNamedChildKindHint, 2, true);
 	for (const hint of namedChildKindHints ?? []) add(hint, 2, true);
-	for (const child of data.$children ?? []) addNodeKind(child, 2);
+	for (const child of childEntries(data.$children)) addNodeKind(child, 2);
 
 	const raw = data as unknown as Record<string, unknown>;
 	for (const key of Object.keys(raw)) {

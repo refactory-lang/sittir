@@ -24,7 +24,7 @@ import type {
 	AssembledSupertype
 } from '../compiler/node-map.ts';
 import { createNamedSlotModel, createUnnamedChildrenSlotModel, type SlotModel } from '../compiler/slot-model.ts';
-import { deriveMergedSlotCardinality } from '../compiler/node-map.ts';
+import { deriveUnnamedChildrenCardinality } from '../compiler/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
 	isMultiple,
@@ -180,6 +180,54 @@ export namespace wrap {
 			nodeMap
 		);
 		output.push(result);
+	}
+
+	/**
+	 * Emit a group wrap function — hidden structural helpers still need lazy
+	 * accessors so native read payloads can drill through their child stubs.
+	 */
+	export function group(
+		output: string[],
+		node: Extract<AssembledNode, { modelType: 'group' }>,
+		kindEntries: readonly KindEnumEntry[] | undefined,
+		nodeMap: NodeMap
+	): void {
+		if (!node.parentKind && node.fields.length === 0 && node.children.length === 1) {
+			output.push(
+				emitTransparentGroupWrap(
+					{
+						kind: node.kind,
+						typeName: node.typeName,
+						rawFactoryName: node.rawFactoryName,
+						childSurface: classifyChildFactorySurface(node, nodeMap)
+					},
+					node.children,
+					nodeMap
+				)
+			);
+			return;
+		}
+		const result = emitFieldCarryingWrap(
+			{
+				kind: node.kind,
+				typeName: node.typeName,
+				rawFactoryName: node.rawFactoryName,
+				childSurface: classifyChildFactorySurface(node, nodeMap)
+			},
+			node.fields,
+			node.children,
+			kindEntries,
+			nodeMap
+		);
+		output.push(result);
+	}
+
+	export function supertype(
+		output: string[],
+		node: Extract<AssembledNode, { modelType: 'supertype' }>,
+		_kindEntries: readonly KindEnumEntry[] | undefined
+	): void {
+		output.push(emitTransparentSupertypeWrap(node));
 	}
 }
 
@@ -368,15 +416,17 @@ interface UnnamedChildrenSlotConfig {
 function resolveUnnamedSlotConfig(
 	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
-	options?: { optional?: boolean }
+	options?: { optional?: boolean; forceSingular?: boolean }
 ): UnnamedChildrenSlotConfig {
-	const cardinality = deriveMergedSlotCardinality(children);
+	const cardinality = deriveUnnamedChildrenCardinality(children);
 	return {
-		slot: createUnnamedChildrenSlotModel(cardinality.multiple ? 'many' : 'one'),
+		slot: createUnnamedChildrenSlotModel(
+			options?.forceSingular ? 'one' : children.length === 1 && !cardinality.multiple ? 'one' : 'many'
+		),
 		elemType: childElementType({ children }, nodeMap),
 		required: options?.optional ? false : cardinality.required,
 		nonEmpty: cardinality.nonEmpty,
-		allowedKinds: [...new Set(children.flatMap((child) => deriveChildrenKinds(child)))]
+		allowedKinds: [...new Set(children.flatMap((child) => deriveChildrenKinds(child, nodeMap)))]
 	};
 }
 
@@ -394,6 +444,41 @@ function resolveSlotAccessorBody(slot: SlotModel, valueType: string): string {
 		return `return drillInAll<${valueType}>(this.${slot.storageKey} as readonly ${arrayElemType}[] | undefined, tree)`;
 	}
 	return `return drillIn<${valueType}>(this.${slot.storageKey}, tree)`;
+}
+
+function emitTransparentGroupWrap(
+	node: WrapNode,
+	children: readonly AssembledNonterminal[],
+	nodeMap: NodeMap
+): string {
+	const fn = `wrap${node.typeName}`;
+	const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
+	const { storeExpr } = resolveSlotDrillExprs(childrenConfig.slot, {
+		dataExpr: 'data',
+		elemType: childrenConfig.elemType,
+		required: childrenConfig.required,
+		nonEmpty: childrenConfig.nonEmpty,
+		allowedKinds: childrenConfig.allowedKinds
+	});
+	const arrayElemType =
+		childrenConfig.elemType.includes(' | ') ? `(${childrenConfig.elemType})` : childrenConfig.elemType;
+	const returnExpr =
+		childrenConfig.slot.arity === 'many'
+			? `drillInAll<${childrenConfig.elemType}>(${storeExpr} as readonly ${arrayElemType}[] | undefined, tree)`
+			: `drillIn<${childrenConfig.required ? childrenConfig.elemType : `${childrenConfig.elemType} | undefined`}>(${storeExpr}, tree)`;
+	return [`export function ${fn}(data: T.${node.typeName}, tree: TreeHandle) {`, `  return ${returnExpr};`, `}`].join(
+		'\n'
+	);
+}
+
+function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
+	const fn = `wrap${node.typeName}`;
+	const allowedKinds = [...new Set(node.subtypes.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))];
+	return [
+		`export function ${fn}(data: T.${node.typeName}, tree: TreeHandle) {`,
+		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ${JSON.stringify(allowedKinds)}), "children", true, data.$type), tree);`,
+		`}`
+	].join('\n');
 }
 
 /**
@@ -449,13 +534,20 @@ function emitFieldCarryingWrap(
 	for (const f of fields) {
 		const slot = createNamedSlotModel(f.name, isMultiple(f) ? 'many' : 'one');
 		const aliasEntries = f.aliasSources ? Object.entries(f.aliasSources) : [];
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
+		const allowedKinds =
+			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
+				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...aliasEntries.flatMap(([from, to]) => [from, to])])]
+				: undefined;
 		const { storeExpr } = resolveSlotDrillExprs(slot, {
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
 			elemType: fieldElementType(f, nodeMap),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
 			alias: aliasEntries[0],
-			storageInfo: resolveFieldStorageInfo(f, nodeMap, kindEntries)
+			storageInfo,
+			allowedKinds
 		});
 		lines.push(`    _${f.name}: ${storeExpr},`);
 	}
@@ -468,7 +560,8 @@ function emitFieldCarryingWrap(
 	// through `(data as any)` to access the property without type errors.
 	if (children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, {
-			optional: node.optionalChildren
+			optional: node.optionalChildren,
+			forceSingular: node.isPolymorph
 		});
 		const { storeExpr } = resolveSlotDrillExprs(childrenConfig.slot, {
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
@@ -486,19 +579,27 @@ function emitFieldCarryingWrap(
 		const propName = f.propertyName;
 		const slot = createNamedSlotModel(f.name, isMultiple(f) ? 'many' : 'one');
 		const aliasEntries = f.aliasSources ? Object.entries(f.aliasSources) : [];
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
+		const allowedKinds =
+			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
+				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...aliasEntries.flatMap(([from, to]) => [from, to])])]
+				: undefined;
 		const { accessorBody } = resolveSlotDrillExprs(slot, {
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
 			elemType: fieldElementType(f, nodeMap),
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
 			alias: aliasEntries[0],
-			storageInfo: resolveFieldStorageInfo(f, nodeMap, kindEntries)
+			storageInfo,
+			allowedKinds
 		});
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
 	}
 	if (children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, {
-			optional: node.optionalChildren
+			optional: node.optionalChildren,
+			forceSingular: node.isPolymorph
 		});
 		const { accessorBody } = resolveSlotDrillExprs(childrenConfig.slot, {
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
@@ -555,7 +656,8 @@ function emitInlineWithProperty(
 
 	if (node.childSurface === 'spread' || node.childSurface === 'direct') {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, {
-			optional: node.optionalChildren
+			optional: node.optionalChildren,
+			forceSingular: node.isPolymorph
 		});
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
@@ -626,8 +728,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	readonly #kindEntries: readonly KindEnumEntry[] | undefined;
 	readonly #inlineKinds: readonly string[] | undefined;
 	readonly #synthesizedKinds: ReadonlySet<string> | undefined;
+	readonly #canonicalAliasSourceKinds: ReadonlySet<string>;
 	readonly #typeImportLine: string | undefined;
 	readonly #output: string[] = [];
+	readonly #emittedStructuralKinds = new Set<string>();
 
 	constructor(config: EmitWrapConfig) {
 		const { nodeMap, generatedIdTables, inlineKinds, synthesizedKinds, kindEntries: providedKindEntries } = config;
@@ -642,6 +746,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		this.#kindEntries = kindEntries;
 		this.#inlineKinds = inlineKinds;
 		this.#synthesizedKinds = synthesizedKinds;
+		this.#canonicalAliasSourceKinds = new Set(collectAliasTargetToSourceMap(nodeMap).values());
 		this.#typeImportLine =
 			typeImports.size > 0
 				? ['import type {', ...[...typeImports].sort().map((name) => `  ${name},`), "} from './types.js';"].join('\n')
@@ -650,18 +755,36 @@ export class WrapEmitter implements CodegenEmitter<string> {
 
 	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
 		wrap.branch(this.#output, node, this.#kindEntries, this.#nodeMap);
+		this.#emittedStructuralKinds.add(node.kind);
 	}
 
 	emitPolymorph(node: Extract<AssembledNode, { modelType: 'polymorph' }>): void {
 		wrap.polymorph(this.#output, node, this.#kindEntries, this.#nodeMap);
+		this.#emittedStructuralKinds.add(node.kind);
+	}
+
+	emitGroup(node: Extract<AssembledNode, { modelType: 'group' }>): void {
+		wrap.group(this.#output, node, this.#kindEntries, this.#nodeMap);
+		this.#emittedStructuralKinds.add(node.kind);
+	}
+
+	emitSupertype(node: Extract<AssembledNode, { modelType: 'supertype' }>): void {
+		wrap.supertype(this.#output, node, this.#kindEntries);
+		this.#emittedStructuralKinds.add(node.kind);
 	}
 
 	dispatchNode(kind: string, node: AssembledNode): void {
-		const emission = classifyWrapEmission(kind, node, {
+		let emission = classifyWrapEmission(kind, node, {
 			kindEntries: this.#kindEntries,
 			inlineKinds: this.#inlineKinds,
 			synthesizedKinds: this.#synthesizedKinds
 		});
+		if (
+			(emission === 'skip-missing-parser-symbol' || emission === 'skip-synthesized-kind') &&
+			this.#canonicalAliasSourceKinds.has(kind)
+		) {
+			emission = 'emit';
+		}
 		if (
 			emission === 'skip-inline-kind' ||
 			emission === 'skip-synthesized-kind' ||
@@ -674,8 +797,14 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			case 'branch':
 				this.emitBranch(node);
 				break;
+			case 'group':
+				this.emitGroup(node);
+				break;
 			case 'polymorph':
 				this.emitPolymorph(node);
+				break;
+			case 'supertype':
+				this.emitSupertype(node);
 				break;
 			default:
 				break;
@@ -793,7 +922,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  if (!entry) return undefined as unknown as T;',
 						'  const e = entry as unknown as _NodeData;',
 						'  if (e.$nodeHandle != null && e.$childIndex != null) return readTreeNode(tree, e.$nodeHandle, e.$childIndex) as unknown as T;',
-						'  if (typeof e === "object" && e !== null && e.$type != null) return wrapNode(e, tree) as unknown as T;',
 						'  return entry;',
 						'}'
 					]
@@ -828,7 +956,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'      const next = currentType === fromType || hiddenCurrentType === fromType',
 						'        ? ({ ...e, $type: toType as unknown as number } as _NodeData)',
 						'        : e;',
-						'      return wrapNode(next, tree) as unknown as T;',
+						'      return next as unknown as T;',
 						'    }',
 						'    return entry as unknown as T;',
 						'  }',
@@ -879,6 +1007,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'',
 						'function _matchesAllowedWrapKind(kind: string, allowedKinds: readonly string[]): boolean {',
 						'  if (allowedKinds.includes(kind)) return true;',
+						'  const canonical = _aliasTargetToSource[kind];',
+						'  if (canonical && allowedKinds.includes(canonical)) return true;',
 						'  const stripped = kind.startsWith("_") ? kind.slice(1) : undefined;',
 						'  if (stripped && allowedKinds.includes(stripped)) return true;',
 						'  for (const allowed of allowedKinds) {',
@@ -886,18 +1016,24 @@ export class WrapEmitter implements CodegenEmitter<string> {
 							? [
 									'    const members = SUPERTYPE_MEMBERS[allowed] ?? SUPERTYPE_MEMBERS[allowed.startsWith("_") ? allowed.slice(1) : allowed];',
 									'    if (members?.has(kind)) return true;',
+									'    if (canonical !== undefined && members?.has(canonical)) return true;',
 									'    if (stripped !== undefined && members?.has(stripped)) return true;'
 								]
 							: []),
 						'    const allowedStripped = allowed.startsWith("_") ? allowed.slice(1) : allowed;',
-						'    if (allowedStripped === kind || (stripped !== undefined && allowedStripped === stripped)) return true;',
+						'    if (allowedStripped === kind || (canonical !== undefined && allowedStripped === canonical) || (stripped !== undefined && allowedStripped === stripped)) return true;',
 						'  }',
 						'  return false;',
 						'}',
 						'',
-						'function _filterWrapChildrenByKind<T>(value: T | readonly T[] | undefined, allowedKinds: readonly string[]): readonly T[] | undefined {',
+						'function _filterWrapChildrenByKind<T>(value: T | readonly T[] | undefined, allowedKinds: readonly string[]): T | readonly T[] | undefined {',
 						'  if (value == null) return undefined;',
-						'  const entries = Array.isArray(value) ? value : [value];',
+						'  if (!Array.isArray(value)) {',
+						'    const kind = _wrapKindNameOf(value);',
+						'    if (kind === undefined) return value;',
+						'    return _matchesAllowedWrapKind(kind, allowedKinds) ? value : undefined;',
+						'  }',
+						'  const entries = value;',
 						'  return entries.filter((entry) => {',
 						'    const kind = _wrapKindNameOf(entry);',
 						'    if (kind === undefined) return false;',
@@ -975,11 +1111,17 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		// _wrapTable — runtime dispatch by kind
 		lines.push('const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {');
 		for (const [kind, node] of this.#nodeMap.nodes) {
-			if (!node.factoryName) continue;
-			if (this.#kindEntries && !hasCatalogEntry(this.#kindEntries, kind)) continue;
-			if (node.modelType === 'branch' || node.modelType === 'polymorph') {
+			if (
+				node.modelType === 'branch' ||
+				node.modelType === 'group' ||
+				node.modelType === 'polymorph' ||
+				node.modelType === 'supertype'
+			) {
+				if (!this.#emittedStructuralKinds.has(kind)) continue;
 				lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`);
 			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword') {
+				if (!node.factoryName) continue;
+				if (this.#kindEntries && !hasCatalogEntry(this.#kindEntries, kind)) continue;
 				if (this.#kindEntries) {
 					const entry = this.#kindEntries.find((e) => e.kind === kind);
 					if (entry) {
@@ -1007,9 +1149,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('');
 
 		// Public entry points
-		if (this.#kindEntries) {
-			lines.push("import { KIND_NAMES } from './types.js';");
-		}
 		lines.push('/** Wrap a NodeData into its lazy read-only view. */');
 		lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {');
 		lines.push('  // The native path now returns numeric $type');

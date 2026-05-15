@@ -28,8 +28,7 @@ import {
 	AssembledEnum,
 	AssembledGroup,
 	AssembledPolymorph,
-	deriveChildrenCardinality,
-	deriveSlotCardinality,
+	deriveUnnamedChildrenCardinality,
 	isMultiple,
 	isRequired,
 	isNodeRef,
@@ -45,7 +44,13 @@ import { computeTemplateBundleHash } from './template-hash.ts';
 import { renderModuleSrcDir, renderModuleTemplatesDir } from './render-module-paths.ts';
 import { type TransportLiteral } from './transport-projection.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
-import { buildSupertypeTransportSet, classifySlot, type SlotClass } from './transport-common.ts';
+import {
+	acceptedTransportKinds,
+	buildSupertypeTransportSet,
+	classifySlot,
+	deriveChildrenKinds,
+	type SlotClass
+} from './transport-common.ts';
 import { keywordPresenceValue, slotLiteralValues } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -389,6 +394,20 @@ function collectEffectiveSupertypeTransportShape(
 		subtypes: []
 	}
 ): EffectiveSupertypeTransportShape {
+	const appendSubtype = (subKind: string, subNode: AssembledNode): void => {
+		const variantName = rustTypeIdent(subNode.typeName);
+		const existingKind = state.variantKindByName.get(variantName);
+		if (existingKind !== undefined && existingKind !== subKind) {
+			throw new Error(
+				`reserved supertype flattening collision: ${supertypeNode.kind} emits variant ${variantName} for both ${existingKind} and ${subKind}`
+			);
+		}
+		state.variantKindByName.set(variantName, subKind);
+		if (state.emittedKinds.has(subKind)) return;
+		state.emittedKinds.add(subKind);
+		state.subtypes.push({ subKind, subNode });
+	};
+
 	if (seen.has(supertypeNode.kind)) {
 		return {
 			subtypes: state.subtypes,
@@ -404,22 +423,39 @@ function collectEffectiveSupertypeTransportShape(
 			collectEffectiveSupertypeTransportShape(subNode, nodeMap, seen, state);
 			continue;
 		}
-		const variantName = rustTypeIdent(subNode.typeName);
-		const existingKind = state.variantKindByName.get(variantName);
-		if (existingKind !== undefined && existingKind !== subKind) {
-			throw new Error(
-				`reserved supertype flattening collision: ${supertypeNode.kind} emits variant ${variantName} for both ${existingKind} and ${subKind}`
-			);
+		appendSubtype(subKind, subNode);
+		for (const nested of collectTransparentRuntimeTransportSubtypes(subNode, nodeMap)) {
+			appendSubtype(nested.subKind, nested.subNode);
 		}
-		state.variantKindByName.set(variantName, subKind);
-		if (state.emittedKinds.has(subKind)) continue;
-		state.emittedKinds.add(subKind);
-		state.subtypes.push({ subKind, subNode });
 	}
 	return {
 		subtypes: state.subtypes,
 		suppressedKinds: [...state.suppressedKinds]
 	};
+}
+
+function collectTransparentRuntimeTransportSubtypes(
+	node: AssembledNode,
+	nodeMap: NodeMap
+): readonly EffectiveSupertypeTransportSubtype[] {
+	if (node.modelType !== 'branch' || !node.kind.startsWith('_') || node.fields.length > 0 || node.children.length === 0) {
+		return [];
+	}
+	const nested = new Map<string, EffectiveSupertypeTransportSubtype>();
+	for (const child of node.children) {
+		const kinds = deriveChildrenKinds(child, nodeMap, new Set([node.kind]));
+		const cls = classifySlotForEmit(kinds, nodeMap);
+		if (cls.tag === 'heterogeneous') continue;
+		const subNode =
+			cls.tag === 'concrete'
+				? nodeMap.nodes.get(cls.kind)
+				: [...nodeMap.nodes.values()].find(
+						(candidate) => candidate.modelType === 'supertype' && candidate.typeName === cls.supertypeName
+					);
+		if (!subNode) continue;
+		nested.set(subNode.kind, { subKind: subNode.kind, subNode });
+	}
+	return [...nested.values()];
 }
 
 /** Rust field identifier mapping for generated render/transport structs.
@@ -541,6 +577,11 @@ interface RenderSlotModel {
 	readonly unnamedKinds: readonly string[];
 }
 
+export function hasSingularNativeChildrenTransport(node: AssembledNode | undefined): boolean {
+	const slotModel = renderSlotModelOf(node);
+	return slotModel.unnamed.length > 0 && !slotModel.unnamedMultiple;
+}
+
 function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNonterminal | undefined {
 	const [first, ...rest] = slots;
 	if (!first) return undefined;
@@ -611,9 +652,7 @@ function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
 	const variantCardinalities = variants.map((variant) => {
 		const children = variant.filter((slot) => slot.source === 'inferred');
 		if (children.length === 0) return undefined;
-		const merged = mergeRenderSlots(children);
-		if (!merged) return undefined;
-		const cardinality = children.length === 1 ? deriveSlotCardinality(merged) : deriveChildrenCardinality(children);
+		const cardinality = deriveUnnamedChildrenCardinality(children);
 		return {
 			required: cardinality.required,
 			multiple: cardinality.multiple || children.length > 1
@@ -2505,7 +2544,7 @@ function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: Nod
 			if (cls.tag === 'supertype') used.add(cls.supertypeName);
 		}
 		if (slotModel.unnamed.length > 0) {
-			const cls = classifySlotForEmit(slotModel.unnamedKinds, nodeMap);
+			const cls = classifyUnnamedSlot(slotModel, nodeMap);
 			if (cls.tag === 'supertype') used.add(cls.supertypeName);
 		}
 	};
@@ -2932,7 +2971,7 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 				literals.push({ kind: text, text });
 			}
 		}
-		const cls = classifySlotForEmit(allKinds, nodeMap);
+		const cls = classifyUnnamedSlot(slotModel, nodeMap);
 		if (cls.tag !== 'heterogeneous') return;
 		// If all child kinds map to supertypes/polymorphs/multi (no concrete transport
 		// struct exists for any of them), emitting an empty enum would fail to compile.
@@ -2970,6 +3009,7 @@ function emitPerSlotChildEnum(
 ): string[] {
 	const enumName = perSlotEnumName(entry.typeName);
 	const lines: string[] = [];
+	const hasSupertypeSourceKinds = entry.kinds.some((kind) => nodeMap.nodes.get(kind)?.modelType === 'supertype');
 
 	// Expand any supertype child kinds to their concrete transport-bearing kinds,
 	// then dedupe so aliased / overlapping paths emit one variant per concrete kind.
@@ -3011,12 +3051,12 @@ function emitPerSlotChildEnum(
 		lines.push(`            None`);
 		lines.push(`        };`);
 		lines.push(`        if let Some(kind_id) = kind_id {`);
-		lines.push(`            return match kind_id {`);
+		lines.push(`            match kind_id {`);
 		const emittedIds = new Set<number>();
 		for (const { kind, node, concreteName } of validKinds) {
 			const variant = rustTypeIdent(node.typeName);
 			const typeName = concreteName;
-			const acceptedKinds = new Set<string>([kind]);
+			const acceptedKinds = new Set<string>(acceptedTransportKinds(kind, nodeMap));
 			if (node instanceof AssembledEnum) {
 				for (const resolvedKind of node.resolvedKinds) {
 					acceptedKinds.add(resolvedKind);
@@ -3027,11 +3067,11 @@ function emitPerSlotChildEnum(
 				if (id === undefined || emittedIds.has(id)) continue;
 				emittedIds.add(id);
 				if (isLeafLike(node)) {
-					lines.push(`                ${id} => Ok(Self::${variant}(`);
+					lines.push(`                ${id} => return Ok(Self::${variant}(`);
 					lines.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
 					lines.push(`                )),`);
 				} else {
-					lines.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
+					lines.push(`                ${id} => return Ok(Self::${variant}(Box::new(`);
 					lines.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
 					lines.push(`                ))),`);
 				}
@@ -3042,14 +3082,21 @@ function emitPerSlotChildEnum(
 			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
 			emittedIds.add(id);
-			lines.push(`                ${id} => Ok(Self::${variant}),`);
+			lines.push(`                ${id} => return Ok(Self::${variant}),`);
 		}
-		lines.push(`                other => Err(::napi::Error::from_reason(format!(`);
-		lines.push(`                    "unknown kind id {{other}} in ${enumName}",`);
-		lines.push(`                ))),`);
-		lines.push(`            };`);
+		if (hasSupertypeSourceKinds) {
+			lines.push(`                _ => {}`);
+		} else {
+			lines.push(`                other => return Err(::napi::Error::from_reason(format!(`);
+			lines.push(`                    "unknown kind id {{other}} in ${enumName}",`);
+			lines.push(`                ))),`);
+		}
+		lines.push(`            }`);
 		lines.push(`        }`);
-		lines.push(`        if String::from_napi_value(env, napi_val).is_ok() {`);
+		const fallbackGuard = hasSupertypeSourceKinds
+			? 'String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok()'
+			: 'String::from_napi_value(env, napi_val).is_ok()';
+		lines.push(`        if ${fallbackGuard} {`);
 		for (const { node, concreteName } of validKinds) {
 			const variant = rustTypeIdent(node.typeName);
 			if (isLeafLike(node)) {
@@ -3063,6 +3110,13 @@ function emitPerSlotChildEnum(
 			}
 		}
 		lines.push(`        }`);
+		if (hasSupertypeSourceKinds) {
+			lines.push(`        if let Some(other) = kind_id {`);
+			lines.push(`            return Err(::napi::Error::from_reason(format!(`);
+			lines.push(`                "unknown kind id {{other}} in ${enumName}",`);
+			lines.push(`            )));`);
+			lines.push(`        }`);
+		}
 		lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))`);
 		lines.push(`    }`);
 		lines.push(`}`);
@@ -3974,7 +4028,14 @@ function renderTransportDataStruct(
 	if (isLeafNode) {
 		// Tokens are anonymous (named=false); patterns and keywords are named (named=true).
 		const leafNamed = node.modelType !== 'token';
-		lines.push(...renderLeafTransportNapiImpls(structName, leafNamed, leafBooleanPresenceLiteral(node, nodeMap)));
+		lines.push(
+			...renderLeafTransportNapiImpls(
+				structName,
+				leafNamed,
+				leafDefaultTextLiteral(node),
+				leafBooleanPresenceLiteral(node, nodeMap)
+			)
+		);
 	}
 	return lines;
 }
@@ -4004,7 +4065,12 @@ function renderTransportDataStruct(
  *   `.filter(|t| t.transport_named().unwrap_or(true))` works correctly without
  *   needing to read `$named` from the JS object.
  */
-function renderLeafTransportNapiImpls(structName: string, named: boolean, booleanLiteral?: string): string[] {
+function renderLeafTransportNapiImpls(
+	structName: string,
+	named: boolean,
+	defaultTextLiteral?: string,
+	booleanLiteral?: string
+): string[] {
 	const lines: string[] = [];
 
 	// Release mode: read plain JS string — no metadata round-trip.
@@ -4018,6 +4084,10 @@ function renderLeafTransportNapiImpls(structName: string, named: boolean, boolea
 	lines.push(`    ) -> ::napi::Result<Self> {`);
 	lines.push(`        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {`);
 	lines.push(`            text`);
+	if (defaultTextLiteral !== undefined) {
+		lines.push(`        } else if u16::from_napi_value(env, napi_val).is_ok() {`);
+		lines.push(`            ${JSON.stringify(defaultTextLiteral)}.to_string()`);
+	}
 	if (booleanLiteral !== undefined) {
 		lines.push(`        } else if let Ok(present) = bool::from_napi_value(env, napi_val) {`);
 		lines.push(`            if !present {`);
@@ -4031,7 +4101,11 @@ function renderLeafTransportNapiImpls(structName: string, named: boolean, boolea
 	}
 	lines.push(`        } else {`);
 	lines.push(`            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-	lines.push(`            obj.get("$text")?.unwrap_or_default()`);
+	lines.push(
+		defaultTextLiteral !== undefined
+			? `            obj.get("$text")?.unwrap_or_else(|| ${JSON.stringify(defaultTextLiteral)}.to_string())`
+			: `            obj.get("$text")?.unwrap_or_default()`
+	);
 	lines.push(`        };`);
 	lines.push(`        Ok(Self {`);
 	for (const f of TRANSPORT_METADATA_FIELDS) {
@@ -4088,7 +4162,11 @@ function renderLeafTransportNapiImpls(structName: string, named: boolean, boolea
 		lines.push(`        }`);
 	}
 	lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
-	lines.push('        let text: String = obj.get("$text")?.unwrap_or_default();');
+	lines.push(
+		defaultTextLiteral !== undefined
+			? `        let text: String = obj.get("$text")?.unwrap_or_else(|| ${JSON.stringify(defaultTextLiteral)}.to_string());`
+			: '        let text: String = obj.get("$text")?.unwrap_or_default();'
+	);
 	for (const f of TRANSPORT_METADATA_FIELDS) {
 		if (f.needsExplicitTypeAnnotation) {
 			lines.push(`        let ${f.rustName}: ${f.rustType} = obj.get(${JSON.stringify(f.jsName)})?;`);
@@ -4121,6 +4199,11 @@ function renderLeafTransportNapiImpls(structName: string, named: boolean, boolea
 	lines.push('');
 
 	return lines;
+}
+
+function leafDefaultTextLiteral(node: AssembledNode): string | undefined {
+	if (node.modelType !== 'keyword' && node.modelType !== 'token') return undefined;
+	return node.text || undefined;
 }
 
 /**
@@ -4315,7 +4398,7 @@ function rustTransportFieldType(field: AssembledNonterminal, nodeMap: NodeMap): 
  * @param nodeMap  - For kind classification.
  */
 function rustTransportChildrenType(slotModel: RenderSlotModel, typeName: string, nodeMap: NodeMap): string {
-	const cls = classifySlotForEmit(slotModel.unnamedKinds, nodeMap);
+	const cls = classifyUnnamedSlot(slotModel, nodeMap);
 	const { unnamedKinds: allKinds, unnamedRequired: required, unnamedMultiple: multiple } = slotModel;
 	switch (cls.tag) {
 		case 'concrete': {

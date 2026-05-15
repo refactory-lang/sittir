@@ -66,15 +66,12 @@ export type BackendStatusLike<TModule extends NativeModuleLike = NativeModuleLik
 	| NativeBackendStatusLike<TModule>
 	| JsBackendStatusLike;
 
-export type NativeRenderTransportProjector<TTransport = unknown> = (node: AnyNodeData) => TTransport;
-
 export interface GrammarEngineConfig<
 	TTransport = unknown,
 	TModule extends NativeModuleLike<TTransport> = NativeModuleLike<TTransport>
 > {
 	templatesPath: string;
 	kindNames: ReadonlyMap<number, string>;
-	toNativeRenderTransport: NativeRenderTransportProjector<TTransport>;
 	getActiveBackend: () => BackendStatusLike<TModule>;
 }
 
@@ -121,12 +118,11 @@ export function createNativeEngine<
 						'Use JS engine or wait for Task 4 (engine-owned format state).'
 				);
 			}
-			const transport = config.toNativeRenderTransport(node);
 			return createRenderHandle(
-				() => engine.render(transport),
+				() => engine.render(node as TTransport),
 				(path) => {
 					if (engine.renderToFile) {
-						engine.renderToFile(transport, path);
+						engine.renderToFile(node as TTransport, path);
 						return true;
 					}
 					return false;

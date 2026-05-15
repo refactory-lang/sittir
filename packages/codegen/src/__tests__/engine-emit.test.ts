@@ -43,4 +43,10 @@ describe('emitEngine', () => {
 		expect(output).toContain('createJsEngine(');
 		expect(output).toContain('createNativeEngine(');
 	});
+
+	it('does not thread deprecated native transport projection through createNativeEngine', () => {
+		const output = emitEngine({ grammar: 'rust' });
+		expect(output).not.toContain("import { toNativeRenderTransport } from './utils.js'");
+		expect(output).not.toContain('toNativeRenderTransport,');
+	});
 });

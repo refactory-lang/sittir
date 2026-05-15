@@ -112,7 +112,7 @@ export const declaration = {
   enum: _attach(FR.enumDeclarationFrom, { from: FR.enumDeclarationFrom, strict: F.enumDeclaration }),
   interface: _attach(FR.interfaceDeclarationFrom, { from: FR.interfaceDeclarationFrom, strict: F.interfaceDeclaration }),
   import: _attach(FR.importAliasFrom, { from: FR.importAliasFrom, strict: F.importAlias }),
-  ambient: _attach(FR.ambientDeclarationFrom, { from: FR.ambientDeclarationFrom, strict: F.ambientDeclaration }),
+  ambient: _attach(FR.ambientDeclarationFrom, { from: FR.ambientDeclarationFrom, strict: F.ambientDeclaration, "declaration": _attach(FR.ambientDeclarationUFormDeclarationFrom, { from: FR.ambientDeclarationUFormDeclarationFrom, strict: F.ambientDeclarationUFormDeclaration }), "global": _attach(FR.ambientDeclarationUFormGlobalFrom, { from: FR.ambientDeclarationUFormGlobalFrom, strict: F.ambientDeclarationUFormGlobal }), "module": _attach(FR.ambientDeclarationUFormModuleFrom, { from: FR.ambientDeclarationUFormModuleFrom, strict: F.ambientDeclarationUFormModule }) }),
 } as const;
 
 export const expression = {
@@ -252,7 +252,8 @@ export const ir = {
   abstractClassDeclaration: _attach(FR.abstractClassDeclarationFrom, { from: FR.abstractClassDeclarationFrom, strict: F.abstractClassDeclaration }),
   abstractMethodSignature: _attach(FR.abstractMethodSignatureFrom, { from: FR.abstractMethodSignatureFrom, strict: F.abstractMethodSignature }),
   addingTypeAnnotation: _attach(FR.addingTypeAnnotationFrom, { from: FR.addingTypeAnnotationFrom, strict: F.addingTypeAnnotation }),
-  ambientDeclaration: _attach(FR.ambientDeclarationFrom, { from: FR.ambientDeclarationFrom, strict: F.ambientDeclaration }),
+  ambientDeclarationDeclaration: _attach(FR.ambientDeclarationDeclarationFrom, { from: FR.ambientDeclarationDeclarationFrom, strict: F.ambientDeclarationDeclaration }),
+  ambientDeclaration: _attach(FR.ambientDeclarationFrom, { from: FR.ambientDeclarationFrom, strict: F.ambientDeclaration, "declaration": _attach(FR.ambientDeclarationUFormDeclarationFrom, { from: FR.ambientDeclarationUFormDeclarationFrom, strict: F.ambientDeclarationUFormDeclaration }), "global": _attach(FR.ambientDeclarationUFormGlobalFrom, { from: FR.ambientDeclarationUFormGlobalFrom, strict: F.ambientDeclarationUFormGlobal }), "module": _attach(FR.ambientDeclarationUFormModuleFrom, { from: FR.ambientDeclarationUFormModuleFrom, strict: F.ambientDeclarationUFormModule }) }),
   arguments: _attach(FR.arguments_From, { from: FR.arguments_From, strict: F.arguments_ }),
   array: _attach(FR.arrayFrom, { from: FR.arrayFrom, strict: F.array }),
   arrayPattern: _attach(FR.arrayPatternFrom, { from: FR.arrayPatternFrom, strict: F.arrayPattern }),
@@ -442,7 +443,7 @@ export const ir = {
 
   // Supertype-stripped short aliases
   abstractClass: _attach(FR.abstractClassDeclarationFrom, { from: FR.abstractClassDeclarationFrom, strict: F.abstractClassDeclaration }),
-  ambient: _attach(FR.ambientDeclarationFrom, { from: FR.ambientDeclarationFrom, strict: F.ambientDeclaration }),
+  ambient: _attach(FR.ambientDeclarationFrom, { from: FR.ambientDeclarationFrom, strict: F.ambientDeclaration, "declaration": _attach(FR.ambientDeclarationUFormDeclarationFrom, { from: FR.ambientDeclarationUFormDeclarationFrom, strict: F.ambientDeclarationUFormDeclaration }), "global": _attach(FR.ambientDeclarationUFormGlobalFrom, { from: FR.ambientDeclarationUFormGlobalFrom, strict: F.ambientDeclarationUFormGlobal }), "module": _attach(FR.ambientDeclarationUFormModuleFrom, { from: FR.ambientDeclarationUFormModuleFrom, strict: F.ambientDeclarationUFormModule }) }),
   arrow: _attach(FR.arrowFunctionFrom, { from: FR.arrowFunctionFrom, strict: F.arrowFunction, "parameter": _attach(FR.arrowFunctionUFormParameterFrom, { from: FR.arrowFunctionUFormParameterFrom, strict: F.arrowFunctionUFormParameter }), "callSignature": _attach(FR.arrowFunctionUFormUCallSignatureFrom, { from: FR.arrowFunctionUFormUCallSignatureFrom, strict: F.arrowFunctionUFormUCallSignature }), "_call_signature": _attach(FR.arrowFunctionUFormUCallSignatureFrom, { from: FR.arrowFunctionUFormUCallSignatureFrom, strict: F.arrowFunctionUFormUCallSignature }) }),
   as: _attach(FR.asExpressionFrom, { from: FR.asExpressionFrom, strict: F.asExpression }),
   assignment: _attach(FR.assignmentExpressionFrom, { from: FR.assignmentExpressionFrom, strict: F.assignmentExpression }),

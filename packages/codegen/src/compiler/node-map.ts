@@ -50,6 +50,7 @@ import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { findGeneratedKindEntry } from './generated-metadata.ts';
 import { tokenToName } from './optimize.ts';
 import { assertNever } from '../polymorph-variant.ts';
+import { fieldContentIsMultiSibling } from './field-shape.ts';
 
 // ---------------------------------------------------------------------------
 // NodeOrTerminal — unified slot-content type
@@ -223,6 +224,17 @@ export function deriveMergedSlotCardinality(
 ): SlotCardinality {
 	const merged = mergeSlotValues(slots);
 	return merged ? deriveSlotCardinality(merged) : { required: false, multiple: false, nonEmpty: false };
+}
+
+export function deriveUnnamedChildrenCardinality(
+	children: readonly {
+		values: readonly NodeOrTerminal[];
+	}[]
+): SlotCardinality {
+	if (children.length === 0) {
+		return { required: false, multiple: false, nonEmpty: false };
+	}
+	return children.length === 1 ? deriveSlotCardinality(children[0]!) : deriveChildrenCardinality(children);
 }
 
 export function deriveChildrenCardinality(
@@ -723,6 +735,39 @@ function mergeFieldsByName(fields: AssembledNonterminal[]): AssembledNonterminal
 	return Array.from(byName.values());
 }
 
+function mergeChoiceArmSlots(arms: readonly AssembledNonterminal[][]): AssembledNonterminal[] {
+	if (arms.length === 0) return [];
+	const merged = new Map<string, AssembledNonterminal>();
+	const presence = new Map<string, number>();
+	for (const arm of arms) {
+		const normalizedArm = mergeFieldsByName([...arm]);
+		for (const slot of normalizedArm) {
+			presence.set(slot.name, (presence.get(slot.name) ?? 0) + 1);
+			const existing = merged.get(slot.name);
+			if (!existing) {
+				merged.set(slot.name, slot);
+				continue;
+			}
+			merged.set(slot.name, {
+				...existing,
+				values: dedupeValues([...existing.values, ...slot.values]),
+				hasTrailing: existing.hasTrailing || slot.hasTrailing,
+				hasLeading: existing.hasLeading || slot.hasLeading,
+				aliasSources:
+					existing.aliasSources || slot.aliasSources
+						? {
+								...existing.aliasSources,
+								...slot.aliasSources
+							}
+						: undefined
+			});
+		}
+	}
+	return [...merged.values()].map((slot) =>
+		(presence.get(slot.name) ?? 0) < arms.length ? relaxSlotForCrossFormAbsence(slot) : slot
+	);
+}
+
 /**
  * Raw field derivation — produces one AssembledNonterminal per `field()` encounter.
  * Duplicates are merged by `deriveFields`. The `outerMultiplicity` threads
@@ -805,6 +850,9 @@ function deriveFieldsRaw(
 		case 'repeat1':
 			return deriveFieldsRaw(rule.content, 'nonEmptyArray', kindEntries);
 		case 'choice': {
+			const armSlots = rule.members.map((member) => deriveFieldsRaw(member, outerMultiplicity, kindEntries));
+			const hasDeclaredFieldArm = armSlots.some((slots) => slots.some((slot) => slot.source !== 'inferred'));
+			if (hasDeclaredFieldArm) return mergeChoiceArmSlots(armSlots);
 			// Choice at a position contributes ONE slot whose `values`
 			// array is the union of all arms (the field walker handles
 			// every position, so a positional choice no longer explodes
@@ -959,6 +1007,12 @@ function fieldContentMultiplicity(content: Rule, outerMultiplicity: Multiplicity
 			return 'optional';
 		}
 		default:
+			if (fieldContentIsMultiSibling(content)) {
+				if (outerMultiplicity === 'optional') return 'array';
+				return outerMultiplicity === 'array' || outerMultiplicity === 'nonEmptyArray'
+					? outerMultiplicity
+					: 'nonEmptyArray';
+			}
 			return outerMultiplicity;
 	}
 }
@@ -1990,7 +2044,8 @@ export function translateToJinja(tmpl: string, meta: JinjaTranslateMeta): string
 		return `{{ ${key} }}`;
 	});
 	const postProcessed = meta.optionalChildren ? absorbFlankingChildrenSpaces(translated) : translated;
-	return escapeJinjaBraceCollisions(absorbHeadConditionalTrailingSpace(postProcessed));
+	const headSpacingNormalized = absorbHeadConditionalLeadingSpace(absorbHeadConditionalTrailingSpace(postProcessed));
+	return escapeJinjaBraceCollisions(headSpacingNormalized);
 }
 
 /**
@@ -2034,6 +2089,39 @@ function absorbHeadConditionalTrailingSpace(tmpl: string): string {
 		runStart += replacement.length;
 	}
 	return work;
+}
+
+function absorbHeadConditionalLeadingSpace(tmpl: string): string {
+	let work = tmpl;
+	let runStart = 0;
+	const commentMatch = work.match(/^\{#-?[^#]*-?#\}/);
+	if (commentMatch) runStart = commentMatch[0].length;
+	const condFull = /^(\{%-? if [^%]+-?%\})(.*?)(\{%-? endif -?%\})/s;
+	const parts: Array<{ ifTag: string; body: string; endTag: string }> = [];
+	let cursor = runStart;
+	while (true) {
+		const head = work.slice(cursor);
+		const m = head.match(condFull);
+		if (!m) break;
+		const ifTag = m[1]!;
+		const body = m[2]!;
+		const endTag = m[3]!;
+		if (body.includes('{% if') || body.includes('{%- if')) break;
+		parts.push({ ifTag, body, endTag });
+		cursor += m[0].length;
+	}
+	if (parts.length === 0) return work;
+	for (let index = 0; index < parts.length; index++) {
+		const part = parts[index]!;
+		const leading = part.body.match(/^ +/)?.[0];
+		if (!leading) continue;
+		part.body = part.body.slice(leading.length);
+		if (index === 0) continue;
+		const previous = parts[index - 1]!;
+		if (!/\s$/.test(previous.body)) previous.body += leading;
+	}
+	const replacement = parts.map(({ ifTag, body, endTag }) => `${ifTag}${body}${endTag}`).join('');
+	return work.slice(0, runStart) + replacement + work.slice(cursor);
 }
 
 /**
@@ -2194,6 +2282,18 @@ function deriveOptionalSlotNames(slots: readonly { name: string; values: readonl
 
 function deriveOptionalFieldNames(fields: readonly AssembledNonterminal[]): Set<string> {
 	return deriveOptionalSlotNames(fields);
+}
+
+/** @internal — repeated slots that already carry literal members must concatenate directly. */
+export function applySelfDelimitedJoinOverrides(
+	joinByField: Record<string, string>,
+	slots: readonly AssembledNonterminal[]
+): void {
+	for (const slot of slots) {
+		if (!isMultiple(slot)) continue;
+		if (!slot.values.some((value) => value.kind === 'terminal')) continue;
+		joinByField[slot.name] = '';
+	}
 }
 
 function buildRenderSurface(opts?: {
@@ -2773,6 +2873,7 @@ export class AssembledBranch<
 			if (trailingFields.size > 0) meta.trailingFields = trailingFields;
 			if (leadingFields.size > 0) meta.leadingFields = leadingFields;
 		}
+		applySelfDelimitedJoinOverrides(joinByField, [...fields, ...this.children]);
 		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
 		if (optionalFields.size > 0) meta.optionalFields = optionalFields;
 		// Container-shape branches: empty children may collapse a flanking
@@ -3688,6 +3789,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		const leadingFields = new Set(this.fields.filter((f) => f.hasLeading).map((f) => f.name));
 		if (trailingFields.size > 0) meta.trailingFields = trailingFields;
 		if (leadingFields.size > 0) meta.leadingFields = leadingFields;
+		applySelfDelimitedJoinOverrides(joinByField, [...this.fields, ...this.children]);
 		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
 		if (optionalFields.size > 0) meta.optionalFields = optionalFields;
 		return {

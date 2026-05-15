@@ -171,7 +171,8 @@ export interface AttributeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _path: PathTransport
-  '$children'?: AttributeChildTransport
+  _value?: ExpressionTransport
+  _arguments?: DelimTokenTreeTransport
 }
 
 export interface AwaitExpressionTransport {
@@ -217,8 +218,9 @@ export interface BlockCommentTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _outer?: OuterBlockDocCommentMarkerTransport
+  _inner?: InnerBlockDocCommentMarkerTransport
   _doc?: Box<AnyTransport>
-  '$children'?: BlockCommentChildTransport
 }
 
 export interface BlockTransport {
@@ -929,7 +931,7 @@ export interface GenericFunctionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _function: ExpressionTransport
+  _function: ExpressionExceptRangeTransport
   _type_arguments: TypeArgumentsTransport
 }
 
@@ -1150,8 +1152,9 @@ export interface LineCommentDocTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _outer?: OuterLineDocCommentMarkerTransport
+  _inner?: InnerLineDocCommentMarkerTransport
   _doc: LineDocContentTransport
-  '$children': LineCommentDocChildTransport
 }
 
 export interface LineCommentTransport {

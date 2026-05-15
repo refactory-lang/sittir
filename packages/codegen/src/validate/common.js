@@ -650,11 +650,11 @@ export const WASM_PATHS = {
     typescript: 'tree-sitter-typescript/tree-sitter-typescript.wasm',
     python: 'tree-sitter-python/tree-sitter-python.wasm'
 };
-/** Relative path from codegen/src/validators to built language package wrap.js */
+/** Relative path from codegen validators to grammar source wrap modules. */
 export const WRAP_MODULE_PATHS = {
-    rust: '../../../rust/dist/wrap.js',
-    typescript: '../../../typescript/dist/wrap.js',
-    python: '../../../python/dist/wrap.js'
+    rust: '../../../rust/src/wrap.ts',
+    typescript: '../../../typescript/src/wrap.ts',
+    python: '../../../python/src/wrap.ts'
 };
 /**
  * Dynamic import of a grammar's `readTreeNode` entry point. Used by
@@ -767,7 +767,12 @@ function resolveWrappedStorageValue(node, storageKey) {
     for (const accessorName of accessorCandidatesForStorageKey(storageKey)) {
         const accessor = node[accessorName];
         if (typeof accessor === 'function' && accessor.length === 0) {
-            return accessor.call(node);
+            try {
+                return accessor.call(node);
+            }
+            catch {
+                return node[storageKey];
+            }
         }
     }
     return node[storageKey];
@@ -1017,9 +1022,7 @@ function resolveChild(child, opts) {
         const fieldNames = factoryFields?.[kind];
         const rawName = fieldNames?.[0];
         const camelName = rawName?.replace(/_([a-z])/g, (_m, c) => c.toUpperCase());
-        const value = camelName
-            ? childConfig[camelName]
-            : childArgs[0];
+        const value = camelName ? childConfig[camelName] : childArgs[0];
         return factory(value);
     }
     return factory(childConfig);
@@ -1091,6 +1094,8 @@ function lookupFactorySlotMeta(opts, slot) {
 function slotModelArityFromMeta(slotMeta, unnamed) {
     if (!slotMeta)
         return unnamed ? 'many' : 'one';
+    if (unnamed && slotMeta.slotCount > 1)
+        return 'many';
     return slotMeta.multiple ? 'many' : 'one';
 }
 function createNamedConfigSlotModel(parentKind, name, factorySlots) {
@@ -1101,17 +1106,50 @@ function createChildrenConfigSlotModel(parentKind, factorySlots) {
     const slotMeta = parentKind ? factorySlots?.[parentKind]?.children : undefined;
     return createUnnamedChildrenSlotModel(slotModelArityFromMeta(slotMeta, true));
 }
+function hasDeclaredFactorySlot(parentKind, name, opts) {
+    if (!parentKind)
+        return false;
+    if (opts.factorySlots?.[parentKind]?.[name] !== undefined)
+        return true;
+    return opts.factoryFields?.[parentKind]?.includes(name) ?? false;
+}
 function shouldNormalizeConfigSlotAsMany(slot, slotMeta) {
     return slotModelArityFromMeta(slotMeta, slot.unnamed) === 'many';
 }
+function rawChildKindName(value, kindNameFromId) {
+    if (value == null || typeof value !== 'object')
+        return undefined;
+    const rawType = value.$type;
+    if (typeof rawType === 'string')
+        return rawType;
+    if (typeof rawType === 'number')
+        return kindNameFromId?.(rawType);
+    return undefined;
+}
+function narrowSingularUnnamedChildrenValue(slot, value, childOpts, slotMeta) {
+    if (!slot.unnamed || slot.name !== 'children' || !slotMeta || slotMeta.multiple || slotMeta.slotCount !== 1) {
+        return value;
+    }
+    if (!Array.isArray(value) || value.length <= 1)
+        return value;
+    const hintedKind = childOpts.namedChildKindHints?.length === 1
+        ? childOpts.namedChildKindHints[0]
+        : childOpts.firstNamedChildKindHint;
+    if (hintedKind) {
+        const hinted = value.filter((item) => rawChildKindName(item, childOpts.kindNameFromId) === hintedKind);
+        if (hinted.length === 1)
+            return hinted[0];
+    }
+    const named = value.filter((item) => item != null && typeof item === 'object' && item.$named !== false);
+    if (named.length === 1)
+        return named[0];
+    return value;
+}
 function normalizeConfigSlotValue(slot, value, childOpts, slotMeta) {
-    const resolved = resolveMemberValue(value, childOpts);
+    const narrowed = narrowSingularUnnamedChildrenValue(slot, value, childOpts, slotMeta);
+    const resolved = resolveMemberValue(narrowed, childOpts);
     if (shouldNormalizeConfigSlotAsMany(slot, slotMeta)) {
-        const items = Array.isArray(resolved)
-            ? resolved
-            : resolved == null
-                ? []
-                : [resolved];
+        const items = Array.isArray(resolved) ? resolved : resolved == null ? [] : [resolved];
         if (slotMeta?.nonEmpty && items.length === 0) {
             throw new TypeError(`nodeToConfig: repeated slot ${JSON.stringify(slot.name)} requires at least one value`);
         }
@@ -1145,7 +1183,10 @@ export function getChildFactoryArgs(kind, childConfig, factorySlots) {
     return childrenValue == null ? [] : [childrenValue];
 }
 function assignSlotToConfig(slot, value, childOpts, out) {
-    out[slotConfigKey(slot)] = normalizeConfigSlotValue(slot, value, childOpts, lookupFactorySlotMeta(childOpts, slot));
+    const normalized = normalizeConfigSlotValue(slot, value, childOpts, lookupFactorySlotMeta(childOpts, slot));
+    if (normalized !== undefined) {
+        out[slotConfigKey(slot)] = normalized;
+    }
 }
 function isAnonymousPromotableField(name) {
     return name === 'semicolon' || name === 'opening' || name === 'closing';
@@ -1160,6 +1201,137 @@ function getMissingDeclaredFields(declaredFields, out) {
 }
 function isAnonymousTokenNode(value) {
     return value != null && typeof value === 'object' && value.$named === false;
+}
+function filterStructuralChildren(children) {
+    return children.filter((child) => child != null && typeof child === 'object' && !isAnonymousTokenNode(child));
+}
+function shouldOmitResidualScalarChildren(parentKind, structuralChildren, opts, out) {
+    if (!parentKind || structuralChildren.length === 0)
+        return false;
+    if (Object.keys(out).length === 0)
+        return false;
+    const slotMeta = opts.factorySlots?.[parentKind]?.children;
+    if (!slotMeta || slotMeta.required || slotMeta.multiple)
+        return false;
+    return structuralChildren.every((child) => child == null || typeof child !== 'object');
+}
+function resolveOverrideVariantFromKind(childKind, candidate) {
+    if (!candidate)
+        return undefined;
+    if (candidate in childKind)
+        return childKind[candidate];
+    const stripped = candidate.startsWith('_') ? candidate.slice(1) : undefined;
+    if (stripped && stripped in childKind)
+        return childKind[stripped];
+    let bestVariant;
+    let bestSpecificity = -1;
+    for (const [, variant] of Object.entries(childKind)) {
+        const suffix = `_${variant}`;
+        if (candidate.endsWith(suffix) || stripped?.endsWith(suffix)) {
+            if (variant.length > bestSpecificity) {
+                bestVariant = variant;
+                bestSpecificity = variant.length;
+            }
+        }
+    }
+    return bestVariant;
+}
+function namedChildNodes(value) {
+    return (value?.filter((child) => child != null && typeof child === 'object' && child.$named !== false) ?? []);
+}
+function findOverrideVariantChildNode(data, childKind, variant, kindNameFromId) {
+    const matches = [];
+    for (const child of namedChildNodes(data.$children)) {
+        let current = child;
+        const seen = new Set();
+        while (current && !seen.has(current)) {
+            seen.add(current);
+            if (resolveOverrideVariantFromKind(childKind, rawChildKindName(current, kindNameFromId)) === variant) {
+                matches.push(current);
+                break;
+            }
+            const descendants = namedChildNodes(current.$children);
+            if (descendants.length !== 1)
+                break;
+            current = descendants[0];
+        }
+    }
+    return matches.length === 1 ? matches[0] : undefined;
+}
+function buildVariantHelperData(data, helperKind) {
+    return {
+        ...data,
+        $type: helperKind
+    };
+}
+function helperDeclaredConfigKeys(helperKind, opts) {
+    const fieldKeys = opts.factoryFields?.[helperKind]?.map((name) => name.replace(/_([a-z])/g, (_m, c) => c.toUpperCase())) ?? [];
+    const slotKeys = Object.keys(opts.factorySlots?.[helperKind] ?? {})
+        .filter((name) => name !== 'children')
+        .map((name) => name.replace(/_([a-z])/g, (_m, c) => c.toUpperCase()));
+    return [...new Set([...fieldKeys, ...slotKeys])];
+}
+function projectsHelperOwnedSurface(projected, helperKind, opts) {
+    const helperKeys = helperDeclaredConfigKeys(helperKind, opts);
+    if (helperKeys.length === 0) {
+        return Object.keys(projected).some((key) => key !== '$variant' && key !== 'children');
+    }
+    return helperKeys.some((key) => projected[key] !== undefined);
+}
+function projectOverrideVariantConfig(data, childKind, helperKind, variant, opts) {
+    if (helperKind) {
+        const projected = nodeToConfig(buildVariantHelperData(data, helperKind), opts);
+        if (projectsHelperOwnedSurface(projected, helperKind, opts)) {
+            return projected;
+        }
+    }
+    const variantChild = findOverrideVariantChildNode(data, childKind, variant, opts.kindNameFromId);
+    if (!variantChild)
+        return undefined;
+    if (helperKind) {
+        const projected = nodeToConfig(buildVariantHelperData(variantChild, helperKind), opts);
+        if (Object.keys(projected).length > 0)
+            return projected;
+    }
+    return nodeToConfig(variantChild, opts);
+}
+function inferOverrideVariantFromHelperChildKinds(helperChildKind, candidates) {
+    if (!helperChildKind)
+        return undefined;
+    for (const candidate of candidates) {
+        if (!candidate)
+            continue;
+        const matches = Object.entries(helperChildKind)
+            .filter(([, kinds]) => kinds.includes(candidate))
+            .map(([variant]) => variant);
+        if (matches.length === 1)
+            return matches[0];
+    }
+    return undefined;
+}
+function promoteOverrideVariantChildSurface(data, childKind, helperKind, variant, opts, out) {
+    const childConfig = projectOverrideVariantConfig(data, childKind, helperKind, variant, opts);
+    if (!childConfig)
+        return;
+    let mergedAny = false;
+    let promotedChildren = false;
+    for (const [key, value] of Object.entries(childConfig)) {
+        if (key === '$variant')
+            continue;
+        if (key === 'children') {
+            out.children = value;
+            mergedAny = true;
+            promotedChildren = true;
+            continue;
+        }
+        if (out[key] !== undefined)
+            continue;
+        out[key] = value;
+        mergedAny = true;
+    }
+    if (mergedAny && !promotedChildren) {
+        delete out.children;
+    }
 }
 function isOpeningDelimiter(text) {
     return text === '{' || text === '{|' || text === '[' || text === '(' || text === '<';
@@ -1207,8 +1379,16 @@ function promoteNamedChildrenToMissingFields(declaredFields, parentKind, namedCh
         return false;
     if (missing.length === 1) {
         const name = missing[0];
-        assignSlotToConfig(createNamedSlotModel(name, 'many'), namedChildren, memberValueOpts(opts, parentKind, name), out);
-        return true;
+        const slot = createNamedConfigSlotModel(parentKind, name, opts.factorySlots);
+        if (slot.arity === 'many') {
+            assignSlotToConfig(slot, namedChildren, memberValueOpts(opts, parentKind, name), out);
+            return true;
+        }
+        if (namedChildren.length === 1) {
+            assignSlotToConfig(slot, namedChildren[0], memberValueOpts(opts, parentKind, name), out);
+            return true;
+        }
+        return false;
     }
     if (namedChildren.length > missing.length)
         return false;
@@ -1244,6 +1424,18 @@ function promoteAnonymousChildrenToMissingFields(declaredFields, parentKind, chi
     });
     return true;
 }
+function inferOverrideHelperVariant(parentKind, data, opts, out) {
+    if (!parentKind)
+        return undefined;
+    const desc = opts.polymorphVariants?.[parentKind];
+    if (!desc || desc.source !== 'override')
+        return undefined;
+    const variant = inferPolymorphVariant(desc, data, out, parentKind, opts.kindNameFromId, opts.cstNodeKindHint, opts.firstNamedChildKindHint, opts.namedChildKindHints);
+    if (!variant)
+        return undefined;
+    const helperKind = desc.helperKind?.[variant];
+    return helperKind ? { variant, helperKind } : undefined;
+}
 export function nodeToConfig(data, opts = {}) {
     const out = {};
     // $type may be numeric (TSKindId) or string (hidden/synthetic kind).
@@ -1267,25 +1459,34 @@ export function nodeToConfig(data, opts = {}) {
             continue;
         if (!isIdentifierShapedFieldKey(k))
             continue;
+        if (!hasDeclaredFactorySlot(parentKind, k, opts))
+            continue;
         assignSlotToConfig(createNamedConfigSlotModel(parentKind, k, opts.factorySlots), v, memberValueOpts(opts, parentKind, k), out);
     }
     promoteAnonymousTokenFields(parentKind ? opts.factoryFields?.[parentKind] : undefined, namedSlotEntries, opts, parentKind, out);
+    const overrideHelperVariant = inferOverrideHelperVariant(parentKind, data, opts, out);
     if (data.$children) {
         const declaredFields = parentKind ? opts.factoryFields?.[parentKind] : undefined;
-        const namedChildren = data.$children.filter((c) => c != null && typeof c === 'object' && c.$named !== false);
+        const structuralChildren = filterStructuralChildren(data.$children);
+        const namedChildren = structuralChildren.filter((c) => c != null && typeof c === 'object' && c.$named !== false);
         const childOpts = memberValueOpts(opts, parentKind, undefined);
-        if (promoteNamedChildrenToMissingFields(declaredFields, parentKind, namedChildren, opts, out)) {
+        if (!overrideHelperVariant && promoteNamedChildrenToMissingFields(declaredFields, parentKind, namedChildren, opts, out)) {
             // Missing declared fields were recovered from surviving named children.
         }
-        else if (shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
+        else if (!overrideHelperVariant && shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
             // Assign by position: first N named children → first N declared fields.
             assignPositionPromotedChildren(declaredFields, parentKind, namedChildren, opts, out);
         }
-        else if (promoteAnonymousChildrenToMissingFields(declaredFields, parentKind, data.$children, opts, out)) {
+        else if (!overrideHelperVariant &&
+            promoteAnonymousChildrenToMissingFields(declaredFields, parentKind, data.$children, opts, out)) {
             // Ambiguous-free anonymous-token fill completed above.
         }
+        else if (shouldOmitResidualScalarChildren(parentKind, structuralChildren, opts, out)) {
+            // Residual scalar children on optional singular `children` slots are token
+            // baggage from the native read path, not structural children for the factory surface.
+        }
         else {
-            assignSlotToConfig(createChildrenConfigSlotModel(parentKind, opts.factorySlots), data.$children, childOpts, out);
+            assignSlotToConfig(createChildrenConfigSlotModel(parentKind, opts.factorySlots), structuralChildren, childOpts, out);
         }
     }
     // Polymorph $variant stamping — the dispatcher's `switch
@@ -1296,8 +1497,12 @@ export function nodeToConfig(data, opts = {}) {
         const desc = opts.polymorphVariants[parentKind];
         if (desc && !('$variant' in out)) {
             const v = inferPolymorphVariant(desc, data, out, parentKind, opts.kindNameFromId, opts.cstNodeKindHint, opts.firstNamedChildKindHint, opts.namedChildKindHints);
-            if (v !== undefined)
+            if (v !== undefined) {
                 out.$variant = v;
+                if (desc.source === 'override') {
+                    promoteOverrideVariantChildSurface(data, desc.childKind, desc.helperKind?.[v], v, opts, out);
+                }
+            }
         }
     }
     return out;
@@ -1317,7 +1522,7 @@ export function nodeToConfig(data, opts = {}) {
 function inferPolymorphVariant(desc, data, derivedConfig, parentKind, kindNameFromId, cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints) {
     switch (desc.source) {
         case 'override':
-            return inferFromChildKind(desc.childKind, data, derivedConfig, parentKind, kindNameFromId, cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints);
+            return inferFromChildKind(desc.childKind, desc.helperChildKind, data, derivedConfig, parentKind, kindNameFromId, cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints);
         case 'promoted':
             return inferFromFieldPresence(desc.fields, derivedConfig, parentKind);
         default:
@@ -1329,7 +1534,7 @@ function inferPolymorphVariant(desc, data, derivedConfig, parentKind, kindNameFr
  * the `childKind` map. Used for polymorphs where each form is a
  * distinct child node kind (source='override').
  */
-function inferFromChildKind(childKind, data, derivedConfig, parentKind, kindNameFromId, cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints) {
+function inferFromChildKind(childKind, helperChildKind, data, derivedConfig, parentKind, kindNameFromId, cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints) {
     const firstChild = data.$children?.find((c) => c != null && typeof c === 'object' && c.$named !== false);
     const rawType = firstChild?.$type;
     // Phase D: $type is numeric (TSKindId) or string (hidden/synthetic kind).
@@ -1349,48 +1554,48 @@ function inferFromChildKind(childKind, data, derivedConfig, parentKind, kindName
         // underscore for the childKind map lookup, which uses the visible name.
         kind = rawType;
     }
-    const resolveVariantFromKind = (candidate) => {
-        if (!candidate)
-            return undefined;
-        // Try exact match first (e.g. for visible kinds or already-stripped names).
-        if (candidate in childKind)
-            return childKind[candidate];
-        // Tree-sitter strips leading underscore from hidden rule names when
-        // reporting node.type, but kindNameFromId may have already returned the
-        // canonical form with underscore. Try stripping the leading underscore
-        // as a fallback.
-        const stripped = candidate.startsWith('_') ? candidate.slice(1) : undefined;
-        if (stripped && stripped in childKind)
-            return childKind[stripped];
-        // Some override-polymorph children arrive under a hidden helper kind
-        // whose visible variant child differs only in the prefix family
-        // (`_delim_token_tree_paren` → `token_tree_paren`). Fall back to the
-        // variant suffix when an exact kind-name match fails.
-        let bestVariant;
-        let bestSpecificity = -1;
-        for (const [, variant] of Object.entries(childKind)) {
-            const suffix = `_${variant}`;
-            if (candidate.endsWith(suffix) || stripped?.endsWith(suffix)) {
-                if (variant.length > bestSpecificity) {
-                    bestVariant = variant;
-                    bestSpecificity = variant.length;
-                }
-            }
-        }
-        return bestVariant;
-    };
     const resolvedFromHints = (candidates) => {
         for (const candidate of candidates) {
-            const resolved = resolveVariantFromKind(candidate);
+            const resolved = resolveOverrideVariantFromKind(childKind, candidate);
             if (resolved !== undefined)
                 return resolved;
         }
         return undefined;
     };
-    const resolved = resolveVariantFromKind(kind) ??
-        resolveVariantFromKind(cstNodeKindHint) ??
+    const resolveFromSingleChildSpine = () => {
+        let current = data;
+        const seen = new Set();
+        while (current && !seen.has(current)) {
+            seen.add(current);
+            const namedChildren = current.$children?.filter((child) => child != null && typeof child === 'object' && child.$named !== false) ?? [];
+            if (namedChildren.length !== 1)
+                return undefined;
+            const onlyChild = namedChildren[0];
+            const onlyChildType = onlyChild.$type;
+            const onlyChildKind = onlyChildType === undefined
+                ? undefined
+                : typeof onlyChildType === 'number'
+                    ? kindNameFromId?.(onlyChildType) ?? String(onlyChildType)
+                    : onlyChildType;
+            const resolved = resolveOverrideVariantFromKind(childKind, onlyChildKind);
+            if (resolved !== undefined)
+                return resolved;
+            current = onlyChild;
+        }
+        return undefined;
+    };
+    const helperResolved = inferOverrideVariantFromHelperChildKinds(helperChildKind, [
+        kind,
+        cstNodeKindHint,
+        ...(namedChildKindHints ?? []),
+        firstNamedChildKindHint
+    ]);
+    const resolved = resolveOverrideVariantFromKind(childKind, kind) ??
+        resolveOverrideVariantFromKind(childKind, cstNodeKindHint) ??
         resolvedFromHints(namedChildKindHints ?? []) ??
-        resolveVariantFromKind(firstNamedChildKindHint) ??
+        resolveOverrideVariantFromKind(childKind, firstNamedChildKindHint) ??
+        helperResolved ??
+        resolveFromSingleChildSpine() ??
         inferFromStructuralMarkers(childKind, data, derivedConfig, parentKind, kindNameFromId, cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints);
     if (resolved !== undefined)
         return resolved;
@@ -1420,9 +1625,7 @@ function inferFromStructuralMarkers(childKind, data, derivedConfig, parentKind, 
         if (matched <= 0)
             continue;
         const coverage = matched / variantTokens.length;
-        if (!best ||
-            matched > best.score ||
-            (matched === best.score && coverage > best.coverage)) {
+        if (!best || matched > best.score || (matched === best.score && coverage > best.coverage)) {
             best = { variant, score: matched, coverage };
             ambiguous = false;
             continue;

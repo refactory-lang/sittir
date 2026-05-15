@@ -475,6 +475,38 @@ describe('Rule — deriveFields', () => {
 		const fields = deriveFields(rule);
 		expect(isMultiple(fields[0]!)).toBe(true);
 	});
+
+	it('preserves named fields across mixed field-or-child choices', () => {
+		const rule: Rule = {
+			type: 'seq',
+			members: [
+				{ type: 'string', value: 'default' },
+				{
+					type: 'choice',
+					members: [
+						{
+							type: 'field',
+							name: 'declaration',
+							content: { type: 'symbol', name: 'declaration' }
+						},
+						{ type: 'symbol', name: '_export_statement_default_decl_arm_default_kw_value' }
+					]
+				}
+			]
+		};
+
+		const slots = deriveSlots(rule);
+		const declaration = slots.find((slot) => slot.name === 'declaration');
+		const childSlot = slots.find((slot) => slot.source === 'inferred');
+
+		expect(declaration).toBeDefined();
+		expect(isRequired(declaration!)).toBe(false);
+		expect(childSlot).toBeDefined();
+		expect(isRequired(childSlot!)).toBe(false);
+		expect(childSlot!.values.map((value) => ('node' in value ? (value.node as { name?: string }).name : value.value))).toContain(
+			'_export_statement_default_decl_arm_default_kw_value'
+		);
+	});
 });
 
 describe('Assemble — naming', () => {

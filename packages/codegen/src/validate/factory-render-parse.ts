@@ -156,11 +156,18 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 		(result as unknown as Record<string, unknown>)[rawKey] = stripMemberValue(value);
 	}
 	if (data.$children) {
+		const childEntries = Array.isArray(data.$children) ? data.$children : [data.$children];
 		// Factory nodes only have named children — filter anonymous
-		const namedChildren = data.$children.filter(
+		const namedChildren = childEntries.filter(
 			(c): c is NodeMemberValue => typeof c !== 'object' || c === null || (c as AnyNodeData).$named !== false
 		);
-		result.$children = stripMemberValue(namedChildren) as readonly NodeMemberValue[];
+		if (namedChildren.length > 0) {
+			result.$children = (
+				Array.isArray(data.$children)
+					? stripMemberValue(namedChildren)
+					: stripMemberValue(namedChildren[0])
+			) as AnyNodeData['$children'];
+		}
 	}
 
 	return result;
@@ -439,18 +446,67 @@ function recordFactoryModuleLoadFailure(
  * @returns The first matching `TSNode`, or `null` if none is found.
  */
 function resolveNodeForKind(kind: string, rootNode: TSNode, nodeIdToEffectiveType: Map<string, string>): TSNode | null {
+	const direct = findFirst(rootNode, kind);
+	if (direct) return direct;
 	let node1: TSNode | null = null;
+	let bestWidth = Number.POSITIVE_INFINITY;
 	for (const [spanKey, et] of nodeIdToEffectiveType) {
 		if (et === kind) {
 			const colon = spanKey.indexOf(':');
 			const startIdx = parseInt(spanKey.slice(0, colon), 10);
 			const endIdx = parseInt(spanKey.slice(colon + 1), 10);
-			node1 = findNodeBySpan(rootNode, startIdx, endIdx);
-			if (node1) break;
+			const candidate = findNodeBySpan(rootNode, startIdx, endIdx);
+			if (!candidate) continue;
+			const width = endIdx - startIdx;
+			if (width < bestWidth) {
+				node1 = candidate;
+				bestWidth = width;
+			}
 		}
 	}
-	if (!node1) node1 = findFirst(rootNode, kind);
 	return node1;
+}
+
+function renderKindNameOf(node: AnyNodeData, kindNameFromId?: (id: number) => string | undefined): string | undefined {
+	if (typeof node.$type === 'string') return node.$type;
+	if (typeof node.$type === 'number') return kindNameFromId?.(node.$type) ?? String(node.$type);
+	return undefined;
+}
+
+function matchesRenderedKind(
+	node: AnyNodeData,
+	renderedKind: string,
+	kindNameFromId?: (id: number) => string | undefined
+): boolean {
+	const kind = renderKindNameOf(node, kindNameFromId);
+	if (!kind) return false;
+	if (kind === renderedKind) return true;
+	const strippedKind = kind.startsWith('_') ? kind.slice(1) : kind;
+	const strippedRendered = renderedKind.startsWith('_') ? renderedKind.slice(1) : renderedKind;
+	return strippedKind === strippedRendered;
+}
+
+function alignReadDataToRenderedKind(
+	rawReadData: AnyNodeData,
+	renderedKind: string,
+	kindNameFromId?: (id: number) => string | undefined
+): AnyNodeData {
+	if (matchesRenderedKind(rawReadData, renderedKind, kindNameFromId)) return rawReadData;
+	const childEntries = rawReadData.$children === undefined
+		? []
+		: Array.isArray(rawReadData.$children)
+			? rawReadData.$children
+			: [rawReadData.$children];
+	const matchingChildren =
+		childEntries.filter(
+			(child): child is AnyNodeData =>
+				child != null &&
+				typeof child === 'object' &&
+				(child as { $named?: boolean }).$named !== false &&
+				matchesRenderedKind(child as AnyNodeData, renderedKind, kindNameFromId)
+		);
+	if (matchingChildren.length === 1) return matchingChildren[0]!;
+	return { ...rawReadData, $type: renderedKind };
 }
 
 /**
@@ -791,7 +847,8 @@ export async function validateFactoryRenderParse(
 		if (tree1.rootNode.hasError) continue;
 
 		const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
-		const kinds = new Set(collectKinds(tree1.rootNode));
+		const rawKinds = new Set(collectKinds(tree1.rootNode));
+		const kinds = new Set(rawKinds);
 		const nodeIdToEffectiveType = new Map<string, string>();
 		if (readTreeNodeFn) {
 			const wrappedRoot = readTreeNodeFn(handle);
@@ -850,11 +907,18 @@ export async function validateFactoryRenderParse(
 			// the actual string tree-sitter reported for this node.
 			const targetKind = node1.type;
 			const effective = nodeIdToEffectiveType.get(`${node1.startIndex}:${node1.endIndex}`);
-			// Apply alias rewriting only when effective kind differs from the canonical kind.
-			const readData =
-				effective && effective !== canonicalKind ? { ...rawReadData, $type: rawReadData.$type } : rawReadData;
 			// renderedKind: canonical form used for factory lookup and error messages.
-			const renderedKind = effective ?? canonicalKind;
+			// Only wrapped-only/internal kinds should borrow the effective kind. For
+			// direct CST kinds like `expression_statement` or `module`, overriding to a
+			// same-span promoted child kind makes the validator run the wrong factory
+			// against wrapper-shaped data.
+			const renderedKind = rawKinds.has(kind) ? canonicalKind : (effective ?? canonicalKind);
+			// Keep nodeToConfig's parent-kind / slot / polymorph lookups aligned with
+			// the kind we're actually validating. If readData retains the outer wrapper
+			// kind here (for example `expression_statement` while renderedKind is
+			// `assignment`), nodeToConfig derives the wrong $variant and config surface
+			// before the factory is called.
+			const readData = alignReadDataToRenderedKind(rawReadData, renderedKind, kindNameFromId);
 			const cstNamedChildKinds = namedChildKinds(node1);
 
 			const factoryData = buildFactoryNodeData(

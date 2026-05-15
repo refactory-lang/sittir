@@ -1289,6 +1289,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'import_from_statement': [
     { name: 'moduleName', required: true, multiple: false },
+    { name: 'names', required: false, multiple: true },
   ],
   'import_statement': [
     { name: 'names', required: true, multiple: true },

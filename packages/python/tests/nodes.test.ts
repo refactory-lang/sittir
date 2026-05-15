@@ -594,7 +594,7 @@ describe('if_statement', () => {
 
 describe('import_from_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.importFromStatement({ moduleName: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, children: [{ $type: TSKindId.WildcardImport, $text: '*', $source: 2, $named: true } as any] as any });
+    const node = ir.importFromStatement({ moduleName: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ImportFromStatement);
     expect(node.$source).toBe(2);
   });

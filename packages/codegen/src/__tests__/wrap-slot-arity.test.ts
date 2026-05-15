@@ -127,6 +127,59 @@ function makeOptionalThenRequiredChildNodeMap() {
 	return makeNodeMapWith(nodes);
 }
 
+function makeMultiSiblingFieldNodeMap() {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'field',
+				name: 'declaration',
+				content: {
+					type: 'choice',
+					members: [
+						{ type: 'symbol', name: 'identifier' },
+						{
+							type: 'seq',
+							members: [
+								{ type: 'string', value: 'module' },
+								{ type: 'symbol', name: 'property_identifier' },
+								{ type: 'string', value: ':' },
+								{ type: 'symbol', name: 'object_type' }
+							]
+						}
+					]
+				}
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('ambient_like_parent', new AssembledBranch('ambient_like_parent', parentRule, parentRule));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('property_identifier', new AssembledPattern('property_identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('object_type', new AssembledPattern('object_type', { type: 'pattern', value: '\\{\\}' }));
+	return makeNodeMapWith(nodes);
+}
+
+function makeHiddenWrapperChildNodeMap() {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: '_suite' }]
+	};
+	const suiteRule: ChoiceRule = {
+		type: 'choice',
+		members: [
+			{ type: 'symbol', name: 'block' },
+			{ type: 'symbol', name: '_newline' }
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('except_like_parent', new AssembledBranch('except_like_parent', parentRule, parentRule));
+	nodes.set('_suite', new AssembledBranch('_suite', suiteRule, suiteRule));
+	nodes.set('block', new AssembledPattern('block', { type: 'pattern', value: 'block' }));
+	nodes.set('_newline', new AssembledPattern('_newline', { type: 'pattern', value: '\\n' }));
+	return makeNodeMapWith(nodes);
+}
+
 describe('wrap emitter slot arity', () => {
 	it('normalizes named singular and repeated slots from grammar-derived cardinality', () => {
 		const singularSource = emitWrap({ grammar: 'synth', nodeMap: makeRequiredSingleFieldNodeMap() });
@@ -147,17 +200,28 @@ describe('wrap emitter slot arity', () => {
 		);
 	});
 
-	it('derives unnamed children optionality from merged slot values', () => {
+	it('keeps multi-slot unnamed children list-shaped while deriving requiredness from child surfaces', () => {
 		const source = emitWrap({ grammar: 'synth', nodeMap: makeOptionalThenRequiredChildNodeMap() });
 
 		expect(source).toContain(
-			'$children: normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","number_literal"]), "children", false, data.$type),'
+			'$children: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","number_literal"]), false, "children"),'
 		);
-		expect(source).toContain('children() { return drillIn<');
-		expect(source).not.toContain('children() { return drillInAll<');
-		expect(source).toContain(
-			'$with: { $child: (v: (T.Identifier | T.NumberLiteral)) => wrapOptionalThenRequiredParent({ ...data, $children: v }, tree) },'
-		);
+		expect(source).toContain('children() { return drillInAll<');
+		expect(source).not.toContain('children() { return drillIn<');
+	});
+
+	it('keeps multi-sibling fields repeated at the wrap surface', () => {
+		const source = emitWrap({ grammar: 'synth', nodeMap: makeMultiSiblingFieldNodeMap() });
+
+		expect(source).toContain('_declaration: normalizeRepeatedWrapSlot(data._declaration, true, "declaration"),');
+	});
+
+	it('expands hidden wrapper child kinds to concrete runtime kinds for wrap filtering', () => {
+		const source = emitWrap({ grammar: 'synth', nodeMap: makeHiddenWrapperChildNodeMap() });
+
+		expect(source).toContain('"block"');
+		expect(source).toContain('"_suite"');
+		expect(source).toContain('"suite"');
 	});
 
 	it('emits singular-mismatch guards for wrapped children', () => {
@@ -175,6 +239,7 @@ describe('wrap emitter slot arity', () => {
 		expect(source).toContain(
 			'return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T);'
 		);
+		expect(source).not.toContain('return wrapNode(e, tree) as unknown as T;');
 	});
 
 	it('expands hidden supertype members transitively for wrap child filtering', () => {
@@ -193,7 +258,7 @@ describe('wrap emitter slot arity', () => {
 		expect(source).toContain('if (members?.has(kind)) return true;');
 		expect(source).toContain('if (stripped !== undefined && members?.has(stripped)) return true;');
 		expect(source).toContain(
-			'$children: normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["expression"]), "children", true, data.$type),'
+			'$children: normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["expression","identifier"]), "children", true, data.$type),'
 		);
 	});
 });

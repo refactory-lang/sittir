@@ -281,6 +281,12 @@ it('leaf transport napi impls accept strings, structured objects, and boolean-pr
 		expect(src).toContain('if let Ok(present) = bool::from_napi_value(env, napi_val) {');
 		expect(src).toContain('received false; omit the field instead of sending false');
 	});
+
+	it('leaf token transport napi impls recover literal text from numeric kind ids', async () => {
+		const src = await getTypescriptTransportRs();
+		expect(src).toContain('} else if u16::from_napi_value(env, napi_val).is_ok() {');
+		expect(src).toContain('obj.get("$text")?.unwrap_or_else(|| "+".to_string())');
+	});
 });
 
 async function buildRustFixtureForParity() {

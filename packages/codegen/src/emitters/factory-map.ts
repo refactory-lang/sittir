@@ -19,10 +19,12 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/node-map.ts';
 import {
 	allSlotsOf,
-	deriveMergedSlotCardinality,
+	deriveUnnamedChildrenCardinality,
 	deriveSlotCardinality,
 	structuralChildrenOf,
-	structuralFieldsOf
+	structuralFieldsOf,
+	isNodeRef,
+	isUnresolvedRef
 } from '../compiler/node-map.ts';
 import { classifyFactoryShape, resolveFactoryFieldNames } from './shared.ts';
 import type { FactoryShape } from './shared.ts';
@@ -68,10 +70,11 @@ export interface FactoryMapData {
 
 export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	const aliasSet = collectAliasSourceKinds(nodeMap);
+	const overrideHelperKinds = collectOverridePolymorphHelperKinds(nodeMap);
 
 	const factoryShapes: Record<string, FactoryShape> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (kind.startsWith('_') && !aliasSet.has(kind) && !overrideHelperKinds.has(kind)) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		const shape = shapeOf(node, nodeMap);
 		if (shape) factoryShapes[kind] = shape;
@@ -89,14 +92,14 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
 	const factoryFields: Record<string, readonly string[]> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (kind.startsWith('_') && !aliasSet.has(kind) && !overrideHelperKinds.has(kind)) continue;
 		const fieldNames = resolveFactoryFieldNames(node, nodeMap);
 		if (fieldNames) factoryFields[kind] = fieldNames;
 	}
 
 	const factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (kind.startsWith('_') && !aliasSet.has(kind) && !overrideHelperKinds.has(kind)) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		const slots: Record<string, FactorySlotMeta> = {};
 		for (const field of structuralFieldsOf(node)) {
@@ -104,7 +107,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		}
 		const children = structuralChildrenOf(node);
 		if (children.length > 0) {
-			slots.children = createFactorySlotMeta(true, children.length, deriveMergedSlotCardinality(children));
+			slots.children = createFactorySlotMeta(true, children.length, deriveUnnamedChildrenCardinality(children));
 		}
 		if (Object.keys(slots).length > 0) factorySlots[kind] = slots;
 	}
@@ -130,16 +133,31 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 			continue;
 		}
 		if (node.modelType !== 'polymorph') continue;
-		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		if (kind.startsWith('_') && !aliasSet.has(kind) && !overrideHelperKinds.has(kind)) continue;
 		if (node.source === 'override') {
 			const childKind: Record<string, string> = {};
+			const helperKind: Record<string, string> = {};
+			const helperChildKind: Record<string, readonly string[]> = {};
 			for (const form of node.formRules) {
 				const discriminatorKinds = form.discriminatorKinds ?? [`${kind}_${form.name}`];
 				for (const runtimeKind of expandRuntimeDiscriminatorKinds(discriminatorKinds, nodeMap)) {
 					childKind[runtimeKind] = form.name;
 				}
+				const formHelperKind = `_${kind}_${form.name}`;
+				if (nodeMap.nodes.has(formHelperKind)) {
+					helperKind[form.name] = formHelperKind;
+					const surfaceKinds = collectHelperChildKinds(formHelperKind, nodeMap);
+					if (surfaceKinds.length > 0) {
+						helperChildKind[form.name] = surfaceKinds;
+					}
+				}
 			}
-			polymorphVariants[kind] = { source: 'override', childKind };
+			polymorphVariants[kind] = {
+				source: 'override',
+				childKind,
+				...(Object.keys(helperKind).length > 0 ? { helperKind } : {}),
+				...(Object.keys(helperChildKind).length > 0 ? { helperChildKind } : {})
+			};
 		} else {
 			const fields: Record<string, readonly string[]> = {};
 			const seenSignatures = new Map<string, string>();
@@ -170,6 +188,34 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	}
 
 	return { factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants };
+}
+
+function collectOverridePolymorphHelperKinds(nodeMap: NodeMap): Set<string> {
+	const out = new Set<string>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node.modelType !== 'polymorph' || node.source !== 'override') continue;
+		for (const form of node.forms) {
+			const helperKind = `_${kind}_${form.name}`;
+			if (nodeMap.nodes.has(helperKind)) out.add(helperKind);
+		}
+	}
+	return out;
+}
+
+function collectHelperChildKinds(kind: string, nodeMap: NodeMap): string[] {
+	const node = nodeMap.nodes.get(kind);
+	if (!node || !('fields' in node)) return [];
+	const out = new Set<string>();
+	for (const slot of node.fields) {
+		for (const value of slot.values) {
+			if (!isNodeRef(value)) continue;
+			const targetKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+			for (const runtimeKind of expandRuntimeDiscriminatorKinds([targetKind], nodeMap)) {
+				out.add(runtimeKind);
+			}
+		}
+	}
+	return [...out];
 }
 
 export function emitFactoryMap(config: EmitFactoryMapConfig): string {

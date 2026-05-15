@@ -1543,6 +1543,58 @@
       "name": "_line_comment_doc",
       "fields": [
         {
+          "name": "outer",
+          "propertyName": "outer",
+          "paramName": "outer",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_outer_line_doc_comment_marker",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_outer_line_doc_comment_marker"
+            ]
+          },
+          "aliasSources": {
+            "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
+          }
+        },
+        {
+          "name": "inner",
+          "propertyName": "inner",
+          "paramName": "inner",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_inner_line_doc_comment_marker",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_inner_line_doc_comment_marker"
+            ]
+          },
+          "aliasSources": {
+            "inner_doc_comment_marker": "_inner_line_doc_comment_marker"
+          }
+        },
+        {
           "name": "doc",
           "propertyName": "doc",
           "paramName": "doc",
@@ -1569,29 +1621,7 @@
           }
         }
       ],
-      "children": [
-        {
-          "name": "outer_line_doc_comment_marker",
-          "propertyName": "outerLineDocCommentMarker",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_outer_line_doc_comment_marker",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_inner_line_doc_comment_marker",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "_line_comment_regular_dslash",
@@ -4105,12 +4135,11 @@
               "_path"
             ]
           }
-        }
-      ],
-      "children": [
+        },
         {
-          "name": "expression",
-          "propertyName": "expression",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -4120,16 +4149,44 @@
               "multiplicity": "optional",
               "name": "_expression",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_expression"
+            ]
+          }
+        },
+        {
+          "name": "arguments",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "delim_token_tree",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "delim_token_tree"
+            ]
+          },
+          "aliasSources": {
+            "token_tree": "delim_token_tree"
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "attribute_item",
@@ -4482,6 +4539,58 @@
       "hidden": false,
       "fields": [
         {
+          "name": "outer",
+          "propertyName": "outer",
+          "paramName": "outer",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_outer_block_doc_comment_marker",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_outer_block_doc_comment_marker"
+            ]
+          },
+          "aliasSources": {
+            "outer_doc_comment_marker": "_outer_block_doc_comment_marker"
+          }
+        },
+        {
+          "name": "inner",
+          "propertyName": "inner",
+          "paramName": "inner",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_inner_block_doc_comment_marker",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_inner_block_doc_comment_marker"
+            ]
+          },
+          "aliasSources": {
+            "inner_doc_comment_marker": "_inner_block_doc_comment_marker"
+          }
+        },
+        {
           "name": "doc",
           "propertyName": "doc",
           "paramName": "doc",
@@ -4508,29 +4617,7 @@
           }
         }
       ],
-      "children": [
-        {
-          "name": "outer_block_doc_comment_marker",
-          "propertyName": "outerBlockDocCommentMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_outer_block_doc_comment_marker",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_inner_block_doc_comment_marker",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "boolean_literal",

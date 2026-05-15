@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 432,
+  "nodeCount": 436,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -45,6 +45,9 @@
     "||"
   ],
   "polymorphFormKinds": [
+    "ambient_declaration__form_declaration",
+    "ambient_declaration__form_global",
+    "ambient_declaration__form_module",
     "arrow_function__form__call_signature",
     "arrow_function__form_parameter",
     "call_expression__form_call",
@@ -417,6 +420,151 @@
         "set",
         "*"
       ]
+    },
+    {
+      "kind": "_ambient_declaration_declaration",
+      "modelType": "branch",
+      "typeName": "_AmbientDeclarationDeclaration",
+      "factoryName": "_ambientDeclarationDeclaration",
+      "irKey": "_ambientDeclarationDeclaration",
+      "hidden": false,
+      "fields": [],
+      "children": [
+        {
+          "name": "declaration",
+          "propertyName": "declaration",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "declaration",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_ambient_declaration_global",
+      "modelType": "group",
+      "typeName": "AmbientDeclarationGlobal",
+      "factoryName": "_ambientDeclarationGlobal",
+      "irKey": "ambientDeclarationGlobal",
+      "hidden": false,
+      "name": "_ambient_declaration_global",
+      "fields": [
+        {
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "statement_block",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "statement_block"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_ambient_declaration_module",
+      "modelType": "group",
+      "typeName": "AmbientDeclarationModule",
+      "factoryName": "_ambientDeclarationModule",
+      "irKey": "ambientDeclarationModule",
+      "hidden": false,
+      "name": "_ambient_declaration_module",
+      "fields": [
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier"
+            ]
+          },
+          "aliasSources": {
+            "property_identifier": "identifier"
+          }
+        },
+        {
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type"
+            ]
+          }
+        },
+        {
+          "name": "semicolon",
+          "propertyName": "semicolon",
+          "paramName": "semicolon",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_semicolon",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_semicolon"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_arrow_function__call_signature",
@@ -1258,25 +1406,42 @@
               "decorator"
             ]
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "declaration",
           "propertyName": "declaration",
-          "required": true,
+          "paramName": "declaration",
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "declaration",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "declaration"
+            ]
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "export_statement_default_decl_arm_default_kw",
+          "propertyName": "exportStatementDefaultDeclArmDefaultKw",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_export_statement_default_decl_arm_default_kw",
               "unresolved": true
             }
@@ -1292,24 +1457,42 @@
       "irKey": "exportStatementDefaultDeclArmDefaultKw",
       "hidden": false,
       "name": "_export_statement_default_decl_arm_default_kw",
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "declaration",
           "propertyName": "declaration",
-          "required": true,
+          "paramName": "declaration",
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "declaration",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "declaration"
+            ]
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "export_statement_default_decl_arm_default_kw_value",
+          "propertyName": "exportStatementDefaultDeclArmDefaultKwValue",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_export_statement_default_decl_arm_default_kw_value",
               "unresolved": true
             }
@@ -4848,16 +5031,111 @@
     },
     {
       "kind": "ambient_declaration",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "AmbientDeclaration",
       "factoryName": "ambientDeclaration",
       "irKey": "ambientDeclaration",
       "hidden": false,
-      "fields": [
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "ambient_declaration_declaration",
+        "ambient_declaration_global",
+        "ambient_declaration_module"
+      ],
+      "forms": [
+        {
+          "kind": "ambient_declaration__form_declaration",
+          "name": "declaration",
+          "typeName": "AmbientDeclarationUFormDeclaration",
+          "factoryName": "ambientDeclarationUFormDeclaration",
+          "irKey": "ambientDeclarationUFormDeclaration",
+          "parentKind": "ambient_declaration",
+          "fields": [],
+          "children": [
+            {
+              "name": "ambient_declaration_declaration",
+              "propertyName": "ambientDeclarationDeclaration",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_ambient_declaration_declaration",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "ambient_declaration__form_global",
+          "name": "global",
+          "typeName": "AmbientDeclarationUFormGlobal",
+          "factoryName": "ambientDeclarationUFormGlobal",
+          "irKey": "ambientDeclarationUFormGlobal",
+          "parentKind": "ambient_declaration",
+          "fields": [],
+          "children": [
+            {
+              "name": "ambient_declaration_global",
+              "propertyName": "ambientDeclarationGlobal",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_ambient_declaration_global",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "ambient_declaration__form_module",
+          "name": "module",
+          "typeName": "AmbientDeclarationUFormModule",
+          "factoryName": "ambientDeclarationUFormModule",
+          "irKey": "ambientDeclarationUFormModule",
+          "parentKind": "ambient_declaration",
+          "fields": [],
+          "children": [
+            {
+              "name": "ambient_declaration_module",
+              "propertyName": "ambientDeclarationModule",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_ambient_declaration_module",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "ambient_declaration_declaration",
+      "modelType": "branch",
+      "typeName": "AmbientDeclarationDeclaration",
+      "factoryName": "ambientDeclarationDeclaration",
+      "irKey": "ambientDeclarationDeclaration",
+      "hidden": false,
+      "fields": [],
+      "children": [
         {
           "name": "declaration",
           "propertyName": "declaration",
-          "paramName": "declaration",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4867,59 +5145,10 @@
               "multiplicity": "single",
               "name": "declaration",
               "unresolved": true
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "global"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "statement_block",
-              "unresolved": true
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "module"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "type",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_semicolon",
-              "unresolved": true
             }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "declaration",
-              "statement_block",
-              "identifier",
-              "type",
-              "_semicolon"
-            ]
-          },
-          "aliasSources": {
-            "property_identifier": "identifier"
-          }
+          ]
         }
-      ],
-      "children": []
+      ]
     },
     {
       "kind": "amp",
@@ -8070,11 +8299,11 @@
       "factoryName": "enumBody",
       "irKey": "enumBody",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
-          "name": "property_name",
-          "propertyName": "propertyNames",
+          "name": "name",
+          "propertyName": "names",
+          "paramName": "names",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -8084,7 +8313,25 @@
               "multiplicity": "array",
               "name": "_property_name",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_property_name"
+            ]
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "enum_assignment",
+          "propertyName": "enumAssignments",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -9658,7 +9905,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "enriched",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -9771,11 +10018,12 @@
               "type_predicate_annotation"
             ]
           }
-        },
+        }
+      ],
+      "children": [
         {
           "name": "semicolon",
           "propertyName": "semicolon",
-          "paramName": "semicolon",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -9792,18 +10040,9 @@
               "name": "_function_signature_automatic_semicolon",
               "unresolved": true
             }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_semicolon",
-              "_function_signature_automatic_semicolon"
-            ]
-          }
+          ]
         }
-      ],
-      "children": []
+      ]
     },
     {
       "kind": "function_type",
@@ -11090,32 +11329,32 @@
         },
         {
           "name": "from_clause",
-          "propertyName": "fromClause",
-          "paramName": "fromClause",
+          "propertyName": "fromClauses",
+          "paramName": "fromClauses",
           "required": true,
-          "multiple": false,
-          "nonEmpty": false,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "nonEmptyArray",
               "name": "import_clause",
               "unresolved": true
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "nonEmptyArray",
               "value": "from"
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "nonEmptyArray",
               "name": "string",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "nonEmptyArray",
               "name": "import_require_clause",
               "unresolved": true
             }
@@ -12707,6 +12946,29 @@
           }
         },
         {
+          "name": "optional_chain",
+          "propertyName": "optionalChain",
+          "paramName": "optionalChain",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_optional_chain",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_optional_chain"
+            ]
+          }
+        },
+        {
           "name": "property",
           "propertyName": "property",
           "paramName": "property",
@@ -12740,28 +13002,7 @@
           }
         }
       ],
-      "children": [
-        {
-          "name": "optional_chain",
-          "propertyName": "optionalChain",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "."
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_optional_chain",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "meta_property",

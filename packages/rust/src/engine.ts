@@ -12,7 +12,6 @@ import {
 	type EngineOptions
 } from '@sittir/common/engine';
 import { KIND_NAMES } from './types.js';
-import { toNativeRenderTransport } from './utils.js';
 import { getActiveBackend } from './backend.js';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -36,7 +35,6 @@ export function createEngine(options?: EngineOptions): SittirEngineLike {
 			{
 				templatesPath: join(__dirname, '..', 'templates'),
 				kindNames: KIND_NAMES,
-				toNativeRenderTransport,
 				getActiveBackend,
 			},
 			options

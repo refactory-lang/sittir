@@ -115,7 +115,7 @@ export declare function wrapForReparse(rendered: string, kind: string, grammar: 
     targetKind?: string;
 }): WrapForReparseResult | null;
 export declare const WASM_PATHS: Record<string, string>;
-/** Relative path from codegen/src/validators to built language package wrap.js */
+/** Relative path from codegen validators to grammar source wrap modules. */
 export declare const WRAP_MODULE_PATHS: Record<string, string>;
 /**
  * Dynamic import of a grammar's `readTreeNode` entry point. Used by

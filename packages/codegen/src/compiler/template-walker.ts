@@ -32,6 +32,7 @@
 import type { Rule, ChoiceRule } from './rule.ts';
 import { isLinkSymbol, literalTextOf } from './rule.ts';
 import { isSyntheticFieldWrapper, unwrapStructuralPassthroughs } from './node-map.ts';
+import { fieldContentIsMultiSibling } from './field-shape.ts';
 
 /**
  * Extract anonymous-string literals flanking the main content of a field
@@ -93,77 +94,6 @@ function wrappedRepeatSeparator(content: Rule): string | null {
 	}
 }
 
-/**
- * True when a field's content would have tree-sitter emit MULTIPLE
- * children under the same field name at parse time. Tree-sitter's
- * field inheritance rule: a `FIELD(name, seq(A, B, C))` causes A, B,
- * AND C to all be emitted as children of the parent carrying
- * `field=name`.
- *
- * @remarks
- * Only fires for seqs (or choice branches containing seqs) with 2+
- * "structural" members — members that surface as children at runtime
- * (symbol, supertype, named alias, string literal, nested field, seq
- * of same). Pure wrappers (optional / variant / clause / group / token
- * / terminal) are unwrapped. Anonymous tokens (plain string literals
- * inside a seq) count toward the structural-member tally because
- * they also inherit the field name from tree-sitter's perspective —
- * the ambient_declaration `module.exports:` shape has `module`, `.`,
- * `property_identifier`, `:`, `object_type` all under
- * `field=declaration`.
- *
- * When the field carries a multi-sibling seq, the walker must emit
- * `$$$NAME` (multi-slot) instead of `$NAME` so the renderer joins
- * the array instead of picking item[0] and silently dropping the
- * rest.
- */
-function fieldContentIsMultiSibling(content: Rule): boolean {
-	// Unwrap structural passthroughs that don't themselves contribute
-	// sibling positions.
-	const core = unwrapStructuralPassthroughs(content);
-	if (core.type === 'choice') {
-		return core.members.some((m) => fieldContentIsMultiSibling(m));
-	}
-	if (core.type !== 'seq') return false;
-	// Count NAMED structural members — anything tree-sitter would emit
-	// as a content child. String literals and pattern terminals are
-	// flanking punctuation (`label + ':'`), not independent sibling
-	// values — they belong inside the field as `extractFlankingLiterals`
-	// handles separately. Only count members that produce a
-	// distinct child reference at runtime.
-	let count = 0;
-	for (const m of core.members) {
-		let unwrapped: Rule = m;
-		while (
-			unwrapped.type === 'optional' ||
-			unwrapped.type === 'variant' ||
-			unwrapped.type === 'clause' ||
-			unwrapped.type === 'group' ||
-			unwrapped.type === 'token' ||
-			unwrapped.type === 'terminal'
-		) {
-			unwrapped = (unwrapped as { content: Rule }).content;
-		}
-		switch (unwrapped.type) {
-			case 'symbol':
-				if (isLinkSymbol(unwrapped)) break;
-				count++;
-				if (count >= 2) return true;
-				break;
-			case 'supertype':
-			case 'alias':
-			case 'field':
-			case 'repeat':
-			case 'repeat1':
-				count++;
-				if (count >= 2) return true;
-				break;
-			default:
-				break;
-		}
-	}
-	return false;
-}
 // ---------------------------------------------------------------------------
 // Template walker — shared by AssembledBranch/Container/Group.renderTemplate
 // ---------------------------------------------------------------------------

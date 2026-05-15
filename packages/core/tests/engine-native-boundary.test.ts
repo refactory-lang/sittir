@@ -1,19 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createNativeEngine, type GrammarEngineConfig } from '../../common/src/engine.ts';
-import type { AnyNodeData } from '@sittir/types';
 
 describe('createNativeEngine native boundary', () => {
-	it('projects render inputs before native validation', () => {
-		let projected = false;
+	it('passes render inputs straight through to the native engine', () => {
 		const render = vi.fn((_node: unknown) => 'ok');
-		const toNativeRenderTransport = vi.fn((node: AnyNodeData) => {
-			projected = true;
-			return node;
-		});
 		const config = {
 			templatesPath: '.',
 			kindNames: new Map<number, string>(),
-			toNativeRenderTransport,
 			getActiveBackend: () => ({
 				name: 'native' as const,
 				hashMatch: true as const,
@@ -62,11 +55,8 @@ describe('createNativeEngine native boundary', () => {
 		expect(engine).not.toBeNull();
 		const handle = engine!.render(invalid);
 
-		expect(toNativeRenderTransport).toHaveBeenCalledTimes(1);
-		expect(toNativeRenderTransport).toHaveBeenCalledWith(invalid);
-		expect(render).not.toHaveBeenCalled();
-		expect(projected).toBe(true);
 		expect(handle.toString()).toBe('ok');
 		expect(render).toHaveBeenCalledTimes(1);
+		expect(render).toHaveBeenCalledWith(invalid);
 	});
 });

@@ -92,6 +92,26 @@ pub mod filters {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_ambient_declaration_declaration.jinja", escape = "none")]
+pub struct _AmbientDeclarationDeclarationTemplate<'a> {
+    pub children: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_ambient_declaration_global.jinja", escape = "none")]
+pub struct AmbientDeclarationGlobalTemplate<'a> {
+    pub body: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_ambient_declaration_module.jinja", escape = "none")]
+pub struct AmbientDeclarationModuleTemplate<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub semicolon: OptionalNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_arrow_function__call_signature.jinja", escape = "none")]
 pub struct _ArrowFunctionUCallSignatureTemplate<'a> {
     pub parameters: SingleNonterminalView<'a>,
@@ -169,14 +189,14 @@ pub struct ExportStatementDefaultDeclArmDefaultKwValueTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_default_decl_arm_default_kw.jinja", escape = "none")]
 pub struct ExportStatementDefaultDeclArmDefaultKwTemplate<'a> {
-    pub children: SingleNonterminalView<'a>,
+    pub children: OptionalNonterminalView<'a>,
     pub declaration: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_default_decl_arm.jinja", escape = "none")]
 pub struct ExportStatementDefaultDeclArmTemplate<'a> {
-    pub children: SingleNonterminalView<'a>,
+    pub children: OptionalNonterminalView<'a>,
     pub declaration: OptionalNonterminalView<'a>,
     pub decorator: ListNonterminalView<'a>,
 }
@@ -451,10 +471,15 @@ pub struct AddingTypeAnnotationTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "ambient_declaration_declaration.jinja", escape = "none")]
+pub struct AmbientDeclarationDeclarationTemplate<'a> {
+    pub children: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "ambient_declaration.jinja", escape = "none")]
 pub struct AmbientDeclarationTemplate<'a> {
-    pub children: OptionalNonterminalView<'a>,
-    pub declaration: SingleNonterminalView<'a>,
+    pub children: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -750,7 +775,6 @@ pub struct EnumAssignmentTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "enum_body.jinja", escape = "none")]
 pub struct EnumBodyTemplate<'a> {
-    pub children: ListNonterminalView<'a>,
     pub name: ListNonterminalView<'a>,
 }
 
@@ -893,12 +917,11 @@ pub struct FunctionExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "function_signature.jinja", escape = "none")]
 pub struct FunctionSignatureTemplate<'a> {
-    pub children: OptionalNonterminalView<'a>,
+    pub children: SingleNonterminalView<'a>,
     pub async_marker: OptionalNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
     pub parameters: SingleNonterminalView<'a>,
     pub return_type: OptionalNonterminalView<'a>,
-    pub semicolon: SingleNonterminalView<'a>,
     pub type_parameters: OptionalNonterminalView<'a>,
 }
 
@@ -1166,7 +1189,6 @@ pub struct MappedTypeClauseTemplate<'a> {
 #[template(path = "member_expression.jinja", escape = "none")]
 pub struct MemberExpressionTemplate<'a> {
     pub object: SingleNonterminalView<'a>,
-    pub optional_chain: OptionalNonterminalView<'a>,
     pub property: SingleNonterminalView<'a>,
 }
 

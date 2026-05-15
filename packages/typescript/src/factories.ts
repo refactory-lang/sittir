@@ -29,6 +29,54 @@ const _leafRe_unescapedDoubleStringFragment = /^(?:[^"\\\r\n]+)/u;
 const _leafRe_unescapedSingleJsxStringFragment = /^(?:([^'&]|&[^#A-Za-z])+)/u;
 const _leafRe_unescapedSingleStringFragment = /^(?:[^'\\\r\n]+)/u;
 
+export function _ambientDeclarationDeclaration(child: T.Declaration) {
+  const children = [child];
+  return withMethods({
+    $type: TSKindId._AmbientDeclarationDeclaration as const,
+    $source: 2 as const,
+    $named: true as const,
+    $children: children,
+    children() { return children; },
+    $with: { $child: (v: T.Declaration) => _ambientDeclarationDeclaration(v) },
+  }, methodsEngine);
+}
+
+export function _ambientDeclarationGlobal(config: T.AmbientDeclarationGlobal.Config) {
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.AmbientDeclarationGlobal as const,
+    $source: 2 as const,
+    $named: true as const,
+    _body,
+    body() { return _body; },
+    $with: {
+      body: (value: T.StatementBlock) => _ambientDeclarationGlobal({ ...config, body: value }),
+    },
+  }, methodsEngine);
+}
+
+export function _ambientDeclarationModule(config: T.AmbientDeclarationModule.Config) {
+  const _name = config.name;
+  const _type = config.type;
+  const _semicolon = config.semicolon;
+  return withMethods({
+    $type: TSKindId.AmbientDeclarationModule as const,
+    $source: 2 as const,
+    $named: true as const,
+    _name,
+    _type,
+    _semicolon,
+    name() { return _name; },
+    type() { return _type; },
+    semicolon() { return _semicolon; },
+    $with: {
+      name: (value: T.Identifier) => _ambientDeclarationModule({ ...config, name: value }),
+      type: (value: T.Type) => _ambientDeclarationModule({ ...config, type: value }),
+      semicolon: (value?: T.Semicolon) => _ambientDeclarationModule({ ...config, semicolon: value }),
+    },
+  }, methodsEngine);
+}
+
 export function _arrowFunctionUCallSignature(config: T._ArrowFunctionUCallSignature.Config) {
   const _type_parameters = config.typeParameters;
   const _parameters = config.parameters;
@@ -215,34 +263,42 @@ export function _classHeritageImplementsClause(child: T.ImplementsClause) {
   }, methodsEngine);
 }
 
-export function _exportStatementDefaultDeclArm(config: T.ExportStatementDefaultDeclArm.Config) {
+export function _exportStatementDefaultDeclArm(config: Partial<T.ExportStatementDefaultDeclArm.Config> = {}) {
   const children = _configChildren<T.ExportStatementDefaultDeclArm['$children']>(config, [] as unknown as T.ExportStatementDefaultDeclArm['$children']);
   const _decorator = config.decorator;
+  const _declaration = config.declaration;
   return withMethods({
     $type: TSKindId.ExportStatementDefaultDeclArm as const,
     $source: 2 as const,
     $named: true as const,
     _decorator,
+    _declaration,
     $children: children,
     decorators() { return _decorator; },
+    declaration() { return _declaration; },
     children() { return children; },
     $with: {
       decorators: (...values: T.Decorator[]) => _exportStatementDefaultDeclArm({ ...config, decorator: values }),
-      children: (...items: readonly [((T.Declaration | T.ExportStatementDefaultDeclArmDefaultKw))]) => _exportStatementDefaultDeclArm({ ...config, children: items } as unknown as Parameters<typeof _exportStatementDefaultDeclArm>[0]),
+      declaration: (value?: T.Declaration) => _exportStatementDefaultDeclArm({ ...config, declaration: value }),
+      children: (...items: readonly [T.ExportStatementDefaultDeclArmDefaultKw]) => _exportStatementDefaultDeclArm({ ...config, children: items } as unknown as Parameters<typeof _exportStatementDefaultDeclArm>[0]),
     },
   }, methodsEngine);
 }
 
-export function _exportStatementDefaultDeclArmDefaultKw(config: T.ExportStatementDefaultDeclArmDefaultKw.Config) {
+export function _exportStatementDefaultDeclArmDefaultKw(config: Partial<T.ExportStatementDefaultDeclArmDefaultKw.Config> = {}) {
   const children = _configChildren<T.ExportStatementDefaultDeclArmDefaultKw['$children']>(config, [] as unknown as T.ExportStatementDefaultDeclArmDefaultKw['$children']);
+  const _declaration = config.declaration;
   return withMethods({
     $type: TSKindId.ExportStatementDefaultDeclArmDefaultKw as const,
     $source: 2 as const,
     $named: true as const,
+    _declaration,
     $children: children,
+    declaration() { return _declaration; },
     children() { return children; },
     $with: {
-      children: (...items: readonly [((T.Declaration | T.ExportStatementDefaultDeclArmDefaultKwValue))]) => _exportStatementDefaultDeclArmDefaultKw({ ...config, children: items } as unknown as Parameters<typeof _exportStatementDefaultDeclArmDefaultKw>[0]),
+      declaration: (value?: T.Declaration) => _exportStatementDefaultDeclArmDefaultKw({ ...config, declaration: value }),
+      children: (...items: readonly [T.ExportStatementDefaultDeclArmDefaultKwValue]) => _exportStatementDefaultDeclArmDefaultKw({ ...config, children: items } as unknown as Parameters<typeof _exportStatementDefaultDeclArmDefaultKw>[0]),
     },
   }, methodsEngine);
 }
@@ -1033,16 +1089,73 @@ export function addingTypeAnnotation(type: T.AddingTypeAnnotation.Config['type']
   }, methodsEngine);
 }
 
-export function ambientDeclaration(declaration: T.AmbientDeclaration.Config['declaration']) {
-  const _declaration = declaration;
+export function ambientDeclarationDeclaration(child: T.Declaration) {
+  const children = [child];
+  return withMethods({
+    $type: TSKindId._AmbientDeclarationDeclaration as const,
+    $source: 2 as const,
+    $named: true as const,
+    $children: children,
+    children() { return children; },
+    $with: { $child: (v: T.Declaration) => ambientDeclarationDeclaration(v) },
+  }, methodsEngine);
+}
+
+export function ambientDeclaration(config: ConfigOf<T.AmbientDeclarationUFormDeclaration>): ReturnType<typeof ambientDeclarationUFormDeclaration>;
+export function ambientDeclaration(config: ConfigOf<T.AmbientDeclarationUFormGlobal>): ReturnType<typeof ambientDeclarationUFormGlobal>;
+export function ambientDeclaration(config: ConfigOf<T.AmbientDeclarationUFormModule>): ReturnType<typeof ambientDeclarationUFormModule>;
+export function ambientDeclaration(config: ConfigOf<T.AmbientDeclarationUFormDeclaration> | ConfigOf<T.AmbientDeclarationUFormGlobal> | ConfigOf<T.AmbientDeclarationUFormModule>) {
+  switch (config.$variant) {
+    case 'declaration': return ambientDeclarationUFormDeclaration(config as Parameters<typeof ambientDeclarationUFormDeclaration>[0]);
+    case 'global': return ambientDeclarationUFormGlobal(config as Parameters<typeof ambientDeclarationUFormGlobal>[0]);
+    case 'module': return ambientDeclarationUFormModule(config as Parameters<typeof ambientDeclarationUFormModule>[0]);
+  }
+  throw new Error(`ambientDeclaration: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'declaration' | 'global' | 'module'.`);
+}
+export function ambientDeclarationUFormDeclaration(config?: Omit<ConfigOf<T.AmbientDeclarationUFormDeclaration>, '$variant'>) {
+  const _innerChildren = _configChildren<readonly [Parameters<typeof _ambientDeclarationDeclaration>[0]] | []>(config, []);
+  const inner = _ambientDeclarationDeclaration(_innerChildren[0] as Parameters<typeof _ambientDeclarationDeclaration>[0]);
+  const children = [inner] as const;
   return withMethods({
     $type: TSKindId.AmbientDeclaration as const,
     $source: 2 as const,
     $named: true as const,
-    _declaration,
-    declaration() { return _declaration; },
+    $variant: 'declaration' as const,
+    $children: children,
+    $with: {},
+  }, methodsEngine);
+}
+export function ambientDeclarationUFormGlobal(config: Omit<ConfigOf<T.AmbientDeclarationUFormGlobal>, '$variant'>) {
+  const inner = _ambientDeclarationGlobal(config);
+  const children = [inner] as const;
+  return withMethods({
+    $type: TSKindId.AmbientDeclaration as const,
+    $source: 2 as const,
+    $named: true as const,
+    $variant: 'global' as const,
+    $children: children,
+    body() { return inner.body(); },
     $with: {
-      declaration: (value: T.AmbientDeclaration.Config['declaration']) => ambientDeclaration(value),
+      body: (value: T.StatementBlock) => ambientDeclarationUFormGlobal({ ...config, body: value } as Parameters<typeof ambientDeclarationUFormGlobal>[0]),
+    },
+  }, methodsEngine);
+}
+export function ambientDeclarationUFormModule(config: Omit<ConfigOf<T.AmbientDeclarationUFormModule>, '$variant'>) {
+  const inner = _ambientDeclarationModule(config);
+  const children = [inner] as const;
+  return withMethods({
+    $type: TSKindId.AmbientDeclaration as const,
+    $source: 2 as const,
+    $named: true as const,
+    $variant: 'module' as const,
+    $children: children,
+    name() { return inner.name(); },
+    type() { return inner.type(); },
+    semicolon() { return inner.semicolon(); },
+    $with: {
+      name: (value: T.Identifier) => ambientDeclarationUFormModule({ ...config, name: value } as Parameters<typeof ambientDeclarationUFormModule>[0]),
+      type: (value: T.Type) => ambientDeclarationUFormModule({ ...config, type: value } as Parameters<typeof ambientDeclarationUFormModule>[0]),
+      semicolon: (value?: T.Semicolon) => ambientDeclarationUFormModule({ ...config, semicolon: value } as Parameters<typeof ambientDeclarationUFormModule>[0]),
     },
   }, methodsEngine);
 }
@@ -1908,14 +2021,18 @@ export function enumAssignment(config: T.EnumAssignment.Config) {
 
 export function enumBody(config: Partial<T.EnumBody.Config> = {}) {
   const children = _configChildren<T.EnumBody['$children']>(config, [] as unknown as T.EnumBody['$children']);
+  const _name = config.name;
   return withMethods({
     $type: TSKindId.EnumBody as const,
     $source: 2 as const,
     $named: true as const,
+    _name,
     $children: children,
+    names() { return _name; },
     children() { return children; },
     $with: {
-      children: (...items: ((T.PropertyName | T.EnumAssignment))[]) => enumBody({ ...config, children: items } as unknown as Parameters<typeof enumBody>[0]),
+      names: (...values: T.PropertyName[]) => enumBody({ ...config, name: values }),
+      children: (...items: T.EnumAssignment[]) => enumBody({ ...config, children: items } as unknown as Parameters<typeof enumBody>[0]),
     },
   }, methodsEngine);
 }
@@ -2329,12 +2446,12 @@ export function functionExpression(config: T.FunctionExpression.Config) {
 }
 
 export function functionSignature(config: T.FunctionSignature.Config) {
+  const children = _configChildren<T.FunctionSignature['$children']>(config, [] as unknown as T.FunctionSignature['$children']);
   const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
   const _name = config.name;
   const _type_parameters = config.typeParameters;
   const _parameters = config.parameters;
   const _return_type = config.returnType;
-  const _semicolon = config.semicolon;
   return withMethods({
     $type: TSKindId.FunctionSignature as const,
     $source: 2 as const,
@@ -2344,20 +2461,20 @@ export function functionSignature(config: T.FunctionSignature.Config) {
     _type_parameters,
     _parameters,
     _return_type,
-    _semicolon,
+    $children: children,
     asyncMarker() { return _async_marker; },
     name() { return _name; },
     typeParameters() { return _type_parameters; },
     parameters() { return _parameters; },
     returnType() { return _return_type; },
-    semicolon() { return _semicolon; },
+    children() { return children; },
     $with: {
       asyncMarker: (value?: NonNullable<Parameters<typeof functionSignature>[0]>['asyncMarker']) => functionSignature({ ...config, asyncMarker: value }),
       name: (value: T.Identifier) => functionSignature({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => functionSignature({ ...config, typeParameters: value }),
       parameters: (value: T.FormalParameters) => functionSignature({ ...config, parameters: value }),
       returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => functionSignature({ ...config, returnType: value }),
-      semicolon: (value: T.Semicolon | T.FunctionSignatureAutomaticSemicolon) => functionSignature({ ...config, semicolon: value }),
+      children: (...items: readonly [((T.Semicolon | T.FunctionSignatureAutomaticSemicolon))]) => functionSignature({ ...config, children: items } as unknown as Parameters<typeof functionSignature>[0]),
     },
   }, methodsEngine);
 }
@@ -2756,12 +2873,12 @@ export function importStatement(config: T.ImportStatement.Config) {
     _import_attribute,
     _semicolon,
     importClause() { return _import_clause; },
-    fromClause() { return _from_clause; },
+    fromClauses() { return _from_clause; },
     importAttribute() { return _import_attribute; },
     semicolon() { return _semicolon; },
     $with: {
       importClause: (value?: NonNullable<Parameters<typeof importStatement>[0]>['importClause']) => importStatement({ ...config, importClause: value }),
-      fromClause: (value: T.ImportClause | "from" | T.String | T.ImportRequireClause) => importStatement({ ...config, fromClause: value }),
+      fromClauses: (...values: NonEmptyArray<T.ImportClause | "from" | T.String | T.ImportRequireClause>) => importStatement({ ...config, fromClause: values }),
       importAttribute: (value?: T.ImportAttribute) => importStatement({ ...config, importAttribute: value }),
       semicolon: (value: T.Semicolon) => importStatement({ ...config, semicolon: value }),
     },
@@ -3043,17 +3160,21 @@ export function mappedTypeClause(config: T.MappedTypeClause.Config) {
 
 export function memberExpression(config: T.MemberExpression.Config) {
   const _object = config.object;
+  const _optional_chain = coerceBooleanKeywordStorage(config.optionalChain);
   const _property = config.property;
   return withMethods({
     $type: TSKindId.MemberExpression as const,
     $source: 2 as const,
     $named: true as const,
     _object,
+    _optional_chain,
     _property,
     object() { return _object; },
+    optionalChain() { return _optional_chain; },
     property() { return _property; },
     $with: {
       object: (value: T.Expression | T.PrimaryExpression | T.Import) => memberExpression({ ...config, object: value }),
+      optionalChain: (value?: NonNullable<Parameters<typeof memberExpression>[0]>['optionalChain']) => memberExpression({ ...config, optionalChain: value }),
       property: (value: T.PrivatePropertyIdentifier | T.Identifier) => memberExpression({ ...config, property: value }),
     },
   }, methodsEngine);
@@ -4696,6 +4817,9 @@ export function errorRecovery(text: string) {
 }
 
 export type FluentKindMap = {
+  "_ambient_declaration_declaration": FluentNode<"_ambient_declaration_declaration", T._AmbientDeclarationDeclaration.Config>;
+  "_ambient_declaration_global": T.AmbientDeclarationGlobal;
+  "_ambient_declaration_module": T.AmbientDeclarationModule;
   "_arrow_function__call_signature": FluentNode<"_arrow_function__call_signature", T._ArrowFunctionUCallSignature.Config>;
   "_arrow_function_parameter": FluentNode<"_arrow_function_parameter", T._ArrowFunctionParameter.Config>;
   "_call_expression_call": T.CallExpressionCall;
@@ -4755,6 +4879,7 @@ export type FluentKindMap = {
   "abstract_method_signature": FluentNode<"abstract_method_signature", T.AbstractMethodSignature.Config>;
   "accessibility_modifier": T.AccessibilityModifier;
   "adding_type_annotation": FluentNode<"adding_type_annotation", T.AddingTypeAnnotation.Config>;
+  "ambient_declaration_declaration": FluentNode<"ambient_declaration_declaration", T.AmbientDeclarationDeclaration.Config>;
   "ambient_declaration": FluentNode<"ambient_declaration", T.AmbientDeclaration.Config>;
   "arguments": FluentNode<"arguments", T.Arguments.Config>;
   "array": FluentNode<"array", T.Array.Config>;
@@ -4946,6 +5071,9 @@ export type FluentKindMap = {
 };
 
 export const _factoryMap = {
+  "_ambient_declaration_declaration": _ambientDeclarationDeclaration,
+  "_ambient_declaration_global": _ambientDeclarationGlobal,
+  "_ambient_declaration_module": _ambientDeclarationModule,
   "_arrow_function__call_signature": _arrowFunctionUCallSignature,
   "_arrow_function_parameter": _arrowFunctionParameter,
   "_call_expression_call": _callExpressionCall,
@@ -5005,6 +5133,7 @@ export const _factoryMap = {
   "abstract_method_signature": abstractMethodSignature,
   "accessibility_modifier": accessibilityModifier,
   "adding_type_annotation": addingTypeAnnotation,
+  "ambient_declaration_declaration": ambientDeclarationDeclaration,
   "ambient_declaration": ambientDeclaration,
   "arguments": arguments_,
   "array": array,

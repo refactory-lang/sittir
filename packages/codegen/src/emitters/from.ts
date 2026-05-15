@@ -829,9 +829,9 @@ function containerTypeCheck(kind: string, kindEntries: readonly KindEnumEntry[] 
  * the factory's signature at the call sites it forwards to.
  *
  * `data.$children` is undefined for empty collections that readNode represents
- * without a children array (e.g. python `format_specifier` for `:2` — the
- * colon gets promoted to a field, no children). Spreading `undefined` throws;
- * guard with `?? []` so the rebuilt factory call matches the empty form.
+ * without a children slot, and singular-child containers may carry one scalar
+ * child rather than an array. Normalize to an array before spreading so the
+ * rebuilt factory call matches both shapes.
  *
  * @param fn - The `fromX` function name to emit.
  * @param factory - The `F.<factoryName>` reference string.
@@ -859,8 +859,8 @@ function emitRepeatedContainerFrom(
 	// this point any `${tName}` element has been ruled out by structural
 	// selection (the only way to land here with the union is a single
 	// self-NodeData first arg, handled above). The unwrap branch's
-	// `data.$children` is typed as `readonly NodeMemberValue[]` (the loose
-	// generic shape on `AnyNodeData`); the same boundary cast funnels it
+	// `data.$children` is typed as singular-or-array `NodeChildren` on the loose
+	// `AnyNodeData` shape; normalize to an array before the same boundary cast funnels it
 	// into the factory's narrow children-element type.
 	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
 	// TSGrammar-only kinds (string $type) can't satisfy isNodeData() (which
@@ -880,9 +880,10 @@ function emitRepeatedContainerFrom(
 		`export function ${fn}(...input: readonly (${elementType} | ${tName})[]): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
 		`    const data = input[0];`,
-		// as unknown as Parameters<>: data.$children is NodeMemberValue[] (includes
-		// string|number + separator literals); factory accepts only semantic nodes.
-		`    return ${factory}(...((data.$children ?? []) as unknown as Parameters<typeof ${factory}>));`,
+		// as unknown as Parameters<>: normalized children still include string|number
+		// separator literals; factory accepts only semantic nodes.
+		`    const children = data.$children === undefined ? [] : Array.isArray(data.$children) ? data.$children : [data.$children];`,
+		`    return ${factory}(...(children as unknown as Parameters<typeof ${factory}>));`,
 		`  }`,
 		// as unknown as Parameters<>: input may include separator literals.
 		`  return ${factory}(...(input as unknown as Parameters<typeof ${factory}>));`,

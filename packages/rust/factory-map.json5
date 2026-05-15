@@ -293,8 +293,23 @@
     "_field_pattern_shorthand.name": {
       "shorthand_field_identifier": "identifier"
     },
+    "_line_comment_doc.outer": {
+      "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
+    },
+    "_line_comment_doc.inner": {
+      "inner_doc_comment_marker": "_inner_line_doc_comment_marker"
+    },
     "_line_comment_doc.doc": {
       "doc_comment": "_line_doc_content"
+    },
+    "attribute.arguments": {
+      "token_tree": "delim_token_tree"
+    },
+    "block_comment.outer": {
+      "outer_doc_comment_marker": "_outer_block_doc_comment_marker"
+    },
+    "block_comment.inner": {
+      "inner_doc_comment_marker": "_inner_block_doc_comment_marker"
     },
     "block_comment.doc": {
       "doc_comment": "_block_comment_content"
@@ -360,6 +375,9 @@
     "_impl_item_body": [
       "body"
     ],
+    "_line_comment_doc": [
+      "doc"
+    ],
     "_match_arm_block_ending": [
       "value"
     ],
@@ -424,7 +442,9 @@
       "block"
     ],
     "attribute": [
-      "path"
+      "path",
+      "value",
+      "arguments"
     ],
     "attribute_item": [
       "attribute"
@@ -439,6 +459,8 @@
       "trailing_expression"
     ],
     "block_comment": [
+      "outer",
+      "inner",
       "doc"
     ],
     "bounded_type": [
@@ -1008,15 +1030,22 @@
       }
     },
     "_line_comment_doc": {
-      "doc": {
+      "outer": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "inner": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "doc": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1449,8 +1478,15 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "arguments": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1531,15 +1567,22 @@
       }
     },
     "block_comment": {
-      "doc": {
+      "outer": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "inner": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "doc": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -3591,7 +3634,7 @@
       "children": {
         "unnamed": true,
         "slotCount": 2,
-        "required": false,
+        "required": true,
         "multiple": true,
         "nonEmpty": true
       }
@@ -3930,6 +3973,110 @@
       "childKind": {
         "array_expression_semi": "semi",
         "array_expression_list": "list"
+      },
+      "helperKind": {
+        "semi": "_array_expression_semi",
+        "list": "_array_expression_list"
+      },
+      "helperChildKind": {
+        "semi": [
+          "attribute_item",
+          "unary_expression",
+          "reference_expression",
+          "try_expression",
+          "binary_expression",
+          "assignment_expression",
+          "compound_assignment_expr",
+          "type_cast_expression",
+          "call_expression",
+          "return_expression",
+          "yield_expression",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "reserved_identifier",
+          "self",
+          "scoped_identifier",
+          "generic_function",
+          "await_expression",
+          "field_expression",
+          "array_expression",
+          "tuple_expression",
+          "macro_invocation",
+          "unit_expression",
+          "break_expression",
+          "continue_expression",
+          "index_expression",
+          "metavariable",
+          "closure_expression",
+          "parenthesized_expression",
+          "struct_expression",
+          "unsafe_block",
+          "async_block",
+          "gen_block",
+          "try_block",
+          "block",
+          "if_expression",
+          "match_expression",
+          "while_expression",
+          "loop_expression",
+          "for_expression",
+          "const_block",
+          "range_expression"
+        ],
+        "list": [
+          "attribute_item",
+          "unary_expression",
+          "reference_expression",
+          "try_expression",
+          "binary_expression",
+          "assignment_expression",
+          "compound_assignment_expr",
+          "type_cast_expression",
+          "call_expression",
+          "return_expression",
+          "yield_expression",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "reserved_identifier",
+          "self",
+          "scoped_identifier",
+          "generic_function",
+          "await_expression",
+          "field_expression",
+          "array_expression",
+          "tuple_expression",
+          "macro_invocation",
+          "unit_expression",
+          "break_expression",
+          "continue_expression",
+          "index_expression",
+          "metavariable",
+          "closure_expression",
+          "parenthesized_expression",
+          "struct_expression",
+          "unsafe_block",
+          "async_block",
+          "gen_block",
+          "try_block",
+          "block",
+          "if_expression",
+          "match_expression",
+          "while_expression",
+          "loop_expression",
+          "for_expression",
+          "const_block",
+          "range_expression"
+        ]
       }
     },
     "closure_expression": {
@@ -3937,6 +4084,81 @@
       "childKind": {
         "closure_expression_block": "block",
         "closure_expression_expr": "expr"
+      },
+      "helperKind": {
+        "block": "_closure_expression_block",
+        "expr": "_closure_expression_expr"
+      },
+      "helperChildKind": {
+        "block": [
+          "abstract_type",
+          "reference_type",
+          "metavariable",
+          "pointer_type",
+          "generic_type",
+          "scoped_type_identifier",
+          "tuple_type",
+          "unit_type",
+          "array_type",
+          "function_type",
+          "type_identifier",
+          "macro_invocation",
+          "never_type",
+          "dynamic_type",
+          "bounded_type",
+          "removed_trait_bound",
+          "primitive_type",
+          "block"
+        ],
+        "expr": [
+          "unary_expression",
+          "reference_expression",
+          "try_expression",
+          "binary_expression",
+          "assignment_expression",
+          "compound_assignment_expr",
+          "type_cast_expression",
+          "call_expression",
+          "return_expression",
+          "yield_expression",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "reserved_identifier",
+          "self",
+          "scoped_identifier",
+          "generic_function",
+          "await_expression",
+          "field_expression",
+          "array_expression",
+          "tuple_expression",
+          "macro_invocation",
+          "unit_expression",
+          "break_expression",
+          "continue_expression",
+          "index_expression",
+          "metavariable",
+          "closure_expression",
+          "parenthesized_expression",
+          "struct_expression",
+          "unsafe_block",
+          "async_block",
+          "gen_block",
+          "try_block",
+          "block",
+          "if_expression",
+          "match_expression",
+          "while_expression",
+          "loop_expression",
+          "for_expression",
+          "const_block",
+          "range_expression",
+          ""
+        ]
       }
     },
     "delim_token_tree": {
@@ -3945,6 +4167,11 @@
         "delim_token_tree_paren": "paren",
         "delim_token_tree_bracket": "bracket",
         "delim_token_tree_brace": "brace"
+      },
+      "helperKind": {
+        "paren": "_delim_token_tree_paren",
+        "bracket": "_delim_token_tree_bracket",
+        "brace": "_delim_token_tree_brace"
       }
     },
     "expression_statement": {
@@ -3952,6 +4179,10 @@
       "childKind": {
         "expression_statement_with_semi": "with_semi",
         "expression_statement_block_ending": "block_ending"
+      },
+      "helperKind": {
+        "with_semi": "_expression_statement_with_semi",
+        "block_ending": "_expression_statement_block_ending"
       }
     },
     "field_pattern": {
@@ -3959,6 +4190,43 @@
       "childKind": {
         "field_pattern_shorthand": "shorthand",
         "field_pattern_named": "named"
+      },
+      "helperKind": {
+        "shorthand": "_field_pattern_shorthand",
+        "named": "_field_pattern_named"
+      },
+      "helperChildKind": {
+        "shorthand": [
+          "identifier"
+        ],
+        "named": [
+          "field_identifier",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "negative_literal",
+          "identifier",
+          "scoped_identifier",
+          "generic_pattern",
+          "tuple_pattern",
+          "tuple_struct_pattern",
+          "struct_pattern",
+          "reserved_identifier",
+          "ref_pattern",
+          "slice_pattern",
+          "captured_pattern",
+          "reference_pattern",
+          "remaining_field_pattern",
+          "mut_pattern",
+          "range_pattern",
+          "or_pattern",
+          "const_block",
+          "macro_invocation",
+          "wildcard_pattern"
+        ]
       }
     },
     "foreign_mod_item": {
@@ -3966,6 +4234,15 @@
       "childKind": {
         "foreign_mod_item_semi": "semi",
         "foreign_mod_item_body": "body"
+      },
+      "helperKind": {
+        "semi": "_foreign_mod_item_semi",
+        "body": "_foreign_mod_item_body"
+      },
+      "helperChildKind": {
+        "body": [
+          "declaration_list"
+        ]
       }
     },
     "function_type": {
@@ -3980,6 +4257,15 @@
       "childKind": {
         "impl_item_body": "body",
         "impl_item_semi": "semi"
+      },
+      "helperKind": {
+        "body": "_impl_item_body",
+        "semi": "_impl_item_semi"
+      },
+      "helperChildKind": {
+        "body": [
+          "declaration_list"
+        ]
       }
     },
     "line_comment": {
@@ -3988,6 +4274,18 @@
         "line_comment_regular_dslash": "regular_dslash",
         "line_comment_doc": "doc",
         "line_comment_content": "content"
+      },
+      "helperKind": {
+        "regular_dslash": "_line_comment_regular_dslash",
+        "doc": "_line_comment_doc",
+        "content": "_line_comment_content"
+      },
+      "helperChildKind": {
+        "doc": [
+          "outer_line_doc_comment_marker",
+          "inner_line_doc_comment_marker",
+          "line_doc_content"
+        ]
       }
     },
     "macro_definition": {
@@ -3996,6 +4294,11 @@
         "macro_definition_paren": "paren",
         "macro_definition_bracket": "bracket",
         "macro_definition_brace": "brace"
+      },
+      "helperKind": {
+        "paren": "_macro_definition_paren",
+        "bracket": "_macro_definition_bracket",
+        "brace": "_macro_definition_brace"
       }
     },
     "match_arm": {
@@ -4003,6 +4306,73 @@
       "childKind": {
         "match_arm_with_comma": "with_comma",
         "match_arm_block_ending": "block_ending"
+      },
+      "helperKind": {
+        "with_comma": "_match_arm_with_comma",
+        "block_ending": "_match_arm_block_ending"
+      },
+      "helperChildKind": {
+        "with_comma": [
+          "unary_expression",
+          "reference_expression",
+          "try_expression",
+          "binary_expression",
+          "assignment_expression",
+          "compound_assignment_expr",
+          "type_cast_expression",
+          "call_expression",
+          "return_expression",
+          "yield_expression",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "reserved_identifier",
+          "self",
+          "scoped_identifier",
+          "generic_function",
+          "await_expression",
+          "field_expression",
+          "array_expression",
+          "tuple_expression",
+          "macro_invocation",
+          "unit_expression",
+          "break_expression",
+          "continue_expression",
+          "index_expression",
+          "metavariable",
+          "closure_expression",
+          "parenthesized_expression",
+          "struct_expression",
+          "unsafe_block",
+          "async_block",
+          "gen_block",
+          "try_block",
+          "block",
+          "if_expression",
+          "match_expression",
+          "while_expression",
+          "loop_expression",
+          "for_expression",
+          "const_block",
+          "range_expression"
+        ],
+        "block_ending": [
+          "unsafe_block",
+          "async_block",
+          "gen_block",
+          "try_block",
+          "block",
+          "if_expression",
+          "match_expression",
+          "while_expression",
+          "loop_expression",
+          "for_expression",
+          "const_block"
+        ]
       }
     },
     "mod_item": {
@@ -4010,6 +4380,15 @@
       "childKind": {
         "mod_item_external": "external",
         "mod_item_inline": "inline"
+      },
+      "helperKind": {
+        "external": "_mod_item_external",
+        "inline": "_mod_item_inline"
+      },
+      "helperChildKind": {
+        "inline": [
+          "declaration_list"
+        ]
       }
     },
     "or_pattern": {
@@ -4017,6 +4396,66 @@
       "childKind": {
         "or_pattern_binary": "binary",
         "or_pattern_prefix": "prefix"
+      },
+      "helperKind": {
+        "binary": "_or_pattern_binary",
+        "prefix": "_or_pattern_prefix"
+      },
+      "helperChildKind": {
+        "binary": [
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "negative_literal",
+          "identifier",
+          "scoped_identifier",
+          "generic_pattern",
+          "tuple_pattern",
+          "tuple_struct_pattern",
+          "struct_pattern",
+          "reserved_identifier",
+          "ref_pattern",
+          "slice_pattern",
+          "captured_pattern",
+          "reference_pattern",
+          "remaining_field_pattern",
+          "mut_pattern",
+          "range_pattern",
+          "or_pattern",
+          "const_block",
+          "macro_invocation",
+          "wildcard_pattern"
+        ],
+        "prefix": [
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "negative_literal",
+          "identifier",
+          "scoped_identifier",
+          "generic_pattern",
+          "tuple_pattern",
+          "tuple_struct_pattern",
+          "struct_pattern",
+          "reserved_identifier",
+          "ref_pattern",
+          "slice_pattern",
+          "captured_pattern",
+          "reference_pattern",
+          "remaining_field_pattern",
+          "mut_pattern",
+          "range_pattern",
+          "or_pattern",
+          "const_block",
+          "macro_invocation",
+          "wildcard_pattern"
+        ]
       }
     },
     "pointer_type": {
@@ -4024,6 +4463,10 @@
       "childKind": {
         "pointer_type_const": "const",
         "pointer_type_mut": "mut"
+      },
+      "helperKind": {
+        "const": "_pointer_type_const",
+        "mut": "_pointer_type_mut"
       }
     },
     "range_expression": {
@@ -4033,6 +4476,164 @@
         "range_expression_postfix": "postfix",
         "range_expression_prefix": "prefix",
         "range_expression_bare": "bare"
+      },
+      "helperKind": {
+        "binary": "_range_expression_binary",
+        "postfix": "_range_expression_postfix",
+        "prefix": "_range_expression_prefix",
+        "bare": "_range_expression_bare"
+      },
+      "helperChildKind": {
+        "binary": [
+          "unary_expression",
+          "reference_expression",
+          "try_expression",
+          "binary_expression",
+          "assignment_expression",
+          "compound_assignment_expr",
+          "type_cast_expression",
+          "call_expression",
+          "return_expression",
+          "yield_expression",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "reserved_identifier",
+          "self",
+          "scoped_identifier",
+          "generic_function",
+          "await_expression",
+          "field_expression",
+          "array_expression",
+          "tuple_expression",
+          "macro_invocation",
+          "unit_expression",
+          "break_expression",
+          "continue_expression",
+          "index_expression",
+          "metavariable",
+          "closure_expression",
+          "parenthesized_expression",
+          "struct_expression",
+          "unsafe_block",
+          "async_block",
+          "gen_block",
+          "try_block",
+          "block",
+          "if_expression",
+          "match_expression",
+          "while_expression",
+          "loop_expression",
+          "for_expression",
+          "const_block",
+          "range_expression",
+          "_range_expression_binary_operator"
+        ],
+        "postfix": [
+          "unary_expression",
+          "reference_expression",
+          "try_expression",
+          "binary_expression",
+          "assignment_expression",
+          "compound_assignment_expr",
+          "type_cast_expression",
+          "call_expression",
+          "return_expression",
+          "yield_expression",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "reserved_identifier",
+          "self",
+          "scoped_identifier",
+          "generic_function",
+          "await_expression",
+          "field_expression",
+          "array_expression",
+          "tuple_expression",
+          "macro_invocation",
+          "unit_expression",
+          "break_expression",
+          "continue_expression",
+          "index_expression",
+          "metavariable",
+          "closure_expression",
+          "parenthesized_expression",
+          "struct_expression",
+          "unsafe_block",
+          "async_block",
+          "gen_block",
+          "try_block",
+          "block",
+          "if_expression",
+          "match_expression",
+          "while_expression",
+          "loop_expression",
+          "for_expression",
+          "const_block",
+          "range_expression",
+          "operator"
+        ],
+        "prefix": [
+          "operator",
+          "unary_expression",
+          "reference_expression",
+          "try_expression",
+          "binary_expression",
+          "assignment_expression",
+          "compound_assignment_expr",
+          "type_cast_expression",
+          "call_expression",
+          "return_expression",
+          "yield_expression",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "reserved_identifier",
+          "self",
+          "scoped_identifier",
+          "generic_function",
+          "await_expression",
+          "field_expression",
+          "array_expression",
+          "tuple_expression",
+          "macro_invocation",
+          "unit_expression",
+          "break_expression",
+          "continue_expression",
+          "index_expression",
+          "metavariable",
+          "closure_expression",
+          "parenthesized_expression",
+          "struct_expression",
+          "unsafe_block",
+          "async_block",
+          "gen_block",
+          "try_block",
+          "block",
+          "if_expression",
+          "match_expression",
+          "while_expression",
+          "loop_expression",
+          "for_expression",
+          "const_block",
+          "range_expression"
+        ],
+        "bare": [
+          "operator"
+        ]
       }
     },
     "range_pattern": {
@@ -4041,6 +4642,45 @@
         "range_pattern_prefix": "prefix",
         "range_pattern_left_with_right": "left_with_right",
         "range_pattern_left_bare": "left_bare"
+      },
+      "helperKind": {
+        "prefix": "_range_pattern_prefix",
+        "left_with_right": "_range_pattern_left_with_right",
+        "left_bare": "_range_pattern_left_bare"
+      },
+      "helperChildKind": {
+        "prefix": [
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "negative_literal",
+          "self",
+          "identifier",
+          "metavariable",
+          "super",
+          "crate",
+          "scoped_identifier",
+          "reserved_identifier"
+        ],
+        "left_with_right": [
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "negative_literal",
+          "self",
+          "identifier",
+          "metavariable",
+          "super",
+          "crate",
+          "scoped_identifier",
+          "reserved_identifier"
+        ]
       }
     },
     "reference_expression": {
@@ -4056,6 +4696,19 @@
         "struct_item_brace": "brace",
         "struct_item_tuple": "tuple",
         "struct_item_unit": "unit"
+      },
+      "helperKind": {
+        "brace": "_struct_item_brace",
+        "tuple": "_struct_item_tuple",
+        "unit": "_struct_item_unit"
+      },
+      "helperChildKind": {
+        "brace": [
+          "field_declaration_list"
+        ],
+        "tuple": [
+          "ordered_field_declaration_list"
+        ]
       }
     },
     "token_tree": {
@@ -4064,6 +4717,11 @@
         "token_tree_paren": "paren",
         "token_tree_bracket": "bracket",
         "token_tree_brace": "brace"
+      },
+      "helperKind": {
+        "paren": "_token_tree_paren",
+        "bracket": "_token_tree_bracket",
+        "brace": "_token_tree_brace"
       }
     },
     "token_tree_pattern": {
@@ -4072,6 +4730,11 @@
         "token_tree_pattern_paren": "paren",
         "token_tree_pattern_bracket": "bracket",
         "token_tree_pattern_brace": "brace"
+      },
+      "helperKind": {
+        "paren": "_token_tree_pattern_paren",
+        "bracket": "_token_tree_pattern_bracket",
+        "brace": "_token_tree_pattern_brace"
       }
     },
     "visibility_modifier": {
@@ -4080,6 +4743,11 @@
         "visibility_modifier_crate": "crate",
         "visibility_modifier_pub": "pub",
         "visibility_modifier_in_path": "in_path"
+      },
+      "helperKind": {
+        "crate": "_visibility_modifier_crate",
+        "pub": "_visibility_modifier_pub",
+        "in_path": "_visibility_modifier_in_path"
       }
     }
   }

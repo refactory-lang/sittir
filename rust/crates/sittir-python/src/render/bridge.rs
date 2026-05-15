@@ -1165,25 +1165,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         115 => { // "import_from_statement"
-            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("module_name"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("name"), false)?;
-            let children_renderables = children.renderable_items();
-            let field_1_renderables = field_1.renderable_items();
             let template = ImportFromStatementTemplate {
-                children: ListNonterminalView {
-                    items: children_renderables.as_slice(),
-                    separator: children.separator,
-                    leading: children.leading_sep,
-                    trailing: children.trailing_sep,
+                children: match children.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),
                 },
                 module_name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                name: ListNonterminalView {
-                    items: field_1_renderables.as_slice(),
-                    separator: field_1.separator,
-                    leading: field_1.leading_sep,
-                    trailing: field_1.trailing_sep,
-                },
             };
             template.render_into(dest)
         }

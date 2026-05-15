@@ -31,6 +31,7 @@ import {
 	loadReadTreeNode,
 	walkWrappedTree,
 	materializeWrappedNodeData,
+	stripStructuralNodeText,
 	emitValidatorMetrics,
 	type TSNode,
 	type TSTree,
@@ -88,10 +89,11 @@ function _deepReadNode(
 		typeof entry.$type === 'number' &&
 		deepReadKinds.has(entry.$type);
 	if (data.$children) {
-		const drilled = data.$children.map((c) =>
+		const children = Array.isArray(data.$children) ? data.$children : [data.$children];
+		const drilled = children.map((c) =>
 			shouldDrill(c) ? _deepReadNode(tree, c.$nodeHandle, c.$childIndex, deepReadKinds) : c
 		);
-		(data as { $children?: typeof drilled }).$children = drilled;
+		(data as { $children?: AnyNodeData['$children'] }).$children = Array.isArray(data.$children) ? drilled : drilled[0];
 	}
 	// Iterate `_<name>` top-level keys (de-hoisted storage).
 	const rec = data as unknown as Record<string, unknown>;
@@ -111,40 +113,6 @@ function _deepReadNode(
 	return data;
 }
 
-function stripMaterializedNodeText(root: AnyNodeData): AnyNodeData {
-	const seen = new WeakSet<object>();
-	const isNodeData = (value: unknown): value is AnyNodeData =>
-		typeof value === 'object' && value !== null && '$type' in value;
-	const hasNamedFields = (record: Record<string, unknown>): boolean =>
-		Object.keys(record).some((key) => key.startsWith('_'))
-		|| (record.$fields != null && typeof record.$fields === 'object');
-	const recurse = (value: unknown): void => {
-		if (!isNodeData(value)) return;
-		if (seen.has(value)) return;
-		seen.add(value);
-		const record = value as unknown as Record<string, unknown>;
-		if (hasNamedFields(record)) {
-			delete record.$text;
-		}
-		for (const [key, child] of Object.entries(record)) {
-			if (key === '$with') continue;
-			if (key === '$children' && Array.isArray(child)) {
-				for (const entry of child) recurse(entry);
-				continue;
-			}
-			if (key.startsWith('_')) {
-				if (Array.isArray(child)) {
-					for (const entry of child) recurse(entry);
-				} else {
-					recurse(child);
-				}
-			}
-		}
-	};
-	recurse(root);
-	return root;
-}
-
 function readValidatorNodeData(
 	handle: TreeHandle,
 	node: TSNode,
@@ -158,7 +126,7 @@ function readValidatorNodeData(
 	}
 	if (readTreeNodeFn) {
 		if (nativeCoords && handle.read) {
-			return stripMaterializedNodeText(
+			return stripStructuralNodeText(
 				materializeWrappedNodeData(readTreeNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex))
 			);
 		}
@@ -431,6 +399,14 @@ export interface ReadRenderParseResult {
  * @param kinds - Mutable set of kind names; alias-source kinds discovered during the walk are added here.
  * @returns A map from composite span key (`"start:end"`) to the effective (alias-rewritten) type string.
  */
+export function chooseEffectiveKindForSpan(existing: string | undefined, next: string): string {
+	if (!existing) return next;
+	const existingHidden = existing.startsWith('_');
+	const nextHidden = next.startsWith('_');
+	if (nextHidden && !existingHidden) return next;
+	return existing;
+}
+
 function discoverAliasSourceKinds(
 	readTreeNodeFn: ((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null,
 	tree: TSTree,
@@ -445,10 +421,11 @@ function discoverAliasSourceKinds(
 	// start and end byte offsets avoids the collision that arises from a
 	// start-only key: a parent node and its first child share the same
 	// startIndex (e.g. `parameter` at 7..12 and its child `identifier` at
-	// 7..8 both start at 7). A start-only key would map offset 7 to only
-	// ONE kind, causing the wrong node to be returned by lookup. The
-	// composite key is unique per node — no two distinct nodes can occupy
-	// exactly the same byte range.
+	// 7..8 both start at 7). Exact-span collisions still exist for wrapper
+	// nodes that cover the same bytes as their single named child (e.g.
+	// `program` vs `try_statement` on a one-statement file). In those cases,
+	// keep the first visible kind and only let a hidden alias-source kind
+	// replace it — direct tree scanning already resolves visible kinds.
 	const nodeIdToEffectiveType = new Map<string, string>();
 	if (readTreeNodeFn) {
 		const handle = buildReadHandle(grammar, tree, source, backend, kindIdFromName);
@@ -473,7 +450,8 @@ function discoverAliasSourceKinds(
 			// ADR-0017: use "${start}:${end}" composite span as collision-free identity key.
 			const span = (w as { $span?: { start: number; end: number } }).$span;
 			if (span != null) {
-				nodeIdToEffectiveType.set(`${span.start}:${span.end}`, kindStr);
+				const key = `${span.start}:${span.end}`;
+				nodeIdToEffectiveType.set(key, chooseEffectiveKindForSpan(nodeIdToEffectiveType.get(key), kindStr));
 			}
 			kinds.add(kindStr);
 		});

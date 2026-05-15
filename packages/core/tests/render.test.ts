@@ -32,6 +32,13 @@ const config: RulesConfig = {
 };
 
 const { render } = createRenderer(config);
+const { render: renderWithBooleanFields } = createRenderer({
+	...config,
+	rules: {
+		...config.rules,
+		flagged_expression: '$ASYNC_MARKER $OPTIONAL_MARKER'
+	}
+});
 
 describe('render', () => {
 	it('renders a terminal node as its text', () => {
@@ -172,6 +179,26 @@ describe('render', () => {
 			]
 		};
 		expect(render(node)).toBe('{ x y }');
+	});
+
+	it('renders block with scalar children storage', () => {
+		const node: AnyNodeData = {
+			$type: 'block',
+			$fields: {},
+			$children: { $type: 'identifier', $text: 'x' }
+		};
+		expect(render(node)).toBe('{ x }');
+	});
+
+	it('renders boolean keyword and punctuation fields through the regex renderer', () => {
+		const node: AnyNodeData = {
+			$type: 'flagged_expression',
+			$fields: {
+				async_marker: true,
+				optional_marker: true
+			}
+		};
+		expect(renderWithBooleanFields(node)).toBe('async ?');
 	});
 
 	it('renders leaf node without fields property', () => {

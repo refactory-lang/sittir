@@ -1296,19 +1296,19 @@ export function ifStatement(config: T.IfStatement.Config) {
 }
 
 export function importFromStatement(config: T.ImportFromStatement.Config) {
-  const children = _configChildren<T.ImportFromStatement['$children']>(config, [] as unknown as T.ImportFromStatement['$children']);
   const _module_name = config.moduleName;
+  const _name = config.name;
   return withMethods({
     $type: TSKindId.ImportFromStatement as const,
     $source: 2 as const,
     $named: true as const,
     _module_name,
-    $children: children,
+    _name,
     moduleName() { return _module_name; },
-    children() { return children; },
+    names() { return _name; },
     $with: {
       moduleName: (value: T.RelativeImport | T.DottedName) => importFromStatement({ ...config, moduleName: value }),
-      children: (...items: NonEmptyArray<(T.WildcardImport | T.DottedName | T.AliasedImport)>) => importFromStatement({ ...config, children: items } as unknown as Parameters<typeof importFromStatement>[0]),
+      names: (...values: (T.DottedName | T.AliasedImport)[]) => importFromStatement({ ...config, name: values }),
     },
   }, methodsEngine);
 }

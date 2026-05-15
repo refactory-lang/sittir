@@ -317,6 +317,10 @@
       "consequence",
       "alternative"
     ],
+    "import_from_statement": [
+      "module_name",
+      "name"
+    ],
     "import_statement": [
       "name"
     ],
@@ -1323,12 +1327,19 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
       "children": {
         "unnamed": true,
         "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "import_statement": {
@@ -2069,6 +2080,97 @@
         "assignment_eq": "eq",
         "assignment_type": "type",
         "assignment_typed": "typed"
+      },
+      "helperKind": {
+        "eq": "_assignment_eq",
+        "type": "_assignment_type",
+        "typed": "_assignment_typed"
+      },
+      "helperChildKind": {
+        "eq": [
+          "comparison_operator",
+          "not_operator",
+          "boolean_operator",
+          "lambda",
+          "await",
+          "binary_operator",
+          "identifier",
+          "keyword_identifier",
+          "string",
+          "concatenated_string",
+          "integer",
+          "float",
+          "true",
+          "false",
+          "none",
+          "unary_operator",
+          "attribute",
+          "subscript",
+          "call",
+          "list",
+          "list_comprehension",
+          "dictionary",
+          "dictionary_comprehension",
+          "set",
+          "set_comprehension",
+          "tuple",
+          "parenthesized_expression",
+          "generator_expression",
+          "ellipsis",
+          "list_splat_pattern",
+          "conditional_expression",
+          "named_expression",
+          "as_pattern",
+          "expression_list",
+          "assignment",
+          "augmented_assignment",
+          "pattern_list",
+          "yield"
+        ],
+        "type": [
+          "type"
+        ],
+        "typed": [
+          "type",
+          "comparison_operator",
+          "not_operator",
+          "boolean_operator",
+          "lambda",
+          "await",
+          "binary_operator",
+          "identifier",
+          "keyword_identifier",
+          "string",
+          "concatenated_string",
+          "integer",
+          "float",
+          "true",
+          "false",
+          "none",
+          "unary_operator",
+          "attribute",
+          "subscript",
+          "call",
+          "list",
+          "list_comprehension",
+          "dictionary",
+          "dictionary_comprehension",
+          "set",
+          "set_comprehension",
+          "tuple",
+          "parenthesized_expression",
+          "generator_expression",
+          "ellipsis",
+          "list_splat_pattern",
+          "conditional_expression",
+          "named_expression",
+          "as_pattern",
+          "expression_list",
+          "assignment",
+          "augmented_assignment",
+          "pattern_list",
+          "yield"
+        ]
       }
     },
     "dict_pattern": {
@@ -2117,6 +2219,9 @@
         "assignment": "assignment",
         "augmented_assignment": "augmented_assignment",
         "yield": "yield"
+      },
+      "helperKind": {
+        "tuple": "_expression_statement_tuple"
       }
     },
     "with_clause": {
@@ -2124,6 +2229,10 @@
       "childKind": {
         "with_clause_bare": "bare",
         "with_clause_paren": "paren"
+      },
+      "helperKind": {
+        "bare": "_with_clause_bare",
+        "paren": "_with_clause_paren"
       }
     }
   }

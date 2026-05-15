@@ -205,11 +205,14 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 				break;
 			case 'group':
 				if (factoryEmission === 'emit') factoryEmitter.emitGroup(node);
+				if (wrapEmission === 'emit') wrapEmitter.emitGroup(node);
 				if (templateEmission === 'emit') templateEmitter.emitGroup(node);
 				renderModuleEmitterInst?.emitGroup?.(node);
 				break;
-			case 'token':
 			case 'supertype':
+				if (wrapEmission === 'emit') wrapEmitter.emitSupertype(node);
+				break;
+			case 'token':
 			case 'multi':
 				break;
 		}

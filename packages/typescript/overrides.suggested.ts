@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   85  (77 applied, 8 held)
+// Rule promotions:   88  (81 applied, 7 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -35,14 +35,6 @@ export const suggestedTransforms = {
   _class_body_method_sig: {
       "1/0": variant("form0"),
       "1/1": variant("form1"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 3 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: declaration
-  ambient_declaration: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-      "1/2": variant("form2"),
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
@@ -240,7 +232,10 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_export_statement_default_from_arm_clause_from", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm_ns_from", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm_star_from", classification: "polymorph", applied: true },
-  { kind: "ambient_declaration", classification: "polymorph", applied: false },
+  { kind: "ambient_declaration", classification: "polymorph", applied: true },
+  { kind: "ambient_declaration_declaration", classification: "polymorph", applied: true },
+  { kind: "ambient_declaration_global", classification: "polymorph", applied: true },
+  { kind: "ambient_declaration_module", classification: "polymorph", applied: true },
   { kind: "arrow_function", classification: "polymorph", applied: true },
   { kind: "arrow_function__call_signature", classification: "polymorph", applied: true },
   { kind: "arrow_function_parameter", classification: "polymorph", applied: true },

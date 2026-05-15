@@ -30,6 +30,9 @@ pub enum AnyTransport {
     AbstractMarker(AbstractMarkerTransport),
     _AccessibilityModifier(_AccessibilityModifierEnum),
     AccessorKind(AccessorKindEnum),
+    _AmbientDeclarationDeclaration(_AmbientDeclarationDeclarationTransport),
+    AmbientDeclarationGlobal(AmbientDeclarationGlobalTransport),
+    AmbientDeclarationModule(AmbientDeclarationModuleTransport),
     _ArrowFunctionUCallSignature(_ArrowFunctionUCallSignatureTransport),
     _ArrowFunctionParameter(_ArrowFunctionParameterTransport),
     AssertsAnnotationAsserts(AssertsAnnotationAssertsTransport),
@@ -123,6 +126,7 @@ pub enum AnyTransport {
     AbstractMethodSignature(AbstractMethodSignatureTransport),
     AccessibilityModifier(AccessibilityModifierEnum),
     AddingTypeAnnotation(AddingTypeAnnotationTransport),
+    AmbientDeclarationDeclaration(AmbientDeclarationDeclarationTransport),
     AmbientDeclaration(AmbientDeclarationTransport),
     Arguments(ArgumentsTransport),
     Array(ArrayTransport),
@@ -326,6 +330,8 @@ pub enum AnyTransport {
     FunctionSignatureAutomaticSemicolon(FunctionSignatureAutomaticSemicolonTransport),
     ErrorRecovery(ErrorRecoveryTransport),
     Abstract(AbstractTransport),
+    Global(GlobalTransport),
+    Dot(DotTransport),
     Colon(ColonTransport),
     Async(AsyncTransport),
     TokQDot(TokQDotTransport),
@@ -352,11 +358,9 @@ pub enum AnyTransport {
     Static(StaticTransport),
     Using(UsingTransport),
     Override(OverrideTransport),
-    Dot(DotTransport),
     Bracket(BracketTransport),
     CloseBracket(CloseBracketTransport),
     TokPlusQColon(TokPlusQColonTransport),
-    Global(GlobalTransport),
     AmpAmp(AmpAmpTransport),
     PipePipe(PipePipeTransport),
     GtGt(GtGtTransport),
@@ -448,24 +452,36 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
         };
         if let Some(kind_id) = kind_id {
             return match kind_id {
+                // kind: _ambient_declaration_declaration (_AMBIENT_DECLARATION_DECLARATION)
+                369 => Ok(AnyTransport::_AmbientDeclarationDeclaration(
+                    _AmbientDeclarationDeclarationTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _ambient_declaration_global (_AMBIENT_DECLARATION_GLOBAL)
+                352 => Ok(AnyTransport::AmbientDeclarationGlobal(
+                    AmbientDeclarationGlobalTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _ambient_declaration_module (_AMBIENT_DECLARATION_MODULE)
+                353 => Ok(AnyTransport::AmbientDeclarationModule(
+                    AmbientDeclarationModuleTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _arrow_function__call_signature (_ARROW_FUNCTION_U_CALL_SIGNATURE)
-                357 => Ok(AnyTransport::_ArrowFunctionUCallSignature(
+                359 => Ok(AnyTransport::_ArrowFunctionUCallSignature(
                     _ArrowFunctionUCallSignatureTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _arrow_function_parameter (_ARROW_FUNCTION_PARAMETER)
-                356 => Ok(AnyTransport::_ArrowFunctionParameter(
+                358 => Ok(AnyTransport::_ArrowFunctionParameter(
                     _ArrowFunctionParameterTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _call_expression_call (_CALL_EXPRESSION_CALL)
-                382 => Ok(AnyTransport::CallExpressionCall(
+                385 => Ok(AnyTransport::CallExpressionCall(
                     CallExpressionCallTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _call_expression_member (_CALL_EXPRESSION_MEMBER)
-                384 => Ok(AnyTransport::CallExpressionMember(
+                387 => Ok(AnyTransport::CallExpressionMember(
                     CallExpressionMemberTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _call_expression_template_call (_CALL_EXPRESSION_TEMPLATE_CALL)
-                383 => Ok(AnyTransport::CallExpressionTemplateCall(
+                386 => Ok(AnyTransport::CallExpressionTemplateCall(
                     CallExpressionTemplateCallTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _call_signature (_CALL_SIGNATURE)
@@ -473,63 +489,63 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     _CallSignatureTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _class_body_member (_CLASS_BODY_MEMBER)
-                373 => Ok(AnyTransport::ClassBodyMember(
+                376 => Ok(AnyTransport::ClassBodyMember(
                     ClassBodyMemberTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _class_body_method (_CLASS_BODY_METHOD)
-                371 => Ok(AnyTransport::ClassBodyMethod(
+                374 => Ok(AnyTransport::ClassBodyMethod(
                     ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _class_body_method_sig (_CLASS_BODY_METHOD_SIG)
-                372 => Ok(AnyTransport::ClassBodyMethodSig(
+                375 => Ok(AnyTransport::ClassBodyMethodSig(
                     ClassBodyMethodSigTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _class_heritage_extends_clause (_CLASS_HERITAGE_EXTENDS_CLAUSE)
-                358 => Ok(AnyTransport::_ClassHeritageExtendsClause(
+                360 => Ok(AnyTransport::_ClassHeritageExtendsClause(
                     _ClassHeritageExtendsClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _class_heritage_implements_clause (_CLASS_HERITAGE_IMPLEMENTS_CLAUSE)
-                359 => Ok(AnyTransport::_ClassHeritageImplementsClause(
+                361 => Ok(AnyTransport::_ClassHeritageImplementsClause(
                     _ClassHeritageImplementsClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_decl_arm (_EXPORT_STATEMENT_DEFAULT_DECL_ARM)
-                354 => Ok(AnyTransport::ExportStatementDefaultDeclArm(
+                356 => Ok(AnyTransport::ExportStatementDefaultDeclArm(
                     ExportStatementDefaultDeclArmTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_decl_arm_default_kw (_EXPORT_STATEMENT_DEFAULT_DECL_ARM_DEFAULT_KW)
-                355 => Ok(AnyTransport::ExportStatementDefaultDeclArmDefaultKw(
+                357 => Ok(AnyTransport::ExportStatementDefaultDeclArmDefaultKw(
                     ExportStatementDefaultDeclArmDefaultKwTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_decl_arm_default_kw_value (_EXPORT_STATEMENT_DEFAULT_DECL_ARM_DEFAULT_KW_VALUE)
-                370 => Ok(AnyTransport::ExportStatementDefaultDeclArmDefaultKwValue(
+                373 => Ok(AnyTransport::ExportStatementDefaultDeclArmDefaultKwValue(
                     ExportStatementDefaultDeclArmDefaultKwValueTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_from_arm (_EXPORT_STATEMENT_DEFAULT_FROM_ARM)
-                353 => Ok(AnyTransport::ExportStatementDefaultFromArm(
+                355 => Ok(AnyTransport::ExportStatementDefaultFromArm(
                     ExportStatementDefaultFromArmTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_from_arm_clause_from (_EXPORT_STATEMENT_DEFAULT_FROM_ARM_CLAUSE_FROM)
-                369 => Ok(AnyTransport::ExportStatementDefaultFromArmClauseFrom(
+                372 => Ok(AnyTransport::ExportStatementDefaultFromArmClauseFrom(
                     ExportStatementDefaultFromArmClauseFromTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_from_arm_ns_from (_EXPORT_STATEMENT_DEFAULT_FROM_ARM_NS_FROM)
-                368 => Ok(AnyTransport::ExportStatementDefaultFromArmNsFrom(
+                371 => Ok(AnyTransport::ExportStatementDefaultFromArmNsFrom(
                     ExportStatementDefaultFromArmNsFromTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_default_from_arm_star_from (_EXPORT_STATEMENT_DEFAULT_FROM_ARM_STAR_FROM)
-                367 => Ok(AnyTransport::ExportStatementDefaultFromArmStarFrom(
+                370 => Ok(AnyTransport::ExportStatementDefaultFromArmStarFrom(
                     ExportStatementDefaultFromArmStarFromTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_equals_export (_EXPORT_STATEMENT_EQUALS_EXPORT)
-                380 => Ok(AnyTransport::_ExportStatementEqualsExport(
+                383 => Ok(AnyTransport::_ExportStatementEqualsExport(
                     _ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_namespace_export (_EXPORT_STATEMENT_NAMESPACE_EXPORT)
-                381 => Ok(AnyTransport::_ExportStatementNamespaceExport(
+                384 => Ok(AnyTransport::_ExportStatementNamespaceExport(
                     _ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_type_export (_EXPORT_STATEMENT_TYPE_EXPORT)
-                379 => Ok(AnyTransport::_ExportStatementTypeExport(
+                382 => Ok(AnyTransport::_ExportStatementTypeExport(
                     _ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _extends_clause_single (_EXTENDS_CLAUSE_SINGLE)
@@ -541,15 +557,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     ForHeaderTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _for_header_let_const_kind (_FOR_HEADER_LET_CONST_KIND)
-                376 => Ok(AnyTransport::ForHeaderLetConstKind(
+                379 => Ok(AnyTransport::ForHeaderLetConstKind(
                     ForHeaderLetConstKindTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _for_header_lhs (_FOR_HEADER_LHS)
-                374 => Ok(AnyTransport::ForHeaderLhs(
+                377 => Ok(AnyTransport::ForHeaderLhs(
                     ForHeaderLhsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _for_header_var_kind (_FOR_HEADER_VAR_KIND)
-                375 => Ok(AnyTransport::ForHeaderVarKind(
+                378 => Ok(AnyTransport::ForHeaderVarKind(
                     ForHeaderVarKindTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _from_clause (_FROM_CLAUSE)
@@ -557,31 +573,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     FromClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_clause_default_import (_IMPORT_CLAUSE_DEFAULT_IMPORT)
-                362 => Ok(AnyTransport::_ImportClauseDefaultImport(
+                364 => Ok(AnyTransport::_ImportClauseDefaultImport(
                     _ImportClauseDefaultImportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_clause_named_imports (_IMPORT_CLAUSE_NAMED_IMPORTS)
-                361 => Ok(AnyTransport::_ImportClauseNamedImports(
+                363 => Ok(AnyTransport::_ImportClauseNamedImports(
                     _ImportClauseNamedImportsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_clause_namespace_import (_IMPORT_CLAUSE_NAMESPACE_IMPORT)
-                360 => Ok(AnyTransport::_ImportClauseNamespaceImport(
+                362 => Ok(AnyTransport::_ImportClauseNamespaceImport(
                     _ImportClauseNamespaceImportTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_specifier_as (_IMPORT_SPECIFIER_AS)
-                364 => Ok(AnyTransport::ImportSpecifierAs(
+                366 => Ok(AnyTransport::ImportSpecifierAs(
                     ImportSpecifierAsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_specifier_name (_IMPORT_SPECIFIER_NAME)
-                363 => Ok(AnyTransport::_ImportSpecifierName(
+                365 => Ok(AnyTransport::_ImportSpecifierName(
                     _ImportSpecifierNameTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _index_signature_colon (_INDEX_SIGNATURE_COLON)
-                365 => Ok(AnyTransport::IndexSignatureColon(
+                367 => Ok(AnyTransport::IndexSignatureColon(
                     IndexSignatureColonTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _index_signature_mapped_type_clause (_INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE)
-                366 => Ok(AnyTransport::_IndexSignatureMappedTypeClause(
+                368 => Ok(AnyTransport::_IndexSignatureMappedTypeClause(
                     _IndexSignatureMappedTypeClauseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _initializer (_INITIALIZER)
@@ -601,39 +617,39 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     ParameterNameTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _parenthesized_expression_sequence (_PARENTHESIZED_EXPRESSION_SEQUENCE)
-                378 => Ok(AnyTransport::_ParenthesizedExpressionSequence(
+                381 => Ok(AnyTransport::_ParenthesizedExpressionSequence(
                     _ParenthesizedExpressionSequenceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _parenthesized_expression_typed (_PARENTHESIZED_EXPRESSION_TYPED)
-                377 => Ok(AnyTransport::ParenthesizedExpressionTyped(
+                380 => Ok(AnyTransport::ParenthesizedExpressionTyped(
                     ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _public_field_definition_abstract_first (_PUBLIC_FIELD_DEFINITION_ABSTRACT_FIRST)
-                413 => Ok(AnyTransport::PublicFieldDefinitionAbstractFirst(
+                416 => Ok(AnyTransport::PublicFieldDefinitionAbstractFirst(
                     PublicFieldDefinitionAbstractFirstTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _public_field_definition_access_first (_PUBLIC_FIELD_DEFINITION_ACCESS_FIRST)
-                414 => Ok(AnyTransport::PublicFieldDefinitionAccessFirst(
+                417 => Ok(AnyTransport::PublicFieldDefinitionAccessFirst(
                     PublicFieldDefinitionAccessFirstTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _public_field_definition_accessor_opt (_PUBLIC_FIELD_DEFINITION_ACCESSOR_OPT)
-                415 => Ok(AnyTransport::PublicFieldDefinitionAccessorOpt(
+                418 => Ok(AnyTransport::PublicFieldDefinitionAccessorOpt(
                     PublicFieldDefinitionAccessorOptTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _public_field_definition_declare_first (_PUBLIC_FIELD_DEFINITION_DECLARE_FIRST)
-                416 => Ok(AnyTransport::PublicFieldDefinitionDeclareFirst(
+                419 => Ok(AnyTransport::PublicFieldDefinitionDeclareFirst(
                     PublicFieldDefinitionDeclareFirstTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _public_field_definition_readonly_first (_PUBLIC_FIELD_DEFINITION_READONLY_FIRST)
-                417 => Ok(AnyTransport::PublicFieldDefinitionReadonlyFirst(
+                420 => Ok(AnyTransport::PublicFieldDefinitionReadonlyFirst(
                     PublicFieldDefinitionReadonlyFirstTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _public_field_definition_static_mods (_PUBLIC_FIELD_DEFINITION_STATIC_MODS)
-                418 => Ok(AnyTransport::PublicFieldDefinitionStaticMods(
+                421 => Ok(AnyTransport::PublicFieldDefinitionStaticMods(
                     PublicFieldDefinitionStaticModsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_identifier (_TYPE_IDENTIFIER)
-                423 => Ok(AnyTransport::TypeIdentifier(
+                426 => Ok(AnyTransport::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_query_call_expression (_TYPE_QUERY_CALL_EXPRESSION)
@@ -661,11 +677,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _update_expression_postfix (_UPDATE_EXPRESSION_POSTFIX)
-                385 => Ok(AnyTransport::UpdateExpressionPostfix(
+                388 => Ok(AnyTransport::UpdateExpressionPostfix(
                     UpdateExpressionPostfixTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _update_expression_prefix (_UPDATE_EXPRESSION_PREFIX)
-                386 => Ok(AnyTransport::UpdateExpressionPrefix(
+                389 => Ok(AnyTransport::UpdateExpressionPrefix(
                     UpdateExpressionPrefixTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: abstract_class_declaration (ABSTRACT_CLASS_DECLARATION)
@@ -1396,6 +1412,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 135 => Ok(AnyTransport::Abstract(
                     AbstractTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: global (GLOBAL)
+                154 => Ok(AnyTransport::Global(
+                    GlobalTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: . (DOT)
+                45 => Ok(AnyTransport::Dot(
+                    DotTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: : (COLON)
                 36 => Ok(AnyTransport::Colon(
                     ColonTransport::from_napi_value(env, napi_val)?
@@ -1500,10 +1524,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 124 => Ok(AnyTransport::Override(
                     OverrideTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: . (DOT)
-                45 => Ok(AnyTransport::Dot(
-                    DotTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: [ (BRACKET)
                 43 => Ok(AnyTransport::Bracket(
                     BracketTransport::from_napi_value(env, napi_val)?
@@ -1513,12 +1533,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     CloseBracketTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: +?: (TOK_PLUS_Q_COLON)
-                144 => Ok(AnyTransport::TokPlusQColon(
+                143 => Ok(AnyTransport::TokPlusQColon(
                     TokPlusQColonTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: global (GLOBAL)
-                140 => Ok(AnyTransport::Global(
-                    GlobalTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: amp_amp (AMP_AMP)
                 68 => Ok(AnyTransport::AmpAmp(
@@ -1665,7 +1681,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     ElseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: enum (ENUM)
-                142 => Ok(AnyTransport::Enum(
+                141 => Ok(AnyTransport::Enum(
                     EnumTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: finally (FINALLY)
@@ -1693,15 +1709,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     RequireTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: keyof (KEYOF)
-                149 => Ok(AnyTransport::Keyof(
+                148 => Ok(AnyTransport::Keyof(
                     KeyofTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: infer (INFER)
-                147 => Ok(AnyTransport::Infer(
+                146 => Ok(AnyTransport::Infer(
                     InferTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: interface (INTERFACE)
-                141 => Ok(AnyTransport::Interface(
+                140 => Ok(AnyTransport::Interface(
                     InterfaceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: ! (BANG)
@@ -1709,11 +1725,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     BangTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: -?: (TOK_MINUS_Q_COLON)
-                143 => Ok(AnyTransport::TokMinusQColon(
+                142 => Ok(AnyTransport::TokMinusQColon(
                     TokMinusQColonTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: ?: (TOK_Q_COLON)
-                145 => Ok(AnyTransport::TokQColon(
+                144 => Ok(AnyTransport::TokQColon(
                     TokQColonTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: ... (ELLIPSIS)
@@ -1753,7 +1769,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     TryTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: is (IS)
-                148 => Ok(AnyTransport::Is(
+                147 => Ok(AnyTransport::Is(
                     IsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: typeof (TYPEOF)
@@ -1790,6 +1806,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = AccessorKindEnum::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::AccessorKind(value));
+            }
+            if let Ok(value) = _AmbientDeclarationDeclarationTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::_AmbientDeclarationDeclaration(value));
+            }
+            if let Ok(value) = AmbientDeclarationGlobalTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::AmbientDeclarationGlobal(value));
+            }
+            if let Ok(value) = AmbientDeclarationModuleTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::AmbientDeclarationModule(value));
             }
             if let Ok(value) = _ArrowFunctionUCallSignatureTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::_ArrowFunctionUCallSignature(value));
@@ -2069,6 +2094,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = AddingTypeAnnotationTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::AddingTypeAnnotation(value));
+            }
+            if let Ok(value) = AmbientDeclarationDeclarationTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::AmbientDeclarationDeclaration(value));
             }
             if let Ok(value) = AmbientDeclarationTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::AmbientDeclaration(value));
@@ -2679,6 +2707,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = AbstractTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Abstract(value));
             }
+            if let Ok(value) = GlobalTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::Global(value));
+            }
+            if let Ok(value) = DotTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::Dot(value));
+            }
             if let Ok(value) = ColonTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Colon(value));
             }
@@ -2757,9 +2791,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = OverrideTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Override(value));
             }
-            if let Ok(value) = DotTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::Dot(value));
-            }
             if let Ok(value) = BracketTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Bracket(value));
             }
@@ -2768,9 +2799,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = TokPlusQColonTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TokPlusQColon(value));
-            }
-            if let Ok(value) = GlobalTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::Global(value));
             }
             if let Ok(value) = AmpAmpTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::AmpAmp(value));
@@ -3886,7 +3914,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyIdentifierTransport {
         };
         if let Some(kind_id) = kind_id {
             return match kind_id {
-                412 => {
+                415 => {
                 if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::Identifier(value));
                 }
@@ -3987,7 +4015,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyNameTransport {
                 }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PropertyNameTransport"))
                 },
-                412 => Ok(Self::PropertyIdentifier(Box::new(
+                415 => Ok(Self::PropertyIdentifier(Box::new(
                     PropertyIdentifierTransport::from_napi_value(env, napi_val)?
                 ))),
                 1 => Ok(Self::PropertyIdentifier(Box::new(
@@ -4155,7 +4183,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementIdentifierTransport {
         };
         if let Some(kind_id) = kind_id {
             return match kind_id {
-                421 => {
+                424 => {
                 if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::Identifier(value));
                 }
@@ -4273,7 +4301,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMemberTransport {
                 335 => Ok(Self::Type(Box::new(
                     TypeTransport::from_napi_value(env, napi_val)?
                 ))),
-                423 => Ok(Self::Type(Box::new(
+                426 => Ok(Self::Type(Box::new(
                     TypeTransport::from_napi_value(env, napi_val)?
                 ))),
                 287 => Ok(Self::Type(Box::new(
@@ -5474,7 +5502,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
                 335 => Ok(Self::PredefinedType(
                     PredefinedTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                423 => Ok(Self::TypeIdentifier(
+                426 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 287 => Ok(Self::NestedTypeIdentifier(Box::new(
@@ -6014,7 +6042,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
                 335 => Ok(Self::PrimaryType(Box::new(
                     PrimaryTypeTransport::from_napi_value(env, napi_val)?
                 ))),
-                423 => Ok(Self::PrimaryType(Box::new(
+                426 => Ok(Self::PrimaryType(Box::new(
                     PrimaryTypeTransport::from_napi_value(env, napi_val)?
                 ))),
                 287 => Ok(Self::PrimaryType(Box::new(
@@ -6171,31 +6199,29 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMemberChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                270 => Ok(Self::AbstractMethodSignature(Box::new(
+            match kind_id {
+                270 => return Ok(Self::AbstractMethodSignature(Box::new(
                     AbstractMethodSignatureTransport::from_napi_value(env, napi_val)?
                 ))),
-                345 => Ok(Self::IndexSignature(Box::new(
+                345 => return Ok(Self::IndexSignature(Box::new(
                     IndexSignatureTransport::from_napi_value(env, napi_val)?
                 ))),
-                269 => Ok(Self::MethodSignature(Box::new(
+                269 => return Ok(Self::MethodSignature(Box::new(
                     MethodSignatureTransport::from_napi_value(env, napi_val)?
                 ))),
-                266 => Ok(Self::PublicFieldDefinition(Box::new(
+                266 => return Ok(Self::PublicFieldDefinition(Box::new(
                     PublicFieldDefinitionTransport::from_napi_value(env, napi_val)?
                 ))),
-                159 => Ok(Self::AutomaticSemicolon(
+                159 => return Ok(Self::AutomaticSemicolon(
                     AutomaticSemicolonTransport::from_napi_value(env, napi_val)?
                 )),
-                23 => Ok(Self::Semi(
+                23 => return Ok(Self::Semi(
                     SemiTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ClassBodyMemberChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = AbstractMethodSignatureTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::AbstractMethodSignature(Box::new(value)));
             }
@@ -6214,6 +6240,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMemberChildTransport {
             if let Ok(value) = SemiTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Semi(value));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ClassBodyMemberChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in ClassBodyMemberChildTransport"))
     }
@@ -6277,22 +6308,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                261 => Ok(Self::MethodDefinition(Box::new(
+            match kind_id {
+                261 => return Ok(Self::MethodDefinition(Box::new(
                     MethodDefinitionTransport::from_napi_value(env, napi_val)?
                 ))),
-                159 => Ok(Self::AutomaticSemicolon(
+                159 => return Ok(Self::AutomaticSemicolon(
                     AutomaticSemicolonTransport::from_napi_value(env, napi_val)?
                 )),
-                23 => Ok(Self::Semi(
+                23 => return Ok(Self::Semi(
                     SemiTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ClassBodyMethodChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = MethodDefinitionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::MethodDefinition(Box::new(value)));
             }
@@ -6302,6 +6331,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodChildTransport {
             if let Ok(value) = SemiTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Semi(value));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ClassBodyMethodChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in ClassBodyMethodChildTransport"))
     }
@@ -6358,17 +6392,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodSigChildTransport
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                269 => Ok(Self::MethodSignature(Box::new(
+            match kind_id {
+                269 => return Ok(Self::MethodSignature(Box::new(
                     MethodSignatureTransport::from_napi_value(env, napi_val)?
                 ))),
-                164 => Ok(Self::FunctionSignatureAutomaticSemicolon(
+                164 => return Ok(Self::FunctionSignatureAutomaticSemicolon(
                     FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in ClassBodyMethodSigChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = MethodSignatureTransport::from_napi_value(env, napi_val) {
@@ -6431,17 +6465,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ClassHeritageExtendsClauseChild
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                278 => Ok(Self::ExtendsClause(Box::new(
+            match kind_id {
+                278 => return Ok(Self::ExtendsClause(Box::new(
                     ExtendsClauseTransport::from_napi_value(env, napi_val)?
                 ))),
-                280 => Ok(Self::ImplementsClause(Box::new(
+                280 => return Ok(Self::ImplementsClause(Box::new(
                     ImplementsClauseTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in _ClassHeritageExtendsClauseChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = ExtendsClauseTransport::from_napi_value(env, napi_val) {
@@ -6485,386 +6519,6 @@ impl RenderableTransport for _ClassHeritageExtendsClauseChildTransport {
 }
 
 #[derive(Debug, Clone)]
-pub enum ExportStatementDefaultDeclArmChildTransport {
-    FunctionDeclaration(Box<FunctionDeclarationTransport>),
-    GeneratorFunctionDeclaration(Box<GeneratorFunctionDeclarationTransport>),
-    ClassDeclaration(Box<ClassDeclarationTransport>),
-    LexicalDeclaration(Box<LexicalDeclarationTransport>),
-    VariableDeclaration(Box<VariableDeclarationTransport>),
-    FunctionSignature(Box<FunctionSignatureTransport>),
-    AbstractClassDeclaration(Box<AbstractClassDeclarationTransport>),
-    Module(Box<ModuleTransport>),
-    InternalModule(Box<InternalModuleTransport>),
-    TypeAliasDeclaration(Box<TypeAliasDeclarationTransport>),
-    EnumDeclaration(Box<EnumDeclarationTransport>),
-    InterfaceDeclaration(Box<InterfaceDeclarationTransport>),
-    ImportAlias(Box<ImportAliasTransport>),
-    AmbientDeclaration(Box<AmbientDeclarationTransport>),
-    ExportStatementDefaultDeclArmDefaultKw(Box<ExportStatementDefaultDeclArmDefaultKwTransport>),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclArmChildTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-            Some(kind_id)
-        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-            obj.get::<u16>("$type")?
-        } else {
-            None
-        };
-        if let Some(kind_id) = kind_id {
-            return match kind_id {
-                224 => Ok(Self::FunctionDeclaration(Box::new(
-                    FunctionDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                226 => Ok(Self::GeneratorFunctionDeclaration(Box::new(
-                    GeneratorFunctionDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                221 => Ok(Self::ClassDeclaration(Box::new(
-                    ClassDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                184 => Ok(Self::LexicalDeclaration(Box::new(
-                    LexicalDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                183 => Ok(Self::VariableDeclaration(Box::new(
-                    VariableDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                271 => Ok(Self::FunctionSignature(Box::new(
-                    FunctionSignatureTransport::from_napi_value(env, napi_val)?
-                ))),
-                282 => Ok(Self::AbstractClassDeclaration(Box::new(
-                    AbstractClassDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                283 => Ok(Self::Module(Box::new(
-                    ModuleTransport::from_napi_value(env, napi_val)?
-                ))),
-                284 => Ok(Self::InternalModule(Box::new(
-                    InternalModuleTransport::from_napi_value(env, napi_val)?
-                ))),
-                293 => Ok(Self::TypeAliasDeclaration(Box::new(
-                    TypeAliasDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                290 => Ok(Self::EnumDeclaration(Box::new(
-                    EnumDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                288 => Ok(Self::InterfaceDeclaration(Box::new(
-                    InterfaceDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                286 => Ok(Self::ImportAlias(Box::new(
-                    ImportAliasTransport::from_napi_value(env, napi_val)?
-                ))),
-                281 => Ok(Self::AmbientDeclaration(Box::new(
-                    AmbientDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                355 => Ok(Self::ExportStatementDefaultDeclArmDefaultKw(Box::new(
-                    ExportStatementDefaultDeclArmDefaultKwTransport::from_napi_value(env, napi_val)?
-                ))),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ExportStatementDefaultDeclArmChildTransport",
-                ))),
-            };
-        }
-        if String::from_napi_value(env, napi_val).is_ok() {
-            if let Ok(value) = FunctionDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::FunctionDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = GeneratorFunctionDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::GeneratorFunctionDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = ClassDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ClassDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = LexicalDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::LexicalDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = VariableDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::VariableDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = FunctionSignatureTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::FunctionSignature(Box::new(value)));
-            }
-            if let Ok(value) = AbstractClassDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::AbstractClassDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = ModuleTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::Module(Box::new(value)));
-            }
-            if let Ok(value) = InternalModuleTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::InternalModule(Box::new(value)));
-            }
-            if let Ok(value) = TypeAliasDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::TypeAliasDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = EnumDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::EnumDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = InterfaceDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::InterfaceDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = ImportAliasTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ImportAlias(Box::new(value)));
-            }
-            if let Ok(value) = AmbientDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::AmbientDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = ExportStatementDefaultDeclArmDefaultKwTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ExportStatementDefaultDeclArmDefaultKw(Box::new(value)));
-            }
-        }
-        Err(::napi::Error::from_reason("$type property missing in ExportStatementDefaultDeclArmChildTransport"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementDefaultDeclArmChildTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExportStatementDefaultDeclArmChildTransport is receive-only"))
-    }
-}
-
-fn export_statement_default_decl_arm_child_transport_to_any(t: ExportStatementDefaultDeclArmChildTransport) -> AnyTransport {
-    match t {
-        ExportStatementDefaultDeclArmChildTransport::FunctionDeclaration(inner) => AnyTransport::FunctionDeclaration(*inner),
-        ExportStatementDefaultDeclArmChildTransport::GeneratorFunctionDeclaration(inner) => AnyTransport::GeneratorFunctionDeclaration(*inner),
-        ExportStatementDefaultDeclArmChildTransport::ClassDeclaration(inner) => AnyTransport::ClassDeclaration(*inner),
-        ExportStatementDefaultDeclArmChildTransport::LexicalDeclaration(inner) => AnyTransport::LexicalDeclaration(*inner),
-        ExportStatementDefaultDeclArmChildTransport::VariableDeclaration(inner) => AnyTransport::VariableDeclaration(*inner),
-        ExportStatementDefaultDeclArmChildTransport::FunctionSignature(inner) => AnyTransport::FunctionSignature(*inner),
-        ExportStatementDefaultDeclArmChildTransport::AbstractClassDeclaration(inner) => AnyTransport::AbstractClassDeclaration(*inner),
-        ExportStatementDefaultDeclArmChildTransport::Module(inner) => AnyTransport::Module(*inner),
-        ExportStatementDefaultDeclArmChildTransport::InternalModule(inner) => AnyTransport::InternalModule(*inner),
-        ExportStatementDefaultDeclArmChildTransport::TypeAliasDeclaration(inner) => AnyTransport::TypeAliasDeclaration(*inner),
-        ExportStatementDefaultDeclArmChildTransport::EnumDeclaration(inner) => AnyTransport::EnumDeclaration(*inner),
-        ExportStatementDefaultDeclArmChildTransport::InterfaceDeclaration(inner) => AnyTransport::InterfaceDeclaration(*inner),
-        ExportStatementDefaultDeclArmChildTransport::ImportAlias(inner) => AnyTransport::ImportAlias(*inner),
-        ExportStatementDefaultDeclArmChildTransport::AmbientDeclaration(inner) => AnyTransport::AmbientDeclaration(*inner),
-        ExportStatementDefaultDeclArmChildTransport::ExportStatementDefaultDeclArmDefaultKw(inner) => AnyTransport::ExportStatementDefaultDeclArmDefaultKw(*inner),
-    }
-}
-
-impl RenderableTransport for ExportStatementDefaultDeclArmChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            ExportStatementDefaultDeclArmChildTransport::FunctionDeclaration(inner) => render_function_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::GeneratorFunctionDeclaration(inner) => render_generator_function_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::ClassDeclaration(inner) => render_class_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::LexicalDeclaration(inner) => render_lexical_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::VariableDeclaration(inner) => render_variable_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::FunctionSignature(inner) => render_function_signature(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::AbstractClassDeclaration(inner) => render_abstract_class_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::Module(inner) => render_module(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::InternalModule(inner) => render_internal_module(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::TypeAliasDeclaration(inner) => render_type_alias_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::EnumDeclaration(inner) => render_enum_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::InterfaceDeclaration(inner) => render_interface_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::ImportAlias(inner) => render_import_alias(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::AmbientDeclaration(inner) => render_ambient_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmChildTransport::ExportStatementDefaultDeclArmDefaultKw(inner) => render_export_statement_default_decl_arm_default_kw(inner.as_ref(), dest),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ExportStatementDefaultDeclArmDefaultKwChildTransport {
-    FunctionDeclaration(Box<FunctionDeclarationTransport>),
-    GeneratorFunctionDeclaration(Box<GeneratorFunctionDeclarationTransport>),
-    ClassDeclaration(Box<ClassDeclarationTransport>),
-    LexicalDeclaration(Box<LexicalDeclarationTransport>),
-    VariableDeclaration(Box<VariableDeclarationTransport>),
-    FunctionSignature(Box<FunctionSignatureTransport>),
-    AbstractClassDeclaration(Box<AbstractClassDeclarationTransport>),
-    Module(Box<ModuleTransport>),
-    InternalModule(Box<InternalModuleTransport>),
-    TypeAliasDeclaration(Box<TypeAliasDeclarationTransport>),
-    EnumDeclaration(Box<EnumDeclarationTransport>),
-    InterfaceDeclaration(Box<InterfaceDeclarationTransport>),
-    ImportAlias(Box<ImportAliasTransport>),
-    AmbientDeclaration(Box<AmbientDeclarationTransport>),
-    ExportStatementDefaultDeclArmDefaultKwValue(Box<ExportStatementDefaultDeclArmDefaultKwValueTransport>),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclArmDefaultKwChildTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-            Some(kind_id)
-        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-            obj.get::<u16>("$type")?
-        } else {
-            None
-        };
-        if let Some(kind_id) = kind_id {
-            return match kind_id {
-                224 => Ok(Self::FunctionDeclaration(Box::new(
-                    FunctionDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                226 => Ok(Self::GeneratorFunctionDeclaration(Box::new(
-                    GeneratorFunctionDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                221 => Ok(Self::ClassDeclaration(Box::new(
-                    ClassDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                184 => Ok(Self::LexicalDeclaration(Box::new(
-                    LexicalDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                183 => Ok(Self::VariableDeclaration(Box::new(
-                    VariableDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                271 => Ok(Self::FunctionSignature(Box::new(
-                    FunctionSignatureTransport::from_napi_value(env, napi_val)?
-                ))),
-                282 => Ok(Self::AbstractClassDeclaration(Box::new(
-                    AbstractClassDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                283 => Ok(Self::Module(Box::new(
-                    ModuleTransport::from_napi_value(env, napi_val)?
-                ))),
-                284 => Ok(Self::InternalModule(Box::new(
-                    InternalModuleTransport::from_napi_value(env, napi_val)?
-                ))),
-                293 => Ok(Self::TypeAliasDeclaration(Box::new(
-                    TypeAliasDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                290 => Ok(Self::EnumDeclaration(Box::new(
-                    EnumDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                288 => Ok(Self::InterfaceDeclaration(Box::new(
-                    InterfaceDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                286 => Ok(Self::ImportAlias(Box::new(
-                    ImportAliasTransport::from_napi_value(env, napi_val)?
-                ))),
-                281 => Ok(Self::AmbientDeclaration(Box::new(
-                    AmbientDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                370 => Ok(Self::ExportStatementDefaultDeclArmDefaultKwValue(Box::new(
-                    ExportStatementDefaultDeclArmDefaultKwValueTransport::from_napi_value(env, napi_val)?
-                ))),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ExportStatementDefaultDeclArmDefaultKwChildTransport",
-                ))),
-            };
-        }
-        if String::from_napi_value(env, napi_val).is_ok() {
-            if let Ok(value) = FunctionDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::FunctionDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = GeneratorFunctionDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::GeneratorFunctionDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = ClassDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ClassDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = LexicalDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::LexicalDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = VariableDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::VariableDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = FunctionSignatureTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::FunctionSignature(Box::new(value)));
-            }
-            if let Ok(value) = AbstractClassDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::AbstractClassDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = ModuleTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::Module(Box::new(value)));
-            }
-            if let Ok(value) = InternalModuleTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::InternalModule(Box::new(value)));
-            }
-            if let Ok(value) = TypeAliasDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::TypeAliasDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = EnumDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::EnumDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = InterfaceDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::InterfaceDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = ImportAliasTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ImportAlias(Box::new(value)));
-            }
-            if let Ok(value) = AmbientDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::AmbientDeclaration(Box::new(value)));
-            }
-            if let Ok(value) = ExportStatementDefaultDeclArmDefaultKwValueTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ExportStatementDefaultDeclArmDefaultKwValue(Box::new(value)));
-            }
-        }
-        Err(::napi::Error::from_reason("$type property missing in ExportStatementDefaultDeclArmDefaultKwChildTransport"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementDefaultDeclArmDefaultKwChildTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExportStatementDefaultDeclArmDefaultKwChildTransport is receive-only"))
-    }
-}
-
-fn export_statement_default_decl_arm_default_kw_child_transport_to_any(t: ExportStatementDefaultDeclArmDefaultKwChildTransport) -> AnyTransport {
-    match t {
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::FunctionDeclaration(inner) => AnyTransport::FunctionDeclaration(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::GeneratorFunctionDeclaration(inner) => AnyTransport::GeneratorFunctionDeclaration(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::ClassDeclaration(inner) => AnyTransport::ClassDeclaration(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::LexicalDeclaration(inner) => AnyTransport::LexicalDeclaration(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::VariableDeclaration(inner) => AnyTransport::VariableDeclaration(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::FunctionSignature(inner) => AnyTransport::FunctionSignature(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::AbstractClassDeclaration(inner) => AnyTransport::AbstractClassDeclaration(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::Module(inner) => AnyTransport::Module(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::InternalModule(inner) => AnyTransport::InternalModule(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::TypeAliasDeclaration(inner) => AnyTransport::TypeAliasDeclaration(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::EnumDeclaration(inner) => AnyTransport::EnumDeclaration(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::InterfaceDeclaration(inner) => AnyTransport::InterfaceDeclaration(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::ImportAlias(inner) => AnyTransport::ImportAlias(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::AmbientDeclaration(inner) => AnyTransport::AmbientDeclaration(*inner),
-        ExportStatementDefaultDeclArmDefaultKwChildTransport::ExportStatementDefaultDeclArmDefaultKwValue(inner) => AnyTransport::ExportStatementDefaultDeclArmDefaultKwValue(*inner),
-    }
-}
-
-impl RenderableTransport for ExportStatementDefaultDeclArmDefaultKwChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::FunctionDeclaration(inner) => render_function_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::GeneratorFunctionDeclaration(inner) => render_generator_function_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::ClassDeclaration(inner) => render_class_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::LexicalDeclaration(inner) => render_lexical_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::VariableDeclaration(inner) => render_variable_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::FunctionSignature(inner) => render_function_signature(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::AbstractClassDeclaration(inner) => render_abstract_class_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::Module(inner) => render_module(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::InternalModule(inner) => render_internal_module(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::TypeAliasDeclaration(inner) => render_type_alias_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::EnumDeclaration(inner) => render_enum_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::InterfaceDeclaration(inner) => render_interface_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::ImportAlias(inner) => render_import_alias(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::AmbientDeclaration(inner) => render_ambient_declaration(inner.as_ref(), dest),
-            ExportStatementDefaultDeclArmDefaultKwChildTransport::ExportStatementDefaultDeclArmDefaultKwValue(inner) => render_export_statement_default_decl_arm_default_kw_value(inner.as_ref(), dest),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum ExportStatementDefaultFromArmChildTransport {
     ExportStatementDefaultFromArmStarFrom(Box<ExportStatementDefaultFromArmStarFromTransport>),
     ExportStatementDefaultFromArmNsFrom(Box<ExportStatementDefaultFromArmNsFromTransport>),
@@ -6888,31 +6542,29 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultFromArmChi
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                367 => Ok(Self::ExportStatementDefaultFromArmStarFrom(Box::new(
+            match kind_id {
+                370 => return Ok(Self::ExportStatementDefaultFromArmStarFrom(Box::new(
                     ExportStatementDefaultFromArmStarFromTransport::from_napi_value(env, napi_val)?
                 ))),
-                368 => Ok(Self::ExportStatementDefaultFromArmNsFrom(Box::new(
+                371 => return Ok(Self::ExportStatementDefaultFromArmNsFrom(Box::new(
                     ExportStatementDefaultFromArmNsFromTransport::from_napi_value(env, napi_val)?
                 ))),
-                369 => Ok(Self::ExportStatementDefaultFromArmClauseFrom(Box::new(
+                372 => return Ok(Self::ExportStatementDefaultFromArmClauseFrom(Box::new(
                     ExportStatementDefaultFromArmClauseFromTransport::from_napi_value(env, napi_val)?
                 ))),
-                169 => Ok(Self::ExportClause(Box::new(
+                169 => return Ok(Self::ExportClause(Box::new(
                     ExportClauseTransport::from_napi_value(env, napi_val)?
                 ))),
-                159 => Ok(Self::AutomaticSemicolon(
+                159 => return Ok(Self::AutomaticSemicolon(
                     AutomaticSemicolonTransport::from_napi_value(env, napi_val)?
                 )),
-                23 => Ok(Self::Semi(
+                23 => return Ok(Self::Semi(
                     SemiTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ExportStatementDefaultFromArmChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = ExportStatementDefaultFromArmStarFromTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ExportStatementDefaultFromArmStarFrom(Box::new(value)));
             }
@@ -6931,6 +6583,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultFromArmChi
             if let Ok(value) = SemiTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Semi(value));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ExportStatementDefaultFromArmChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in ExportStatementDefaultFromArmChildTransport"))
     }
@@ -7031,130 +6688,128 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ExportStatementEqualsExportChil
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                274 => Ok(Self::AsExpression(Box::new(
+            match kind_id {
+                274 => return Ok(Self::AsExpression(Box::new(
                     AsExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                275 => Ok(Self::SatisfiesExpression(Box::new(
+                275 => return Ok(Self::SatisfiesExpression(Box::new(
                     SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                276 => Ok(Self::InstantiationExpression(Box::new(
+                276 => return Ok(Self::InstantiationExpression(Box::new(
                     InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                284 => Ok(Self::InternalModule(Box::new(
+                284 => return Ok(Self::InternalModule(Box::new(
                     InternalModuleTransport::from_napi_value(env, napi_val)?
                 ))),
-                273 => Ok(Self::TypeAssertion(Box::new(
+                273 => return Ok(Self::TypeAssertion(Box::new(
                     TypeAssertionTransport::from_napi_value(env, napi_val)?
                 ))),
-                235 => Ok(Self::SubscriptExpression(Box::new(
+                235 => return Ok(Self::SubscriptExpression(Box::new(
                     SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                234 => Ok(Self::MemberExpression(Box::new(
+                234 => return Ok(Self::MemberExpression(Box::new(
                     MemberExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                209 => Ok(Self::ParenthesizedExpression(Box::new(
+                209 => return Ok(Self::ParenthesizedExpression(Box::new(
                     ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                114 => Ok(Self::Undefined(
+                114 => return Ok(Self::Undefined(
                     UndefinedTransport::from_napi_value(env, napi_val)?
                 )),
-                1 => Ok(Self::Identifier(
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                109 => Ok(Self::This(
+                109 => return Ok(Self::This(
                     ThisTransport::from_napi_value(env, napi_val)?
                 )),
-                110 => Ok(Self::Super(
+                110 => return Ok(Self::Super(
                     SuperTransport::from_napi_value(env, napi_val)?
                 )),
-                105 => Ok(Self::Number(
+                105 => return Ok(Self::Number(
                     NumberTransport::from_napi_value(env, napi_val)?
                 )),
-                247 => Ok(Self::String(Box::new(
+                247 => return Ok(Self::String(Box::new(
                     StringTransport::from_napi_value(env, napi_val)?
                 ))),
-                248 => Ok(Self::TemplateString(Box::new(
+                248 => return Ok(Self::TemplateString(Box::new(
                     TemplateStringTransport::from_napi_value(env, napi_val)?
                 ))),
-                250 => Ok(Self::Regex(Box::new(
+                250 => return Ok(Self::Regex(Box::new(
                     RegexTransport::from_napi_value(env, napi_val)?
                 ))),
-                111 => Ok(Self::True(
+                111 => return Ok(Self::True(
                     TrueTransport::from_napi_value(env, napi_val)?
                 )),
-                112 => Ok(Self::False(
+                112 => return Ok(Self::False(
                     FalseTransport::from_napi_value(env, napi_val)?
                 )),
-                113 => Ok(Self::Null(
+                113 => return Ok(Self::Null(
                     NullTransport::from_napi_value(env, napi_val)?
                 )),
-                213 => Ok(Self::Object(Box::new(
+                213 => return Ok(Self::Object(Box::new(
                     ObjectTransport::from_napi_value(env, napi_val)?
                 ))),
-                217 => Ok(Self::Array(Box::new(
+                217 => return Ok(Self::Array(Box::new(
                     ArrayTransport::from_napi_value(env, napi_val)?
                 ))),
-                223 => Ok(Self::FunctionExpression(Box::new(
+                223 => return Ok(Self::FunctionExpression(Box::new(
                     FunctionExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                227 => Ok(Self::ArrowFunction(Box::new(
+                227 => return Ok(Self::ArrowFunction(Box::new(
                     ArrowFunctionTransport::from_napi_value(env, napi_val)?
                 ))),
-                225 => Ok(Self::GeneratorFunction(Box::new(
+                225 => return Ok(Self::GeneratorFunction(Box::new(
                     GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                 ))),
-                220 => Ok(Self::Class(Box::new(
+                220 => return Ok(Self::Class(Box::new(
                     ClassTransport::from_napi_value(env, napi_val)?
                 ))),
-                251 => Ok(Self::MetaProperty(
+                251 => return Ok(Self::MetaProperty(
                     MetaPropertyTransport::from_napi_value(env, napi_val)?
                 )),
-                231 => Ok(Self::CallExpression(Box::new(
+                231 => return Ok(Self::CallExpression(Box::new(
                     CallExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                268 => Ok(Self::NonNullExpression(Box::new(
+                268 => return Ok(Self::NonNullExpression(Box::new(
                     NonNullExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                236 => Ok(Self::AssignmentExpression(Box::new(
+                236 => return Ok(Self::AssignmentExpression(Box::new(
                     AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                238 => Ok(Self::AugmentedAssignmentExpression(Box::new(
+                238 => return Ok(Self::AugmentedAssignmentExpression(Box::new(
                     AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                233 => Ok(Self::AwaitExpression(Box::new(
+                233 => return Ok(Self::AwaitExpression(Box::new(
                     AwaitExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                244 => Ok(Self::UnaryExpression(Box::new(
+                244 => return Ok(Self::UnaryExpression(Box::new(
                     UnaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                243 => Ok(Self::BinaryExpression(Box::new(
+                243 => return Ok(Self::BinaryExpression(Box::new(
                     BinaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                242 => Ok(Self::TernaryExpression(Box::new(
+                242 => return Ok(Self::TernaryExpression(Box::new(
                     TernaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                245 => Ok(Self::UpdateExpression(Box::new(
+                245 => return Ok(Self::UpdateExpression(Box::new(
                     UpdateExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                232 => Ok(Self::NewExpression(Box::new(
+                232 => return Ok(Self::NewExpression(Box::new(
                     NewExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                212 => Ok(Self::YieldExpression(Box::new(
+                212 => return Ok(Self::YieldExpression(Box::new(
                     YieldExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                159 => Ok(Self::AutomaticSemicolon(
+                159 => return Ok(Self::AutomaticSemicolon(
                     AutomaticSemicolonTransport::from_napi_value(env, napi_val)?
                 )),
-                23 => Ok(Self::Semi(
+                23 => return Ok(Self::Semi(
                     SemiTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in _ExportStatementEqualsExportChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = AsExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::AsExpression(Box::new(value)));
             }
@@ -7275,6 +6930,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ExportStatementEqualsExportChil
             if let Ok(value) = SemiTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Semi(value));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in _ExportStatementEqualsExportChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in _ExportStatementEqualsExportChildTransport"))
     }
@@ -7406,22 +7066,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ExportStatementNamespaceExportC
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                1 => Ok(Self::Identifier(
+            match kind_id {
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                159 => Ok(Self::AutomaticSemicolon(
+                159 => return Ok(Self::AutomaticSemicolon(
                     AutomaticSemicolonTransport::from_napi_value(env, napi_val)?
                 )),
-                23 => Ok(Self::Semi(
+                23 => return Ok(Self::Semi(
                     SemiTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in _ExportStatementNamespaceExportChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Identifier(value));
             }
@@ -7431,6 +7089,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ExportStatementNamespaceExportC
             if let Ok(value) = SemiTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Semi(value));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in _ExportStatementNamespaceExportChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in _ExportStatementNamespaceExportChildTransport"))
     }
@@ -7488,22 +7151,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ExportStatementTypeExportChildT
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                169 => Ok(Self::ExportClause(Box::new(
+            match kind_id {
+                169 => return Ok(Self::ExportClause(Box::new(
                     ExportClauseTransport::from_napi_value(env, napi_val)?
                 ))),
-                159 => Ok(Self::AutomaticSemicolon(
+                159 => return Ok(Self::AutomaticSemicolon(
                     AutomaticSemicolonTransport::from_napi_value(env, napi_val)?
                 )),
-                23 => Ok(Self::Semi(
+                23 => return Ok(Self::Semi(
                     SemiTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in _ExportStatementTypeExportChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = ExportClauseTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ExportClause(Box::new(value)));
             }
@@ -7513,6 +7174,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ExportStatementTypeExportChildT
             if let Ok(value) = SemiTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Semi(value));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in _ExportStatementTypeExportChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in _ExportStatementTypeExportChildTransport"))
     }
@@ -7570,20 +7236,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                374 => Ok(Self::ForHeaderLhs(Box::new(
+            match kind_id {
+                377 => return Ok(Self::ForHeaderLhs(Box::new(
                     ForHeaderLhsTransport::from_napi_value(env, napi_val)?
                 ))),
-                375 => Ok(Self::ForHeaderVarKind(Box::new(
+                378 => return Ok(Self::ForHeaderVarKind(Box::new(
                     ForHeaderVarKindTransport::from_napi_value(env, napi_val)?
                 ))),
-                376 => Ok(Self::ForHeaderLetConstKind(Box::new(
+                379 => return Ok(Self::ForHeaderLetConstKind(Box::new(
                     ForHeaderLetConstKindTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in ForHeaderChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = ForHeaderLhsTransport::from_napi_value(env, napi_val) {
@@ -7652,22 +7318,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ImportClauseDefaultImportChildT
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                1 => Ok(Self::Identifier(
+            match kind_id {
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                177 => Ok(Self::NamespaceImport(Box::new(
+                177 => return Ok(Self::NamespaceImport(Box::new(
                     NamespaceImportTransport::from_napi_value(env, napi_val)?
                 ))),
-                178 => Ok(Self::NamedImports(Box::new(
+                178 => return Ok(Self::NamedImports(Box::new(
                     NamedImportsTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in _ImportClauseDefaultImportChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Identifier(value));
             }
@@ -7677,6 +7341,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ImportClauseDefaultImportChildT
             if let Ok(value) = NamedImportsTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::NamedImports(Box::new(value)));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in _ImportClauseDefaultImportChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in _ImportClauseDefaultImportChildTransport"))
     }
@@ -7734,11 +7403,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxStringChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                other => Err(::napi::Error::from_reason(format!(
+            match kind_id {
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in JsxStringChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = UnescapedDoubleJsxStringFragmentTransport::from_napi_value(env, napi_val) {
@@ -7812,34 +7481,32 @@ impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                234 => Ok(Self::MemberExpression(Box::new(
+            match kind_id {
+                234 => return Ok(Self::MemberExpression(Box::new(
                     MemberExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                235 => Ok(Self::SubscriptExpression(Box::new(
+                235 => return Ok(Self::SubscriptExpression(Box::new(
                     SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                114 => Ok(Self::Undefined(
+                114 => return Ok(Self::Undefined(
                     UndefinedTransport::from_napi_value(env, napi_val)?
                 )),
-                1 => Ok(Self::Identifier(
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                214 => Ok(Self::ObjectPattern(Box::new(
+                214 => return Ok(Self::ObjectPattern(Box::new(
                     ObjectPatternTransport::from_napi_value(env, napi_val)?
                 ))),
-                218 => Ok(Self::ArrayPattern(Box::new(
+                218 => return Ok(Self::ArrayPattern(Box::new(
                     ArrayPatternTransport::from_napi_value(env, napi_val)?
                 ))),
-                268 => Ok(Self::NonNullExpression(Box::new(
+                268 => return Ok(Self::NonNullExpression(Box::new(
                     NonNullExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in LhsExpressionChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = MemberExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::MemberExpression(Box::new(value)));
             }
@@ -7864,6 +7531,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionChildTransport {
             if let Ok(value) = NonNullExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::NonNullExpression(Box::new(value)));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in LhsExpressionChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in LhsExpressionChildTransport"))
     }
@@ -7930,26 +7602,26 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterNameChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                294 => Ok(Self::AccessibilityModifier(
+            match kind_id {
+                294 => return Ok(Self::AccessibilityModifier(
                     AccessibilityModifierEnum::from_napi_value(env, napi_val)?
                 )),
-                121 => Ok(Self::AccessibilityModifier(
+                121 => return Ok(Self::AccessibilityModifier(
                     AccessibilityModifierEnum::from_napi_value(env, napi_val)?
                 )),
-                122 => Ok(Self::AccessibilityModifier(
+                122 => return Ok(Self::AccessibilityModifier(
                     AccessibilityModifierEnum::from_napi_value(env, napi_val)?
                 )),
-                123 => Ok(Self::AccessibilityModifier(
+                123 => return Ok(Self::AccessibilityModifier(
                     AccessibilityModifierEnum::from_napi_value(env, napi_val)?
                 )),
-                295 => Ok(Self::OverrideModifier(
+                295 => return Ok(Self::OverrideModifier(
                     OverrideModifierTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in ParameterNameChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = AccessibilityModifierEnum::from_napi_value(env, napi_val) {
@@ -7988,6 +7660,88 @@ impl RenderableTransport for ParameterNameChildTransport {
         match self {
             ParameterNameChildTransport::AccessibilityModifier(inner) => render_accessibility_modifier(inner, dest),
             ParameterNameChildTransport::OverrideModifier(inner) => render_override_modifier(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum AmbientDeclarationChildTransport {
+    _AmbientDeclarationDeclaration(Box<_AmbientDeclarationDeclarationTransport>),
+    AmbientDeclarationGlobal(Box<AmbientDeclarationGlobalTransport>),
+    AmbientDeclarationModule(Box<AmbientDeclarationModuleTransport>),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for AmbientDeclarationChildTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            Some(kind_id)
+        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+            obj.get::<u16>("$type")?
+        } else {
+            None
+        };
+        if let Some(kind_id) = kind_id {
+            match kind_id {
+                369 => return Ok(Self::_AmbientDeclarationDeclaration(Box::new(
+                    _AmbientDeclarationDeclarationTransport::from_napi_value(env, napi_val)?
+                ))),
+                352 => return Ok(Self::AmbientDeclarationGlobal(Box::new(
+                    AmbientDeclarationGlobalTransport::from_napi_value(env, napi_val)?
+                ))),
+                353 => return Ok(Self::AmbientDeclarationModule(Box::new(
+                    AmbientDeclarationModuleTransport::from_napi_value(env, napi_val)?
+                ))),
+                other => return Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {{other}} in AmbientDeclarationChildTransport",
+                ))),
+            }
+        }
+        if String::from_napi_value(env, napi_val).is_ok() {
+            if let Ok(value) = _AmbientDeclarationDeclarationTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::_AmbientDeclarationDeclaration(Box::new(value)));
+            }
+            if let Ok(value) = AmbientDeclarationGlobalTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::AmbientDeclarationGlobal(Box::new(value)));
+            }
+            if let Ok(value) = AmbientDeclarationModuleTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::AmbientDeclarationModule(Box::new(value)));
+            }
+        }
+        Err(::napi::Error::from_reason("$type property missing in AmbientDeclarationChildTransport"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AmbientDeclarationChildTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("AmbientDeclarationChildTransport is receive-only"))
+    }
+}
+
+fn ambient_declaration_child_transport_to_any(t: AmbientDeclarationChildTransport) -> AnyTransport {
+    match t {
+        AmbientDeclarationChildTransport::_AmbientDeclarationDeclaration(inner) => AnyTransport::_AmbientDeclarationDeclaration(*inner),
+        AmbientDeclarationChildTransport::AmbientDeclarationGlobal(inner) => AnyTransport::AmbientDeclarationGlobal(*inner),
+        AmbientDeclarationChildTransport::AmbientDeclarationModule(inner) => AnyTransport::AmbientDeclarationModule(*inner),
+    }
+}
+
+impl RenderableTransport for AmbientDeclarationChildTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            AmbientDeclarationChildTransport::_AmbientDeclarationDeclaration(inner) => render__ambient_declaration_declaration(inner.as_ref(), dest),
+            AmbientDeclarationChildTransport::AmbientDeclarationGlobal(inner) => render_ambient_declaration_global(inner.as_ref(), dest),
+            AmbientDeclarationChildTransport::AmbientDeclarationModule(inner) => render_ambient_declaration_module(inner.as_ref(), dest),
         }
     }
 }
@@ -8049,127 +7803,125 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                274 => Ok(Self::AsExpression(Box::new(
+            match kind_id {
+                274 => return Ok(Self::AsExpression(Box::new(
                     AsExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                275 => Ok(Self::SatisfiesExpression(Box::new(
+                275 => return Ok(Self::SatisfiesExpression(Box::new(
                     SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                276 => Ok(Self::InstantiationExpression(Box::new(
+                276 => return Ok(Self::InstantiationExpression(Box::new(
                     InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                284 => Ok(Self::InternalModule(Box::new(
+                284 => return Ok(Self::InternalModule(Box::new(
                     InternalModuleTransport::from_napi_value(env, napi_val)?
                 ))),
-                273 => Ok(Self::TypeAssertion(Box::new(
+                273 => return Ok(Self::TypeAssertion(Box::new(
                     TypeAssertionTransport::from_napi_value(env, napi_val)?
                 ))),
-                235 => Ok(Self::SubscriptExpression(Box::new(
+                235 => return Ok(Self::SubscriptExpression(Box::new(
                     SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                234 => Ok(Self::MemberExpression(Box::new(
+                234 => return Ok(Self::MemberExpression(Box::new(
                     MemberExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                209 => Ok(Self::ParenthesizedExpression(Box::new(
+                209 => return Ok(Self::ParenthesizedExpression(Box::new(
                     ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                114 => Ok(Self::Undefined(
+                114 => return Ok(Self::Undefined(
                     UndefinedTransport::from_napi_value(env, napi_val)?
                 )),
-                1 => Ok(Self::Identifier(
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                109 => Ok(Self::This(
+                109 => return Ok(Self::This(
                     ThisTransport::from_napi_value(env, napi_val)?
                 )),
-                110 => Ok(Self::Super(
+                110 => return Ok(Self::Super(
                     SuperTransport::from_napi_value(env, napi_val)?
                 )),
-                105 => Ok(Self::Number(
+                105 => return Ok(Self::Number(
                     NumberTransport::from_napi_value(env, napi_val)?
                 )),
-                247 => Ok(Self::String(Box::new(
+                247 => return Ok(Self::String(Box::new(
                     StringTransport::from_napi_value(env, napi_val)?
                 ))),
-                248 => Ok(Self::TemplateString(Box::new(
+                248 => return Ok(Self::TemplateString(Box::new(
                     TemplateStringTransport::from_napi_value(env, napi_val)?
                 ))),
-                250 => Ok(Self::Regex(Box::new(
+                250 => return Ok(Self::Regex(Box::new(
                     RegexTransport::from_napi_value(env, napi_val)?
                 ))),
-                111 => Ok(Self::True(
+                111 => return Ok(Self::True(
                     TrueTransport::from_napi_value(env, napi_val)?
                 )),
-                112 => Ok(Self::False(
+                112 => return Ok(Self::False(
                     FalseTransport::from_napi_value(env, napi_val)?
                 )),
-                113 => Ok(Self::Null(
+                113 => return Ok(Self::Null(
                     NullTransport::from_napi_value(env, napi_val)?
                 )),
-                213 => Ok(Self::Object(Box::new(
+                213 => return Ok(Self::Object(Box::new(
                     ObjectTransport::from_napi_value(env, napi_val)?
                 ))),
-                217 => Ok(Self::Array(Box::new(
+                217 => return Ok(Self::Array(Box::new(
                     ArrayTransport::from_napi_value(env, napi_val)?
                 ))),
-                223 => Ok(Self::FunctionExpression(Box::new(
+                223 => return Ok(Self::FunctionExpression(Box::new(
                     FunctionExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                227 => Ok(Self::ArrowFunction(Box::new(
+                227 => return Ok(Self::ArrowFunction(Box::new(
                     ArrowFunctionTransport::from_napi_value(env, napi_val)?
                 ))),
-                225 => Ok(Self::GeneratorFunction(Box::new(
+                225 => return Ok(Self::GeneratorFunction(Box::new(
                     GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                 ))),
-                220 => Ok(Self::Class(Box::new(
+                220 => return Ok(Self::Class(Box::new(
                     ClassTransport::from_napi_value(env, napi_val)?
                 ))),
-                251 => Ok(Self::MetaProperty(
+                251 => return Ok(Self::MetaProperty(
                     MetaPropertyTransport::from_napi_value(env, napi_val)?
                 )),
-                231 => Ok(Self::CallExpression(Box::new(
+                231 => return Ok(Self::CallExpression(Box::new(
                     CallExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                268 => Ok(Self::NonNullExpression(Box::new(
+                268 => return Ok(Self::NonNullExpression(Box::new(
                     NonNullExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                236 => Ok(Self::AssignmentExpression(Box::new(
+                236 => return Ok(Self::AssignmentExpression(Box::new(
                     AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                238 => Ok(Self::AugmentedAssignmentExpression(Box::new(
+                238 => return Ok(Self::AugmentedAssignmentExpression(Box::new(
                     AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                233 => Ok(Self::AwaitExpression(Box::new(
+                233 => return Ok(Self::AwaitExpression(Box::new(
                     AwaitExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                244 => Ok(Self::UnaryExpression(Box::new(
+                244 => return Ok(Self::UnaryExpression(Box::new(
                     UnaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                243 => Ok(Self::BinaryExpression(Box::new(
+                243 => return Ok(Self::BinaryExpression(Box::new(
                     BinaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                242 => Ok(Self::TernaryExpression(Box::new(
+                242 => return Ok(Self::TernaryExpression(Box::new(
                     TernaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                245 => Ok(Self::UpdateExpression(Box::new(
+                245 => return Ok(Self::UpdateExpression(Box::new(
                     UpdateExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                232 => Ok(Self::NewExpression(Box::new(
+                232 => return Ok(Self::NewExpression(Box::new(
                     NewExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                212 => Ok(Self::YieldExpression(Box::new(
+                212 => return Ok(Self::YieldExpression(Box::new(
                     YieldExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                241 => Ok(Self::SpreadElement(Box::new(
+                241 => return Ok(Self::SpreadElement(Box::new(
                     SpreadElementTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ArgumentsChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = AsExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::AsExpression(Box::new(value)));
             }
@@ -8287,6 +8039,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsChildTransport {
             if let Ok(value) = SpreadElementTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::SpreadElement(Box::new(value)));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ArgumentsChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in ArgumentsChildTransport"))
     }
@@ -8452,127 +8209,125 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                274 => Ok(Self::AsExpression(Box::new(
+            match kind_id {
+                274 => return Ok(Self::AsExpression(Box::new(
                     AsExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                275 => Ok(Self::SatisfiesExpression(Box::new(
+                275 => return Ok(Self::SatisfiesExpression(Box::new(
                     SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                276 => Ok(Self::InstantiationExpression(Box::new(
+                276 => return Ok(Self::InstantiationExpression(Box::new(
                     InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                284 => Ok(Self::InternalModule(Box::new(
+                284 => return Ok(Self::InternalModule(Box::new(
                     InternalModuleTransport::from_napi_value(env, napi_val)?
                 ))),
-                273 => Ok(Self::TypeAssertion(Box::new(
+                273 => return Ok(Self::TypeAssertion(Box::new(
                     TypeAssertionTransport::from_napi_value(env, napi_val)?
                 ))),
-                235 => Ok(Self::SubscriptExpression(Box::new(
+                235 => return Ok(Self::SubscriptExpression(Box::new(
                     SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                234 => Ok(Self::MemberExpression(Box::new(
+                234 => return Ok(Self::MemberExpression(Box::new(
                     MemberExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                209 => Ok(Self::ParenthesizedExpression(Box::new(
+                209 => return Ok(Self::ParenthesizedExpression(Box::new(
                     ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                114 => Ok(Self::Undefined(
+                114 => return Ok(Self::Undefined(
                     UndefinedTransport::from_napi_value(env, napi_val)?
                 )),
-                1 => Ok(Self::Identifier(
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                109 => Ok(Self::This(
+                109 => return Ok(Self::This(
                     ThisTransport::from_napi_value(env, napi_val)?
                 )),
-                110 => Ok(Self::Super(
+                110 => return Ok(Self::Super(
                     SuperTransport::from_napi_value(env, napi_val)?
                 )),
-                105 => Ok(Self::Number(
+                105 => return Ok(Self::Number(
                     NumberTransport::from_napi_value(env, napi_val)?
                 )),
-                247 => Ok(Self::String(Box::new(
+                247 => return Ok(Self::String(Box::new(
                     StringTransport::from_napi_value(env, napi_val)?
                 ))),
-                248 => Ok(Self::TemplateString(Box::new(
+                248 => return Ok(Self::TemplateString(Box::new(
                     TemplateStringTransport::from_napi_value(env, napi_val)?
                 ))),
-                250 => Ok(Self::Regex(Box::new(
+                250 => return Ok(Self::Regex(Box::new(
                     RegexTransport::from_napi_value(env, napi_val)?
                 ))),
-                111 => Ok(Self::True(
+                111 => return Ok(Self::True(
                     TrueTransport::from_napi_value(env, napi_val)?
                 )),
-                112 => Ok(Self::False(
+                112 => return Ok(Self::False(
                     FalseTransport::from_napi_value(env, napi_val)?
                 )),
-                113 => Ok(Self::Null(
+                113 => return Ok(Self::Null(
                     NullTransport::from_napi_value(env, napi_val)?
                 )),
-                213 => Ok(Self::Object(Box::new(
+                213 => return Ok(Self::Object(Box::new(
                     ObjectTransport::from_napi_value(env, napi_val)?
                 ))),
-                217 => Ok(Self::Array(Box::new(
+                217 => return Ok(Self::Array(Box::new(
                     ArrayTransport::from_napi_value(env, napi_val)?
                 ))),
-                223 => Ok(Self::FunctionExpression(Box::new(
+                223 => return Ok(Self::FunctionExpression(Box::new(
                     FunctionExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                227 => Ok(Self::ArrowFunction(Box::new(
+                227 => return Ok(Self::ArrowFunction(Box::new(
                     ArrowFunctionTransport::from_napi_value(env, napi_val)?
                 ))),
-                225 => Ok(Self::GeneratorFunction(Box::new(
+                225 => return Ok(Self::GeneratorFunction(Box::new(
                     GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                 ))),
-                220 => Ok(Self::Class(Box::new(
+                220 => return Ok(Self::Class(Box::new(
                     ClassTransport::from_napi_value(env, napi_val)?
                 ))),
-                251 => Ok(Self::MetaProperty(
+                251 => return Ok(Self::MetaProperty(
                     MetaPropertyTransport::from_napi_value(env, napi_val)?
                 )),
-                231 => Ok(Self::CallExpression(Box::new(
+                231 => return Ok(Self::CallExpression(Box::new(
                     CallExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                268 => Ok(Self::NonNullExpression(Box::new(
+                268 => return Ok(Self::NonNullExpression(Box::new(
                     NonNullExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                236 => Ok(Self::AssignmentExpression(Box::new(
+                236 => return Ok(Self::AssignmentExpression(Box::new(
                     AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                238 => Ok(Self::AugmentedAssignmentExpression(Box::new(
+                238 => return Ok(Self::AugmentedAssignmentExpression(Box::new(
                     AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                233 => Ok(Self::AwaitExpression(Box::new(
+                233 => return Ok(Self::AwaitExpression(Box::new(
                     AwaitExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                244 => Ok(Self::UnaryExpression(Box::new(
+                244 => return Ok(Self::UnaryExpression(Box::new(
                     UnaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                243 => Ok(Self::BinaryExpression(Box::new(
+                243 => return Ok(Self::BinaryExpression(Box::new(
                     BinaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                242 => Ok(Self::TernaryExpression(Box::new(
+                242 => return Ok(Self::TernaryExpression(Box::new(
                     TernaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                245 => Ok(Self::UpdateExpression(Box::new(
+                245 => return Ok(Self::UpdateExpression(Box::new(
                     UpdateExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                232 => Ok(Self::NewExpression(Box::new(
+                232 => return Ok(Self::NewExpression(Box::new(
                     NewExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                212 => Ok(Self::YieldExpression(Box::new(
+                212 => return Ok(Self::YieldExpression(Box::new(
                     YieldExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                241 => Ok(Self::SpreadElement(Box::new(
+                241 => return Ok(Self::SpreadElement(Box::new(
                     SpreadElementTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ArrayChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = AsExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::AsExpression(Box::new(value)));
             }
@@ -8690,6 +8445,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayChildTransport {
             if let Ok(value) = SpreadElementTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::SpreadElement(Box::new(value)));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ArrayChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in ArrayChildTransport"))
     }
@@ -8825,40 +8585,38 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                234 => Ok(Self::MemberExpression(Box::new(
+            match kind_id {
+                234 => return Ok(Self::MemberExpression(Box::new(
                     MemberExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                235 => Ok(Self::SubscriptExpression(Box::new(
+                235 => return Ok(Self::SubscriptExpression(Box::new(
                     SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                114 => Ok(Self::Undefined(
+                114 => return Ok(Self::Undefined(
                     UndefinedTransport::from_napi_value(env, napi_val)?
                 )),
-                1 => Ok(Self::Identifier(
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                214 => Ok(Self::ObjectPattern(Box::new(
+                214 => return Ok(Self::ObjectPattern(Box::new(
                     ObjectPatternTransport::from_napi_value(env, napi_val)?
                 ))),
-                218 => Ok(Self::ArrayPattern(Box::new(
+                218 => return Ok(Self::ArrayPattern(Box::new(
                     ArrayPatternTransport::from_napi_value(env, napi_val)?
                 ))),
-                268 => Ok(Self::NonNullExpression(Box::new(
+                268 => return Ok(Self::NonNullExpression(Box::new(
                     NonNullExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                260 => Ok(Self::RestPattern(Box::new(
+                260 => return Ok(Self::RestPattern(Box::new(
                     RestPatternTransport::from_napi_value(env, napi_val)?
                 ))),
-                215 => Ok(Self::AssignmentPattern(Box::new(
+                215 => return Ok(Self::AssignmentPattern(Box::new(
                     AssignmentPatternTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ArrayPatternChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = MemberExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::MemberExpression(Box::new(value)));
             }
@@ -8886,6 +8644,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternChildTransport {
             if let Ok(value) = AssignmentPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::AssignmentPattern(Box::new(value)));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ArrayPatternChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in ArrayPatternChildTransport"))
     }
@@ -8954,17 +8717,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                356 => Ok(Self::_ArrowFunctionParameter(Box::new(
+            match kind_id {
+                358 => return Ok(Self::_ArrowFunctionParameter(Box::new(
                     _ArrowFunctionParameterTransport::from_napi_value(env, napi_val)?
                 ))),
-                357 => Ok(Self::_ArrowFunctionUCallSignature(Box::new(
+                359 => return Ok(Self::_ArrowFunctionUCallSignature(Box::new(
                     _ArrowFunctionUCallSignatureTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in ArrowFunctionChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = _ArrowFunctionParameterTransport::from_napi_value(env, napi_val) {
@@ -9028,20 +8791,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertsChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                320 => Ok(Self::TypePredicate(Box::new(
+            match kind_id {
+                320 => return Ok(Self::TypePredicate(Box::new(
                     TypePredicateTransport::from_napi_value(env, napi_val)?
                 ))),
-                1 => Ok(Self::Identifier(
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                109 => Ok(Self::This(
+                109 => return Ok(Self::This(
                     ThisTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in AssertsChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = TypePredicateTransport::from_napi_value(env, napi_val) {
@@ -9110,20 +8873,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                382 => Ok(Self::CallExpressionCall(Box::new(
+            match kind_id {
+                385 => return Ok(Self::CallExpressionCall(Box::new(
                     CallExpressionCallTransport::from_napi_value(env, napi_val)?
                 ))),
-                383 => Ok(Self::CallExpressionTemplateCall(Box::new(
+                386 => return Ok(Self::CallExpressionTemplateCall(Box::new(
                     CallExpressionTemplateCallTransport::from_napi_value(env, napi_val)?
                 ))),
-                384 => Ok(Self::CallExpressionMember(Box::new(
+                387 => return Ok(Self::CallExpressionMember(Box::new(
                     CallExpressionMemberTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in CallExpressionChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = CallExpressionCallTransport::from_napi_value(env, napi_val) {
@@ -9193,23 +8956,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                371 => Ok(Self::ClassBodyMethod(Box::new(
+            match kind_id {
+                374 => return Ok(Self::ClassBodyMethod(Box::new(
                     ClassBodyMethodTransport::from_napi_value(env, napi_val)?
                 ))),
-                372 => Ok(Self::ClassBodyMethodSig(Box::new(
+                375 => return Ok(Self::ClassBodyMethodSig(Box::new(
                     ClassBodyMethodSigTransport::from_napi_value(env, napi_val)?
                 ))),
-                258 => Ok(Self::ClassStaticBlock(Box::new(
+                258 => return Ok(Self::ClassStaticBlock(Box::new(
                     ClassStaticBlockTransport::from_napi_value(env, napi_val)?
                 ))),
-                373 => Ok(Self::ClassBodyMember(Box::new(
+                376 => return Ok(Self::ClassBodyMember(Box::new(
                     ClassBodyMemberTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in ClassBodyChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = ClassBodyMethodTransport::from_napi_value(env, napi_val) {
@@ -9282,17 +9045,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassHeritageExtendsClauseChildT
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                278 => Ok(Self::ExtendsClause(Box::new(
+            match kind_id {
+                278 => return Ok(Self::ExtendsClause(Box::new(
                     ExtendsClauseTransport::from_napi_value(env, napi_val)?
                 ))),
-                280 => Ok(Self::ImplementsClause(Box::new(
+                280 => return Ok(Self::ImplementsClause(Box::new(
                     ImplementsClauseTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in ClassHeritageExtendsClauseChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = ExtendsClauseTransport::from_napi_value(env, napi_val) {
@@ -9355,17 +9118,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassHeritageChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                358 => Ok(Self::_ClassHeritageExtendsClause(Box::new(
+            match kind_id {
+                360 => return Ok(Self::_ClassHeritageExtendsClause(Box::new(
                     _ClassHeritageExtendsClauseTransport::from_napi_value(env, napi_val)?
                 ))),
-                359 => Ok(Self::_ClassHeritageImplementsClause(Box::new(
+                361 => return Ok(Self::_ClassHeritageImplementsClause(Box::new(
                     _ClassHeritageImplementsClauseTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in ClassHeritageChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = _ClassHeritageExtendsClauseTransport::from_napi_value(env, napi_val) {
@@ -9430,23 +9193,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                1 => Ok(Self::Identifier(
+            match kind_id {
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                254 => Ok(Self::DecoratorMemberExpression(Box::new(
+                254 => return Ok(Self::DecoratorMemberExpression(Box::new(
                     DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                255 => Ok(Self::DecoratorCallExpression(Box::new(
+                255 => return Ok(Self::DecoratorCallExpression(Box::new(
                     DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                272 => Ok(Self::DecoratorParenthesizedExpression(Box::new(
+                272 => return Ok(Self::DecoratorParenthesizedExpression(Box::new(
                     DecoratorParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in DecoratorChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
@@ -9520,20 +9283,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorParenthesizedExpression
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                1 => Ok(Self::Identifier(
+            match kind_id {
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                254 => Ok(Self::DecoratorMemberExpression(Box::new(
+                254 => return Ok(Self::DecoratorMemberExpression(Box::new(
                     DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                255 => Ok(Self::DecoratorCallExpression(Box::new(
+                255 => return Ok(Self::DecoratorCallExpression(Box::new(
                     DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in DecoratorParenthesizedExpressionChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
@@ -9582,121 +9345,6 @@ impl RenderableTransport for DecoratorParenthesizedExpressionChildTransport {
 }
 
 #[derive(Debug, Clone)]
-pub enum EnumBodyChildTransport {
-    Identifier(IdentifierTransport),
-    ReservedIdentifier(ReservedIdentifierTransport),
-    PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
-    String(Box<StringTransport>),
-    Number(NumberTransport),
-    ComputedPropertyName(Box<ComputedPropertyNameTransport>),
-    EnumAssignment(Box<EnumAssignmentTransport>),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyChildTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-            Some(kind_id)
-        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-            obj.get::<u16>("$type")?
-        } else {
-            None
-        };
-        if let Some(kind_id) = kind_id {
-            return match kind_id {
-                1 => Ok(Self::Identifier(
-                    IdentifierTransport::from_napi_value(env, napi_val)?
-                )),
-                106 => Ok(Self::PrivatePropertyIdentifier(
-                    PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
-                )),
-                247 => Ok(Self::String(Box::new(
-                    StringTransport::from_napi_value(env, napi_val)?
-                ))),
-                105 => Ok(Self::Number(
-                    NumberTransport::from_napi_value(env, napi_val)?
-                )),
-                265 => Ok(Self::ComputedPropertyName(Box::new(
-                    ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
-                ))),
-                292 => Ok(Self::EnumAssignment(Box::new(
-                    EnumAssignmentTransport::from_napi_value(env, napi_val)?
-                ))),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in EnumBodyChildTransport",
-                ))),
-            };
-        }
-        if String::from_napi_value(env, napi_val).is_ok() {
-            if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::Identifier(value));
-            }
-            if let Ok(value) = ReservedIdentifierTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ReservedIdentifier(value));
-            }
-            if let Ok(value) = PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::PrivatePropertyIdentifier(value));
-            }
-            if let Ok(value) = StringTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::String(Box::new(value)));
-            }
-            if let Ok(value) = NumberTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::Number(value));
-            }
-            if let Ok(value) = ComputedPropertyNameTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ComputedPropertyName(Box::new(value)));
-            }
-            if let Ok(value) = EnumAssignmentTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::EnumAssignment(Box::new(value)));
-            }
-        }
-        Err(::napi::Error::from_reason("$type property missing in EnumBodyChildTransport"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for EnumBodyChildTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("EnumBodyChildTransport is receive-only"))
-    }
-}
-
-fn enum_body_child_transport_to_any(t: EnumBodyChildTransport) -> AnyTransport {
-    match t {
-        EnumBodyChildTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        EnumBodyChildTransport::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
-        EnumBodyChildTransport::PrivatePropertyIdentifier(inner) => AnyTransport::PrivatePropertyIdentifier(inner),
-        EnumBodyChildTransport::String(inner) => AnyTransport::String(*inner),
-        EnumBodyChildTransport::Number(inner) => AnyTransport::Number(inner),
-        EnumBodyChildTransport::ComputedPropertyName(inner) => AnyTransport::ComputedPropertyName(*inner),
-        EnumBodyChildTransport::EnumAssignment(inner) => AnyTransport::EnumAssignment(*inner),
-    }
-}
-
-impl RenderableTransport for EnumBodyChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            EnumBodyChildTransport::Identifier(inner) => render_identifier(inner, dest),
-            EnumBodyChildTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            EnumBodyChildTransport::PrivatePropertyIdentifier(inner) => render_private_property_identifier(inner, dest),
-            EnumBodyChildTransport::String(inner) => render_string(inner.as_ref(), dest),
-            EnumBodyChildTransport::Number(inner) => render_number(inner, dest),
-            EnumBodyChildTransport::ComputedPropertyName(inner) => render_computed_property_name(inner.as_ref(), dest),
-            EnumBodyChildTransport::EnumAssignment(inner) => render_enum_assignment(inner.as_ref(), dest),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum ExportStatementTypeExportChildTransport {
     ExportClause(Box<ExportClauseTransport>),
     AutomaticSemicolon(AutomaticSemicolonTransport),
@@ -9717,22 +9365,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementTypeExportChildTr
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                169 => Ok(Self::ExportClause(Box::new(
+            match kind_id {
+                169 => return Ok(Self::ExportClause(Box::new(
                     ExportClauseTransport::from_napi_value(env, napi_val)?
                 ))),
-                159 => Ok(Self::AutomaticSemicolon(
+                159 => return Ok(Self::AutomaticSemicolon(
                     AutomaticSemicolonTransport::from_napi_value(env, napi_val)?
                 )),
-                23 => Ok(Self::Semi(
+                23 => return Ok(Self::Semi(
                     SemiTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ExportStatementTypeExportChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = ExportClauseTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ExportClause(Box::new(value)));
             }
@@ -9742,6 +9388,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementTypeExportChildTr
             if let Ok(value) = SemiTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Semi(value));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ExportStatementTypeExportChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in ExportStatementTypeExportChildTransport"))
     }
@@ -9836,130 +9487,128 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementEqualsExportChild
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                274 => Ok(Self::AsExpression(Box::new(
+            match kind_id {
+                274 => return Ok(Self::AsExpression(Box::new(
                     AsExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                275 => Ok(Self::SatisfiesExpression(Box::new(
+                275 => return Ok(Self::SatisfiesExpression(Box::new(
                     SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                276 => Ok(Self::InstantiationExpression(Box::new(
+                276 => return Ok(Self::InstantiationExpression(Box::new(
                     InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                284 => Ok(Self::InternalModule(Box::new(
+                284 => return Ok(Self::InternalModule(Box::new(
                     InternalModuleTransport::from_napi_value(env, napi_val)?
                 ))),
-                273 => Ok(Self::TypeAssertion(Box::new(
+                273 => return Ok(Self::TypeAssertion(Box::new(
                     TypeAssertionTransport::from_napi_value(env, napi_val)?
                 ))),
-                235 => Ok(Self::SubscriptExpression(Box::new(
+                235 => return Ok(Self::SubscriptExpression(Box::new(
                     SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                234 => Ok(Self::MemberExpression(Box::new(
+                234 => return Ok(Self::MemberExpression(Box::new(
                     MemberExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                209 => Ok(Self::ParenthesizedExpression(Box::new(
+                209 => return Ok(Self::ParenthesizedExpression(Box::new(
                     ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                114 => Ok(Self::Undefined(
+                114 => return Ok(Self::Undefined(
                     UndefinedTransport::from_napi_value(env, napi_val)?
                 )),
-                1 => Ok(Self::Identifier(
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                109 => Ok(Self::This(
+                109 => return Ok(Self::This(
                     ThisTransport::from_napi_value(env, napi_val)?
                 )),
-                110 => Ok(Self::Super(
+                110 => return Ok(Self::Super(
                     SuperTransport::from_napi_value(env, napi_val)?
                 )),
-                105 => Ok(Self::Number(
+                105 => return Ok(Self::Number(
                     NumberTransport::from_napi_value(env, napi_val)?
                 )),
-                247 => Ok(Self::String(Box::new(
+                247 => return Ok(Self::String(Box::new(
                     StringTransport::from_napi_value(env, napi_val)?
                 ))),
-                248 => Ok(Self::TemplateString(Box::new(
+                248 => return Ok(Self::TemplateString(Box::new(
                     TemplateStringTransport::from_napi_value(env, napi_val)?
                 ))),
-                250 => Ok(Self::Regex(Box::new(
+                250 => return Ok(Self::Regex(Box::new(
                     RegexTransport::from_napi_value(env, napi_val)?
                 ))),
-                111 => Ok(Self::True(
+                111 => return Ok(Self::True(
                     TrueTransport::from_napi_value(env, napi_val)?
                 )),
-                112 => Ok(Self::False(
+                112 => return Ok(Self::False(
                     FalseTransport::from_napi_value(env, napi_val)?
                 )),
-                113 => Ok(Self::Null(
+                113 => return Ok(Self::Null(
                     NullTransport::from_napi_value(env, napi_val)?
                 )),
-                213 => Ok(Self::Object(Box::new(
+                213 => return Ok(Self::Object(Box::new(
                     ObjectTransport::from_napi_value(env, napi_val)?
                 ))),
-                217 => Ok(Self::Array(Box::new(
+                217 => return Ok(Self::Array(Box::new(
                     ArrayTransport::from_napi_value(env, napi_val)?
                 ))),
-                223 => Ok(Self::FunctionExpression(Box::new(
+                223 => return Ok(Self::FunctionExpression(Box::new(
                     FunctionExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                227 => Ok(Self::ArrowFunction(Box::new(
+                227 => return Ok(Self::ArrowFunction(Box::new(
                     ArrowFunctionTransport::from_napi_value(env, napi_val)?
                 ))),
-                225 => Ok(Self::GeneratorFunction(Box::new(
+                225 => return Ok(Self::GeneratorFunction(Box::new(
                     GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                 ))),
-                220 => Ok(Self::Class(Box::new(
+                220 => return Ok(Self::Class(Box::new(
                     ClassTransport::from_napi_value(env, napi_val)?
                 ))),
-                251 => Ok(Self::MetaProperty(
+                251 => return Ok(Self::MetaProperty(
                     MetaPropertyTransport::from_napi_value(env, napi_val)?
                 )),
-                231 => Ok(Self::CallExpression(Box::new(
+                231 => return Ok(Self::CallExpression(Box::new(
                     CallExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                268 => Ok(Self::NonNullExpression(Box::new(
+                268 => return Ok(Self::NonNullExpression(Box::new(
                     NonNullExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                236 => Ok(Self::AssignmentExpression(Box::new(
+                236 => return Ok(Self::AssignmentExpression(Box::new(
                     AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                238 => Ok(Self::AugmentedAssignmentExpression(Box::new(
+                238 => return Ok(Self::AugmentedAssignmentExpression(Box::new(
                     AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                233 => Ok(Self::AwaitExpression(Box::new(
+                233 => return Ok(Self::AwaitExpression(Box::new(
                     AwaitExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                244 => Ok(Self::UnaryExpression(Box::new(
+                244 => return Ok(Self::UnaryExpression(Box::new(
                     UnaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                243 => Ok(Self::BinaryExpression(Box::new(
+                243 => return Ok(Self::BinaryExpression(Box::new(
                     BinaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                242 => Ok(Self::TernaryExpression(Box::new(
+                242 => return Ok(Self::TernaryExpression(Box::new(
                     TernaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                245 => Ok(Self::UpdateExpression(Box::new(
+                245 => return Ok(Self::UpdateExpression(Box::new(
                     UpdateExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                232 => Ok(Self::NewExpression(Box::new(
+                232 => return Ok(Self::NewExpression(Box::new(
                     NewExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                212 => Ok(Self::YieldExpression(Box::new(
+                212 => return Ok(Self::YieldExpression(Box::new(
                     YieldExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                159 => Ok(Self::AutomaticSemicolon(
+                159 => return Ok(Self::AutomaticSemicolon(
                     AutomaticSemicolonTransport::from_napi_value(env, napi_val)?
                 )),
-                23 => Ok(Self::Semi(
+                23 => return Ok(Self::Semi(
                     SemiTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ExportStatementEqualsExportChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = AsExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::AsExpression(Box::new(value)));
             }
@@ -10080,6 +9729,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementEqualsExportChild
             if let Ok(value) = SemiTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Semi(value));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ExportStatementEqualsExportChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in ExportStatementEqualsExportChildTransport"))
     }
@@ -10211,22 +9865,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementNamespaceExportCh
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                1 => Ok(Self::Identifier(
+            match kind_id {
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                159 => Ok(Self::AutomaticSemicolon(
+                159 => return Ok(Self::AutomaticSemicolon(
                     AutomaticSemicolonTransport::from_napi_value(env, napi_val)?
                 )),
-                23 => Ok(Self::Semi(
+                23 => return Ok(Self::Semi(
                     SemiTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ExportStatementNamespaceExportChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Identifier(value));
             }
@@ -10236,6 +9888,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementNamespaceExportCh
             if let Ok(value) = SemiTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Semi(value));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ExportStatementNamespaceExportChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in ExportStatementNamespaceExportChildTransport"))
     }
@@ -10295,28 +9952,26 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                353 => Ok(Self::ExportStatementDefaultFromArm(Box::new(
+            match kind_id {
+                355 => return Ok(Self::ExportStatementDefaultFromArm(Box::new(
                     ExportStatementDefaultFromArmTransport::from_napi_value(env, napi_val)?
                 ))),
-                354 => Ok(Self::ExportStatementDefaultDeclArm(Box::new(
+                356 => return Ok(Self::ExportStatementDefaultDeclArm(Box::new(
                     ExportStatementDefaultDeclArmTransport::from_napi_value(env, napi_val)?
                 ))),
-                379 => Ok(Self::_ExportStatementTypeExport(Box::new(
+                382 => return Ok(Self::_ExportStatementTypeExport(Box::new(
                     _ExportStatementTypeExportTransport::from_napi_value(env, napi_val)?
                 ))),
-                380 => Ok(Self::_ExportStatementEqualsExport(Box::new(
+                383 => return Ok(Self::_ExportStatementEqualsExport(Box::new(
                     _ExportStatementEqualsExportTransport::from_napi_value(env, napi_val)?
                 ))),
-                381 => Ok(Self::_ExportStatementNamespaceExport(Box::new(
+                384 => return Ok(Self::_ExportStatementNamespaceExport(Box::new(
                     _ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ExportStatementChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = ExportStatementDefaultFromArmTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ExportStatementDefaultFromArm(Box::new(value)));
             }
@@ -10332,6 +9987,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementChildTransport {
             if let Ok(value) = _ExportStatementNamespaceExportTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::_ExportStatementNamespaceExport(Box::new(value)));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ExportStatementChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in ExportStatementChildTransport"))
     }
@@ -10393,20 +10053,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                374 => Ok(Self::ForHeaderLhs(Box::new(
+            match kind_id {
+                377 => return Ok(Self::ForHeaderLhs(Box::new(
                     ForHeaderLhsTransport::from_napi_value(env, napi_val)?
                 ))),
-                375 => Ok(Self::ForHeaderVarKind(Box::new(
+                378 => return Ok(Self::ForHeaderVarKind(Box::new(
                     ForHeaderVarKindTransport::from_napi_value(env, napi_val)?
                 ))),
-                376 => Ok(Self::ForHeaderLetConstKind(Box::new(
+                379 => return Ok(Self::ForHeaderLetConstKind(Box::new(
                     ForHeaderLetConstKindTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in ForInStatementChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = ForHeaderLhsTransport::from_napi_value(env, napi_val) {
@@ -10455,6 +10115,91 @@ impl RenderableTransport for ForInStatementChildTransport {
 }
 
 #[derive(Debug, Clone)]
+pub enum FunctionSignatureChildTransport {
+    AutomaticSemicolon(AutomaticSemicolonTransport),
+    Semi(SemiTransport),
+    FunctionSignatureAutomaticSemicolon(FunctionSignatureAutomaticSemicolonTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureChildTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            Some(kind_id)
+        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+            obj.get::<u16>("$type")?
+        } else {
+            None
+        };
+        if let Some(kind_id) = kind_id {
+            match kind_id {
+                159 => return Ok(Self::AutomaticSemicolon(
+                    AutomaticSemicolonTransport::from_napi_value(env, napi_val)?
+                )),
+                23 => return Ok(Self::Semi(
+                    SemiTransport::from_napi_value(env, napi_val)?
+                )),
+                164 => return Ok(Self::FunctionSignatureAutomaticSemicolon(
+                    FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val)?
+                )),
+                _ => {}
+            }
+        }
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
+            if let Ok(value) = AutomaticSemicolonTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::AutomaticSemicolon(value));
+            }
+            if let Ok(value) = SemiTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::Semi(value));
+            }
+            if let Ok(value) = FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::FunctionSignatureAutomaticSemicolon(value));
+            }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in FunctionSignatureChildTransport",
+            )));
+        }
+        Err(::napi::Error::from_reason("$type property missing in FunctionSignatureChildTransport"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FunctionSignatureChildTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("FunctionSignatureChildTransport is receive-only"))
+    }
+}
+
+fn function_signature_child_transport_to_any(t: FunctionSignatureChildTransport) -> AnyTransport {
+    match t {
+        FunctionSignatureChildTransport::AutomaticSemicolon(inner) => AnyTransport::AutomaticSemicolon(inner),
+        FunctionSignatureChildTransport::Semi(inner) => AnyTransport::Semi(inner),
+        FunctionSignatureChildTransport::FunctionSignatureAutomaticSemicolon(inner) => AnyTransport::FunctionSignatureAutomaticSemicolon(inner),
+    }
+}
+
+impl RenderableTransport for FunctionSignatureChildTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            FunctionSignatureChildTransport::AutomaticSemicolon(inner) => render_automatic_semicolon(inner, dest),
+            FunctionSignatureChildTransport::Semi(inner) => render_semi(inner, dest),
+            FunctionSignatureChildTransport::FunctionSignatureAutomaticSemicolon(inner) => render_function_signature_automatic_semicolon(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ImportClauseDefaultImportChildTransport {
     Identifier(IdentifierTransport),
     NamespaceImport(Box<NamespaceImportTransport>),
@@ -10475,22 +10220,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportClauseDefaultImportChildTr
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                1 => Ok(Self::Identifier(
+            match kind_id {
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                177 => Ok(Self::NamespaceImport(Box::new(
+                177 => return Ok(Self::NamespaceImport(Box::new(
                     NamespaceImportTransport::from_napi_value(env, napi_val)?
                 ))),
-                178 => Ok(Self::NamedImports(Box::new(
+                178 => return Ok(Self::NamedImports(Box::new(
                     NamedImportsTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ImportClauseDefaultImportChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Identifier(value));
             }
@@ -10500,6 +10243,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportClauseDefaultImportChildTr
             if let Ok(value) = NamedImportsTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::NamedImports(Box::new(value)));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ImportClauseDefaultImportChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in ImportClauseDefaultImportChildTransport"))
     }
@@ -10557,20 +10305,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportClauseChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                360 => Ok(Self::_ImportClauseNamespaceImport(Box::new(
+            match kind_id {
+                362 => return Ok(Self::_ImportClauseNamespaceImport(Box::new(
                     _ImportClauseNamespaceImportTransport::from_napi_value(env, napi_val)?
                 ))),
-                361 => Ok(Self::_ImportClauseNamedImports(Box::new(
+                363 => return Ok(Self::_ImportClauseNamedImports(Box::new(
                     _ImportClauseNamedImportsTransport::from_napi_value(env, napi_val)?
                 ))),
-                362 => Ok(Self::_ImportClauseDefaultImport(Box::new(
+                364 => return Ok(Self::_ImportClauseDefaultImport(Box::new(
                     _ImportClauseDefaultImportTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in ImportClauseChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = _ImportClauseNamespaceImportTransport::from_napi_value(env, napi_val) {
@@ -10638,17 +10386,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportSpecifierChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                363 => Ok(Self::_ImportSpecifierName(Box::new(
+            match kind_id {
+                365 => return Ok(Self::_ImportSpecifierName(Box::new(
                     _ImportSpecifierNameTransport::from_napi_value(env, napi_val)?
                 ))),
-                364 => Ok(Self::ImportSpecifierAs(Box::new(
+                366 => return Ok(Self::ImportSpecifierAs(Box::new(
                     ImportSpecifierAsTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in ImportSpecifierChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = _ImportSpecifierNameTransport::from_napi_value(env, napi_val) {
@@ -10711,17 +10459,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                365 => Ok(Self::IndexSignatureColon(Box::new(
+            match kind_id {
+                367 => return Ok(Self::IndexSignatureColon(Box::new(
                     IndexSignatureColonTransport::from_napi_value(env, napi_val)?
                 ))),
-                366 => Ok(Self::_IndexSignatureMappedTypeClause(Box::new(
+                368 => return Ok(Self::_IndexSignatureMappedTypeClause(Box::new(
                     _IndexSignatureMappedTypeClauseTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in IndexSignatureChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = IndexSignatureColonTransport::from_napi_value(env, napi_val) {
@@ -10789,16 +10537,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxAttributeChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                1 => Ok(Self::Identifier(
+            match kind_id {
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in JsxAttributeChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = JsxIdentifierTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::JsxIdentifier(value));
             }
@@ -10820,6 +10566,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxAttributeChildTransport {
             if let Ok(value) = JsxSelfClosingElementTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::JsxSelfClosingElement(Box::new(value)));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in JsxAttributeChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in JsxAttributeChildTransport"))
     }
@@ -10922,130 +10673,128 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxExpressionChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                274 => Ok(Self::AsExpression(Box::new(
+            match kind_id {
+                274 => return Ok(Self::AsExpression(Box::new(
                     AsExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                275 => Ok(Self::SatisfiesExpression(Box::new(
+                275 => return Ok(Self::SatisfiesExpression(Box::new(
                     SatisfiesExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                276 => Ok(Self::InstantiationExpression(Box::new(
+                276 => return Ok(Self::InstantiationExpression(Box::new(
                     InstantiationExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                284 => Ok(Self::InternalModule(Box::new(
+                284 => return Ok(Self::InternalModule(Box::new(
                     InternalModuleTransport::from_napi_value(env, napi_val)?
                 ))),
-                273 => Ok(Self::TypeAssertion(Box::new(
+                273 => return Ok(Self::TypeAssertion(Box::new(
                     TypeAssertionTransport::from_napi_value(env, napi_val)?
                 ))),
-                235 => Ok(Self::SubscriptExpression(Box::new(
+                235 => return Ok(Self::SubscriptExpression(Box::new(
                     SubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                234 => Ok(Self::MemberExpression(Box::new(
+                234 => return Ok(Self::MemberExpression(Box::new(
                     MemberExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                209 => Ok(Self::ParenthesizedExpression(Box::new(
+                209 => return Ok(Self::ParenthesizedExpression(Box::new(
                     ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                114 => Ok(Self::Undefined(
+                114 => return Ok(Self::Undefined(
                     UndefinedTransport::from_napi_value(env, napi_val)?
                 )),
-                1 => Ok(Self::Identifier(
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                109 => Ok(Self::This(
+                109 => return Ok(Self::This(
                     ThisTransport::from_napi_value(env, napi_val)?
                 )),
-                110 => Ok(Self::Super(
+                110 => return Ok(Self::Super(
                     SuperTransport::from_napi_value(env, napi_val)?
                 )),
-                105 => Ok(Self::Number(
+                105 => return Ok(Self::Number(
                     NumberTransport::from_napi_value(env, napi_val)?
                 )),
-                247 => Ok(Self::String(Box::new(
+                247 => return Ok(Self::String(Box::new(
                     StringTransport::from_napi_value(env, napi_val)?
                 ))),
-                248 => Ok(Self::TemplateString(Box::new(
+                248 => return Ok(Self::TemplateString(Box::new(
                     TemplateStringTransport::from_napi_value(env, napi_val)?
                 ))),
-                250 => Ok(Self::Regex(Box::new(
+                250 => return Ok(Self::Regex(Box::new(
                     RegexTransport::from_napi_value(env, napi_val)?
                 ))),
-                111 => Ok(Self::True(
+                111 => return Ok(Self::True(
                     TrueTransport::from_napi_value(env, napi_val)?
                 )),
-                112 => Ok(Self::False(
+                112 => return Ok(Self::False(
                     FalseTransport::from_napi_value(env, napi_val)?
                 )),
-                113 => Ok(Self::Null(
+                113 => return Ok(Self::Null(
                     NullTransport::from_napi_value(env, napi_val)?
                 )),
-                213 => Ok(Self::Object(Box::new(
+                213 => return Ok(Self::Object(Box::new(
                     ObjectTransport::from_napi_value(env, napi_val)?
                 ))),
-                217 => Ok(Self::Array(Box::new(
+                217 => return Ok(Self::Array(Box::new(
                     ArrayTransport::from_napi_value(env, napi_val)?
                 ))),
-                223 => Ok(Self::FunctionExpression(Box::new(
+                223 => return Ok(Self::FunctionExpression(Box::new(
                     FunctionExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                227 => Ok(Self::ArrowFunction(Box::new(
+                227 => return Ok(Self::ArrowFunction(Box::new(
                     ArrowFunctionTransport::from_napi_value(env, napi_val)?
                 ))),
-                225 => Ok(Self::GeneratorFunction(Box::new(
+                225 => return Ok(Self::GeneratorFunction(Box::new(
                     GeneratorFunctionTransport::from_napi_value(env, napi_val)?
                 ))),
-                220 => Ok(Self::Class(Box::new(
+                220 => return Ok(Self::Class(Box::new(
                     ClassTransport::from_napi_value(env, napi_val)?
                 ))),
-                251 => Ok(Self::MetaProperty(
+                251 => return Ok(Self::MetaProperty(
                     MetaPropertyTransport::from_napi_value(env, napi_val)?
                 )),
-                231 => Ok(Self::CallExpression(Box::new(
+                231 => return Ok(Self::CallExpression(Box::new(
                     CallExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                268 => Ok(Self::NonNullExpression(Box::new(
+                268 => return Ok(Self::NonNullExpression(Box::new(
                     NonNullExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                236 => Ok(Self::AssignmentExpression(Box::new(
+                236 => return Ok(Self::AssignmentExpression(Box::new(
                     AssignmentExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                238 => Ok(Self::AugmentedAssignmentExpression(Box::new(
+                238 => return Ok(Self::AugmentedAssignmentExpression(Box::new(
                     AugmentedAssignmentExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                233 => Ok(Self::AwaitExpression(Box::new(
+                233 => return Ok(Self::AwaitExpression(Box::new(
                     AwaitExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                244 => Ok(Self::UnaryExpression(Box::new(
+                244 => return Ok(Self::UnaryExpression(Box::new(
                     UnaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                243 => Ok(Self::BinaryExpression(Box::new(
+                243 => return Ok(Self::BinaryExpression(Box::new(
                     BinaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                242 => Ok(Self::TernaryExpression(Box::new(
+                242 => return Ok(Self::TernaryExpression(Box::new(
                     TernaryExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                245 => Ok(Self::UpdateExpression(Box::new(
+                245 => return Ok(Self::UpdateExpression(Box::new(
                     UpdateExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                232 => Ok(Self::NewExpression(Box::new(
+                232 => return Ok(Self::NewExpression(Box::new(
                     NewExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                212 => Ok(Self::YieldExpression(Box::new(
+                212 => return Ok(Self::YieldExpression(Box::new(
                     YieldExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                246 => Ok(Self::SequenceExpression(Box::new(
+                246 => return Ok(Self::SequenceExpression(Box::new(
                     SequenceExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                241 => Ok(Self::SpreadElement(Box::new(
+                241 => return Ok(Self::SpreadElement(Box::new(
                     SpreadElementTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in JsxExpressionChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = AsExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::AsExpression(Box::new(value)));
             }
@@ -11166,6 +10915,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxExpressionChildTransport {
             if let Ok(value) = SpreadElementTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::SpreadElement(Box::new(value)));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in JsxExpressionChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in JsxExpressionChildTransport"))
     }
@@ -11301,32 +11055,32 @@ impl ::napi::bindgen_prelude::FromNapiValue for LiteralTypeChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                331 => Ok(Self::_Number(Box::new(
+            match kind_id {
+                331 => return Ok(Self::_Number(Box::new(
                     _NumberTransport::from_napi_value(env, napi_val)?
                 ))),
-                105 => Ok(Self::Number(
+                105 => return Ok(Self::Number(
                     NumberTransport::from_napi_value(env, napi_val)?
                 )),
-                247 => Ok(Self::String(Box::new(
+                247 => return Ok(Self::String(Box::new(
                     StringTransport::from_napi_value(env, napi_val)?
                 ))),
-                111 => Ok(Self::True(
+                111 => return Ok(Self::True(
                     TrueTransport::from_napi_value(env, napi_val)?
                 )),
-                112 => Ok(Self::False(
+                112 => return Ok(Self::False(
                     FalseTransport::from_napi_value(env, napi_val)?
                 )),
-                113 => Ok(Self::Null(
+                113 => return Ok(Self::Null(
                     NullTransport::from_napi_value(env, napi_val)?
                 )),
-                114 => Ok(Self::Undefined(
+                114 => return Ok(Self::Undefined(
                     UndefinedTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in LiteralTypeChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = _NumberTransport::from_napi_value(env, napi_val) {
@@ -11417,25 +11171,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                262 => Ok(Self::Pair(Box::new(
+            match kind_id {
+                262 => return Ok(Self::Pair(Box::new(
                     PairTransport::from_napi_value(env, napi_val)?
                 ))),
-                241 => Ok(Self::SpreadElement(Box::new(
+                241 => return Ok(Self::SpreadElement(Box::new(
                     SpreadElementTransport::from_napi_value(env, napi_val)?
                 ))),
-                261 => Ok(Self::MethodDefinition(Box::new(
+                261 => return Ok(Self::MethodDefinition(Box::new(
                     MethodDefinitionTransport::from_napi_value(env, napi_val)?
                 ))),
-                1 => Ok(Self::Identifier(
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ObjectChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = PairTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Pair(Box::new(value)));
             }
@@ -11451,6 +11203,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectChildTransport {
             if let Ok(value) = ReservedIdentifierTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ReservedIdentifier(value));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ObjectChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in ObjectChildTransport"))
     }
@@ -11514,25 +11271,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPatternChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                263 => Ok(Self::PairPattern(Box::new(
+            match kind_id {
+                263 => return Ok(Self::PairPattern(Box::new(
                     PairPatternTransport::from_napi_value(env, napi_val)?
                 ))),
-                260 => Ok(Self::RestPattern(Box::new(
+                260 => return Ok(Self::RestPattern(Box::new(
                     RestPatternTransport::from_napi_value(env, napi_val)?
                 ))),
-                216 => Ok(Self::ObjectAssignmentPattern(Box::new(
+                216 => return Ok(Self::ObjectAssignmentPattern(Box::new(
                     ObjectAssignmentPatternTransport::from_napi_value(env, napi_val)?
                 ))),
-                1 => Ok(Self::Identifier(
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ObjectPatternChildTransport",
-                ))),
-            };
+                _ => {}
+            }
         }
-        if String::from_napi_value(env, napi_val).is_ok() {
+        if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = PairPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::PairPattern(Box::new(value)));
             }
@@ -11548,6 +11303,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPatternChildTransport {
             if let Ok(value) = ReservedIdentifierTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ReservedIdentifier(value));
             }
+        }
+        if let Some(other) = kind_id {
+            return Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ObjectPatternChildTransport",
+            )));
         }
         Err(::napi::Error::from_reason("$type property missing in ObjectPatternChildTransport"))
     }
@@ -11608,26 +11368,26 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterChildTransport 
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                294 => Ok(Self::AccessibilityModifier(
+            match kind_id {
+                294 => return Ok(Self::AccessibilityModifier(
                     AccessibilityModifierEnum::from_napi_value(env, napi_val)?
                 )),
-                121 => Ok(Self::AccessibilityModifier(
+                121 => return Ok(Self::AccessibilityModifier(
                     AccessibilityModifierEnum::from_napi_value(env, napi_val)?
                 )),
-                122 => Ok(Self::AccessibilityModifier(
+                122 => return Ok(Self::AccessibilityModifier(
                     AccessibilityModifierEnum::from_napi_value(env, napi_val)?
                 )),
-                123 => Ok(Self::AccessibilityModifier(
+                123 => return Ok(Self::AccessibilityModifier(
                     AccessibilityModifierEnum::from_napi_value(env, napi_val)?
                 )),
-                295 => Ok(Self::OverrideModifier(
+                295 => return Ok(Self::OverrideModifier(
                     OverrideModifierTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in OptionalParameterChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = AccessibilityModifierEnum::from_napi_value(env, napi_val) {
@@ -11690,17 +11450,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionChildTran
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                377 => Ok(Self::ParenthesizedExpressionTyped(Box::new(
+            match kind_id {
+                380 => return Ok(Self::ParenthesizedExpressionTyped(Box::new(
                     ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val)?
                 ))),
-                378 => Ok(Self::_ParenthesizedExpressionSequence(Box::new(
+                381 => return Ok(Self::_ParenthesizedExpressionSequence(Box::new(
                     _ParenthesizedExpressionSequenceTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in ParenthesizedExpressionChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = ParenthesizedExpressionTypedTransport::from_napi_value(env, napi_val) {
@@ -11767,29 +11527,29 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionChildTransp
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                416 => Ok(Self::PublicFieldDefinitionDeclareFirst(Box::new(
+            match kind_id {
+                419 => return Ok(Self::PublicFieldDefinitionDeclareFirst(Box::new(
                     PublicFieldDefinitionDeclareFirstTransport::from_napi_value(env, napi_val)?
                 ))),
-                414 => Ok(Self::PublicFieldDefinitionAccessFirst(Box::new(
+                417 => return Ok(Self::PublicFieldDefinitionAccessFirst(Box::new(
                     PublicFieldDefinitionAccessFirstTransport::from_napi_value(env, napi_val)?
                 ))),
-                418 => Ok(Self::PublicFieldDefinitionStaticMods(Box::new(
+                421 => return Ok(Self::PublicFieldDefinitionStaticMods(Box::new(
                     PublicFieldDefinitionStaticModsTransport::from_napi_value(env, napi_val)?
                 ))),
-                413 => Ok(Self::PublicFieldDefinitionAbstractFirst(Box::new(
+                416 => return Ok(Self::PublicFieldDefinitionAbstractFirst(Box::new(
                     PublicFieldDefinitionAbstractFirstTransport::from_napi_value(env, napi_val)?
                 ))),
-                417 => Ok(Self::PublicFieldDefinitionReadonlyFirst(Box::new(
+                420 => return Ok(Self::PublicFieldDefinitionReadonlyFirst(Box::new(
                     PublicFieldDefinitionReadonlyFirstTransport::from_napi_value(env, napi_val)?
                 ))),
-                415 => Ok(Self::PublicFieldDefinitionAccessorOpt(Box::new(
+                418 => return Ok(Self::PublicFieldDefinitionAccessorOpt(Box::new(
                     PublicFieldDefinitionAccessorOptTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in PublicFieldDefinitionChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = PublicFieldDefinitionDeclareFirstTransport::from_napi_value(env, napi_val) {
@@ -11872,26 +11632,26 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterChildTransport 
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                294 => Ok(Self::AccessibilityModifier(
+            match kind_id {
+                294 => return Ok(Self::AccessibilityModifier(
                     AccessibilityModifierEnum::from_napi_value(env, napi_val)?
                 )),
-                121 => Ok(Self::AccessibilityModifier(
+                121 => return Ok(Self::AccessibilityModifier(
                     AccessibilityModifierEnum::from_napi_value(env, napi_val)?
                 )),
-                122 => Ok(Self::AccessibilityModifier(
+                122 => return Ok(Self::AccessibilityModifier(
                     AccessibilityModifierEnum::from_napi_value(env, napi_val)?
                 )),
-                123 => Ok(Self::AccessibilityModifier(
+                123 => return Ok(Self::AccessibilityModifier(
                     AccessibilityModifierEnum::from_napi_value(env, napi_val)?
                 )),
-                295 => Ok(Self::OverrideModifier(
+                295 => return Ok(Self::OverrideModifier(
                     OverrideModifierTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in RequiredParameterChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = AccessibilityModifierEnum::from_napi_value(env, napi_val) {
@@ -11954,17 +11714,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchBodyChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                205 => Ok(Self::SwitchCase(Box::new(
+            match kind_id {
+                205 => return Ok(Self::SwitchCase(Box::new(
                     SwitchCaseTransport::from_napi_value(env, napi_val)?
                 ))),
-                206 => Ok(Self::SwitchDefault(Box::new(
+                206 => return Ok(Self::SwitchDefault(Box::new(
                     SwitchDefaultTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in SwitchBodyChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = SwitchCaseTransport::from_napi_value(env, napi_val) {
@@ -12027,17 +11787,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateLiteralTypeChildTranspor
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                160 => Ok(Self::TemplateChars(
+            match kind_id {
+                160 => return Ok(Self::TemplateChars(
                     TemplateCharsTransport::from_napi_value(env, napi_val)?
                 )),
-                315 => Ok(Self::TemplateType(Box::new(
+                315 => return Ok(Self::TemplateType(Box::new(
                     TemplateTypeTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in TemplateLiteralTypeChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = TemplateCharsTransport::from_napi_value(env, napi_val) {
@@ -12101,20 +11861,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateStringChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                160 => Ok(Self::TemplateChars(
+            match kind_id {
+                160 => return Ok(Self::TemplateChars(
                     TemplateCharsTransport::from_napi_value(env, napi_val)?
                 )),
-                98 => Ok(Self::EscapeSequence(
+                98 => return Ok(Self::EscapeSequence(
                     EscapeSequenceTransport::from_napi_value(env, napi_val)?
                 )),
-                249 => Ok(Self::TemplateSubstitution(Box::new(
+                249 => return Ok(Self::TemplateSubstitution(Box::new(
                     TemplateSubstitutionTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in TemplateStringChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = TemplateCharsTransport::from_napi_value(env, napi_val) {
@@ -12186,29 +11946,29 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                323 => Ok(Self::TypeQuerySubscriptExpression(Box::new(
+            match kind_id {
+                323 => return Ok(Self::TypeQuerySubscriptExpression(Box::new(
                     TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                322 => Ok(Self::TypeQueryMemberExpression(Box::new(
+                322 => return Ok(Self::TypeQueryMemberExpression(Box::new(
                     TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                324 => Ok(Self::TypeQueryCallExpression(Box::new(
+                324 => return Ok(Self::TypeQueryCallExpression(Box::new(
                     TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                325 => Ok(Self::TypeQueryInstantiationExpression(Box::new(
+                325 => return Ok(Self::TypeQueryInstantiationExpression(Box::new(
                     TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
-                1 => Ok(Self::Identifier(
+                1 => return Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
-                109 => Ok(Self::This(
+                109 => return Ok(Self::This(
                     ThisTransport::from_napi_value(env, napi_val)?
                 )),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in TypeQueryChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val) {
@@ -12291,17 +12051,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for UpdateExpressionChildTransport {
             None
         };
         if let Some(kind_id) = kind_id {
-            return match kind_id {
-                385 => Ok(Self::UpdateExpressionPostfix(Box::new(
+            match kind_id {
+                388 => return Ok(Self::UpdateExpressionPostfix(Box::new(
                     UpdateExpressionPostfixTransport::from_napi_value(env, napi_val)?
                 ))),
-                386 => Ok(Self::UpdateExpressionPrefix(Box::new(
+                389 => return Ok(Self::UpdateExpressionPrefix(Box::new(
                     UpdateExpressionPrefixTransport::from_napi_value(env, napi_val)?
                 ))),
-                other => Err(::napi::Error::from_reason(format!(
+                other => return Err(::napi::Error::from_reason(format!(
                     "unknown kind id {{other}} in UpdateExpressionChildTransport",
                 ))),
-            };
+            }
         }
         if String::from_napi_value(env, napi_val).is_ok() {
             if let Ok(value) = UpdateExpressionPostfixTransport::from_napi_value(env, napi_val) {
@@ -12529,6 +12289,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "abstract".to_string()
         } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
             if !present {
                 return Err(::napi::Error::from_reason("AbstractMarkerTransport received false; omit the field instead of sending false"));
@@ -12536,7 +12298,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMarkerTransport {
             "abstract".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "abstract".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -12582,7 +12344,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMarkerTransport {
             });
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "abstract".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -12785,6 +12547,100 @@ impl RenderableTransport for AccessorKindEnum {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct _AmbientDeclarationDeclarationTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: DeclarationTransport,
+}
+
+impl RenderableTransport for _AmbientDeclarationDeclarationTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render__ambient_declaration_declaration(self, dest))
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct AmbientDeclarationGlobalTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    pub body: StatementBlockTransport,
+}
+
+impl RenderableTransport for AmbientDeclarationGlobalTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_ambient_declaration_global(self, dest))
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct AmbientDeclarationModuleTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: IdentifierTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    pub type_: TypeTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
+    pub semicolon: Option<SemicolonTransport>,
+}
+
+impl RenderableTransport for AmbientDeclarationModuleTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_ambient_declaration_module(self, dest))
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct _ArrowFunctionUCallSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -12875,9 +12731,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertsAnnotationAssertsTranspor
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ":".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| ":".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -12898,7 +12756,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertsAnnotationAssertsTranspor
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ":".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -12955,6 +12813,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "async".to_string()
         } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
             if !present {
                 return Err(::napi::Error::from_reason("AsyncMarkerTransport received false; omit the field instead of sending false"));
@@ -12962,7 +12822,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncMarkerTransport {
             "async".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "async".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -13008,7 +12868,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncMarkerTransport {
             });
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "async".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -13533,6 +13393,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "const".to_string()
         } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
             if !present {
                 return Err(::napi::Error::from_reason("ConstMarkerTransport received false; omit the field instead of sending false"));
@@ -13540,7 +13402,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstMarkerTransport {
             "const".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "const".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -13586,7 +13448,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstMarkerTransport {
             });
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "const".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -13712,8 +13574,10 @@ pub struct ExportStatementDefaultDeclArmTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<DecoratorTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declaration"))]
+    pub declaration: Option<DeclarationTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: ExportStatementDefaultDeclArmChildTransport,
+    pub children: Option<ExportStatementDefaultDeclArmDefaultKwTransport>,
 }
 
 impl RenderableTransport for ExportStatementDefaultDeclArmTransport {
@@ -13742,8 +13606,10 @@ pub struct ExportStatementDefaultDeclArmDefaultKwTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declaration"))]
+    pub declaration: Option<DeclarationTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: ExportStatementDefaultDeclArmDefaultKwChildTransport,
+    pub children: Option<ExportStatementDefaultDeclArmDefaultKwValueTransport>,
 }
 
 impl RenderableTransport for ExportStatementDefaultDeclArmDefaultKwTransport {
@@ -14383,7 +14249,7 @@ pub struct ImportSpecifierAsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Box<AnyTransport>,
+    pub name: ModuleExportNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
     pub alias: ImportIdentifierTransport,
 }
@@ -14689,9 +14555,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAbstractMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "abstract".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "abstract".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -14712,7 +14580,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAbstractMarkerTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "abstract".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -14769,9 +14637,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAccessorMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "accessor".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "accessor".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -14792,7 +14662,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAccessorMarkerTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "accessor".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -14849,9 +14719,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAssertsTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ":".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| ":".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -14872,7 +14744,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAssertsTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ":".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -14929,9 +14801,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "async".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "async".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -14952,7 +14826,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "async".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -15009,9 +14883,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAwaitMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "await".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "await".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -15032,7 +14908,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAwaitMarkerTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "await".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -15089,9 +14965,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwConstMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "const".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "const".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -15112,7 +14990,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwConstMarkerTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "const".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -15169,9 +15047,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwDeclareMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "declare".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "declare".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -15192,7 +15072,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwDeclareMarkerTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "declare".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -15249,9 +15129,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwOptionalMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "?".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "?".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -15272,7 +15154,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwOptionalMarkerTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "?".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -15329,9 +15211,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwReadonlyMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "readonly".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "readonly".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -15352,7 +15236,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwReadonlyMarkerTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "readonly".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -15409,9 +15293,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "static".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "static".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -15432,7 +15318,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "static".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -15489,9 +15375,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwTypePredicateTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ":".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| ":".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -15512,7 +15400,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwTypePredicateTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ":".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -15569,9 +15457,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwUsingMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "using".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "using".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -15592,7 +15482,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwUsingMarkerTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "using".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -15730,7 +15620,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeClosingEnum {
         if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
             match kind_id {
                 7 => return Ok(Self::RBrace), // "}"
-                154 => return Ok(Self::V7c_7d), // "|}"
+                153 => return Ok(Self::V7c_7d), // "|}"
                 _ => {}
             }
         }
@@ -15745,7 +15635,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeClosingEnum {
         if let Some(kind_id) = obj.get::<u16>("$type")? {
             match kind_id {
                 7 => return Ok(Self::RBrace), // "}"
-                154 => return Ok(Self::V7c_7d), // "|}"
+                153 => return Ok(Self::V7c_7d), // "|}"
                 _ => {}
             }
         }
@@ -15808,7 +15698,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeOpeningEnum {
         if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
             match kind_id {
                 5 => return Ok(Self::LBrace), // "{"
-                153 => return Ok(Self::V7b_7c), // "{|"
+                152 => return Ok(Self::V7b_7c), // "{|"
                 _ => {}
             }
         }
@@ -15823,7 +15713,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeOpeningEnum {
         if let Some(kind_id) = obj.get::<u16>("$type")? {
             match kind_id {
                 5 => return Ok(Self::LBrace), // "{"
-                153 => return Ok(Self::V7b_7c), // "{|"
+                152 => return Ok(Self::V7b_7c), // "{|"
                 _ => {}
             }
         }
@@ -15977,6 +15867,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "?.".to_string()
         } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
             if !present {
                 return Err(::napi::Error::from_reason("OptionalChainTransport received false; omit the field instead of sending false"));
@@ -15984,7 +15876,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
             "?.".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "?.".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -16030,7 +15922,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
             });
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "?.".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -16087,6 +15979,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "?".to_string()
         } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
             if !present {
                 return Err(::napi::Error::from_reason("OptionalMarkerTransport received false; omit the field instead of sending false"));
@@ -16094,7 +15988,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalMarkerTransport {
             "?".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "?".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -16140,7 +16034,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalMarkerTransport {
             });
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "?".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -16197,6 +16091,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for _OverrideModifierTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "override".to_string()
         } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
             if !present {
                 return Err(::napi::Error::from_reason("_OverrideModifierTransport received false; omit the field instead of sending false"));
@@ -16204,7 +16100,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _OverrideModifierTransport {
             "override".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "override".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -16250,7 +16146,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _OverrideModifierTransport {
             });
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "override".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -16673,6 +16569,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "readonly".to_string()
         } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
             if !present {
                 return Err(::napi::Error::from_reason("ReadonlyMarkerTransport received false; omit the field instead of sending false"));
@@ -16680,7 +16578,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyMarkerTransport {
             "readonly".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "readonly".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -16726,7 +16624,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyMarkerTransport {
             });
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "readonly".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -16863,6 +16761,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticMarkerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "static".to_string()
         } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
             if !present {
                 return Err(::napi::Error::from_reason("StaticMarkerTransport received false; omit the field instead of sending false"));
@@ -16870,7 +16770,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticMarkerTransport {
             "static".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "static".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -16916,7 +16816,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticMarkerTransport {
             });
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "static".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -17677,6 +17577,36 @@ impl RenderableTransport for AddingTypeAnnotationTransport {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct AmbientDeclarationDeclarationTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: DeclarationTransport,
+}
+
+impl RenderableTransport for AmbientDeclarationDeclarationTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_ambient_declaration_declaration(self, dest))
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct AmbientDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -17692,8 +17622,8 @@ pub struct AmbientDeclarationTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declaration"))]
-    pub declaration: Box<AnyTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: AmbientDeclarationChildTransport,
 }
 
 impl RenderableTransport for AmbientDeclarationTransport {
@@ -19097,9 +19027,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ";".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| ";".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -19120,7 +19052,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ";".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -19198,8 +19130,10 @@ pub struct EnumBodyTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: Option<Vec<PropertyNameTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<EnumBodyChildTransport>,
+    pub children: Vec<EnumAssignmentTransport>,
 }
 
 impl RenderableTransport for EnumBodyTransport {
@@ -19353,9 +19287,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExistentialTypeTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "*".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "*".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -19376,7 +19312,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExistentialTypeTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "*".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -19713,9 +19649,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for FalseTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "false".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "false".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -19736,7 +19674,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FalseTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "false".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -20074,8 +20012,8 @@ pub struct FunctionSignatureTransport {
     pub parameters: FormalParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<Box<AnyTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Box<AnyTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: FunctionSignatureChildTransport,
 }
 
 impl RenderableTransport for FunctionSignatureTransport {
@@ -20567,9 +20505,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "import".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "import".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -20590,7 +20530,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "import".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -20917,7 +20857,7 @@ pub struct ImportStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause"))]
     pub import_clause: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_clause"))]
-    pub from_clause: Box<AnyTransport>,
+    pub from_clause: Vec<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_attribute"))]
     pub import_attribute: Option<ImportAttributeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
@@ -21674,10 +21614,10 @@ pub struct MemberExpressionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: Box<AnyTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_chain"))]
+    pub optional_chain: Option<OptionalChainTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
     pub property: PropertyNameTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: OptionalChainTransport,
 }
 
 impl RenderableTransport for MemberExpressionTransport {
@@ -22149,9 +22089,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for NullTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "null".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "null".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -22172,7 +22114,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NullTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "null".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -22597,9 +22539,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideModifierTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "override".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "override".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -22620,7 +22564,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideModifierTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "override".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -23607,7 +23551,7 @@ pub struct SubscriptExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
-    pub object: Box<AnyTransport>,
+    pub object: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_chain"))]
     pub optional_chain: Option<OptionalChainTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index"))]
@@ -23651,9 +23595,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "super".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "super".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -23674,7 +23620,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "super".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -24009,9 +23955,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThisTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "this".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "this".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -24032,7 +23980,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThisTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "this".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -24121,9 +24069,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TrueTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "true".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "true".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -24144,7 +24094,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TrueTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "true".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -24615,9 +24565,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for UndefinedTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "undefined".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "undefined".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -24638,7 +24590,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UndefinedTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "undefined".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -25877,9 +25829,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "abstract".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "abstract".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -25900,7 +25854,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "abstract".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -25921,6 +25875,170 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractTransport {
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for AbstractTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct GlobalTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for GlobalTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "global".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| "global".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "global".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for GlobalTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct DotTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for DotTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ".".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| ".".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ".".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for DotTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -25957,9 +26075,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ":".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| ":".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -25980,7 +26100,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ":".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -26037,9 +26157,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "async".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "async".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -26060,7 +26182,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "async".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -26117,9 +26239,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokQDotTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "?.".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "?.".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -26140,7 +26264,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokQDotTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "?.".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -26197,9 +26321,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ",".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| ",".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -26220,7 +26346,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ",".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -26277,9 +26403,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "const".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "const".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -26300,7 +26428,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "const".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -26357,9 +26485,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "export".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "export".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -26380,7 +26510,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "export".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -26437,9 +26567,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "default".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "default".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -26460,7 +26592,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "default".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -26517,9 +26649,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "*".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "*".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -26540,7 +26674,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "*".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -26597,9 +26731,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "=".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "=".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -26620,7 +26756,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "=".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -26677,9 +26813,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "as".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "as".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -26700,7 +26838,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "as".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -26757,9 +26895,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamespaceTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "namespace".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "namespace".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -26780,7 +26920,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NamespaceTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "namespace".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -26837,9 +26977,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "(".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "(".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -26860,7 +27002,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "(".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -26917,9 +27059,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ")".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| ")".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -26940,7 +27084,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ")".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -26997,9 +27141,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for VarTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "var".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "var".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -27020,7 +27166,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for VarTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "var".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -27077,9 +27223,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "from".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "from".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -27100,7 +27248,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "from".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -27157,9 +27305,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "<".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "<".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -27180,7 +27330,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "<".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -27237,9 +27387,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDqTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "\"".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "\"".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -27260,7 +27412,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDqTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "\"".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -27317,9 +27469,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSqTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "'".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "'".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -27340,7 +27494,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSqTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "'".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -27397,9 +27551,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AccessorTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "accessor".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "accessor".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -27420,7 +27576,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AccessorTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "accessor".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -27477,9 +27633,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "await".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "await".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -27500,7 +27658,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "await".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -27557,9 +27715,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeclareTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "declare".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "declare".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -27580,7 +27740,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeclareTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "declare".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -27637,9 +27797,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for QuestionTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "?".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "?".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -27660,7 +27822,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QuestionTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "?".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -27717,9 +27879,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "readonly".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "readonly".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -27740,7 +27904,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReadonlyTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "readonly".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -27797,9 +27961,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "static".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "static".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -27820,7 +27986,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "static".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -27877,9 +28043,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for UsingTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "using".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "using".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -27900,7 +28068,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UsingTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "using".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -27957,9 +28125,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "override".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "override".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -27980,7 +28150,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "override".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -28001,86 +28171,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for OverrideTransport {
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for OverrideTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct DotTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for DotTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
-            text
-        } else {
-            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(false),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DotTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -28117,9 +28207,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "[".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "[".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -28140,7 +28232,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "[".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -28197,9 +28289,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "]".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "]".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -28220,7 +28314,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "]".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -28277,9 +28371,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokPlusQColonTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "+?:".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "+?:".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -28300,7 +28396,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokPlusQColonTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "+?:".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -28321,86 +28417,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokPlusQColonTransport {
 
 #[cfg(feature = "napi-bindings")]
 impl ::napi::bindgen_prelude::ToNapiValue for TokPlusQColonTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct GlobalTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for GlobalTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
-            text
-        } else {
-            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for GlobalTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -28437,9 +28453,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpAmpTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "&&".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "&&".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -28460,7 +28478,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpAmpTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "&&".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -28517,9 +28535,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipePipeTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "||".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "||".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -28540,7 +28560,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipePipeTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "||".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -28597,9 +28617,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ">>".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| ">>".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -28620,7 +28642,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ">>".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -28677,9 +28699,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtGtTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ">>>".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| ">>>".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -28700,7 +28724,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtGtGtTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ">>>".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -28757,9 +28781,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "<<".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "<<".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -28780,7 +28806,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtLtTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "<<".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -28837,9 +28863,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for Amp2Transport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "&".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "&".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -28860,7 +28888,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Amp2Transport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "&".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -28917,9 +28945,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "^".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "^".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -28940,7 +28970,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaretTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "^".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -28997,9 +29027,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for Pipe2Transport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "|".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "|".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -29020,7 +29052,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Pipe2Transport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "|".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -29077,9 +29109,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "+".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "+".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -29100,7 +29134,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "+".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -29157,9 +29191,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "-".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "-".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -29180,7 +29216,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "-".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -29237,9 +29273,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for Star2Transport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "*".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "*".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -29260,7 +29298,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Star2Transport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "*".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -29317,9 +29355,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for Slash2Transport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "/".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "/".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -29340,7 +29380,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Slash2Transport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "/".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -29397,9 +29437,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "%".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "%".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -29420,7 +29462,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PercentTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "%".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -29477,9 +29519,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "**".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "**".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -29500,7 +29544,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarStarTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "**".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -29557,9 +29601,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for Lt2Transport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "<".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "<".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -29580,7 +29626,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Lt2Transport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "<".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -29637,9 +29683,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtEqTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "<=".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "<=".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -29660,7 +29708,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtEqTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "<=".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -29717,9 +29765,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "==".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "==".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -29740,7 +29790,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "==".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -29797,9 +29847,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqEqTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "===".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "===".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -29820,7 +29872,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqEqEqTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "===".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -29877,9 +29929,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "!=".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "!=".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -29900,7 +29954,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "!=".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -29957,9 +30011,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqEqTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "!==".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "!==".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -29980,7 +30036,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangEqEqTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "!==".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30037,9 +30093,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ">=".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| ">=".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -30060,7 +30118,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtEqTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ">=".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30117,9 +30175,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for Gt2Transport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ">".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| ">".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -30140,7 +30200,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Gt2Transport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ">".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30197,9 +30257,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkQmarkTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "??".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "??".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -30220,7 +30282,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QmarkQmarkTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "??".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30277,9 +30339,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for InstanceofTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "instanceof".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "instanceof".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -30300,7 +30364,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InstanceofTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "instanceof".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30357,9 +30421,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "in".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "in".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -30380,7 +30446,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "in".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30437,9 +30503,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "break".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "break".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -30460,7 +30528,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "break".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30517,9 +30585,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for CatchTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "catch".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "catch".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -30540,7 +30610,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CatchTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "catch".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30597,9 +30667,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "{".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "{".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -30620,7 +30692,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "{".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30677,9 +30749,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ";".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| ";".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -30700,7 +30774,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ";".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30757,9 +30831,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "}".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "}".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -30780,7 +30856,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "}".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30837,9 +30913,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExtendsTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "extends".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "extends".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -30860,7 +30938,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExtendsTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "extends".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30917,9 +30995,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "new".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "new".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -30940,7 +31020,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "new".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30997,9 +31077,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for FatArrowTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "=>".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "=>".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -31020,7 +31102,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FatArrowTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "=>".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -31077,9 +31159,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "continue".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "continue".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -31100,7 +31184,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "continue".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -31157,9 +31241,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for DebuggerTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "debugger".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "debugger".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -31180,7 +31266,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DebuggerTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "debugger".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -31237,9 +31323,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "@".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "@".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -31260,7 +31348,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "@".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -31317,9 +31405,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "do".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "do".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -31340,7 +31430,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DoTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "do".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -31397,9 +31487,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "while".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "while".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -31420,7 +31512,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "while".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -31477,9 +31569,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "else".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "else".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -31500,7 +31594,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "else".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -31557,9 +31651,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "enum".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "enum".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -31580,7 +31676,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "enum".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -31637,9 +31733,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "finally".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "finally".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -31660,7 +31758,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "finally".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -31717,9 +31815,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "for".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "for".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -31740,7 +31840,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "for".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -31797,9 +31897,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "function".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "function".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -31820,7 +31922,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "function".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -31877,9 +31979,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "if".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "if".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -31900,7 +32004,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "if".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -31957,9 +32061,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplementsTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "implements".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "implements".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -31980,7 +32086,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplementsTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "implements".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -32037,9 +32143,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequireTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "require".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "require".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -32060,7 +32168,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequireTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "require".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -32117,9 +32225,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeyofTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "keyof".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "keyof".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -32140,7 +32250,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeyofTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "keyof".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -32197,9 +32307,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for InferTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "infer".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "infer".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -32220,7 +32332,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InferTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "infer".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -32277,9 +32389,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterfaceTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "interface".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "interface".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -32300,7 +32414,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterfaceTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "interface".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -32357,9 +32471,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "&".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "&".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -32380,7 +32496,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "&".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -32437,9 +32553,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokLtSlashTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "</".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "</".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -32460,7 +32578,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokLtSlashTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "</".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -32517,9 +32635,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ">".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| ">".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -32540,7 +32660,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ">".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -32597,9 +32717,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSlashGtTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "/>".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "/>".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -32620,7 +32742,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSlashGtTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "/>".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -32677,9 +32799,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "!".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "!".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -32700,7 +32824,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "!".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -32757,9 +32881,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokMinusQColonTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "-?:".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "-?:".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -32780,7 +32906,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokMinusQColonTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "-?:".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -32837,9 +32963,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokQColonTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "?:".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "?:".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -32860,7 +32988,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokQColonTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "?:".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -32917,9 +33045,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "/".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "/".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -32940,7 +33070,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "/".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -32997,9 +33127,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "...".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "...".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -33020,7 +33152,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "...".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -33077,9 +33209,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "return".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "return".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -33100,7 +33234,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "return".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -33157,9 +33291,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SatisfiesTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "satisfies".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "satisfies".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -33180,7 +33316,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SatisfiesTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "satisfies".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -33237,9 +33373,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "case".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "case".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -33260,7 +33398,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "case".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -33317,9 +33455,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "switch".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "switch".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -33340,7 +33480,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "switch".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -33397,9 +33537,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokBtTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "`".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "`".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -33420,7 +33562,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokBtTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "`".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -33477,9 +33619,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDollarLbrTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "${".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "${".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -33500,7 +33644,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDollarLbrTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "${".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -33557,9 +33701,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "throw".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "throw".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -33580,7 +33726,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ThrowTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "throw".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -33637,9 +33783,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "try".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "try".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -33660,7 +33808,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "try".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -33717,9 +33865,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "is".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "is".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -33740,7 +33890,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "is".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -33797,9 +33947,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeofTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "typeof".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "typeof".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -33820,7 +33972,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeofTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "typeof".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -33877,9 +34029,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "|".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "|".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -33900,7 +34054,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "|".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -33957,9 +34111,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "with".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "with".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -33980,7 +34136,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "with".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -34037,9 +34193,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldTransport {
     ) -> ::napi::Result<Self> {
         let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
             text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "yield".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
+            obj.get("$text")?.unwrap_or_else(|| "yield".to_string())
         };
         Ok(Self {
             transport_source: None,
@@ -34060,7 +34218,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "yield".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -34136,6 +34294,32 @@ fn render__accessibility_modifier(t: &_AccessibilityModifierEnum, dest: &mut dyn
 
 fn render_accessor_kind(t: &AccessorKindEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.to_string()).map_err(::askama::Error::from)
+}
+
+fn render__ambient_declaration_declaration(node: &_AmbientDeclarationDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = _AmbientDeclarationDeclarationTemplate {
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+    };
+    template.render_into(dest)
+}
+
+fn render_ambient_declaration_global(node: &AmbientDeclarationGlobalTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = AmbientDeclarationGlobalTemplate {
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+    };
+    template.render_into(dest)
+}
+
+fn render_ambient_declaration_module(node: &AmbientDeclarationModuleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = AmbientDeclarationModuleTemplate {
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        semicolon: match &node.semicolon {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
+    };
+    template.render_into(dest)
 }
 
 fn render__arrow_function_ucall_signature(node: &_ArrowFunctionUCallSignatureTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -34299,8 +34483,14 @@ fn render_export_statement_default_decl_arm(node: &ExportStatementDefaultDeclArm
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ExportStatementDefaultDeclArmTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
-        declaration: OptionalNonterminalView::Missing,
+        children: match &node.children {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        declaration: match &node.declaration {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         decorator: ListNonterminalView {
             items: decorator_buf.as_slice(),
             separator: "",
@@ -34313,8 +34503,14 @@ fn render_export_statement_default_decl_arm(node: &ExportStatementDefaultDeclArm
 
 fn render_export_statement_default_decl_arm_default_kw(node: &ExportStatementDefaultDeclArmDefaultKwTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExportStatementDefaultDeclArmDefaultKwTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
-        declaration: OptionalNonterminalView::Missing,
+        children: match &node.children {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        declaration: match &node.declaration {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }
@@ -34491,7 +34687,7 @@ fn render__import_clause_namespace_import(node: &_ImportClauseNamespaceImportTra
 fn render_import_specifier_as(node: &ImportSpecifierAsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ImportSpecifierAsTemplate {
         alias: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alias)),
-        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.name.as_ref())),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
     };
     template.render_into(dest)
 }
@@ -34882,10 +35078,16 @@ fn render_adding_type_annotation(node: &AddingTypeAnnotationTransport, dest: &mu
     template.render_into(dest)
 }
 
+fn render_ambient_declaration_declaration(node: &AmbientDeclarationDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = AmbientDeclarationDeclarationTemplate {
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+    };
+    template.render_into(dest)
+}
+
 fn render_ambient_declaration(node: &AmbientDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AmbientDeclarationTemplate {
-        children: OptionalNonterminalView::Missing,
-        declaration: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.declaration.as_ref())),
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
     };
     template.render_into(dest)
 }
@@ -35360,18 +35562,13 @@ fn render_enum_assignment(node: &EnumAssignmentTransport, dest: &mut dyn ::std::
 }
 
 fn render_enum_body(node: &EnumBodyTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+    let name_owned = node.name.as_deref().unwrap_or(&[]);
+    let name_buf: Vec<::sittir_core::filters::Renderable<'_>> = name_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = EnumBodyTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
         name: ListNonterminalView {
-            items: &[],
+            items: name_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -35664,7 +35861,7 @@ fn render_function_expression(node: &FunctionExpressionTransport, dest: &mut dyn
 
 fn render_function_signature(node: &FunctionSignatureTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = FunctionSignatureTemplate {
-        children: OptionalNonterminalView::Missing,
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
         async_marker: match &node.async_marker {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -35675,7 +35872,6 @@ fn render_function_signature(node: &FunctionSignatureTransport, dest: &mut dyn :
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
             None => OptionalNonterminalView::Missing,
         },
-        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.semicolon.as_ref())),
         type_parameters: match &node.type_parameters {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -36133,7 +36329,6 @@ fn render_mapped_type_clause(node: &MappedTypeClauseTransport, dest: &mut dyn ::
 fn render_member_expression(node: &MemberExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = MemberExpressionTemplate {
         object: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.object.as_ref())),
-        optional_chain: OptionalNonterminalView::Missing,
         property: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.property)),
     };
     template.render_into(dest)
@@ -36740,7 +36935,7 @@ fn render_string(node: &StringTransport, dest: &mut dyn ::std::fmt::Write) -> Re
 fn render_subscript_expression(node: &SubscriptExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = SubscriptExpressionTemplate {
         index: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.index)),
-        object: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.object.as_ref())),
+        object: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.object)),
         optional_chain: match &node.optional_chain {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -37155,6 +37350,14 @@ fn render_abstract(t: &AbstractTransport, dest: &mut dyn ::std::fmt::Write) -> R
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render_global(t: &GlobalTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_dot(t: &DotTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_colon(t: &ColonTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -37259,10 +37462,6 @@ fn render_override(t: &OverrideTransport, dest: &mut dyn ::std::fmt::Write) -> R
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_dot(t: &DotTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
 fn render_bracket(t: &BracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -37272,10 +37471,6 @@ fn render_close_bracket(t: &CloseBracketTransport, dest: &mut dyn ::std::fmt::Wr
 }
 
 fn render_tok_plus_qcolon(t: &TokPlusQColonTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_global(t: &GlobalTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -37841,6 +38036,9 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::AbstractMarker(t) => t.render_into(dest),
             AnyTransport::_AccessibilityModifier(t) => t.render_into(dest),
             AnyTransport::AccessorKind(t) => t.render_into(dest),
+            AnyTransport::_AmbientDeclarationDeclaration(t) => render__ambient_declaration_declaration(t, dest),
+            AnyTransport::AmbientDeclarationGlobal(t) => render_ambient_declaration_global(t, dest),
+            AnyTransport::AmbientDeclarationModule(t) => render_ambient_declaration_module(t, dest),
             AnyTransport::_ArrowFunctionUCallSignature(t) => render__arrow_function_ucall_signature(t, dest),
             AnyTransport::_ArrowFunctionParameter(t) => render__arrow_function_parameter(t, dest),
             AnyTransport::AssertsAnnotationAsserts(t) => t.render_into(dest),
@@ -37934,6 +38132,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::AbstractMethodSignature(t) => render_abstract_method_signature(t, dest),
             AnyTransport::AccessibilityModifier(t) => t.render_into(dest),
             AnyTransport::AddingTypeAnnotation(t) => render_adding_type_annotation(t, dest),
+            AnyTransport::AmbientDeclarationDeclaration(t) => render_ambient_declaration_declaration(t, dest),
             AnyTransport::AmbientDeclaration(t) => render_ambient_declaration(t, dest),
             AnyTransport::Arguments(t) => render_arguments(t, dest),
             AnyTransport::Array(t) => render_array(t, dest),
@@ -38137,6 +38336,8 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::FunctionSignatureAutomaticSemicolon(t) => t.render_into(dest),
             AnyTransport::ErrorRecovery(t) => t.render_into(dest),
             AnyTransport::Abstract(t) => t.render_into(dest),
+            AnyTransport::Global(t) => t.render_into(dest),
+            AnyTransport::Dot(t) => t.render_into(dest),
             AnyTransport::Colon(t) => t.render_into(dest),
             AnyTransport::Async(t) => t.render_into(dest),
             AnyTransport::TokQDot(t) => t.render_into(dest),
@@ -38163,11 +38364,9 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Static(t) => t.render_into(dest),
             AnyTransport::Using(t) => t.render_into(dest),
             AnyTransport::Override(t) => t.render_into(dest),
-            AnyTransport::Dot(t) => t.render_into(dest),
             AnyTransport::Bracket(t) => t.render_into(dest),
             AnyTransport::CloseBracket(t) => t.render_into(dest),
             AnyTransport::TokPlusQColon(t) => t.render_into(dest),
-            AnyTransport::Global(t) => t.render_into(dest),
             AnyTransport::AmpAmp(t) => t.render_into(dest),
             AnyTransport::PipePipe(t) => t.render_into(dest),
             AnyTransport::GtGt(t) => t.render_into(dest),
@@ -38251,6 +38450,9 @@ impl AnyTransport {
     pub fn transport_named(&self) -> Option<bool> {
         match self {
             Self::AbstractMarker(t) => t.transport_named,
+            Self::_AmbientDeclarationDeclaration(t) => t.transport_named,
+            Self::AmbientDeclarationGlobal(t) => t.transport_named,
+            Self::AmbientDeclarationModule(t) => t.transport_named,
             Self::_ArrowFunctionUCallSignature(t) => t.transport_named,
             Self::_ArrowFunctionParameter(t) => t.transport_named,
             Self::AssertsAnnotationAsserts(t) => t.transport_named,
@@ -38333,7 +38535,7 @@ impl AnyTransport {
             Self::AbstractClassDeclaration(t) => t.transport_named,
             Self::AbstractMethodSignature(t) => t.transport_named,
             Self::AddingTypeAnnotation(t) => t.transport_named,
-            Self::AmbientDeclaration(t) => t.transport_named,
+            Self::AmbientDeclarationDeclaration(t) => t.transport_named,
             Self::Arguments(t) => t.transport_named,
             Self::Array(t) => t.transport_named,
             Self::ArrayPattern(t) => t.transport_named,
@@ -38527,6 +38729,8 @@ impl AnyTransport {
             Self::FunctionSignatureAutomaticSemicolon(t) => t.transport_named,
             Self::ErrorRecovery(t) => t.transport_named,
             Self::Abstract(t) => t.transport_named,
+            Self::Global(t) => t.transport_named,
+            Self::Dot(t) => t.transport_named,
             Self::Colon(t) => t.transport_named,
             Self::Async(t) => t.transport_named,
             Self::TokQDot(t) => t.transport_named,
@@ -38553,11 +38757,9 @@ impl AnyTransport {
             Self::Static(t) => t.transport_named,
             Self::Using(t) => t.transport_named,
             Self::Override(t) => t.transport_named,
-            Self::Dot(t) => t.transport_named,
             Self::Bracket(t) => t.transport_named,
             Self::CloseBracket(t) => t.transport_named,
             Self::TokPlusQColon(t) => t.transport_named,
-            Self::Global(t) => t.transport_named,
             Self::AmpAmp(t) => t.transport_named,
             Self::PipePipe(t) => t.transport_named,
             Self::GtGt(t) => t.transport_named,
@@ -38697,6 +38899,9 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::AbstractMarker(data) => transport_to_node_abstract_marker(data),
         AnyTransport::_AccessibilityModifier(data) => transport_to_node__accessibility_modifier(data),
         AnyTransport::AccessorKind(data) => transport_to_node_accessor_kind(data),
+        AnyTransport::_AmbientDeclarationDeclaration(data) => transport_to_node__ambient_declaration_declaration(data),
+        AnyTransport::AmbientDeclarationGlobal(data) => transport_to_node_ambient_declaration_global(data),
+        AnyTransport::AmbientDeclarationModule(data) => transport_to_node_ambient_declaration_module(data),
         AnyTransport::_ArrowFunctionUCallSignature(data) => transport_to_node__arrow_function_ucall_signature(data),
         AnyTransport::_ArrowFunctionParameter(data) => transport_to_node__arrow_function_parameter(data),
         AnyTransport::AssertsAnnotationAsserts(data) => transport_to_node_asserts_annotation_asserts(data),
@@ -38790,6 +38995,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::AbstractMethodSignature(data) => transport_to_node_abstract_method_signature(data),
         AnyTransport::AccessibilityModifier(data) => transport_to_node_accessibility_modifier(data),
         AnyTransport::AddingTypeAnnotation(data) => transport_to_node_adding_type_annotation(data),
+        AnyTransport::AmbientDeclarationDeclaration(data) => transport_to_node_ambient_declaration_declaration(data),
         AnyTransport::AmbientDeclaration(data) => transport_to_node_ambient_declaration(data),
         AnyTransport::Arguments(data) => transport_to_node_arguments(data),
         AnyTransport::Array(data) => transport_to_node_array(data),
@@ -38993,6 +39199,8 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::FunctionSignatureAutomaticSemicolon(data) => transport_to_node_function_signature_automatic_semicolon(data),
         AnyTransport::ErrorRecovery(data) => transport_to_node_error_recovery(data),
         AnyTransport::Abstract(data) => transport_to_node_abstract(data),
+        AnyTransport::Global(data) => transport_to_node_global(data),
+        AnyTransport::Dot(data) => transport_to_node_dot(data),
         AnyTransport::Colon(data) => transport_to_node_colon(data),
         AnyTransport::Async(data) => transport_to_node_async(data),
         AnyTransport::TokQDot(data) => transport_to_node_tok_qdot(data),
@@ -39019,11 +39227,9 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Static(data) => transport_to_node_static(data),
         AnyTransport::Using(data) => transport_to_node_using(data),
         AnyTransport::Override(data) => transport_to_node_override(data),
-        AnyTransport::Dot(data) => transport_to_node_dot(data),
         AnyTransport::Bracket(data) => transport_to_node_bracket(data),
         AnyTransport::CloseBracket(data) => transport_to_node_close_bracket(data),
         AnyTransport::TokPlusQColon(data) => transport_to_node_tok_plus_qcolon(data),
-        AnyTransport::Global(data) => transport_to_node_global(data),
         AnyTransport::AmpAmp(data) => transport_to_node_amp_amp(data),
         AnyTransport::PipePipe(data) => transport_to_node_pipe_pipe(data),
         AnyTransport::GtGt(data) => transport_to_node_gt_gt(data),
@@ -39182,6 +39388,72 @@ fn transport_to_node_accessor_kind(transport: AccessorKindEnum) -> Result<Transp
     ))
 }
 
+fn transport_to_node__ambient_declaration_declaration(transport: _AmbientDeclarationDeclarationTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(vec![declaration_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(369) /* "_ambient_declaration_declaration" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_ambient_declaration_global(transport: AmbientDeclarationGlobalTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("body".to_string(), transport_field_value(AnyTransport::StatementBlock(transport.body))?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(352) /* "_ambient_declaration_global" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_ambient_declaration_module(transport: AmbientDeclarationModuleTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("name".to_string(), transport_field_value(AnyTransport::Identifier(transport.name))?);
+    fields.insert("type".to_string(), transport_field_value(type_transport_to_any(transport.type_))?);
+    if let Some(value) = transport.semicolon {
+        fields.insert("semicolon".to_string(), transport_field_value(semicolon_transport_to_any(value))?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(353) /* "_ambient_declaration_module" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
 fn transport_to_node__arrow_function_ucall_signature(transport: _ArrowFunctionUCallSignatureTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.type_parameters {
@@ -39195,7 +39467,7 @@ fn transport_to_node__arrow_function_ucall_signature(transport: _ArrowFunctionUC
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(357) /* "_arrow_function__call_signature" */,
+        TransportKindId(359) /* "_arrow_function__call_signature" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39216,7 +39488,7 @@ fn transport_to_node__arrow_function_parameter(transport: _ArrowFunctionParamete
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(356) /* "_arrow_function_parameter" */,
+        TransportKindId(358) /* "_arrow_function_parameter" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39291,7 +39563,7 @@ fn transport_to_node_call_expression_call(transport: CallExpressionCallTransport
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(382) /* "_call_expression_call" */,
+        TransportKindId(385) /* "_call_expression_call" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39316,7 +39588,7 @@ fn transport_to_node_call_expression_member(transport: CallExpressionMemberTrans
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(384) /* "_call_expression_member" */,
+        TransportKindId(387) /* "_call_expression_member" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39338,7 +39610,7 @@ fn transport_to_node_call_expression_template_call(transport: CallExpressionTemp
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(383) /* "_call_expression_template_call" */,
+        TransportKindId(386) /* "_call_expression_template_call" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39385,7 +39657,7 @@ fn transport_to_node_class_body_member(transport: ClassBodyMemberTransport) -> R
     let children = Some(transport_children(transport.children.into_iter().map(|v| class_body_member_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(373) /* "_class_body_member" */,
+        TransportKindId(376) /* "_class_body_member" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39408,7 +39680,7 @@ fn transport_to_node_class_body_method(transport: ClassBodyMethodTransport) -> R
     let children = Some(transport_children(transport.children.into_iter().map(|v| class_body_method_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(371) /* "_class_body_method" */,
+        TransportKindId(374) /* "_class_body_method" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39428,7 +39700,7 @@ fn transport_to_node_class_body_method_sig(transport: ClassBodyMethodSigTranspor
     let children = Some(transport_children(transport.children.into_iter().map(|v| class_body_method_sig_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(372) /* "_class_body_method_sig" */,
+        TransportKindId(375) /* "_class_body_method_sig" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39448,7 +39720,7 @@ fn transport_to_node__class_heritage_extends_clause(transport: _ClassHeritageExt
     let children = Some(transport_children(transport.children.into_iter().map(|v| _class_heritage_extends_clause_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(358) /* "_class_heritage_extends_clause" */,
+        TransportKindId(360) /* "_class_heritage_extends_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39468,7 +39740,7 @@ fn transport_to_node__class_heritage_implements_clause(transport: _ClassHeritage
     let children = Some(transport_children(vec![AnyTransport::ImplementsClause(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(359) /* "_class_heritage_implements_clause" */,
+        TransportKindId(361) /* "_class_heritage_implements_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39520,11 +39792,17 @@ fn transport_to_node_export_statement_default_decl_arm(transport: ExportStatemen
     if let Some(value) = transport.decorator {
         fields.insert("decorator".to_string(), transport_field_values(value.into_iter().map(|v| AnyTransport::Decorator(v)).collect::<Vec<_>>())?);
     }
+    if let Some(value) = transport.declaration {
+        fields.insert("declaration".to_string(), transport_field_value(declaration_transport_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![export_statement_default_decl_arm_child_transport_to_any(transport.children)])?);
+    let children = match transport.children {
+        Some(c) => Some(transport_children(vec![AnyTransport::ExportStatementDefaultDeclArmDefaultKw(c)])?),
+        None => None,
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(354) /* "_export_statement_default_decl_arm" */,
+        TransportKindId(356) /* "_export_statement_default_decl_arm" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39540,11 +39818,17 @@ fn transport_to_node_export_statement_default_decl_arm(transport: ExportStatemen
 
 fn transport_to_node_export_statement_default_decl_arm_default_kw(transport: ExportStatementDefaultDeclArmDefaultKwTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.declaration {
+        fields.insert("declaration".to_string(), transport_field_value(declaration_transport_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![export_statement_default_decl_arm_default_kw_child_transport_to_any(transport.children)])?);
+    let children = match transport.children {
+        Some(c) => Some(transport_children(vec![AnyTransport::ExportStatementDefaultDeclArmDefaultKwValue(c)])?),
+        None => None,
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(355) /* "_export_statement_default_decl_arm_default_kw" */,
+        TransportKindId(357) /* "_export_statement_default_decl_arm_default_kw" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39565,7 +39849,7 @@ fn transport_to_node_export_statement_default_decl_arm_default_kw_value(transpor
     let children = Some(transport_children(vec![semicolon_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(370) /* "_export_statement_default_decl_arm_default_kw_value" */,
+        TransportKindId(373) /* "_export_statement_default_decl_arm_default_kw_value" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39585,7 +39869,7 @@ fn transport_to_node_export_statement_default_from_arm(transport: ExportStatemen
     let children = Some(transport_children(transport.children.into_iter().map(|v| export_statement_default_from_arm_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(353) /* "_export_statement_default_from_arm" */,
+        TransportKindId(355) /* "_export_statement_default_from_arm" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39606,7 +39890,7 @@ fn transport_to_node_export_statement_default_from_arm_clause_from(transport: Ex
     let children = Some(transport_children(vec![AnyTransport::ExportClause(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(369) /* "_export_statement_default_from_arm_clause_from" */,
+        TransportKindId(372) /* "_export_statement_default_from_arm_clause_from" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39627,7 +39911,7 @@ fn transport_to_node_export_statement_default_from_arm_ns_from(transport: Export
     let children = Some(transport_children(vec![AnyTransport::NamespaceExport(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(368) /* "_export_statement_default_from_arm_ns_from" */,
+        TransportKindId(371) /* "_export_statement_default_from_arm_ns_from" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39648,7 +39932,7 @@ fn transport_to_node_export_statement_default_from_arm_star_from(transport: Expo
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(367) /* "_export_statement_default_from_arm_star_from" */,
+        TransportKindId(370) /* "_export_statement_default_from_arm_star_from" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39668,7 +39952,7 @@ fn transport_to_node__export_statement_equals_export(transport: _ExportStatement
     let children = Some(transport_children(transport.children.into_iter().map(|v| _export_statement_equals_export_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(380) /* "_export_statement_equals_export" */,
+        TransportKindId(383) /* "_export_statement_equals_export" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39688,7 +39972,7 @@ fn transport_to_node__export_statement_namespace_export(transport: _ExportStatem
     let children = Some(transport_children(transport.children.into_iter().map(|v| _export_statement_namespace_export_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(381) /* "_export_statement_namespace_export" */,
+        TransportKindId(384) /* "_export_statement_namespace_export" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39711,7 +39995,7 @@ fn transport_to_node__export_statement_type_export(transport: _ExportStatementTy
     let children = Some(transport_children(transport.children.into_iter().map(|v| _export_statement_type_export_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(379) /* "_export_statement_type_export" */,
+        TransportKindId(382) /* "_export_statement_type_export" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39782,7 +40066,7 @@ fn transport_to_node_for_header_let_const_kind(transport: ForHeaderLetConstKindT
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(376) /* "_for_header_let_const_kind" */,
+        TransportKindId(379) /* "_for_header_let_const_kind" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39803,7 +40087,7 @@ fn transport_to_node_for_header_lhs(transport: ForHeaderLhsTransport) -> Result<
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(374) /* "_for_header_lhs" */,
+        TransportKindId(377) /* "_for_header_lhs" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39828,7 +40112,7 @@ fn transport_to_node_for_header_var_kind(transport: ForHeaderVarKindTransport) -
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(375) /* "_for_header_var_kind" */,
+        TransportKindId(378) /* "_for_header_var_kind" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39885,7 +40169,7 @@ fn transport_to_node__import_clause_default_import(transport: _ImportClauseDefau
     let children = Some(transport_children(transport.children.into_iter().map(|v| _import_clause_default_import_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(362) /* "_import_clause_default_import" */,
+        TransportKindId(364) /* "_import_clause_default_import" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39905,7 +40189,7 @@ fn transport_to_node__import_clause_named_imports(transport: _ImportClauseNamedI
     let children = Some(transport_children(vec![AnyTransport::NamedImports(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(361) /* "_import_clause_named_imports" */,
+        TransportKindId(363) /* "_import_clause_named_imports" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39925,7 +40209,7 @@ fn transport_to_node__import_clause_namespace_import(transport: _ImportClauseNam
     let children = Some(transport_children(vec![AnyTransport::NamespaceImport(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(360) /* "_import_clause_namespace_import" */,
+        TransportKindId(362) /* "_import_clause_namespace_import" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39941,13 +40225,13 @@ fn transport_to_node__import_clause_namespace_import(transport: _ImportClauseNam
 
 fn transport_to_node_import_specifier_as(transport: ImportSpecifierAsTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(*transport.name)?);
+    fields.insert("name".to_string(), transport_field_value(module_export_name_transport_to_any(transport.name))?);
     fields.insert("alias".to_string(), transport_field_value(import_identifier_transport_to_any(transport.alias))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(364) /* "_import_specifier_as" */,
+        TransportKindId(366) /* "_import_specifier_as" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39968,7 +40252,7 @@ fn transport_to_node__import_specifier_name(transport: _ImportSpecifierNameTrans
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(363) /* "_import_specifier_name" */,
+        TransportKindId(365) /* "_import_specifier_name" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39990,7 +40274,7 @@ fn transport_to_node_index_signature_colon(transport: IndexSignatureColonTranspo
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(365) /* "_index_signature_colon" */,
+        TransportKindId(367) /* "_index_signature_colon" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -40010,7 +40294,7 @@ fn transport_to_node__index_signature_mapped_type_clause(transport: _IndexSignat
     let children = Some(transport_children(vec![AnyTransport::MappedTypeClause(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(366) /* "_index_signature_mapped_type_clause" */,
+        TransportKindId(368) /* "_index_signature_mapped_type_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -40512,7 +40796,7 @@ fn transport_to_node__parenthesized_expression_sequence(transport: _Parenthesize
     let children = Some(transport_children(vec![AnyTransport::SequenceExpression(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(378) /* "_parenthesized_expression_sequence" */,
+        TransportKindId(381) /* "_parenthesized_expression_sequence" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -40535,7 +40819,7 @@ fn transport_to_node_parenthesized_expression_typed(transport: ParenthesizedExpr
     let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(377) /* "_parenthesized_expression_typed" */,
+        TransportKindId(380) /* "_parenthesized_expression_typed" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -40559,7 +40843,7 @@ fn transport_to_node_public_field_definition_abstract_first(transport: PublicFie
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(413) /* "_public_field_definition_abstract_first" */,
+        TransportKindId(416) /* "_public_field_definition_abstract_first" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -40582,7 +40866,7 @@ fn transport_to_node_public_field_definition_access_first(transport: PublicField
     let children = Some(transport_children(vec![AnyTransport::AccessibilityModifier(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(414) /* "_public_field_definition_access_first" */,
+        TransportKindId(417) /* "_public_field_definition_access_first" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -40603,7 +40887,7 @@ fn transport_to_node_public_field_definition_accessor_opt(transport: PublicField
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(415) /* "_public_field_definition_accessor_opt" */,
+        TransportKindId(418) /* "_public_field_definition_accessor_opt" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -40626,7 +40910,7 @@ fn transport_to_node_public_field_definition_declare_first(transport: PublicFiel
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(416) /* "_public_field_definition_declare_first" */,
+        TransportKindId(419) /* "_public_field_definition_declare_first" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -40666,7 +40950,7 @@ fn transport_to_node_public_field_definition_readonly_first(transport: PublicFie
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(417) /* "_public_field_definition_readonly_first" */,
+        TransportKindId(420) /* "_public_field_definition_readonly_first" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -40693,7 +40977,7 @@ fn transport_to_node_public_field_definition_static_mods(transport: PublicFieldD
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(418) /* "_public_field_definition_static_mods" */,
+        TransportKindId(421) /* "_public_field_definition_static_mods" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -40777,7 +41061,7 @@ fn transport_to_node_string_opening(transport: StringOpeningEnum) -> Result<Tran
 fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(423) /* "_type_identifier" */,
+        TransportKindId(426) /* "_type_identifier" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -40947,7 +41231,7 @@ fn transport_to_node_update_expression_postfix(transport: UpdateExpressionPostfi
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(385) /* "_update_expression_postfix" */,
+        TransportKindId(388) /* "_update_expression_postfix" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -40969,7 +41253,7 @@ fn transport_to_node_update_expression_prefix(transport: UpdateExpressionPrefixT
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(386) /* "_update_expression_prefix" */,
+        TransportKindId(389) /* "_update_expression_prefix" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -41091,11 +41375,30 @@ fn transport_to_node_adding_type_annotation(transport: AddingTypeAnnotationTrans
     ))
 }
 
+fn transport_to_node_ambient_declaration_declaration(transport: AmbientDeclarationDeclarationTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(vec![declaration_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(369) /* "ambient_declaration_declaration" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
 fn transport_to_node_ambient_declaration(transport: AmbientDeclarationTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("declaration".to_string(), transport_field_value(*transport.declaration)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let children = Some(transport_children(vec![ambient_declaration_child_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(281) /* "ambient_declaration" */,
@@ -41200,7 +41503,7 @@ fn transport_to_node_arrow_function_parameter(transport: ArrowFunctionParameterT
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(356) /* "arrow_function_parameter" */,
+        TransportKindId(358) /* "arrow_function_parameter" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -41227,7 +41530,7 @@ fn transport_to_node_arrow_function_ucall_signature(transport: ArrowFunctionUCal
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(357) /* "arrow_function__call_signature" */,
+        TransportKindId(359) /* "arrow_function__call_signature" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -41633,7 +41936,7 @@ fn transport_to_node_class_heritage_extends_clause(transport: ClassHeritageExten
     let children = Some(transport_children(transport.children.into_iter().map(|v| class_heritage_extends_clause_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(358) /* "class_heritage_extends_clause" */,
+        TransportKindId(360) /* "class_heritage_extends_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -41653,7 +41956,7 @@ fn transport_to_node_class_heritage_implements_clause(transport: ClassHeritageIm
     let children = Some(transport_children(vec![AnyTransport::ImplementsClause(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(359) /* "class_heritage_implements_clause" */,
+        TransportKindId(361) /* "class_heritage_implements_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -42092,8 +42395,11 @@ fn transport_to_node_enum_assignment(transport: EnumAssignmentTransport) -> Resu
 
 fn transport_to_node_enum_body(transport: EnumBodyTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.name {
+        fields.insert("name".to_string(), transport_field_values(value.into_iter().map(|v| property_name_transport_to_any(v)).collect::<Vec<_>>())?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| enum_body_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::EnumAssignment(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(291) /* "enum_body" */,
@@ -42225,7 +42531,7 @@ fn transport_to_node_export_statement_type_export(transport: ExportStatementType
     let children = Some(transport_children(transport.children.into_iter().map(|v| export_statement_type_export_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(379) /* "export_statement_type_export" */,
+        TransportKindId(382) /* "export_statement_type_export" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -42245,7 +42551,7 @@ fn transport_to_node_export_statement_equals_export(transport: ExportStatementEq
     let children = Some(transport_children(transport.children.into_iter().map(|v| export_statement_equals_export_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(380) /* "export_statement_equals_export" */,
+        TransportKindId(383) /* "export_statement_equals_export" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -42265,7 +42571,7 @@ fn transport_to_node_export_statement_namespace_export(transport: ExportStatemen
     let children = Some(transport_children(transport.children.into_iter().map(|v| export_statement_namespace_export_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(381) /* "export_statement_namespace_export" */,
+        TransportKindId(384) /* "export_statement_namespace_export" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -42608,9 +42914,8 @@ fn transport_to_node_function_signature(transport: FunctionSignatureTransport) -
     if let Some(value) = transport.return_type {
         fields.insert("return_type".to_string(), transport_field_value(*value)?);
     }
-    fields.insert("semicolon".to_string(), transport_field_value(*transport.semicolon)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let children = Some(transport_children(vec![function_signature_child_transport_to_any(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(271) /* "function_signature" */,
@@ -42906,7 +43211,7 @@ fn transport_to_node_import_clause_namespace_import(transport: ImportClauseNames
     let children = Some(transport_children(vec![AnyTransport::NamespaceImport(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(360) /* "import_clause_namespace_import" */,
+        TransportKindId(362) /* "import_clause_namespace_import" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -42926,7 +43231,7 @@ fn transport_to_node_import_clause_named_imports(transport: ImportClauseNamedImp
     let children = Some(transport_children(vec![AnyTransport::NamedImports(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(361) /* "import_clause_named_imports" */,
+        TransportKindId(363) /* "import_clause_named_imports" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -42946,7 +43251,7 @@ fn transport_to_node_import_clause_default_import(transport: ImportClauseDefault
     let children = Some(transport_children(transport.children.into_iter().map(|v| import_clause_default_import_child_transport_to_any(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(362) /* "import_clause_default_import" */,
+        TransportKindId(364) /* "import_clause_default_import" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -43009,7 +43314,7 @@ fn transport_to_node_import_specifier_name(transport: ImportSpecifierNameTranspo
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(363) /* "import_specifier_name" */,
+        TransportKindId(365) /* "import_specifier_name" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -43051,7 +43356,7 @@ fn transport_to_node_import_statement(transport: ImportStatementTransport) -> Re
     if let Some(value) = transport.import_clause {
         fields.insert("import_clause".to_string(), transport_field_value(*value)?);
     }
-    fields.insert("from_clause".to_string(), transport_field_value(*transport.from_clause)?);
+    fields.insert("from_clause".to_string(), transport_field_values(transport.from_clause.into_iter().collect::<Vec<_>>())?);
     if let Some(value) = transport.import_attribute {
         fields.insert("import_attribute".to_string(), transport_field_value(AnyTransport::ImportAttribute(value))?);
     }
@@ -43080,7 +43385,7 @@ fn transport_to_node_index_signature_mapped_type_clause(transport: IndexSignatur
     let children = Some(transport_children(vec![AnyTransport::MappedTypeClause(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(366) /* "index_signature_mapped_type_clause" */,
+        TransportKindId(368) /* "index_signature_mapped_type_clause" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -43559,9 +43864,12 @@ fn transport_to_node_mapped_type_clause(transport: MappedTypeClauseTransport) ->
 fn transport_to_node_member_expression(transport: MemberExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("object".to_string(), transport_field_value(*transport.object)?);
+    if let Some(value) = transport.optional_chain {
+        fields.insert("optional_chain".to_string(), transport_field_value(AnyTransport::OptionalChain(value))?);
+    }
     fields.insert("property".to_string(), transport_field_value(property_name_transport_to_any(transport.property))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::OptionalChain(transport.children)])?);
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(234) /* "member_expression" */,
@@ -44177,7 +44485,7 @@ fn transport_to_node_parenthesized_expression_sequence(transport: ParenthesizedE
     let children = Some(transport_children(vec![AnyTransport::SequenceExpression(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(378) /* "parenthesized_expression_sequence" */,
+        TransportKindId(381) /* "parenthesized_expression_sequence" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -44657,7 +44965,7 @@ fn transport_to_node_string(transport: StringTransport) -> Result<TransportNodeD
 
 fn transport_to_node_subscript_expression(transport: SubscriptExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("object".to_string(), transport_field_value(*transport.object)?);
+    fields.insert("object".to_string(), transport_field_value(expression_transport_to_any(transport.object))?);
     if let Some(value) = transport.optional_chain {
         fields.insert("optional_chain".to_string(), transport_field_value(AnyTransport::OptionalChain(value))?);
     }
@@ -45635,6 +45943,40 @@ fn transport_to_node_abstract(transport: AbstractTransport) -> Result<TransportN
     ))
 }
 
+fn transport_to_node_global(transport: GlobalTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(154) /* "global" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(45) /* "." */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
+        trivia_data,
+    ))
+}
+
 fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
@@ -46077,23 +46419,6 @@ fn transport_to_node_override(transport: OverrideTransport) -> Result<TransportN
     ))
 }
 
-fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
-    Ok(transport_node_data(
-        TransportKindId(45) /* "." */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_handle.map(|v| v as u32),
-        transport.transport_child_index.map(|v| v as u16),
-        None,
-        None,
-        trivia_data,
-    ))
-}
-
 fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
@@ -46131,24 +46456,7 @@ fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<T
 fn transport_to_node_tok_plus_qcolon(transport: TokPlusQColonTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(144) /* "+?:" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_handle.map(|v| v as u32),
-        transport.transport_child_index.map(|v| v as u16),
-        None,
-        None,
-        trivia_data,
-    ))
-}
-
-fn transport_to_node_global(transport: GlobalTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
-    Ok(transport_node_data(
-        TransportKindId(140) /* "global" */,
+        TransportKindId(143) /* "+?:" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -46828,7 +47136,7 @@ fn transport_to_node_else(transport: ElseTransport) -> Result<TransportNodeData,
 fn transport_to_node_enum(transport: EnumTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(142) /* "enum" */,
+        TransportKindId(141) /* "enum" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -46947,7 +47255,7 @@ fn transport_to_node_require(transport: RequireTransport) -> Result<TransportNod
 fn transport_to_node_keyof(transport: KeyofTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(149) /* "keyof" */,
+        TransportKindId(148) /* "keyof" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -46964,7 +47272,7 @@ fn transport_to_node_keyof(transport: KeyofTransport) -> Result<TransportNodeDat
 fn transport_to_node_infer(transport: InferTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(147) /* "infer" */,
+        TransportKindId(146) /* "infer" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -46981,7 +47289,7 @@ fn transport_to_node_infer(transport: InferTransport) -> Result<TransportNodeDat
 fn transport_to_node_interface(transport: InterfaceTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(141) /* "interface" */,
+        TransportKindId(140) /* "interface" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -47083,7 +47391,7 @@ fn transport_to_node_bang(transport: BangTransport) -> Result<TransportNodeData,
 fn transport_to_node_tok_minus_qcolon(transport: TokMinusQColonTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(143) /* "-?:" */,
+        TransportKindId(142) /* "-?:" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -47100,7 +47408,7 @@ fn transport_to_node_tok_minus_qcolon(transport: TokMinusQColonTransport) -> Res
 fn transport_to_node_tok_qcolon(transport: TokQColonTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(145) /* "?:" */,
+        TransportKindId(144) /* "?:" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -47287,7 +47595,7 @@ fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, :
 fn transport_to_node_is(transport: IsTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(148) /* "is" */,
+        TransportKindId(147) /* "is" */,
         transport.transport_source,
         transport.transport_named,
         true,

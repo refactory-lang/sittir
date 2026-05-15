@@ -508,9 +508,8 @@ pub struct IfStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "import_from_statement.jinja", escape = "none")]
 pub struct ImportFromStatementTemplate<'a> {
-    pub children: ListNonterminalView<'a>,
+    pub children: OptionalNonterminalView<'a>,
     pub module_name: SingleNonterminalView<'a>,
-    pub name: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

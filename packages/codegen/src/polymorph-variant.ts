@@ -13,6 +13,8 @@ export type PolymorphVariantDescriptor =
 	| {
 			readonly source: 'override';
 			readonly childKind: Readonly<Record<string, string>>;
+			readonly helperKind?: Readonly<Record<string, string>>;
+			readonly helperChildKind?: Readonly<Record<string, readonly string[]>>;
 	  }
 	| {
 			readonly source: 'promoted';

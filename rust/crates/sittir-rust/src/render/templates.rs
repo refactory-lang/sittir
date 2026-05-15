@@ -197,7 +197,6 @@ pub struct LetChainTemplate<'a> {
 #[template(path = "_line_comment_doc.jinja", escape = "none")]
 pub struct LineCommentDocTemplate<'a> {
     pub doc: SingleNonterminalView<'a>,
-    pub inner: OptionalNonterminalView<'a>,
     pub outer: OptionalNonterminalView<'a>,
 }
 
@@ -459,7 +458,6 @@ pub struct BinaryExpressionTemplate<'a> {
 #[template(path = "block_comment.jinja", escape = "none")]
 pub struct BlockCommentTemplate<'a> {
     pub doc: OptionalNonterminalView<'a>,
-    pub inner: OptionalNonterminalView<'a>,
     pub outer: OptionalNonterminalView<'a>,
 }
 

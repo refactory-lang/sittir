@@ -4744,32 +4744,50 @@
               "dotted_name"
             ]
           }
-        }
-      ],
-      "children": [
+        },
         {
-          "name": "wildcard_import",
-          "propertyName": "wildcardImports",
-          "required": true,
+          "name": "name",
+          "propertyName": "names",
+          "paramName": "names",
+          "required": false,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "wildcard_import",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "dotted_name",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "aliased_import",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "dotted_name",
+              "aliased_import"
+            ]
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "wildcard_import",
+          "propertyName": "wildcardImport",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "wildcard_import",
               "unresolved": true
             }
           ]

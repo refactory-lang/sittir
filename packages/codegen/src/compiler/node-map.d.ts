@@ -153,6 +153,9 @@ export declare function mergeSlotValues(slots: readonly {
 export declare function deriveMergedSlotCardinality(slots: readonly {
     values: readonly NodeOrTerminal[];
 }[]): SlotCardinality;
+export declare function deriveUnnamedChildrenCardinality(children: readonly {
+    values: readonly NodeOrTerminal[];
+}[]): SlotCardinality;
 export declare function deriveChildrenCardinality(children: readonly {
     values: readonly NodeOrTerminal[];
 }[]): SlotCardinality;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { TreeHandle } from '@sittir/common';
-import { materializeWrappedNodeData, walkWrappedTree, type WrappedNodeData } from '../validate/common.ts';
+import { buildReadHandle, loadLanguageForGrammar, materializeWrappedNodeData, walkWrappedTree, type WrappedNodeData } from '../validate/common.ts';
 
 function leaf(handle: number, text: string): WrappedNodeData {
 	return {
@@ -53,6 +53,33 @@ describe('wrapped tree materialization', () => {
 		expect(visited).toEqual([1, 11, 21]);
 	});
 
+	it('falls back to raw storage when an accessor throws during traversal', () => {
+		const rawFieldChild = leaf(10, 'raw-field');
+		const rawChildrenChild = leaf(20, 'raw-child');
+		const root = {
+			$type: 1,
+			$source: 0,
+			$named: true,
+			$nodeHandle: 1,
+			$childIndex: 0,
+			_value: rawFieldChild,
+			$children: [rawChildrenChild],
+			value() {
+				throw new Error('boom');
+			},
+			children() {
+				throw new Error('boom');
+			},
+		} satisfies WrappedNodeData;
+
+		const visited: number[] = [];
+		walkWrappedTree(root, (node) => {
+			visited.push(node.$type);
+		});
+
+		expect(visited).toEqual([1, 10, 20]);
+	});
+
 	it('projects wrapped nodes into plain native-render data', () => {
 		const wrappedFieldChild = {
 			...leaf(11, 'field'),
@@ -94,16 +121,16 @@ describe('wrapped tree materialization', () => {
 
 		expect(materialized.$type).toBe(1);
 		expect(materialized._value).toMatchObject({ $type: 11, $text: 'field' });
-		expect(materialized.$children).toEqual([{ $type: 21, $source: 0, $named: true, $text: 'child', $nodeHandle: 21, $childIndex: 0 }]);
+		expect(materialized.$children).toEqual({ $type: 21, $source: 0, $named: true, $text: 'child', $nodeHandle: 21, $childIndex: 0 });
 		expect(materialized).not.toHaveProperty('value');
 		expect(materialized).not.toHaveProperty('children');
 		expect(materialized).not.toHaveProperty('$render');
 		expect(materialized).not.toHaveProperty('$with');
 	});
 
-	it('normalizes already-materialized repeated field nodes through generated wrap accessors', async () => {
-		const wrapModulePath = new URL('../../../rust/dist/wrap.js', import.meta.url).pathname;
-		const typesModulePath = new URL('../../../rust/dist/types.js', import.meta.url).pathname;
+	it('preserves raw nested field storage when factory-style children are already materialized', async () => {
+		const wrapModulePath = new URL('../../../rust/src/wrap.ts', import.meta.url).pathname;
+		const typesModulePath = new URL('../../../rust/src/types.ts', import.meta.url).pathname;
 		const { wrapFunctionItem } = (await import(wrapModulePath)) as {
 			wrapFunctionItem: (node: unknown, tree: TreeHandle) => unknown;
 		};
@@ -143,7 +170,35 @@ describe('wrapped tree materialization', () => {
 
 		expect(materialized._function_modifiers).toMatchObject({
 			$type: TSKindId.FunctionModifiers,
-			_modifier: [TSKindId.Async],
+			_modifier: TSKindId.Async,
 		});
+	});
+
+	it('materializes typescript function signatures without requiring a surfaced semicolon', async () => {
+		const source = 'export async function readFile(filename: string): Promise<Buffer>';
+		const { Parser, lang } = await loadLanguageForGrammar('typescript');
+		const parser = new Parser();
+		parser.setLanguage(lang);
+		const tree = parser.parse(source)!;
+		const handle = buildReadHandle('typescript', tree, source, 'native');
+		const wrapModulePath = new URL('../../../typescript/src/wrap.ts', import.meta.url).pathname;
+		const { readTreeNode } = (await import(wrapModulePath)) as {
+			readTreeNode: (tree: TreeHandle, handle?: number, childIndex?: number) => unknown;
+		};
+		const root = readTreeNode(handle) as {
+			statements: () => Array<{
+				children: () => {
+					declaration: () => unknown;
+				};
+			}>;
+		};
+		const exportStatement = root.statements()[0];
+		const declarationArm = exportStatement.children();
+
+		expect(() => declarationArm.declaration()).not.toThrow();
+
+		const declaration = asRecord(materializeWrappedNodeData(declarationArm.declaration()));
+		expect(declaration._name).toBe('readFile');
+		expect(declaration).not.toHaveProperty('_semicolon');
 	});
 });

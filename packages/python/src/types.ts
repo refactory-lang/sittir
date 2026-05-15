@@ -1864,8 +1864,10 @@ export interface IfStatement {
 export interface ImportFromStatement {
   readonly $type: TSKindId.ImportFromStatement;
   readonly _module_name: RelativeImport | DottedName;
+  readonly _name?: readonly (DottedName | AliasedImport)[];
   moduleName(): RelativeImport | DottedName;
-  readonly $children: NonEmptyArray<WildcardImport | DottedName | AliasedImport>;
+  names(): readonly (DottedName | AliasedImport)[];
+  readonly $children?: WildcardImport;
 }
 
 export interface ImportStatement {

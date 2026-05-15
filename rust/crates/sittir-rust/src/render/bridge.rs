@@ -649,17 +649,12 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         362 => { // "_line_comment_doc" | "line_comment_doc"
             let field_0 = resolve_slot(node, SlotAccessor::Field("doc"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("inner"), false)?;
-            let field_2 = resolve_slot(node, SlotAccessor::Field("outer"), false)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("outer"), false)?;
             let template = LineCommentDocTemplate {
                 doc: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                inner: match field_1.kind {
+                outer: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
                     ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                },
-                outer: match field_2.kind {
-                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
                 },
             };
             template.render_into(dest)
@@ -1093,20 +1088,15 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         318 => { // "block_comment"
             let field_0 = resolve_slot(node, SlotAccessor::Field("doc"), false)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("inner"), false)?;
-            let field_2 = resolve_slot(node, SlotAccessor::Field("outer"), false)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("outer"), false)?;
             let template = BlockCommentTemplate {
                 doc: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
                     ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
                 },
-                inner: match field_1.kind {
+                outer: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
                     ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                },
-                outer: match field_2.kind {
-                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
                 },
             };
             template.render_into(dest)
