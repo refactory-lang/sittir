@@ -186,14 +186,20 @@ Costs a billed turn and appears in the target session's transcript. See `[[refer
 
 These are requirements that follow from the design or this session's findings but are not yet implemented as enforceable invariants. Each should be addressed before the cleanup is declared complete.
 
-**H1. Token whitespace fidelity invariant (not implemented).** `jjjj` must not become ` jjjj `. Render changes touching token leaves require explicit verification. (May 13 design §6.7, §7.7, §8)
+**H1. Token whitespace fidelity invariant (partially implemented).** `jjjj` must not become ` jjjj `. Render changes touching token leaves require explicit verification. (May 13 design §6.7, §7.7, §8)
 
 - **Root cause:** The render pipeline does not pass token rules through to the render template. The template therefore has no information about token-specific spacing semantics (adjacent vs spaced, immediate-token vs separated, etc.) and falls back to generic field-spacing helpers — which is what causes `jjjj` to widen to ` jjjj `. The fix is structural, not a regression-test-on-top.
 - **Current state:** `packages/codegen/src/__tests__/render-pipeline-optimization.test.ts:297` covers one case (`jjjj` → `"jjjj"`) on the Rust render pipeline. That test is a unit-level fixture, not a corpus-level invariant.
-- **Gap:** Token rules are absent from the template input contract. No corpus-level regression catches whitespace drift between source and rendered output.
-- **Action (in order):**
-  1. Thread token rules from grammar metadata into the template-input data structure produced by `packages/codegen/src/emitters/render-module.ts` (and the upstream slot model in `compiler/node-map.ts`).
-  2. Update the Askama / Jinja templates to honor the token-rule annotations when emitting adjacent vs spaced output.
+- **Data-model threading (LANDED 2026-05-16):**
+  - `TerminalValue` (`compiler/node-map.ts`) carries `immediate?: boolean` and `tokenized?: boolean`.
+  - `deriveValuesForRule`'s new `case 'token':` recurses into the wrapped rule and tags produced terminals with the TokenRule's `immediate` flag (and marks them `tokenized`).
+  - `AssembledToken` exposes `.immediate` and `.tokenized` getters that report the underlying rule's wrapper status — distinct from the `modelType === 'token'` classification (an `AssembledToken` exists for every classified token kind whether or not its rule was wrapped in a `TokenRule`).
+  - Verification: `packages/codegen/src/__tests__/token-immediate-threading.test.ts`.
+- **Gap (remaining):** the metadata reaches `TerminalValue` and `AssembledToken`, but the template walker (`compiler/template-walker.ts`) and render-module template emission don't yet consume it. The walker returns `string[]` from `walkRuleForTemplate`; adjacency annotation requires a structured return.
+- **Concrete payoff bound for rust:** of the 10 IMMEDIATE_TOKEN/TOKEN entries in the rust grammar, **none reach a walker position** where adjacency would matter. The 6 IMMEDIATE_TOKEN entries are all inside leaf rules (`_string_content`, `escape_sequence`, doc-comment markers, etc.) whose templates emit `{{ text }}` directly — the inner wrapping is invisible to walker emission. The 4 TOKEN entries are either lexer-disambiguation hints (`TOKEN(prec(1,'<'))` in `use_as_clause`/`type_arguments`) or whole-leaf wrappers (`integer_literal`, `char_literal`). Walker consumption is therefore zero-payoff for today's rust corpus; landing it before a consumer materializes would be a P-007 violation.
+- **Action (still open):**
+  1. ~~Thread token rules from grammar metadata into the template-input data structure produced by `packages/codegen/src/emitters/render-module.ts` (and the upstream slot model in `compiler/node-map.ts`).~~ **Done at the slot-model layer.** Render-module exposure of the flag still TODO.
+  2. Update the Askama / Jinja templates to honor the token-rule annotations when emitting adjacent vs spaced output. **Blocked on walker structured-emit refactor — defer until a real consumer (a grammar that actually IMMEDIATE_TOKEN-wraps a field-position string) materializes.**
   3. Add a corpus-level regression that flags any rendered output gaining/losing whitespace vs the source on token-only-derived spans (counts-side check is the natural spot since corpus walking is already there).
 
 **H2. Validator counts output should include failing entry names.** ~~The current `counts` output gives bucket aggregates only.~~ **Implemented 2026-05-15.**

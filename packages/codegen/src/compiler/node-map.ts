@@ -128,6 +128,17 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
  *
  * See {@link NodeRef} for the per-value `separator` / `trailing` / `leading`
  * semantics.
+ *
+ * `immediate` is set when the rule that produced this value was wrapped in
+ * a `TokenRule` with `immediate: true` (i.e. `token.immediate(...)` in the
+ * authored grammar, or tree-sitter `IMMEDIATE_TOKEN`). Render templates
+ * use this to emit the literal adjacent to the preceding token (no leading
+ * whitespace separator). Absent / false → default field-spacing rules.
+ *
+ * `tokenized` is set when the rule was wrapped in a `TokenRule` (whether
+ * or not it was the `immediate` variant). Preserved for cases where the
+ * lexer-hint nature of `TOKEN(...)` matters separately from adjacency
+ * (e.g. disambiguation between `<` operator and generic-open).
  */
 export interface TerminalValue {
 	readonly kind: 'terminal';
@@ -137,6 +148,8 @@ export interface TerminalValue {
 	readonly separator?: string;
 	readonly trailing?: boolean;
 	readonly leading?: boolean;
+	readonly immediate?: boolean;
+	readonly tokenized?: boolean;
 }
 
 /**
@@ -1214,6 +1227,14 @@ function deriveValuesForRule(
 		case 'clause':
 		case 'group':
 			return deriveValuesForRule(rule.content, multiplicity, kindEntries);
+		case 'token':
+			// `token(...)` / `token.immediate(...)` wrappers carry adjacency
+			// metadata the inner rule alone doesn't express. Recurse, then
+			// tag each produced terminal so render templates can decide
+			// whether to emit adjacent or spaced.
+			return deriveValuesForRule(rule.content, multiplicity, kindEntries).map((v) =>
+				v.kind === 'terminal' ? { ...v, immediate: rule.immediate, tokenized: true } : v
+			);
 		case 'seq':
 			// Seq inside a choice arm — flatten all members (rare, but
 			// handles seq-of-symbols within choice arms).
@@ -3538,6 +3559,32 @@ export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	get text(): string | undefined {
 		if (this.rule.type === 'string') return this.rule.value;
 		return undefined;
+	}
+
+	/**
+	 * True when the underlying rule is a `token.immediate(...)` wrapper
+	 * (tree-sitter `IMMEDIATE_TOKEN`). Render contexts use this to emit
+	 * the literal adjacent to the preceding token. Plain string-rule
+	 * tokens and non-immediate `token(...)` wrappers return false.
+	 *
+	 * NOTE: distinct from the `modelType === 'token'` classification —
+	 * an `AssembledToken` exists for every classified token kind whether
+	 * or not its rule was wrapped in a `TokenRule`. This getter reports
+	 * the wrapper status, not the model classification.
+	 */
+	get immediate(): boolean {
+		return this.rule.type === 'token' && this.rule.immediate;
+	}
+
+	/**
+	 * True when the underlying rule is wrapped in a `TokenRule` (either
+	 * `token(...)` or `token.immediate(...)`). Used to distinguish bare
+	 * string tokens from lexer-hint tokens (e.g. rust's `TOKEN(prec(1,
+	 * '<'))` in `type_arguments`). See {@link immediate} for the
+	 * adjacency-specific flag.
+	 */
+	get tokenized(): boolean {
+		return this.rule.type === 'token';
 	}
 
 	/**
