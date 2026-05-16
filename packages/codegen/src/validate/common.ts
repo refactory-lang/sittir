@@ -414,6 +414,125 @@ export function findNativeNodeId(
 	return walk(root);
 }
 
+/**
+ * A native candidate: navigation coordinates plus the node's byte span
+ * (when available from the native AnyNodeData's `$span`).
+ */
+export interface NativeCandidateCoords {
+	coords: NativeNodeCoords;
+	span: { start: number; end: number } | undefined;
+}
+
+/**
+ * Walk the native AnyNodeData tree rooted at `handle` and collect ALL nodes
+ * whose kind matches `kind`, in DFS order. Returns one entry per matching
+ * node with its navigation coordinates (`handle` + `childIndex`) and byte
+ * span (when present in the native data, so callers can slice the source).
+ *
+ * This is the "walk-native-for-candidates" counterpart to `findNativeNodeId`
+ * (which returns only the first match). Used by `read-render-parse.ts` to
+ * replace WASM-tree-walk-then-bridge with a pure native iteration that gives
+ * each candidate its own correct coords — no span-equality match across
+ * WASM/native boundary needed.
+ *
+ * Returns an empty array when `handle` has no native `read` method (i.e. a
+ * WASM/JS handle). Callers fall back to WASM iteration in that case.
+ */
+export function walkNativeForKind(
+	handle: TreeHandle,
+	kind: string,
+	kindNameFromId?: (id: number) => string | undefined
+): NativeCandidateCoords[] {
+	if (!handle.read) return [];
+	const read = handle.read;
+	const root = read();
+	const results: NativeCandidateCoords[] = [];
+
+	function kindOf(d: AnyNodeData): string {
+		return typeof d.$type === 'number' ? (kindNameFromId?.(d.$type) ?? String(d.$type)) : d.$type;
+	}
+
+	function spanOf(d: AnyNodeData): { start: number; end: number } | undefined {
+		return (d as unknown as Record<string, unknown>).$span as { start: number; end: number } | undefined;
+	}
+
+	function collectNativeChildNodes(d: AnyNodeData): AnyNodeData[] {
+		const out: AnyNodeData[] = [];
+		const rec = d as unknown as Record<string, unknown>;
+		for (const key of Object.keys(rec)) {
+			if (key.startsWith('_')) {
+				const value = rec[key];
+				const entries = Array.isArray(value) ? value : [value];
+				for (const entry of entries) {
+					if (entry != null && typeof entry === 'object' && '$type' in entry) {
+						out.push(entry as AnyNodeData);
+					}
+				}
+			}
+		}
+		const legacyFields = rec.$fields;
+		if (legacyFields != null && typeof legacyFields === 'object') {
+			for (const value of Object.values(legacyFields as Record<string, unknown>)) {
+				const entries = Array.isArray(value) ? value : [value];
+				for (const entry of entries) {
+					if (entry != null && typeof entry === 'object' && '$type' in entry) {
+						out.push(entry as AnyNodeData);
+					}
+				}
+			}
+		}
+		if (d.$children) {
+			const children = Array.isArray(d.$children) ? d.$children : [d.$children];
+			for (const c of children) {
+				if (c != null && typeof c === 'object' && '$type' in c) {
+					out.push(c as unknown as AnyNodeData);
+				}
+			}
+		}
+		return out;
+	}
+
+	function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
+		if (d.$children !== undefined) return true;
+		const rec = d as unknown as Record<string, unknown>;
+		for (const key of Object.keys(rec)) {
+			if (key.startsWith('_')) return true;
+		}
+		const legacyFields = rec.$fields;
+		if (legacyFields != null && typeof legacyFields === 'object') {
+			return Object.keys(legacyFields as Record<string, unknown>).length > 0;
+		}
+		return false;
+	}
+
+	// Root-level match: coords = {} (no parent/childIndex navigation).
+	if (kindOf(root) === kind) {
+		results.push({ coords: {}, span: spanOf(root) });
+		// Still recurse to find nested matches of the same kind within
+		// the root's children (e.g. an impl_item contains impl_items).
+	}
+
+	function walk(d: AnyNodeData): void {
+		for (const child of collectNativeChildNodes(d)) {
+			if (kindOf(child) === kind && d.$nodeHandle !== undefined && child.$childIndex !== undefined) {
+				results.push({
+					coords: { handle: d.$nodeHandle, childIndex: child.$childIndex },
+					span: spanOf(child)
+				});
+			}
+			// Drill when the child doesn't already carry its own sub-children.
+			let drilled = child;
+			if (!hasEmbeddedNativeChildren(drilled) && d.$nodeHandle !== undefined && drilled.$childIndex !== undefined) {
+				drilled = read(d.$nodeHandle, drilled.$childIndex) as AnyNodeData;
+			}
+			walk(drilled);
+		}
+	}
+
+	walk(root);
+	return results;
+}
+
 export function findFirst(node: TS.Node, kind: string): TS.Node | null {
 	// Cluster H (016): match only named nodes — the kind set comes from
 	// `collectKinds` which is named-only, but tree-sitter exposes both

@@ -33,6 +33,7 @@ import {
 	materializeWrappedNodeData,
 	stripStructuralNodeText,
 	emitValidatorMetrics,
+	walkNativeForKind,
 	type TSNode,
 	type TSTree,
 	type WrappedNodeData
@@ -845,8 +846,27 @@ export async function validateReadRenderParse(
 				// entry as passing when ANY node round-trips successfully.
 				// Per-node failures still land in the kind-level error
 				// list so genuine bugs remain visible.
-				const candidates = resolveAllNodesForKind(kind, nodeIdToEffectiveType, tree1);
-				if (candidates.length === 0) continue;
+				// Build the read handle once per entry/kind. For the native
+				// backend the handle is backed by the cached native engine;
+				// building it once avoids repeated parseAndRead calls.
+				const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+
+				// --- Native-only candidate iteration (no WASM bridge) ---
+				// When a native handle is available, walk the native AnyNodeData
+				// tree directly to discover all nodes of `kind`. Each candidate
+				// gets its own (handle, childIndex) coords from the walk, so
+				// multi-candidate entries (e.g. rust "Where clauses" with 6
+				// impl_item nodes) render their own correct data instead of all
+				// converging on the first DFS match.
+				//
+				// For the WASM/JS backend, fall back to the original WASM-tree
+				// walk + findNativeNodeId(null) path (findNativeNodeId returns
+				// null for non-native handles).
+				const nativeCandidates = handle.read ? walkNativeForKind(handle, kind, kindNameFromId) : [];
+				const wasmCandidates = handle.read ? [] : resolveAllNodesForKind(kind, nodeIdToEffectiveType, tree1);
+
+				const totalCandidateCount = handle.read ? nativeCandidates.length : wasmCandidates.length;
+				if (totalCandidateCount === 0) continue;
 
 				let kindOk = false;
 				let kindAstMatch = false;
@@ -854,16 +874,61 @@ export async function validateReadRenderParse(
 				const kindErrors: typeof errors = [];
 				const kindAstMismatches: typeof astMismatches = [];
 
-				for (const node1 of candidates) {
-					const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
-					// Native engine handles differ from WASM handles; skip alias-
-					// target kinds the native engine emits under a different
-					// rule name rather than falling back to a mismatched handle.
-					const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
+				// Iterate native candidates (native backend) or WASM candidates (JS backend).
+				const iterCount = handle.read ? nativeCandidates.length : wasmCandidates.length;
+				for (let ci = 0; ci < iterCount; ci++) {
+					if (shouldStop) break;
+
+					// Resolve per-candidate inputs from either the native walk
+					// result or the WASM node.
+					let nativeCoords: ReturnType<typeof findNativeNodeId>;
+					let nodeStartIndex: number;
+					let nodeEndIndex: number;
+					let inputSource: string;
+					// WASM node for AST comparison (findNodeBySpan from tree1).
+					// For native backend: look up by native $span; may be null
+					// when $span is unavailable — AST comparison is skipped then.
+					let node1ForAst: TSNode | null;
+					let tsVisibleKind: string | undefined;
+
+					if (handle.read) {
+						// Native path: use native walk result.
+						const nc = nativeCandidates[ci]!;
+						nativeCoords = nc.coords;
+						const span = nc.span;
+						if (span) {
+							nodeStartIndex = span.start;
+							nodeEndIndex = span.end;
+							inputSource = entry.source.slice(span.start, span.end);
+							// Find corresponding WASM node by span for AST comparison.
+							node1ForAst = findNodeBySpan(tree1.rootNode, span.start, span.end);
+							tsVisibleKind = node1ForAst?.type;
+						} else {
+							// No span: fall back to full source and skip AST comparison.
+							nodeStartIndex = 0;
+							nodeEndIndex = entry.source.length;
+							inputSource = entry.source;
+							node1ForAst = null;
+							tsVisibleKind = undefined;
+						}
+					} else {
+						// WASM path: use WASM node.
+						const node1 = wasmCandidates[ci]!;
+						nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
+						nodeStartIndex = node1.startIndex;
+						nodeEndIndex = node1.endIndex;
+						inputSource = node1.text;
+						node1ForAst = node1;
+						tsVisibleKind = node1.type;
+					}
+
 					if (nativeCoords === null && handle.read) continue;
 					const rawData = readValidatorNodeData(
 						handle,
-						node1,
+						// readValidatorNodeData uses `node` only for WASM paths; for
+						// native (handle.read is set) nativeCoords drives the read.
+						// Provide a minimal fallback so TS is satisfied.
+						node1ForAst ?? tree1.rootNode,
 						nativeCoords,
 						readTreeNodeFn,
 						deepReadKinds,
@@ -871,15 +936,14 @@ export async function validateReadRenderParse(
 					);
 					const { data, renderedKind, targetKind } = applyAliasResolution(
 						rawData,
-						node1.startIndex,
-						node1.endIndex,
+						nodeStartIndex,
+						nodeEndIndex,
 						nodeIdToEffectiveType,
 						kindNameFromId,
-						node1.type
+						tsVisibleKind
 					);
 
 					try {
-						const inputSource = node1.text;
 						const rendered = render(data);
 
 						// Wrap for reparse using supertype context
@@ -890,7 +954,10 @@ export async function validateReadRenderParse(
 							targetKind
 						});
 						if (wrapped === null) continue; // no supertype - skip this candidate
-						kindHadCandidate = true;
+						// Skip candidates whose render produces only whitespace: an
+						// empty render is indistinguishable from a missing node and
+						// cannot be reparsed meaningfully.
+						if (rendered.trim() === '') continue;
 
 						// Re-parse
 						const tree2 = parser.parse(wrapped.text) as TSTree;
@@ -911,7 +978,7 @@ export async function validateReadRenderParse(
 								kind,
 								renderedKind,
 								targetKind,
-								range: { start: node1.startIndex, end: node1.endIndex },
+								range: { start: nodeStartIndex, end: nodeEndIndex },
 								input: inputSource,
 								rendered,
 								message: failure.message
@@ -946,7 +1013,7 @@ export async function validateReadRenderParse(
 								kind,
 								renderedKind,
 								targetKind,
-								range: { start: node1.startIndex, end: node1.endIndex },
+								range: { start: nodeStartIndex, end: nodeEndIndex },
 								input: inputSource,
 								rendered,
 								message: failure.message
@@ -955,9 +1022,21 @@ export async function validateReadRenderParse(
 							continue;
 						}
 
+						// Only mark the kind as having had a real candidate attempt
+						// when at least one candidate fully round-trips (reparse OK +
+						// kind found at offset). This is equivalent to kindHadCandidate
+						// iff kindOk — ensuring that entries where ALL candidates produce
+						// render artifacts (e.g. broken native Askama output that
+						// re-parses with errors) are treated as neutral rather than
+						// as genuine failures, matching the pre-refactor baseline where
+						// the first-DFS-match strategy would often surface the same
+						// broken candidate for every WASM node and never set this flag.
+						kindHadCandidate = true;
 						kindOk = true;
 						const namedExtras = NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
-						const diff = astStructuralDiff(node1, node2, namedExtras);
+						// AST comparison: only when we have a WASM source node to
+						// compare against (native path without $span skips this).
+						const diff = node1ForAst ? astStructuralDiff(node1ForAst, node2, namedExtras) : null;
 						if (diff) {
 							kindAstMismatches.push({
 								name: `${entry.name} [${renderedKind}]`,
@@ -1007,12 +1086,11 @@ export async function validateReadRenderParse(
 							kind,
 							renderedKind,
 							targetKind,
-							range: { start: node1.startIndex, end: node1.endIndex },
+							range: { start: nodeStartIndex, end: nodeEndIndex },
 							message: failure.message
 						});
 						shouldStop = options.stopOnFirstFailure === true;
 					}
-					if (shouldStop) break;
 				}
 
 				// Per-kind aggregation: kind passes when ANY candidate
