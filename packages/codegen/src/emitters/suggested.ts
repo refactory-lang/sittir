@@ -847,6 +847,15 @@ export function emitSuggestedGroupsBlock(candidates: readonly GroupCandidate[]):
 	out.push('// `groups:` block. Each entry lifts a nested sub-rule into');
 	out.push('// a hidden synthesized kind materialized as AssembledGroup.');
 	out.push('// All entries are held — none are auto-applied.');
+	out.push('//');
+	out.push('// CAVEAT: paths here are from the POST-LINK rule map. The synthesis');
+	out.push('// pass runs on POST-EVALUATE rules (before polymorph alias rewrites).');
+	out.push('// If a kind has been polymorph-aliased, the original-kind path may');
+	out.push('// differ from what is shown here. Pick the kind that exists at');
+	out.push('// synthesis time (often the polymorph-variant kind such as');
+	out.push('// `_visibility_modifier_pub`) and adjust the path accordingly.');
+	out.push('// validateGroupsConfig E2 will catch unresolvable paths with an');
+	out.push('// actionable error.');
 	out.push('// ---------------------------------------------------------------');
 	out.push('export const suggestedGroups = {');
 

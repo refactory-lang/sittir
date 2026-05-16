@@ -132,6 +132,15 @@ export const suggestedRules = {
 // `groups:` block. Each entry lifts a nested sub-rule into
 // a hidden synthesized kind materialized as AssembledGroup.
 // All entries are held — none are auto-applied.
+//
+// CAVEAT: paths here are from the POST-LINK rule map. The synthesis
+// pass runs on POST-EVALUATE rules (before polymorph alias rewrites).
+// If a kind has been polymorph-aliased, the original-kind path may
+// differ from what is shown here. Pick the kind that exists at
+// synthesis time (often the polymorph-variant kind such as
+// `_visibility_modifier_pub`) and adjust the path accordingly.
+// validateGroupsConfig E2 will catch unresolvable paths with an
+// actionable error.
 // ---------------------------------------------------------------
 export const suggestedGroups = {
   // [held] 1 candidate(s)
