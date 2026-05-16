@@ -34,7 +34,8 @@ import {
 	isNodeRef,
 	isUnresolvedRef,
 	kindsOf,
-	structuralFieldsOf
+	structuralFieldsOf,
+	allFormFieldsOf
 } from '../compiler/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { findRepeatSeparator } from '../compiler/template-walker.ts';
@@ -2652,6 +2653,44 @@ function renderAnyTransportWithStringTag(
  *   `undefined` when parser.c is unavailable (fallback path)
  * @param nodeMap       - for typeName + modelType lookups
  */
+
+/**
+ * Returns true when a node's emitted `FromNapiValue` will NOT silently match
+ * any bare JS string by coercing it to an object. Used to sort string-fallback
+ * dispatch arms so "greedy" all-optional structs come LAST.
+ *
+ * Two categories return true (i.e. are safe to try first):
+ *
+ * 1. Leaf nodes (`pattern` / `keyword` / `token` / `enum`): use
+ *    `renderLeafTransportNapiImpls` which reads `text` directly from the JS
+ *    string value — they correctly decode a bare string and produce a
+ *    non-empty `text` field.
+ *
+ * 2. Branch / group / polymorph nodes with at least one required (non-Option)
+ *    grammar field: `#[napi(object)]`-derived `FromNapiValue` coerces the JS
+ *    string to a boxed String object via `napi_coerce_to_object`; all property
+ *    lookups return `undefined`. A required field (`String`, not `Option<String>`)
+ *    cannot be `undefined` → deserialization fails → the arm is correctly skipped.
+ *
+ * All-optional branch/group/polymorph nodes are the "greedy" case: every field
+ * becomes `None` when coerced from a string, so `FromNapiValue` silently
+ * succeeds regardless of the input — these must come LAST.
+ */
+function nodeTransportHasRequiredField(node: AssembledNode): boolean {
+	// Leaf types use renderLeafTransportNapiImpls — always safe on bare strings.
+	if (
+		node.modelType === 'pattern' ||
+		node.modelType === 'keyword' ||
+		node.modelType === 'token' ||
+		node.modelType === 'enum'
+	) {
+		return true;
+	}
+	// For structural nodes (branch / group / polymorph): safe if any grammar
+	// slot is required (non-optional). All-optional nodes are the greedy ones.
+	return allFormFieldsOf(node).some((slot) => isRequired(slot));
+}
+
 function emitSupertypeTransportEnum(
 	supertypeNode: AssembledSupertype,
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
@@ -2666,7 +2705,14 @@ function emitSupertypeTransportEnum(
 		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
 
 	const emitDecodeTrials = (leafOnly = false, indent = '                ') => {
-		for (const { subNode } of validSubtypes) {
+		// Sort required-field variants first so all-optional structs (e.g.
+		// ReturnExpressionTransport) don't shadow required-field ones
+		// (e.g. IdentifierTransport) in the string-fallback dispatch chain.
+		// Stable sort: preserve original order within each group.
+		const sortedSubtypes = [...validSubtypes].sort(
+			(a, b) => (nodeTransportHasRequiredField(b.subNode) ? 1 : 0) - (nodeTransportHasRequiredField(a.subNode) ? 1 : 0)
+		);
+		for (const { subNode } of sortedSubtypes) {
 			if (leafOnly && !isLeafLike(subNode)) continue;
 			const variant = rustTypeIdent(subNode.typeName);
 			const typeName = rustTransportStructName(subNode);
@@ -3401,7 +3447,12 @@ function renderAnyTransportWithNapiFromValue(
 	lines.push('            };');
 	lines.push('        }');
 	lines.push('        if String::from_napi_value(env, napi_val).is_ok() {');
-	for (const node of nodes) {
+	// Sort required-field variants first so all-optional structs don't shadow
+	// required-field ones in the string-fallback dispatch chain. Stable sort.
+	const sortedNodes = [...nodes].sort(
+		(a, b) => (nodeTransportHasRequiredField(b) ? 1 : 0) - (nodeTransportHasRequiredField(a) ? 1 : 0)
+	);
+	for (const node of sortedNodes) {
 		const variant = rustTransportVariantName(node);
 		const structName = rustTransportStructName(node);
 		lines.push(`            if let Ok(value) = ${structName}::from_napi_value(env, napi_val) {`);

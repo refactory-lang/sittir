@@ -1095,9 +1095,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             };
         }
         if String::from_napi_value(env, napi_val).is_ok() {
-            if let Ok(value) = _AsPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::_AsPattern(value));
-            }
             if let Ok(value) = AssignmentEqTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::AssignmentEq(value));
             }
@@ -1112,9 +1109,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = AugmentedAssignmentOperatorEnum::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::AugmentedAssignmentOperator(value));
-            }
-            if let Ok(value) = ComprehensionClausesTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ComprehensionClauses(value));
             }
             if let Ok(value) = _IdentifierEnum::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::_Identifier(value));
@@ -1134,50 +1128,20 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = KwTypeTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::KwType(value));
             }
-            if let Ok(value) = _ListPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::_ListPattern(value));
-            }
-            if let Ok(value) = MatchBlockTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::MatchBlock(value));
-            }
-            if let Ok(value) = MatchBlockBlockTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::MatchBlockBlock(value));
-            }
             if let Ok(value) = NotEscapeSequenceTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::NotEscapeSequence(value));
             }
             if let Ok(value) = NotInTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::NotIn(value));
             }
-            if let Ok(value) = SimplePatternNegativeTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::SimplePatternNegative(value));
-            }
-            if let Ok(value) = SimpleStatementsTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::SimpleStatements(value));
-            }
-            if let Ok(value) = SuiteTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::Suite(value));
-            }
-            if let Ok(value) = _TuplePatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::_TuplePattern(value));
-            }
             if let Ok(value) = UnaryOperatorOperatorEnum::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::UnaryOperatorOperator(value));
-            }
-            if let Ok(value) = _WithClauseParenTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::_WithClauseParen(value));
             }
             if let Ok(value) = AliasedImportTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::AliasedImport(value));
             }
-            if let Ok(value) = ArgumentListTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ArgumentList(value));
-            }
             if let Ok(value) = AsPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::AsPattern(value));
-            }
-            if let Ok(value) = AssertStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::AssertStatement(value));
             }
             if let Ok(value) = AssignmentTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Assignment(value));
@@ -1194,9 +1158,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = BinaryOperatorTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::BinaryOperator(value));
             }
-            if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::Block(value));
-            }
             if let Ok(value) = BooleanOperatorTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::BooleanOperator(value));
             }
@@ -1208,9 +1169,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = CaseClauseTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::CaseClause(value));
-            }
-            if let Ok(value) = CasePatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::CasePattern(value));
             }
             if let Ok(value) = ChevronTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Chevron(value));
@@ -1230,9 +1188,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = ComplexPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ComplexPattern(value));
             }
-            if let Ok(value) = ConcatenatedStringTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ConcatenatedString(value));
-            }
             if let Ok(value) = ConditionalExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ConditionalExpression(value));
             }
@@ -1251,26 +1206,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = DefaultParameterTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::DefaultParameter(value));
             }
-            if let Ok(value) = DeleteStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::DeleteStatement(value));
-            }
-            if let Ok(value) = DictPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::DictPattern(value));
-            }
-            if let Ok(value) = DictionaryTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::Dictionary(value));
-            }
             if let Ok(value) = DictionaryComprehensionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::DictionaryComprehension(value));
             }
             if let Ok(value) = DictionarySplatTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::DictionarySplat(value));
-            }
-            if let Ok(value) = DictionarySplatPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::DictionarySplatPattern(value));
-            }
-            if let Ok(value) = DottedNameTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::DottedName(value));
             }
             if let Ok(value) = ElifClauseTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ElifClause(value));
@@ -1284,20 +1224,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = EscapeSequenceTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::EscapeSequence(value));
             }
-            if let Ok(value) = ExceptClauseTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ExceptClause(value));
-            }
             if let Ok(value) = ExecStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ExecStatement(value));
-            }
-            if let Ok(value) = ExpressionListTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ExpressionList(value));
-            }
-            if let Ok(value) = ExpressionStatementTupleTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ExpressionStatementTuple(value));
-            }
-            if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ExpressionStatement(value));
             }
             if let Ok(value) = FalseTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::False(value));
@@ -1314,9 +1242,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = ForStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ForStatement(value));
             }
-            if let Ok(value) = FormatSpecifierTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::FormatSpecifier(value));
-            }
             if let Ok(value) = FunctionDefinitionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::FunctionDefinition(value));
             }
@@ -1328,9 +1253,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = GenericTypeTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::GenericType(value));
-            }
-            if let Ok(value) = GlobalStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::GlobalStatement(value));
             }
             if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Identifier(value));
@@ -1359,9 +1281,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = KeywordArgumentTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::KeywordArgument(value));
             }
-            if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::KeywordIdentifier(value));
-            }
             if let Ok(value) = KeywordPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::KeywordPattern(value));
             }
@@ -1371,29 +1290,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = LambdaTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Lambda(value));
             }
-            if let Ok(value) = LambdaParametersTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::LambdaParameters(value));
-            }
             if let Ok(value) = LambdaWithinForInClauseTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::LambdaWithinForInClause(value));
             }
             if let Ok(value) = LineContinuationTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::LineContinuation(value));
             }
-            if let Ok(value) = ListTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::List(value));
-            }
             if let Ok(value) = ListComprehensionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ListComprehension(value));
             }
-            if let Ok(value) = ListPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ListPattern(value));
-            }
             if let Ok(value) = ListSplatTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ListSplat(value));
-            }
-            if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ListSplatPattern(value));
             }
             if let Ok(value) = MatchStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::MatchStatement(value));
@@ -1401,17 +1308,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = MemberTypeTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::MemberType(value));
             }
-            if let Ok(value) = ModuleTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::Module(value));
-            }
             if let Ok(value) = NamedExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::NamedExpression(value));
             }
             if let Ok(value) = NoneTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::None(value));
-            }
-            if let Ok(value) = NonlocalStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::NonlocalStatement(value));
             }
             if let Ok(value) = NotOperatorTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::NotOperator(value));
@@ -1419,44 +1320,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = PairTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Pair(value));
             }
-            if let Ok(value) = ParametersTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::Parameters(value));
-            }
-            if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ParenthesizedExpression(value));
-            }
-            if let Ok(value) = ParenthesizedListSplatTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ParenthesizedListSplat(value));
-            }
             if let Ok(value) = PassStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::PassStatement(value));
-            }
-            if let Ok(value) = PatternListTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::PatternList(value));
             }
             if let Ok(value) = PositionalSeparatorTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::PositionalSeparator(value));
             }
-            if let Ok(value) = PrintStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::PrintStatement(value));
-            }
-            if let Ok(value) = RaiseStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::RaiseStatement(value));
-            }
             if let Ok(value) = RelativeImportTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::RelativeImport(value));
             }
-            if let Ok(value) = ReturnStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ReturnStatement(value));
-            }
-            if let Ok(value) = SetTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::Set(value));
-            }
             if let Ok(value) = SetComprehensionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::SetComprehension(value));
-            }
-            if let Ok(value) = SliceTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::Slice(value));
             }
             if let Ok(value) = SplatPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::SplatPattern(value));
@@ -1467,9 +1341,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = StringTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::String(value));
             }
-            if let Ok(value) = StringContentTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::StringContent(value));
-            }
             if let Ok(value) = SubscriptTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Subscript(value));
             }
@@ -1479,23 +1350,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = TryStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TryStatement(value));
             }
-            if let Ok(value) = TupleTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::Tuple(value));
-            }
-            if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::TuplePattern(value));
-            }
-            if let Ok(value) = TypeTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::Type(value));
-            }
             if let Ok(value) = TypeAliasStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TypeAliasStatement(value));
             }
             if let Ok(value) = TypeConversionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TypeConversion(value));
-            }
-            if let Ok(value) = TypeParameterTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::TypeParameter(value));
             }
             if let Ok(value) = TypedDefaultParameterTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TypedDefaultParameter(value));
@@ -1506,9 +1365,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = UnaryOperatorTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::UnaryOperator(value));
             }
-            if let Ok(value) = UnionPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::UnionPattern(value));
-            }
             if let Ok(value) = UnionTypeTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::UnionType(value));
             }
@@ -1518,23 +1374,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = WildcardImportTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::WildcardImport(value));
             }
-            if let Ok(value) = WithClauseBareTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::WithClauseBare(value));
-            }
-            if let Ok(value) = WithClauseParenTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::WithClauseParen(value));
-            }
-            if let Ok(value) = WithClauseTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::WithClause(value));
-            }
             if let Ok(value) = WithItemTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::WithItem(value));
             }
             if let Ok(value) = WithStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::WithStatement(value));
-            }
-            if let Ok(value) = YieldTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::Yield(value));
             }
             if let Ok(value) = NewlineTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Newline(value));
@@ -1769,6 +1613,162 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = WithTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::With(value));
+            }
+            if let Ok(value) = _AsPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::_AsPattern(value));
+            }
+            if let Ok(value) = ComprehensionClausesTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ComprehensionClauses(value));
+            }
+            if let Ok(value) = _ListPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::_ListPattern(value));
+            }
+            if let Ok(value) = MatchBlockTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::MatchBlock(value));
+            }
+            if let Ok(value) = MatchBlockBlockTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::MatchBlockBlock(value));
+            }
+            if let Ok(value) = SimplePatternNegativeTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::SimplePatternNegative(value));
+            }
+            if let Ok(value) = SimpleStatementsTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::SimpleStatements(value));
+            }
+            if let Ok(value) = SuiteTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::Suite(value));
+            }
+            if let Ok(value) = _TuplePatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::_TuplePattern(value));
+            }
+            if let Ok(value) = _WithClauseParenTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::_WithClauseParen(value));
+            }
+            if let Ok(value) = ArgumentListTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ArgumentList(value));
+            }
+            if let Ok(value) = AssertStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::AssertStatement(value));
+            }
+            if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::Block(value));
+            }
+            if let Ok(value) = CasePatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::CasePattern(value));
+            }
+            if let Ok(value) = ConcatenatedStringTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ConcatenatedString(value));
+            }
+            if let Ok(value) = DeleteStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::DeleteStatement(value));
+            }
+            if let Ok(value) = DictPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::DictPattern(value));
+            }
+            if let Ok(value) = DictionaryTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::Dictionary(value));
+            }
+            if let Ok(value) = DictionarySplatPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::DictionarySplatPattern(value));
+            }
+            if let Ok(value) = DottedNameTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::DottedName(value));
+            }
+            if let Ok(value) = ExceptClauseTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ExceptClause(value));
+            }
+            if let Ok(value) = ExpressionListTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ExpressionList(value));
+            }
+            if let Ok(value) = ExpressionStatementTupleTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ExpressionStatementTuple(value));
+            }
+            if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ExpressionStatement(value));
+            }
+            if let Ok(value) = FormatSpecifierTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::FormatSpecifier(value));
+            }
+            if let Ok(value) = GlobalStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::GlobalStatement(value));
+            }
+            if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::KeywordIdentifier(value));
+            }
+            if let Ok(value) = LambdaParametersTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::LambdaParameters(value));
+            }
+            if let Ok(value) = ListTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::List(value));
+            }
+            if let Ok(value) = ListPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ListPattern(value));
+            }
+            if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ListSplatPattern(value));
+            }
+            if let Ok(value) = ModuleTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::Module(value));
+            }
+            if let Ok(value) = NonlocalStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::NonlocalStatement(value));
+            }
+            if let Ok(value) = ParametersTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::Parameters(value));
+            }
+            if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ParenthesizedExpression(value));
+            }
+            if let Ok(value) = ParenthesizedListSplatTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ParenthesizedListSplat(value));
+            }
+            if let Ok(value) = PatternListTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::PatternList(value));
+            }
+            if let Ok(value) = PrintStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::PrintStatement(value));
+            }
+            if let Ok(value) = RaiseStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::RaiseStatement(value));
+            }
+            if let Ok(value) = ReturnStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ReturnStatement(value));
+            }
+            if let Ok(value) = SetTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::Set(value));
+            }
+            if let Ok(value) = SliceTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::Slice(value));
+            }
+            if let Ok(value) = StringContentTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::StringContent(value));
+            }
+            if let Ok(value) = TupleTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::Tuple(value));
+            }
+            if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::TuplePattern(value));
+            }
+            if let Ok(value) = TypeTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::Type(value));
+            }
+            if let Ok(value) = TypeParameterTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::TypeParameter(value));
+            }
+            if let Ok(value) = UnionPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::UnionPattern(value));
+            }
+            if let Ok(value) = WithClauseBareTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::WithClauseBare(value));
+            }
+            if let Ok(value) = WithClauseParenTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::WithClauseParen(value));
+            }
+            if let Ok(value) = WithClauseTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::WithClause(value));
+            }
+            if let Ok(value) = YieldTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::Yield(value));
             }
         }
         Err(::napi::Error::from_reason("$type property missing in AnyTransport"))
@@ -2033,11 +2033,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionWithinForInClauseTrans
         if let Some(kind_id) = kind_id {
             return match kind_id {
                 186 => {
-                if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::Expression(Box::new(value)));
-                }
                 if let Ok(value) = LambdaWithinForInClauseTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::LambdaWithinForInClause(Box::new(value)));
+                }
+                if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::Expression(Box::new(value)));
                 }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionWithinForInClauseTransport"))
                 },
@@ -2149,11 +2149,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionWithinForInClauseTrans
             };
         }
         if String::from_napi_value(env, napi_val).is_ok() {
-            if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::Expression(Box::new(value)));
-            }
             if let Ok(value) = LambdaWithinForInClauseTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::LambdaWithinForInClause(Box::new(value)));
+            }
+            if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::Expression(Box::new(value)));
             }
         }
         Err(::napi::Error::from_reason("$type property missing in ExpressionWithinForInClauseTransport"))
@@ -2739,17 +2739,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for RightHandSideTransport {
         if let Some(kind_id) = kind_id {
             return match kind_id {
                 201 => {
-                if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::Expression(Box::new(value)));
-                }
-                if let Ok(value) = ExpressionListTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ExpressionList(Box::new(value)));
-                }
                 if let Ok(value) = AssignmentTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::Assignment(Box::new(value)));
                 }
                 if let Ok(value) = AugmentedAssignmentTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::AugmentedAssignment(Box::new(value)));
+                }
+                if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::Expression(Box::new(value)));
+                }
+                if let Ok(value) = ExpressionListTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ExpressionList(Box::new(value)));
                 }
                 if let Ok(value) = PatternListTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::PatternList(Box::new(value)));
@@ -2879,17 +2879,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for RightHandSideTransport {
             };
         }
         if String::from_napi_value(env, napi_val).is_ok() {
-            if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::Expression(Box::new(value)));
-            }
-            if let Ok(value) = ExpressionListTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ExpressionList(Box::new(value)));
-            }
             if let Ok(value) = AssignmentTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Assignment(Box::new(value)));
             }
             if let Ok(value) = AugmentedAssignmentTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::AugmentedAssignment(Box::new(value)));
+            }
+            if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::Expression(Box::new(value)));
+            }
+            if let Ok(value) = ExpressionListTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ExpressionList(Box::new(value)));
             }
             if let Ok(value) = PatternListTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::PatternList(Box::new(value)));
@@ -2974,6 +2974,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
                 if let Ok(value) = SplatPatternTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::SplatPattern(Box::new(value)));
                 }
+                if let Ok(value) = StringTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::String(Box::new(value)));
+                }
+                if let Ok(value) = TrueTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::True(value));
+                }
+                if let Ok(value) = FalseTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::False(value));
+                }
+                if let Ok(value) = NoneTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::None(value));
+                }
+                if let Ok(value) = ComplexPatternTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ComplexPattern(Box::new(value)));
+                }
                 if let Ok(value) = UnionPatternTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::UnionPattern(Box::new(value)));
                 }
@@ -2989,29 +3004,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
                 if let Ok(value) = DictPatternTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::DictPattern(Box::new(value)));
                 }
-                if let Ok(value) = StringTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::String(Box::new(value)));
-                }
                 if let Ok(value) = ConcatenatedStringTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ConcatenatedString(Box::new(value)));
-                }
-                if let Ok(value) = TrueTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::True(value));
-                }
-                if let Ok(value) = FalseTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::False(value));
-                }
-                if let Ok(value) = NoneTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::None(value));
                 }
                 if let Ok(value) = SimplePatternNegativeTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::SimplePatternNegative(Box::new(value)));
                 }
                 if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::PrimaryExpression(Box::new(value)));
-                }
-                if let Ok(value) = ComplexPatternTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ComplexPattern(Box::new(value)));
                 }
                 if let Ok(value) = DottedNameTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::DottedName(Box::new(value)));
@@ -3138,6 +3138,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
             if let Ok(value) = SplatPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::SplatPattern(Box::new(value)));
             }
+            if let Ok(value) = StringTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::String(Box::new(value)));
+            }
+            if let Ok(value) = TrueTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::True(value));
+            }
+            if let Ok(value) = FalseTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::False(value));
+            }
+            if let Ok(value) = NoneTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::None(value));
+            }
+            if let Ok(value) = ComplexPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ComplexPattern(Box::new(value)));
+            }
             if let Ok(value) = UnionPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::UnionPattern(Box::new(value)));
             }
@@ -3153,29 +3168,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
             if let Ok(value) = DictPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::DictPattern(Box::new(value)));
             }
-            if let Ok(value) = StringTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::String(Box::new(value)));
-            }
             if let Ok(value) = ConcatenatedStringTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ConcatenatedString(Box::new(value)));
-            }
-            if let Ok(value) = TrueTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::True(value));
-            }
-            if let Ok(value) = FalseTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::False(value));
-            }
-            if let Ok(value) = NoneTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::None(value));
             }
             if let Ok(value) = SimplePatternNegativeTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::SimplePatternNegative(Box::new(value)));
             }
             if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::PrimaryExpression(Box::new(value)));
-            }
-            if let Ok(value) = ComplexPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ComplexPattern(Box::new(value)));
             }
             if let Ok(value) = DottedNameTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::DottedName(Box::new(value)));
@@ -3323,6 +3323,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimpleStatementTransport {
             if let Ok(value) = ImportFromStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ImportFromStatement(Box::new(value)));
             }
+            if let Ok(value) = PassStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::PassStatement(value));
+            }
+            if let Ok(value) = BreakStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::BreakStatement(value));
+            }
+            if let Ok(value) = ContinueStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ContinueStatement(value));
+            }
+            if let Ok(value) = ExecStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ExecStatement(Box::new(value)));
+            }
+            if let Ok(value) = TypeAliasStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::TypeAliasStatement(Box::new(value)));
+            }
             if let Ok(value) = PrintStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::PrintStatement(Box::new(value)));
             }
@@ -3341,26 +3356,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimpleStatementTransport {
             if let Ok(value) = RaiseStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::RaiseStatement(Box::new(value)));
             }
-            if let Ok(value) = PassStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::PassStatement(value));
-            }
-            if let Ok(value) = BreakStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::BreakStatement(value));
-            }
-            if let Ok(value) = ContinueStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ContinueStatement(value));
-            }
             if let Ok(value) = GlobalStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::GlobalStatement(Box::new(value)));
             }
             if let Ok(value) = NonlocalStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::NonlocalStatement(Box::new(value)));
-            }
-            if let Ok(value) = ExecStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ExecStatement(Box::new(value)));
-            }
-            if let Ok(value) = TypeAliasStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::TypeAliasStatement(Box::new(value)));
             }
         }
         Err(::napi::Error::from_reason("$type property missing in SimpleStatementTransport"))
@@ -3439,15 +3439,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
         if let Some(kind_id) = kind_id {
             return match kind_id {
                 109 => {
-                if let Ok(value) = SimpleStatementsTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::SimpleStatements(Box::new(value)));
-                }
-                if let Ok(value) = SimpleStatementTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::SimpleStatement(Box::new(value)));
-                }
-                if let Ok(value) = CompoundStatementTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::CompoundStatement(Box::new(value)));
-                }
                 if let Ok(value) = IfStatementTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::IfStatement(Box::new(value)));
                 }
@@ -3474,6 +3465,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                 }
                 if let Ok(value) = MatchStatementTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::MatchStatement(Box::new(value)));
+                }
+                if let Ok(value) = SimpleStatementsTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::SimpleStatements(Box::new(value)));
+                }
+                if let Ok(value) = SimpleStatementTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::SimpleStatement(Box::new(value)));
+                }
+                if let Ok(value) = CompoundStatementTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::CompoundStatement(Box::new(value)));
                 }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in StatementTransport"))
                 },
@@ -3561,15 +3561,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
             };
         }
         if String::from_napi_value(env, napi_val).is_ok() {
-            if let Ok(value) = SimpleStatementsTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::SimpleStatements(Box::new(value)));
-            }
-            if let Ok(value) = SimpleStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::SimpleStatement(Box::new(value)));
-            }
-            if let Ok(value) = CompoundStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::CompoundStatement(Box::new(value)));
-            }
             if let Ok(value) = IfStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::IfStatement(Box::new(value)));
             }
@@ -3596,6 +3587,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
             }
             if let Ok(value) = MatchStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::MatchStatement(Box::new(value)));
+            }
+            if let Ok(value) = SimpleStatementsTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::SimpleStatements(Box::new(value)));
+            }
+            if let Ok(value) = SimpleStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::SimpleStatement(Box::new(value)));
+            }
+            if let Ok(value) = CompoundStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::CompoundStatement(Box::new(value)));
             }
         }
         Err(::napi::Error::from_reason("$type property missing in StatementTransport"))
@@ -3678,9 +3678,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                 if let Ok(value) = LambdaTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::Lambda(Box::new(value)));
                 }
-                if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::PrimaryExpression(Box::new(value)));
-                }
                 if let Ok(value) = ConditionalExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ConditionalExpression(Box::new(value)));
                 }
@@ -3689,6 +3686,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                 }
                 if let Ok(value) = AsPatternTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::AsPattern(Box::new(value)));
+                }
+                if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::PrimaryExpression(Box::new(value)));
                 }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionTransport"))
                 },
@@ -3809,9 +3809,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
             if let Ok(value) = LambdaTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Lambda(Box::new(value)));
             }
-            if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::PrimaryExpression(Box::new(value)));
-            }
             if let Ok(value) = ConditionalExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ConditionalExpression(Box::new(value)));
             }
@@ -3820,6 +3817,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
             }
             if let Ok(value) = AsPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::AsPattern(Box::new(value)));
+            }
+            if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::PrimaryExpression(Box::new(value)));
             }
         }
         Err(::napi::Error::from_reason("$type property missing in ExpressionTransport"))
@@ -3899,17 +3899,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
                 if let Ok(value) = TypedDefaultParameterTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::TypedDefaultParameter(Box::new(value)));
                 }
-                if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ListSplatPattern(Box::new(value)));
-                }
-                if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::TuplePattern(Box::new(value)));
-                }
                 if let Ok(value) = KeywordSeparatorTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::KeywordSeparator(value));
                 }
                 if let Ok(value) = PositionalSeparatorTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::PositionalSeparator(value));
+                }
+                if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ListSplatPattern(Box::new(value)));
+                }
+                if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::TuplePattern(Box::new(value)));
                 }
                 if let Ok(value) = DictionarySplatPatternTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::DictionarySplatPattern(Box::new(value)));
@@ -3961,17 +3961,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterTransport {
             if let Ok(value) = TypedDefaultParameterTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::TypedDefaultParameter(Box::new(value)));
             }
-            if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ListSplatPattern(Box::new(value)));
-            }
-            if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::TuplePattern(Box::new(value)));
-            }
             if let Ok(value) = KeywordSeparatorTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::KeywordSeparator(value));
             }
             if let Ok(value) = PositionalSeparatorTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::PositionalSeparator(value));
+            }
+            if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ListSplatPattern(Box::new(value)));
+            }
+            if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::TuplePattern(Box::new(value)));
             }
             if let Ok(value) = DictionarySplatPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::DictionarySplatPattern(Box::new(value)));
@@ -4044,14 +4044,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                 if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::Identifier(value));
                 }
-                if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::KeywordIdentifier(Box::new(value)));
-                }
                 if let Ok(value) = SubscriptTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::Subscript(Box::new(value)));
                 }
                 if let Ok(value) = AttributeTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::Attribute(Box::new(value)));
+                }
+                if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::KeywordIdentifier(Box::new(value)));
                 }
                 if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ListSplatPattern(Box::new(value)));
@@ -4091,14 +4091,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
             if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Identifier(value));
             }
-            if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::KeywordIdentifier(Box::new(value)));
-            }
             if let Ok(value) = SubscriptTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Subscript(Box::new(value)));
             }
             if let Ok(value) = AttributeTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Attribute(Box::new(value)));
+            }
+            if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::KeywordIdentifier(Box::new(value)));
             }
             if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ListSplatPattern(Box::new(value)));
@@ -4200,14 +4200,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                 if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::Identifier(value));
                 }
-                if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::KeywordIdentifier(Box::new(value)));
-                }
                 if let Ok(value) = StringTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::String(Box::new(value)));
-                }
-                if let Ok(value) = ConcatenatedStringTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ConcatenatedString(Box::new(value)));
                 }
                 if let Ok(value) = IntegerTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::Integer(value));
@@ -4236,35 +4230,41 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                 if let Ok(value) = CallTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::Call(Box::new(value)));
                 }
-                if let Ok(value) = ListTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::List(Box::new(value)));
-                }
                 if let Ok(value) = ListComprehensionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ListComprehension(Box::new(value)));
-                }
-                if let Ok(value) = DictionaryTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::Dictionary(Box::new(value)));
                 }
                 if let Ok(value) = DictionaryComprehensionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::DictionaryComprehension(Box::new(value)));
                 }
-                if let Ok(value) = SetTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::Set(Box::new(value)));
-                }
                 if let Ok(value) = SetComprehensionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::SetComprehension(Box::new(value)));
-                }
-                if let Ok(value) = TupleTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::Tuple(Box::new(value)));
-                }
-                if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ParenthesizedExpression(Box::new(value)));
                 }
                 if let Ok(value) = GeneratorExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::GeneratorExpression(Box::new(value)));
                 }
                 if let Ok(value) = Ellipsis2Transport::from_napi_value(env, napi_val) {
                     return Ok(Self::Ellipsis2(value));
+                }
+                if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::KeywordIdentifier(Box::new(value)));
+                }
+                if let Ok(value) = ConcatenatedStringTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ConcatenatedString(Box::new(value)));
+                }
+                if let Ok(value) = ListTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::List(Box::new(value)));
+                }
+                if let Ok(value) = DictionaryTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::Dictionary(Box::new(value)));
+                }
+                if let Ok(value) = SetTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::Set(Box::new(value)));
+                }
+                if let Ok(value) = TupleTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::Tuple(Box::new(value)));
+                }
+                if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ParenthesizedExpression(Box::new(value)));
                 }
                 if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ListSplatPattern(Box::new(value)));
@@ -4361,14 +4361,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
             if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Identifier(value));
             }
-            if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::KeywordIdentifier(Box::new(value)));
-            }
             if let Ok(value) = StringTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::String(Box::new(value)));
-            }
-            if let Ok(value) = ConcatenatedStringTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ConcatenatedString(Box::new(value)));
             }
             if let Ok(value) = IntegerTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Integer(value));
@@ -4397,35 +4391,41 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
             if let Ok(value) = CallTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Call(Box::new(value)));
             }
-            if let Ok(value) = ListTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::List(Box::new(value)));
-            }
             if let Ok(value) = ListComprehensionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ListComprehension(Box::new(value)));
-            }
-            if let Ok(value) = DictionaryTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::Dictionary(Box::new(value)));
             }
             if let Ok(value) = DictionaryComprehensionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::DictionaryComprehension(Box::new(value)));
             }
-            if let Ok(value) = SetTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::Set(Box::new(value)));
-            }
             if let Ok(value) = SetComprehensionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::SetComprehension(Box::new(value)));
-            }
-            if let Ok(value) = TupleTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::Tuple(Box::new(value)));
-            }
-            if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ParenthesizedExpression(Box::new(value)));
             }
             if let Ok(value) = GeneratorExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::GeneratorExpression(Box::new(value)));
             }
             if let Ok(value) = Ellipsis2Transport::from_napi_value(env, napi_val) {
                 return Ok(Self::Ellipsis2(value));
+            }
+            if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::KeywordIdentifier(Box::new(value)));
+            }
+            if let Ok(value) = ConcatenatedStringTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ConcatenatedString(Box::new(value)));
+            }
+            if let Ok(value) = ListTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::List(Box::new(value)));
+            }
+            if let Ok(value) = DictionaryTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::Dictionary(Box::new(value)));
+            }
+            if let Ok(value) = SetTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::Set(Box::new(value)));
+            }
+            if let Ok(value) = TupleTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::Tuple(Box::new(value)));
+            }
+            if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ParenthesizedExpression(Box::new(value)));
             }
             if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ListSplatPattern(Box::new(value)));
