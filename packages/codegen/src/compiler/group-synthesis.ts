@@ -6,6 +6,7 @@
  */
 
 import type { Rule } from './rule.ts';
+import { replaceAtPath } from './rule.ts';
 
 const IDENTIFIER_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
@@ -298,36 +299,6 @@ function liftRule(target: Rule, synName: string, _discriminator: string): { lift
 			};
 		default:
 			return { liftedBody: target, replacement: synSym };
-	}
-}
-
-function replaceAtPath(rule: Rule, path: string, replacement: Rule): Rule {
-	const segments = path.split('/').filter((s) => s.length > 0);
-	return replaceAtPathRec(rule, segments, 0, replacement);
-}
-
-function replaceAtPathRec(rule: Rule, segments: readonly string[], depth: number, replacement: Rule): Rule {
-	if (depth === segments.length) return replacement;
-	const idx = parseInt(segments[depth]!, 10);
-	switch (rule.type) {
-		case 'seq':
-		case 'choice': {
-			const members = rule.members.slice();
-			members[idx] = replaceAtPathRec(members[idx]!, segments, depth + 1, replacement);
-			return { ...rule, members };
-		}
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'field':
-		case 'token':
-		case 'alias':
-		case 'variant':
-		case 'clause':
-		case 'group':
-			return { ...rule, content: replaceAtPathRec((rule as { content: Rule }).content, segments, depth + 1, replacement) } as Rule;
-		default:
-			throw new Error(`replaceAtPath: cannot descend into '${rule.type}' at segment ${depth}`);
 	}
 }
 

@@ -411,3 +411,51 @@ export interface SymbolRef {
 	repeated?: boolean;
 	position?: number; // Link adds: index within parent's SEQ
 }
+
+// ---------------------------------------------------------------
+// Path-addressed rule rewriting
+//
+// Slash-separated positional paths (e.g. '1/1/0/1/3') used by
+// `polymorphs:` / `transforms:` / `groups:` in overrides.ts. See
+// docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+// for the path semantics.
+// ---------------------------------------------------------------
+
+/**
+ * Return a new rule tree with the sub-rule at `path` replaced by
+ * `replacement`. Pure — no mutation of input. Path segments index into:
+ *   - seq.members[i] / choice.members[i]
+ *   - wrapper.content (path '0' for optional/repeat/repeat1/field/
+ *     token/alias/variant/clause/group)
+ *
+ * Throws if any segment fails to address.
+ */
+export function replaceAtPath(rule: Rule, path: string, replacement: Rule): Rule {
+	const segments = path.split('/').filter((s) => s.length > 0);
+	return replaceAtPathRec(rule, segments, 0, replacement);
+}
+
+function replaceAtPathRec(rule: Rule, segments: readonly string[], depth: number, replacement: Rule): Rule {
+	if (depth === segments.length) return replacement;
+	const idx = parseInt(segments[depth]!, 10);
+	switch (rule.type) {
+		case 'seq':
+		case 'choice': {
+			const members = rule.members.slice();
+			members[idx] = replaceAtPathRec(members[idx]!, segments, depth + 1, replacement);
+			return { ...rule, members };
+		}
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'field':
+		case 'token':
+		case 'alias':
+		case 'variant':
+		case 'clause':
+		case 'group':
+			return { ...rule, content: replaceAtPathRec((rule as { content: Rule }).content, segments, depth + 1, replacement) } as Rule;
+		default:
+			throw new Error(`replaceAtPath: cannot descend into '${rule.type}' at segment ${depth}`);
+	}
+}
