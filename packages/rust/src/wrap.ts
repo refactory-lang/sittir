@@ -1299,11 +1299,11 @@ export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle) {
     ...data,
     $type: TSKindId.BlockComment as const,
     _outer: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._outer, "outer", false, data.$type)),
-    _inner: normalizeSingularWrapSlot(data._inner, "inner", false, data.$type),
+    _inner: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._inner, "inner", false, data.$type)),
     _doc: normalizeSingularWrapSlot(data._doc, "doc", false, data.$type),
 
     outer() { return this._outer; },
-    inner() { return drillAs<T.InnerBlockDocCommentMarker | undefined>(this._inner, tree, "inner_doc_comment_marker", "_inner_block_doc_comment_marker"); },
+    inner() { return this._inner; },
     doc() { return drillAs<T.BlockCommentContent | undefined>(this._doc, tree, "doc_comment", "_block_comment_content"); },
     $with: {
       outer: (v: NonNullable<T.BlockComment['_outer']>) => wrapBlockComment({ ...data, _outer: v }, tree),
@@ -4025,7 +4025,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'string_content': (d) => ({ ...d, $type: TSKindId.StringContent as const }),
   'raw_string_literal_content': (d) => ({ ...d, $type: TSKindId.RawStringLiteralContent as const }),
   'float_literal': (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
-  '_inner_block_doc_comment_marker': (d) => ({ ...d, $type: TSKindId.InnerBlockDocCommentMarker as const }),
   '_line_doc_content': (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
   '_error_sentinel': (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const }),
 };
@@ -4047,7 +4046,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'field_pattern_named': '_field_pattern_named',
   'function_type_fn_form': '_function_type_fn_form',
   'function_type_trait_form': '_function_type_trait_form',
-  'inner_block_doc_comment_marker': '_inner_block_doc_comment_marker',
   'let_chain': '_let_chain',
   'line_comment_content': '_line_comment_content',
   'line_comment_doc': '_line_comment_doc',

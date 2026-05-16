@@ -624,7 +624,7 @@ export function blockCommentFrom(input?: T.BlockComment.Loose): ReturnType<typeo
   if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.blockComment>;
   return F.blockComment({
     outer: _resolveBooleanKeyword(input?.outer),
-    inner: _resolveOneLeaf<T.InnerBlockDocCommentMarker>(input?.inner, "_inner_block_doc_comment_marker"),
+    inner: _resolveBooleanKeyword(input?.inner),
     doc: _resolveOneBranch<T.BlockCommentContent>(input?.doc, "_block_comment_content"),
   });
 }

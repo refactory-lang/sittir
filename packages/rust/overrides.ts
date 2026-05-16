@@ -643,14 +643,26 @@ const config: WireConfig<RustGrammar> = {
 	// they are stripped before the grammar reaches tree-sitter (the C
 	// external scanner still produces these symbols during parsing).
 	//
-	// _outer_block_doc_comment_marker: produced by the external scanner as
-	// the `!` that distinguishes outer block doc comments (`/**!`) from
-	// ordinary block comments. Declared as string('!') so sittir knows its
-	// literal value for render templates and factory/from contracts.
-	// (The marker has no body in tree-sitter's grammar — it is a pure
-	// external symbol with no grammar rule entry.)
+	// Doc comment markers — sittir-side declarations of the marker character.
+	// Tree-sitter's external scanner still produces these tokens; alt defs let
+	// sittir's render/factory/from pipelines know the literal text without
+	// depending on tree-sitter to expose it.
+	//
+	// Line markers (_outer_line / _inner_line) DO have IMMEDIATE_TOKEN bodies
+	// in grammar.json — those are stripped by wire so tree-sitter never sees
+	// duplicate rule bodies. Block markers (_outer_block / _inner_block) are
+	// pure externals with no grammar body.
+	//
+	// Rust doc-comment syntax:
+	//   ///outer line doc      — outer line marker is '/' (lexer consumes '//' first)
+	//   //!inner line doc      — inner line marker is '!'
+	//   /**outer block doc*/   — outer block marker is '*'
+	//   /*!inner block doc*/   — inner block marker is '!'
 	externalAltDef: (_$) => ({
-		_outer_block_doc_comment_marker: string('!')
+		_outer_line_doc_comment_marker: string('/'),   // /// outer line doc
+		_inner_line_doc_comment_marker: string('!'),   // //! inner line doc
+		_outer_block_doc_comment_marker: string('*'),  // /** outer block doc */ (was '!' in MVP — typo)
+		_inner_block_doc_comment_marker: string('!')   // /*! inner block doc */
 	})
 };
 

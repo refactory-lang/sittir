@@ -1363,11 +1363,13 @@
     },
     {
       "kind": "_inner_block_doc_comment_marker",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "InnerBlockDocCommentMarker",
-      "factoryName": "innerBlockDocCommentMarker",
       "irKey": "innerBlockDocCommentMarker",
-      "hidden": false
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!\" as const",
+      "text": "!"
     },
     {
       "kind": "_inner_line_doc_comment_marker",
@@ -2460,8 +2462,8 @@
       "irKey": "outerBlockDocCommentMarker",
       "hidden": true,
       "isParameterless": true,
-      "stampExpression": "\"!\" as const",
-      "text": "!"
+      "stampExpression": "\"*\" as const",
+      "text": "*"
     },
     {
       "kind": "_outer_line_doc_comment_marker",

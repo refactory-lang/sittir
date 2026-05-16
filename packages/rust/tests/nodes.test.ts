@@ -154,13 +154,13 @@ describe('block', () => {
 
 describe('block_comment', () => {
   it('factory produces correct type', () => {
-    const node = ir.blockComment({});
+    const node = ir.blockComment();
     expect(node.$type).toBe(TSKindId.BlockComment);
     expect(node.$source).toBe(2);
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.blockComment({});
-    expect(() => node.$render!()).not.toThrow();
+  it('render produces non-empty string', () => {
+    const node = ir.blockComment({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 

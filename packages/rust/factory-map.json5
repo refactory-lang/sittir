@@ -79,7 +79,7 @@
     "base_field_initializer": "direct",
     "binary_expression": "config",
     "block": "config",
-    "block_comment": "config",
+    "block_comment": "direct",
     "boolean_literal": "text",
     "bounded_type": "config",
     "bracketed_type": "direct",
@@ -246,7 +246,6 @@
     "string_content": "text",
     "raw_string_literal_content": "text",
     "float_literal": "text",
-    "_inner_block_doc_comment_marker": "text",
     "_line_doc_content": "text",
     "_visibility_modifier_pub_parens": "config",
     "async": "text",
@@ -459,7 +458,6 @@
       "trailing_expression"
     ],
     "block_comment": [
-      "inner",
       "doc"
     ],
     "bounded_type": [

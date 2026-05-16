@@ -1011,7 +1011,7 @@ export function block(config: Partial<T.Block.Config> = {}) {
 
 export function blockComment(config: Partial<T.BlockComment.Config> = {}) {
   const _outer = coerceBooleanKeywordStorage(config.outer);
-  const _inner = config.inner;
+  const _inner = coerceBooleanKeywordStorage(config.inner);
   const _doc = config.doc;
   return withMethods({
     $type: TSKindId.BlockComment as const,
@@ -1025,7 +1025,7 @@ export function blockComment(config: Partial<T.BlockComment.Config> = {}) {
     doc() { return _doc; },
     $with: {
       outer: (value?: NonNullable<Parameters<typeof blockComment>[0]>['outer']) => blockComment({ ...config, outer: value }),
-      inner: (value?: T.InnerBlockDocCommentMarker) => blockComment({ ...config, inner: value }),
+      inner: (value?: NonNullable<Parameters<typeof blockComment>[0]>['inner']) => blockComment({ ...config, inner: value }),
       doc: (value?: T.BlockCommentContent) => blockComment({ ...config, doc: value }),
     },
   }, methodsEngine);
@@ -4511,16 +4511,6 @@ export function floatLiteral(text: string) {
   }, methodsEngine);
 }
 
-export function innerBlockDocCommentMarker(text: string) {
-  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_inner_block_doc_comment_marker: text must be non-empty`);
-  return withMethods({
-    $type: TSKindId.InnerBlockDocCommentMarker as const,
-    $source: 2 as const,
-    $named: true as const,
-    $text: text,
-  }, methodsEngine);
-}
-
 export function lineDocContent(text: string) {
   if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_line_doc_content: text must be non-empty`);
   return withMethods({
@@ -4770,7 +4760,6 @@ export type FluentKindMap = {
   "string_content": T.StringContent;
   "raw_string_literal_content": T.RawStringLiteralContent;
   "float_literal": T.FloatLiteral;
-  "_inner_block_doc_comment_marker": T.InnerBlockDocCommentMarker;
   "_line_doc_content": T.LineDocContent;
   "_error_sentinel": T.ErrorSentinel;
 };
@@ -5004,7 +4993,6 @@ export const _factoryMap = {
   "string_content": stringContent,
   "raw_string_literal_content": rawStringLiteralContent,
   "float_literal": floatLiteral,
-  "_inner_block_doc_comment_marker": innerBlockDocCommentMarker,
   "_line_doc_content": lineDocContent,
   "_error_sentinel": errorSentinel,
 } as const;
