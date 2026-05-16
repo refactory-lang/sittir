@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 369,
+  "nodeCount": 371,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -2938,6 +2938,26 @@
       "isParameterless": true,
       "stampExpression": "\"\\\"#\" as const",
       "text": "\"#"
+    },
+    {
+      "kind": "_raw_string_literal_raw_string_literal_end",
+      "modelType": "token",
+      "typeName": "RawStringLiteralRawStringLiteralEnd",
+      "irKey": "rawStringLiteralRawStringLiteralEnd",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\\"#\" as const",
+      "text": "\"#"
+    },
+    {
+      "kind": "_raw_string_literal_raw_string_literal_start",
+      "modelType": "token",
+      "typeName": "RawStringLiteralRawStringLiteralStart",
+      "irKey": "rawStringLiteralRawStringLiteralStart",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"r#\\\"\" as const",
+      "text": "r#\""
     },
     {
       "kind": "_raw_string_literal_start",
@@ -11662,26 +11682,6 @@
       "hidden": false,
       "fields": [
         {
-          "name": "raw_string_literal_start",
-          "propertyName": "rawStringLiteralStart",
-          "paramName": "rawStringLiteralStart",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "r#\""
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
           "name": "string_content",
           "propertyName": "stringContent",
           "paramName": "stringContent",
@@ -11705,26 +11705,6 @@
           },
           "aliasSources": {
             "string_content": "raw_string_literal_content"
-          }
-        },
-        {
-          "name": "raw_string_literal_end",
-          "propertyName": "rawStringLiteralEnd",
-          "paramName": "rawStringLiteralEnd",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "\"#"
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": []
           }
         }
       ],

@@ -89,6 +89,10 @@ pub enum AnyTransport {
     RangePatternLeftBare(RangePatternLeftBareTransport),
     RangePatternLeftWithRight(RangePatternLeftWithRightTransport),
     RangePatternPrefix(RangePatternPrefixTransport),
+    RawStringLiteralEnd(RawStringLiteralEndTransport),
+    RawStringLiteralRawStringLiteralEnd(RawStringLiteralRawStringLiteralEndTransport),
+    RawStringLiteralRawStringLiteralStart(RawStringLiteralRawStringLiteralStartTransport),
+    RawStringLiteralStart(RawStringLiteralStartTransport),
     RefMarker(RefMarkerTransport),
     ReferenceExpressionRawConst(ReferenceExpressionRawConstTransport),
     ReferenceExpressionRawMut(ReferenceExpressionRawMutTransport),
@@ -346,6 +350,8 @@ pub enum AnyTransport {
     Pipe(PipeTransport),
     Star(StarTransport),
     Slash(SlashTransport),
+    TokDqHash(TokDqHashTransport),
+    TokRHashDq(TokRHashDqTransport),
     Raw(RawTransport),
     Eq(EqTransport),
     Hash(HashTransport),
@@ -586,6 +592,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: _range_pattern_prefix (_RANGE_PATTERN_PREFIX)
                 342 => Ok(AnyTransport::RangePatternPrefix(
                     RangePatternPrefixTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _raw_string_literal_end (_RAW_STRING_LITERAL_END)
+                150 => Ok(AnyTransport::RawStringLiteralEnd(
+                    RawStringLiteralEndTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _raw_string_literal_start (_RAW_STRING_LITERAL_START)
+                148 => Ok(AnyTransport::RawStringLiteralStart(
+                    RawStringLiteralStartTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _reference_expression_raw_const (_REFERENCE_EXPRESSION_RAW_CONST)
                 353 => Ok(AnyTransport::ReferenceExpressionRawConst(
@@ -1784,6 +1798,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = RangePatternPrefixTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::RangePatternPrefix(value));
             }
+            if let Ok(value) = RawStringLiteralEndTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::RawStringLiteralEnd(value));
+            }
+            if let Ok(value) = RawStringLiteralRawStringLiteralEndTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::RawStringLiteralRawStringLiteralEnd(value));
+            }
+            if let Ok(value) = RawStringLiteralRawStringLiteralStartTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::RawStringLiteralRawStringLiteralStart(value));
+            }
+            if let Ok(value) = RawStringLiteralStartTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::RawStringLiteralStart(value));
+            }
             if let Ok(value) = RefMarkerTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::RefMarker(value));
             }
@@ -2323,6 +2349,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = SlashTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Slash(value));
+            }
+            if let Ok(value) = TokDqHashTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::TokDqHash(value));
+            }
+            if let Ok(value) = TokRHashDqTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::TokRHashDq(value));
             }
             if let Ok(value) = RawTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Raw(value));
@@ -20514,6 +20546,334 @@ impl RenderableTransport for RangePatternPrefixTransport {
 }
 
 #[derive(Debug, Clone)]
+pub struct RawStringLiteralEndTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for RawStringLiteralEndTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralEndTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "\"#".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| "\"#".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralEndTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "\"#".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RawStringLiteralEndTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct RawStringLiteralRawStringLiteralEndTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for RawStringLiteralRawStringLiteralEndTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralRawStringLiteralEndTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "\"#".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| "\"#".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralRawStringLiteralEndTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "\"#".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RawStringLiteralRawStringLiteralEndTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct RawStringLiteralRawStringLiteralStartTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for RawStringLiteralRawStringLiteralStartTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralRawStringLiteralStartTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "r#\"".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| "r#\"".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralRawStringLiteralStartTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "r#\"".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RawStringLiteralRawStringLiteralStartTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct RawStringLiteralStartTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for RawStringLiteralStartTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralStartTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "r#\"".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| "r#\"".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralStartTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "r#\"".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RawStringLiteralStartTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct RefMarkerTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -26096,12 +26456,8 @@ pub struct RawStringLiteralTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raw_string_literal_start"))]
-    pub raw_string_literal_start: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_string_content"))]
     pub string_content: RawStringLiteralContentTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_raw_string_literal_end"))]
-    pub raw_string_literal_end: Option<Box<AnyTransport>>,
 }
 
 impl RenderableTransport for RawStringLiteralTransport {
@@ -33004,6 +33360,170 @@ impl ::napi::bindgen_prelude::ToNapiValue for SlashTransport {
 }
 
 #[derive(Debug, Clone)]
+pub struct TokDqHashTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for TokDqHashTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokDqHashTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "\"#".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| "\"#".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokDqHashTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "\"#".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TokDqHashTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct TokRHashDqTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for TokRHashDqTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokRHashDqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "r#\"".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| "r#\"".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for TokRHashDqTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "r#\"".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TokRHashDqTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct RawTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -35705,6 +36225,22 @@ fn render_range_pattern_prefix(node: &RangePatternPrefixTransport, dest: &mut dy
     template.render_into(dest)
 }
 
+fn render_raw_string_literal_end(t: &RawStringLiteralEndTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_raw_string_literal_raw_string_literal_end(t: &RawStringLiteralRawStringLiteralEndTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_raw_string_literal_raw_string_literal_start(t: &RawStringLiteralRawStringLiteralStartTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_raw_string_literal_start(t: &RawStringLiteralStartTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_ref_marker(t: &RefMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -37132,14 +37668,6 @@ fn render_range_pattern(node: &RangePatternTransport, dest: &mut dyn ::std::fmt:
 
 fn render_raw_string_literal(node: &RawStringLiteralTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = RawStringLiteralTemplate {
-        raw_string_literal_end: match &node.raw_string_literal_end {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
-        },
-        raw_string_literal_start: match &node.raw_string_literal_start {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
-        },
         string_content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.string_content)),
     };
     template.render_into(dest)
@@ -38176,6 +38704,14 @@ fn render_slash(t: &SlashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render_tok_dq_hash(t: &TokDqHashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_tok_rhash_dq(t: &TokRHashDqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_raw(t: &RawTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -38758,6 +39294,10 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::RangePatternLeftBare(t) => t.render_into(dest),
             AnyTransport::RangePatternLeftWithRight(t) => render_range_pattern_left_with_right(t, dest),
             AnyTransport::RangePatternPrefix(t) => render_range_pattern_prefix(t, dest),
+            AnyTransport::RawStringLiteralEnd(t) => t.render_into(dest),
+            AnyTransport::RawStringLiteralRawStringLiteralEnd(t) => t.render_into(dest),
+            AnyTransport::RawStringLiteralRawStringLiteralStart(t) => t.render_into(dest),
+            AnyTransport::RawStringLiteralStart(t) => t.render_into(dest),
             AnyTransport::RefMarker(t) => t.render_into(dest),
             AnyTransport::ReferenceExpressionRawConst(t) => t.render_into(dest),
             AnyTransport::ReferenceExpressionRawMut(t) => render_reference_expression_raw_mut(t, dest),
@@ -39015,6 +39555,8 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Pipe(t) => t.render_into(dest),
             AnyTransport::Star(t) => t.render_into(dest),
             AnyTransport::Slash(t) => t.render_into(dest),
+            AnyTransport::TokDqHash(t) => t.render_into(dest),
+            AnyTransport::TokRHashDq(t) => t.render_into(dest),
             AnyTransport::Raw(t) => t.render_into(dest),
             AnyTransport::Eq(t) => t.render_into(dest),
             AnyTransport::Hash(t) => t.render_into(dest),
@@ -39132,6 +39674,10 @@ impl AnyTransport {
             Self::RangePatternLeftBare(t) => t.transport_named,
             Self::RangePatternLeftWithRight(t) => t.transport_named,
             Self::RangePatternPrefix(t) => t.transport_named,
+            Self::RawStringLiteralEnd(t) => t.transport_named,
+            Self::RawStringLiteralRawStringLiteralEnd(t) => t.transport_named,
+            Self::RawStringLiteralRawStringLiteralStart(t) => t.transport_named,
+            Self::RawStringLiteralStart(t) => t.transport_named,
             Self::RefMarker(t) => t.transport_named,
             Self::ReferenceExpressionRawConst(t) => t.transport_named,
             Self::ReferenceExpressionRawMut(t) => t.transport_named,
@@ -39365,6 +39911,8 @@ impl AnyTransport {
             Self::Pipe(t) => t.transport_named,
             Self::Star(t) => t.transport_named,
             Self::Slash(t) => t.transport_named,
+            Self::TokDqHash(t) => t.transport_named,
+            Self::TokRHashDq(t) => t.transport_named,
             Self::Raw(t) => t.transport_named,
             Self::Eq(t) => t.transport_named,
             Self::Hash(t) => t.transport_named,
@@ -39519,6 +40067,10 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::RangePatternLeftBare(data) => transport_to_node_range_pattern_left_bare(data),
         AnyTransport::RangePatternLeftWithRight(data) => transport_to_node_range_pattern_left_with_right(data),
         AnyTransport::RangePatternPrefix(data) => transport_to_node_range_pattern_prefix(data),
+        AnyTransport::RawStringLiteralEnd(data) => transport_to_node_raw_string_literal_end(data),
+        AnyTransport::RawStringLiteralRawStringLiteralEnd(data) => transport_to_node_raw_string_literal_raw_string_literal_end(data),
+        AnyTransport::RawStringLiteralRawStringLiteralStart(data) => transport_to_node_raw_string_literal_raw_string_literal_start(data),
+        AnyTransport::RawStringLiteralStart(data) => transport_to_node_raw_string_literal_start(data),
         AnyTransport::RefMarker(data) => transport_to_node_ref_marker(data),
         AnyTransport::ReferenceExpressionRawConst(data) => transport_to_node_reference_expression_raw_const(data),
         AnyTransport::ReferenceExpressionRawMut(data) => transport_to_node_reference_expression_raw_mut(data),
@@ -39776,6 +40328,8 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Pipe(data) => transport_to_node_pipe(data),
         AnyTransport::Star(data) => transport_to_node_star(data),
         AnyTransport::Slash(data) => transport_to_node_slash(data),
+        AnyTransport::TokDqHash(data) => transport_to_node_tok_dq_hash(data),
+        AnyTransport::TokRHashDq(data) => transport_to_node_tok_rhash_dq(data),
         AnyTransport::Raw(data) => transport_to_node_raw(data),
         AnyTransport::Eq(data) => transport_to_node_eq(data),
         AnyTransport::Hash(data) => transport_to_node_hash(data),
@@ -41055,6 +41609,74 @@ fn transport_to_node_range_pattern_prefix(transport: RangePatternPrefixTransport
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_raw_string_literal_end(transport: RawStringLiteralEndTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(150) /* "_raw_string_literal_end" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_raw_string_literal_raw_string_literal_end(transport: RawStringLiteralRawStringLiteralEndTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_raw_string_literal_raw_string_literal_end" — no parser symbol */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_raw_string_literal_raw_string_literal_start(transport: RawStringLiteralRawStringLiteralStartTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_raw_string_literal_raw_string_literal_start" — no parser symbol */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_raw_string_literal_start(transport: RawStringLiteralStartTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(148) /* "_raw_string_literal_start" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
         trivia_data,
     ))
 }
@@ -44008,13 +44630,7 @@ fn transport_to_node_range_pattern(transport: RangePatternTransport) -> Result<T
 
 fn transport_to_node_raw_string_literal(transport: RawStringLiteralTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.raw_string_literal_start {
-        fields.insert("raw_string_literal_start".to_string(), transport_field_value(*value)?);
-    }
     fields.insert("string_content".to_string(), transport_field_value(AnyTransport::RawStringLiteralContent(transport.string_content))?);
-    if let Some(value) = transport.raw_string_literal_end {
-        fields.insert("raw_string_literal_end".to_string(), transport_field_value(*value)?);
-    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -46430,6 +47046,40 @@ fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeDat
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(46) /* "/" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_tok_dq_hash(transport: TokDqHashTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "\"#" — no parser symbol */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_tok_rhash_dq(transport: TokRHashDqTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "r#\"" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,

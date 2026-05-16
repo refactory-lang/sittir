@@ -3476,12 +3476,8 @@ export interface RangePatternUFormLeftBare {
 export type RangePattern = RangePatternUFormPrefix | RangePatternUFormLeftWithRight | RangePatternUFormLeftBare;
 export interface RawStringLiteral {
   readonly $type: TSKindId.RawStringLiteral;
-  readonly _raw_string_literal_start: AutoStamp<"r#\"">;
   readonly _string_content: RawStringLiteralContent;
-  readonly _raw_string_literal_end: AutoStamp<"\"#">;
-  rawStringLiteralStart(): AutoStamp<"r#\"">;
   stringContent(): RawStringLiteralContent;
-  rawStringLiteralEnd(): AutoStamp<"\"#">;
 }
 
 export interface RefPattern {

@@ -305,3 +305,127 @@ function liftRule(target: Rule, synName: string, _discriminator: string): { lift
 function clone<T>(value: T): T {
 	return JSON.parse(JSON.stringify(value)) as T;
 }
+
+// ---------------------------------------------------------------------------
+// stampStaticExternalAltDefs — inline string() alt-def bodies into rule trees
+// ---------------------------------------------------------------------------
+
+/**
+ * Stamp static externalAltDef entries into rule bodies.
+ *
+ * For each externalAltDef entry with a `string(lit)` body, walk the
+ * rule map and replace every occurrence of:
+ *   - `SYMBOL(x)` (bare)
+ *   - `FIELD(name, SYMBOL(x))` (field-wrapped)
+ *   - `FIELD(name, ALIAS(SYMBOL(x)))` (alias-wrapped — any depth)
+ * with `STRING(lit)` at the same position. Pure transform — input rule
+ * map not mutated.
+ *
+ * Symbol resolution is transitive: when `x` itself is not in `altDefs`
+ * but `rules[x]` is a `StringRule` whose value matches an alt-def literal,
+ * the stamp fires. This handles post-evaluate renaming — evaluate's
+ * `synthesizeFieldEnumRules` replaces `field(n, SYMBOL(altDef))` with
+ * `field(n, SYMBOL(_parentKind_fieldName))` where the new hidden rule
+ * has the same `string` body as the original alt-def entry.
+ *
+ * After this pass, downstream phases (slot derivation, template walker,
+ * factory emitter, from emitter) see bare string literals at those
+ * positions and treat them as inline mandatory literals in seq context —
+ * the same as how `seq('mod', $.name)` renders `mod {{ name }}` with
+ * `mod` stamped inline.
+ */
+export function stampStaticExternalAltDefs(
+	rules: Record<string, Rule>,
+	altDefs: Record<string, Rule>
+): Record<string, Rule> {
+	// Build the stamp lookup: altDef-key → literal value, for entries that
+	// are single string() bodies.
+	const altStamps: Record<string, string> = {};
+	for (const [sym, body] of Object.entries(altDefs)) {
+		if (body.type === 'string') altStamps[sym] = body.value;
+	}
+	if (Object.keys(altStamps).length === 0) return rules;
+
+	// Build symToLit: symbol-name → literal to stamp.
+	// Includes:
+	//   1. The original altDef key names (exact match).
+	//   2. Names whose string body matches an altDef value AND whose name
+	//      ends with the altDef key (handling evaluate's synthesized renames:
+	//      `synthesizeFieldEnumRules` creates `_<parent>_<fieldName>` where
+	//      `<fieldName>` corresponds to the field that referenced the altDef
+	//      symbol — the altDef key itself ends with `_<fieldName>`).
+	// This is deliberately conservative: we do NOT match all string rules
+	// by value alone, to avoid stamping unrelated `_kw_*` helpers that
+	// happen to share a character with an altDef literal (e.g. `_kw_negative`
+	// has body `'!'` which clashes with the `_inner_*_doc_comment_marker`
+	// alt-def values).
+	const symToLit: Record<string, string> = { ...altStamps };
+	for (const [sym, body] of Object.entries(rules)) {
+		if (sym in symToLit) continue; // Already included via exact match.
+		if (body.type !== 'string') continue;
+		// Check whether any altDef key is a suffix of this symbol name.
+		for (const [altKey, lit] of Object.entries(altStamps)) {
+			if (sym.endsWith(altKey) && body.value === lit) {
+				symToLit[sym] = lit;
+				break;
+			}
+		}
+	}
+	if (Object.keys(symToLit).length === 0) return rules;
+
+	const out: Record<string, Rule> = {};
+	for (const [name, rule] of Object.entries(rules)) {
+		out[name] = rewriteRuleForStamp(rule, symToLit);
+	}
+	return out;
+}
+
+function rewriteRuleForStamp(rule: Rule, symToLit: Record<string, string>): Rule {
+	switch (rule.type) {
+		case 'symbol': {
+			const lit = symToLit[rule.name];
+			return lit !== undefined ? { type: 'string', value: lit } : rule;
+		}
+
+		case 'field': {
+			const inner = unwrapAliasForCheck(rule.content);
+			if (inner.type === 'symbol') {
+				const lit = symToLit[inner.name];
+				if (lit !== undefined) {
+					// Drop the field wrapper; stamp the literal inline.
+					return { type: 'string', value: lit };
+				}
+			}
+			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit) };
+		}
+
+		case 'alias':
+			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit) };
+
+		case 'token':
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'variant':
+		case 'clause':
+		case 'group':
+			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit) } as Rule;
+
+		case 'seq':
+		case 'choice':
+			return { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, symToLit)) };
+
+		default:
+			return rule;
+	}
+}
+
+/**
+ * Unwrap alias (and token) wrappers to find the inner rule for stamp
+ * candidate checking. Does NOT recurse into field/optional/etc — only
+ * strips alias/token transparency layers.
+ */
+function unwrapAliasForCheck(rule: Rule): Rule {
+	if (rule.type === 'alias' || rule.type === 'token') return unwrapAliasForCheck(rule.content);
+	return rule;
+}

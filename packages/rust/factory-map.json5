@@ -178,7 +178,7 @@
     "range_expression_bare": "config",
     "range_expression": "config",
     "range_pattern": "config",
-    "raw_string_literal": "config",
+    "raw_string_literal": "direct",
     "ref_pattern": "direct",
     "reference_expression": "config",
     "reference_pattern": "direct",
@@ -692,9 +692,7 @@
       "left"
     ],
     "raw_string_literal": [
-      "raw_string_literal_start",
-      "string_content",
-      "raw_string_literal_end"
+      "string_content"
     ],
     "reference_expression": [
       "value"
@@ -3046,24 +3044,10 @@
       }
     },
     "raw_string_literal": {
-      "raw_string_literal_start": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "string_content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "raw_string_literal_end": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }

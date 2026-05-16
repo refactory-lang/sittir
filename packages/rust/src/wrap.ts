@@ -2801,17 +2801,11 @@ export function wrapRawStringLiteral(data: T.RawStringLiteral, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.RawStringLiteral as const,
-    _raw_string_literal_start: normalizeSingularWrapSlot(data._raw_string_literal_start, "raw_string_literal_start", true, data.$type),
     _string_content: normalizeSingularWrapSlot(data._string_content, "string_content", true, data.$type),
-    _raw_string_literal_end: normalizeSingularWrapSlot(data._raw_string_literal_end, "raw_string_literal_end", true, data.$type),
 
-    rawStringLiteralStart() { return drillIn<"r#\"">(this._raw_string_literal_start, tree); },
     stringContent() { return drillAs<T.RawStringLiteralContent>(this._string_content, tree, "string_content", "raw_string_literal_content"); },
-    rawStringLiteralEnd() { return drillIn<"\"#">(this._raw_string_literal_end, tree); },
     $with: {
-      rawStringLiteralStart: (v: NonNullable<T.RawStringLiteral['_raw_string_literal_start']>) => wrapRawStringLiteral({ ...data, _raw_string_literal_start: v }, tree),
       stringContent: (v: NonNullable<T.RawStringLiteral['_string_content']>) => wrapRawStringLiteral({ ...data, _string_content: v }, tree),
-      rawStringLiteralEnd: (v: NonNullable<T.RawStringLiteral['_raw_string_literal_end']>) => wrapRawStringLiteral({ ...data, _raw_string_literal_end: v }, tree),
     },
   }, methodsEngine);
   return _node;

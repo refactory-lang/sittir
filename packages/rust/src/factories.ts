@@ -3224,19 +3224,13 @@ export function rangePatternUFormLeftBare(config: Omit<ConfigOf<T.RangePatternUF
 }
 
 export function rawStringLiteral(stringContent: T.RawStringLiteral.Config['stringContent']) {
-  const _raw_string_literal_start = "r#\"" as const;
   const _string_content = stringContent;
-  const _raw_string_literal_end = "\"#" as const;
   return withMethods({
     $type: TSKindId.RawStringLiteral as const,
     $source: 2 as const,
     $named: true as const,
-    _raw_string_literal_start,
     _string_content,
-    _raw_string_literal_end,
-    rawStringLiteralStart() { return _raw_string_literal_start; },
     stringContent() { return _string_content; },
-    rawStringLiteralEnd() { return _raw_string_literal_end; },
     $with: {
       stringContent: (value: T.RawStringLiteral.Config['stringContent']) => rawStringLiteral(value),
     },

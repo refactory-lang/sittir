@@ -48,7 +48,7 @@ import { collectFieldNames } from './rule.ts';
 import { isHiddenKind } from './evaluate.ts';
 import type { PolymorphVariant } from './types.ts';
 import { validateRefineForms } from './link-refine.ts';
-import { applyGroupOverrides } from './group-synthesis.ts';
+import { applyGroupOverrides, stampStaticExternalAltDefs } from './group-synthesis.ts';
 
 // ---------------------------------------------------------------------------
 // link() — main entry point
@@ -89,6 +89,22 @@ export function link(
 
 	// Map hidden rules to alias targets before resolveRule collapses them.
 	const aliasedHiddenKinds = collectAliasedHiddenKinds(raw.rules);
+
+	// Stamp static externalAltDef entries first — replaces field/symbol
+	// refs to alt-def'd externals with their literal text inline. After
+	// this, downstream phases see bare string literals at those positions
+	// and treat them as inline mandatory literals in seq context — same
+	// as how `seq('mod', $.name)` renders `mod {{ name }}` with `mod`
+	// stamped inline. Runs BEFORE applyGroupOverrides so any group lifts
+	// operate on already-stamped rule bodies.
+	const altDefs = raw.externalAltDef ?? {};
+	if (Object.keys(altDefs).length > 0) {
+		const stamped = stampStaticExternalAltDefs(rules, altDefs);
+		for (const key of Object.keys(rules)) {
+			if (!(key in stamped)) delete rules[key];
+		}
+		Object.assign(rules, stamped);
+	}
 
 	// Group lift pass — run BEFORE classifyAndLogHiddenRules so path
 	// resolution addresses the raw resolved seq/choice bodies before
