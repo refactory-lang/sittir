@@ -32,6 +32,8 @@ Sections marked **Invariant** must hold at every commit. Sections marked **Workf
 
 **A4. Fix the grammar, not the output.** If a parse-side issue is found, fix the grammar overrides in `packages/<grammar>/overrides.ts` rather than patching the output.
 
+**A4a. Override mechanisms: `polymorphs:`, `transforms:`, `groups:`.** `packages/<grammar>/overrides.ts` exports three position-keyed override blocks. `polymorphs:` aliases a sub-rule to a variant kind; `transforms:` rewrites a sub-rule's body. The new `groups:` block (2026-05-15) lifts a nested sub-rule into a synthesized hidden kind materialized as `AssembledGroup`, affecting factories, from, wrap, and render symmetrically. Path semantics match `polymorphs:` (slash-separated indices rooted at the parent kind). Synthesized names follow the pattern `_<parent>_<discriminator>` with `__` collapse when the parent already starts with `_`. Synthesis runs BEFORE polymorph composition in `link.ts`. Closed bug #3 (rust `visibility_modifier` rendering `pub()` when it should render `pub`). Details: `docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md`.
+
 **A5. Generated content is hash-verified at every grammar load.** Each grammar carries a per-grammar manifest at `packages/<grammar>/.sittir/generated.manifest.json` containing:
 
 - `source_hash` — SHA256 of the inputs that drove this generation: `packages/<grammar>/overrides.ts`, `packages/<grammar>/package.json` (pins upstream tree-sitter version), and a content hash of `packages/codegen/src/**`. This catches "you edited the inputs but didn't regen" — the cross-layer synchronicity guarantee.
