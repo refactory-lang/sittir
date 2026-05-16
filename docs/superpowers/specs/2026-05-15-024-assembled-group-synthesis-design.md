@@ -38,22 +38,20 @@ Second, the user has stated the broader goal multiple times across the session: 
 
 ### Override surface: new `groups:` block
 
-Polymorph-symmetric syntax. Path keys root at the original (pre-polymorph-alias) rule, matching `transforms:` and `polymorphs:`. Value is the discriminator string:
+Polymorph-symmetric syntax. Path keys root at the post-evaluate rule map — typically the polymorph variant kind after aliasing. Value is the discriminator string:
 
 ```ts
 // packages/rust/overrides.ts
 groups: {
-  visibility_modifier: {
-    '1/1': 'parens'
+  _visibility_modifier_pub: {
+    '1': 'parens'
   }
 }
 ```
 
-Synthesized kind name follows polymorph context: walk the path from the original kind, and for each path segment that ALSO appears in `polymorphs:` for the same kind, prepend that polymorph's variant name to the discriminator. Non-polymorph segments don't contribute.
+Synthesized kind name is `_<parent>_<discriminator>` with `__` → `_` collapse when the parent already starts with `_`. For the example above, parent `_visibility_modifier_pub` + discriminator `parens` = **`_visibility_modifier_pub_parens`**.
 
-For the example above, with `polymorphs: { visibility_modifier: { '1': 'pub', '0': 'crate', '1/1/0/1/3': 'in_path' } }`, the synthesized name is:
-
-- Parent `visibility_modifier` + polymorph segment `'1'` → `pub` + non-polymorph segment `'1'` (no contribution) + discriminator `parens` = **`_visibility_modifier_pub_parens`**
+Note: because keys address the post-polymorph variant kind (`_visibility_modifier_pub`), the path `'1'` directly indexes position 1 of its seq body, where the optional parens group lives. This is simpler than the pre-polymorph keying scheme and produces the same synthesized name via a more direct path.
 
 ### Synthesis stage: pre-polymorph in link
 
@@ -76,7 +74,7 @@ This means:
 
 - **Factories.** `_visibility_modifier_pub_parens` gets its own factory taking the inner-choice slot. `_visibility_modifier_pub`'s factory takes `pub` plus `parens?` (optional ref to the group).
 - **Wrap.** Drill-in produces a nested view for the group — `_visibility_modifier_pub`'s children include the synthesized symbol, which wraps through `_visibility_modifier_pub_parens`'s wrap function.
-- **Render.** The template walker's existing `seq(field, optional(symbol))` path produces `{{ pub }}{% if parens | isPresent %}{{ parens }}{% endif %}` for the variant. The walker's existing `seq(literal, structural, literal)` path produces `({{ children }})` for the group. Both shapes are already supported.
+- **Render.** The template walker has a special case for `source === 'group-lift'` symbols (see `template-walker.ts`): instead of inline-expanding the symbol's body (as with other hidden symbols), it emits a bare slot reference. The render template for `_visibility_modifier_pub` is `{{ pub }}{{ children }}` — no explicit `{% if isPresent %}` gate. Askama's `OptionalNonterminalView<'a>` type handles absent slots at the type level, rendering as empty string when the optional parens group is not present. The group's own template (`_visibility_modifier_pub_parens.jinja`) is `({{ children }})` — literals live there only.
 - **From.** Reads the parent's CST, recognizes `_visibility_modifier_pub_parens` at the synthesized symbol position, and recursively delegates to that kind's from. Mirrors today's behavior for hidden helpers.
 
 ### Suggested overrides emitter: `suggestedGroups:` block
@@ -94,17 +92,7 @@ Filter: don't suggest a group whose target is already a `source: 'group-lift'` s
 
 All errors caught at config-validate time (when overrides.ts is loaded), before any synthesis runs.
 
-**E1. Overlap with polymorphs.** The directionality matters:
-
-- **Groups ancestor of polymorphs on the same kind** → reject. The polymorph path becomes unreachable after the lift (the polymorph would address a position inside the lifted sub-rule, which is no longer addressable from the original kind).
-  ```text
-  groups['visibility_modifier']['1/1'] would lift content containing
-  polymorphs['visibility_modifier']['1/1/0/1/3']; rewrite the inner
-  polymorph relative to the lifted kind (_visibility_modifier_pub_parens)
-  or remove the overlapping entry.
-  ```
-- **Polymorphs ancestor of groups on the same kind** → OK. This is the visibility_modifier case: polymorph at `'1'` aliases the pub arm, group at `'1/1'` lifts inside it. Synthesis runs first (per design), so the lift happens against the original rule body and the polymorph alias subsequently encapsulates the synthesized symbol ref inside the variant.
-- **Exact path match (groups path == polymorphs path on the same kind)** → reject. Both want to rewrite the same position; the resolution depends on which "wins" and the answer is unprincipled. Author picks one.
+**E1. Overlap with polymorphs.** Path keys now root in the post-evaluate rule map (often a polymorph variant kind). Cross-kind overlap (groups path keyed off `_visibility_modifier_pub`, polymorphs path keyed off `visibility_modifier`) is impossible by construction. Same-kind conflicts are caught by checking the rule map directly. Exact path matches on the same kind → reject. Author picks one.
 
 **E2. Unresolvable path.** Group path doesn't address a sub-rule in the kind's body:
 ```text
@@ -137,10 +125,10 @@ No silent overwrite, no auto-suffixing.
 - All seven error cases (E1, E2, E3, E4, E5, E6 warning, E7 negative) → verify correct error message or warning.
 
 **T2. Integration test: visibility_modifier round-trip** (the load-bearing test):
-- Add `groups: { visibility_modifier: { '1/1': 'parens' } }` to `packages/rust/overrides.ts`.
+- Add `groups: { _visibility_modifier_pub: { '1': 'parens' } }` to `packages/rust/overrides.ts`.
 - Regen rust per cleanup-rules §B3 → manifest sync verified.
 - Run `pnpm exec tsx packages/validator/src/cli.ts counts --backend native rust`.
-- Verify `_visibility_modifier_pub.jinja` no longer contains literal `()` parens; instead `{% if parens | isPresent %}{{ parens }}{% endif %}`.
+- Verify `_visibility_modifier_pub.jinja` now contains `{{ pub }}{{ children }}` (bare slot reference, no `{% if isPresent %}` gate). Verify `_visibility_modifier_pub_parens.jinja` contains `({{ children }})`.
 - Verify rust read-render-parse pass count rises by at least 5 (the 5 first-failing entries that show `pub()` in their re-parse error today).
 - Per §D3, AST-match must move with pass count — single-metric jumps trigger scrutiny.
 
@@ -180,6 +168,14 @@ After this lands, three things change observably:
 
 1. `packages/<grammar>/overrides.suggested.ts` grows a `suggestedGroups:` block on next codegen run.
 2. Adding a `groups:` entry to `packages/<grammar>/overrides.ts` regen-changes the affected polymorph variant's `.jinja` template and factory/from/wrap shape.
-3. Bug #3 (`pub()` → `pub`) closes once `groups: { visibility_modifier: { '1/1': 'parens' } }` is added to `packages/rust/overrides.ts`.
+3. Bug #3 (`pub()` → `pub`) closes once `groups: { _visibility_modifier_pub: { '1': 'parens' } }` is added to `packages/rust/overrides.ts`.
 
 No breaking change to existing overrides — `groups:` is additive. Empty `groups:` block (or missing entirely) preserves today's behavior exactly.
+
+## Implementation notes (post-landing)
+
+Two design points landed differently from the pre-implementation spec, both approved in final code review:
+
+1. **Post-evaluate rule map keying.** Path keys root at the post-evaluate rule map, not the pre-polymorph-alias original rule. After polymorph aliasing, this is often the variant kind itself (e.g., `_visibility_modifier_pub`). The naming algorithm simplifies to `_<parent>_<discriminator>` with `__` → `_` collapse, producing the same outcome as the pre-polymorph walking algorithm via a more direct path.
+
+2. **Walker special-case for group-lift symbols.** The template walker checks `source === 'group-lift'` and skips inline expansion of the symbol's body, instead emitting a bare slot reference (e.g., `{{ children }}`). Askama's `OptionalNonterminalView<'a>` type handles absent optional slots at the type level, rendering as empty string. The explicit `{% if isPresent %}` Jinja conditional is unnecessary; the group's own template contains the literals.
