@@ -291,7 +291,7 @@ export interface NewlineRule {
 export interface SymbolRule {
 	readonly type: 'symbol';
 	readonly name: string;
-	readonly source?: 'grammar' | 'link';
+	readonly source?: 'grammar' | 'link' | 'group-lift';
 	/** Original literal text when Link synthesized this ref from a string token. */
 	readonly literal?: string;
 	readonly hidden?: boolean;
