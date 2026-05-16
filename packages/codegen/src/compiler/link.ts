@@ -48,6 +48,7 @@ import { collectFieldNames } from './rule.ts';
 import { isHiddenKind } from './evaluate.ts';
 import type { PolymorphVariant } from './types.ts';
 import { validateRefineForms } from './link-refine.ts';
+import { applyGroupOverrides } from './group-synthesis.ts';
 
 // ---------------------------------------------------------------------------
 // link() — main entry point
@@ -88,6 +89,34 @@ export function link(
 
 	// Map hidden rules to alias targets before resolveRule collapses them.
 	const aliasedHiddenKinds = collectAliasedHiddenKinds(raw.rules);
+
+	// Group lift pass — run BEFORE classifyAndLogHiddenRules so path
+	// resolution addresses the raw resolved seq/choice bodies before
+	// classifyHiddenSeqRule wraps them in GroupRule nodes. Also runs
+	// BEFORE polymorph alias so lifts happen against the original rule
+	// body. See:
+	//   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+	const groupsConfig = raw.groups ?? {};
+	if (Object.keys(groupsConfig).length > 0) {
+		const lifted = applyGroupOverrides({
+			rules,
+			groups: groupsConfig,
+			polymorphs: raw.polymorphsConfig ?? {}
+		});
+		for (const key of Object.keys(rules)) {
+			if (!(key in lifted.rules)) delete rules[key];
+		}
+		Object.assign(rules, lifted.rules);
+		// Force-classify synthesized kinds as GroupRule so downstream
+		// optimize.inlineSingleUseHidden skips them (it preserves 'group'
+		// type rules) and assemble sees them as AssembledGroup candidates.
+		for (const synthKind of lifted.synthesizedKinds) {
+			const body = rules[synthKind];
+			if (body && body.type !== 'group') {
+				rules[synthKind] = { type: 'group', name: synthKind, content: body } satisfies GroupRule;
+			}
+		}
+	}
 
 	classifyAndLogHiddenRules(rules, raw.inline, supertypes, references, derivations, applyPromotedRules);
 	promoteAndLogTerminalRules(rules, derivations, applyPromotedRules);

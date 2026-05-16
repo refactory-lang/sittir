@@ -186,6 +186,19 @@ export interface RawGrammar {
 	 * See refine() DSL primitive for the full design.
 	 */
 	readonly refineForms?: Map<string, RefineForm[]>;
+	/**
+	 * Per-kind group-lift map from `groups:` in the override layer.
+	 * Link reads this to synthesize nested sub-rules into hidden
+	 * AssembledGroup kinds. See:
+	 *   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+	 */
+	readonly groups?: Record<string, Record<string, string> | undefined>;
+	/**
+	 * Raw polymorphs path→variant-name config from the override layer.
+	 * Link passes this to applyGroupOverrides so synthesized kind names
+	 * include polymorph-ancestor context segments.
+	 */
+	readonly polymorphsConfig?: Record<string, Record<string, string> | undefined>;
 }
 
 /**

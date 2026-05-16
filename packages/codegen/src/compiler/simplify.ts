@@ -686,6 +686,10 @@ export function inlineGroupRefs(
 	switch (rule.type) {
 		case 'symbol': {
 			if (!rule.hidden) return rule;
+			// Don't inline group-lift synthesized symbol refs — those are
+			// deliberate structural boundaries: the referenced kind should
+			// materialize as its own AssembledGroup, not be inlined away.
+			if ((rule as { source?: string }).source === 'group-lift') return rule;
 			if (visited.has(rule.name)) return rule;
 			const target = rules[rule.name];
 			if (!target) return rule;

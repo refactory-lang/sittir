@@ -74,6 +74,10 @@ export interface WireContext {
 	 *  nested sub-rules into hidden AssembledGroup kinds. See:
 	 *  docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md */
 	readonly groups?: GroupsConfig;
+	/** Raw polymorphs path→variant-name config. Link passes this to
+	 *  applyGroupOverrides so synthesized kind names include polymorph-
+	 *  ancestor context segments. */
+	readonly polymorphsConfig?: PolymorphsConfig;
 	/** Name of the rule currently being evaluated, for variant()'s
 	 *  auto-prefix behavior (`variant('eq')` under `assignment` →
 	 *  `_assignment_eq`). Set by the rule-fn wrapper. */
@@ -214,6 +218,7 @@ export function withWireContext<T>(
 		conflictGroups: [],
 		refineForms: new Map(),
 		groups: undefined,
+		polymorphsConfig: undefined,
 		currentRuleKind: ruleKind,
 		authoredRuleNames: new Set()
 	};
@@ -399,6 +404,7 @@ export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<
 		conflictGroups: [],
 		refineForms: new Map(),
 		groups: config.groups,
+		polymorphsConfig: config.polymorphs,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(config.rules))
 	};

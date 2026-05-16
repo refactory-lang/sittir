@@ -833,6 +833,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 
 	const polymorphVariants = drainPolymorphMetadata(opts);
 	const refineForms = drainRefineMetadata(opts);
+	const groups = drainGroupsMetadata(opts);
+	const polymorphsConfig = drainPolymorphsConfigMetadata(opts);
 
 	// Rules map mirrors tree-sitter's view: no synthesized top-level
 	// entry for alias TARGETS. The source (`_X`) is the canonical
@@ -866,7 +868,9 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 			// declares no roles.
 			externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
 			polymorphVariants: polymorphVariants.length > 0 ? polymorphVariants : undefined,
-			refineForms
+			refineForms,
+			groups,
+			polymorphsConfig
 		} satisfies RawGrammar
 	};
 }
@@ -1664,6 +1668,31 @@ function drainRefineMetadata(opts: GrammarOptions): Map<string, RefineForm[]> | 
 	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 	if (!wireCtx || wireCtx.refineForms.size === 0) return undefined;
 	return new Map(wireCtx.refineForms);
+}
+
+/**
+ * Read the groups config from the wire context. Returns `undefined` when
+ * no `groups:` block was supplied (keeps `RawGrammar.groups` absent for
+ * downstream consumers that check presence).
+ */
+function drainGroupsMetadata(opts: GrammarOptions): Record<string, Record<string, string> | undefined> | undefined {
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	if (!wireCtx || !wireCtx.groups) return undefined;
+	const g = wireCtx.groups as Record<string, Record<string, string> | undefined>;
+	if (Object.keys(g).length === 0) return undefined;
+	return { ...g };
+}
+
+/**
+ * Read the raw polymorphs path→variant-name config from the wire context.
+ * Returns `undefined` when no `polymorphs:` block was supplied.
+ */
+function drainPolymorphsConfigMetadata(opts: GrammarOptions): Record<string, Record<string, string> | undefined> | undefined {
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	if (!wireCtx || !wireCtx.polymorphsConfig) return undefined;
+	const p = wireCtx.polymorphsConfig as Record<string, Record<string, string> | undefined>;
+	if (Object.keys(p).length === 0) return undefined;
+	return { ...p };
 }
 
 /**

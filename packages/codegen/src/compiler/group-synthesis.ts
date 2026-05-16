@@ -98,7 +98,10 @@ export function deriveSynthesizedName(args: DeriveSynthesizedNameArgs): string {
 		}
 	}
 
-	return '_' + [parentKind, ...contributions, discriminator].join('_');
+	// When parentKind already starts with '_' (hidden rule), use it as-is
+	// as the base; otherwise prepend '_' to canonicalize.
+	const base = parentKind.startsWith('_') ? parentKind : '_' + parentKind;
+	return [base, ...contributions, discriminator].join('_');
 }
 
 export interface ValidateGroupsArgs {
