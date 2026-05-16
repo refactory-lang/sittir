@@ -2173,15 +2173,25 @@ var config = {
   //   //!inner line doc      — inner line marker is '!'
   //   /**outer block doc*/   — outer block marker is '*'
   //   /*!inner block doc*/   — inner block marker is '!'
+  //
+  // Raw string literal delimiters — static (1-hash form only).
+  // Round-trip will fail for `r##"..."##` etc. Factory-side benefit: no
+  // delimiter-count parameter needed.
   externalAltDef: (_$) => ({
+    // Doc comment markers
     _outer_line_doc_comment_marker: string("/"),
     // /// outer line doc
     _inner_line_doc_comment_marker: string("!"),
     // //! inner line doc
     _outer_block_doc_comment_marker: string("*"),
     // /** outer block doc */ (was '!' in MVP — typo)
-    _inner_block_doc_comment_marker: string("!")
+    _inner_block_doc_comment_marker: string("!"),
     // /*! inner block doc */
+    // Raw string literal delimiters — static (1-hash form only).
+    // Round-trip will fail for `r##"..."##` etc. Factory-side
+    // benefit: no delimiter-count parameter needed.
+    _raw_string_literal_start: string('r#"'),
+    _raw_string_literal_end: string('"#')
   })
 };
 var overrides_default = grammar(enrich(import_grammar.default), wire(config));

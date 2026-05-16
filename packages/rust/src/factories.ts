@@ -3223,10 +3223,10 @@ export function rangePatternUFormLeftBare(config: Omit<ConfigOf<T.RangePatternUF
   }, methodsEngine);
 }
 
-export function rawStringLiteral(config: T.RawStringLiteral.Config) {
-  const _raw_string_literal_start = config.rawStringLiteralStart;
-  const _string_content = config.stringContent;
-  const _raw_string_literal_end = config.rawStringLiteralEnd;
+export function rawStringLiteral(stringContent: T.RawStringLiteral.Config['stringContent']) {
+  const _raw_string_literal_start = "r#\"" as const;
+  const _string_content = stringContent;
+  const _raw_string_literal_end = "\"#" as const;
   return withMethods({
     $type: TSKindId.RawStringLiteral as const,
     $source: 2 as const,
@@ -3238,9 +3238,7 @@ export function rawStringLiteral(config: T.RawStringLiteral.Config) {
     stringContent() { return _string_content; },
     rawStringLiteralEnd() { return _raw_string_literal_end; },
     $with: {
-      rawStringLiteralStart: (value?: string) => rawStringLiteral({ ...config, rawStringLiteralStart: value }),
-      stringContent: (value: T.RawStringLiteralContent) => rawStringLiteral({ ...config, stringContent: value }),
-      rawStringLiteralEnd: (value?: string) => rawStringLiteral({ ...config, rawStringLiteralEnd: value }),
+      stringContent: (value: T.RawStringLiteral.Config['stringContent']) => rawStringLiteral(value),
     },
   }, methodsEngine);
 }

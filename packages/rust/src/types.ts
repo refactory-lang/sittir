@@ -525,9 +525,9 @@ export const enum TSKindId {
   _LineCommentRegularDslashToken2 = 145,
   LineCommentContent = 146,
   StringContent = 147,
-  _RawStringLiteralStart = 148,
+  RawStringLiteralStart = 148,
   RawStringLiteralContent = 149,
-  _RawStringLiteralEnd = 150,
+  RawStringLiteralEnd = 150,
   FloatLiteral = 151,
   OuterBlockDocCommentMarker = 152,
   InnerBlockDocCommentMarker = 153,
@@ -1344,9 +1344,9 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_line_comment_regular_dslash_token2": return TSKindId._LineCommentRegularDslashToken2;
     case "_line_comment_content": return TSKindId.LineCommentContent;
     case "string_content": return TSKindId.StringContent;
-    case "_raw_string_literal_start": return TSKindId._RawStringLiteralStart;
+    case "_raw_string_literal_start": return TSKindId.RawStringLiteralStart;
     case "raw_string_literal_content": return TSKindId.RawStringLiteralContent;
-    case "_raw_string_literal_end": return TSKindId._RawStringLiteralEnd;
+    case "_raw_string_literal_end": return TSKindId.RawStringLiteralEnd;
     case "float_literal": return TSKindId.FloatLiteral;
     case "_outer_block_doc_comment_marker": return TSKindId.OuterBlockDocCommentMarker;
     case "_inner_block_doc_comment_marker": return TSKindId.InnerBlockDocCommentMarker;
@@ -3476,12 +3476,12 @@ export interface RangePatternUFormLeftBare {
 export type RangePattern = RangePatternUFormPrefix | RangePatternUFormLeftWithRight | RangePatternUFormLeftBare;
 export interface RawStringLiteral {
   readonly $type: TSKindId.RawStringLiteral;
-  readonly _raw_string_literal_start?: string;
+  readonly _raw_string_literal_start: AutoStamp<"r#\"">;
   readonly _string_content: RawStringLiteralContent;
-  readonly _raw_string_literal_end?: string;
-  rawStringLiteralStart(): string | undefined;
+  readonly _raw_string_literal_end: AutoStamp<"\"#">;
+  rawStringLiteralStart(): AutoStamp<"r#\"">;
   stringContent(): RawStringLiteralContent;
-  rawStringLiteralEnd(): string | undefined;
+  rawStringLiteralEnd(): AutoStamp<"\"#">;
 }
 
 export interface RefPattern {

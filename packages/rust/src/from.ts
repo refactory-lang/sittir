@@ -1586,12 +1586,8 @@ export function rangePatternUFormLeftBareFrom(input: Omit<ConfigOf<T.RangePatter
 }
 
 export function rawStringLiteralFrom(input: T.RawStringLiteral.Loose): ReturnType<typeof F.rawStringLiteral> {
-  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.rawStringLiteral>;
-  return F.rawStringLiteral({
-    rawStringLiteralStart: _resolveOne<string>(input.rawStringLiteralStart, _K9, _K9),
-    stringContent: _resolveOneLeaf<T.RawStringLiteralContent>(input.stringContent, "raw_string_literal_content"),
-    rawStringLiteralEnd: _resolveOne<string>(input.rawStringLiteralEnd, _K9, _K9),
-  });
+  if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("raw_string_literal")) return input as unknown as ReturnType<typeof F.rawStringLiteral>;
+  return F.rawStringLiteral(_resolveOneLeaf<T.RawStringLiteralContent>((input !== null && typeof input === 'object' && !isNodeData(input) && "stringContent" in input ? input.stringContent : input), "raw_string_literal_content"));
 }
 
 export function refPatternFrom(input?: NonNullable<T.RefPattern['$children']> extends readonly [infer E] ? E : NonNullable<T.RefPattern['$children']> | T.RefPattern): ReturnType<typeof F.refPattern> {

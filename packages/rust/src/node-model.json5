@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 365,
+  "nodeCount": 369,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -102,6 +102,16 @@
       "isParameterless": true,
       "stampExpression": "\"\\\"\" as const",
       "text": "\""
+    },
+    {
+      "kind": "\"#",
+      "modelType": "token",
+      "typeName": "TokDqHash",
+      "irKey": "tokDqHash",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\\"#\" as const",
+      "text": "\"#"
     },
     {
       "kind": "#",
@@ -2918,6 +2928,26 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "_raw_string_literal_end",
+      "modelType": "token",
+      "typeName": "RawStringLiteralEnd",
+      "irKey": "rawStringLiteralEnd",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\\"#\" as const",
+      "text": "\"#"
+    },
+    {
+      "kind": "_raw_string_literal_start",
+      "modelType": "token",
+      "typeName": "RawStringLiteralStart",
+      "irKey": "rawStringLiteralStart",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"r#\\\"\" as const",
+      "text": "r#\""
     },
     {
       "kind": "_ref_marker",
@@ -11289,6 +11319,16 @@
       "children": []
     },
     {
+      "kind": "r#\"",
+      "modelType": "token",
+      "typeName": "TokRHashDq",
+      "irKey": "tokRHashDq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"r#\\\"\" as const",
+      "text": "r#\""
+    },
+    {
       "kind": "range_expression",
       "modelType": "polymorph",
       "typeName": "RangeExpression",
@@ -11625,10 +11665,16 @@
           "name": "raw_string_literal_start",
           "propertyName": "rawStringLiteralStart",
           "paramName": "rawStringLiteralStart",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "values": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "r#\""
+            }
+          ],
           "source": "override",
           "projection": {
             "typeName": "",
@@ -11665,10 +11711,16 @@
           "name": "raw_string_literal_end",
           "propertyName": "rawStringLiteralEnd",
           "paramName": "rawStringLiteralEnd",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "values": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "\"#"
+            }
+          ],
           "source": "override",
           "projection": {
             "typeName": "",
