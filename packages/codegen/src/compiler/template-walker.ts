@@ -977,6 +977,15 @@ function walkRuleForTemplate(
 			// slots in the caller's template. Guards against recursion
 			// via the rule-name seen-set key.
 			const symName = (rule as { name: string }).name;
+			// Group-lifted symbols own their own template — never inline-expand.
+			// They should render as a children-slot reference like any other
+			// real kind. See spec:
+			//   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+			if ((rule as { source?: string }).source === 'group-lift') {
+				if (seen.has('children')) return [];
+				seen.add('children');
+				return [emitChildren()];
+			}
 			if (symName.startsWith('_') && rules) {
 				const target = rules[symName];
 				if (target && !seen.has(`@${symName}`)) {

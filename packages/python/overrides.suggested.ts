@@ -127,6 +127,7 @@ export const suggestedRules = {
 
 };
 
+// suggestedGroups: {} // (group candidate detection not yet implemented)
 // ---------------------------------------------------------------
 // Raw derivation data — typed arrays for tooling
 // ---------------------------------------------------------------

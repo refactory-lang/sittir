@@ -524,6 +524,12 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 	lines.push('');
 
 	// ---------------------------------------------------------------
+	// suggestedGroups — nested-seq candidates for group synthesis
+	// (detection logic pending task #34 — emitting empty block for now)
+	// ---------------------------------------------------------------
+	lines.push('// suggestedGroups: {} // (group candidate detection not yet implemented)');
+
+	// ---------------------------------------------------------------
 	// Raw data exports — typed arrays for programmatic consumption
 	// ---------------------------------------------------------------
 	lines.push('// ---------------------------------------------------------------');

@@ -275,28 +275,29 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 	return { rules: newRules, synthesizedKinds };
 }
 
-function liftRule(target: Rule, synName: string, discriminator: string): { liftedBody: Rule; replacement: Rule } {
+function liftRule(target: Rule, synName: string, _discriminator: string): { liftedBody: Rule; replacement: Rule } {
 	const synSym = { type: 'symbol' as const, name: synName, source: 'group-lift' as const };
-	const fieldWrappedSym: Rule = { type: 'field', name: discriminator, content: synSym } as Rule;
+	// (_discriminator kept for future use; the current implementation does not use it.
+	// The discriminator participates only in the synthesized kind name component.)
 
 	switch (target.type) {
 		case 'optional':
 			return {
 				liftedBody: target.content,
-				replacement: { type: 'optional', content: fieldWrappedSym } as Rule
+				replacement: { type: 'optional', content: synSym } as Rule
 			};
 		case 'repeat':
 			return {
 				liftedBody: target.content,
-				replacement: { type: 'repeat', content: fieldWrappedSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule
+				replacement: { type: 'repeat', content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule
 			};
 		case 'repeat1':
 			return {
 				liftedBody: target.content,
-				replacement: { type: 'repeat1', content: fieldWrappedSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule
+				replacement: { type: 'repeat1', content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule
 			};
 		default:
-			return { liftedBody: target, replacement: fieldWrappedSym };
+			return { liftedBody: target, replacement: synSym };
 	}
 }
 
