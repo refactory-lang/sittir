@@ -38,6 +38,7 @@ declare const token: {
 	(r: unknown): unknown;
 	immediate: (r: unknown) => unknown;
 };
+declare const string: (value: string) => unknown;
 
 const config: WireConfig<RustGrammar> = {
 	name: 'rust',
@@ -635,7 +636,22 @@ const config: WireConfig<RustGrammar> = {
 		// the named alias on `_pattern` above promotes it to a proper
 		// `wildcard_pattern` kind at parse time.
 		_wildcard_pattern: ($) => '_'
-	}
+	},
+
+	// externalAltDef — sittir-side rule bodies for external scanner symbols.
+	// These bodies are used by sittir's slot/render/factory pipeline ONLY;
+	// they are stripped before the grammar reaches tree-sitter (the C
+	// external scanner still produces these symbols during parsing).
+	//
+	// _outer_block_doc_comment_marker: produced by the external scanner as
+	// the `!` that distinguishes outer block doc comments (`/**!`) from
+	// ordinary block comments. Declared as string('!') so sittir knows its
+	// literal value for render templates and factory/from contracts.
+	// (The marker has no body in tree-sitter's grammar — it is a pure
+	// external symbol with no grammar rule entry.)
+	externalAltDef: (_$) => ({
+		_outer_block_doc_comment_marker: string('!')
+	})
 };
 
 // The typed `config` above is validated against WireConfig<RustGrammar>.

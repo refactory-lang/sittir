@@ -334,7 +334,6 @@ export const enum SyntaxKind {
   StringContent = "string_content",
   RawStringLiteralContent = "raw_string_literal_content",
   FloatLiteral = "float_literal",
-  OuterBlockDocCommentMarker = "_outer_block_doc_comment_marker",
   InnerBlockDocCommentMarker = "_inner_block_doc_comment_marker",
   LineDocContent = "_line_doc_content",
   ErrorSentinel = "_error_sentinel",
@@ -2521,10 +2520,13 @@ export interface Block {
 
 export interface BlockComment {
   readonly $type: TSKindId.BlockComment;
-  readonly _outer?: OuterBlockDocCommentMarker;
+  readonly _outer?: boolean;
   readonly _inner?: InnerBlockDocCommentMarker;
   readonly _doc?: BlockCommentContent;
-  outer(): OuterBlockDocCommentMarker | undefined;
+  readonly __inputHints__?: {
+    readonly outer?: BooleanKeyword<"!">;
+  };
+  outer(): boolean | undefined;
   inner(): InnerBlockDocCommentMarker | undefined;
   doc(): BlockCommentContent | undefined;
 }
@@ -4058,7 +4060,6 @@ export type UnitType = Terminal<TSKindId.UnitType, string>;
 export type StringContent = Terminal<TSKindId.StringContent, string>;
 export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
 export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
-export type OuterBlockDocCommentMarker = Terminal<TSKindId.OuterBlockDocCommentMarker, string>;
 export type InnerBlockDocCommentMarker = Terminal<TSKindId.InnerBlockDocCommentMarker, string>;
 export type LineDocContent = Terminal<TSKindId.LineDocContent, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
@@ -4355,7 +4356,6 @@ export interface UnitTypeTree extends TreeNode<'unit_type'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface RawStringLiteralContentTree extends AnyTreeNode { readonly type: "raw_string_literal_content"; }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
-export interface OuterBlockDocCommentMarkerTree extends AnyTreeNode { readonly type: "_outer_block_doc_comment_marker"; }
 export interface InnerBlockDocCommentMarkerTree extends AnyTreeNode { readonly type: "_inner_block_doc_comment_marker"; }
 export interface LineDocContentTree extends AnyTreeNode { readonly type: "_line_doc_content"; }
 export interface ErrorSentinelTree extends AnyTreeNode { readonly type: "_error_sentinel"; }
@@ -5265,7 +5265,6 @@ export interface KindMap {
   'string_content': StringContent;
   'raw_string_literal_content': RawStringLiteralContent;
   'float_literal': FloatLiteral;
-  '_outer_block_doc_comment_marker': OuterBlockDocCommentMarker;
   '_inner_block_doc_comment_marker': InnerBlockDocCommentMarker;
   '_line_doc_content': LineDocContent;
   '_error_sentinel': ErrorSentinel;

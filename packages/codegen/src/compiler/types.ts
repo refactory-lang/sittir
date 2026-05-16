@@ -199,6 +199,18 @@ export interface RawGrammar {
 	 * include polymorph-ancestor context segments.
 	 */
 	readonly polymorphsConfig?: Record<string, Record<string, string> | undefined>;
+	/**
+	 * Sittir-side alt rule bodies for external scanner symbols. Populated
+	 * by `externalAltDef:` in the override layer. The bodies enter
+	 * sittir's slot/render/factory pipeline as if they were regular
+	 * author-written rules; they are NOT present in the tree-sitter rules
+	 * map (the external scanner still produces these symbols).
+	 *
+	 * Record keys are the external symbol names (e.g.
+	 * `_outer_block_doc_comment_marker`); values are the sittir-side Rule
+	 * bodies (e.g. `{ type: 'string', value: '!' }`).
+	 */
+	readonly externalAltDef?: Record<string, Rule>;
 }
 
 /**

@@ -480,6 +480,7 @@ function wire(config2) {
     refineForms: /* @__PURE__ */ new Map(),
     groups: config2.groups,
     polymorphsConfig: config2.polymorphs,
+    externalAltDef: config2.externalAltDef,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(config2.rules))
   };
@@ -2151,7 +2152,21 @@ var config = {
     // the named alias on `_pattern` above promotes it to a proper
     // `wildcard_pattern` kind at parse time.
     _wildcard_pattern: ($) => "_"
-  }
+  },
+  // externalAltDef — sittir-side rule bodies for external scanner symbols.
+  // These bodies are used by sittir's slot/render/factory pipeline ONLY;
+  // they are stripped before the grammar reaches tree-sitter (the C
+  // external scanner still produces these symbols during parsing).
+  //
+  // _outer_block_doc_comment_marker: produced by the external scanner as
+  // the `!` that distinguishes outer block doc comments (`/**!`) from
+  // ordinary block comments. Declared as string('!') so sittir knows its
+  // literal value for render templates and factory/from contracts.
+  // (The marker has no body in tree-sitter's grammar — it is a pure
+  // external symbol with no grammar rule entry.)
+  externalAltDef: (_$) => ({
+    _outer_block_doc_comment_marker: string("!")
+  })
 };
 var overrides_default = grammar(enrich(import_grammar.default), wire(config));
 if (module.exports && module.exports.default) module.exports = module.exports.default;

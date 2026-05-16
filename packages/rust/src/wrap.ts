@@ -1298,11 +1298,11 @@ export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.BlockComment as const,
-    _outer: normalizeSingularWrapSlot(data._outer, "outer", false, data.$type),
+    _outer: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._outer, "outer", false, data.$type)),
     _inner: normalizeSingularWrapSlot(data._inner, "inner", false, data.$type),
     _doc: normalizeSingularWrapSlot(data._doc, "doc", false, data.$type),
 
-    outer() { return drillAs<T.OuterBlockDocCommentMarker | undefined>(this._outer, tree, "outer_doc_comment_marker", "_outer_block_doc_comment_marker"); },
+    outer() { return this._outer; },
     inner() { return drillAs<T.InnerBlockDocCommentMarker | undefined>(this._inner, tree, "inner_doc_comment_marker", "_inner_block_doc_comment_marker"); },
     doc() { return drillAs<T.BlockCommentContent | undefined>(this._doc, tree, "doc_comment", "_block_comment_content"); },
     $with: {
@@ -4025,7 +4025,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'string_content': (d) => ({ ...d, $type: TSKindId.StringContent as const }),
   'raw_string_literal_content': (d) => ({ ...d, $type: TSKindId.RawStringLiteralContent as const }),
   'float_literal': (d) => ({ ...d, $type: TSKindId.FloatLiteral as const }),
-  '_outer_block_doc_comment_marker': (d) => ({ ...d, $type: TSKindId.OuterBlockDocCommentMarker as const }),
   '_inner_block_doc_comment_marker': (d) => ({ ...d, $type: TSKindId.InnerBlockDocCommentMarker as const }),
   '_line_doc_content': (d) => ({ ...d, $type: TSKindId.LineDocContent as const }),
   '_error_sentinel': (d) => ({ ...d, $type: TSKindId.ErrorSentinel as const }),
@@ -4060,7 +4059,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'move_marker': '_move_marker',
   'or_pattern_binary': '_or_pattern_binary',
   'or_pattern_prefix': '_or_pattern_prefix',
-  'outer_block_doc_comment_marker': '_outer_block_doc_comment_marker',
   'path': '_path',
   'pattern': '_pattern',
   'pointer_type_const': '_pointer_type_const',

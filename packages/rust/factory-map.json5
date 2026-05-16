@@ -246,7 +246,6 @@
     "string_content": "text",
     "raw_string_literal_content": "text",
     "float_literal": "text",
-    "_outer_block_doc_comment_marker": "text",
     "_inner_block_doc_comment_marker": "text",
     "_line_doc_content": "text",
     "_visibility_modifier_pub_parens": "config",
@@ -460,7 +459,6 @@
       "trailing_expression"
     ],
     "block_comment": [
-      "outer",
       "inner",
       "doc"
     ],

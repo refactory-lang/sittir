@@ -76,6 +76,7 @@ pub enum AnyTransport {
     Operator(OperatorTransport),
     OrPatternBinary(OrPatternBinaryTransport),
     OrPatternPrefix(OrPatternPrefixTransport),
+    OuterBlockDocCommentMarker(OuterBlockDocCommentMarkerTransport),
     OuterLineDocCommentMarker(OuterLineDocCommentMarkerTransport),
     PointerTypeConst(PointerTypeConstTransport),
     _PointerTypeMut(_PointerTypeMutTransport),
@@ -291,7 +292,6 @@ pub enum AnyTransport {
     StringContent(StringContentTransport),
     RawStringLiteralContent(RawStringLiteralContentTransport),
     FloatLiteral(FloatLiteralTransport),
-    OuterBlockDocCommentMarker(OuterBlockDocCommentMarkerTransport),
     InnerBlockDocCommentMarker(InnerBlockDocCommentMarkerTransport),
     LineDocContent(LineDocContentTransport),
     ErrorSentinel(ErrorSentinelTransport),
@@ -538,6 +538,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: _or_pattern_prefix (_OR_PATTERN_PREFIX)
                 337 => Ok(AnyTransport::OrPatternPrefix(
                     OrPatternPrefixTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _outer_block_doc_comment_marker (_OUTER_BLOCK_DOC_COMMENT_MARKER)
+                152 => Ok(AnyTransport::OuterBlockDocCommentMarker(
+                    OuterBlockDocCommentMarkerTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _outer_line_doc_comment_marker (_OUTER_LINE_DOC_COMMENT_MARKER)
                 317 => Ok(AnyTransport::OuterLineDocCommentMarker(
@@ -1279,10 +1283,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 151 => Ok(AnyTransport::FloatLiteral(
                     FloatLiteralTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _outer_block_doc_comment_marker (_OUTER_BLOCK_DOC_COMMENT_MARKER)
-                152 => Ok(AnyTransport::OuterBlockDocCommentMarker(
-                    OuterBlockDocCommentMarkerTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: _inner_block_doc_comment_marker (_INNER_BLOCK_DOC_COMMENT_MARKER)
                 153 => Ok(AnyTransport::InnerBlockDocCommentMarker(
                     InnerBlockDocCommentMarkerTransport::from_napi_value(env, napi_val)?
@@ -1748,6 +1748,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = OrPatternPrefixTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::OrPatternPrefix(value));
             }
+            if let Ok(value) = OuterBlockDocCommentMarkerTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::OuterBlockDocCommentMarker(value));
+            }
             if let Ok(value) = OuterLineDocCommentMarkerTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::OuterLineDocCommentMarker(value));
             }
@@ -2161,9 +2164,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::FloatLiteral(value));
-            }
-            if let Ok(value) = OuterBlockDocCommentMarkerTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::OuterBlockDocCommentMarker(value));
             }
             if let Ok(value) = InnerBlockDocCommentMarkerTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::InnerBlockDocCommentMarker(value));
@@ -19598,6 +19598,118 @@ impl RenderableTransport for OrPatternPrefixTransport {
 }
 
 #[derive(Debug, Clone)]
+pub struct OuterBlockDocCommentMarkerTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for OuterBlockDocCommentMarkerTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for OuterBlockDocCommentMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "!".to_string()
+        } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("OuterBlockDocCommentMarkerTransport received false; omit the field instead of sending false"));
+            }
+            "!".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| "!".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for OuterBlockDocCommentMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(false),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text,
+            });
+        }
+        if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("OuterBlockDocCommentMarkerTransport received false; omit the field instead of sending false"));
+            }
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(false),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text: "!".to_string(),
+            });
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "!".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for OuterBlockDocCommentMarkerTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct OuterLineDocCommentMarkerTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -28490,86 +28602,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for FloatLiteralTransport {
 }
 
 #[derive(Debug, Clone)]
-pub struct OuterBlockDocCommentMarkerTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for OuterBlockDocCommentMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for OuterBlockDocCommentMarkerTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
-            text
-        } else {
-            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_default()
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for OuterBlockDocCommentMarkerTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OuterBlockDocCommentMarkerTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct InnerBlockDocCommentMarkerTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -35564,6 +35596,10 @@ fn render_or_pattern_prefix(node: &OrPatternPrefixTransport, dest: &mut dyn ::st
     template.render_into(dest)
 }
 
+fn render_outer_block_doc_comment_marker(t: &OuterBlockDocCommentMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_outer_line_doc_comment_marker(t: &OuterLineDocCommentMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -37889,10 +37925,6 @@ fn render_float_literal(t: &FloatLiteralTransport, dest: &mut dyn ::std::fmt::Wr
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_outer_block_doc_comment_marker(t: &OuterBlockDocCommentMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
 fn render_inner_block_doc_comment_marker(t: &InnerBlockDocCommentMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -38681,6 +38713,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Operator(t) => t.render_into(dest),
             AnyTransport::OrPatternBinary(t) => render_or_pattern_binary(t, dest),
             AnyTransport::OrPatternPrefix(t) => render_or_pattern_prefix(t, dest),
+            AnyTransport::OuterBlockDocCommentMarker(t) => t.render_into(dest),
             AnyTransport::OuterLineDocCommentMarker(t) => t.render_into(dest),
             AnyTransport::PointerTypeConst(t) => t.render_into(dest),
             AnyTransport::_PointerTypeMut(t) => render__pointer_type_mut(t, dest),
@@ -38896,7 +38929,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::StringContent(t) => t.render_into(dest),
             AnyTransport::RawStringLiteralContent(t) => t.render_into(dest),
             AnyTransport::FloatLiteral(t) => t.render_into(dest),
-            AnyTransport::OuterBlockDocCommentMarker(t) => t.render_into(dest),
             AnyTransport::InnerBlockDocCommentMarker(t) => t.render_into(dest),
             AnyTransport::LineDocContent(t) => t.render_into(dest),
             AnyTransport::ErrorSentinel(t) => t.render_into(dest),
@@ -39056,6 +39088,7 @@ impl AnyTransport {
             Self::Operator(t) => t.transport_named,
             Self::OrPatternBinary(t) => t.transport_named,
             Self::OrPatternPrefix(t) => t.transport_named,
+            Self::OuterBlockDocCommentMarker(t) => t.transport_named,
             Self::OuterLineDocCommentMarker(t) => t.transport_named,
             Self::PointerTypeConst(t) => t.transport_named,
             Self::_PointerTypeMut(t) => t.transport_named,
@@ -39246,7 +39279,6 @@ impl AnyTransport {
             Self::StringContent(t) => t.transport_named,
             Self::RawStringLiteralContent(t) => t.transport_named,
             Self::FloatLiteral(t) => t.transport_named,
-            Self::OuterBlockDocCommentMarker(t) => t.transport_named,
             Self::InnerBlockDocCommentMarker(t) => t.transport_named,
             Self::LineDocContent(t) => t.transport_named,
             Self::ErrorSentinel(t) => t.transport_named,
@@ -39442,6 +39474,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Operator(data) => transport_to_node_operator(data),
         AnyTransport::OrPatternBinary(data) => transport_to_node_or_pattern_binary(data),
         AnyTransport::OrPatternPrefix(data) => transport_to_node_or_pattern_prefix(data),
+        AnyTransport::OuterBlockDocCommentMarker(data) => transport_to_node_outer_block_doc_comment_marker(data),
         AnyTransport::OuterLineDocCommentMarker(data) => transport_to_node_outer_line_doc_comment_marker(data),
         AnyTransport::PointerTypeConst(data) => transport_to_node_pointer_type_const(data),
         AnyTransport::_PointerTypeMut(data) => transport_to_node__pointer_type_mut(data),
@@ -39657,7 +39690,6 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::StringContent(data) => transport_to_node_string_content(data),
         AnyTransport::RawStringLiteralContent(data) => transport_to_node_raw_string_literal_content(data),
         AnyTransport::FloatLiteral(data) => transport_to_node_float_literal(data),
-        AnyTransport::OuterBlockDocCommentMarker(data) => transport_to_node_outer_block_doc_comment_marker(data),
         AnyTransport::InnerBlockDocCommentMarker(data) => transport_to_node_inner_block_doc_comment_marker(data),
         AnyTransport::LineDocContent(data) => transport_to_node_line_doc_content(data),
         AnyTransport::ErrorSentinel(data) => transport_to_node_error_sentinel(data),
@@ -40740,6 +40772,23 @@ fn transport_to_node_or_pattern_prefix(transport: OrPatternPrefixTransport) -> R
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_outer_block_doc_comment_marker(transport: OuterBlockDocCommentMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(152) /* "_outer_block_doc_comment_marker" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
         trivia_data,
     ))
 }
@@ -45428,23 +45477,6 @@ fn transport_to_node_float_literal(transport: FloatLiteralTransport) -> Result<T
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(151) /* "float_literal" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_handle.map(|v| v as u32),
-        transport.transport_child_index.map(|v| v as u16),
-        None,
-        None,
-        trivia_data,
-    ))
-}
-
-fn transport_to_node_outer_block_doc_comment_marker(transport: OuterBlockDocCommentMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
-    Ok(transport_node_data(
-        TransportKindId(152) /* "_outer_block_doc_comment_marker" */,
         transport.transport_source,
         transport.transport_named,
         true,

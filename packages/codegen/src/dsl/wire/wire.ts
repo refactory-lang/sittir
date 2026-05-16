@@ -42,6 +42,29 @@ import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
 
 // ---------------------------------------------------------------------------
+// ExternalAltDefConfig — sittir-side rule bodies for external scanner symbols
+// ---------------------------------------------------------------------------
+
+/**
+ * A function taking the grammar's `$` proxy and returning a record from
+ * external-symbol-name to a sittir DSL rule body.
+ *
+ * The returned bodies are used by sittir's slot/render/factory pipeline
+ * AS IF they were regular author-written rules. They are stripped from
+ * the grammar that reaches tree-sitter (the external scanner still
+ * produces the symbol). Only `string(...)` bodies are supported in the
+ * MVP; `pattern()`, `optional()`, `choice()`, etc. are deferred.
+ *
+ * @example
+ *   externalAltDef: ($) => ({
+ *     _outer_block_doc_comment_marker: string('!'),
+ *   })
+ */
+export type ExternalAltDefConfig = (
+	$: Record<string, unknown>
+) => Record<string, unknown>;
+
+// ---------------------------------------------------------------------------
 // WireContext + module-level current pointer
 // ---------------------------------------------------------------------------
 
@@ -78,6 +101,13 @@ export interface WireContext {
 	 *  applyGroupOverrides so synthesized kind names include polymorph-
 	 *  ancestor context segments. */
 	readonly polymorphsConfig?: PolymorphsConfig;
+	/** Sittir-side rule bodies for external scanner symbols. Each entry
+	 *  gives sittir's slot/render/factory pipeline a structural body for
+	 *  a symbol produced by the C external scanner. The body is used
+	 *  sittir-side only; when the grammar reaches tree-sitter the entry
+	 *  is stripped (the external scanner still produces the symbol).
+	 *  See: externalAltDef mechanism. */
+	readonly externalAltDef?: ExternalAltDefConfig;
 	/** Name of the rule currently being evaluated, for variant()'s
 	 *  auto-prefix behavior (`variant('eq')` under `assignment` →
 	 *  `_assignment_eq`). Set by the rule-fn wrapper. */
@@ -219,6 +249,7 @@ export function withWireContext<T>(
 		refineForms: new Map(),
 		groups: undefined,
 		polymorphsConfig: undefined,
+		externalAltDef: undefined,
 		currentRuleKind: ruleKind,
 		authoredRuleNames: new Set()
 	};
@@ -364,6 +395,19 @@ export interface WireConfig<Base extends GrammarBase = GrammarBase> {
 	readonly reserved?: Record<string, DollarFn<unknown[]>>;
 	/** Side-channel from `enrich()` — preserved unchanged. */
 	readonly __enrichOverrides__?: Record<string, RuleFn>;
+	/**
+	 * Sittir-side alt rule bodies for external scanner symbols.
+	 * Takes the grammar's `$` proxy and returns a record from external-
+	 * symbol-name to a sittir DSL rule body (MVP: `string(...)` only).
+	 * Bodies enter sittir's slot/render/factory pipeline as regular rules
+	 * and are stripped from the tree-sitter grammar output.
+	 *
+	 * @example
+	 *   externalAltDef: ($) => ({
+	 *     _outer_block_doc_comment_marker: string('!'),
+	 *   })
+	 */
+	readonly externalAltDef?: ExternalAltDefConfig;
 }
 
 export interface WiredOpts {
@@ -410,6 +454,7 @@ export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<
 		refineForms: new Map(),
 		groups: config.groups,
 		polymorphsConfig: config.polymorphs,
+		externalAltDef: config.externalAltDef,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(config.rules))
 	};

@@ -623,7 +623,7 @@ export function blockFrom(input?: T.Block.Loose): ReturnType<typeof F.block> {
 export function blockCommentFrom(input?: T.BlockComment.Loose): ReturnType<typeof F.blockComment> {
   if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.blockComment>;
   return F.blockComment({
-    outer: _resolveOneLeaf<T.OuterBlockDocCommentMarker>(input?.outer, "_outer_block_doc_comment_marker"),
+    outer: _resolveBooleanKeyword(input?.outer),
     inner: _resolveOneLeaf<T.InnerBlockDocCommentMarker>(input?.inner, "_inner_block_doc_comment_marker"),
     doc: _resolveOneBranch<T.BlockCommentContent>(input?.doc, "_block_comment_content"),
   });

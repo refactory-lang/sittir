@@ -476,7 +476,6 @@ const _kindIdByKind = new Map<string, number>([
     ["string_content", TSKindId.StringContent],
     ["raw_string_literal_content", TSKindId.RawStringLiteralContent],
     ["float_literal", TSKindId.FloatLiteral],
-    ["_outer_block_doc_comment_marker", TSKindId.OuterBlockDocCommentMarker],
     ["_inner_block_doc_comment_marker", TSKindId.InnerBlockDocCommentMarker],
     ["_line_doc_content", TSKindId.LineDocContent],
     ["_error_sentinel", TSKindId.ErrorSentinel],
