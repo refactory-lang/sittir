@@ -466,6 +466,7 @@ function wire(config) {
     conflictGroups: [],
     refineForms: /* @__PURE__ */ new Map(),
     groups: config.groups,
+    polymorphsConfig: config.polymorphs,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(config.rules))
   };
