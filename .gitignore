@@ -38,3 +38,24 @@ rust/crates/sittir-*/*.node
 .claude/worktrees/
 tmp-scripts/
 graphify-out/cache/**
+
+# tsc build outputs accidentally landing alongside .ts source. These four
+# packages have ZERO intentionally-tracked .js/.d.ts in src/ (verified
+# 2026-05-15) — pure TS source. (packages/codegen and packages/validator
+# DO track .js/.d.ts intentionally and are NOT covered by these rules.)
+packages/common/src/**/*.js
+packages/common/src/**/*.js.map
+packages/common/src/**/*.d.ts
+packages/common/src/**/*.d.ts.map
+packages/core/src/**/*.js
+packages/core/src/**/*.js.map
+packages/core/src/**/*.d.ts
+packages/core/src/**/*.d.ts.map
+packages/types/src/**/*.js
+packages/types/src/**/*.js.map
+packages/types/src/**/*.d.ts
+packages/types/src/**/*.d.ts.map
+packages/tools/src/**/*.js
+packages/tools/src/**/*.js.map
+packages/tools/src/**/*.d.ts
+packages/tools/src/**/*.d.ts.map
