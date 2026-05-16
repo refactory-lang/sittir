@@ -127,7 +127,75 @@ export const suggestedRules = {
 
 };
 
-// suggestedGroups: {} // (group candidate detection not yet implemented)
+// ---------------------------------------------------------------
+// suggestedGroups — drop entries into your overrides.ts
+// `groups:` block. Each entry lifts a nested sub-rule into
+// a hidden synthesized kind materialized as AssembledGroup.
+// All entries are held — none are auto-applied.
+// ---------------------------------------------------------------
+export const suggestedGroups = {
+  // [held] 1 candidate(s)
+  _suite: {
+    '1': 'block',
+  },
+
+  // [held] 1 candidate(s)
+  argument_list: {
+    '1': 'expression',
+  },
+
+  // [held] 1 candidate(s)
+  comparison_operator: {
+    '1/0': 'operators',
+  },
+
+  // [held] 1 candidate(s)
+  except_clause: {
+    '2/0/0': 'value',
+  },
+
+  // [held] 1 candidate(s)
+  exec_statement: {
+    '2/0': 'expression',
+  },
+
+  // [held] 1 candidate(s)
+  function_definition: {
+    '5/0': 'return_type',
+  },
+
+  // [held] 1 candidate(s)
+  future_import_statement: {
+    '3/1': 'import_list',
+  },
+
+  // [held] 1 candidate(s)
+  import_from_statement: {
+    '3/0/2': 'import_list',
+  },
+
+  // [held] 1 candidate(s)
+  print_statement: {
+    '1/0': 'chevron',
+  },
+
+  // [held] 1 candidate(s)
+  raise_statement: {
+    '2/0': 'cause',
+  },
+
+  // [held] 1 candidate(s)
+  slice: {
+    '3/0': 'expression',
+  },
+
+  // [held] 1 candidate(s)
+  yield: {
+    '1/0': 'expression',
+  },
+
+};
+
 // ---------------------------------------------------------------
 // Raw derivation data — typed arrays for tooling
 // ---------------------------------------------------------------

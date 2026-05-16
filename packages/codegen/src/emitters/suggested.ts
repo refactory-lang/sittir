@@ -525,9 +525,13 @@ export function emitSuggested(config: EmitSuggestedConfig): string {
 
 	// ---------------------------------------------------------------
 	// suggestedGroups — nested-seq candidates for group synthesis
-	// (detection logic pending task #34 — emitting empty block for now)
 	// ---------------------------------------------------------------
-	lines.push('// suggestedGroups: {} // (group candidate detection not yet implemented)');
+	// Use linkedRules (post-Link, pre-Optimize) so the detector sees
+	// the natural grammar shape with nested seqs intact. Fall back to
+	// post-Optimize rules when linkedRules is absent.
+	const groupRules = nodeMap.linkedRules ?? nodeMap.rules ?? {};
+	const groupCandidates = detectGroupCandidates(groupRules);
+	lines.push(emitSuggestedGroupsBlock(groupCandidates));
 
 	// ---------------------------------------------------------------
 	// Raw data exports — typed arrays for programmatic consumption
@@ -665,4 +669,212 @@ function groupInferencesByKind(entries: readonly InferredFieldEntry[]): Map<stri
 		else byKind.set(e.kind, [e]);
 	}
 	return byKind;
+}
+
+// ---------------------------------------------------------------------------
+// Group candidate detection — suggestedGroups block
+// ---------------------------------------------------------------------------
+
+export interface GroupCandidate {
+	/** Parent rule kind whose body contains the nested seq. */
+	kind: string;
+	/** Slash-separated positional path to the seq within the rule body. */
+	path: string;
+	/** Heuristic discriminator guess — first structural member's name, or position-based fallback. */
+	discriminatorGuess: string;
+}
+
+/**
+ * Walk rule bodies looking for nested seqs that could benefit from
+ * group synthesis. Candidates:
+ *   - Live inside a wrapper (not at the top level of the rule body).
+ *   - Have ≥1 structural member (field / symbol / supertype).
+ *   - Are not already a group-lifted symbol ref (source === 'group-lift').
+ */
+export function detectGroupCandidates(rules: Record<string, Rule>): GroupCandidate[] {
+	const out: GroupCandidate[] = [];
+	for (const [kind, body] of Object.entries(rules)) {
+		walkBodyForGroups(body, [], { kind, isTopLevel: true }, out);
+	}
+	return out;
+}
+
+function walkBodyForGroups(
+	rule: Rule,
+	path: readonly number[],
+	ctx: { kind: string; isTopLevel: boolean },
+	out: GroupCandidate[]
+): void {
+	// Skip already-lifted symbol refs.
+	if (rule.type === 'symbol' && (rule as { source?: string }).source === 'group-lift') return;
+
+	// Case 1: A cardinality wrapper (optional/repeat/repeat1) whose content is a
+	// structural seq — suggest the wrapper's path. This way the user's groups
+	// entry points to the optional/repeat, and applyGroupOverrides's liftRule
+	// preserves the wrapper (lifts only the inner seq body) as designed.
+	if (
+		(rule.type === 'optional' || rule.type === 'repeat' || rule.type === 'repeat1') &&
+		!ctx.isTopLevel
+	) {
+		const inner = (rule as { content: Rule }).content;
+		if (inner.type === 'seq' && hasGroupableStructure(inner)) {
+			out.push({
+				kind: ctx.kind,
+				path: path.join('/'),
+				discriminatorGuess: guessGroupDiscriminator(inner, path)
+			});
+			// Don't descend further — the inner seq is captured by this entry.
+			return;
+		}
+	}
+
+	// Case 2: A non-top-level seq with structural members directly nested
+	// inside a choice, seq, or field (no cardinality wrapper) — suggest the
+	// seq's path directly.
+	if (rule.type === 'seq' && !ctx.isTopLevel && hasGroupableStructure(rule)) {
+		out.push({
+			kind: ctx.kind,
+			path: path.join('/'),
+			discriminatorGuess: guessGroupDiscriminator(rule, path)
+		});
+		// Don't descend into it — nested-seq-inside-seq candidates would be
+		// sub-candidates of this one, and nested group lifts are unsupported.
+		return;
+	}
+
+	const childCtx = { ...ctx, isTopLevel: false };
+	switch (rule.type) {
+		case 'seq':
+		case 'choice':
+			for (let i = 0; i < rule.members.length; i++) {
+				walkBodyForGroups(rule.members[i]!, [...path, i], childCtx, out);
+			}
+			break;
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'field':
+		case 'token':
+		case 'alias':
+		case 'variant':
+		case 'clause':
+			// For non-cardinality-with-structural-seq cases, descend normally.
+			walkBodyForGroups((rule as { content: Rule }).content, [...path, 0], childCtx, out);
+			break;
+		case 'group':
+			// A top-level `group` rule wraps the rule body transparently — treat
+			// the group's content as still top-level so the body seq isn't
+			// incorrectly flagged as a nested-seq candidate. At non-top-level a
+			// group wrapper is meaningful (it signals grouping) so use childCtx.
+			walkBodyForGroups(
+				(rule as { content: Rule }).content,
+				[...path, 0],
+				ctx.isTopLevel ? ctx : childCtx,
+				out
+			);
+			break;
+		// string / blank / pattern / supertype / symbol — no children to walk
+	}
+}
+
+function hasGroupableStructure(rule: Rule): boolean {
+	switch (rule.type) {
+		case 'field':
+		case 'symbol':
+		case 'supertype':
+			return true;
+		case 'seq':
+		case 'choice':
+			return rule.members.some(hasGroupableStructure);
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'token':
+		case 'alias':
+		case 'variant':
+		case 'clause':
+		case 'group':
+			return hasGroupableStructure((rule as { content: Rule }).content);
+		default:
+			return false;
+	}
+}
+
+const IDENTIFIER_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
+
+function guessGroupDiscriminator(rule: Rule, path: readonly number[]): string {
+	const peel = (r: Rule): string | null => {
+		switch (r.type) {
+			case 'symbol':
+			case 'supertype':
+				return r.name.replace(/^_+/, '').replace(/^\$\./, '');
+			case 'field':
+				return r.name;
+			case 'seq':
+			case 'choice':
+				for (const m of r.members) {
+					const n = peel(m);
+					if (n) return n;
+				}
+				return null;
+			case 'optional':
+			case 'repeat':
+			case 'repeat1':
+			case 'token':
+			case 'alias':
+			case 'variant':
+			case 'clause':
+			case 'group':
+				return peel((r as { content: Rule }).content);
+			default:
+				return null;
+		}
+	};
+	const guess = peel(rule);
+	if (guess && IDENTIFIER_RE.test(guess)) return guess;
+	// Position-based fallback: 'g' + underscore-joined path (e.g. g1_1)
+	return 'g' + path.join('_');
+}
+
+/**
+ * Format the `suggestedGroups` export block. All entries are held —
+ * the author copies them into the overrides.ts `groups:` block to activate.
+ */
+export function emitSuggestedGroupsBlock(candidates: readonly GroupCandidate[]): string {
+	const out: string[] = [];
+	out.push('// ---------------------------------------------------------------');
+	out.push('// suggestedGroups — drop entries into your overrides.ts');
+	out.push('// `groups:` block. Each entry lifts a nested sub-rule into');
+	out.push('// a hidden synthesized kind materialized as AssembledGroup.');
+	out.push('// All entries are held — none are auto-applied.');
+	out.push('// ---------------------------------------------------------------');
+	out.push('export const suggestedGroups = {');
+
+	if (candidates.length === 0) {
+		out.push('};');
+		out.push('');
+		return out.join('\n');
+	}
+
+	// Group candidates by parent kind for readability.
+	const byKind: Record<string, GroupCandidate[]> = {};
+	for (const c of candidates) {
+		(byKind[c.kind] ??= []).push(c);
+	}
+
+	const quoteKey = (k: string): string => (/^[a-zA-Z_$][\w$]*$/.test(k) ? k : JSON.stringify(k));
+
+	for (const [kind, list] of Object.entries(byKind)) {
+		out.push(`  // [held] ${list.length} candidate(s)`);
+		out.push(`  ${quoteKey(kind)}: {`);
+		for (const c of list) {
+			out.push(`    '${c.path}': '${c.discriminatorGuess}',`);
+		}
+		out.push('  },');
+		out.push('');
+	}
+
+	out.push('};');
+	out.push('');
+	return out.join('\n');
 }

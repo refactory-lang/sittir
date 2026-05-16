@@ -181,7 +181,122 @@ export const suggestedRules = {
 
 };
 
-// suggestedGroups: {} // (group candidate detection not yet implemented)
+// ---------------------------------------------------------------
+// suggestedGroups — drop entries into your overrides.ts
+// `groups:` block. Each entry lifts a nested sub-rule into
+// a hidden synthesized kind materialized as AssembledGroup.
+// All entries are held — none are auto-applied.
+// ---------------------------------------------------------------
+export const suggestedGroups = {
+  // [held] 1 candidate(s)
+  _import_clause_default_import: {
+    '1': 'namespace_import',
+  },
+
+  // [held] 1 candidate(s)
+  _jsx_start_opening_element: {
+    '0/1': 'name',
+  },
+
+  // [held] 2 candidate(s)
+  _jsx_string: {
+    '0': 'string_fragment',
+    '1': 'string_fragment',
+  },
+
+  // [held] 25 candidate(s)
+  binary_expression: {
+    '0/0': 'left',
+    '0/1': 'left',
+    '0/2': 'left',
+    '0/3': 'left',
+    '0/4': 'left',
+    '0/5': 'left',
+    '0/6': 'left',
+    '0/7': 'left',
+    '0/8': 'left',
+    '0/9': 'left',
+    '0/10': 'left',
+    '0/11': 'left',
+    '0/12': 'left',
+    '0/13': 'left',
+    '0/14': 'left',
+    '0/15': 'left',
+    '0/16': 'left',
+    '0/17': 'left',
+    '0/18': 'left',
+    '0/19': 'left',
+    '0/20': 'left',
+    '0/21': 'left',
+    '0/22': 'left',
+    '0/23': 'left',
+    '0/24': 'left',
+  },
+
+  // [held] 1 candidate(s)
+  catch_clause: {
+    '1/0': 'parameter',
+  },
+
+  // [held] 1 candidate(s)
+  export_specifier: {
+    '1': 'name',
+  },
+
+  // [held] 2 candidate(s)
+  for_statement: {
+    '2/1': 'initializer',
+    '3/0/0': 'expressions',
+  },
+
+  // [held] 1 candidate(s)
+  import_statement: {
+    '2/0/0': 'import_clause',
+  },
+
+  // [held] 1 candidate(s)
+  infer_type: {
+    '2/0/0': 'type',
+  },
+
+  // [held] 1 candidate(s)
+  jsx_attribute: {
+    '1': 'jsx_attribute_value',
+  },
+
+  // [held] 1 candidate(s)
+  mapped_type_clause: {
+    '3/0': 'alias',
+  },
+
+  // [held] 1 candidate(s)
+  object: {
+    '1': 'pair',
+  },
+
+  // [held] 1 candidate(s)
+  object_pattern: {
+    '1': 'pair_pattern',
+  },
+
+  // [held] 1 candidate(s)
+  object_type: {
+    '1/0': 'export_statement',
+  },
+
+  // [held] 2 candidate(s)
+  variable_declarator: {
+    '0': 'name',
+    '1': 'name',
+  },
+
+  // [held] 1 candidate(s)
+  yield_expression: {
+    '1/0/0': 'expression',
+  },
+
+};
+
 // ---------------------------------------------------------------
 // Raw derivation data — typed arrays for tooling
 // ---------------------------------------------------------------

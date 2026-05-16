@@ -168,7 +168,213 @@ export const suggestedRules = {
 
 };
 
-// suggestedGroups: {} // (group candidate detection not yet implemented)
+// ---------------------------------------------------------------
+// suggestedGroups — drop entries into your overrides.ts
+// `groups:` block. Each entry lifts a nested sub-rule into
+// a hidden synthesized kind materialized as AssembledGroup.
+// All entries are held — none are auto-applied.
+// ---------------------------------------------------------------
+export const suggestedGroups = {
+  // [held] 1 candidate(s)
+  _array_expression_list: {
+    '0/2': 'attribute_item',
+  },
+
+  // [held] 1 candidate(s)
+  _array_expression_semi: {
+    '0/2': 'elements',
+  },
+
+  // [held] 1 candidate(s)
+  _closure_expression_block: {
+    '0/0/0': 'return_type',
+  },
+
+  // [held] 5 candidate(s)
+  _let_chain: {
+    '0': 'let_chain',
+    '1': 'let_chain',
+    '2': 'let_condition',
+    '3': 'let_condition',
+    '4': 'expression',
+  },
+
+  // [held] 1 candidate(s)
+  _macro_definition_brace: {
+    '1': 'macro_rule',
+  },
+
+  // [held] 1 candidate(s)
+  _macro_definition_bracket: {
+    '1': 'macro_rule',
+  },
+
+  // [held] 1 candidate(s)
+  _macro_definition_paren: {
+    '1': 'macro_rule',
+  },
+
+  // [held] 1 candidate(s)
+  _visibility_modifier_pub: {
+    '0/1': 'self',
+  },
+
+  // [held] 1 candidate(s)
+  abstract_type: {
+    '1/0': 'type_parameters',
+  },
+
+  // [held] 1 candidate(s)
+  arguments: {
+    '1/0/0': 'attribute_item',
+  },
+
+  // [held] 1 candidate(s)
+  array_type: {
+    '2/0': 'length',
+  },
+
+  // [held] 1 candidate(s)
+  attribute: {
+    '1/0/0': 'value',
+  },
+
+  // [held] 1 candidate(s)
+  block: {
+    '0/0': 'label',
+  },
+
+  // [held] 1 candidate(s)
+  block_comment: {
+    '1/0/0': 'outer',
+  },
+
+  // [held] 1 candidate(s)
+  const_item: {
+    '5/0': 'value',
+  },
+
+  // [held] 1 candidate(s)
+  const_parameter: {
+    '4/0': 'value',
+  },
+
+  // [held] 1 candidate(s)
+  enum_variant: {
+    '3/0': 'value',
+  },
+
+  // [held] 1 candidate(s)
+  enum_variant_list: {
+    '1': 'attribute_item',
+  },
+
+  // [held] 1 candidate(s)
+  extern_crate_declaration: {
+    '4/0': 'alias',
+  },
+
+  // [held] 1 candidate(s)
+  field_declaration_list: {
+    '1': 'attribute_item',
+  },
+
+  // [held] 1 candidate(s)
+  for_expression: {
+    '0/0': 'label',
+  },
+
+  // [held] 1 candidate(s)
+  function_item: {
+    '6/0': 'return_type',
+  },
+
+  // [held] 1 candidate(s)
+  function_signature_item: {
+    '6/0': 'return_type',
+  },
+
+  // [held] 3 candidate(s)
+  function_type: {
+    '1/0': 'function_type_trait_form',
+    '1/1': 'function_type_fn_form',
+    '2/0': 'return_type',
+  },
+
+  // [held] 3 candidate(s)
+  let_declaration: {
+    '3/0': 'type',
+    '4/0': 'value',
+    '5/0': 'alternative',
+  },
+
+  // [held] 1 candidate(s)
+  loop_expression: {
+    '0/0': 'label',
+  },
+
+  // [held] 1 candidate(s)
+  match_block: {
+    '1': 'match_arm',
+  },
+
+  // [held] 1 candidate(s)
+  match_pattern: {
+    '1/0': 'condition',
+  },
+
+  // [held] 1 candidate(s)
+  ordered_field_declaration_list: {
+    '1/0': 'attribute_item',
+  },
+
+  // [held] 1 candidate(s)
+  parameters: {
+    '1': 'attribute_item',
+  },
+
+  // [held] 1 candidate(s)
+  static_item: {
+    '7/0': 'value',
+  },
+
+  // [held] 1 candidate(s)
+  tuple_expression: {
+    '2': 'elements',
+  },
+
+  // [held] 1 candidate(s)
+  type_arguments: {
+    '1': 'type',
+  },
+
+  // [held] 1 candidate(s)
+  type_parameter: {
+    '2/0': 'default_type',
+  },
+
+  // [held] 1 candidate(s)
+  type_parameters: {
+    '1/0/0': 'attribute_item',
+  },
+
+  // [held] 1 candidate(s)
+  use_wildcard: {
+    '0/0': 'path',
+  },
+
+  // [held] 1 candidate(s)
+  variadic_parameter: {
+    '1/0': 'pattern',
+  },
+
+  // [held] 1 candidate(s)
+  while_expression: {
+    '0/0': 'label',
+  },
+
+};
+
 // ---------------------------------------------------------------
 // Raw derivation data — typed arrays for tooling
 // ---------------------------------------------------------------
