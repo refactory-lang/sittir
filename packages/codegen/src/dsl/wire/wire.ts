@@ -70,6 +70,10 @@ export interface WireContext {
 	 *  tree itself is unchanged by refine(); tree-sitter parses with
 	 *  the original shape. */
 	readonly refineForms: Map<string, RefineForm[]>;
+	/** Per-kind group-lift map from config. Link reads this to synthesize
+	 *  nested sub-rules into hidden AssembledGroup kinds. See:
+	 *  docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md */
+	readonly groups?: GroupsConfig;
 	/** Name of the rule currently being evaluated, for variant()'s
 	 *  auto-prefix behavior (`variant('eq')` under `assignment` →
 	 *  `_assignment_eq`). Set by the rule-fn wrapper. */
@@ -209,6 +213,7 @@ export function withWireContext<T>(
 		polymorphVariants: [],
 		conflictGroups: [],
 		refineForms: new Map(),
+		groups: undefined,
 		currentRuleKind: ruleKind,
 		authoredRuleNames: new Set()
 	};
@@ -274,6 +279,24 @@ export type PolymorphsConfig<Base extends GrammarBase = GrammarBase> = Partial<
 >;
 
 /**
+ * Per-kind group-lift map. Each entry's key is the parent kind whose
+ * rule body contains the sub-rule to lift; the inner map is
+ * `path → discriminator`, where the path is the same slash-separated
+ * positional path used by `polymorphs:` and `transforms:` and the
+ * discriminator is a non-empty identifier that becomes the leaf
+ * segment of the synthesized hidden kind name.
+ *
+ * The synthesized kind name follows polymorph-ancestor context: each
+ * path segment that ALSO appears in `polymorphs:` for the same kind
+ * contributes its variant name to the synthesized kind. Non-polymorph
+ * segments don't contribute. See:
+ *   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+ */
+export type GroupsConfig<Base extends GrammarBase = GrammarBase> = Partial<
+	Record<BaseKind<Base>, Record<string, string>>
+>;
+
+/**
  * Declarative transforms map: each rule kind → a patch-map (or array
  * of patch-maps for multi-patchset rules). Values inside each patch-
  * map are DSL placeholders (`field`, `variant`, `alias`) or native
@@ -319,6 +342,7 @@ export interface WireConfig<Base extends GrammarBase = GrammarBase> {
 	readonly name?: string;
 	readonly rules: Partial<Record<BaseKind<Base>, RuleFn>> & Record<string, RuleFn>;
 	readonly polymorphs?: PolymorphsConfig<Base>;
+	readonly groups?: GroupsConfig<Base>;
 	readonly transforms?: TransformsConfig<Base>;
 	readonly conflicts?: ConflictsFn;
 	readonly externals?: DollarFn<unknown[]>;
@@ -374,6 +398,7 @@ export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<
 		polymorphVariants: [],
 		conflictGroups: [],
 		refineForms: new Map(),
+		groups: config.groups,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(config.rules))
 	};
