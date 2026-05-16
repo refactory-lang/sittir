@@ -111,6 +111,16 @@ const config: WireConfig<RustGrammar> = {
 			'1': 'pub'
 		}
 	},
+	groups: {
+		// visibility_modifier — lift the inner optional(seq('(', choice, ')'))
+		// into a synthesized hidden kind (_visibility_modifier_pub_parens) so
+		// the polymorph variant's render template naturally references the
+		// group via the children slot. Closes bug #3 (`pub()` → `pub`).
+		// See: docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+		_visibility_modifier_pub: {
+			'1': 'parens'
+		}
+	},
 	transforms: {
 		// abstract_type: 1 field(s)
 		abstract_type: {},

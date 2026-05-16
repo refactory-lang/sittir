@@ -295,6 +295,7 @@ pub enum AnyTransport {
     InnerBlockDocCommentMarker(InnerBlockDocCommentMarkerTransport),
     LineDocContent(LineDocContentTransport),
     ErrorSentinel(ErrorSentinelTransport),
+    VisibilityModifierPubParens(VisibilityModifierPubParensTransport),
     Bracket(BracketTransport),
     CloseBracket(CloseBracketTransport),
     Semi(SemiTransport),
@@ -2439,6 +2440,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = ErrorSentinelTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ErrorSentinel(value));
+            }
+            if let Ok(value) = VisibilityModifierPubParensTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::VisibilityModifierPubParens(value));
             }
             if let Ok(value) = BracketTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Bracket(value));
@@ -8376,97 +8380,6 @@ impl RenderableTransport for RangePatternPrefixRightTransportSlot {
             RangePatternPrefixRightTransportSlot::Crate(inner) => render_crate(inner, dest),
             RangePatternPrefixRightTransportSlot::ScopedIdentifier(inner) => render_scoped_identifier(inner.as_ref(), dest),
             RangePatternPrefixRightTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum VisibilityModifierPubChildTransportSlot {
-    Self_(Self_Transport),
-    Super(SuperTransport),
-    Crate(CrateTransport),
-    VisibilityModifierInPath(Box<VisibilityModifierInPathTransport>),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierPubChildTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-            Some(kind_id)
-        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-            obj.get::<u16>("$type")?
-        } else {
-            None
-        };
-        if let Some(kind_id) = kind_id {
-            match kind_id {
-                139 => return Ok(Self::Self_(
-                    Self_Transport::from_napi_value(env, napi_val)?
-                )),
-                140 => return Ok(Self::Super(
-                    SuperTransport::from_napi_value(env, napi_val)?
-                )),
-                141 => return Ok(Self::Crate(
-                    CrateTransport::from_napi_value(env, napi_val)?
-                )),
-                350 => return Ok(Self::VisibilityModifierInPath(Box::new(
-                    VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
-                ))),
-                other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in VisibilityModifierPubChildTransportSlot",
-                ))),
-            }
-        }
-        if String::from_napi_value(env, napi_val).is_ok() {
-            if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
-                return Ok(Self::Self_(value));
-            }
-            if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::Super(value));
-            }
-            if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::Crate(value));
-            }
-            if let Ok(value) = VisibilityModifierInPathTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::VisibilityModifierInPath(Box::new(value)));
-            }
-        }
-        Err(::napi::Error::from_reason("$type property missing in VisibilityModifierPubChildTransportSlot"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for VisibilityModifierPubChildTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("VisibilityModifierPubChildTransportSlot is receive-only"))
-    }
-}
-
-fn visibility_modifier_pub_child_transport_slot_to_any(t: VisibilityModifierPubChildTransportSlot) -> AnyTransport {
-    match t {
-        VisibilityModifierPubChildTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
-        VisibilityModifierPubChildTransportSlot::Super(inner) => AnyTransport::Super(inner),
-        VisibilityModifierPubChildTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
-        VisibilityModifierPubChildTransportSlot::VisibilityModifierInPath(inner) => AnyTransport::VisibilityModifierInPath(*inner),
-    }
-}
-
-impl RenderableTransport for VisibilityModifierPubChildTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            VisibilityModifierPubChildTransportSlot::Self_(inner) => render_self(inner, dest),
-            VisibilityModifierPubChildTransportSlot::Super(inner) => render_super(inner, dest),
-            VisibilityModifierPubChildTransportSlot::Crate(inner) => render_crate(inner, dest),
-            VisibilityModifierPubChildTransportSlot::VisibilityModifierInPath(inner) => render_visibility_modifier_in_path(inner.as_ref(), dest),
         }
     }
 }
@@ -16506,6 +16419,97 @@ impl RenderableTransport for WherePredicateLeftTransportSlot {
     }
 }
 
+#[derive(Debug, Clone)]
+pub enum VisibilityModifierPubParensChildTransportSlot {
+    Self_(Self_Transport),
+    Super(SuperTransport),
+    Crate(CrateTransport),
+    VisibilityModifierInPath(Box<VisibilityModifierInPathTransport>),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierPubParensChildTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            Some(kind_id)
+        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+            obj.get::<u16>("$type")?
+        } else {
+            None
+        };
+        if let Some(kind_id) = kind_id {
+            match kind_id {
+                139 => return Ok(Self::Self_(
+                    Self_Transport::from_napi_value(env, napi_val)?
+                )),
+                140 => return Ok(Self::Super(
+                    SuperTransport::from_napi_value(env, napi_val)?
+                )),
+                141 => return Ok(Self::Crate(
+                    CrateTransport::from_napi_value(env, napi_val)?
+                )),
+                350 => return Ok(Self::VisibilityModifierInPath(Box::new(
+                    VisibilityModifierInPathTransport::from_napi_value(env, napi_val)?
+                ))),
+                other => return Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in VisibilityModifierPubParensChildTransportSlot",
+                ))),
+            }
+        }
+        if String::from_napi_value(env, napi_val).is_ok() {
+            if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                return Ok(Self::Self_(value));
+            }
+            if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::Super(value));
+            }
+            if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::Crate(value));
+            }
+            if let Ok(value) = VisibilityModifierInPathTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::VisibilityModifierInPath(Box::new(value)));
+            }
+        }
+        Err(::napi::Error::from_reason("$type property missing in VisibilityModifierPubParensChildTransportSlot"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for VisibilityModifierPubParensChildTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("VisibilityModifierPubParensChildTransportSlot is receive-only"))
+    }
+}
+
+fn visibility_modifier_pub_parens_child_transport_slot_to_any(t: VisibilityModifierPubParensChildTransportSlot) -> AnyTransport {
+    match t {
+        VisibilityModifierPubParensChildTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
+        VisibilityModifierPubParensChildTransportSlot::Super(inner) => AnyTransport::Super(inner),
+        VisibilityModifierPubParensChildTransportSlot::Crate(inner) => AnyTransport::Crate(inner),
+        VisibilityModifierPubParensChildTransportSlot::VisibilityModifierInPath(inner) => AnyTransport::VisibilityModifierInPath(*inner),
+    }
+}
+
+impl RenderableTransport for VisibilityModifierPubParensChildTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            VisibilityModifierPubParensChildTransportSlot::Self_(inner) => render_self(inner, dest),
+            VisibilityModifierPubParensChildTransportSlot::Super(inner) => render_super(inner, dest),
+            VisibilityModifierPubParensChildTransportSlot::Crate(inner) => render_crate(inner, dest),
+            VisibilityModifierPubParensChildTransportSlot::VisibilityModifierInPath(inner) => render_visibility_modifier_in_path(inner.as_ref(), dest),
+        }
+    }
+}
+
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RangeExpressionBinaryOperatorEnum {
@@ -21461,7 +21465,7 @@ pub struct VisibilityModifierPubTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pub"))]
     pub pub_: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Option<VisibilityModifierPubChildTransportSlot>,
+    pub children: Option<VisibilityModifierPubParensTransport>,
 }
 
 impl RenderableTransport for VisibilityModifierPubTransport {
@@ -28802,6 +28806,36 @@ impl ::napi::bindgen_prelude::ToNapiValue for ErrorSentinelTransport {
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct VisibilityModifierPubParensTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: VisibilityModifierPubParensChildTransportSlot,
+}
+
+impl RenderableTransport for VisibilityModifierPubParensTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_visibility_modifier_pub_parens(self, dest))
     }
 }
 
@@ -37863,6 +37897,13 @@ fn render_error_sentinel(t: &ErrorSentinelTransport, dest: &mut dyn ::std::fmt::
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render_visibility_modifier_pub_parens(node: &VisibilityModifierPubParensTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = VisibilityModifierPubParensTemplate {
+        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+    };
+    template.render_into(dest)
+}
+
 fn render_bracket(t: &BracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -38851,6 +38892,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::InnerBlockDocCommentMarker(t) => t.render_into(dest),
             AnyTransport::LineDocContent(t) => t.render_into(dest),
             AnyTransport::ErrorSentinel(t) => t.render_into(dest),
+            AnyTransport::VisibilityModifierPubParens(t) => render_visibility_modifier_pub_parens(t, dest),
             AnyTransport::Bracket(t) => t.render_into(dest),
             AnyTransport::CloseBracket(t) => t.render_into(dest),
             AnyTransport::Semi(t) => t.render_into(dest),
@@ -39200,6 +39242,7 @@ impl AnyTransport {
             Self::InnerBlockDocCommentMarker(t) => t.transport_named,
             Self::LineDocContent(t) => t.transport_named,
             Self::ErrorSentinel(t) => t.transport_named,
+            Self::VisibilityModifierPubParens(t) => t.transport_named,
             Self::Bracket(t) => t.transport_named,
             Self::CloseBracket(t) => t.transport_named,
             Self::Semi(t) => t.transport_named,
@@ -39610,6 +39653,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::InnerBlockDocCommentMarker(data) => transport_to_node_inner_block_doc_comment_marker(data),
         AnyTransport::LineDocContent(data) => transport_to_node_line_doc_content(data),
         AnyTransport::ErrorSentinel(data) => transport_to_node_error_sentinel(data),
+        AnyTransport::VisibilityModifierPubParens(data) => transport_to_node_visibility_modifier_pub_parens(data),
         AnyTransport::Bracket(data) => transport_to_node_bracket(data),
         AnyTransport::CloseBracket(data) => transport_to_node_close_bracket(data),
         AnyTransport::Semi(data) => transport_to_node_semi(data),
@@ -41276,7 +41320,7 @@ fn transport_to_node_visibility_modifier_pub(transport: VisibilityModifierPubTra
     fields.insert("pub".to_string(), transport_field_value(*transport.pub_)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = match transport.children {
-        Some(c) => Some(transport_children(vec![visibility_modifier_pub_child_transport_slot_to_any(c)])?),
+        Some(c) => Some(transport_children(vec![AnyTransport::VisibilityModifierPubParens(c)])?),
         None => None,
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -45453,6 +45497,26 @@ fn transport_to_node_error_sentinel(transport: ErrorSentinelTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_visibility_modifier_pub_parens(transport: VisibilityModifierPubParensTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(vec![visibility_modifier_pub_parens_child_transport_slot_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_visibility_modifier_pub_parens" — no parser symbol */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
         trivia_data,
     ))
 }

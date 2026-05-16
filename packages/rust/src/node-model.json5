@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 364,
+  "nodeCount": 365,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -3538,8 +3538,8 @@
       ],
       "children": [
         {
-          "name": "self",
-          "propertyName": "self",
+          "name": "visibility_modifier_pub_parens",
+          "propertyName": "visibilityModifierPubParens",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -3547,24 +3547,51 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
+              "name": "_visibility_modifier_pub_parens",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_visibility_modifier_pub_parens",
+      "modelType": "group",
+      "typeName": "VisibilityModifierPubParens",
+      "factoryName": "_visibilityModifierPubParens",
+      "irKey": "visibilityModifierPubParens",
+      "hidden": false,
+      "name": "_visibility_modifier_pub_parens",
+      "fields": [],
+      "children": [
+        {
+          "name": "self",
+          "propertyName": "self",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "self",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "super",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "crate",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_visibility_modifier_in_path",
               "unresolved": true
             }

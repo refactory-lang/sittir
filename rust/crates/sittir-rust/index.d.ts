@@ -2443,6 +2443,17 @@ export interface VisibilityModifierInPathTransport {
   '$children': PathTransport
 }
 
+export interface VisibilityModifierPubParensTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  '$children': VisibilityModifierPubParensChildTransportSlot
+}
+
 export interface VisibilityModifierPubTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2452,7 +2463,7 @@ export interface VisibilityModifierPubTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _pub: Box<AnyTransport>
-  '$children'?: VisibilityModifierPubChildTransportSlot
+  '$children'?: VisibilityModifierPubParensTransport
 }
 
 export interface VisibilityModifierTransport {

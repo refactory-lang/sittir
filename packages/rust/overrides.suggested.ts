@@ -215,11 +215,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  _visibility_modifier_pub: {
-    '0/1': 'self',
-  },
-
-  // [held] 1 candidate(s)
   abstract_type: {
     '1/0': 'type_parameters',
   },

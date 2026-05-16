@@ -249,6 +249,7 @@
     "_outer_block_doc_comment_marker": "text",
     "_inner_block_doc_comment_marker": "text",
     "_line_doc_content": "text",
+    "_visibility_modifier_pub_parens": "config",
     "async": "text",
     "_": "text",
     "static": "text",
@@ -3962,6 +3963,15 @@
         "unnamed": true,
         "slotCount": 1,
         "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_visibility_modifier_pub_parens": {
+      "children": {
+        "unnamed": true,
+        "slotCount": 1,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }

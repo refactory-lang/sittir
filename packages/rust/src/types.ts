@@ -290,6 +290,7 @@ export const enum SyntaxKind {
   WherePredicate = "where_predicate",
   WhileExpression = "while_expression",
   YieldExpression = "yield_expression",
+  VisibilityModifierPubParens = "_visibility_modifier_pub_parens",
   RangeExpressionBinaryOperator = "__range_expression_binary_operator",
   ClosureExpressionAsyncMarker = "_closure_expression_async_marker",
   ClosureExpressionStaticMarker = "_closure_expression_static_marker",
@@ -2401,7 +2402,7 @@ export interface VisibilityModifierPub {
     readonly pub: KindEnum<"pub", TSKindId.Pub>;
   };
   pub(): number;
-  readonly $children?: Self | Super | Crate | VisibilityModifierInPath;
+  readonly $children?: VisibilityModifierPubParens;
 }
 
 export interface AbstractType {
@@ -4022,6 +4023,11 @@ export interface YieldExpression {
   readonly $children?: Expression;
 }
 
+export interface VisibilityModifierPubParens {
+  readonly $type: "_visibility_modifier_pub_parens";
+  readonly $children: Self | Super | Crate | VisibilityModifierInPath;
+}
+
 
 // Leaf node types
 export type RangeExpressionBinaryOperator = Terminal<TSKindId.DotDot | TSKindId.DotDotDot | TSKindId.DotDotEq, ".." | "..." | "..=">;
@@ -4320,6 +4326,7 @@ export interface WhereClauseTree extends TreeNode<'where_clause'> {}
 export interface WherePredicateTree extends TreeNode<'where_predicate'> {}
 export interface WhileExpressionTree extends TreeNode<'while_expression'> {}
 export interface YieldExpressionTree extends TreeNode<'yield_expression'> {}
+export interface VisibilityModifierPubParensTree extends AnyTreeNode { readonly type: "_visibility_modifier_pub_parens"; }
 export interface RangeExpressionBinaryOperatorTree extends AnyTreeNode { readonly type: "__range_expression_binary_operator"; }
 export interface CompoundAssignmentExprOperatorTree extends AnyTreeNode { readonly type: "_compound_assignment_expr_operator"; }
 export interface FieldIdentifierTree extends AnyTreeNode { readonly type: "_field_identifier"; }
@@ -5017,6 +5024,7 @@ export type RustNode =
   | WherePredicate
   | WhileExpression
   | YieldExpression
+  | VisibilityModifierPubParens
 ;
 
 export interface KindMap {
@@ -5228,6 +5236,7 @@ export interface KindMap {
   'where_predicate': WherePredicate;
   'while_expression': WhileExpression;
   'yield_expression': YieldExpression;
+  '_visibility_modifier_pub_parens': VisibilityModifierPubParens;
   '__range_expression_binary_operator': RangeExpressionBinaryOperator;
   '_compound_assignment_expr_operator': CompoundAssignmentExprOperator;
   '_field_identifier': FieldIdentifier;
@@ -5497,6 +5506,7 @@ export interface WhereClauseNs extends NodeNs<WhereClause, LeafScalarMap, LeafSt
 export interface WherePredicateNs extends NodeNs<WherePredicate, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WhileExpressionNs extends NodeNs<WhileExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface YieldExpressionNs extends NodeNs<YieldExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface VisibilityModifierPubParensNs extends NodeNs<VisibilityModifierPubParens, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
 export interface NamespaceMap {
   '_array_expression_list': ArrayExpressionListNs;
@@ -5707,6 +5717,7 @@ export interface NamespaceMap {
   'where_predicate': WherePredicateNs;
   'while_expression': WhileExpressionNs;
   'yield_expression': YieldExpressionNs;
+  '_visibility_modifier_pub_parens': VisibilityModifierPubParensNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -7171,4 +7182,11 @@ export namespace YieldExpression {
   export type Loose = LooseFor<'yield_expression'>;
   export type Tree = TreeFor<'yield_expression'>;
   export type Kind = 'yield_expression';
+}
+export namespace VisibilityModifierPubParens {
+  export type Config = ConfigFor<'_visibility_modifier_pub_parens'>;
+  export type Fluent = FluentFor<'_visibility_modifier_pub_parens'>;
+  export type Loose = LooseFor<'_visibility_modifier_pub_parens'>;
+  export type Tree = TreeFor<'_visibility_modifier_pub_parens'>;
+  export type Kind = '_visibility_modifier_pub_parens';
 }

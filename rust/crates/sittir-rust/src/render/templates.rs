@@ -365,6 +365,12 @@ pub struct VisibilityModifierInPathTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_visibility_modifier_pub_parens.jinja", escape = "none")]
+pub struct VisibilityModifierPubParensTemplate<'a> {
+    pub children: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_visibility_modifier_pub.jinja", escape = "none")]
 pub struct VisibilityModifierPubTemplate<'a> {
     pub children: OptionalNonterminalView<'a>,

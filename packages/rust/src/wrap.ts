@@ -1065,13 +1065,13 @@ export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: T
     ...data,
     $type: TSKindId.VisibilityModifierPub as const,
     _pub: projectKindEnumStorage(normalizeSingularWrapSlot(data._pub, "pub", true, data.$type)),
-    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["self","super","crate","_visibility_modifier_in_path"]), "children", false, data.$type),
+    $children: normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["_visibility_modifier_pub_parens"]), "children", false, data.$type),
 
     pub() { return this._pub; },
-    children() { return drillIn<(T.Self | T.Super | T.Crate | T.VisibilityModifierInPath) | undefined>(this.$children, tree); },
+    children() { return drillIn<T.VisibilityModifierPubParens | undefined>(this.$children, tree); },
     $with: {
       pub: (v: NonNullable<T.VisibilityModifierPub['_pub']>) => wrapVisibilityModifierPub({ ...data, _pub: v }, tree),
-      children: (item: (T.Self | T.Super | T.Crate | T.VisibilityModifierInPath)) => wrapVisibilityModifierPub({ ...data, $children: item }, tree),
+      children: (item: T.VisibilityModifierPubParens) => wrapVisibilityModifierPub({ ...data, $children: item }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -4087,6 +4087,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'use_clause': '_use_clause',
   'visibility_modifier_in_path': '_visibility_modifier_in_path',
   'visibility_modifier_pub': '_visibility_modifier_pub',
+  'visibility_modifier_pub_parens': '_visibility_modifier_pub_parens',
 };
 
 /** Wrap a NodeData into its lazy read-only view. */

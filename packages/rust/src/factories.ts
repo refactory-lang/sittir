@@ -742,7 +742,7 @@ export function _visibilityModifierPub(config: Partial<T.VisibilityModifierPub.C
     pub() { return _pub; },
     children() { return children; },
     $with: {
-      children: (...items: readonly [((T.Self | T.Super | T.Crate | T.VisibilityModifierInPath))]) => _visibilityModifierPub({ ...config, children: items } as unknown as Parameters<typeof _visibilityModifierPub>[0]),
+      children: (...items: readonly [T.VisibilityModifierPubParens]) => _visibilityModifierPub({ ...config, children: items } as unknown as Parameters<typeof _visibilityModifierPub>[0]),
     },
   }, methodsEngine);
 }
