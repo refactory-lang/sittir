@@ -3188,7 +3188,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
                     SequenceExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ExpressionsTransport",
+                    "unknown kind id {other} in ExpressionsTransport",
                 ))),
             };
         }
@@ -3267,7 +3267,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormalParameterTransport {
                     OptionalParameterTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in FormalParameterTransport",
+                    "unknown kind id {other} in FormalParameterTransport",
                 ))),
             };
         }
@@ -3337,7 +3337,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _IdentifierTransport {
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in _IdentifierTransport",
+                    "unknown kind id {other} in _IdentifierTransport",
                 ))),
             };
         }
@@ -3409,7 +3409,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportIdentifierTransport {
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ImportIdentifierTransport",
+                    "unknown kind id {other} in ImportIdentifierTransport",
                 ))),
             };
         }
@@ -3469,7 +3469,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _JsxAttributeTransport {
         if let Some(kind_id) = kind_id {
             return match kind_id {
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in _JsxAttributeTransport",
+                    "unknown kind id {other} in _JsxAttributeTransport",
                 ))),
             };
         }
@@ -3540,7 +3540,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxChildTransport {
                     JsxTextTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in JsxChildTransport",
+                    "unknown kind id {other} in JsxChildTransport",
                 ))),
             };
         }
@@ -3620,7 +3620,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _JsxElementTransport {
         if let Some(kind_id) = kind_id {
             return match kind_id {
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in _JsxElementTransport",
+                    "unknown kind id {other} in _JsxElementTransport",
                 ))),
             };
         }
@@ -3693,7 +3693,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxElementNameTransport {
                     NestedIdentifierTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in JsxElementNameTransport",
+                    "unknown kind id {other} in JsxElementNameTransport",
                 ))),
             };
         }
@@ -3772,7 +3772,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _JsxIdentifierTransport {
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in _JsxIdentifierTransport",
+                    "unknown kind id {other} in _JsxIdentifierTransport",
                 ))),
             };
         }
@@ -3851,7 +3851,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModuleExportNameTransport {
                     StringTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ModuleExportNameTransport",
+                    "unknown kind id {other} in ModuleExportNameTransport",
                 ))),
             };
         }
@@ -3927,7 +3927,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyIdentifierTransport {
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in PropertyIdentifierTransport",
+                    "unknown kind id {other} in PropertyIdentifierTransport",
                 ))),
             };
         }
@@ -4034,7 +4034,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyNameTransport {
                     ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in PropertyNameTransport",
+                    "unknown kind id {other} in PropertyNameTransport",
                 ))),
             };
         }
@@ -4120,7 +4120,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SemicolonTransport {
                     SemiTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in SemicolonTransport",
+                    "unknown kind id {other} in SemicolonTransport",
                 ))),
             };
         }
@@ -4196,7 +4196,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementIdentifierTransport {
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in StatementIdentifierTransport",
+                    "unknown kind id {other} in StatementIdentifierTransport",
                 ))),
             };
         }
@@ -4371,7 +4371,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMemberTransport {
                     TypeTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TupleTypeMemberTransport",
+                    "unknown kind id {other} in TupleTypeMemberTransport",
                 ))),
             };
         }
@@ -4546,7 +4546,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeclarationTransport {
                     AmbientDeclarationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in DeclarationTransport",
+                    "unknown kind id {other} in DeclarationTransport",
                 ))),
             };
         }
@@ -4833,7 +4833,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     YieldExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ExpressionTransport",
+                    "unknown kind id {other} in ExpressionTransport",
                 ))),
             };
         }
@@ -5006,7 +5006,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     RestPatternTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in PatternTransport",
+                    "unknown kind id {other} in PatternTransport",
                 ))),
             };
         }
@@ -5264,7 +5264,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     NonNullExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in PrimaryExpressionTransport",
+                    "unknown kind id {other} in PrimaryExpressionTransport",
                 ))),
             };
         }
@@ -5554,7 +5554,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
                     UnionTypeTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in PrimaryTypeTransport",
+                    "unknown kind id {other} in PrimaryTypeTransport",
                 ))),
             };
         }
@@ -5869,7 +5869,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                     LabeledStatementTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in StatementTransport",
+                    "unknown kind id {other} in StatementTransport",
                 ))),
             };
         }
@@ -6112,7 +6112,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
                     TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TypeTransport",
+                    "unknown kind id {other} in TypeTransport",
                 ))),
             };
         }
@@ -6207,7 +6207,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ArrowFunctionUCallSignatureRetu
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in _ArrowFunctionUCallSignatureReturnTypeTransportSlot",
+                    "unknown kind id {other} in _ArrowFunctionUCallSignatureReturnTypeTransportSlot",
                 ))),
             }
         }
@@ -6553,7 +6553,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionCallFunctionTransp
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in CallExpressionCallFunctionTransportSlot",
+                "unknown kind id {other} in CallExpressionCallFunctionTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in CallExpressionCallFunctionTransportSlot"))
@@ -6695,7 +6695,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _CallSignatureReturnTypeTranspor
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in _CallSignatureReturnTypeTransportSlot",
+                    "unknown kind id {other} in _CallSignatureReturnTypeTransportSlot",
                 ))),
             }
         }
@@ -6813,7 +6813,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMemberChildTransportSlo
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ClassBodyMemberChildTransportSlot",
+                "unknown kind id {other} in ClassBodyMemberChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ClassBodyMemberChildTransportSlot"))
@@ -6904,7 +6904,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodChildTransportSlo
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ClassBodyMethodChildTransportSlot",
+                "unknown kind id {other} in ClassBodyMethodChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ClassBodyMethodChildTransportSlot"))
@@ -6970,7 +6970,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodSigChildTransport
                     FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val)?
                 )),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ClassBodyMethodSigChildTransportSlot",
+                    "unknown kind id {other} in ClassBodyMethodSigChildTransportSlot",
                 ))),
             }
         }
@@ -7043,7 +7043,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ClassHeritageExtendsClauseChild
                     ImplementsClauseTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in _ClassHeritageExtendsClauseChildTransportSlot",
+                    "unknown kind id {other} in _ClassHeritageExtendsClauseChildTransportSlot",
                 ))),
             }
         }
@@ -7156,7 +7156,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultFromArmChi
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ExportStatementDefaultFromArmChildTransportSlot",
+                "unknown kind id {other} in ExportStatementDefaultFromArmChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ExportStatementDefaultFromArmChildTransportSlot"))
@@ -7503,7 +7503,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ExportStatementEqualsExportChil
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in _ExportStatementEqualsExportChildTransportSlot",
+                "unknown kind id {other} in _ExportStatementEqualsExportChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in _ExportStatementEqualsExportChildTransportSlot"))
@@ -7662,7 +7662,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ExportStatementNamespaceExportC
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in _ExportStatementNamespaceExportChildTransportSlot",
+                "unknown kind id {other} in _ExportStatementNamespaceExportChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in _ExportStatementNamespaceExportChildTransportSlot"))
@@ -7747,7 +7747,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ExportStatementTypeExportChildT
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in _ExportStatementTypeExportChildTransportSlot",
+                "unknown kind id {other} in _ExportStatementTypeExportChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in _ExportStatementTypeExportChildTransportSlot"))
@@ -7817,7 +7817,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderChildTransportSlot {
                     ForHeaderLetConstKindTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ForHeaderChildTransportSlot",
+                    "unknown kind id {other} in ForHeaderChildTransportSlot",
                 ))),
             }
         }
@@ -7914,7 +7914,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLetConstKindLeftTranspo
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ForHeaderLetConstKindLeftTransportSlot",
+                "unknown kind id {other} in ForHeaderLetConstKindLeftTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ForHeaderLetConstKindLeftTransportSlot"))
@@ -7977,7 +7977,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLhsLeftTransportSlot {
                     ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ForHeaderLhsLeftTransportSlot",
+                    "unknown kind id {other} in ForHeaderLhsLeftTransportSlot",
                 ))),
             }
         }
@@ -8069,7 +8069,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderVarKindLeftTransportSlo
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ForHeaderVarKindLeftTransportSlot",
+                "unknown kind id {other} in ForHeaderVarKindLeftTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ForHeaderVarKindLeftTransportSlot"))
@@ -8154,7 +8154,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ImportClauseDefaultImportChildT
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in _ImportClauseDefaultImportChildTransportSlot",
+                "unknown kind id {other} in _ImportClauseDefaultImportChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in _ImportClauseDefaultImportChildTransportSlot"))
@@ -8215,7 +8215,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxStringChildTransportSlot {
         if let Some(kind_id) = kind_id {
             match kind_id {
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in JsxStringChildTransportSlot",
+                    "unknown kind id {other} in JsxStringChildTransportSlot",
                 ))),
             }
         }
@@ -8344,7 +8344,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LhsExpressionChildTransportSlot 
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in LhsExpressionChildTransportSlot",
+                "unknown kind id {other} in LhsExpressionChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in LhsExpressionChildTransportSlot"))
@@ -8424,7 +8424,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _ModuleNameTransportSlot {
                     NestedIdentifierTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in _ModuleNameTransportSlot",
+                    "unknown kind id {other} in _ModuleNameTransportSlot",
                 ))),
             }
         }
@@ -8511,7 +8511,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterNameChildTransportSlot 
                     OverrideModifierTransport::from_napi_value(env, napi_val)?
                 )),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ParameterNameChildTransportSlot",
+                    "unknown kind id {other} in ParameterNameChildTransportSlot",
                 ))),
             }
         }
@@ -8645,7 +8645,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterNamePatternTransportSlo
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ParameterNamePatternTransportSlot",
+                "unknown kind id {other} in ParameterNamePatternTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ParameterNamePatternTransportSlot"))
@@ -8731,7 +8731,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryCallExpressionFunctionT
                     TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TypeQueryCallExpressionFunctionTransportSlot",
+                    "unknown kind id {other} in TypeQueryCallExpressionFunctionTransportSlot",
                 ))),
             }
         }
@@ -8814,7 +8814,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryCallExpressionInTypeAnn
                     TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot",
+                    "unknown kind id {other} in TypeQueryCallExpressionInTypeAnnotationFunctionTransportSlot",
                 ))),
             }
         }
@@ -8895,7 +8895,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryInstantiationExpression
                     TypeQuerySubscriptExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TypeQueryInstantiationExpressionFunctionTransportSlot",
+                    "unknown kind id {other} in TypeQueryInstantiationExpressionFunctionTransportSlot",
                 ))),
             }
         }
@@ -8990,7 +8990,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionObjectT
                     TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TypeQueryMemberExpressionObjectTransportSlot",
+                    "unknown kind id {other} in TypeQueryMemberExpressionObjectTransportSlot",
                 ))),
             }
         }
@@ -9082,7 +9082,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionInTypeA
                     TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot",
+                    "unknown kind id {other} in TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot",
                 ))),
             }
         }
@@ -9172,7 +9172,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionObje
                     TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TypeQuerySubscriptExpressionObjectTransportSlot",
+                    "unknown kind id {other} in TypeQuerySubscriptExpressionObjectTransportSlot",
                 ))),
             }
         }
@@ -9264,7 +9264,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionInde
                     NumberTransport::from_napi_value(env, napi_val)?
                 )),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TypeQuerySubscriptExpressionIndexTransportSlot",
+                    "unknown kind id {other} in TypeQuerySubscriptExpressionIndexTransportSlot",
                 ))),
             }
         }
@@ -9346,7 +9346,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureReturnTyp
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in AbstractMethodSignatureReturnTypeTransportSlot",
+                    "unknown kind id {other} in AbstractMethodSignatureReturnTypeTransportSlot",
                 ))),
             }
         }
@@ -9428,7 +9428,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmbientDeclarationChildTransport
                     AmbientDeclarationModuleTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in AmbientDeclarationChildTransportSlot",
+                    "unknown kind id {other} in AmbientDeclarationChildTransportSlot",
                 ))),
             }
         }
@@ -9774,7 +9774,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsChildTransportSlot {
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ArgumentsChildTransportSlot",
+                "unknown kind id {other} in ArgumentsChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ArgumentsChildTransportSlot"))
@@ -10180,7 +10180,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayChildTransportSlot {
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ArrayChildTransportSlot",
+                "unknown kind id {other} in ArrayChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ArrayChildTransportSlot"))
@@ -10379,7 +10379,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrayPatternChildTransportSlot {
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ArrayPatternChildTransportSlot",
+                "unknown kind id {other} in ArrayPatternChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ArrayPatternChildTransportSlot"))
@@ -10461,7 +10461,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionUCallSignatureRetur
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ArrowFunctionUCallSignatureReturnTypeTransportSlot",
+                    "unknown kind id {other} in ArrowFunctionUCallSignatureReturnTypeTransportSlot",
                 ))),
             }
         }
@@ -10539,7 +10539,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionChildTransportSlot 
                     _ArrowFunctionUCallSignatureTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ArrowFunctionChildTransportSlot",
+                    "unknown kind id {other} in ArrowFunctionChildTransportSlot",
                 ))),
             }
         }
@@ -10880,7 +10880,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionBodyTransportSlot {
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ArrowFunctionBodyTransportSlot",
+                "unknown kind id {other} in ArrowFunctionBodyTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ArrowFunctionBodyTransportSlot"))
@@ -11198,7 +11198,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in AsExpressionTypeAnnotationTransportSlot",
+                "unknown kind id {other} in AsExpressionTypeAnnotationTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in AsExpressionTypeAnnotationTransportSlot"))
@@ -11314,7 +11314,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertsChildTransportSlot {
                     ThisTransport::from_napi_value(env, napi_val)?
                 )),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in AssertsChildTransportSlot",
+                    "unknown kind id {other} in AssertsChildTransportSlot",
                 ))),
             }
         }
@@ -11389,7 +11389,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertsAnnotationAssertsTranspor
                     AssertsTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in AssertsAnnotationAssertsTransportSlot",
+                    "unknown kind id {other} in AssertsAnnotationAssertsTransportSlot",
                 ))),
             }
         }
@@ -11459,7 +11459,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionLeftTranspor
                     ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in AssignmentExpressionLeftTransportSlot",
+                    "unknown kind id {other} in AssignmentExpressionLeftTransportSlot",
                 ))),
             }
         }
@@ -11800,7 +11800,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionLeftTransportSlo
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in BinaryExpressionLeftTransportSlot",
+                "unknown kind id {other} in BinaryExpressionLeftTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in BinaryExpressionLeftTransportSlot"))
@@ -12030,7 +12030,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionOperatorTranspor
                     InTransport::from_napi_value(env, napi_val)?
                 )),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in BinaryExpressionOperatorTransportSlot",
+                    "unknown kind id {other} in BinaryExpressionOperatorTransportSlot",
                 ))),
             }
         }
@@ -12222,7 +12222,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionChildTransportSlot
                     CallExpressionMemberTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in CallExpressionChildTransportSlot",
+                    "unknown kind id {other} in CallExpressionChildTransportSlot",
                 ))),
             }
         }
@@ -12304,7 +12304,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallSignatureReturnTypeTransport
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in CallSignatureReturnTypeTransportSlot",
+                    "unknown kind id {other} in CallSignatureReturnTypeTransportSlot",
                 ))),
             }
         }
@@ -12401,7 +12401,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CatchClauseParameterTransportSlo
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in CatchClauseParameterTransportSlot",
+                "unknown kind id {other} in CatchClauseParameterTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in CatchClauseParameterTransportSlot"))
@@ -12475,7 +12475,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyChildTransportSlot {
                     ClassBodyMemberTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ClassBodyChildTransportSlot",
+                    "unknown kind id {other} in ClassBodyChildTransportSlot",
                 ))),
             }
         }
@@ -12558,7 +12558,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassHeritageExtendsClauseChildT
                     ImplementsClauseTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ClassHeritageExtendsClauseChildTransportSlot",
+                    "unknown kind id {other} in ClassHeritageExtendsClauseChildTransportSlot",
                 ))),
             }
         }
@@ -12631,7 +12631,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassHeritageChildTransportSlot 
                     _ClassHeritageImplementsClauseTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ClassHeritageChildTransportSlot",
+                    "unknown kind id {other} in ClassHeritageChildTransportSlot",
                 ))),
             }
         }
@@ -12712,7 +12712,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorChildTransportSlot {
                     DecoratorParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in DecoratorChildTransportSlot",
+                    "unknown kind id {other} in DecoratorChildTransportSlot",
                 ))),
             }
         }
@@ -12795,7 +12795,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorCallExpressionFunctionT
                     DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in DecoratorCallExpressionFunctionTransportSlot",
+                    "unknown kind id {other} in DecoratorCallExpressionFunctionTransportSlot",
                 ))),
             }
         }
@@ -12868,7 +12868,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorMemberExpressionObjectT
                     DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in DecoratorMemberExpressionObjectTransportSlot",
+                    "unknown kind id {other} in DecoratorMemberExpressionObjectTransportSlot",
                 ))),
             }
         }
@@ -12945,7 +12945,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorParenthesizedExpression
                     DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in DecoratorParenthesizedExpressionChildTransportSlot",
+                    "unknown kind id {other} in DecoratorParenthesizedExpressionChildTransportSlot",
                 ))),
             }
         }
@@ -13042,7 +13042,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementTypeExportChildTr
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ExportStatementTypeExportChildTransportSlot",
+                "unknown kind id {other} in ExportStatementTypeExportChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ExportStatementTypeExportChildTransportSlot"))
@@ -13383,7 +13383,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementEqualsExportChild
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ExportStatementEqualsExportChildTransportSlot",
+                "unknown kind id {other} in ExportStatementEqualsExportChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ExportStatementEqualsExportChildTransportSlot"))
@@ -13542,7 +13542,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementNamespaceExportCh
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ExportStatementNamespaceExportChildTransportSlot",
+                "unknown kind id {other} in ExportStatementNamespaceExportChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ExportStatementNamespaceExportChildTransportSlot"))
@@ -13641,7 +13641,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementChildTransportSlo
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ExportStatementChildTransportSlot",
+                "unknown kind id {other} in ExportStatementChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ExportStatementChildTransportSlot"))
@@ -13715,7 +13715,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementChildTransportSlot
                     ForHeaderLetConstKindTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ForInStatementChildTransportSlot",
+                    "unknown kind id {other} in ForInStatementChildTransportSlot",
                 ))),
             }
         }
@@ -14075,7 +14075,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ForStatementInitializerTransportSlot",
+                "unknown kind id {other} in ForStatementInitializerTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ForStatementInitializerTransportSlot"))
@@ -14492,7 +14492,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ForStatementConditionTransportSlot",
+                "unknown kind id {other} in ForStatementConditionTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ForStatementConditionTransportSlot"))
@@ -14636,7 +14636,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDeclarationReturnTypeTra
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in FunctionDeclarationReturnTypeTransportSlot",
+                    "unknown kind id {other} in FunctionDeclarationReturnTypeTransportSlot",
                 ))),
             }
         }
@@ -14718,7 +14718,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionExpressionReturnTypeTran
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in FunctionExpressionReturnTypeTransportSlot",
+                    "unknown kind id {other} in FunctionExpressionReturnTypeTransportSlot",
                 ))),
             }
         }
@@ -14815,7 +14815,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureChildTransportS
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in FunctionSignatureChildTransportSlot",
+                "unknown kind id {other} in FunctionSignatureChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in FunctionSignatureChildTransportSlot"))
@@ -14885,7 +14885,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureReturnTypeTrans
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in FunctionSignatureReturnTypeTransportSlot",
+                    "unknown kind id {other} in FunctionSignatureReturnTypeTransportSlot",
                 ))),
             }
         }
@@ -15150,7 +15150,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeReturnTypeTransportS
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in FunctionTypeReturnTypeTransportSlot",
+                "unknown kind id {other} in FunctionTypeReturnTypeTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in FunctionTypeReturnTypeTransportSlot"))
@@ -15268,7 +15268,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionReturnTypeTrans
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in GeneratorFunctionReturnTypeTransportSlot",
+                    "unknown kind id {other} in GeneratorFunctionReturnTypeTransportSlot",
                 ))),
             }
         }
@@ -15350,7 +15350,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionDeclarationRetu
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in GeneratorFunctionDeclarationReturnTypeTransportSlot",
+                    "unknown kind id {other} in GeneratorFunctionDeclarationReturnTypeTransportSlot",
                 ))),
             }
         }
@@ -15431,7 +15431,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportAttributeObjectTransportSl
                     ObjectTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ImportAttributeObjectTransportSlot",
+                    "unknown kind id {other} in ImportAttributeObjectTransportSlot",
                 ))),
             }
         }
@@ -15523,7 +15523,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportClauseDefaultImportChildTr
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ImportClauseDefaultImportChildTransportSlot",
+                "unknown kind id {other} in ImportClauseDefaultImportChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ImportClauseDefaultImportChildTransportSlot"))
@@ -15593,7 +15593,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportClauseChildTransportSlot {
                     _ImportClauseDefaultImportTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ImportClauseChildTransportSlot",
+                    "unknown kind id {other} in ImportClauseChildTransportSlot",
                 ))),
             }
         }
@@ -15671,7 +15671,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportSpecifierChildTransportSlo
                     ImportSpecifierAsTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ImportSpecifierChildTransportSlot",
+                    "unknown kind id {other} in ImportSpecifierChildTransportSlot",
                 ))),
             }
         }
@@ -15748,7 +15748,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementFromClauseTranspo
                     ImportRequireClauseTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ImportStatementFromClauseTransportSlot",
+                    "unknown kind id {other} in ImportStatementFromClauseTransportSlot",
                 ))),
             }
         }
@@ -15826,7 +15826,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureChildTransportSlot
                     _IndexSignatureMappedTypeClauseTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in IndexSignatureChildTransportSlot",
+                    "unknown kind id {other} in IndexSignatureChildTransportSlot",
                 ))),
             }
         }
@@ -15907,7 +15907,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureTypeTransportSlot 
                     OptingTypeAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in IndexSignatureTypeTransportSlot",
+                    "unknown kind id {other} in IndexSignatureTypeTransportSlot",
                 ))),
             }
         }
@@ -15994,7 +15994,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InternalModuleNameTransportSlot 
                     NestedIdentifierTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in InternalModuleNameTransportSlot",
+                    "unknown kind id {other} in InternalModuleNameTransportSlot",
                 ))),
             }
         }
@@ -16101,7 +16101,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxAttributeChildTransportSlot {
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in JsxAttributeChildTransportSlot",
+                "unknown kind id {other} in JsxAttributeChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in JsxAttributeChildTransportSlot"))
@@ -16450,7 +16450,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxExpressionChildTransportSlot 
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in JsxExpressionChildTransportSlot",
+                "unknown kind id {other} in JsxExpressionChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in JsxExpressionChildTransportSlot"))
@@ -16610,7 +16610,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LiteralTypeChildTransportSlot {
                     UndefinedTransport::from_napi_value(env, napi_val)?
                 )),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in LiteralTypeChildTransportSlot",
+                    "unknown kind id {other} in LiteralTypeChildTransportSlot",
                 ))),
             }
         }
@@ -16976,7 +16976,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionObjectTransportS
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in MemberExpressionObjectTransportSlot",
+                "unknown kind id {other} in MemberExpressionObjectTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in MemberExpressionObjectTransportSlot"))
@@ -17118,7 +17118,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionReturnTypeTransp
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in MethodDefinitionReturnTypeTransportSlot",
+                    "unknown kind id {other} in MethodDefinitionReturnTypeTransportSlot",
                 ))),
             }
         }
@@ -17200,7 +17200,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureReturnTypeTranspo
                     TypePredicateAnnotationTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in MethodSignatureReturnTypeTransportSlot",
+                    "unknown kind id {other} in MethodSignatureReturnTypeTransportSlot",
                 ))),
             }
         }
@@ -17282,7 +17282,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModuleNameTransportSlot {
                     NestedIdentifierTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ModuleNameTransportSlot",
+                    "unknown kind id {other} in ModuleNameTransportSlot",
                 ))),
             }
         }
@@ -17390,7 +17390,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectChildTransportSlot {
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ObjectChildTransportSlot",
+                "unknown kind id {other} in ObjectChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ObjectChildTransportSlot"))
@@ -17483,7 +17483,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectAssignmentPatternLeftTrans
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ObjectAssignmentPatternLeftTransportSlot",
+                "unknown kind id {other} in ObjectAssignmentPatternLeftTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ObjectAssignmentPatternLeftTransportSlot"))
@@ -17581,7 +17581,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPatternChildTransportSlot 
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ObjectPatternChildTransportSlot",
+                "unknown kind id {other} in ObjectPatternChildTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ObjectPatternChildTransportSlot"))
@@ -17705,7 +17705,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeMembersTransportSlot {
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ObjectTypeMembersTransportSlot",
+                "unknown kind id {other} in ObjectTypeMembersTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in ObjectTypeMembersTransportSlot"))
@@ -17790,7 +17790,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterChildTransportS
                     OverrideModifierTransport::from_napi_value(env, napi_val)?
                 )),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in OptionalParameterChildTransportSlot",
+                    "unknown kind id {other} in OptionalParameterChildTransportSlot",
                 ))),
             }
         }
@@ -17924,7 +17924,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterPatternTranspor
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in OptionalParameterPatternTransportSlot",
+                "unknown kind id {other} in OptionalParameterPatternTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in OptionalParameterPatternTransportSlot"))
@@ -18063,7 +18063,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PairPatternValueTransportSlot {
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in PairPatternValueTransportSlot",
+                "unknown kind id {other} in PairPatternValueTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in PairPatternValueTransportSlot"))
@@ -18141,7 +18141,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionChildTran
                     _ParenthesizedExpressionSequenceTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in ParenthesizedExpressionChildTransportSlot",
+                    "unknown kind id {other} in ParenthesizedExpressionChildTransportSlot",
                 ))),
             }
         }
@@ -18230,7 +18230,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionChildTransp
                     PublicFieldDefinitionAccessorOptTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in PublicFieldDefinitionChildTransportSlot",
+                    "unknown kind id {other} in PublicFieldDefinitionChildTransportSlot",
                 ))),
             }
         }
@@ -18332,7 +18332,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterChildTransportS
                     OverrideModifierTransport::from_napi_value(env, napi_val)?
                 )),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in RequiredParameterChildTransportSlot",
+                    "unknown kind id {other} in RequiredParameterChildTransportSlot",
                 ))),
             }
         }
@@ -18466,7 +18466,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterPatternTranspor
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in RequiredParameterPatternTransportSlot",
+                "unknown kind id {other} in RequiredParameterPatternTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in RequiredParameterPatternTransportSlot"))
@@ -18548,7 +18548,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentsTransportSlot {
                     UnescapedSingleStringFragmentTransport::from_napi_value(env, napi_val)?
                 )),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in StringContentsTransportSlot",
+                    "unknown kind id {other} in StringContentsTransportSlot",
                 ))),
             }
         }
@@ -18626,7 +18626,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SwitchBodyChildTransportSlot {
                     SwitchDefaultTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in SwitchBodyChildTransportSlot",
+                    "unknown kind id {other} in SwitchBodyChildTransportSlot",
                 ))),
             }
         }
@@ -18699,7 +18699,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateLiteralTypeChildTranspor
                     TemplateTypeTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TemplateLiteralTypeChildTransportSlot",
+                    "unknown kind id {other} in TemplateLiteralTypeChildTransportSlot",
                 ))),
             }
         }
@@ -18776,7 +18776,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateStringChildTransportSlot
                     TemplateSubstitutionTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TemplateStringChildTransportSlot",
+                    "unknown kind id {other} in TemplateStringChildTransportSlot",
                 ))),
             }
         }
@@ -18858,7 +18858,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateNameTransportSlot {
                     PredefinedTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TypePredicateNameTransportSlot",
+                    "unknown kind id {other} in TypePredicateNameTransportSlot",
                 ))),
             }
         }
@@ -18933,7 +18933,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateAnnotationTypePredi
                     TypePredicateTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TypePredicateAnnotationTypePredicateTransportSlot",
+                    "unknown kind id {other} in TypePredicateAnnotationTypePredicateTransportSlot",
                 ))),
             }
         }
@@ -19022,7 +19022,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryChildTransportSlot {
                     ThisTransport::from_napi_value(env, napi_val)?
                 )),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in TypeQueryChildTransportSlot",
+                    "unknown kind id {other} in TypeQueryChildTransportSlot",
                 ))),
             }
         }
@@ -19115,7 +19115,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UpdateExpressionChildTransportSl
                     UpdateExpressionPrefixTransport::from_napi_value(env, napi_val)?
                 ))),
                 other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {{other}} in UpdateExpressionChildTransportSlot",
+                    "unknown kind id {other} in UpdateExpressionChildTransportSlot",
                 ))),
             }
         }
@@ -19207,7 +19207,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for VariableDeclaratorNameTransportS
         }
         if let Some(other) = kind_id {
             return Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in VariableDeclaratorNameTransportSlot",
+                "unknown kind id {other} in VariableDeclaratorNameTransportSlot",
             )));
         }
         Err(::napi::Error::from_reason("$type property missing in VariableDeclaratorNameTransportSlot"))

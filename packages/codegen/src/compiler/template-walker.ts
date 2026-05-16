@@ -1194,24 +1194,23 @@ function liftChoiceBranchesToInlineJinja(
 	seen?: Set<string>
 ): { parts: string[]; fieldsConsumed: string[] } | null {
 	const parts: string[] = [];
-	const fieldsConsumed: string[] = [];
+	const fieldsConsumedAll: string[] = [];
 	for (const member of choice.members) {
 		const stripped = stripWrappers(member);
 		const extracted = extractClauseBranch(stripped);
 		if (extracted === null) return null;
-		const { fieldName, leading, trailing } = extracted;
-		// Don't re-lift a field that's already emitted earlier in the
-		// rule (e.g. rust `tuple_expression`'s trailing
+		const { anchorField, fieldsConsumed, body } = extracted;
+		// Don't re-lift if any field in this branch is already emitted
+		// earlier in the rule (e.g. rust `tuple_expression`'s trailing
 		// `optional(field('elements', ...))` after the same field
 		// appeared inside a repeat earlier — the multi-valued slot
 		// already captures those values; a conditional would
 		// double-count).
-		if (seen?.has(fieldName)) return null;
-		const body = `${leading}$${fieldName.toUpperCase()}${trailing}`;
-		parts.push(emitJinjaConditional(fieldName, body));
-		fieldsConsumed.push(fieldName);
+		if (fieldsConsumed.some((f) => seen?.has(f))) return null;
+		parts.push(emitJinjaConditional(anchorField, body));
+		fieldsConsumedAll.push(...fieldsConsumed);
 	}
-	return { parts, fieldsConsumed };
+	return { parts, fieldsConsumed: fieldsConsumedAll };
 }
 
 function stripWrappers(rule: Rule): Rule {
@@ -1227,32 +1226,55 @@ function stripWrappers(rule: Rule): Rule {
 	}
 }
 
-function extractClauseBranch(rule: Rule): { fieldName: string; leading: string; trailing: string } | null {
+/**
+ * Extract a co-optional branch shape: a single field, or a `seq` of any
+ * number of fields with interspersed/flanking literals. Returns the
+ * anchor field (the first encountered — used as the Jinja conditional
+ * predicate), every consumed field name (for the `seen` dedupe check),
+ * and the rendered body containing `$FIELDNAME` placeholders mixed with
+ * literal text in original order.
+ *
+ * Bails (returns null) on any non-field non-literal member — symbols,
+ * supertypes, repeats, nested optionals, etc. — to keep the lift
+ * conservative. The caller's fallback handles richer shapes via the
+ * default walker path.
+ */
+function extractClauseBranch(rule: Rule): {
+	anchorField: string;
+	fieldsConsumed: string[];
+	body: string;
+} | null {
 	if (rule.type === 'field') {
-		return { fieldName: rule.name, leading: '', trailing: '' };
+		return {
+			anchorField: rule.name,
+			fieldsConsumed: [rule.name],
+			body: `$${rule.name.toUpperCase()}`
+		};
 	}
 	if (rule.type !== 'seq') return null;
-	// Walk the seq collecting at most one field plus flanking literals.
-	let leading = '';
-	let trailing = '';
-	let fieldName: string | null = null;
+	// Walk the seq collecting any number of fields plus interspersed
+	// literals. Members must be either field-rules or literal strings;
+	// anything else bails out to preserve the conservative lift contract.
+	let anchorField: string | null = null;
+	const fieldsConsumed: string[] = [];
+	let body = '';
 	for (const m of rule.members) {
 		const stripped = stripWrappers(m);
 		if (stripped.type === 'field') {
-			if (fieldName !== null) return null; // multi-field branch — too complex
-			fieldName = stripped.name;
+			body += `$${stripped.name.toUpperCase()}`;
+			fieldsConsumed.push(stripped.name);
+			if (anchorField === null) anchorField = stripped.name;
 			continue;
 		}
 		const literal = literalTextOf(stripped);
 		if (literal !== undefined) {
-			if (fieldName === null) leading += literal;
-			else trailing += literal;
+			body += literal;
 			continue;
 		}
 		return null; // other shapes bail out
 	}
-	if (fieldName === null) return null;
-	return { fieldName, leading, trailing };
+	if (anchorField === null || fieldsConsumed.length === 0) return null;
+	return { anchorField, fieldsConsumed, body };
 }
 
 /**
