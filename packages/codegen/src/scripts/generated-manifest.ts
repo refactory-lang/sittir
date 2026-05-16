@@ -298,9 +298,14 @@ export function verifyAll(): VerifyResult[] {
  * Throw a formatted error if any grammar's manifest verification fails.
  * Convenience for callers that just want a boolean gate.
  *
- * Bootstrap rule: if a manifest is MISSING (never written for this grammar),
- * a one-line warning is emitted and the call returns. This lets a fresh
- * checkout reach codegen, which then writes the first manifest.
+ * Missing manifest is treated as a HARD ERROR (was previously a warn-and-continue
+ * "bootstrap mode" — that turned out to be a verification-bypass surface: any
+ * caller that wanted to skip verification could just delete the manifest file
+ * and proceed). The legitimate bootstrap path is "run codegen first":
+ * `packages/codegen/src/cli.ts` runs with `SITTIR_INTERNAL_CODEGEN_RUN=1` set
+ * (see below) so its OWN internal validators bypass verification, and codegen
+ * writes the manifest at the end of its run. Once that happens, subsequent
+ * external runs see a present manifest and verify normally.
  *
  * Codegen-internal bypass: when `SITTIR_INTERNAL_CODEGEN_RUN=1` is set, the
  * call returns silently. This env is set ONLY by `packages/codegen/src/cli.ts`
@@ -315,19 +320,18 @@ export function assertGeneratedManifestsClean(grammars?: readonly Grammar[]): vo
 	if (process.env.SITTIR_INTERNAL_CODEGEN_RUN === '1') return;
 	const targets = grammars ?? GRAMMARS;
 	const results = targets.map((g) => verifyManifestForGrammar(g));
-	for (const r of results) {
-		if (!r.manifestPresent) {
-			console.warn(
-				`[generated-manifest] ${r.grammar}: manifest missing (bootstrap mode); ` +
-					`run codegen for this grammar to populate it`
-			);
-		}
-	}
-	const failed = results.filter((r) => r.manifestPresent && !r.ok);
+	const failed = results.filter((r) => !r.ok);
 	if (failed.length === 0) return;
 	const lines: string[] = ['Generated manifest verification failed:'];
 	for (const r of failed) {
 		lines.push(`  ${r.grammar}:`);
+		if (!r.manifestPresent) {
+			lines.push(
+				`    MANIFEST MISSING — no packages/${r.grammar}/.sittir/generated.manifest.json. ` +
+					`Run codegen for this grammar to populate it (see regen command below).`
+			);
+			continue;
+		}
 		if (r.sourceHashMismatch) {
 			lines.push(`    SOURCE INPUTS CHANGED (overrides.ts, package.json, or packages/codegen/src/** edited since last regen)`);
 		}
