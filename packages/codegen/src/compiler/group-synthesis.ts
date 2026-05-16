@@ -128,6 +128,13 @@ export function validateGroupsConfig(args: ValidateGroupsArgs): void {
 		for (const path of liftPaths) {
 			const discriminator = lifts[path]!;
 
+			let target: Rule;
+			try {
+				target = resolveGroupPath(root, path);
+			} catch (e) {
+				throw new Error(`groups['${kind}']['${path}']: ${(e as Error).message}`);
+			}
+
 			if (discriminator.length === 0) {
 				throw new Error(`groups['${kind}']['${path}']: discriminator must be a non-empty identifier`);
 			}
@@ -135,13 +142,6 @@ export function validateGroupsConfig(args: ValidateGroupsArgs): void {
 				throw new Error(
 					`groups['${kind}']['${path}']: discriminator '${discriminator}' is not a valid identifier`
 				);
-			}
-
-			let target: Rule;
-			try {
-				target = resolveGroupPath(root, path);
-			} catch (e) {
-				throw new Error(`groups['${kind}']['${path}']: ${(e as Error).message}`);
 			}
 
 			for (const polyPath of Object.keys(polysForKind)) {
