@@ -320,6 +320,17 @@ export interface NativeNodeCoords {
 	childIndex?: number;
 }
 
+/**
+ * Byte-offset span matching the WASM node's `startIndex`/`endIndex`.
+ * Used by `findNativeNodeId` to prefer the native node whose `$span`
+ * matches the WASM candidate's position, disambiguating multiple nodes
+ * of the same kind within a single corpus entry.
+ */
+export interface NodeSpan {
+	start: number;
+	end: number;
+}
+
 function childEntries(value: unknown | readonly unknown[] | undefined): readonly unknown[] {
 	if (value === undefined) return [];
 	return Array.isArray(value) ? value : [value];
@@ -341,7 +352,8 @@ function childEntries(value: unknown | readonly unknown[] | undefined): readonly
 export function findNativeNodeId(
 	handle: TreeHandle,
 	kind: string,
-	kindNameFromId?: (id: number) => string | undefined
+	kindNameFromId?: (id: number) => string | undefined,
+	span?: NodeSpan
 ): NativeNodeCoords | null {
 	if (!handle.read) return null;
 	const read = handle.read;
@@ -385,17 +397,58 @@ export function findNativeNodeId(
 		if (legacyFields != null && typeof legacyFields === 'object') {
 			return Object.keys(legacyFields as Record<string, unknown>).length > 0;
 		}
-	return false;
-}
+		return false;
+	}
 
 	function kindOf(d: AnyNodeData): string {
 		return typeof d.$type === 'number' ? (kindNameFromId?.(d.$type) ?? String(d.$type)) : d.$type;
 	}
 
-	if (kindOf(root) === kind) {
-		return {};
+	function spanOf(d: AnyNodeData): { start: number; end: number } | undefined {
+		return (d as unknown as Record<string, unknown>).$span as
+			| { start: number; end: number }
+			| undefined;
 	}
 
+	if (kindOf(root) === kind) {
+		// Root-match: if caller provided a span, verify it matches the root's span;
+		// if root has no $span (WASM-only path), fall through to DFS for safety.
+		if (!span) return {};
+		const rootSpan = spanOf(root);
+		if (!rootSpan || (rootSpan.start === span.start && rootSpan.end === span.end)) return {};
+		// Span mismatch at root — fall through to DFS to look for a descendant match.
+	}
+
+	if (span) {
+		// Span-aware DFS: prefer the native node whose $span matches the WASM span.
+		// Keeps a firstMatch fallback for paths where native $span is unpopulated.
+		let firstMatch: NativeNodeCoords | null = null;
+		let spanMatch: NativeNodeCoords | null = null;
+
+		function walkSpan(d: AnyNodeData): void {
+			if (spanMatch !== null) return; // already found exact match
+			for (const child of collectNativeChildNodes(d)) {
+				if (kindOf(child) === kind && d.$nodeHandle !== undefined && child.$childIndex !== undefined) {
+					const coords: NativeNodeCoords = { handle: d.$nodeHandle, childIndex: child.$childIndex };
+					const childSpan = spanOf(child);
+					if (childSpan && childSpan.start === span.start && childSpan.end === span.end) {
+						spanMatch = coords;
+						return;
+					}
+					if (firstMatch === null) firstMatch = coords;
+				}
+				let drilled = child;
+				if (!hasEmbeddedNativeChildren(drilled) && d.$nodeHandle !== undefined && drilled.$childIndex !== undefined) {
+					drilled = read(d.$nodeHandle, drilled.$childIndex) as AnyNodeData;
+				}
+				walkSpan(drilled);
+			}
+		}
+		walkSpan(root);
+		return spanMatch ?? firstMatch;
+	}
+
+	// No span — original behavior: DFS, return first matching node.
 	function walk(d: AnyNodeData): NativeNodeCoords | null {
 		for (const child of collectNativeChildNodes(d)) {
 			if (kindOf(child) === kind && d.$nodeHandle !== undefined && child.$childIndex !== undefined) {

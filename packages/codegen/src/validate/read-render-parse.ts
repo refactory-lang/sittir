@@ -859,7 +859,10 @@ export async function validateReadRenderParse(
 					// Native engine handles differ from WASM handles; skip alias-
 					// target kinds the native engine emits under a different
 					// rule name rather than falling back to a mismatched handle.
-					const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
+					const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId, {
+						start: node1.startIndex,
+						end: node1.endIndex
+					});
 					if (nativeCoords === null && handle.read) continue;
 					const rawData = readValidatorNodeData(
 						handle,
