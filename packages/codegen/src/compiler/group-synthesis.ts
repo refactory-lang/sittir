@@ -217,3 +217,112 @@ function hasStructuralMember(rule: Rule): boolean {
 			return false;
 	}
 }
+
+export interface ApplyGroupOverridesArgs {
+	rules: Record<string, Rule>;
+	groups: Record<string, Record<string, string> | undefined>;
+	polymorphs: Record<string, Record<string, string> | undefined>;
+	warn?: (msg: string) => void;
+}
+
+export interface ApplyGroupOverridesResult {
+	rules: Record<string, Rule>;
+	synthesizedKinds: readonly string[];
+}
+
+/**
+ * Apply all `groups:` lifts. Pure transform — input rules are not
+ * mutated; a new rules map is returned with lifted bodies registered
+ * under their synthesized kind names and parent bodies rewritten to
+ * reference them.
+ *
+ * Wrapper handling: when the lift target is wrapped (`optional` /
+ * `repeat` / `repeat1`), only the wrapper's content is moved into the
+ * synthesized kind. The wrapper stays at the parent's lift position
+ * with the synthesized symbol ref inside. This preserves cardinality
+ * semantics at the parent.
+ */
+export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOverridesResult {
+	validateGroupsConfig(args);
+
+	const newRules: Record<string, Rule> = { ...args.rules };
+	const synthesizedKinds: string[] = [];
+
+	for (const [kind, lifts] of Object.entries(args.groups)) {
+		if (!lifts || Object.keys(lifts).length === 0) continue;
+		const sortedPaths = Object.keys(lifts).sort((a, b) => b.length - a.length); // deep first
+		let parentBody = clone(newRules[kind]!);
+
+		for (const path of sortedPaths) {
+			const discriminator = lifts[path]!;
+			const synName = deriveSynthesizedName({
+				parentKind: kind, path, discriminator, polymorphs: args.polymorphs
+			});
+			const target = resolveGroupPath(parentBody, path);
+			const { liftedBody, replacement } = liftRule(target, synName);
+
+			parentBody = replaceAtPath(parentBody, path, replacement);
+			newRules[synName] = liftedBody;
+			synthesizedKinds.push(synName);
+		}
+
+		newRules[kind] = parentBody;
+	}
+
+	return { rules: newRules, synthesizedKinds };
+}
+
+function liftRule(target: Rule, synName: string): { liftedBody: Rule; replacement: Rule } {
+	const synSym = { type: 'symbol' as const, name: synName, source: 'group-lift' as const };
+
+	switch (target.type) {
+		case 'optional':
+			return { liftedBody: target.content, replacement: { type: 'optional', content: synSym } as Rule };
+		case 'repeat':
+			return {
+				liftedBody: target.content,
+				replacement: { type: 'repeat', content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule
+			};
+		case 'repeat1':
+			return {
+				liftedBody: target.content,
+				replacement: { type: 'repeat1', content: synSym, separator: target.separator, trailing: target.trailing, leading: target.leading } as Rule
+			};
+		default:
+			return { liftedBody: target, replacement: synSym as Rule };
+	}
+}
+
+function replaceAtPath(rule: Rule, path: string, replacement: Rule): Rule {
+	const segments = path.split('/').filter((s) => s.length > 0);
+	return replaceAtPathRec(rule, segments, 0, replacement);
+}
+
+function replaceAtPathRec(rule: Rule, segments: readonly string[], depth: number, replacement: Rule): Rule {
+	if (depth === segments.length) return replacement;
+	const idx = parseInt(segments[depth]!, 10);
+	switch (rule.type) {
+		case 'seq':
+		case 'choice': {
+			const members = rule.members.slice();
+			members[idx] = replaceAtPathRec(members[idx]!, segments, depth + 1, replacement);
+			return { ...rule, members };
+		}
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'field':
+		case 'token':
+		case 'alias':
+		case 'variant':
+		case 'clause':
+		case 'group':
+			return { ...rule, content: replaceAtPathRec((rule as { content: Rule }).content, segments, depth + 1, replacement) } as Rule;
+		default:
+			throw new Error(`replaceAtPath: cannot descend into '${rule.type}' at segment ${depth}`);
+	}
+}
+
+function clone<T>(value: T): T {
+	return JSON.parse(JSON.stringify(value)) as T;
+}
