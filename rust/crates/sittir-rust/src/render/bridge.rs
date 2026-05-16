@@ -2135,9 +2135,19 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         312 => { // "raw_string_literal"
-            let text = resolve_text(node)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("raw_string_literal_end"), false)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("raw_string_literal_start"), false)?;
+            let field_2 = resolve_slot(node, SlotAccessor::Field("string_content"), true)?;
             let template = RawStringLiteralTemplate {
-                text: text.as_str(),
+                raw_string_literal_end: match field_0.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                },
+                raw_string_literal_start: match field_1.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                },
+                string_content: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
             };
             template.render_into(dest)
         }

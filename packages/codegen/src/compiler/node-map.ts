@@ -3145,14 +3145,27 @@ function hasHiddenExternalRef(rule: Rule, externals: ReadonlySet<string>): boole
 			if (fw.type !== 'field') return false;
 			const inner = unwrapStructuralPassthroughs(fw.content);
 			// After assembly, external scanner tokens are replaced with
-			// pattern("") stubs. An underscore-prefixed external (anonymous in
-			// tree-sitter) maps to `_<fieldName>` in the externals set — it
-			// cannot be rendered structurally even when wrapped in `field(...)`.
+			// pattern("") stubs. Every member that reaches this point has
+			// already passed isExternalTerminalMember (the main loop above),
+			// so a pattern("") stub here is confirmed to be from the external
+			// scanner. The field wrapper provides a slot name that the walker
+			// can bind — accept it regardless of whether the external symbol
+			// name is underscore-prefixed. This is the case the relaxation
+			// block was designed for (e.g. raw_string_literal: all three
+			// fields wrap external stubs and CAN be rendered by field name).
 			if (inner.type === 'pattern' && inner.value === '') {
-				return !externals.has('_' + fw.name);
+				return true;
 			}
 			// Pre-assembly path: symbol reference with underscore prefix.
-			return inner.type !== 'symbol' || !inner.name.startsWith('_');
+			// Reject only when the symbol is NOT in externals — those are
+			// hidden helper rules with real bodies that don't have a slot name
+			// to bind. Underscore-prefixed externals (the raw_string_literal
+			// pattern) ARE accepted because the field provides a slot name
+			// even though the inner external is anonymous in tree-sitter's
+			// output.
+			if (inner.type !== 'symbol') return true;
+			if (!inner.name.startsWith('_')) return true;
+			return externals.has(inner.name);
 		})
 	) {
 		return false;

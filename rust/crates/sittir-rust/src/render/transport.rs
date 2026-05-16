@@ -37060,7 +37060,15 @@ fn render_range_pattern(node: &RangePatternTransport, dest: &mut dyn ::std::fmt:
 
 fn render_raw_string_literal(node: &RawStringLiteralTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = RawStringLiteralTemplate {
-        text: node.transport_text.as_deref().unwrap_or(""),
+        raw_string_literal_end: match &node.raw_string_literal_end {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => OptionalNonterminalView::Missing,
+        },
+        raw_string_literal_start: match &node.raw_string_literal_start {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => OptionalNonterminalView::Missing,
+        },
+        string_content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.string_content)),
     };
     template.render_into(dest)
 }
