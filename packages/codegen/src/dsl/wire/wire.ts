@@ -296,10 +296,15 @@ export type PolymorphsConfig<Base extends GrammarBase = GrammarBase> = Partial<
  * contributes its variant name to the synthesized kind. Non-polymorph
  * segments don't contribute. See:
  *   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+ *
+ * Keys are plain `string` rather than `BaseKind<Base>` because the
+ * post-polymorph-aliased rule map contains synthesized variant kinds
+ * (e.g. `_visibility_modifier_pub`) that aren't exported in the base
+ * grammar's kind set. `BaseKind<Base>` was too narrow — it caused a
+ * type error on those keys that was masked by `--noCheck` but would
+ * fail when the build check is re-enabled.
  */
-export type GroupsConfig<Base extends GrammarBase = GrammarBase> = Partial<
-	Record<BaseKind<Base>, Record<string, string>>
->;
+export type GroupsConfig = Partial<Record<string, Record<string, string>>>;
 
 /**
  * Declarative transforms map: each rule kind → a patch-map (or array
@@ -347,7 +352,7 @@ export interface WireConfig<Base extends GrammarBase = GrammarBase> {
 	readonly name?: string;
 	readonly rules: Partial<Record<BaseKind<Base>, RuleFn>> & Record<string, RuleFn>;
 	readonly polymorphs?: PolymorphsConfig<Base>;
-	readonly groups?: GroupsConfig<Base>;
+	readonly groups?: GroupsConfig;
 	readonly transforms?: TransformsConfig<Base>;
 	readonly conflicts?: ConflictsFn;
 	readonly externals?: DollarFn<unknown[]>;
