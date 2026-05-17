@@ -182,7 +182,8 @@ export function link(
 		aliasedHiddenKinds,
 		topLevelAliasBodies,
 		polymorphVariants: raw.polymorphVariants,
-		refineForms: raw.refineForms
+		refineForms: raw.refineForms,
+		patternReplacementKinds: raw.patternReplacementKinds
 	};
 }
 
