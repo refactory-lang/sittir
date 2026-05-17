@@ -1094,10 +1094,12 @@ function walkRuleForTemplate(
 				optionalFields
 			);
 
-		case 'supertype':
-			if (seen.has('children')) return [];
-			seen.add('children');
-			return [emitChildren()];
+		case 'supertype': {
+			const slotName = (rule as { name: string }).name.replace(/^_+/, '') || 'children';
+			if (seen.has(slotName)) return [];
+			seen.add(slotName);
+			return [emitChildren(slotName)];
+		}
 
 		case 'alias':
 			// Named aliases (`alias($._hidden, $.visible)`) create a
@@ -1108,9 +1110,10 @@ function walkRuleForTemplate(
 			// `$$$CHILDREN`. Unnamed aliases (`alias($.x, 'display')`)
 			// just relabel existing content — walk into it.
 			if (rule.named) {
-				if (seen.has('children')) return [];
-				seen.add('children');
-				return [emitChildren()];
+				const slotName = (rule as { value: string }).value.replace(/^_+/, '') || 'children';
+				if (seen.has(slotName)) return [];
+				seen.add(slotName);
+				return [emitChildren(slotName)];
 			}
 			return walkRuleForTemplate(
 				rule.content,
