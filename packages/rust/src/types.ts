@@ -84,6 +84,7 @@ export type LeafStringMap = {
 export const enum SyntaxKind {
   ArrayExpressionList = "_array_expression_list",
   ArrayExpressionSemi = "_array_expression_semi",
+  AttributedFieldDeclaration = "_attributed_field_declaration",
   ClosureExpressionBlock = "_closure_expression_block",
   _ClosureExpressionExpr = "_closure_expression_expr",
   _DelimTokenTreeBrace = "_delim_token_tree_brace",
@@ -2121,6 +2122,11 @@ export interface ArrayExpressionSemi {
   length(): Expression;
 }
 
+export interface AttributedFieldDeclaration {
+  readonly $type: "_attributed_field_declaration";
+  readonly $children: readonly (AttributeItem | FieldDeclaration)[];
+}
+
 export interface ClosureExpressionBlock {
   readonly $type: TSKindId.ClosureExpressionBlock;
   readonly _return_type?: _Type;
@@ -2818,7 +2824,7 @@ export interface FieldDeclaration {
 
 export interface FieldDeclarationList {
   readonly $type: TSKindId.FieldDeclarationList;
-  readonly $children: readonly (AttributeItem | FieldDeclaration)[];
+  readonly $children: readonly (AttributedFieldDeclaration)[];
 }
 
 export interface FieldExpression {
@@ -4068,6 +4074,7 @@ export type BlockCommentContent = Terminal<TSKindId._BlockCommentContent, string
 // Tree types
 export interface ArrayExpressionListTree extends AnyTreeNode { readonly type: "_array_expression_list"; }
 export interface ArrayExpressionSemiTree extends AnyTreeNode { readonly type: "_array_expression_semi"; }
+export interface AttributedFieldDeclarationTree extends AnyTreeNode { readonly type: "_attributed_field_declaration"; }
 export interface ClosureExpressionBlockTree extends AnyTreeNode { readonly type: "_closure_expression_block"; }
 export interface _ClosureExpressionExprTree extends AnyTreeNode { readonly type: "_closure_expression_expr"; }
 export interface _DelimTokenTreeBraceTree extends AnyTreeNode { readonly type: "_delim_token_tree_brace"; }
@@ -4812,6 +4819,7 @@ export interface TokDollarTree extends AnyTreeNode { readonly type: "$"; }
 export type RustNode =
   | ArrayExpressionList
   | ArrayExpressionSemi
+  | AttributedFieldDeclaration
   | ClosureExpressionBlock
   | _ClosureExpressionExpr
   | _DelimTokenTreeBrace
@@ -5024,6 +5032,7 @@ export type RustNode =
 export interface KindMap {
   '_array_expression_list': ArrayExpressionList;
   '_array_expression_semi': ArrayExpressionSemi;
+  '_attributed_field_declaration': AttributedFieldDeclaration;
   '_closure_expression_block': ClosureExpressionBlock;
   '_closure_expression_expr': _ClosureExpressionExpr;
   '_delim_token_tree_brace': _DelimTokenTreeBrace;
@@ -5292,6 +5301,7 @@ export interface VariantMap {
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
 export interface ArrayExpressionListNs extends NodeNs<ArrayExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayExpressionSemiNs extends NodeNs<ArrayExpressionSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributedFieldDeclarationNs extends NodeNs<AttributedFieldDeclaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClosureExpressionBlockNs extends NodeNs<ClosureExpressionBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ClosureExpressionExprNs extends NodeNs<_ClosureExpressionExpr, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _DelimTokenTreeBraceNs extends NodeNs<_DelimTokenTreeBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5503,6 +5513,7 @@ export interface VisibilityModifierPubParensNs extends NodeNs<VisibilityModifier
 export interface NamespaceMap {
   '_array_expression_list': ArrayExpressionListNs;
   '_array_expression_semi': ArrayExpressionSemiNs;
+  '_attributed_field_declaration': AttributedFieldDeclarationNs;
   '_closure_expression_block': ClosureExpressionBlockNs;
   '_closure_expression_expr': _ClosureExpressionExprNs;
   '_delim_token_tree_brace': _DelimTokenTreeBraceNs;
@@ -5732,6 +5743,13 @@ export namespace ArrayExpressionSemi {
   export type Loose = LooseFor<'_array_expression_semi'>;
   export type Tree = TreeFor<'_array_expression_semi'>;
   export type Kind = '_array_expression_semi';
+}
+export namespace AttributedFieldDeclaration {
+  export type Config = ConfigFor<'_attributed_field_declaration'>;
+  export type Fluent = FluentFor<'_attributed_field_declaration'>;
+  export type Loose = LooseFor<'_attributed_field_declaration'>;
+  export type Tree = TreeFor<'_attributed_field_declaration'>;
+  export type Kind = '_attributed_field_declaration';
 }
 export namespace ClosureExpressionBlock {
   export type Config = ConfigFor<'_closure_expression_block'>;

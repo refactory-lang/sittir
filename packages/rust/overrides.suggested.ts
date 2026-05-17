@@ -279,11 +279,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  field_declaration_list: {
-    '1': 'attribute_item',
-  },
-
-  // [held] 1 candidate(s)
   for_expression: {
     '0/0': 'label',
   },

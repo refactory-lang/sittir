@@ -1791,11 +1791,11 @@ export function wrapFieldDeclarationList(data: T.FieldDeclarationList, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.FieldDeclarationList as const,
-    $children: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data.$children, ["attribute_item","field_declaration"]), false, "children"),
+    $children: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data.$children, ["_attributed_field_declaration","attributed_field_declaration","attribute_item","field_declaration"]), false, "children"),
 
-    children() { return drillInAll<(T.AttributeItem | T.FieldDeclaration)>(this.$children as readonly ((T.AttributeItem | T.FieldDeclaration))[] | undefined, tree); },
+    children() { return drillInAll<T.AttributedFieldDeclaration>(this.$children as readonly T.AttributedFieldDeclaration[] | undefined, tree); },
     $with: {
-      children: (...items: ((T.AttributeItem | T.FieldDeclaration))[]) => wrapFieldDeclarationList({ ...data, $children: items }, tree),
+      children: (...items: T.AttributedFieldDeclaration[]) => wrapFieldDeclarationList({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -4026,6 +4026,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 const _aliasTargetToSource: Record<string, string> = {
   'array_expression_list': '_array_expression_list',
   'array_expression_semi': '_array_expression_semi',
+  'attributed_field_declaration': '_attributed_field_declaration',
   'closure_expression_async_marker': '_closure_expression_async_marker',
   'closure_expression_block': '_closure_expression_block',
   'closure_expression_static_marker': '_closure_expression_static_marker',

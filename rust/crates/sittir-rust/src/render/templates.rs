@@ -108,6 +108,12 @@ pub struct ArrayExpressionSemiTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_attributed_field_declaration.jinja", escape = "none")]
+pub struct AttributedFieldDeclarationTemplate<'a> {
+    pub children: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_closure_expression_block.jinja", escape = "none")]
 pub struct ClosureExpressionBlockTemplate<'a> {
     pub body: SingleNonterminalView<'a>,

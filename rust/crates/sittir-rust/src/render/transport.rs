@@ -28,6 +28,7 @@ pub enum AnyTransport {
     RangeExpressionBinaryOperator(RangeExpressionBinaryOperatorEnum),
     ArrayExpressionList(ArrayExpressionListTransport),
     ArrayExpressionSemi(ArrayExpressionSemiTransport),
+    AttributedFieldDeclaration(AttributedFieldDeclarationTransport),
     ClosureExpressionAsyncMarker(ClosureExpressionAsyncMarkerTransport),
     ClosureExpressionBlock(ClosureExpressionBlockTransport),
     _ClosureExpressionExpr(_ClosureExpressionExprTransport),
@@ -2439,6 +2440,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = ArrayExpressionListTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ArrayExpressionList(value));
+            }
+            if let Ok(value) = AttributedFieldDeclarationTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::AttributedFieldDeclaration(value));
             }
             if let Ok(value) = _DelimTokenTreeBraceTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::_DelimTokenTreeBrace(value));
@@ -7228,6 +7232,79 @@ impl RenderableTransport for UseClauseTransport {
 
 
 #[derive(Debug, Clone)]
+pub enum AttributedFieldDeclarationChildTransportSlot {
+    AttributeItem(Box<AttributeItemTransport>),
+    FieldDeclaration(Box<FieldDeclarationTransport>),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for AttributedFieldDeclarationChildTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            Some(kind_id)
+        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
+            obj.get::<u16>("$type")?
+        } else {
+            None
+        };
+        if let Some(kind_id) = kind_id {
+            match kind_id {
+                170 => return Ok(Self::AttributeItem(Box::new(
+                    AttributeItemTransport::from_napi_value(env, napi_val)?
+                ))),
+                182 => return Ok(Self::FieldDeclaration(Box::new(
+                    FieldDeclarationTransport::from_napi_value(env, napi_val)?
+                ))),
+                other => return Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in AttributedFieldDeclarationChildTransportSlot",
+                ))),
+            }
+        }
+        if String::from_napi_value(env, napi_val).is_ok() {
+            if let Ok(value) = AttributeItemTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::AttributeItem(Box::new(value)));
+            }
+            if let Ok(value) = FieldDeclarationTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::FieldDeclaration(Box::new(value)));
+            }
+        }
+        Err(::napi::Error::from_reason("$type property missing in AttributedFieldDeclarationChildTransportSlot"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AttributedFieldDeclarationChildTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("AttributedFieldDeclarationChildTransportSlot is receive-only"))
+    }
+}
+
+fn attributed_field_declaration_child_transport_slot_to_any(t: AttributedFieldDeclarationChildTransportSlot) -> AnyTransport {
+    match t {
+        AttributedFieldDeclarationChildTransportSlot::AttributeItem(inner) => AnyTransport::AttributeItem(*inner),
+        AttributedFieldDeclarationChildTransportSlot::FieldDeclaration(inner) => AnyTransport::FieldDeclaration(*inner),
+    }
+}
+
+impl RenderableTransport for AttributedFieldDeclarationChildTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            AttributedFieldDeclarationChildTransportSlot::AttributeItem(inner) => render_attribute_item(inner.as_ref(), dest),
+            AttributedFieldDeclarationChildTransportSlot::FieldDeclaration(inner) => render_field_declaration(inner.as_ref(), dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum _ClosureExpressionExprBodyTransportSlot {
     UnaryExpression(Box<UnaryExpressionTransport>),
     ReferenceExpression(Box<ReferenceExpressionTransport>),
@@ -11426,79 +11503,6 @@ impl RenderableTransport for ExpressionStatementChildTransportSlot {
         match self {
             ExpressionStatementChildTransportSlot::_ExpressionStatementWithSemi(inner) => render__expression_statement_with_semi(inner.as_ref(), dest),
             ExpressionStatementChildTransportSlot::_ExpressionStatementBlockEnding(inner) => render__expression_statement_block_ending(inner.as_ref(), dest),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum FieldDeclarationListChildTransportSlot {
-    AttributeItem(Box<AttributeItemTransport>),
-    FieldDeclaration(Box<FieldDeclarationTransport>),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FieldDeclarationListChildTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-            Some(kind_id)
-        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {
-            obj.get::<u16>("$type")?
-        } else {
-            None
-        };
-        if let Some(kind_id) = kind_id {
-            match kind_id {
-                170 => return Ok(Self::AttributeItem(Box::new(
-                    AttributeItemTransport::from_napi_value(env, napi_val)?
-                ))),
-                182 => return Ok(Self::FieldDeclaration(Box::new(
-                    FieldDeclarationTransport::from_napi_value(env, napi_val)?
-                ))),
-                other => return Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in FieldDeclarationListChildTransportSlot",
-                ))),
-            }
-        }
-        if String::from_napi_value(env, napi_val).is_ok() {
-            if let Ok(value) = AttributeItemTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::AttributeItem(Box::new(value)));
-            }
-            if let Ok(value) = FieldDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::FieldDeclaration(Box::new(value)));
-            }
-        }
-        Err(::napi::Error::from_reason("$type property missing in FieldDeclarationListChildTransportSlot"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FieldDeclarationListChildTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FieldDeclarationListChildTransportSlot is receive-only"))
-    }
-}
-
-fn field_declaration_list_child_transport_slot_to_any(t: FieldDeclarationListChildTransportSlot) -> AnyTransport {
-    match t {
-        FieldDeclarationListChildTransportSlot::AttributeItem(inner) => AnyTransport::AttributeItem(*inner),
-        FieldDeclarationListChildTransportSlot::FieldDeclaration(inner) => AnyTransport::FieldDeclaration(*inner),
-    }
-}
-
-impl RenderableTransport for FieldDeclarationListChildTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            FieldDeclarationListChildTransportSlot::AttributeItem(inner) => render_attribute_item(inner.as_ref(), dest),
-            FieldDeclarationListChildTransportSlot::FieldDeclaration(inner) => render_field_declaration(inner.as_ref(), dest),
         }
     }
 }
@@ -16694,6 +16698,36 @@ impl RenderableTransport for ArrayExpressionSemiTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_array_expression_semi(self, dest))
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct AttributedFieldDeclarationTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: Vec<AttributedFieldDeclarationChildTransportSlot>,
+}
+
+impl RenderableTransport for AttributedFieldDeclarationTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_attributed_field_declaration(self, dest))
     }
 }
 
@@ -23967,7 +24001,7 @@ pub struct FieldDeclarationListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<FieldDeclarationListChildTransportSlot>,
+    pub children: Vec<AttributedFieldDeclarationTransport>,
 }
 
 impl RenderableTransport for FieldDeclarationListTransport {
@@ -35823,6 +35857,21 @@ fn render_array_expression_semi(node: &ArrayExpressionSemiTransport, dest: &mut 
     template.render_into(dest)
 }
 
+fn render_attributed_field_declaration(node: &AttributedFieldDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let template = AttributedFieldDeclarationTemplate {
+        children: ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render_into(dest)
+}
+
 fn render_closure_expression_async_marker(t: &ClosureExpressionAsyncMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -39233,6 +39282,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::RangeExpressionBinaryOperator(t) => t.render_into(dest),
             AnyTransport::ArrayExpressionList(t) => render_array_expression_list(t, dest),
             AnyTransport::ArrayExpressionSemi(t) => render_array_expression_semi(t, dest),
+            AnyTransport::AttributedFieldDeclaration(t) => render_attributed_field_declaration(t, dest),
             AnyTransport::ClosureExpressionAsyncMarker(t) => t.render_into(dest),
             AnyTransport::ClosureExpressionBlock(t) => render_closure_expression_block(t, dest),
             AnyTransport::_ClosureExpressionExpr(t) => render__closure_expression_expr(t, dest),
@@ -39615,6 +39665,7 @@ impl AnyTransport {
         match self {
             Self::ArrayExpressionList(t) => t.transport_named,
             Self::ArrayExpressionSemi(t) => t.transport_named,
+            Self::AttributedFieldDeclaration(t) => t.transport_named,
             Self::ClosureExpressionAsyncMarker(t) => t.transport_named,
             Self::ClosureExpressionBlock(t) => t.transport_named,
             Self::_ClosureExpressionExpr(t) => t.transport_named,
@@ -40006,6 +40057,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::RangeExpressionBinaryOperator(data) => transport_to_node_range_expression_binary_operator(data),
         AnyTransport::ArrayExpressionList(data) => transport_to_node_array_expression_list(data),
         AnyTransport::ArrayExpressionSemi(data) => transport_to_node_array_expression_semi(data),
+        AnyTransport::AttributedFieldDeclaration(data) => transport_to_node_attributed_field_declaration(data),
         AnyTransport::ClosureExpressionAsyncMarker(data) => transport_to_node_closure_expression_async_marker(data),
         AnyTransport::ClosureExpressionBlock(data) => transport_to_node_closure_expression_block(data),
         AnyTransport::_ClosureExpressionExpr(data) => transport_to_node__closure_expression_expr(data),
@@ -40435,6 +40487,26 @@ fn transport_to_node_array_expression_semi(transport: ArrayExpressionSemiTranspo
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(321) /* "_array_expression_semi" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_attributed_field_declaration(transport: AttributedFieldDeclarationTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(transport.children.into_iter().map(|v| attributed_field_declaration_child_transport_slot_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_attributed_field_declaration" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -43184,7 +43256,7 @@ fn transport_to_node_field_declaration(transport: FieldDeclarationTransport) -> 
 fn transport_to_node_field_declaration_list(transport: FieldDeclarationListTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| field_declaration_list_child_transport_slot_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::AttributedFieldDeclaration(v)).collect::<Vec<_>>())?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(181) /* "field_declaration_list" */,

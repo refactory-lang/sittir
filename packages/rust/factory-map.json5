@@ -7,6 +7,7 @@
     "__range_expression_binary_operator": "text",
     "_array_expression_list": "config",
     "_array_expression_semi": "config",
+    "_attributed_field_declaration": "spread",
     "_closure_expression_async_marker": "text",
     "_closure_expression_block": "config",
     "_closure_expression_expr": "config",
@@ -881,6 +882,15 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_attributed_field_declaration": {
+      "children": {
+        "unnamed": true,
+        "slotCount": 2,
+        "required": true,
+        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -2046,7 +2056,7 @@
     "field_declaration_list": {
       "children": {
         "unnamed": true,
-        "slotCount": 2,
+        "slotCount": 1,
         "required": false,
         "multiple": true,
         "nonEmpty": false

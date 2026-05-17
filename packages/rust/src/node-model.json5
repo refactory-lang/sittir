@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 371,
+  "nodeCount": 372,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -580,6 +580,47 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "_attributed_field_declaration",
+      "modelType": "branch",
+      "typeName": "AttributedFieldDeclaration",
+      "factoryName": "attributedFieldDeclaration",
+      "irKey": "attributedFieldDeclaration",
+      "hidden": false,
+      "fields": [],
+      "children": [
+        {
+          "name": "attribute_item",
+          "propertyName": "attributeItems",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "attribute_item",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "field_declaration",
+          "propertyName": "fieldDeclaration",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "field_declaration",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
     },
     {
       "kind": "_closure_expression_async_marker",
@@ -6747,8 +6788,8 @@
       "fields": [],
       "children": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItems",
+          "name": "attributed_field_declaration",
+          "propertyName": "attributedFieldDeclarations",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -6756,22 +6797,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "attribute_item",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "field_declaration",
-          "propertyName": "fieldDeclarations",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "field_declaration",
+              "name": "_attributed_field_declaration",
               "unresolved": true
             }
           ]

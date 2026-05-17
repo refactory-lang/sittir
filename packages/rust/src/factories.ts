@@ -1683,7 +1683,7 @@ export function fieldDeclarationList(config: Partial<T.FieldDeclarationList.Conf
     $children: children,
     children() { return children; },
     $with: {
-      children: (...items: ((T.AttributeItem | T.FieldDeclaration))[]) => fieldDeclarationList({ ...config, children: items } as unknown as Parameters<typeof fieldDeclarationList>[0]),
+      children: (...items: T.AttributedFieldDeclaration[]) => fieldDeclarationList({ ...config, children: items } as unknown as Parameters<typeof fieldDeclarationList>[0]),
     },
   }, methodsEngine);
 }

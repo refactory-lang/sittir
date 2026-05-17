@@ -57387,6 +57387,1144 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 293,
+      "$source": 0,
+      "$span": {
+        "start": 321,
+        "end": 375
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_{": {
+        "$type": 114,
+        "$source": 0,
+        "$text": "{",
+        "$span": {
+          "start": 321,
+          "end": 322
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_trailing_expression": {
+        "$type": 311,
+        "$source": 0,
+        "$text": "\"200 (but this is not very stylish)\"",
+        "$span": {
+          "start": 331,
+          "end": 367
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_}": {
+        "$type": 115,
+        "$source": 0,
+        "$text": "}",
+        "$span": {
+          "start": 374,
+          "end": 375
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": false
+      }
+    },
+    "expectedOutput": "{  \"200 (but this is not very stylish)\" }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{\n        \"200 (but this is not very stylish)\"\n      }",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{  \"200 (but this is not very stylish)\" }",
+    "expectedReparseTree": "(block trailing_expression: (string_literal (string_content)))",
+    "wrappedText": "fn _f() { let _ = {  \"200 (but this is not very stylish)\" }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "one",
+          "$span": {
+            "start": 22,
+            "end": 25
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 25,
+            "end": 26
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 21,
+        "end": 26
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 21,
+          "end": 22
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"one\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"one\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"one\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"one\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "two",
+          "$span": {
+            "start": 39,
+            "end": 42
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 42,
+            "end": 43
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 38,
+        "end": 43
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 38,
+          "end": 39
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"two\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"two\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"two\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"two\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "three",
+          "$span": {
+            "start": 98,
+            "end": 103
+          },
+          "$nodeHandle": 2,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 103,
+            "end": 104
+          },
+          "$nodeHandle": 2,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 97,
+        "end": 104
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 97,
+          "end": 98
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"three\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"three\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"three\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"three\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "four",
+          "$span": {
+            "start": 124,
+            "end": 128
+          },
+          "$nodeHandle": 3,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 128,
+            "end": 129
+          },
+          "$nodeHandle": 3,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 123,
+        "end": 129
+      },
+      "$nodeHandle": 3,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 123,
+          "end": 124
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"four\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"four\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"four\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"four\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "something else",
+          "$span": {
+            "start": 141,
+            "end": 155
+          },
+          "$nodeHandle": 4,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 155,
+            "end": 156
+          },
+          "$nodeHandle": 4,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 140,
+        "end": 156
+      },
+      "$nodeHandle": 4,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 140,
+          "end": 141
+        },
+        "$nodeHandle": 4,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"something else\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"something else\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"something else\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"something else\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "one of zero, one, or ten",
+          "$span": {
+            "start": 200,
+            "end": 224
+          },
+          "$nodeHandle": 5,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 224,
+            "end": 225
+          },
+          "$nodeHandle": 5,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 199,
+        "end": 225
+      },
+      "$nodeHandle": 5,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 199,
+          "end": 200
+        },
+        "$nodeHandle": 5,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"one of zero, one, or ten\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"one of zero, one, or ten\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"one of zero, one, or ten\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"one of zero, one, or ten\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "less than 20, but not zero, one, or ten",
+          "$span": {
+            "start": 247,
+            "end": 286
+          },
+          "$nodeHandle": 6,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 286,
+            "end": 287
+          },
+          "$nodeHandle": 6,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 246,
+        "end": 287
+      },
+      "$nodeHandle": 6,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 246,
+          "end": 247
+        },
+        "$nodeHandle": 6,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"less than 20, but not zero, one, or ten\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"less than 20, but not zero, one, or ten\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"less than 20, but not zero, one, or ten\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"less than 20, but not zero, one, or ten\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "200 (but this is not very stylish)",
+          "$span": {
+            "start": 332,
+            "end": 366
+          },
+          "$nodeHandle": 7,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 366,
+            "end": 367
+          },
+          "$nodeHandle": 7,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 331,
+        "end": 367
+      },
+      "$nodeHandle": 7,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 331,
+          "end": 332
+        },
+        "$nodeHandle": 7,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"200 (but this is not very stylish)\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"200 (but this is not very stylish)\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"200 (but this is not very stylish)\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"200 (but this is not very stylish)\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "very chained",
+          "$span": {
+            "start": 433,
+            "end": 445
+          },
+          "$nodeHandle": 8,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 445,
+            "end": 446
+          },
+          "$nodeHandle": 8,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 432,
+        "end": 446
+      },
+      "$nodeHandle": 8,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 432,
+          "end": 433
+        },
+        "$nodeHandle": 8,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"very chained\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"very chained\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"very chained\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"very chained\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "something else",
+          "$span": {
+            "start": 458,
+            "end": 472
+          },
+          "$nodeHandle": 9,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 472,
+            "end": 473
+          },
+          "$nodeHandle": 9,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 457,
+        "end": 473
+      },
+      "$nodeHandle": 9,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 457,
+          "end": 458
+        },
+        "$nodeHandle": 9,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"something else\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"something else\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"something else\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"something else\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 170,
+      "$source": 0,
+      "$span": {
+        "start": 79,
+        "end": 87
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_#": {
+        "$type": 82,
+        "$source": 0,
+        "$text": "#",
+        "$span": {
+          "start": 79,
+          "end": 80
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_[": {
+        "$type": 112,
+        "$source": 0,
+        "$text": "[",
+        "$span": {
+          "start": 80,
+          "end": 81
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_attribute": {
+        "$type": 172,
+        "$source": 0,
+        "$text": "attr1",
+        "$span": {
+          "start": 81,
+          "end": 86
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      },
+      "_]": {
+        "$type": 113,
+        "$source": 0,
+        "$text": "]",
+        "$span": {
+          "start": 86,
+          "end": 87
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
+        "$named": false
+      }
+    },
+    "expectedOutput": "#[attr1]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "#[attr1]",
+    "pattern": "attribute_item",
+    "edits": [],
+    "expectedSourceOut": "#[attr1]",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier)))",
+    "wrappedText": "#[attr1]",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 203,
+      "$source": 0,
+      "$span": {
+        "start": 161,
+        "end": 477
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_let": {
+        "$type": 97,
+        "$source": 0,
+        "$text": "let",
+        "$span": {
+          "start": 161,
+          "end": 164
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_pattern": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "msg",
+        "$span": {
+          "start": 165,
+          "end": 168
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_=": {
+        "$type": 66,
+        "$source": 0,
+        "$text": "=",
+        "$span": {
+          "start": 169,
+          "end": 170
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": false
+      },
+      "_value": {
+        "$type": 272,
+        "$source": 0,
+        "$text": "match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n}",
+        "$span": {
+          "start": 171,
+          "end": 476
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
+        "$named": true
+      },
+      "_;": {
+        "$type": 2,
+        "$source": 0,
+        "$text": ";",
+        "$span": {
+          "start": 476,
+          "end": 477
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": false
+      }
+    },
+    "expectedOutput": "let msg =match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "let msg = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
+    "pattern": "let_declaration",
+    "edits": [],
+    "expectedSourceOut": "let msg =match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_block_ending value: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal (string_content)))))) (match_arm pattern: (match_pattern (identifier) condition: (let_chain (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier)) (identifier) (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier)))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (string_literal (string_content))))))",
+    "wrappedText": "let msg =match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 250,
+      "$source": 0,
+      "$span": {
+        "start": 236,
+        "end": 242
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "y",
+        "$span": {
+          "start": 236,
+          "end": 237
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_operator": {
+        "$type": 70,
+        "$source": 0,
+        "$text": "<",
+        "$span": {
+          "start": 238,
+          "end": 239
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 126,
+        "$source": 0,
+        "$text": "20",
+        "$span": {
+          "start": 240,
+          "end": 242
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "y < 20"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "y < 20",
+    "pattern": "binary_expression",
+    "edits": [],
+    "expectedSourceOut": "y < 20",
+    "expectedReparseTree": "(binary_expression left: (identifier) right: (integer_literal))",
+    "wrappedText": "fn _f() { let _ = y < 20; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 250,
+      "$source": 0,
+      "$span": {
+        "start": 298,
+        "end": 306
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "y",
+        "$span": {
+          "start": 298,
+          "end": 299
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_operator": {
+        "$type": 67,
+        "$source": 0,
+        "$text": "==",
+        "$span": {
+          "start": 300,
+          "end": 302
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 126,
+        "$source": 0,
+        "$text": "200",
+        "$span": {
+          "start": 303,
+          "end": 306
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "y == 200"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "y == 200",
+    "pattern": "binary_expression",
+    "edits": [],
+    "expectedSourceOut": "y == 200",
+    "expectedReparseTree": "(binary_expression left: (identifier) right: (integer_literal))",
+    "wrappedText": "fn _f() { let _ = y == 200; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 298,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "z",
+          "$span": {
+            "start": 394,
+            "end": 395
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 389,
+        "end": 396
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_type": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "Some",
+        "$span": {
+          "start": 389,
+          "end": 393
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 393,
+          "end": 394
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 395,
+          "end": 396
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
+        "$named": false
+      }
+    },
+    "expectedOutput": "Some(z)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "Some(z)",
+    "pattern": "tuple_struct_pattern",
+    "edits": [],
+    "expectedSourceOut": "Some(z)",
+    "expectedReparseTree": "(tuple_struct_pattern type: (identifier) (identifier))",
+    "wrappedText": "fn _f() { let Some(z) = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 298,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "w",
+          "$span": {
+            "start": 420,
+            "end": 421
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 415,
+        "end": 422
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_type": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "Some",
+        "$span": {
+          "start": 415,
+          "end": 419
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 419,
+          "end": 420
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 421,
+          "end": 422
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 3,
+        "$named": false
+      }
+    },
+    "expectedOutput": "Some(w)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "Some(w)",
+    "pattern": "tuple_struct_pattern",
+    "edits": [],
+    "expectedSourceOut": "Some(w)",
+    "expectedReparseTree": "(tuple_struct_pattern type: (identifier) (identifier))",
+    "wrappedText": "fn _f() { let Some(w) = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 157,
       "$source": 0,
       "$span": {
@@ -71545,6 +72683,686 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 305,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 298,
+          "$source": 0,
+          "$text": "A(_)",
+          "$span": {
+            "start": 16,
+            "end": 20
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 12,
+        "end": 20
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_identifier": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "a",
+        "$span": {
+          "start": 12,
+          "end": 13
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_@": {
+        "$type": 73,
+        "$source": 0,
+        "$text": "@",
+        "$span": {
+          "start": 14,
+          "end": 15
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "a@A(_)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "a @ A(_)",
+    "pattern": "captured_pattern",
+    "edits": [],
+    "expectedSourceOut": "a@A(_)",
+    "expectedReparseTree": "(captured_pattern identifier: (identifier) (tuple_struct_pattern type: (identifier) (wildcard_pattern)))",
+    "wrappedText": "fn _f() { let a@A(_) = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 305,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 298,
+          "$source": 0,
+          "$text": "B(..)",
+          "$span": {
+            "start": 27,
+            "end": 32
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 23,
+        "end": 32
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_identifier": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "b",
+        "$span": {
+          "start": 23,
+          "end": 24
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_@": {
+        "$type": 73,
+        "$source": 0,
+        "$text": "@",
+        "$span": {
+          "start": 25,
+          "end": 26
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "b@B(..)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "b @ B(..)",
+    "pattern": "captured_pattern",
+    "edits": [],
+    "expectedSourceOut": "b@B(..)",
+    "expectedReparseTree": "(captured_pattern identifier: (identifier) (tuple_struct_pattern type: (identifier) (remaining_field_pattern)))",
+    "wrappedText": "fn _f() { let b@B(..) = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 298,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 320,
+          "$source": 0,
+          "$text": "_",
+          "$span": {
+            "start": 18,
+            "end": 19
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 16,
+        "end": 20
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_type": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "A",
+        "$span": {
+          "start": 16,
+          "end": 17
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 17,
+          "end": 18
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 19,
+          "end": 20
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
+        "$named": false
+      }
+    },
+    "expectedOutput": "A(_)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "A(_)",
+    "pattern": "tuple_struct_pattern",
+    "edits": [],
+    "expectedSourceOut": "A(_)",
+    "expectedReparseTree": "(tuple_struct_pattern type: (identifier) (wildcard_pattern))",
+    "wrappedText": "fn _f() { let A(_) = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 298,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 301,
+          "$source": 0,
+          "$text": "..",
+          "$span": {
+            "start": 29,
+            "end": 31
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 27,
+        "end": 32
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_type": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "B",
+        "$span": {
+          "start": 27,
+          "end": 28
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 28,
+          "end": 29
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 31,
+          "end": 32
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 3,
+        "$named": false
+      }
+    },
+    "expectedOutput": "B(..)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "B(..)",
+    "pattern": "tuple_struct_pattern",
+    "edits": [],
+    "expectedSourceOut": "B(..)",
+    "expectedReparseTree": "(tuple_struct_pattern type: (identifier) (remaining_field_pattern))",
+    "wrappedText": "fn _f() { let B(..) = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 303,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 343,
+          "$source": 0,
+          "$text": "... 5",
+          "$span": {
+            "start": 47,
+            "end": 52
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 45,
+        "end": 52
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 126,
+        "$source": 0,
+        "$text": "1",
+        "$span": {
+          "start": 45,
+          "end": 46
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      }
+    },
+    "expectedOutput": "1... 5"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "1 ... 5",
+    "pattern": "range_pattern",
+    "edits": [],
+    "expectedSourceOut": "1... 5",
+    "expectedReparseTree": "(range_pattern left: (integer_literal) (range_pattern_left_with_right right: (integer_literal)))",
+    "wrappedText": "fn _f() { let 1... 5 = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 303,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 343,
+          "$source": 0,
+          "$text": "... 5",
+          "$span": {
+            "start": 68,
+            "end": 73
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 1,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 66,
+        "end": 73
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_left": {
+        "$type": 126,
+        "$source": 0,
+        "$text": "1",
+        "$span": {
+          "start": 66,
+          "end": 67
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": true
+      }
+    },
+    "expectedOutput": "1... 5"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "1 ... 5",
+    "pattern": "range_pattern",
+    "edits": [],
+    "expectedSourceOut": "1... 5",
+    "expectedReparseTree": "(range_pattern left: (integer_literal) (range_pattern_left_with_right right: (integer_literal)))",
+    "wrappedText": "fn _f() { let 1... 5 = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 303,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 343,
+          "$source": 0,
+          "$text": "...c",
+          "$span": {
+            "start": 88,
+            "end": 92
+          },
+          "$nodeHandle": 2,
+          "$childIndex": 1,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 87,
+        "end": 92
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "b",
+        "$span": {
+          "start": 87,
+          "end": 88
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": true
+      }
+    },
+    "expectedOutput": "b...c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "b...c",
+    "pattern": "range_pattern",
+    "edits": [],
+    "expectedSourceOut": "b...c",
+    "expectedReparseTree": "(range_pattern left: (identifier) (range_pattern_left_with_right right: (identifier)))",
+    "wrappedText": "fn _f() { let b...c = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 303,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 343,
+          "$source": 0,
+          "$text": "..=c",
+          "$span": {
+            "start": 106,
+            "end": 110
+          },
+          "$nodeHandle": 3,
+          "$childIndex": 1,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 105,
+        "end": 110
+      },
+      "$nodeHandle": 3,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "b",
+        "$span": {
+          "start": 105,
+          "end": 106
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 0,
+        "$named": true
+      }
+    },
+    "expectedOutput": "b..=c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "b..=c",
+    "pattern": "range_pattern",
+    "edits": [],
+    "expectedSourceOut": "b..=c",
+    "expectedReparseTree": "(range_pattern left: (identifier) (range_pattern_left_with_right right: (identifier)))",
+    "wrappedText": "fn _f() { let b..=c = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "IPV6_FLOWINFO",
+          "$span": {
+            "start": 178,
+            "end": 191
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 191,
+            "end": 192
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 177,
+        "end": 192
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 177,
+          "end": 178
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"IPV6_FLOWINFO\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"IPV6_FLOWINFO\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"IPV6_FLOWINFO\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"IPV6_FLOWINFO\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "IPV6_FLOWLABEL_MGR",
+          "$span": {
+            "start": 198,
+            "end": 216
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 216,
+            "end": 217
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 197,
+        "end": 217
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 197,
+          "end": 198
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"IPV6_FLOWLABEL_MGR\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"IPV6_FLOWLABEL_MGR\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"IPV6_FLOWLABEL_MGR\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"IPV6_FLOWLABEL_MGR\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "IPV6_FLOWINFO_SEND",
+          "$span": {
+            "start": 223,
+            "end": 241
+          },
+          "$nodeHandle": 2,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 241,
+            "end": 242
+          },
+          "$nodeHandle": 2,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 222,
+        "end": 242
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 222,
+          "end": 223
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"IPV6_FLOWINFO_SEND\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"IPV6_FLOWINFO_SEND\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"IPV6_FLOWINFO_SEND\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"IPV6_FLOWINFO_SEND\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 157,
       "$source": 0,
       "$span": {
@@ -75620,6 +77438,296 @@
     "expectedReparseTree": "(arguments attributes: (integer_literal))",
     "wrappedText": "f(3);",
     "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 239,
+      "$source": 0,
+      "$span": {
+        "start": 79,
+        "end": 102
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_macro": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "println",
+        "$span": {
+          "start": 79,
+          "end": 86
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_!": {
+        "$type": 49,
+        "$source": 0,
+        "$text": "!",
+        "$span": {
+          "start": 86,
+          "end": 87
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_token_tree": {
+        "$type": 168,
+        "$source": 0,
+        "$text": "(\"three cubed\")",
+        "$span": {
+          "start": 87,
+          "end": 102
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "println!(\"three cubed\")"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "println!(\"three cubed\")",
+    "pattern": "macro_invocation",
+    "edits": [],
+    "expectedSourceOut": "println!(\"three cubed\")",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content)))))",
+    "wrappedText": "fn _f() { let _ = println!(\"three cubed\"); }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 239,
+      "$source": 0,
+      "$span": {
+        "start": 190,
+        "end": 213
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_macro": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "println",
+        "$span": {
+          "start": 190,
+          "end": 197
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_!": {
+        "$type": 49,
+        "$source": 0,
+        "$text": "!",
+        "$span": {
+          "start": 197,
+          "end": 198
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_token_tree": {
+        "$type": 168,
+        "$source": 0,
+        "$text": "(\"three cubed\")",
+        "$span": {
+          "start": 198,
+          "end": 213
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "println!(\"three cubed\")"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "println!(\"three cubed\")",
+    "pattern": "macro_invocation",
+    "edits": [],
+    "expectedSourceOut": "println!(\"three cubed\")",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content)))))",
+    "wrappedText": "fn _f() { let _ = println!(\"three cubed\"); }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "three cubed",
+          "$span": {
+            "start": 89,
+            "end": 100
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 100,
+            "end": 101
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 88,
+        "end": 101
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 88,
+          "end": 89
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"three cubed\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"three cubed\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"three cubed\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"three cubed\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 311,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 147,
+          "$source": 0,
+          "$text": "three cubed",
+          "$span": {
+            "start": 200,
+            "end": 211
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 127,
+          "$source": 0,
+          "$text": "\"",
+          "$span": {
+            "start": 211,
+            "end": 212
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 2,
+          "$named": false
+        }
+      ],
+      "$span": {
+        "start": 199,
+        "end": 212
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_\"": {
+        "$type": 127,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 199,
+          "end": 200
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": false
+      }
+    },
+    "expectedOutput": "\"three cubed\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "\"three cubed\"",
+    "pattern": "string_literal",
+    "edits": [],
+    "expectedSourceOut": "\"three cubed\"",
+    "expectedReparseTree": "(string_literal (string_content))",
+    "wrappedText": "fn _f() { let _ = \"three cubed\"; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 0,
+        "end": 45
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_statements": {
+        "$type": 160,
+        "$source": 0,
+        "$text": "match y {\n    None::<T> => 17,\n    _ => 42,\n}",
+        "$span": {
+          "start": 0,
+          "end": 45
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      }
+    },
+    "expectedOutput": "match y {\n    None::<T> => 17,\n    _ => 42,\n}"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "match y {\n    None::<T> => 17,\n    _ => 42,\n}",
+    "pattern": "_expression_statement_block_ending",
+    "edits": [],
+    "expectedSourceOut": "match y {\n    None::<T> => 17,\n    _ => 42,\n}",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (generic_pattern (identifier) type_arguments: (type_arguments (type_identifier)))) (match_arm_with_comma value: (integer_literal))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (integer_literal)))))))",
+    "wrappedText": "match y {\n    None::<T> => 17,\n    _ => 42,\n}",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",

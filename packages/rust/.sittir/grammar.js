@@ -492,6 +492,7 @@ function wire(config2) {
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
   injectTransformHiddenRulePlaceholders(outRules, transforms, context);
   wrapAllRuleFns(outRules, context);
+  applyWirePatternReplacement(outRules, context.authoredRuleNames);
   const conflicts = wrapConflictsCallback(config2.conflicts, context);
   const inline = wrapInlineCallback(config2.inline, context);
   const wired = {
@@ -664,6 +665,108 @@ function nativeInlineRef($, name) {
 }
 function symbolizeRef(_$, name) {
   return { type: "SYMBOL", name };
+}
+function makeSimpleDollarProxy() {
+  return new Proxy({}, {
+    get(_target, name) {
+      return { type: "SYMBOL", name };
+    }
+  });
+}
+function isComplexBodyRt(rule) {
+  const r = rule;
+  const t = r.type;
+  if (typeEq(t, "seq") || typeEq(t, "choice")) {
+    return Array.isArray(r.members) && r.members.length >= 2;
+  }
+  if (typeEq(t, "repeat") || typeEq(t, "repeat1")) {
+    const c = r.content;
+    if (!c || typeof c.type !== "string") return false;
+    return !typeEq(c.type, "string") && !typeEq(c.type, "symbol") && !typeEq(c.type, "pattern");
+  }
+  return false;
+}
+function patternBodyEqual(a, b) {
+  if (!a || typeof a !== "object") return a === b;
+  if (!b || typeof b !== "object") return false;
+  const ra = a;
+  const rb = b;
+  if (!typeEq(ra.type, rb.type.toLowerCase())) return false;
+  const t = ra.type.toLowerCase();
+  if (t === "string" || t === "pattern") return ra.value === rb.value;
+  if (t === "symbol") return ra.name === rb.name;
+  if (t === "seq" || t === "choice") {
+    const ma = ra.members;
+    const mb = rb.members;
+    if (!Array.isArray(ma) || !Array.isArray(mb)) return false;
+    if (ma.length !== mb.length) return false;
+    return ma.every((m, i) => patternBodyEqual(m, mb[i]));
+  }
+  if (t === "optional" || t === "repeat" || t === "repeat1") {
+    return patternBodyEqual(ra.content, rb.content);
+  }
+  if (t === "field") {
+    return ra.name === rb.name && patternBodyEqual(ra.content, rb.content);
+  }
+  return false;
+}
+function replaceInBodyRt(rule, candidates) {
+  if (!rule || typeof rule !== "object") return rule;
+  const r = rule;
+  for (const c of candidates) {
+    if (patternBodyEqual(rule, c.body)) {
+      return c.uppercase ? { type: "SYMBOL", name: c.name } : { type: "symbol", name: c.name, hidden: true };
+    }
+  }
+  const t = r.type.toLowerCase();
+  if (t === "seq" || t === "choice") {
+    const members = r.members;
+    if (!Array.isArray(members)) return rule;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const replaced = replaceInBodyRt(m, candidates);
+      if (replaced !== m) changed = true;
+      return replaced;
+    });
+    return changed ? { ...r, members: newMembers } : rule;
+  }
+  if (t === "optional" || t === "repeat" || t === "repeat1" || t === "field") {
+    const newContent = replaceInBodyRt(r.content, candidates);
+    return newContent !== r.content ? { ...r, content: newContent } : rule;
+  }
+  return rule;
+}
+function buildPatternReplacingFn(fn, candidates) {
+  return function patternReplacingRuleFn($, previous) {
+    const result = fn.call(this, $, previous);
+    return replaceInBodyRt(result, candidates);
+  };
+}
+function applyWirePatternReplacement(rules, authoredRuleNames) {
+  const candidates = [];
+  const $ = makeSimpleDollarProxy();
+  for (const name of authoredRuleNames) {
+    if (!name.startsWith("_")) continue;
+    const fn = rules[name];
+    if (!fn) continue;
+    let body;
+    try {
+      const result = fn.call(void 0, $, void 0);
+      if (!result || typeof result !== "object" || typeof result.type !== "string") continue;
+      body = result;
+    } catch {
+      continue;
+    }
+    if (!isComplexBodyRt(body)) continue;
+    const uppercase = body.type === body.type.toUpperCase();
+    candidates.push({ name, body, uppercase });
+  }
+  if (candidates.length === 0) return;
+  const candidateNames = new Set(candidates.map((c) => c.name));
+  for (const [name, fn] of Object.entries(rules)) {
+    if (candidateNames.has(name)) continue;
+    rules[name] = buildPatternReplacingFn(fn, candidates);
+  }
 }
 
 // packages/codegen/src/dsl/primitives/field.ts
@@ -2151,7 +2254,22 @@ var config = {
     // The hidden rule `_wildcard_pattern` is just the `_` literal;
     // the named alias on `_pattern` above promotes it to a proper
     // `wildcard_pattern` kind at parse time.
-    _wildcard_pattern: ($) => "_"
+    _wildcard_pattern: ($) => "_",
+    // Pattern rule: attribute_item(s) attached to a struct field.
+    //
+    // The base grammar uses `seq(repeat($.attribute_item), $.field_declaration)`
+    // inline at every comma-separated position in field_declaration_list. Wire's
+    // pattern find-and-replace detects this body as a STRUCTURAL PATTERN and
+    // replaces every occurrence with a reference to `_attributed_field_declaration`,
+    // so tree-sitter produces a real CST node for the group instead of
+    // flattening attributes and their target into the parent's child list.
+    //
+    // Without this, the parent slot model gets a flat `$children` list of
+    // alternating attribute_item / field_declaration nodes joined by the
+    // comma separator, causing attribute items and their field to be rendered
+    // with commas between them (e.g. `#[attr],y: i32` instead of
+    // `#[attr] y: i32`).
+    _attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration)
   },
   // externalAltDef — sittir-side rule bodies for external scanner symbols.
   // These bodies are used by sittir's slot/render/factory pipeline ONLY;

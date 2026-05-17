@@ -2,6 +2,7 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
+  '_attributed_field_declaration',
   '_closure_expression_expr',
   '_delim_token_tree_brace',
   '_delim_token_tree_bracket',
@@ -1469,6 +1470,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
+  '_attributed_field_declaration': [
+  ],
   '_closure_expression_expr': [
     { name: 'body', required: true, multiple: false },
   ],

@@ -635,7 +635,23 @@ const config: WireConfig<RustGrammar> = {
 		// The hidden rule `_wildcard_pattern` is just the `_` literal;
 		// the named alias on `_pattern` above promotes it to a proper
 		// `wildcard_pattern` kind at parse time.
-		_wildcard_pattern: ($) => '_'
+		_wildcard_pattern: ($) => '_',
+
+		// Pattern rule: attribute_item(s) attached to a struct field.
+		//
+		// The base grammar uses `seq(repeat($.attribute_item), $.field_declaration)`
+		// inline at every comma-separated position in field_declaration_list. Wire's
+		// pattern find-and-replace detects this body as a STRUCTURAL PATTERN and
+		// replaces every occurrence with a reference to `_attributed_field_declaration`,
+		// so tree-sitter produces a real CST node for the group instead of
+		// flattening attributes and their target into the parent's child list.
+		//
+		// Without this, the parent slot model gets a flat `$children` list of
+		// alternating attribute_item / field_declaration nodes joined by the
+		// comma separator, causing attribute items and their field to be rendered
+		// with commas between them (e.g. `#[attr],y: i32` instead of
+		// `#[attr] y: i32`).
+		_attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration)
 	},
 
 	// externalAltDef — sittir-side rule bodies for external scanner symbols.

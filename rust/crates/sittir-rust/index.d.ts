@@ -151,6 +151,17 @@ export interface AsyncBlockTransport {
   _block: BlockTransport
 }
 
+export interface AttributedFieldDeclarationTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  '$children': Array<AttributedFieldDeclarationChildTransportSlot>
+}
+
 export interface AttributeItemTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -670,7 +681,7 @@ export interface FieldDeclarationListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': Array<FieldDeclarationListChildTransportSlot>
+  '$children': Array<AttributedFieldDeclarationTransport>
 }
 
 export interface FieldDeclarationTransport {
