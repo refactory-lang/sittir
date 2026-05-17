@@ -19,28 +19,28 @@
     "_call_expression_call": "config",
     "_call_expression_member": "config",
     "_call_expression_template_call": "config",
-    "_class_body_member": "spread",
+    "_class_body_member": "config",
     "_class_body_method": "config",
-    "_class_body_method_sig": "spread",
-    "_class_heritage_extends_clause": "spread",
+    "_class_body_method_sig": "config",
+    "_class_heritage_extends_clause": "config",
     "_class_heritage_implements_clause": "spread",
     "_const_marker": "text",
     "_export_specifier_export_kind": "text",
     "_export_statement_default_decl_arm": "config",
     "_export_statement_default_decl_arm_default_kw": "config",
     "_export_statement_default_decl_arm_default_kw_value": "config",
-    "_export_statement_default_from_arm": "spread",
+    "_export_statement_default_from_arm": "config",
     "_export_statement_default_from_arm_clause_from": "config",
     "_export_statement_default_from_arm_ns_from": "config",
     "_export_statement_default_from_arm_star_from": "config",
-    "_export_statement_equals_export": "spread",
-    "_export_statement_namespace_export": "spread",
+    "_export_statement_equals_export": "config",
+    "_export_statement_namespace_export": "config",
     "_export_statement_type_export": "config",
     "_for_header_let_const_kind": "config",
     "_for_header_lhs": "config",
     "_for_header_var_kind": "config",
     "_import_attribute_object": "text",
-    "_import_clause_default_import": "spread",
+    "_import_clause_default_import": "config",
     "_import_clause_named_imports": "spread",
     "_import_clause_namespace_import": "spread",
     "_import_specifier_as": "config",
@@ -60,7 +60,7 @@
     "_public_field_definition_abstract_first": "config",
     "_public_field_definition_access_first": "config",
     "_public_field_definition_accessor_opt": "config",
-    "_public_field_definition_declare_first": "config",
+    "_public_field_definition_declare_first": "spread",
     "_public_field_definition_optionality_marker": "text",
     "_public_field_definition_readonly_first": "config",
     "_public_field_definition_static_mods": "config",
@@ -84,9 +84,9 @@
     "adding_type_annotation": "direct",
     "ambient_declaration_declaration": "direct",
     "ambient_declaration": "config",
-    "arguments": "config",
-    "array": "config",
-    "array_pattern": "config",
+    "arguments": "spread",
+    "array": "spread",
+    "array_pattern": "spread",
     "array_type": "direct",
     "arrow_function_parameter": "direct",
     "arrow_function__call_signature": "config",
@@ -104,9 +104,9 @@
     "call_signature": "config",
     "catch_clause": "config",
     "class": "config",
-    "class_body": "config",
+    "class_body": "spread",
     "class_declaration": "config",
-    "class_heritage_extends_clause": "spread",
+    "class_heritage_extends_clause": "config",
     "class_heritage_implements_clause": "direct",
     "class_heritage": "config",
     "class_static_block": "config",
@@ -129,11 +129,11 @@
     "enum_body": "config",
     "enum_declaration": "config",
     "escape_sequence": "text",
-    "export_clause": "config",
+    "export_clause": "spread",
     "export_specifier": "config",
     "export_statement_type_export": "config",
-    "export_statement_equals_export": "spread",
-    "export_statement_namespace_export": "spread",
+    "export_statement_equals_export": "config",
+    "export_statement_namespace_export": "config",
     "export_statement": "config",
     "expression_statement": "config",
     "extends_clause": "config",
@@ -144,7 +144,7 @@
     "flow_maybe_type": "direct",
     "for_in_statement": "config",
     "for_statement": "config",
-    "formal_parameters": "config",
+    "formal_parameters": "spread",
     "function_declaration": "config",
     "function_expression": "config",
     "function_signature": "config",
@@ -162,7 +162,7 @@
     "import_attribute": "direct",
     "import_clause_namespace_import": "direct",
     "import_clause_named_imports": "direct",
-    "import_clause_default_import": "spread",
+    "import_clause_default_import": "config",
     "import_clause": "config",
     "import_require_clause": "config",
     "import_specifier_name": "direct",
@@ -176,10 +176,10 @@
     "interface_declaration": "config",
     "internal_module": "config",
     "intersection_type": "config",
-    "jsx_attribute": "spread",
+    "jsx_attribute": "config",
     "jsx_closing_element": "direct",
     "jsx_element": "config",
-    "jsx_expression": "config",
+    "jsx_expression": "direct",
     "jsx_identifier": "text",
     "jsx_namespace_name": "direct",
     "jsx_opening_element": "config",
@@ -194,7 +194,7 @@
     "method_definition": "config",
     "method_signature": "config",
     "module": "config",
-    "named_imports": "config",
+    "named_imports": "spread",
     "namespace_export": "direct",
     "namespace_import": "direct",
     "nested_identifier": "config",
@@ -203,9 +203,9 @@
     "non_null_expression": "direct",
     "null": "text",
     "number": "text",
-    "object": "config",
+    "object": "spread",
     "object_assignment_pattern": "config",
-    "object_pattern": "config",
+    "object_pattern": "spread",
     "object_type": "config",
     "omitting_type_annotation": "direct",
     "opting_type_annotation": "direct",
@@ -238,12 +238,12 @@
     "string": "config",
     "subscript_expression": "config",
     "super": "text",
-    "switch_body": "config",
+    "switch_body": "spread",
     "switch_case": "config",
     "switch_default": "config",
     "switch_statement": "config",
-    "template_literal_type": "config",
-    "template_string": "config",
+    "template_literal_type": "spread",
+    "template_string": "spread",
     "template_substitution": "direct",
     "template_type": "direct",
     "ternary_expression": "config",
@@ -252,7 +252,7 @@
     "true": "text",
     "try_statement": "config",
     "tuple_parameter": "config",
-    "tuple_type": "config",
+    "tuple_type": "spread",
     "type_alias_declaration": "config",
     "type_annotation": "direct",
     "type_arguments": "spread",
@@ -427,6 +427,9 @@
     }
   },
   "factoryFields": {
+    "_ambient_declaration_declaration": [
+      "declaration"
+    ],
     "_ambient_declaration_global": [
       "body"
     ],
@@ -457,25 +460,88 @@
       "function",
       "arguments"
     ],
+    "_class_body_member": [
+      "abstract_method_signature",
+      "semicolon"
+    ],
+    "_class_body_method": [
+      "decorator",
+      "method_definition",
+      "semicolon"
+    ],
+    "_class_body_method_sig": [
+      "method_signature",
+      "function_signature_automatic_semicolon"
+    ],
+    "_class_heritage_extends_clause": [
+      "extends_clause",
+      "implements_clause"
+    ],
+    "_class_heritage_implements_clause": [
+      "implements_clause"
+    ],
     "_export_statement_default_decl_arm": [
       "decorator",
-      "declaration"
+      "declaration",
+      "export_statement_default_decl_arm_default_kw"
     ],
     "_export_statement_default_decl_arm_default_kw": [
-      "declaration"
+      "declaration",
+      "export_statement_default_decl_arm_default_kw_value"
+    ],
+    "_export_statement_default_decl_arm_default_kw_value": [
+      "value",
+      "semicolon"
+    ],
+    "_export_statement_default_from_arm": [
+      "export_statement_default_from_arm_star_from",
+      "semicolon"
+    ],
+    "_export_statement_default_from_arm_clause_from": [
+      "export_clause",
+      "source"
+    ],
+    "_export_statement_default_from_arm_ns_from": [
+      "namespace_export",
+      "source"
     ],
     "_export_statement_default_from_arm_star_from": [
       "source"
     ],
+    "_export_statement_equals_export": [
+      "expression",
+      "semicolon"
+    ],
+    "_export_statement_namespace_export": [
+      "identifier",
+      "semicolon"
+    ],
+    "_export_statement_type_export": [
+      "export_clause",
+      "source",
+      "semicolon"
+    ],
     "_for_header_let_const_kind": [
       "kind",
-      "left"
+      "left",
+      "automatic_semicolon"
     ],
     "_for_header_lhs": [
       "left"
     ],
     "_for_header_var_kind": [
-      "left"
+      "left",
+      "initializer"
+    ],
+    "_import_clause_default_import": [
+      "import_identifier",
+      "namespace_import"
+    ],
+    "_import_clause_named_imports": [
+      "named_imports"
+    ],
+    "_import_clause_namespace_import": [
+      "namespace_import"
     ],
     "_import_specifier_as": [
       "name",
@@ -488,12 +554,31 @@
       "name",
       "index_type"
     ],
+    "_index_signature_mapped_type_clause": [
+      "mapped_type_clause"
+    ],
     "_initializer": [
       "value"
+    ],
+    "_lhs_expression": [
+      "member_expression"
     ],
     "_number": [
       "operator",
       "argument"
+    ],
+    "_parenthesized_expression_sequence": [
+      "sequence_expression"
+    ],
+    "_parenthesized_expression_typed": [
+      "expression",
+      "type"
+    ],
+    "_public_field_definition_access_first": [
+      "accessibility_modifier"
+    ],
+    "_public_field_definition_declare_first": [
+      "accessibility_modifier"
     ],
     "_type_query_call_expression": [
       "function",
@@ -545,6 +630,23 @@
     "adding_type_annotation": [
       "type"
     ],
+    "ambient_declaration_declaration": [
+      "declaration"
+    ],
+    "ambient_declaration": [
+      "ambient_declaration_declaration",
+      "ambient_declaration_global",
+      "ambient_declaration_module"
+    ],
+    "arguments": [
+      "expression"
+    ],
+    "array": [
+      "expression"
+    ],
+    "array_pattern": [
+      "pattern"
+    ],
     "array_type": [
       "primary_type"
     ],
@@ -557,11 +659,16 @@
       "return_type"
     ],
     "arrow_function": [
-      "body"
+      "arrow_function_parameter",
+      "body",
+      "arrow_function__call_signature"
     ],
     "as_expression": [
       "expression",
       "type_annotation"
+    ],
+    "asserts": [
+      "type_predicate"
     ],
     "asserts_annotation": [
       "asserts"
@@ -591,6 +698,11 @@
       "label",
       "semicolon"
     ],
+    "call_expression": [
+      "call_expression_call",
+      "call_expression_template_call",
+      "call_expression_member"
+    ],
     "call_signature": [
       "type_parameters",
       "parameters",
@@ -608,6 +720,9 @@
       "class_heritage",
       "body"
     ],
+    "class_body": [
+      "class_body_method"
+    ],
     "class_declaration": [
       "decorator",
       "name",
@@ -616,7 +731,19 @@
       "body",
       "automatic_semicolon"
     ],
+    "class_heritage_extends_clause": [
+      "extends_clause",
+      "implements_clause"
+    ],
+    "class_heritage_implements_clause": [
+      "implements_clause"
+    ],
+    "class_heritage": [
+      "class_heritage_extends_clause",
+      "class_heritage_implements_clause"
+    ],
     "class_static_block": [
+      "automatic_semicolon",
       "body"
     ],
     "computed_property_name": [
@@ -648,6 +775,9 @@
     "debugger_statement": [
       "semicolon"
     ],
+    "decorator": [
+      "identifier"
+    ],
     "decorator_call_expression": [
       "function",
       "type_arguments",
@@ -656,6 +786,9 @@
     "decorator_member_expression": [
       "object",
       "property"
+    ],
+    "decorator_parenthesized_expression": [
+      "identifier"
     ],
     "default_type": [
       "type"
@@ -673,16 +806,43 @@
       "value"
     ],
     "enum_body": [
-      "name"
+      "name",
+      "enum_assignment"
     ],
     "enum_declaration": [
       "name",
       "body"
     ],
+    "export_clause": [
+      "export_specifier"
+    ],
     "export_specifier": [
       "export_kind",
       "name",
       "alias"
+    ],
+    "export_statement_type_export": [
+      "export_clause",
+      "source",
+      "semicolon"
+    ],
+    "export_statement_equals_export": [
+      "expression",
+      "semicolon"
+    ],
+    "export_statement_namespace_export": [
+      "identifier",
+      "semicolon"
+    ],
+    "export_statement": [
+      "export_statement_default",
+      "export_statement_type_export",
+      "export_statement_equals_export",
+      "export_statement_namespace_export"
+    ],
+    "expression_statement": [
+      "expressions",
+      "semicolon"
     ],
     "extends_clause": [
       "value",
@@ -702,18 +862,28 @@
     "flow_maybe_type": [
       "primary_type"
     ],
+    "for_in_statement": [
+      "for_header_lhs",
+      "operator",
+      "right",
+      "body"
+    ],
     "for_statement": [
       "initializer",
       "condition",
       "increment",
       "body"
     ],
+    "formal_parameters": [
+      "formal_parameter"
+    ],
     "function_declaration": [
       "name",
       "type_parameters",
       "parameters",
       "return_type",
-      "body"
+      "body",
+      "automatic_semicolon"
     ],
     "function_expression": [
       "name",
@@ -721,6 +891,13 @@
       "parameters",
       "return_type",
       "body"
+    ],
+    "function_signature": [
+      "name",
+      "type_parameters",
+      "parameters",
+      "return_type",
+      "semicolon"
     ],
     "function_type": [
       "type_parameters",
@@ -739,7 +916,8 @@
       "type_parameters",
       "parameters",
       "return_type",
-      "body"
+      "body",
+      "automatic_semicolon"
     ],
     "generic_type": [
       "name",
@@ -750,6 +928,9 @@
       "consequence",
       "alternative"
     ],
+    "implements_clause": [
+      "type"
+    ],
     "import_alias": [
       "name",
       "value",
@@ -757,6 +938,21 @@
     ],
     "import_attribute": [
       "object"
+    ],
+    "import_clause_namespace_import": [
+      "namespace_import"
+    ],
+    "import_clause_named_imports": [
+      "named_imports"
+    ],
+    "import_clause_default_import": [
+      "import_identifier",
+      "namespace_import"
+    ],
+    "import_clause": [
+      "import_clause_namespace_import",
+      "import_clause_named_imports",
+      "import_clause_default_import"
     ],
     "import_require_clause": [
       "identifier",
@@ -766,7 +962,9 @@
       "name"
     ],
     "import_specifier": [
-      "import_kind"
+      "import_kind",
+      "import_specifier_name",
+      "import_specifier_as"
     ],
     "import_statement": [
       "import_clause",
@@ -774,9 +972,14 @@
       "import_attribute",
       "semicolon"
     ],
+    "index_signature_mapped_type_clause": [
+      "mapped_type_clause"
+    ],
     "index_signature": [
       "sign",
-      "type"
+      "index_signature_colon",
+      "type",
+      "index_signature_mapped_type_clause"
     ],
     "index_type_query": [
       "primary_type"
@@ -803,12 +1006,23 @@
       "left",
       "right"
     ],
+    "jsx_attribute": [
+      "jsx_attribute_name",
+      "jsx_attribute_value"
+    ],
     "jsx_closing_element": [
       "name"
     ],
     "jsx_element": [
       "open_tag",
+      "jsx_child",
       "close_tag"
+    ],
+    "jsx_expression": [
+      "expression"
+    ],
+    "jsx_namespace_name": [
+      "jsx_identifier"
     ],
     "jsx_opening_element": [
       "name",
@@ -828,6 +1042,9 @@
       "kind",
       "declarators",
       "semicolon"
+    ],
+    "literal_type": [
+      "number"
     ],
     "lookup_type": [
       "primary_type",
@@ -863,6 +1080,12 @@
       "name",
       "body"
     ],
+    "named_imports": [
+      "import_specifier"
+    ],
+    "namespace_export": [
+      "module_export_name"
+    ],
     "namespace_import": [
       "identifier"
     ],
@@ -882,9 +1105,15 @@
     "non_null_expression": [
       "expression"
     ],
+    "object": [
+      "pair"
+    ],
     "object_assignment_pattern": [
       "left",
       "right"
+    ],
+    "object_pattern": [
+      "pair_pattern"
     ],
     "object_type": [
       "opening",
@@ -899,6 +1128,7 @@
     ],
     "optional_parameter": [
       "decorator",
+      "accessibility_modifier",
       "pattern",
       "type",
       "value"
@@ -918,6 +1148,13 @@
       "key",
       "value"
     ],
+    "parenthesized_expression_sequence": [
+      "sequence_expression"
+    ],
+    "parenthesized_expression": [
+      "parenthesized_expression_typed",
+      "parenthesized_expression_sequence"
+    ],
     "parenthesized_type": [
       "type"
     ],
@@ -932,6 +1169,8 @@
     ],
     "public_field_definition": [
       "decorator",
+      "public_field_definition_declare_first",
+      "public_field_definition_static_mods",
       "name",
       "optionality_marker",
       "type",
@@ -946,19 +1185,27 @@
     ],
     "required_parameter": [
       "decorator",
+      "accessibility_modifier",
       "pattern",
       "type",
       "value"
+    ],
+    "rest_pattern": [
+      "lhs_expression"
     ],
     "rest_type": [
       "type"
     ],
     "return_statement": [
+      "expressions",
       "semicolon"
     ],
     "satisfies_expression": [
       "expression",
       "type_annotation"
+    ],
+    "sequence_expression": [
+      "expression"
     ],
     "spread_element": [
       "expression"
@@ -976,6 +1223,9 @@
       "object",
       "index"
     ],
+    "switch_body": [
+      "switch_case"
+    ],
     "switch_case": [
       "value",
       "body"
@@ -987,10 +1237,26 @@
       "value",
       "body"
     ],
+    "template_literal_type": [
+      "template_chars"
+    ],
+    "template_string": [
+      "template_chars"
+    ],
+    "template_substitution": [
+      "expressions"
+    ],
+    "template_type": [
+      "primary_type"
+    ],
     "ternary_expression": [
       "condition",
       "consequence",
       "alternative"
+    ],
+    "throw_statement": [
+      "expressions",
+      "semicolon"
     ],
     "try_statement": [
       "body",
@@ -1001,6 +1267,9 @@
       "name",
       "type"
     ],
+    "tuple_type": [
+      "tuple_type_member"
+    ],
     "type_alias_declaration": [
       "name",
       "type_parameters",
@@ -1008,6 +1277,9 @@
       "semicolon"
     ],
     "type_annotation": [
+      "type"
+    ],
+    "type_arguments": [
       "type"
     ],
     "type_assertion": [
@@ -1019,12 +1291,18 @@
       "constraint",
       "value"
     ],
+    "type_parameters": [
+      "type_parameter"
+    ],
     "type_predicate": [
       "name",
       "type"
     ],
     "type_predicate_annotation": [
       "type_predicate"
+    ],
+    "type_query": [
+      "type_query_subscript_expression"
     ],
     "unary_expression": [
       "operator",
@@ -1033,6 +1311,10 @@
     "union_type": [
       "left",
       "right"
+    ],
+    "update_expression": [
+      "update_expression_postfix",
+      "update_expression_prefix"
     ],
     "variable_declaration": [
       "declarators",
@@ -1057,8 +1339,8 @@
   },
   "factorySlots": {
     "_ambient_declaration_declaration": {
-      "children": {
-        "unnamed": true,
+      "declaration": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1192,9 +1474,16 @@
       }
     },
     "_class_body_member": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "abstract_method_signature": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
@@ -1208,35 +1497,56 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "method_definition": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "_class_body_method_sig": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "method_signature": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "function_signature_automatic_semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "_class_heritage_extends_clause": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "extends_clause": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "implements_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "_class_heritage_implements_clause": {
-      "children": {
-        "unnamed": true,
+      "implements_clause": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1258,8 +1568,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "export_statement_default_decl_arm_default_kw": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1274,8 +1584,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "export_statement_default_decl_arm_default_kw_value": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1290,8 +1600,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "semicolon": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1299,24 +1609,31 @@
       }
     },
     "_export_statement_default_from_arm": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_export_statement_default_from_arm_clause_from": {
-      "source": {
+      "export_statement_default_from_arm_star_from": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_export_statement_default_from_arm_clause_from": {
+      "export_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "source": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1324,15 +1641,15 @@
       }
     },
     "_export_statement_default_from_arm_ns_from": {
-      "source": {
+      "namespace_export": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "source": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1349,24 +1666,45 @@
       }
     },
     "_export_statement_equals_export": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "_export_statement_namespace_export": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "identifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "_export_statement_type_export": {
+      "export_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "source": {
         "unnamed": false,
         "slotCount": 1,
@@ -1374,9 +1712,9 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
@@ -1397,8 +1735,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "automatic_semicolon": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1429,8 +1767,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "initializer": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1438,17 +1776,24 @@
       }
     },
     "_import_clause_default_import": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "import_identifier": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "namespace_import": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "_import_clause_named_imports": {
-      "children": {
-        "unnamed": true,
+      "named_imports": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1456,8 +1801,8 @@
       }
     },
     "_import_clause_namespace_import": {
-      "children": {
-        "unnamed": true,
+      "namespace_import": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1506,8 +1851,8 @@
       }
     },
     "_index_signature_mapped_type_clause": {
-      "children": {
-        "unnamed": true,
+      "mapped_type_clause": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1524,8 +1869,8 @@
       }
     },
     "_lhs_expression": {
-      "children": {
-        "unnamed": true,
+      "member_expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1549,8 +1894,8 @@
       }
     },
     "_parenthesized_expression_sequence": {
-      "children": {
-        "unnamed": true,
+      "sequence_expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1558,17 +1903,17 @@
       }
     },
     "_parenthesized_expression_typed": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1590,17 +1935,17 @@
       }
     },
     "_public_field_definition_access_first": {
+      "accessibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "declare_marker": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1615,8 +1960,8 @@
       }
     },
     "_public_field_definition_declare_first": {
-      "children": {
-        "unnamed": true,
+      "accessibility_modifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1647,15 +1992,15 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "readonly_marker": {
+      "override_modifier": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "readonly_marker": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1895,8 +2240,8 @@
       }
     },
     "ambient_declaration_declaration": {
-      "children": {
-        "unnamed": true,
+      "declaration": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1904,17 +2249,31 @@
       }
     },
     "ambient_declaration": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 3,
+      "ambient_declaration_declaration": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "ambient_declaration_global": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "ambient_declaration_module": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "arguments": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1922,8 +2281,8 @@
       }
     },
     "array": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1931,8 +2290,8 @@
       }
     },
     "array_pattern": {
-      "children": {
-        "unnamed": true,
+      "pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1988,6 +2347,13 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "arrow_function_parameter": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "body": {
         "unnamed": false,
         "slotCount": 1,
@@ -1995,9 +2361,9 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "arrow_function__call_signature": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -2020,8 +2386,8 @@
       }
     },
     "asserts": {
-      "children": {
-        "unnamed": true,
+      "type_predicate": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -2148,9 +2514,23 @@
       }
     },
     "call_expression": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 3,
+      "call_expression_call": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "call_expression_template_call": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "call_expression_member": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -2240,8 +2620,8 @@
       }
     },
     "class_body": {
-      "children": {
-        "unnamed": true,
+      "class_body_method": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -2293,17 +2673,24 @@
       }
     },
     "class_heritage_extends_clause": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "extends_clause": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "implements_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "class_heritage_implements_clause": {
-      "children": {
-        "unnamed": true,
+      "implements_clause": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -2311,26 +2698,33 @@
       }
     },
     "class_heritage": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "class_heritage_extends_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "class_heritage_implements_clause": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "class_static_block": {
+      "automatic_semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2469,8 +2863,8 @@
       }
     },
     "decorator": {
-      "children": {
-        "unnamed": true,
+      "identifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -2517,8 +2911,8 @@
       }
     },
     "decorator_parenthesized_expression": {
-      "children": {
-        "unnamed": true,
+      "identifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -2590,8 +2984,8 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "enum_assignment": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -2622,8 +3016,8 @@
       }
     },
     "export_clause": {
-      "children": {
-        "unnamed": true,
+      "export_specifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -2654,6 +3048,13 @@
       }
     },
     "export_statement_type_export": {
+      "export_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "source": {
         "unnamed": false,
         "slotCount": 1,
@@ -2661,51 +3062,86 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "export_statement_equals_export": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "export_statement_namespace_export": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "export_statement": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 4,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "expression_statement": {
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
+      }
+    },
+    "export_statement_equals_export": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "export_statement_namespace_export": {
+      "identifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "export_statement": {
+      "export_statement_default": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "export_statement_type_export": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "export_statement_equals_export": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "export_statement_namespace_export": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "expression_statement": {
+      "expressions": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "semicolon": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -2793,6 +3229,13 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "for_header_lhs": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "operator": {
         "unnamed": false,
         "slotCount": 1,
@@ -2809,13 +3252,6 @@
       },
       "body": {
         "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -2853,8 +3289,8 @@
       }
     },
     "formal_parameters": {
-      "children": {
-        "unnamed": true,
+      "formal_parameter": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -2904,8 +3340,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "automatic_semicolon": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -2992,8 +3428,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "semicolon": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -3110,8 +3546,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "automatic_semicolon": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -3158,8 +3594,8 @@
       }
     },
     "implements_clause": {
-      "children": {
-        "unnamed": true,
+      "type": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -3199,8 +3635,8 @@
       }
     },
     "import_clause_namespace_import": {
-      "children": {
-        "unnamed": true,
+      "namespace_import": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -3208,8 +3644,8 @@
       }
     },
     "import_clause_named_imports": {
-      "children": {
-        "unnamed": true,
+      "named_imports": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -3217,18 +3653,39 @@
       }
     },
     "import_clause_default_import": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "import_identifier": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "namespace_import": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "import_clause": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 3,
+      "import_clause_namespace_import": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "import_clause_named_imports": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "import_clause_default_import": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -3267,9 +3724,16 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "import_specifier_name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "import_specifier_as": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -3306,8 +3770,8 @@
       }
     },
     "index_signature_mapped_type_clause": {
-      "children": {
-        "unnamed": true,
+      "mapped_type_clause": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -3322,6 +3786,13 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "index_signature_colon": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "type": {
         "unnamed": false,
         "slotCount": 1,
@@ -3329,9 +3800,9 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "index_signature_mapped_type_clause": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -3441,10 +3912,17 @@
       }
     },
     "jsx_attribute": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "jsx_attribute_name": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "jsx_attribute_value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3466,24 +3944,24 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "jsx_child": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
       "close_tag": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
       }
     },
     "jsx_expression": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -3491,8 +3969,8 @@
       }
     },
     "jsx_namespace_name": {
-      "children": {
-        "unnamed": true,
+      "jsx_identifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -3585,8 +4063,8 @@
       }
     },
     "literal_type": {
-      "children": {
-        "unnamed": true,
+      "number": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -3837,8 +4315,8 @@
       }
     },
     "named_imports": {
-      "children": {
-        "unnamed": true,
+      "import_specifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3846,8 +4324,8 @@
       }
     },
     "namespace_export": {
-      "children": {
-        "unnamed": true,
+      "module_export_name": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -3928,8 +4406,8 @@
       }
     },
     "object": {
-      "children": {
-        "unnamed": true,
+      "pair": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3953,8 +4431,8 @@
       }
     },
     "object_pattern": {
-      "children": {
-        "unnamed": true,
+      "pair_pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -4010,6 +4488,20 @@
         "multiple": true,
         "nonEmpty": false
       },
+      "accessibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "override_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "readonly_marker": {
         "unnamed": false,
         "slotCount": 1,
@@ -4034,13 +4526,6 @@
       "value": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -4104,8 +4589,8 @@
       }
     },
     "parenthesized_expression_sequence": {
-      "children": {
-        "unnamed": true,
+      "sequence_expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -4113,9 +4598,16 @@
       }
     },
     "parenthesized_expression": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "parenthesized_expression_typed": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "parenthesized_expression_sequence": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -4205,6 +4697,20 @@
         "multiple": true,
         "nonEmpty": false
       },
+      "public_field_definition_declare_first": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "public_field_definition_static_mods": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "name": {
         "unnamed": false,
         "slotCount": 1,
@@ -4229,13 +4735,6 @@
       "value": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -4274,6 +4773,20 @@
         "multiple": true,
         "nonEmpty": false
       },
+      "accessibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "override_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "readonly_marker": {
         "unnamed": false,
         "slotCount": 1,
@@ -4301,18 +4814,11 @@
         "required": false,
         "multiple": false,
         "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
       }
     },
     "rest_pattern": {
-      "children": {
-        "unnamed": true,
+      "lhs_expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -4329,17 +4835,17 @@
       }
     },
     "return_statement": {
+      "expressions": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -4361,8 +4867,8 @@
       }
     },
     "sequence_expression": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -4441,8 +4947,8 @@
       }
     },
     "switch_body": {
-      "children": {
-        "unnamed": true,
+      "switch_case": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -4491,8 +4997,8 @@
       }
     },
     "template_literal_type": {
-      "children": {
-        "unnamed": true,
+      "template_chars": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -4500,8 +5006,8 @@
       }
     },
     "template_string": {
-      "children": {
-        "unnamed": true,
+      "template_chars": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -4509,8 +5015,8 @@
       }
     },
     "template_substitution": {
-      "children": {
-        "unnamed": true,
+      "expressions": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -4518,8 +5024,8 @@
       }
     },
     "template_type": {
-      "children": {
-        "unnamed": true,
+      "primary_type": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -4550,15 +5056,15 @@
       }
     },
     "throw_statement": {
-      "semicolon": {
+      "expressions": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "semicolon": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -4605,8 +5111,8 @@
       }
     },
     "tuple_type": {
-      "children": {
-        "unnamed": true,
+      "tuple_type_member": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -4653,8 +5159,8 @@
       }
     },
     "type_arguments": {
-      "children": {
-        "unnamed": true,
+      "type": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -4708,8 +5214,8 @@
       }
     },
     "type_parameters": {
-      "children": {
-        "unnamed": true,
+      "type_parameter": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -4742,8 +5248,8 @@
       }
     },
     "type_query": {
-      "children": {
-        "unnamed": true,
+      "type_query_subscript_expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -4783,9 +5289,16 @@
       }
     },
     "update_expression": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "update_expression_postfix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "update_expression_prefix": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -4894,6 +5407,22 @@
         "module": "_ambient_declaration_module"
       },
       "helperChildKind": {
+        "declaration": [
+          "function_declaration",
+          "generator_function_declaration",
+          "class_declaration",
+          "lexical_declaration",
+          "variable_declaration",
+          "function_signature",
+          "abstract_class_declaration",
+          "module",
+          "internal_module",
+          "type_alias_declaration",
+          "enum_declaration",
+          "interface_declaration",
+          "import_alias",
+          "ambient_declaration"
+        ],
         "global": [
           "statement_block"
         ],
@@ -5083,6 +5612,15 @@
       "helperKind": {
         "extends_clause": "_class_heritage_extends_clause",
         "implements_clause": "_class_heritage_implements_clause"
+      },
+      "helperChildKind": {
+        "extends_clause": [
+          "extends_clause",
+          "implements_clause"
+        ],
+        "implements_clause": [
+          "implements_clause"
+        ]
       }
     },
     "export_statement": {
@@ -5101,7 +5639,57 @@
       },
       "helperChildKind": {
         "type_export": [
-          "string"
+          "export_clause",
+          "string",
+          "automatic_semicolon",
+          ";"
+        ],
+        "equals_export": [
+          "as_expression",
+          "satisfies_expression",
+          "instantiation_expression",
+          "internal_module",
+          "type_assertion",
+          "subscript_expression",
+          "member_expression",
+          "parenthesized_expression",
+          "undefined",
+          "identifier",
+          "reserved_identifier",
+          "this",
+          "super",
+          "number",
+          "string",
+          "template_string",
+          "regex",
+          "true",
+          "false",
+          "null",
+          "object",
+          "array",
+          "function_expression",
+          "arrow_function",
+          "generator_function",
+          "class",
+          "meta_property",
+          "call_expression",
+          "non_null_expression",
+          "assignment_expression",
+          "augmented_assignment_expression",
+          "await_expression",
+          "unary_expression",
+          "binary_expression",
+          "ternary_expression",
+          "update_expression",
+          "new_expression",
+          "yield_expression",
+          "automatic_semicolon",
+          ";"
+        ],
+        "namespace_export": [
+          "identifier",
+          "automatic_semicolon",
+          ";"
         ]
       }
     },
@@ -5116,6 +5704,19 @@
         "namespace_import": "_import_clause_namespace_import",
         "named_imports": "_import_clause_named_imports",
         "default_import": "_import_clause_default_import"
+      },
+      "helperChildKind": {
+        "namespace_import": [
+          "namespace_import"
+        ],
+        "named_imports": [
+          "named_imports"
+        ],
+        "default_import": [
+          "identifier",
+          "namespace_import",
+          "named_imports"
+        ]
       }
     },
     "import_specifier": {
@@ -5177,6 +5778,9 @@
           "infer_type",
           "type_query_member_expression_in_type_annotation",
           "type_query_call_expression_in_type_annotation"
+        ],
+        "mapped_type_clause": [
+          "mapped_type_clause"
         ]
       }
     },
@@ -5192,7 +5796,48 @@
       },
       "helperChildKind": {
         "typed": [
+          "as_expression",
+          "satisfies_expression",
+          "instantiation_expression",
+          "internal_module",
+          "type_assertion",
+          "subscript_expression",
+          "member_expression",
+          "parenthesized_expression",
+          "undefined",
+          "identifier",
+          "reserved_identifier",
+          "this",
+          "super",
+          "number",
+          "string",
+          "template_string",
+          "regex",
+          "true",
+          "false",
+          "null",
+          "object",
+          "array",
+          "function_expression",
+          "arrow_function",
+          "generator_function",
+          "class",
+          "meta_property",
+          "call_expression",
+          "non_null_expression",
+          "assignment_expression",
+          "augmented_assignment_expression",
+          "await_expression",
+          "unary_expression",
+          "binary_expression",
+          "ternary_expression",
+          "update_expression",
+          "new_expression",
+          "yield_expression",
           "type_annotation"
+        ],
+        "sequence": [
+          "sequence_expression"
         ]
       }
     },

@@ -279,11 +279,11 @@
       "factoryName": "_asPattern",
       "irKey": "_asPattern",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "case_pattern",
           "propertyName": "casePattern",
+          "paramName": "casePattern",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -294,11 +294,19 @@
               "name": "case_pattern",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "case_pattern"
+            ]
+          }
         },
         {
           "name": "identifier",
           "propertyName": "identifier",
+          "paramName": "identifier",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -309,9 +317,17 @@
               "name": "identifier",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "_assignment_eq",
@@ -516,11 +532,11 @@
       "factoryName": "comprehensionClauses",
       "irKey": "comprehensionClauses",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "for_in_clause",
           "propertyName": "forInClause",
+          "paramName": "forInClause",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -543,9 +559,18 @@
               "name": "if_clause",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "for_in_clause",
+              "if_clause"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "_dedent",
@@ -782,11 +807,11 @@
       "factoryName": "_listPattern",
       "irKey": "_listPattern",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "case_pattern",
           "propertyName": "casePatterns",
+          "paramName": "casePatterns",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -797,9 +822,17 @@
               "name": "case_pattern",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "case_pattern"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "_match_block",
@@ -808,11 +841,11 @@
       "factoryName": "matchBlock",
       "irKey": "matchBlock",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "match_block_block",
           "propertyName": "matchBlockBlock",
+          "paramName": "matchBlockBlock",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -823,9 +856,17 @@
               "name": "_match_block_block",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_match_block_block"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "_match_block_block",
@@ -970,11 +1011,11 @@
       "factoryName": "simplePatternNegative",
       "irKey": "simplePatternNegative",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "integer",
           "propertyName": "integer",
+          "paramName": "integer",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -991,9 +1032,18 @@
               "name": "float",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "integer",
+              "float"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "_simple_statement",
@@ -1027,11 +1077,11 @@
       "factoryName": "simpleStatements",
       "irKey": "simpleStatements",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "simple_statement",
           "propertyName": "simpleStatements",
+          "paramName": "simpleStatements",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -1042,9 +1092,17 @@
               "name": "_simple_statement",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_simple_statement"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "_statement",
@@ -1081,11 +1139,11 @@
       "factoryName": "suite",
       "irKey": "suite",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "simple_statements",
           "propertyName": "simpleStatements",
+          "paramName": "simpleStatements",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -1108,9 +1166,19 @@
               "name": "_newline",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_simple_statements",
+              "block",
+              "_newline"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "_tuple_pattern",
@@ -1119,11 +1187,11 @@
       "factoryName": "_tuplePattern",
       "irKey": "_tuplePattern",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "case_pattern",
           "propertyName": "casePatterns",
+          "paramName": "casePatterns",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -1134,9 +1202,17 @@
               "name": "case_pattern",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "case_pattern"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "_unary_operator_operator",
@@ -1171,11 +1247,11 @@
       "factoryName": "_withClauseParen",
       "irKey": "_withClauseParen",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "with_item",
           "propertyName": "withItems",
+          "paramName": "withItems",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -1186,9 +1262,17 @@
               "name": "with_item",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "with_item"
+            ]
+          }
         }
       ],
+      "children": [],
       "separator": ","
     },
     {
@@ -1275,11 +1359,11 @@
       "factoryName": "argumentList",
       "irKey": "argumentList",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "expression",
           "propertyName": "expression",
+          "paramName": "expression",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -1344,9 +1428,21 @@
               "name": "keyword_argument",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression",
+              "list_splat",
+              "dictionary_splat",
+              "parenthesized_list_splat",
+              "keyword_argument"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "as",
@@ -1432,11 +1528,11 @@
       "factoryName": "assertStatement",
       "irKey": "assertStatement",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "expression",
           "propertyName": "expressions",
+          "paramName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -1447,9 +1543,17 @@
               "name": "expression",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "assignment",
@@ -1496,12 +1600,11 @@
                   "_left_hand_side"
                 ]
               }
-            }
-          ],
-          "children": [
+            },
             {
               "name": "assignment_eq",
               "propertyName": "assignmentEq",
+              "paramName": "assignmentEq",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -1512,9 +1615,17 @@
                   "name": "_assignment_eq",
                   "unresolved": true
                 }
-              ]
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_assignment_eq"
+                ]
+              }
             }
-          ]
+          ],
+          "children": []
         },
         {
           "kind": "assignment__form_type",
@@ -1546,12 +1657,11 @@
                   "_left_hand_side"
                 ]
               }
-            }
-          ],
-          "children": [
+            },
             {
               "name": "assignment_type",
               "propertyName": "assignmentType",
+              "paramName": "assignmentType",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -1562,9 +1672,17 @@
                   "name": "_assignment_type",
                   "unresolved": true
                 }
-              ]
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_assignment_type"
+                ]
+              }
             }
-          ]
+          ],
+          "children": []
         },
         {
           "kind": "assignment__form_typed",
@@ -1596,12 +1714,11 @@
                   "_left_hand_side"
                 ]
               }
-            }
-          ],
-          "children": [
+            },
             {
               "name": "assignment_typed",
               "propertyName": "assignmentTyped",
+              "paramName": "assignmentTyped",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -1612,9 +1729,17 @@
                   "name": "_assignment_typed",
                   "unresolved": true
                 }
-              ]
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_assignment_typed"
+                ]
+              }
             }
-          ]
+          ],
+          "children": []
         }
       ]
     },
@@ -1980,11 +2105,11 @@
       "factoryName": "block",
       "irKey": "block",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "statement",
           "propertyName": "statements",
+          "paramName": "statements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -1995,9 +2120,17 @@
               "name": "_statement",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_statement"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "boolean_operator",
@@ -2200,6 +2333,29 @@
       "hidden": false,
       "fields": [
         {
+          "name": "case_pattern",
+          "propertyName": "casePatterns",
+          "paramName": "casePatterns",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "case_pattern",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "case_pattern"
+            ]
+          }
+        },
+        {
           "name": "guard",
           "propertyName": "guard",
           "paramName": "guard",
@@ -2246,23 +2402,7 @@
           }
         }
       ],
-      "children": [
-        {
-          "name": "case_pattern",
-          "propertyName": "casePatterns",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "case_pattern",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "case_pattern",
@@ -2271,11 +2411,11 @@
       "factoryName": "casePattern",
       "irKey": "casePattern",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "as_pattern",
           "propertyName": "asPattern",
+          "paramName": "asPattern",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -2298,9 +2438,19 @@
               "name": "_simple_pattern",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_as_pattern",
+              "keyword_pattern",
+              "_simple_pattern"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "chevron",
@@ -2633,12 +2783,11 @@
               "is"
             ]
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "primary_expression",
           "propertyName": "primaryExpressions",
+          "paramName": "primaryExpressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -2649,9 +2798,17 @@
               "name": "primary_expression",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "primary_expression"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "complex_pattern",
@@ -2710,12 +2867,11 @@
               "float"
             ]
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "integer",
           "propertyName": "integer",
+          "paramName": "integer",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -2732,9 +2888,18 @@
               "name": "float",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "integer",
+              "float"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "concatenated_string",
@@ -2743,11 +2908,11 @@
       "factoryName": "concatenatedString",
       "irKey": "concatenatedString",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "string",
           "propertyName": "string",
+          "paramName": "string",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -2764,9 +2929,17 @@
               "name": "string",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "string"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "conditional_expression",
@@ -2945,6 +3118,29 @@
       "hidden": false,
       "fields": [
         {
+          "name": "decorator",
+          "propertyName": "decorators",
+          "paramName": "decorators",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "decorator",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "decorator"
+            ]
+          }
+        },
+        {
           "name": "definition",
           "propertyName": "definition",
           "paramName": "definition",
@@ -2975,23 +3171,7 @@
           }
         }
       ],
-      "children": [
-        {
-          "name": "decorator",
-          "propertyName": "decorators",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "decorator",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "decorator",
@@ -3132,11 +3312,11 @@
       "factoryName": "deleteStatement",
       "irKey": "deleteStatement",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "expressions",
           "propertyName": "expressions",
+          "paramName": "expressions",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3147,9 +3327,17 @@
               "name": "_expressions",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_expressions"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "dict_pattern",
@@ -3158,11 +3346,11 @@
       "factoryName": "dictPattern",
       "irKey": "dictPattern",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "dict_pattern_kv",
           "propertyName": "dictPatternKvs",
+          "paramName": "dictPatternKvs",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -3173,9 +3361,17 @@
               "name": "_dict_pattern_kv",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_dict_pattern_kv"
+            ]
+          }
         }
       ],
+      "children": [],
       "separator": ","
     },
     {
@@ -3185,11 +3381,11 @@
       "factoryName": "dictionary",
       "irKey": "dictionary",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "pair",
           "propertyName": "pairs",
+          "paramName": "pairs",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -3206,9 +3402,18 @@
               "name": "dictionary_splat",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "pair",
+              "dictionary_splat"
+            ]
+          }
         }
       ],
+      "children": [],
       "separator": ","
     },
     {
@@ -3241,12 +3446,11 @@
               "pair"
             ]
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "comprehension_clauses",
           "propertyName": "comprehensionClauses",
+          "paramName": "comprehensionClauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3257,9 +3461,17 @@
               "name": "_comprehension_clauses",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_comprehension_clauses"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "dictionary_splat",
@@ -3302,11 +3514,11 @@
       "factoryName": "dictionarySplatPattern",
       "irKey": "dictionarySplatPattern",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "identifier",
           "propertyName": "identifier",
+          "paramName": "identifier",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3335,9 +3547,20 @@
               "name": "attribute",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier",
+              "keyword_identifier",
+              "subscript",
+              "attribute"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "dotted_name",
@@ -3346,11 +3569,11 @@
       "factoryName": "dottedName",
       "irKey": "dottedName",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "identifier",
           "propertyName": "identifiers",
+          "paramName": "identifiers",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -3361,9 +3584,17 @@
               "name": "identifier",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier"
+            ]
+          }
         }
       ],
+      "children": [],
       "separator": "."
     },
     {
@@ -3570,12 +3801,11 @@
               "expression"
             ]
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "suite",
           "propertyName": "suite",
+          "paramName": "suite",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3586,9 +3816,17 @@
               "name": "_suite",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_suite"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "exec",
@@ -3693,11 +3931,11 @@
       "factoryName": "expressionList",
       "irKey": "expressionList",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "expression",
           "propertyName": "expression",
+          "paramName": "expression",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -3719,9 +3957,17 @@
               "name": "expression",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "expression_statement",
@@ -3747,11 +3993,11 @@
           "factoryName": "expressionStatementUFormExpression",
           "irKey": "expressionStatementUFormExpression",
           "parentKind": "expression_statement",
-          "fields": [],
-          "children": [
+          "fields": [
             {
               "name": "expression",
               "propertyName": "expression",
+              "paramName": "expression",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -3762,9 +4008,17 @@
                   "name": "expression",
                   "unresolved": true
                 }
-              ]
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "expression"
+                ]
+              }
             }
-          ]
+          ],
+          "children": []
         },
         {
           "kind": "expression_statement__form_tuple",
@@ -3773,11 +4027,11 @@
           "factoryName": "expressionStatementUFormTuple",
           "irKey": "expressionStatementUFormTuple",
           "parentKind": "expression_statement",
-          "fields": [],
-          "children": [
+          "fields": [
             {
               "name": "expression_statement_tuple",
               "propertyName": "expressionStatementTuple",
+              "paramName": "expressionStatementTuple",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -3788,9 +4042,17 @@
                   "name": "_expression_statement_tuple",
                   "unresolved": true
                 }
-              ]
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_expression_statement_tuple"
+                ]
+              }
             }
-          ]
+          ],
+          "children": []
         },
         {
           "kind": "expression_statement__form_assignment",
@@ -3799,11 +4061,11 @@
           "factoryName": "expressionStatementUFormAssignment",
           "irKey": "expressionStatementUFormAssignment",
           "parentKind": "expression_statement",
-          "fields": [],
-          "children": [
+          "fields": [
             {
               "name": "assignment",
               "propertyName": "assignment",
+              "paramName": "assignment",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -3814,9 +4076,17 @@
                   "name": "assignment",
                   "unresolved": true
                 }
-              ]
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "assignment"
+                ]
+              }
             }
-          ]
+          ],
+          "children": []
         },
         {
           "kind": "expression_statement__form_augmented_assignment",
@@ -3825,11 +4095,11 @@
           "factoryName": "expressionStatementUFormAugmentedAssignment",
           "irKey": "expressionStatementUFormAugmentedAssignment",
           "parentKind": "expression_statement",
-          "fields": [],
-          "children": [
+          "fields": [
             {
               "name": "augmented_assignment",
               "propertyName": "augmentedAssignment",
+              "paramName": "augmentedAssignment",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -3840,9 +4110,17 @@
                   "name": "augmented_assignment",
                   "unresolved": true
                 }
-              ]
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "augmented_assignment"
+                ]
+              }
             }
-          ]
+          ],
+          "children": []
         },
         {
           "kind": "expression_statement__form_yield",
@@ -3851,11 +4129,11 @@
           "factoryName": "expressionStatementUFormYield",
           "irKey": "expressionStatementUFormYield",
           "parentKind": "expression_statement",
-          "fields": [],
-          "children": [
+          "fields": [
             {
               "name": "yield",
               "propertyName": "yield",
+              "paramName": "yield_",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -3866,9 +4144,17 @@
                   "name": "yield",
                   "unresolved": true
                 }
-              ]
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "yield"
+                ]
+              }
             }
-          ]
+          ],
+          "children": []
         }
       ]
     },
@@ -3879,11 +4165,11 @@
       "factoryName": "expressionStatementTuple",
       "irKey": "expressionStatementTuple",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "expression",
           "propertyName": "expressions",
+          "paramName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -3894,9 +4180,17 @@
               "name": "expression",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
         }
       ],
+      "children": [],
       "separator": ","
     },
     {
@@ -4185,11 +4479,11 @@
       "factoryName": "formatSpecifier",
       "irKey": "formatSpecifier",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "interpolation",
           "propertyName": "interpolations",
+          "paramName": "interpolations",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -4200,9 +4494,17 @@
               "name": "interpolation",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "interpolation"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "from",
@@ -4434,12 +4736,11 @@
               "expression"
             ]
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "comprehension_clauses",
           "propertyName": "comprehensionClauses",
+          "paramName": "comprehensionClauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4450,9 +4751,17 @@
               "name": "_comprehension_clauses",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_comprehension_clauses"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "generic_type",
@@ -4528,11 +4837,11 @@
       "factoryName": "globalStatement",
       "irKey": "globalStatement",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "identifier",
           "propertyName": "identifiers",
+          "paramName": "identifiers",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -4543,9 +4852,17 @@
               "name": "identifier",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "gt_gt",
@@ -4746,6 +5063,29 @@
           }
         },
         {
+          "name": "wildcard_import",
+          "propertyName": "wildcardImport",
+          "paramName": "wildcardImport",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "wildcard_import",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "wildcard_import"
+            ]
+          }
+        },
+        {
           "name": "name",
           "propertyName": "names",
           "paramName": "names",
@@ -4776,23 +5116,7 @@
           }
         }
       ],
-      "children": [
-        {
-          "name": "wildcard_import",
-          "propertyName": "wildcardImport",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "wildcard_import",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "import_prefix",
@@ -5012,11 +5336,11 @@
       "factoryName": "keywordIdentifier",
       "irKey": "keywordIdentifier",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "identifier",
           "propertyName": "identifier",
+          "paramName": "identifier",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5027,9 +5351,17 @@
               "name": "identifier",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "keyword_pattern",
@@ -5162,11 +5494,11 @@
       "factoryName": "lambdaParameters",
       "irKey": "lambdaParameters",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "parameter",
           "propertyName": "parameters",
+          "paramName": "parameters",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -5177,9 +5509,17 @@
               "name": "parameter",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "parameter"
+            ]
+          }
         }
       ],
+      "children": [],
       "separator": ","
     },
     {
@@ -5254,11 +5594,11 @@
       "factoryName": "list",
       "irKey": "list",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "expression",
           "propertyName": "expressions",
+          "paramName": "expressions",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -5287,9 +5627,20 @@
               "name": "parenthesized_list_splat",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression",
+              "yield",
+              "list_splat",
+              "parenthesized_list_splat"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "list_comprehension",
@@ -5321,12 +5672,11 @@
               "expression"
             ]
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "comprehension_clauses",
           "propertyName": "comprehensionClauses",
+          "paramName": "comprehensionClauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5337,9 +5687,17 @@
               "name": "_comprehension_clauses",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_comprehension_clauses"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "list_pattern",
@@ -5348,11 +5706,11 @@
       "factoryName": "listPattern",
       "irKey": "listPattern",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "pattern",
           "propertyName": "patterns",
+          "paramName": "patterns",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -5363,9 +5721,17 @@
               "name": "pattern",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "pattern"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "list_splat",
@@ -5408,11 +5774,11 @@
       "factoryName": "listSplatPattern",
       "irKey": "listSplatPattern",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "identifier",
           "propertyName": "identifier",
+          "paramName": "identifier",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5441,9 +5807,20 @@
               "name": "attribute",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier",
+              "keyword_identifier",
+              "subscript",
+              "attribute"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "lt_lt",
@@ -5589,11 +5966,11 @@
       "factoryName": "module",
       "irKey": "module",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "statement",
           "propertyName": "statements",
+          "paramName": "statements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -5604,9 +5981,17 @@
               "name": "_statement",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_statement"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "named_expression",
@@ -5693,11 +6078,11 @@
       "factoryName": "nonlocalStatement",
       "irKey": "nonlocalStatement",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "identifier",
           "propertyName": "identifiers",
+          "paramName": "identifiers",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -5708,9 +6093,17 @@
               "name": "identifier",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "not",
@@ -5848,11 +6241,11 @@
       "factoryName": "parameters",
       "irKey": "parameters",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "parameter",
           "propertyName": "parameters",
+          "paramName": "parameters",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -5863,9 +6256,17 @@
               "name": "parameter",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "parameter"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "parenthesized_expression",
@@ -5874,11 +6275,11 @@
       "factoryName": "parenthesizedExpression",
       "irKey": "parenthesizedExpression",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "expression",
           "propertyName": "expression",
+          "paramName": "expression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5895,9 +6296,18 @@
               "name": "yield",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression",
+              "yield"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "parenthesized_list_splat",
@@ -5906,11 +6316,11 @@
       "factoryName": "parenthesizedListSplat",
       "irKey": "parenthesizedListSplat",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "parenthesized_list_splat",
           "propertyName": "parenthesizedListSplat",
+          "paramName": "parenthesizedListSplat",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5927,9 +6337,18 @@
               "name": "list_splat",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "parenthesized_list_splat",
+              "list_splat"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "pass",
@@ -5975,11 +6394,11 @@
       "factoryName": "patternList",
       "irKey": "patternList",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "pattern",
           "propertyName": "pattern",
+          "paramName": "pattern",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -6001,9 +6420,17 @@
               "name": "pattern",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "pattern"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "percent",
@@ -6126,12 +6553,11 @@
               "expression"
             ]
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "chevron",
           "propertyName": "chevron",
+          "paramName": "chevron",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6142,9 +6568,17 @@
               "name": "chevron",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "chevron"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "raise",
@@ -6164,6 +6598,29 @@
       "irKey": "raiseStatement",
       "hidden": false,
       "fields": [
+        {
+          "name": "expressions",
+          "propertyName": "expressions",
+          "paramName": "expressions",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_expressions",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_expressions"
+            ]
+          }
+        },
         {
           "name": "cause",
           "propertyName": "cause",
@@ -6188,23 +6645,7 @@
           }
         }
       ],
-      "children": [
-        {
-          "name": "expressions",
-          "propertyName": "expressions",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_expressions",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "relative_import",
@@ -6280,11 +6721,11 @@
       "factoryName": "returnStatement",
       "irKey": "returnStatement",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "expressions",
           "propertyName": "expressions",
+          "paramName": "expressions",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6295,9 +6736,17 @@
               "name": "_expressions",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_expressions"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "set",
@@ -6306,11 +6755,11 @@
       "factoryName": "set",
       "irKey": "set",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "expression",
           "propertyName": "expressions",
+          "paramName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -6339,9 +6788,20 @@
               "name": "parenthesized_list_splat",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression",
+              "yield",
+              "list_splat",
+              "parenthesized_list_splat"
+            ]
+          }
         }
       ],
+      "children": [],
       "separator": ","
     },
     {
@@ -6374,12 +6834,11 @@
               "expression"
             ]
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "comprehension_clauses",
           "propertyName": "comprehensionClauses",
+          "paramName": "comprehensionClauses",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6390,9 +6849,17 @@
               "name": "_comprehension_clauses",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_comprehension_clauses"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "slash",
@@ -6695,11 +7162,11 @@
       "factoryName": "stringContent",
       "irKey": "stringContent",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "escape_interpolation",
           "propertyName": "escapeInterpolations",
+          "paramName": "escapeInterpolations",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -6728,9 +7195,20 @@
               "name": "_string_content",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "escape_interpolation",
+              "escape_sequence",
+              "_not_escape_sequence",
+              "_string_content"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "string_end",
@@ -6943,11 +7421,11 @@
       "factoryName": "tuple",
       "irKey": "tuple",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "expression",
           "propertyName": "expressions",
+          "paramName": "expressions",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -6976,9 +7454,20 @@
               "name": "parenthesized_list_splat",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression",
+              "yield",
+              "list_splat",
+              "parenthesized_list_splat"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "tuple_pattern",
@@ -6987,11 +7476,11 @@
       "factoryName": "tuplePattern",
       "irKey": "tuplePattern",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "pattern",
           "propertyName": "patterns",
+          "paramName": "patterns",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -7002,9 +7491,17 @@
               "name": "pattern",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "pattern"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "type",
@@ -7013,11 +7510,11 @@
       "factoryName": "type",
       "irKey": "type",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "expression",
           "propertyName": "expression",
+          "paramName": "expression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -7058,9 +7555,22 @@
               "name": "member_type",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression",
+              "splat_type",
+              "generic_type",
+              "union_type",
+              "constrained_type",
+              "member_type"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "type_alias_statement",
@@ -7155,11 +7665,11 @@
       "factoryName": "typeParameter",
       "irKey": "typeParameter",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "type",
           "propertyName": "types",
+          "paramName": "types",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -7170,9 +7680,17 @@
               "name": "type",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "type"
+            ]
+          }
         }
       ],
+      "children": [],
       "separator": ","
     },
     {
@@ -7264,6 +7782,43 @@
       "hidden": false,
       "fields": [
         {
+          "name": "identifier",
+          "propertyName": "identifier",
+          "paramName": "identifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "list_splat_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "dictionary_splat_pattern",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier",
+              "list_splat_pattern",
+              "dictionary_splat_pattern"
+            ]
+          }
+        },
+        {
           "name": "type",
           "propertyName": "type",
           "paramName": "type",
@@ -7287,35 +7842,7 @@
           }
         }
       ],
-      "children": [
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "list_splat_pattern",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "dictionary_splat_pattern",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "unary_operator",
@@ -7381,11 +7908,11 @@
       "factoryName": "unionPattern",
       "irKey": "unionPattern",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "simple_pattern",
           "propertyName": "simplePattern",
+          "paramName": "simplePattern",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -7402,9 +7929,17 @@
               "name": "_simple_pattern",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_simple_pattern"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "union_type",
@@ -7594,11 +8129,11 @@
           "factoryName": "withClauseUFormBare",
           "irKey": "withClauseUFormBare",
           "parentKind": "with_clause",
-          "fields": [],
-          "children": [
+          "fields": [
             {
               "name": "with_clause_bare",
               "propertyName": "withClauseBare",
+              "paramName": "withClauseBare",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -7609,9 +8144,17 @@
                   "name": "_with_clause_bare",
                   "unresolved": true
                 }
-              ]
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_with_clause_bare"
+                ]
+              }
             }
-          ]
+          ],
+          "children": []
         },
         {
           "kind": "with_clause__form_paren",
@@ -7620,11 +8163,11 @@
           "factoryName": "withClauseUFormParen",
           "irKey": "withClauseUFormParen",
           "parentKind": "with_clause",
-          "fields": [],
-          "children": [
+          "fields": [
             {
               "name": "with_clause_paren",
               "propertyName": "withClauseParen",
+              "paramName": "withClauseParen",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -7635,9 +8178,17 @@
                   "name": "_with_clause_paren",
                   "unresolved": true
                 }
-              ]
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_with_clause_paren"
+                ]
+              }
             }
-          ]
+          ],
+          "children": []
         }
       ]
     },
@@ -7648,11 +8199,11 @@
       "factoryName": "withClauseBare",
       "irKey": "withClauseBare",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "with_item",
           "propertyName": "withItems",
+          "paramName": "withItems",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -7663,9 +8214,17 @@
               "name": "with_item",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "with_item"
+            ]
+          }
         }
       ],
+      "children": [],
       "separator": ","
     },
     {
@@ -7675,11 +8234,11 @@
       "factoryName": "withClauseParen",
       "irKey": "withClauseParen",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "with_item",
           "propertyName": "withItems",
+          "paramName": "withItems",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -7690,9 +8249,17 @@
               "name": "with_item",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "with_item"
+            ]
+          }
         }
       ],
+      "children": [],
       "separator": ","
     },
     {
@@ -7816,11 +8383,11 @@
       "factoryName": "yield_",
       "irKey": "yield",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "expression",
           "propertyName": "expression",
+          "paramName": "expression",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7842,9 +8409,18 @@
               "name": "_expressions",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression",
+              "_expressions"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "{",

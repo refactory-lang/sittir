@@ -4,13 +4,13 @@
 // See emitters/factory-map.ts for semantics of each map.
 {
   "factoryShapes": {
-    "_as_pattern": "spread",
+    "_as_pattern": "config",
     "_assignment_eq": "config",
     "_assignment_type": "config",
     "_assignment_typed": "config",
     "_async_marker": "text",
     "_augmented_assignment_operator": "text",
-    "_comprehension_clauses": "config",
+    "_comprehension_clauses": "spread",
     "_identifier": "text",
     "_match_block": "spread",
     "_match_block_block": "config",
@@ -20,7 +20,7 @@
     "_unary_operator_operator": "text",
     "_with_clause_paren": "spread",
     "aliased_import": "config",
-    "argument_list": "config",
+    "argument_list": "spread",
     "as_pattern": "config",
     "assert_statement": "spread",
     "assignment": "config",
@@ -28,7 +28,7 @@
     "augmented_assignment": "config",
     "await": "direct",
     "binary_operator": "config",
-    "block": "config",
+    "block": "spread",
     "boolean_operator": "config",
     "break_statement": "text",
     "call": "config",
@@ -48,8 +48,8 @@
     "decorator": "config",
     "default_parameter": "config",
     "delete_statement": "direct",
-    "dict_pattern": "config",
-    "dictionary": "config",
+    "dict_pattern": "spread",
+    "dictionary": "spread",
     "dictionary_comprehension": "config",
     "dictionary_splat": "direct",
     "dictionary_splat_pattern": "direct",
@@ -67,7 +67,7 @@
     "float": "text",
     "for_in_clause": "config",
     "for_statement": "config",
-    "format_specifier": "config",
+    "format_specifier": "spread",
     "function_definition": "config",
     "future_import_statement": "config",
     "generator_expression": "config",
@@ -88,20 +88,20 @@
     "lambda_parameters": "spread",
     "lambda_within_for_in_clause": "config",
     "line_continuation": "text",
-    "list": "config",
+    "list": "spread",
     "list_comprehension": "config",
-    "list_pattern": "config",
+    "list_pattern": "spread",
     "list_splat": "direct",
     "list_splat_pattern": "direct",
     "match_statement": "config",
     "member_type": "config",
-    "module": "config",
+    "module": "spread",
     "named_expression": "config",
     "none": "text",
     "nonlocal_statement": "spread",
     "not_operator": "direct",
     "pair": "config",
-    "parameters": "config",
+    "parameters": "spread",
     "parenthesized_expression": "direct",
     "parenthesized_list_splat": "direct",
     "pass_statement": "text",
@@ -109,7 +109,7 @@
     "print_statement": "config",
     "raise_statement": "config",
     "relative_import": "config",
-    "return_statement": "config",
+    "return_statement": "direct",
     "set": "spread",
     "set_comprehension": "config",
     "slice": "config",
@@ -120,8 +120,8 @@
     "subscript": "config",
     "true": "text",
     "try_statement": "config",
-    "tuple": "config",
-    "tuple_pattern": "config",
+    "tuple": "spread",
+    "tuple_pattern": "spread",
     "type": "direct",
     "type_alias_statement": "config",
     "type_conversion": "text",
@@ -137,7 +137,7 @@
     "with_clause": "config",
     "with_item": "direct",
     "with_statement": "config",
-    "yield": "config",
+    "yield": "direct",
     "_newline": "text",
     "string_start": "text",
     "_string_content": "text",
@@ -188,6 +188,10 @@
     }
   },
   "factoryFields": {
+    "_as_pattern": [
+      "case_pattern",
+      "identifier"
+    ],
     "_assignment_eq": [
       "right"
     ],
@@ -198,19 +202,46 @@
       "type",
       "right"
     ],
+    "_comprehension_clauses": [
+      "for_in_clause"
+    ],
+    "_match_block": [
+      "match_block_block"
+    ],
     "_match_block_block": [
       "alternative"
+    ],
+    "_simple_pattern_negative": [
+      "integer"
+    ],
+    "_simple_statements": [
+      "simple_statement"
+    ],
+    "_suite": [
+      "simple_statements"
+    ],
+    "_with_clause_paren": [
+      "with_item"
     ],
     "aliased_import": [
       "name",
       "alias"
     ],
+    "argument_list": [
+      "expression"
+    ],
     "as_pattern": [
       "expression",
       "alias"
     ],
+    "assert_statement": [
+      "expression"
+    ],
     "assignment": [
-      "left"
+      "left",
+      "assignment_eq",
+      "assignment_type",
+      "assignment_typed"
     ],
     "attribute": [
       "object",
@@ -229,6 +260,9 @@
       "operator",
       "right"
     ],
+    "block": [
+      "statement"
+    ],
     "boolean_operator": [
       "left",
       "operator",
@@ -237,6 +271,14 @@
     "call": [
       "function",
       "arguments"
+    ],
+    "case_clause": [
+      "case_pattern",
+      "guard",
+      "consequence"
+    ],
+    "case_pattern": [
+      "as_pattern"
     ],
     "chevron": [
       "expression"
@@ -251,6 +293,18 @@
       "dotted_name",
       "arguments"
     ],
+    "comparison_operator": [
+      "left",
+      "operators",
+      "primary_expression"
+    ],
+    "complex_pattern": [
+      "imaginary",
+      "integer"
+    ],
+    "concatenated_string": [
+      "string"
+    ],
     "conditional_expression": [
       "body",
       "condition",
@@ -260,6 +314,10 @@
       "base_type",
       "constraint"
     ],
+    "decorated_definition": [
+      "decorator",
+      "definition"
+    ],
     "decorator": [
       "expression",
       "newline"
@@ -268,8 +326,27 @@
       "name",
       "value"
     ],
+    "delete_statement": [
+      "expressions"
+    ],
+    "dict_pattern": [
+      "dict_pattern_kv"
+    ],
+    "dictionary": [
+      "pair"
+    ],
+    "dictionary_comprehension": [
+      "body",
+      "comprehension_clauses"
+    ],
     "dictionary_splat": [
       "expression"
+    ],
+    "dictionary_splat_pattern": [
+      "identifier"
+    ],
+    "dotted_name": [
+      "identifier"
     ],
     "elif_clause": [
       "condition",
@@ -278,9 +355,27 @@
     "else_clause": [
       "body"
     ],
+    "except_clause": [
+      "value",
+      "alias",
+      "suite"
+    ],
     "exec_statement": [
       "code",
       "in_clause"
+    ],
+    "expression_list": [
+      "expression"
+    ],
+    "expression_statement_tuple": [
+      "expression"
+    ],
+    "expression_statement": [
+      "expression",
+      "expression_statement_tuple",
+      "assignment",
+      "augmented_assignment",
+      "yield"
     ],
     "finally_clause": [
       "block"
@@ -295,6 +390,9 @@
       "body",
       "alternative"
     ],
+    "format_specifier": [
+      "interpolation"
+    ],
     "function_definition": [
       "name",
       "type_parameters",
@@ -305,9 +403,16 @@
     "future_import_statement": [
       "name"
     ],
+    "generator_expression": [
+      "body",
+      "comprehension_clauses"
+    ],
     "generic_type": [
       "identifier",
       "type_parameter"
+    ],
+    "global_statement": [
+      "identifier"
     ],
     "if_clause": [
       "expression"
@@ -333,6 +438,9 @@
       "name",
       "value"
     ],
+    "keyword_identifier": [
+      "identifier"
+    ],
     "keyword_pattern": [
       "identifier",
       "simple_pattern"
@@ -341,12 +449,28 @@
       "parameters",
       "body"
     ],
+    "lambda_parameters": [
+      "parameter"
+    ],
     "lambda_within_for_in_clause": [
       "parameters",
       "body"
     ],
+    "list": [
+      "expression"
+    ],
+    "list_comprehension": [
+      "body",
+      "comprehension_clauses"
+    ],
+    "list_pattern": [
+      "pattern"
+    ],
     "list_splat": [
       "expression"
+    ],
+    "list_splat_pattern": [
+      "identifier"
     ],
     "match_statement": [
       "subject",
@@ -356,9 +480,15 @@
       "base_type",
       "identifier"
     ],
+    "module": [
+      "statement"
+    ],
     "named_expression": [
       "name",
       "value"
+    ],
+    "nonlocal_statement": [
+      "identifier"
     ],
     "not_operator": [
       "argument"
@@ -367,15 +497,39 @@
       "key",
       "value"
     ],
+    "parameters": [
+      "parameter"
+    ],
+    "parenthesized_expression": [
+      "expression"
+    ],
+    "parenthesized_list_splat": [
+      "parenthesized_list_splat"
+    ],
+    "pattern_list": [
+      "pattern"
+    ],
     "print_statement": [
-      "argument"
+      "argument",
+      "chevron"
     ],
     "raise_statement": [
+      "expressions",
       "cause"
     ],
     "relative_import": [
       "import_prefix",
       "dotted_name"
+    ],
+    "return_statement": [
+      "expressions"
+    ],
+    "set": [
+      "expression"
+    ],
+    "set_comprehension": [
+      "body",
+      "comprehension_clauses"
     ],
     "slice": [
       "start",
@@ -393,6 +547,9 @@
       "content",
       "string_end"
     ],
+    "string_content": [
+      "escape_interpolation"
+    ],
     "subscript": [
       "value",
       "subscript"
@@ -403,18 +560,37 @@
       "else_clause",
       "finally_clause"
     ],
+    "tuple": [
+      "expression"
+    ],
+    "tuple_pattern": [
+      "pattern"
+    ],
+    "type": [
+      "expression"
+    ],
     "type_alias_statement": [
       "left",
       "right"
+    ],
+    "type_parameter": [
+      "type"
     ],
     "typed_default_parameter": [
       "name",
       "type",
       "value"
     ],
+    "typed_parameter": [
+      "identifier",
+      "type"
+    ],
     "unary_operator": [
       "operator",
       "argument"
+    ],
+    "union_pattern": [
+      "simple_pattern"
     ],
     "union_type": [
       "left",
@@ -425,19 +601,39 @@
       "body",
       "alternative"
     ],
+    "with_clause_bare": [
+      "with_item"
+    ],
+    "with_clause_paren": [
+      "with_item"
+    ],
+    "with_clause": [
+      "with_clause_bare",
+      "with_clause_paren"
+    ],
     "with_item": [
       "value"
     ],
     "with_statement": [
       "with_clause",
       "body"
+    ],
+    "yield": [
+      "expression"
     ]
   },
   "factorySlots": {
     "_as_pattern": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "identifier": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
@@ -478,8 +674,8 @@
       }
     },
     "_comprehension_clauses": {
-      "children": {
-        "unnamed": true,
+      "for_in_clause": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -487,8 +683,8 @@
       }
     },
     "_match_block": {
-      "children": {
-        "unnamed": true,
+      "match_block_block": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -505,8 +701,8 @@
       }
     },
     "_simple_pattern_negative": {
-      "children": {
-        "unnamed": true,
+      "integer": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -514,8 +710,8 @@
       }
     },
     "_simple_statements": {
-      "children": {
-        "unnamed": true,
+      "simple_statement": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -523,8 +719,8 @@
       }
     },
     "_suite": {
-      "children": {
-        "unnamed": true,
+      "simple_statements": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -532,8 +728,8 @@
       }
     },
     "_with_clause_paren": {
-      "children": {
-        "unnamed": true,
+      "with_item": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -557,8 +753,8 @@
       }
     },
     "argument_list": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -582,8 +778,8 @@
       }
     },
     "assert_statement": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -598,9 +794,23 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 3,
+      "assignment_eq": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "assignment_type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "assignment_typed": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -678,8 +888,8 @@
       }
     },
     "block": {
-      "children": {
-        "unnamed": true,
+      "statement": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -726,6 +936,13 @@
       }
     },
     "case_clause": {
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      },
       "guard": {
         "unnamed": false,
         "slotCount": 1,
@@ -739,18 +956,11 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
       }
     },
     "case_pattern": {
-      "children": {
-        "unnamed": true,
+      "as_pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -827,8 +1037,8 @@
         "multiple": true,
         "nonEmpty": true
       },
-      "children": {
-        "unnamed": true,
+      "primary_expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -850,8 +1060,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "integer": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -859,8 +1069,8 @@
       }
     },
     "concatenated_string": {
-      "children": {
-        "unnamed": true,
+      "string": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -907,19 +1117,19 @@
       }
     },
     "decorated_definition": {
+      "decorator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      },
       "definition": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
       }
     },
     "decorator": {
@@ -955,8 +1165,8 @@
       }
     },
     "delete_statement": {
-      "children": {
-        "unnamed": true,
+      "expressions": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -964,8 +1174,8 @@
       }
     },
     "dict_pattern": {
-      "children": {
-        "unnamed": true,
+      "dict_pattern_kv": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -973,8 +1183,8 @@
       }
     },
     "dictionary": {
-      "children": {
-        "unnamed": true,
+      "pair": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -989,8 +1199,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "comprehension_clauses": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1007,8 +1217,8 @@
       }
     },
     "dictionary_splat_pattern": {
-      "children": {
-        "unnamed": true,
+      "identifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1016,8 +1226,8 @@
       }
     },
     "dotted_name": {
-      "children": {
-        "unnamed": true,
+      "identifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -1064,8 +1274,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "suite": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1089,8 +1299,8 @@
       }
     },
     "expression_list": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -1098,8 +1308,8 @@
       }
     },
     "expression_statement_tuple": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -1107,9 +1317,37 @@
       }
     },
     "expression_statement": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 5,
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "expression_statement_tuple": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "assignment": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "augmented_assignment": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "yield": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -1185,8 +1423,8 @@
       }
     },
     "format_specifier": {
-      "children": {
-        "unnamed": true,
+      "interpolation": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1254,8 +1492,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "comprehension_clauses": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1279,8 +1517,8 @@
       }
     },
     "global_statement": {
-      "children": {
-        "unnamed": true,
+      "identifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -1327,18 +1565,18 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "wildcard_import": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -1391,8 +1629,8 @@
       }
     },
     "keyword_identifier": {
-      "children": {
-        "unnamed": true,
+      "identifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1432,8 +1670,8 @@
       }
     },
     "lambda_parameters": {
-      "children": {
-        "unnamed": true,
+      "parameter": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -1457,8 +1695,8 @@
       }
     },
     "list": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1473,8 +1711,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "comprehension_clauses": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1482,8 +1720,8 @@
       }
     },
     "list_pattern": {
-      "children": {
-        "unnamed": true,
+      "pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1500,8 +1738,8 @@
       }
     },
     "list_splat_pattern": {
-      "children": {
-        "unnamed": true,
+      "identifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1541,8 +1779,8 @@
       }
     },
     "module": {
-      "children": {
-        "unnamed": true,
+      "statement": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1566,8 +1804,8 @@
       }
     },
     "nonlocal_statement": {
-      "children": {
-        "unnamed": true,
+      "identifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -1600,8 +1838,8 @@
       }
     },
     "parameters": {
-      "children": {
-        "unnamed": true,
+      "parameter": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1609,8 +1847,8 @@
       }
     },
     "parenthesized_expression": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1618,8 +1856,8 @@
       }
     },
     "parenthesized_list_splat": {
-      "children": {
-        "unnamed": true,
+      "parenthesized_list_splat": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1627,8 +1865,8 @@
       }
     },
     "pattern_list": {
-      "children": {
-        "unnamed": true,
+      "pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -1643,8 +1881,8 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "chevron": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1652,15 +1890,15 @@
       }
     },
     "raise_statement": {
-      "cause": {
+      "expressions": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "cause": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1684,8 +1922,8 @@
       }
     },
     "return_statement": {
-      "children": {
-        "unnamed": true,
+      "expressions": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1693,8 +1931,8 @@
       }
     },
     "set": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -1709,8 +1947,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "comprehension_clauses": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1782,8 +2020,8 @@
       }
     },
     "string_content": {
-      "children": {
-        "unnamed": true,
+      "escape_interpolation": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -1837,8 +2075,8 @@
       }
     },
     "tuple": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1846,8 +2084,8 @@
       }
     },
     "tuple_pattern": {
-      "children": {
-        "unnamed": true,
+      "pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1855,8 +2093,8 @@
       }
     },
     "type": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1887,8 +2125,8 @@
       }
     },
     "type_parameter": {
-      "children": {
-        "unnamed": true,
+      "type": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -1919,15 +2157,15 @@
       }
     },
     "typed_parameter": {
-      "type": {
+      "identifier": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "type": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1951,8 +2189,8 @@
       }
     },
     "union_pattern": {
-      "children": {
-        "unnamed": true,
+      "simple_pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -1999,8 +2237,8 @@
       }
     },
     "with_clause_bare": {
-      "children": {
-        "unnamed": true,
+      "with_item": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -2008,8 +2246,8 @@
       }
     },
     "with_clause_paren": {
-      "children": {
-        "unnamed": true,
+      "with_item": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -2017,9 +2255,16 @@
       }
     },
     "with_clause": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "with_clause_bare": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "with_clause_paren": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -2058,8 +2303,8 @@
       }
     },
     "yield": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -2233,6 +2478,11 @@
       "helperKind": {
         "bare": "_with_clause_bare",
         "paren": "_with_clause_paren"
+      },
+      "helperChildKind": {
+        "paren": [
+          "with_item"
+        ]
       }
     }
   }
