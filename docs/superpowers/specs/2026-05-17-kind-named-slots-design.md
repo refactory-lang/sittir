@@ -43,7 +43,9 @@ Solo fixes for (1) and (2) each produced a net AST regression vs baseline becaus
 
 ## Architecture
 
-### 1. Data shape
+### 1. Data shape (native NodeData)
+
+Verified via `probe-kind --engine native --trace` on `fn foo(#[a] x: u8) {}` against current baseline. The native NodeData uses two namespaces:
 
 ```
 {
@@ -52,24 +54,27 @@ Solo fixes for (1) and (2) each produced a net AST regression vs baseline becaus
   
   // slot storage (the _-prefix namespace)
   _<slot1_name>: ...,           // named slot — name = field name
-  _<slot2_kind>: ...,           // unnamed slot — name = content kind
+  _<slot2_kind>: ...,           // unnamed slot — name = content kind  (NEW)
   
-  // anonymous-token bucket — unchanged
-  $children?: AnyNodeData[],
+  // anonymous-token bucket — survives, carries numeric kind IDs
+  $children?: number[],
 }
 ```
 
-For field-wrapped slots: `<name>` = the field name (existing).
-For unnamed (origin=kind) slots: `<name>` = the content kind name (the rule's symbol the slot references).
-`$children` is restricted to anonymous tokens — children with `is_named() = false` (`type === text` cases like literal `_`, `,`, `;`).
+For field-wrapped slots: `<name>` = the field name (existing — already works on native, e.g., `_attribute`, `_pattern`, `_type`).
+For unnamed slots (origin=kind): `<name>` = the content kind name (the rule symbol the slot references). **NEW** routing — today named children without field tags go into `$children` as object entries.
 
-For `_attributed_parameter` (visible alias `attributed_parameter`):
+**Important native-vs-TS divergence** (informational only — TS path is out of scope):
+- Native's current `$children` is heterogeneous: contains named-child object entries AND numeric kind IDs for anonymous tokens. After the refactor, named-child objects move to `_<kind>` keys; numeric anon-token kind IDs stay in `$children`.
+- TS readNode promotes anonymous tokens to `_<text>` keys via `promoteAnonymousKeyword` (e.g., `_(`, `_)`). Different shape but out of scope.
+
+For `attributed_parameter` (the visible-alias name after Section 4):
 ```ts
 { 
   $type: 'attributed_parameter',
   _attribute_item: AttributeItem | undefined,    // unnamed slot, content kind = attribute_item
   _parameter: Parameter | SelfParameter | VariadicParameter | _Type,  // unnamed slot, primary node-ref's kind = parameter
-  // No $children — the '_' wildcard branch's contents (if parsed) land in $children
+  $children: [<kind_id_of_'_'_token_if_wildcard_parsed>],  // numeric anon-token kind IDs only
 }
 ```
 
@@ -113,15 +118,15 @@ For each child of a CST node:
 2. **No field tag, `child.is_named() = true`** (the child's kind is a named grammar rule, including aliased patterns):
    - Assign to `fields_acc[child.kind()]` (same map; the kind name acts as the slot key).
    - Same multi-value accumulation rule.
-   - **NEW behavior** — replaces today's "push to children bucket".
+   - **NEW behavior** — today these children push as full `NodeData` objects into `children_acc`. After the refactor they live as their own `_<kind>` storage entries.
 
-3. **No field tag, `child.is_named() = false`** (anonymous literal token, `type === text`):
-   - Push to `children_acc`.
+3. **No field tag, `child.is_named() = false`** (anonymous literal token):
+   - Push the kind ID to `children_acc` (today native pushes the kind ID as a number; verified via probe-kind trace).
    - **Unchanged** from today.
 
 Final serialized `NodeData`:
-- Stamp `_<name>: ...` for every entry in `fields_acc` (already the standard serialization path).
-- Set `$children: children_acc` only when `children_acc` is non-empty.
+- Stamp `_<name>: ...` for every entry in `fields_acc` (already the standard serialization path — works the same for field-tagged and kind-routed entries).
+- Set `$children: children_acc` only when `children_acc` is non-empty. After the refactor, `$children` contains anon-token kind IDs only (numeric), no named-child objects.
 
 ### 4. Pattern rules in `groups:` block
 
@@ -223,9 +228,9 @@ match node.field_name_for_child(i) {
 ```
 
 - `fields_acc` becomes the universal named-slots accumulator (field-tagged AND kind-routed).
-- `children_acc` shrinks to the anonymous-token bucket.
-- `child.kind()` returns the visible kind name (alias for aliased rules) — exactly what we want for routing.
-- Downstream serialization (HashMap → `_<key>` JSON keys) is already in place.
+- `children_acc` shrinks to the anonymous-token bucket (numeric kind IDs only — verified via probe-kind trace at baseline).
+- `child.kind()` returns the visible kind name (alias for aliased rules — see Section 4) — exactly what we want for routing.
+- Downstream `NodeData → JSON` serialization (`fields` HashMap → `_<key>` top-level keys) is already in place. Kind-routed entries flow through the same path.
 
 ### 7. Validate + tests migration
 
