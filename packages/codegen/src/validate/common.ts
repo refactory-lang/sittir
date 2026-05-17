@@ -1436,7 +1436,7 @@ function shouldPromoteOrphanChildren(
 }
 
 function slotConfigKey(slot: SlotModel): string {
-	return slot.unnamed ? slot.name : slot.name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+	return slot.origin === 'kind' ? slot.name : slot.name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
 }
 
 function memberValueOpts(
@@ -1496,7 +1496,7 @@ function hasDeclaredFactorySlot(
 }
 
 function shouldNormalizeConfigSlotAsMany(slot: SlotModel, slotMeta: FactorySlotMeta | undefined): boolean {
-	return slotModelArityFromMeta(slotMeta, slot.unnamed) === 'many';
+	return slotModelArityFromMeta(slotMeta, slot.origin === 'kind') === 'many';
 }
 
 function rawChildKindName(
@@ -1516,7 +1516,7 @@ function narrowSingularUnnamedChildrenValue(
 	childOpts: NodeToConfigOpts,
 	slotMeta: FactorySlotMeta | undefined
 ): readonly unknown[] | unknown {
-	if (!slot.unnamed || slot.name !== 'children' || !slotMeta || slotMeta.multiple || slotMeta.slotCount !== 1) {
+	if (slot.origin !== 'kind' || slot.name !== 'children' || !slotMeta || slotMeta.multiple || slotMeta.slotCount !== 1) {
 		return value;
 	}
 	if (!Array.isArray(value) || value.length <= 1) return value;
