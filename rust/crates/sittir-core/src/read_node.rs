@@ -144,7 +144,16 @@ fn read_children(
                 } else {
                     read_child_stub(child, source, node_handle, i as u16)
                 };
-                children_acc.push(data);
+                if child.is_named() {
+                    // Named child without a field tag — route by kind to a `_<kind>` slot.
+                    // This produces a kind-named storage entry in the serialized NodeData,
+                    // uniform with field-tagged slots (spec 2026-05-17 kind-named slots).
+                    assign_named_slot(&mut fields_acc, child.kind(), data);
+                } else {
+                    // Anonymous literal token — stays in the legacy children bucket
+                    // (numeric kind IDs only after the slot model unification).
+                    children_acc.push(data);
+                }
             }
         }
     }
