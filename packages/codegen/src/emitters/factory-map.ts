@@ -105,6 +105,10 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		for (const field of structuralFieldsOf(node)) {
 			slots[field.name] = createFactorySlotMeta(false, 1, deriveSlotCardinality(field));
 		}
+		// MIDWAY-STATE (kind-named-slots refactor, post-Task E1.3): `structuralChildrenOf` returns []
+		// because AssembledBranch.children was retired. This guard is therefore unreachable until
+		// subsequent tasks (E2.1 walker / E5.1 cleanup) migrate the consumers. Leaving the code
+		// structure intact so the dead-code pattern is visible to the cleanup pass.
 		const children = structuralChildrenOf(node);
 		if (children.length > 0) {
 			slots.children = createFactorySlotMeta(true, children.length, deriveUnnamedChildrenCardinality(children));

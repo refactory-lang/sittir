@@ -103,6 +103,10 @@ function expandWrapRuntimeKinds(kind: string, nodeMap: NodeMap | undefined, seen
 		}
 		return [...members];
 	}
+	// MIDWAY-STATE (kind-named-slots refactor, post-Task E1.3): `node.children` always returns []
+	// after the AssembledBranch.children getter retired. This branch is therefore unreachable
+	// until subsequent tasks (E2.1 walker / E5.1 cleanup) migrate the consumers. Leaving the
+	// code structure intact so the dead-code pattern is visible to the cleanup pass.
 	if (node.modelType === 'branch' && kind.startsWith('_') && node.fields.length === 0 && node.children.length > 0) {
 		const members = new Set<string>([kind, kind.slice(1)]);
 		for (const child of node.children) {
@@ -118,6 +122,10 @@ export function acceptedTransportKinds(kind: string, nodeMap?: NodeMap): string[
 	const node = nodeMap.nodes.get(kind);
 	if (!node) return [kind];
 	if (node.modelType === 'supertype') return [kind];
+	// MIDWAY-STATE (kind-named-slots refactor, post-Task E1.3): `node.children` always returns []
+	// after the AssembledBranch.children getter retired. This branch is therefore unreachable
+	// until subsequent tasks (E2.1 walker / E5.1 cleanup) migrate the consumers. Leaving the
+	// code structure intact so the dead-code pattern is visible to the cleanup pass.
 	if (node.modelType === 'branch' && kind.startsWith('_') && node.fields.length === 0 && node.children.length > 0) {
 		return [kind, kind.slice(1)];
 	}
