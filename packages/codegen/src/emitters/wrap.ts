@@ -21,8 +21,10 @@ import type {
 	AssembledNonterminal,
 	AssembledNode,
 	AssembledPolymorph,
-	AssembledSupertype
+	AssembledSupertype,
+	UnresolvedRef
 } from '../compiler/node-map.ts';
+import { isNodeRef, isUnresolvedRef } from '../compiler/node-map.ts';
 import { createNamedSlotModel, createUnnamedChildrenSlotModel, type SlotModel } from '../compiler/slot-model.ts';
 import { deriveUnnamedChildrenCardinality } from '../compiler/node-map.ts';
 import {
@@ -345,6 +347,12 @@ interface ResolveSlotDrillConfig {
 	readonly alias?: readonly [string, string];
 	readonly storageInfo?: ReturnType<typeof resolveFieldStorageInfo>;
 	readonly allowedKinds?: readonly string[];
+	/**
+	 * Optional list of concrete `_<kind>` storage keys to probe in lieu of
+	 * the slot's nominal single key. When set, the storeExpr becomes a
+	 * `??`-coalesce chain over these keys. See `collectConcreteStorageKeys`.
+	 */
+	readonly candidateStorageKeys?: readonly string[];
 }
 
 function resolveSlotDrillExprs(
@@ -354,7 +362,7 @@ function resolveSlotDrillExprs(
 	storeExpr: string;
 	accessorBody: string;
 } {
-	const slotStoreExpr = resolveSlotStoreExpr(slot, config.dataExpr);
+	const slotStoreExpr = resolveSlotStoreExpr(slot, config.dataExpr, config.candidateStorageKeys);
 	const filteredStoreExpr =
 		config.allowedKinds && config.allowedKinds.length > 0
 			? `_filterWrapChildrenByKind(${slotStoreExpr}, ${JSON.stringify(config.allowedKinds)})`
@@ -434,8 +442,79 @@ function bitflagTextsExpr(texts: readonly string[]): string {
 	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
 }
 
-function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string): string {
-	return `${dataExpr}.${slot.storageKey}`;
+/**
+ * For a kind-origin slot whose `values[]` reference one or more concrete
+ * grammar kinds (possibly through a supertype), collect the concrete
+ * `_<kind>` storage keys the runtime reader will populate.
+ *
+ * Background (spec 2026-05-17 kind-named slots):
+ *   The native reader routes UNNAMED-but-named CST children by their
+ *   `child.kind()` (the CONCRETE kind, e.g. `identifier`, `call_expression`).
+ *   That becomes the `_<kind_name>` storage key in the serialized NodeData.
+ *
+ *   For a grammar rule like `await_expression: seq($._expression, '.', 'await')`
+ *   the slot is named after the supertype (`expression`), but the data on the
+ *   wire is keyed by the CONCRETE subtype (`_identifier`, `_call_expression`,
+ *   ...). Accessing `data._expression` always returns undefined.
+ *
+ *   This helper expands each value's referenced kind through
+ *   `expandRuntimeDiscriminatorKinds`, which normalizes the leading
+ *   underscore on supertype names and walks the supertype tree to enumerate
+ *   concrete subtypes. The result is a list of concrete `_<kind>` keys —
+ *   exactly one of which will be populated on the data object at runtime.
+ *
+ * Returns undefined when expansion produces a single key that already
+ * matches the slot's nominal `_<slot.name>` — the legacy single-key access
+ * is sufficient and no probe shape is needed.
+ */
+function collectConcreteStorageKeys(
+	slot: AssembledNonterminal,
+	nodeMap: NodeMap
+): readonly string[] | undefined {
+	if (slot.origin !== 'kind') return undefined;
+	const refKinds: string[] = [];
+	for (const v of slot.values) {
+		if (!isNodeRef(v)) continue;
+		const name = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind;
+		refKinds.push(name);
+	}
+	if (refKinds.length === 0) return undefined;
+	const concrete = expandRuntimeDiscriminatorKinds(refKinds, nodeMap);
+	if (concrete.length === 0) return undefined;
+	const storageKeys = [...new Set(concrete.map((k) => `_${k}`))];
+	const legacyKey = `_${slot.name}`;
+	if (storageKeys.length === 1 && storageKeys[0] === legacyKey) {
+		return undefined;
+	}
+	return storageKeys;
+}
+
+// `_<ident>` where ident is a valid JS identifier suffix. Keys outside this
+// shape must be accessed via bracket notation. Tree-sitter exposes some kinds
+// as literal token strings (`'`, `$`, `.`), which become storage keys like
+// `_'` / `_$` / `_.` — all valid object keys but invalid dotted accessors.
+const SAFE_IDENT_KEY = /^_[A-Za-z_$][A-Za-z0-9_$]*$/;
+
+function dataAccessExpr(dataExpr: string, storageKey: string): string {
+	if (SAFE_IDENT_KEY.test(storageKey)) {
+		return `${dataExpr}.${storageKey}`;
+	}
+	return `${dataExpr}[${JSON.stringify(storageKey)}]`;
+}
+
+function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string, candidateKeys?: readonly string[]): string {
+	if (candidateKeys && candidateKeys.length > 0) {
+		// Multi-key probe: the runtime data has exactly one of these populated.
+		// Append the slot's nominal storage key as a final fallback for any
+		// edge case the analysis missed (e.g. a tree-sitter-injected alias the
+		// supertype-expansion doesn't see).
+		const allKeys = candidateKeys.includes(slot.storageKey)
+			? candidateKeys
+			: [...candidateKeys, slot.storageKey];
+		const probes = allKeys.map((k) => dataAccessExpr(dataExpr, k));
+		return `(${probes.join(' ?? ')})`;
+	}
+	return dataAccessExpr(dataExpr, slot.storageKey);
 }
 
 function resolveSlotAccessorBody(slot: SlotModel, valueType: string): string {
@@ -540,6 +619,10 @@ function emitFieldCarryingWrap(
 			storageInfo.kind === 'verbatim' && hasSeparatorMetadata
 				? [...new Set([...deriveChildrenKinds(f, nodeMap), ...aliasEntries.flatMap(([from, to]) => [from, to])])]
 				: undefined;
+		// For kind-origin slots whose values reference one or more concrete
+		// kinds (possibly via a supertype), the native reader populates
+		// `_<concrete_kind>` not `_<slot.name>`. Probe each concrete key.
+		const candidateStorageKeys = collectConcreteStorageKeys(f, nodeMap);
 		const { storeExpr } = resolveSlotDrillExprs(slot, {
 			dataExpr: node.isPolymorph ? '(data as any)' : 'data',
 			elemType: fieldElementType(f, nodeMap),
@@ -547,7 +630,8 @@ function emitFieldCarryingWrap(
 			nonEmpty: isNonEmpty(f),
 			alias: aliasEntries[0],
 			storageInfo,
-			allowedKinds
+			allowedKinds,
+			candidateStorageKeys
 		});
 		lines.push(`    _${f.name}: ${storeExpr},`);
 	}
