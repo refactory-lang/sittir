@@ -7,7 +7,10 @@
     "__range_expression_binary_operator": "text",
     "_array_expression_list": "config",
     "_array_expression_semi": "config",
+    "_attributed_enum_variant": "spread",
     "_attributed_field_declaration": "spread",
+    "_attributed_parameter": "spread",
+    "_attributed_type_parameter": "spread",
     "_closure_expression_async_marker": "text",
     "_closure_expression_block": "config",
     "_closure_expression_expr": "config",
@@ -249,8 +252,8 @@
     "float_literal": "text",
     "_line_doc_content": "text",
     "_visibility_modifier_pub_parens": "config",
-    "async": "text",
     "_": "text",
+    "async": "text",
     "static": "text",
     "fn": "text",
     "in": "text",
@@ -885,7 +888,34 @@
         "nonEmpty": false
       }
     },
+    "_attributed_enum_variant": {
+      "children": {
+        "unnamed": true,
+        "slotCount": 2,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
     "_attributed_field_declaration": {
+      "children": {
+        "unnamed": true,
+        "slotCount": 2,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "_attributed_parameter": {
+      "children": {
+        "unnamed": true,
+        "slotCount": 2,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_attributed_type_parameter": {
       "children": {
         "unnamed": true,
         "slotCount": 2,
@@ -1958,7 +1988,7 @@
     "enum_variant_list": {
       "children": {
         "unnamed": true,
-        "slotCount": 2,
+        "slotCount": 1,
         "required": false,
         "multiple": true,
         "nonEmpty": false
@@ -2963,7 +2993,7 @@
     "parameters": {
       "children": {
         "unnamed": true,
-        "slotCount": 2,
+        "slotCount": 1,
         "required": false,
         "multiple": true,
         "nonEmpty": false
@@ -3740,9 +3770,9 @@
       "attributes": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "unary_expression": {

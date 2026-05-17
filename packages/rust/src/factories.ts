@@ -1538,7 +1538,7 @@ export function enumVariantList(config: Partial<T.EnumVariantList.Config> = {}) 
     $children: children,
     children() { return children; },
     $with: {
-      children: (...items: ((T.AttributeItem | T.EnumVariant))[]) => enumVariantList({ ...config, children: items } as unknown as Parameters<typeof enumVariantList>[0]),
+      children: (...items: T.AttributedEnumVariant[]) => enumVariantList({ ...config, children: items } as unknown as Parameters<typeof enumVariantList>[0]),
     },
   }, methodsEngine);
 }
@@ -2983,7 +2983,7 @@ export function parameters(config: Partial<T.Parameters.Config> = {}) {
     $children: children,
     children() { return children; },
     $with: {
-      children: (...items: ((T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type))[]) => parameters({ ...config, children: items } as unknown as Parameters<typeof parameters>[0]),
+      children: (...items: T.AttributedParameter[]) => parameters({ ...config, children: items } as unknown as Parameters<typeof parameters>[0]),
     },
   }, methodsEngine);
 }
@@ -4150,7 +4150,7 @@ export function typeParameter(config: T.TypeParameter.Config) {
   }, methodsEngine);
 }
 
-export function typeParameters(config: Partial<T.TypeParameters.Config> = {}) {
+export function typeParameters(config: T.TypeParameters.Config) {
   const _attributes = config.attributes;
   return withMethods({
     $type: TSKindId.TypeParameters as const,
@@ -4159,7 +4159,7 @@ export function typeParameters(config: Partial<T.TypeParameters.Config> = {}) {
     _attributes,
     attributes() { return _attributes; },
     $with: {
-      attributes: (...values: (T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)[]) => typeParameters({ ...config, attributes: values }),
+      attributes: (...values: NonEmptyArray<T.AttributedTypeParameter>) => typeParameters({ ...config, attributes: values }),
     },
   }, methodsEngine);
 }

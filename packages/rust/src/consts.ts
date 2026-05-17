@@ -2,7 +2,10 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
+  '_attributed_enum_variant',
   '_attributed_field_declaration',
+  '_attributed_parameter',
+  '_attributed_type_parameter',
   '_closure_expression_expr',
   '_delim_token_tree_brace',
   '_delim_token_tree_bracket',
@@ -1470,7 +1473,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
+  '_attributed_enum_variant': [
+  ],
   '_attributed_field_declaration': [
+  ],
+  '_attributed_parameter': [
+  ],
+  '_attributed_type_parameter': [
   ],
   '_closure_expression_expr': [
     { name: 'body', required: true, multiple: false },
@@ -2057,7 +2066,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'defaultType', required: false, multiple: false },
   ],
   'type_parameters': [
-    { name: 'attributes', required: false, multiple: true },
+    { name: 'attributes', required: true, multiple: true },
   ],
   'unary_expression': [
     { name: 'operator', required: true, multiple: false },

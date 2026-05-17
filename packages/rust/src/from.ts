@@ -493,11 +493,9 @@ const _K42: readonly string[] = ["scoped_identifier","generic_type_with_turbofis
 const _K43: readonly string[] = ["scoped_identifier","generic_type_with_turbofish"];
 const _K44: readonly string[] = ["_ref_marker","_mutable_specifier"];
 const _K45: readonly string[] = ["scoped_type_identifier_in_expression_position","generic_type_with_turbofish"];
-const _K46: readonly string[] = ["metavariable"];
-const _K47: readonly string[] = ["attribute_item","type_parameter","lifetime_parameter","const_parameter"];
-const _K48: readonly string[] = ["scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"];
-const _K49: readonly string[] = ["_type_identifier","_primitive_type"];
-const _K50: readonly string[] = ["lifetime","scoped_type_identifier","generic_type","reference_type","pointer_type","tuple_type","array_type","higher_ranked_trait_bound"];
+const _K46: readonly string[] = ["scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"];
+const _K47: readonly string[] = ["_type_identifier","_primitive_type"];
+const _K48: readonly string[] = ["lifetime","scoped_type_identifier","generic_type","reference_type","pointer_type","tuple_type","array_type","higher_ranked_trait_bound"];
 
 export function abstractTypeFrom(input: T.AbstractType.Loose): ReturnType<typeof F.abstractType> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.abstractType>;
@@ -1107,7 +1105,7 @@ export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish.L
 export function higherRankedTraitBoundFrom(input: T.HigherRankedTraitBound.Loose): ReturnType<typeof F.higherRankedTraitBound> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.higherRankedTraitBound>;
   return F.higherRankedTraitBound({
-    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters") ?? F.typeParameters(),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     type: _resolveOne<T._Type>(input.type, _K5, _K6),
   });
 }
@@ -2012,10 +2010,12 @@ export function typeParameterFrom(input: T.TypeParameter.Loose): ReturnType<type
   });
 }
 
-export function typeParametersFrom(input?: T.TypeParameters.Loose): ReturnType<typeof F.typeParameters> {
-  if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.typeParameters>;
+export function typeParametersFrom(input: T.TypeParameters.Loose): ReturnType<typeof F.typeParameters> {
+  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.typeParameters>;
+  const _ne_attributes = _resolveManyBranch<T.AttributedTypeParameter>(input.attributes, "_attributed_type_parameter");
+  _assertNonEmpty(_ne_attributes, 'type_parameters.attributes');
   return F.typeParameters({
-    attributes: _resolveMany<T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>(input?.attributes, _K46, _K47),
+    attributes: _ne_attributes,
   });
 }
 
@@ -2070,7 +2070,7 @@ export function useDeclarationFrom(input: T.UseDeclaration.Loose): ReturnType<ty
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.useDeclaration>;
   return F.useDeclaration({
     visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
-    argument: _resolveOne<T.UseClause>(input.argument, _K7, _K48),
+    argument: _resolveOne<T.UseClause>(input.argument, _K7, _K46),
   });
 }
 
@@ -2134,7 +2134,7 @@ export function whereClauseFrom(input?: T.WhereClause.Loose): ReturnType<typeof 
 export function wherePredicateFrom(input: T.WherePredicate.Loose): ReturnType<typeof F.wherePredicate> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.wherePredicate>;
   return F.wherePredicate({
-    left: _resolveOne<T.Lifetime | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType>(input.left, _K49, _K50),
+    left: _resolveOne<T.Lifetime | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType>(input.left, _K47, _K48),
     bounds: _resolveOneBranch<T.TraitBounds>(input.bounds, "trait_bounds"),
   });
 }

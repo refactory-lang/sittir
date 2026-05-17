@@ -651,7 +651,39 @@ const config: WireConfig<RustGrammar> = {
 		// comma separator, causing attribute items and their field to be rendered
 		// with commas between them (e.g. `#[attr],y: i32` instead of
 		// `#[attr] y: i32`).
-		_attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration)
+		_attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
+
+		// Pattern rule: attribute_item(s) attached to an enum variant.
+		//
+		// enum_variant_list uses the same SEQ(REPEAT(attribute_item), enum_variant)
+		// shape inline at every comma-separated position. Wire's pattern replacement
+		// lifts each occurrence into a real _attributed_enum_variant CST node.
+		_attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
+
+		// Pattern rule: optional attribute_item attached to a function parameter.
+		//
+		// parameters uses SEQ(CHOICE(attribute_item, BLANK), CHOICE(...)) — i.e.
+		// an optional single attribute followed by the parameter kind. The sittir
+		// IR normalizes CHOICE(x, BLANK) to optional(x), so the pattern body uses
+		// optional(). Members: parameter | self_parameter | variadic_parameter |
+		// '_' wildcard | _type (anonymous type).
+		_attributed_parameter: ($) =>
+			seq(
+				optional($.attribute_item),
+				choice($.parameter, $.self_parameter, $.variadic_parameter, '_', $._type)
+			),
+
+		// Pattern rule: attribute_item(s) attached to a type parameter.
+		//
+		// type_parameters uses SEQ(REPEAT(attribute_item), CHOICE(metavariable,
+		// type_parameter, lifetime_parameter, const_parameter)) inline at every
+		// comma-separated position. Wire lifts each occurrence into a real
+		// _attributed_type_parameter CST node.
+		_attributed_type_parameter: ($) =>
+			seq(
+				repeat($.attribute_item),
+				choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)
+			)
 	},
 
 	// externalAltDef — sittir-side rule bodies for external scanner symbols.

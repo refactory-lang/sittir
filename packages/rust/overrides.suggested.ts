@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  9  (0 applied, 9 held)
-// Rule promotions:   99  (91 applied, 8 held)
+// Rule promotions:   100  (91 applied, 9 held)
 // Repeated shapes:   4  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -25,6 +25,15 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
+  // [held] polymorph — 1 choice position(s), 5 arm(s) total
+  _attributed_parameter: {
+      "1/0": variant("form0"),
+      "1/1": variant("form1"),
+      "1/2": variant("form2"),
+      "1/3": variant("form3"),
+      "1/4": variant("form4"),
+  },
+
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: body
@@ -269,11 +278,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  enum_variant_list: {
-    '1': 'attribute_item',
-  },
-
-  // [held] 1 candidate(s)
   extern_crate_declaration: {
     '4/0': 'alias',
   },
@@ -328,11 +332,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  parameters: {
-    '1': 'attribute_item',
-  },
-
-  // [held] 1 candidate(s)
   static_item: {
     '7/0': 'value',
   },
@@ -350,11 +349,6 @@ export const suggestedGroups = {
   // [held] 1 candidate(s)
   type_parameter: {
     '2/0': 'default_type',
-  },
-
-  // [held] 1 candidate(s)
-  type_parameters: {
-    '1/0/0': 'attribute_item',
   },
 
   // [held] 1 candidate(s)
@@ -405,6 +399,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "integer_literal", classification: "terminal", applied: true },
   { kind: "unit_expression", classification: "terminal", applied: true },
   { kind: "unit_type", classification: "terminal", applied: true },
+  { kind: "_attributed_parameter", classification: "polymorph", applied: false },
   { kind: "_block_doc_comment_marker", classification: "polymorph", applied: false },
   { kind: "_closure_expression_expr", classification: "polymorph", applied: false },
   { kind: "_let_chain", classification: "polymorph", applied: false },

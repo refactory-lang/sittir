@@ -108,8 +108,26 @@ pub struct ArrayExpressionSemiTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_attributed_enum_variant.jinja", escape = "none")]
+pub struct AttributedEnumVariantTemplate<'a> {
+    pub children: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_attributed_field_declaration.jinja", escape = "none")]
 pub struct AttributedFieldDeclarationTemplate<'a> {
+    pub children: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_attributed_parameter.jinja", escape = "none")]
+pub struct AttributedParameterTemplate<'a> {
+    pub children: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_attributed_type_parameter.jinja", escape = "none")]
+pub struct AttributedTypeParameterTemplate<'a> {
     pub children: ListNonterminalView<'a>,
 }
 

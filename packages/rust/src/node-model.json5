@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 372,
+  "nodeCount": 375,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -582,6 +582,47 @@
       "children": []
     },
     {
+      "kind": "_attributed_enum_variant",
+      "modelType": "branch",
+      "typeName": "AttributedEnumVariant",
+      "factoryName": "attributedEnumVariant",
+      "irKey": "attributedEnumVariant",
+      "hidden": false,
+      "fields": [],
+      "children": [
+        {
+          "name": "attribute_item",
+          "propertyName": "attributeItems",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "attribute_item",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "enum_variant",
+          "propertyName": "enumVariant",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "enum_variant",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
       "kind": "_attributed_field_declaration",
       "modelType": "branch",
       "typeName": "AttributedFieldDeclaration",
@@ -616,6 +657,129 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "field_declaration",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_attributed_parameter",
+      "modelType": "branch",
+      "typeName": "AttributedParameter",
+      "factoryName": "attributedParameter",
+      "irKey": "attributedParameter",
+      "hidden": false,
+      "fields": [],
+      "children": [
+        {
+          "name": "attribute_item",
+          "propertyName": "attributeItem",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "attribute_item",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "parameter",
+          "propertyName": "parameter",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "parameter",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "self_parameter",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "variadic_parameter",
+              "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "_"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_type",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "_attributed_type_parameter",
+      "modelType": "branch",
+      "typeName": "AttributedTypeParameter",
+      "factoryName": "attributedTypeParameter",
+      "irKey": "attributedTypeParameter",
+      "hidden": false,
+      "fields": [],
+      "children": [
+        {
+          "name": "attribute_item",
+          "propertyName": "attributeItems",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "attribute_item",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "metavariable",
+          "propertyName": "metavariable",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "metavariable",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_parameter",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "lifetime_parameter",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "const_parameter",
               "unresolved": true
             }
           ]
@@ -6394,8 +6558,8 @@
       "fields": [],
       "children": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItems",
+          "name": "attributed_enum_variant",
+          "propertyName": "attributedEnumVariants",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -6403,22 +6567,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "attribute_item",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "enum_variant",
-          "propertyName": "enumVariants",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "enum_variant",
+              "name": "_attributed_enum_variant",
               "unresolved": true
             }
           ]
@@ -11052,23 +11201,8 @@
       "fields": [],
       "children": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItem",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "attribute_item",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parameter",
-          "propertyName": "parameters",
+          "name": "attributed_parameter",
+          "propertyName": "attributedParameters",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -11076,30 +11210,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "parameter",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "self_parameter",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "variadic_parameter",
-              "unresolved": true
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "_"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_type",
+              "name": "_attributed_parameter",
               "unresolved": true
             }
           ]
@@ -14647,38 +14758,14 @@
           "name": "attributes",
           "propertyName": "attributes",
           "paramName": "attributes",
-          "required": false,
+          "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "attribute_item",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "metavariable",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "type_parameter",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "lifetime_parameter",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "const_parameter",
+              "name": "_attributed_type_parameter",
               "unresolved": true
             }
           ],
@@ -14686,11 +14773,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "attribute_item",
-              "metavariable",
-              "type_parameter",
-              "lifetime_parameter",
-              "const_parameter"
+              "_attributed_type_parameter"
             ]
           }
         }

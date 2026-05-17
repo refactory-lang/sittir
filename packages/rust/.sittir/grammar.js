@@ -932,17 +932,17 @@ function tryHoistSiblingVariants(rule, variantEntries) {
     );
   const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
-  const choice = seqMembers[resolvedPos];
-  if (!choice || !isChoiceType(choice.type))
-    return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
-  const choiceMembers = membersOf2(choice);
+  const choice2 = seqMembers[resolvedPos];
+  if (!choice2 || !isChoiceType(choice2.type))
+    return bail(`position ${resolvedPos} is '${choice2?.type}', not choice/CHOICE`);
+  const choiceMembers = membersOf2(choice2);
   const anyEmpty = parsed.some(
     (p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx])
   );
   if (!anyEmpty) return null;
   const parentKind = wireGetCurrentRuleKind();
   if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
-  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack);
+  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack);
 }
 function peelPrecWrappersFromRule(rule) {
   const dbg = typeof process !== "undefined" ? process?.env?.SITTIR_DEBUG : void 0;
@@ -970,7 +970,7 @@ function parseVariantPathsForHoist(variantEntries, bail) {
   }
   return parsed;
 }
-function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack) {
+function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack) {
   const refs = [];
   const isUpperCase = core.type === core.type.toUpperCase();
   for (const p of parsed) {
@@ -997,7 +997,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     });
   }
   registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
-  const newChoice = reconstructContainer(choice, refs);
+  const newChoice = reconstructContainer(choice2, refs);
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
 function registerHoistedVariantConflicts(variantNames) {
@@ -1132,13 +1132,13 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
     value: aliasValue
   };
   if (factored) {
-    const optional = globalThis.optional;
-    if (typeof optional !== "function") {
+    const optional2 = globalThis.optional;
+    if (typeof optional2 !== "function") {
       throw new Error(
         "transform: no global optional() found \u2014 variant()/alias() on empty-matching content needs runtime optional()"
       );
     }
-    return optional(aliasNode);
+    return optional2(aliasNode);
   }
   return aliasNode;
 }
@@ -2269,7 +2269,34 @@ var config = {
     // comma separator, causing attribute items and their field to be rendered
     // with commas between them (e.g. `#[attr],y: i32` instead of
     // `#[attr] y: i32`).
-    _attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration)
+    _attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
+    // Pattern rule: attribute_item(s) attached to an enum variant.
+    //
+    // enum_variant_list uses the same SEQ(REPEAT(attribute_item), enum_variant)
+    // shape inline at every comma-separated position. Wire's pattern replacement
+    // lifts each occurrence into a real _attributed_enum_variant CST node.
+    _attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
+    // Pattern rule: optional attribute_item attached to a function parameter.
+    //
+    // parameters uses SEQ(CHOICE(attribute_item, BLANK), CHOICE(...)) — i.e.
+    // an optional single attribute followed by the parameter kind. The sittir
+    // IR normalizes CHOICE(x, BLANK) to optional(x), so the pattern body uses
+    // optional(). Members: parameter | self_parameter | variadic_parameter |
+    // '_' wildcard | _type (anonymous type).
+    _attributed_parameter: ($) => seq(
+      optional($.attribute_item),
+      choice($.parameter, $.self_parameter, $.variadic_parameter, "_", $._type)
+    ),
+    // Pattern rule: attribute_item(s) attached to a type parameter.
+    //
+    // type_parameters uses SEQ(REPEAT(attribute_item), CHOICE(metavariable,
+    // type_parameter, lifetime_parameter, const_parameter)) inline at every
+    // comma-separated position. Wire lifts each occurrence into a real
+    // _attributed_type_parameter CST node.
+    _attributed_type_parameter: ($) => seq(
+      repeat($.attribute_item),
+      choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)
+    )
   },
   // externalAltDef — sittir-side rule bodies for external scanner symbols.
   // These bodies are used by sittir's slot/render/factory pipeline ONLY;

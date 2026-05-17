@@ -1549,13 +1549,13 @@ describe('type_parameter', () => {
 
 describe('type_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeParameters({});
+    const node = ir.typeParameters({ attributes: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any] });
     expect(node.$type).toBe(TSKindId.TypeParameters);
     expect(node.$source).toBe(2);
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.typeParameters({});
-    expect(() => node.$render!()).not.toThrow();
+  it('render produces non-empty string', () => {
+    const node = ir.typeParameters({ attributes: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any] });
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 

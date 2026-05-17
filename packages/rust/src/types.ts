@@ -40,8 +40,8 @@ export type LeafStringMap = {
   mutable_specifier: "mut";
   self: "self";
   super: "super";
-  async: "async";
   _: "_";
+  async: "async";
   static: "static";
   fn: "fn";
   in: "in";
@@ -84,7 +84,10 @@ export type LeafStringMap = {
 export const enum SyntaxKind {
   ArrayExpressionList = "_array_expression_list",
   ArrayExpressionSemi = "_array_expression_semi",
+  AttributedEnumVariant = "_attributed_enum_variant",
   AttributedFieldDeclaration = "_attributed_field_declaration",
+  AttributedParameter = "_attributed_parameter",
+  AttributedTypeParameter = "_attributed_type_parameter",
   ClosureExpressionBlock = "_closure_expression_block",
   _ClosureExpressionExpr = "_closure_expression_expr",
   _DelimTokenTreeBrace = "_delim_token_tree_brace",
@@ -337,8 +340,8 @@ export const enum SyntaxKind {
   FloatLiteral = "float_literal",
   LineDocContent = "_line_doc_content",
   ErrorSentinel = "_error_sentinel",
-  Async = "async",
   Anonymous = "_",
+  Async = "async",
   Static = "static",
   Fn = "fn",
   In = "in",
@@ -2122,9 +2125,24 @@ export interface ArrayExpressionSemi {
   length(): Expression;
 }
 
+export interface AttributedEnumVariant {
+  readonly $type: "_attributed_enum_variant";
+  readonly $children: readonly (AttributeItem | EnumVariant)[];
+}
+
 export interface AttributedFieldDeclaration {
   readonly $type: "_attributed_field_declaration";
   readonly $children: readonly (AttributeItem | FieldDeclaration)[];
+}
+
+export interface AttributedParameter {
+  readonly $type: "_attributed_parameter";
+  readonly $children: readonly [AttributeItem | Parameter | SelfParameter | VariadicParameter | _Type];
+}
+
+export interface AttributedTypeParameter {
+  readonly $type: "_attributed_type_parameter";
+  readonly $children: readonly (AttributeItem | Metavariable | TypeParameter | LifetimeParameter | ConstParameter)[];
 }
 
 export interface ClosureExpressionBlock {
@@ -2761,7 +2779,7 @@ export interface EnumVariant {
 
 export interface EnumVariantList {
   readonly $type: TSKindId.EnumVariantList;
-  readonly $children: readonly (AttributeItem | EnumVariant)[];
+  readonly $children: readonly (AttributedEnumVariant)[];
 }
 
 export interface ExpressionStatementWithSemi {
@@ -3387,7 +3405,7 @@ export interface Parameter {
 
 export interface Parameters {
   readonly $type: TSKindId.Parameters;
-  readonly $children: readonly (AttributeItem | Parameter | SelfParameter | VariadicParameter | _Type)[];
+  readonly $children: readonly (AttributedParameter)[];
 }
 
 export interface ParenthesizedExpression {
@@ -3891,8 +3909,8 @@ export interface TypeParameter {
 
 export interface TypeParameters {
   readonly $type: TSKindId.TypeParameters;
-  readonly _attributes?: readonly (AttributeItem | Metavariable | TypeParameter | LifetimeParameter | ConstParameter)[];
-  attributes(): readonly (AttributeItem | Metavariable | TypeParameter | LifetimeParameter | ConstParameter)[];
+  readonly _attributes: NonEmptyArray<AttributedTypeParameter>;
+  attributes(): NonEmptyArray<AttributedTypeParameter>;
 }
 
 export interface UnaryExpression {
@@ -4074,7 +4092,10 @@ export type BlockCommentContent = Terminal<TSKindId._BlockCommentContent, string
 // Tree types
 export interface ArrayExpressionListTree extends AnyTreeNode { readonly type: "_array_expression_list"; }
 export interface ArrayExpressionSemiTree extends AnyTreeNode { readonly type: "_array_expression_semi"; }
+export interface AttributedEnumVariantTree extends AnyTreeNode { readonly type: "_attributed_enum_variant"; }
 export interface AttributedFieldDeclarationTree extends AnyTreeNode { readonly type: "_attributed_field_declaration"; }
+export interface AttributedParameterTree extends AnyTreeNode { readonly type: "_attributed_parameter"; }
+export interface AttributedTypeParameterTree extends AnyTreeNode { readonly type: "_attributed_type_parameter"; }
 export interface ClosureExpressionBlockTree extends AnyTreeNode { readonly type: "_closure_expression_block"; }
 export interface _ClosureExpressionExprTree extends AnyTreeNode { readonly type: "_closure_expression_expr"; }
 export interface _DelimTokenTreeBraceTree extends AnyTreeNode { readonly type: "_delim_token_tree_brace"; }
@@ -4819,7 +4840,10 @@ export interface TokDollarTree extends AnyTreeNode { readonly type: "$"; }
 export type RustNode =
   | ArrayExpressionList
   | ArrayExpressionSemi
+  | AttributedEnumVariant
   | AttributedFieldDeclaration
+  | AttributedParameter
+  | AttributedTypeParameter
   | ClosureExpressionBlock
   | _ClosureExpressionExpr
   | _DelimTokenTreeBrace
@@ -5032,7 +5056,10 @@ export type RustNode =
 export interface KindMap {
   '_array_expression_list': ArrayExpressionList;
   '_array_expression_semi': ArrayExpressionSemi;
+  '_attributed_enum_variant': AttributedEnumVariant;
   '_attributed_field_declaration': AttributedFieldDeclaration;
+  '_attributed_parameter': AttributedParameter;
+  '_attributed_type_parameter': AttributedTypeParameter;
   '_closure_expression_block': ClosureExpressionBlock;
   '_closure_expression_expr': _ClosureExpressionExpr;
   '_delim_token_tree_brace': _DelimTokenTreeBrace;
@@ -5301,7 +5328,10 @@ export interface VariantMap {
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
 export interface ArrayExpressionListNs extends NodeNs<ArrayExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayExpressionSemiNs extends NodeNs<ArrayExpressionSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributedEnumVariantNs extends NodeNs<AttributedEnumVariant, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AttributedFieldDeclarationNs extends NodeNs<AttributedFieldDeclaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributedParameterNs extends NodeNs<AttributedParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributedTypeParameterNs extends NodeNs<AttributedTypeParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClosureExpressionBlockNs extends NodeNs<ClosureExpressionBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ClosureExpressionExprNs extends NodeNs<_ClosureExpressionExpr, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _DelimTokenTreeBraceNs extends NodeNs<_DelimTokenTreeBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5513,7 +5543,10 @@ export interface VisibilityModifierPubParensNs extends NodeNs<VisibilityModifier
 export interface NamespaceMap {
   '_array_expression_list': ArrayExpressionListNs;
   '_array_expression_semi': ArrayExpressionSemiNs;
+  '_attributed_enum_variant': AttributedEnumVariantNs;
   '_attributed_field_declaration': AttributedFieldDeclarationNs;
+  '_attributed_parameter': AttributedParameterNs;
+  '_attributed_type_parameter': AttributedTypeParameterNs;
   '_closure_expression_block': ClosureExpressionBlockNs;
   '_closure_expression_expr': _ClosureExpressionExprNs;
   '_delim_token_tree_brace': _DelimTokenTreeBraceNs;
@@ -5744,12 +5777,33 @@ export namespace ArrayExpressionSemi {
   export type Tree = TreeFor<'_array_expression_semi'>;
   export type Kind = '_array_expression_semi';
 }
+export namespace AttributedEnumVariant {
+  export type Config = ConfigFor<'_attributed_enum_variant'>;
+  export type Fluent = FluentFor<'_attributed_enum_variant'>;
+  export type Loose = LooseFor<'_attributed_enum_variant'>;
+  export type Tree = TreeFor<'_attributed_enum_variant'>;
+  export type Kind = '_attributed_enum_variant';
+}
 export namespace AttributedFieldDeclaration {
   export type Config = ConfigFor<'_attributed_field_declaration'>;
   export type Fluent = FluentFor<'_attributed_field_declaration'>;
   export type Loose = LooseFor<'_attributed_field_declaration'>;
   export type Tree = TreeFor<'_attributed_field_declaration'>;
   export type Kind = '_attributed_field_declaration';
+}
+export namespace AttributedParameter {
+  export type Config = ConfigFor<'_attributed_parameter'>;
+  export type Fluent = FluentFor<'_attributed_parameter'>;
+  export type Loose = LooseFor<'_attributed_parameter'>;
+  export type Tree = TreeFor<'_attributed_parameter'>;
+  export type Kind = '_attributed_parameter';
+}
+export namespace AttributedTypeParameter {
+  export type Config = ConfigFor<'_attributed_type_parameter'>;
+  export type Fluent = FluentFor<'_attributed_type_parameter'>;
+  export type Loose = LooseFor<'_attributed_type_parameter'>;
+  export type Tree = TreeFor<'_attributed_type_parameter'>;
+  export type Kind = '_attributed_type_parameter';
 }
 export namespace ClosureExpressionBlock {
   export type Config = ConfigFor<'_closure_expression_block'>;

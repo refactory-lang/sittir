@@ -151,6 +151,17 @@ export interface AsyncBlockTransport {
   _block: BlockTransport
 }
 
+export interface AttributedEnumVariantTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  '$children': Array<AttributedEnumVariantChildTransportSlot>
+}
+
 export interface AttributedFieldDeclarationTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -160,6 +171,28 @@ export interface AttributedFieldDeclarationTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   '$children': Array<AttributedFieldDeclarationChildTransportSlot>
+}
+
+export interface AttributedParameterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  '$children': Array<AttributedParameterChildTransportSlot>
+}
+
+export interface AttributedTypeParameterTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  '$children': Array<AttributedTypeParameterChildTransportSlot>
 }
 
 export interface AttributeItemTransport {
@@ -576,7 +609,7 @@ export interface EnumVariantListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': Array<EnumVariantListChildTransportSlot>
+  '$children': Array<AttributedEnumVariantTransport>
 }
 
 export interface EnumVariantTransport {
@@ -1497,7 +1530,7 @@ export interface ParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': Array<ParametersChildTransportSlot>
+  '$children': Array<AttributedParameterTransport>
 }
 
 export interface ParameterTransport {
@@ -2295,7 +2328,7 @@ export interface TypeParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributes?: Array<TypeParametersAttributesTransportSlot>
+  _attributes: Array<AttributedTypeParameterTransport>
 }
 
 export interface TypeParameterTransport {

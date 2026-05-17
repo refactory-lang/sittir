@@ -2677,7 +2677,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         199 => { // "type_parameters"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("attributes"), false)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("attributes"), true)?;
             let field_0_renderables = field_0.renderable_items();
             let template = TypeParametersTemplate {
                 attributes: ListNonterminalView {

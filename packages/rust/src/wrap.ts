@@ -1684,11 +1684,11 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.EnumVariantList as const,
-    $children: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data.$children, ["attribute_item","enum_variant"]), false, "children"),
+    $children: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data.$children, ["_attributed_enum_variant","attributed_enum_variant","attribute_item","enum_variant"]), false, "children"),
 
-    children() { return drillInAll<(T.AttributeItem | T.EnumVariant)>(this.$children as readonly ((T.AttributeItem | T.EnumVariant))[] | undefined, tree); },
+    children() { return drillInAll<T.AttributedEnumVariant>(this.$children as readonly T.AttributedEnumVariant[] | undefined, tree); },
     $with: {
-      children: (...items: ((T.AttributeItem | T.EnumVariant))[]) => wrapEnumVariantList({ ...data, $children: items }, tree),
+      children: (...items: T.AttributedEnumVariant[]) => wrapEnumVariantList({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2684,11 +2684,11 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Parameters as const,
-    $children: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data.$children, ["attribute_item","parameter","self_parameter","variadic_parameter","_type","abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","_type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound","_primitive_type"]), false, "children"),
+    $children: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data.$children, ["_attributed_parameter","attributed_parameter","attribute_item","parameter","self_parameter","variadic_parameter","_type","abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","_type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound","_primitive_type"]), false, "children"),
 
-    children() { return drillInAll<(T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type)>(this.$children as readonly ((T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type))[] | undefined, tree); },
+    children() { return drillInAll<T.AttributedParameter>(this.$children as readonly T.AttributedParameter[] | undefined, tree); },
     $with: {
-      children: (...items: ((T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type))[]) => wrapParameters({ ...data, $children: items }, tree),
+      children: (...items: T.AttributedParameter[]) => wrapParameters({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -3524,11 +3524,11 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeParameters as const,
-    _attributes: normalizeRepeatedWrapSlot(data._attributes, false, "attributes"),
+    _attributes: normalizeRepeatedWrapSlot(data._attributes, true, "attributes"),
 
-    attributes() { return drillInAll<T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>(this._attributes as readonly (T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)[] | undefined, tree); },
+    attributes() { return drillInAll<T.AttributedTypeParameter>(this._attributes as readonly T.AttributedTypeParameter[] | undefined, tree); },
     $with: {
-      attributes: (...v: NonNullable<T.TypeParameters['_attributes']>[number][]) => wrapTypeParameters({ ...data, _attributes: v }, tree),
+      attributes: (...v: NonEmptyArray<NonNullable<T.TypeParameters['_attributes']>[number]>) => wrapTypeParameters({ ...data, _attributes: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -4026,7 +4026,10 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 const _aliasTargetToSource: Record<string, string> = {
   'array_expression_list': '_array_expression_list',
   'array_expression_semi': '_array_expression_semi',
+  'attributed_enum_variant': '_attributed_enum_variant',
   'attributed_field_declaration': '_attributed_field_declaration',
+  'attributed_parameter': '_attributed_parameter',
+  'attributed_type_parameter': '_attributed_type_parameter',
   'closure_expression_async_marker': '_closure_expression_async_marker',
   'closure_expression_block': '_closure_expression_block',
   'closure_expression_static_marker': '_closure_expression_static_marker',
