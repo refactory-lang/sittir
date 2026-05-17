@@ -2825,20 +2825,24 @@ export class AssembledBranch<
 	}
 
 	/**
-	 * Field-shaped slots only (source !== 'inferred'). Convenience view
-	 * over `slots` for callers that need only named-grammar-field slots.
+	 * All slots — both field-named (origin='field') and kind-named (origin='kind').
+	 * After unified-slot refactor (spec 2026-05-17): every slot has a name and
+	 * `_<name>` storage key regardless of whether the name came from a `field()`
+	 * wrapper or the content kind. Consumers should NOT branch on origin — they
+	 * are all just slots.
 	 */
 	get fields(): readonly AssembledNonterminal[] {
-		return Object.values(this.slots).filter((s) => s.source !== 'inferred');
+		return Object.values(this.slots);
 	}
 
 	/**
-	 * Inferred positional slots only (source === 'inferred'). Convenience
-	 * view over `slots` for callers that need only unnamed positional slots.
-	 * Returns empty array when no inferred slots exist.
+	 * Retired post-unification — no longer a separate slot category.
+	 * Kept as empty-returning getter for back-compat with un-migrated callers.
+	 * Template-internal uses (normalizeChildrenPlaceholderArity) will receive []
+	 * until Task E2.1 migrates $CHILDREN placeholders to $<kind> keys.
 	 */
 	get children(): readonly AssembledNonterminal[] {
-		return Object.values(this.slots).filter((s) => s.source === 'inferred');
+		return [];
 	}
 
 	renderTemplate(
@@ -3292,12 +3296,22 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		return Object.values(this.slots);
 	}
 
+	/**
+	 * All slots — both field-named (origin='field') and kind-named (origin='kind').
+	 * After unified-slot refactor (spec 2026-05-17): all slots have a name and
+	 * `_<name>` storage key. The dedup'd union across forms is stored directly in
+	 * `this.slots` via structuralSlotRecordFromForms.
+	 */
 	get fields(): readonly AssembledNonterminal[] {
-		return Object.values(this.slots).filter((slot) => slot.source !== 'inferred');
+		return Object.values(this.slots);
 	}
 
+	/**
+	 * Retired post-unification — no longer a separate slot category.
+	 * Kept as empty-returning getter for back-compat with un-migrated callers.
+	 */
 	get children(): readonly AssembledNonterminal[] {
-		return Object.values(this.slots).filter((slot) => slot.source === 'inferred');
+		return [];
 	}
 
 	renderTemplate(
@@ -3811,19 +3825,23 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 	}
 
 	/**
-	 * Field-shaped slots only (source !== 'inferred'). Convenience view
-	 * over `slots` for callers that need only named-grammar-field slots.
+	 * All slots — both field-named (origin='field') and kind-named (origin='kind').
+	 * After unified-slot refactor (spec 2026-05-17): all slots have a name and
+	 * `_<name>` storage key regardless of slot origin. Consumers should NOT
+	 * branch on origin — they are all just slots.
 	 */
 	get fields(): readonly AssembledNonterminal[] {
-		return Object.values(this.slots).filter((s) => s.source !== 'inferred');
+		return Object.values(this.slots);
 	}
 
 	/**
-	 * Inferred positional slots only (source === 'inferred'). Convenience
-	 * view over `slots` for callers that need only unnamed positional slots.
+	 * Retired post-unification — no longer a separate slot category.
+	 * Kept as empty-returning getter for back-compat with un-migrated callers.
+	 * Template-internal uses (normalizeChildrenPlaceholderArity) will receive []
+	 * until Task E2.1 migrates $CHILDREN placeholders to $<kind> keys.
 	 */
 	get children(): readonly AssembledNonterminal[] {
-		return Object.values(this.slots).filter((s) => s.source === 'inferred');
+		return [];
 	}
 
 	renderTemplate(
