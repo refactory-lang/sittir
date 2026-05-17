@@ -7,34 +7,34 @@
     "__range_expression_binary_operator": "text",
     "_array_expression_list": "config",
     "_array_expression_semi": "config",
-    "_attributed_enum_variant": "spread",
-    "_attributed_field_declaration": "spread",
-    "_attributed_parameter": "spread",
-    "_attributed_type_parameter": "spread",
+    "_attributed_enum_variant": "config",
+    "_attributed_field_declaration": "config",
+    "_attributed_parameter": "config",
+    "_attributed_type_parameter": "config",
     "_closure_expression_async_marker": "text",
     "_closure_expression_block": "config",
     "_closure_expression_expr": "config",
     "_closure_expression_static_marker": "text",
     "_compound_assignment_expr_operator": "text",
-    "_delim_token_tree_brace": "config",
-    "_delim_token_tree_bracket": "config",
-    "_delim_token_tree_paren": "config",
+    "_delim_token_tree_brace": "spread",
+    "_delim_token_tree_bracket": "spread",
+    "_delim_token_tree_paren": "spread",
     "_expression_statement_block_ending": "spread",
     "_expression_statement_with_semi": "spread",
     "_field_identifier": "text",
     "_field_pattern_named": "config",
     "_field_pattern_shorthand": "config",
     "_foreign_mod_item_body": "config",
-    "_function_type_fn_form": "config",
+    "_function_type_fn_form": "spread",
     "_function_type_trait_form": "config",
     "_impl_item_body": "config",
     "_let_chain": "spread",
     "_line_comment_content": "text",
     "_line_comment_doc": "config",
     "_line_comment_regular_dslash": "text",
-    "_macro_definition_brace": "config",
-    "_macro_definition_bracket": "config",
-    "_macro_definition_paren": "config",
+    "_macro_definition_brace": "spread",
+    "_macro_definition_bracket": "spread",
+    "_macro_definition_paren": "spread",
     "_match_arm_block_ending": "config",
     "_match_arm_with_comma": "config",
     "_mod_item_inline": "config",
@@ -58,12 +58,12 @@
     "_struct_item_brace": "config",
     "_struct_item_tuple": "config",
     "_token_binding_pattern_type": "text",
-    "_token_tree_brace": "config",
-    "_token_tree_bracket": "config",
-    "_token_tree_paren": "config",
-    "_token_tree_pattern_brace": "config",
-    "_token_tree_pattern_bracket": "config",
-    "_token_tree_pattern_paren": "config",
+    "_token_tree_brace": "spread",
+    "_token_tree_bracket": "spread",
+    "_token_tree_paren": "spread",
+    "_token_tree_pattern_brace": "spread",
+    "_token_tree_pattern_bracket": "spread",
+    "_token_tree_pattern_paren": "spread",
     "_type_identifier": "text",
     "_unary_expression_operator": "text",
     "_unsafe_marker": "text",
@@ -93,7 +93,7 @@
     "char_literal": "text",
     "closure_expression_expr": "direct",
     "closure_expression": "config",
-    "closure_parameters": "config",
+    "closure_parameters": "spread",
     "comment": "direct",
     "compound_assignment_expr": "config",
     "const_block": "direct",
@@ -101,16 +101,16 @@
     "const_parameter": "config",
     "continue_expression": "direct",
     "crate": "text",
-    "declaration_list": "config",
-    "delim_token_tree_paren": "config",
-    "delim_token_tree_bracket": "config",
-    "delim_token_tree_brace": "config",
+    "declaration_list": "spread",
+    "delim_token_tree_paren": "spread",
+    "delim_token_tree_bracket": "spread",
+    "delim_token_tree_brace": "spread",
     "delim_token_tree": "config",
     "dynamic_type": "direct",
     "else_clause": "direct",
     "enum_item": "config",
     "enum_variant": "config",
-    "enum_variant_list": "config",
+    "enum_variant_list": "spread",
     "escape_sequence": "text",
     "expression_statement_with_semi": "direct",
     "expression_statement_block_ending": "direct",
@@ -118,10 +118,10 @@
     "extern_crate_declaration": "config",
     "extern_modifier": "direct",
     "field_declaration": "config",
-    "field_declaration_list": "config",
+    "field_declaration_list": "spread",
     "field_expression": "config",
     "field_initializer": "config",
-    "field_initializer_list": "config",
+    "field_initializer_list": "spread",
     "field_pattern_shorthand": "direct",
     "field_pattern": "config",
     "for_expression": "config",
@@ -154,15 +154,15 @@
     "lifetime_parameter": "config",
     "line_comment": "config",
     "loop_expression": "config",
-    "macro_definition_paren": "config",
-    "macro_definition_bracket": "config",
-    "macro_definition_brace": "config",
+    "macro_definition_paren": "spread",
+    "macro_definition_bracket": "spread",
+    "macro_definition_brace": "spread",
     "macro_definition": "config",
     "macro_invocation": "config",
     "macro_rule": "config",
     "match_arm_block_ending": "direct",
     "match_arm": "config",
-    "match_block": "config",
+    "match_block": "spread",
     "match_expression": "config",
     "match_pattern": "config",
     "metavariable": "text",
@@ -174,7 +174,7 @@
     "or_pattern": "config",
     "ordered_field_declaration_list": "config",
     "parameter": "config",
-    "parameters": "config",
+    "parameters": "spread",
     "parenthesized_expression": "direct",
     "pointer_type_mut": "config",
     "pointer_type": "config",
@@ -188,7 +188,7 @@
     "reference_pattern": "direct",
     "reference_type": "config",
     "removed_trait_bound": "direct",
-    "return_expression": "config",
+    "return_expression": "direct",
     "scoped_identifier": "config",
     "scoped_type_identifier": "config",
     "scoped_type_identifier_in_expression_position": "config",
@@ -197,34 +197,34 @@
     "self_parameter": "direct",
     "shebang": "text",
     "shorthand_field_initializer": "config",
-    "slice_pattern": "config",
+    "slice_pattern": "spread",
     "source_file": "config",
     "static_item": "config",
-    "string_literal": "config",
+    "string_literal": "spread",
     "struct_expression": "config",
     "struct_item": "config",
     "struct_pattern": "config",
     "super": "text",
     "token_binding_pattern": "config",
-    "token_repetition": "config",
-    "token_repetition_pattern": "config",
-    "token_tree_paren": "config",
-    "token_tree_bracket": "config",
-    "token_tree_brace": "config",
+    "token_repetition": "spread",
+    "token_repetition_pattern": "spread",
+    "token_tree_paren": "spread",
+    "token_tree_bracket": "spread",
+    "token_tree_brace": "spread",
     "token_tree": "config",
-    "token_tree_pattern_paren": "config",
-    "token_tree_pattern_bracket": "config",
-    "token_tree_pattern_brace": "config",
+    "token_tree_pattern_paren": "spread",
+    "token_tree_pattern_bracket": "spread",
+    "token_tree_pattern_brace": "spread",
     "token_tree_pattern": "config",
     "trait_bounds": "spread",
     "trait_item": "config",
     "try_block": "direct",
     "try_expression": "direct",
     "tuple_expression": "config",
-    "tuple_pattern": "config",
+    "tuple_pattern": "spread",
     "tuple_struct_pattern": "config",
     "tuple_type": "spread",
-    "type_arguments": "spread",
+    "type_arguments": "config",
     "type_binding": "config",
     "type_cast_expression": "config",
     "type_item": "config",
@@ -236,17 +236,17 @@
     "unit_type": "text",
     "unsafe_block": "direct",
     "use_as_clause": "config",
-    "use_bounds": "config",
+    "use_bounds": "spread",
     "use_declaration": "config",
-    "use_list": "config",
+    "use_list": "spread",
     "use_wildcard": "direct",
     "variadic_parameter": "direct",
     "visibility_modifier_crate": "config",
     "visibility_modifier": "config",
-    "where_clause": "config",
+    "where_clause": "spread",
     "where_predicate": "config",
     "while_expression": "config",
-    "yield_expression": "config",
+    "yield_expression": "direct",
     "string_content": "text",
     "raw_string_literal_content": "text",
     "float_literal": "text",
@@ -348,6 +348,7 @@
   "factoryFields": {
     "_array_expression_list": [
       "attributes",
+      "attribute_item",
       "elements"
     ],
     "_array_expression_semi": [
@@ -355,12 +356,43 @@
       "elements",
       "length"
     ],
+    "_attributed_enum_variant": [
+      "attribute_item",
+      "enum_variant"
+    ],
+    "_attributed_field_declaration": [
+      "attribute_item",
+      "field_declaration"
+    ],
+    "_attributed_parameter": [
+      "attribute_item",
+      "parameter"
+    ],
+    "_attributed_type_parameter": [
+      "attribute_item",
+      "metavariable"
+    ],
     "_closure_expression_block": [
       "return_type",
       "body"
     ],
     "_closure_expression_expr": [
       "body"
+    ],
+    "_delim_token_tree_brace": [
+      "delim_tokens"
+    ],
+    "_delim_token_tree_bracket": [
+      "delim_tokens"
+    ],
+    "_delim_token_tree_paren": [
+      "delim_tokens"
+    ],
+    "_expression_statement_block_ending": [
+      "expression_ending_with_block"
+    ],
+    "_expression_statement_with_semi": [
+      "expression"
     ],
     "_field_pattern_named": [
       "name",
@@ -372,14 +404,29 @@
     "_foreign_mod_item_body": [
       "body"
     ],
+    "_function_type_fn_form": [
+      "function_modifiers"
+    ],
     "_function_type_trait_form": [
       "trait"
     ],
     "_impl_item_body": [
       "body"
     ],
+    "_let_chain": [
+      "let_chain"
+    ],
     "_line_comment_doc": [
       "doc"
+    ],
+    "_macro_definition_brace": [
+      "macro_rule"
+    ],
+    "_macro_definition_bracket": [
+      "macro_rule"
+    ],
+    "_macro_definition_paren": [
+      "macro_rule"
     ],
     "_match_arm_block_ending": [
       "value"
@@ -415,10 +462,36 @@
       "right"
     ],
     "_struct_item_brace": [
+      "where_clause",
       "body"
     ],
     "_struct_item_tuple": [
-      "body"
+      "body",
+      "where_clause"
+    ],
+    "_token_tree_brace": [
+      "tokens"
+    ],
+    "_token_tree_bracket": [
+      "tokens"
+    ],
+    "_token_tree_paren": [
+      "tokens"
+    ],
+    "_token_tree_pattern_brace": [
+      "token_pattern"
+    ],
+    "_token_tree_pattern_bracket": [
+      "token_pattern"
+    ],
+    "_token_tree_pattern_paren": [
+      "token_pattern"
+    ],
+    "_visibility_modifier_in_path": [
+      "path"
+    ],
+    "_visibility_modifier_pub": [
+      "visibility_modifier_pub_parens"
     ],
     "abstract_type": [
       "type_parameters",
@@ -426,6 +499,10 @@
     ],
     "arguments": [
       "attributes"
+    ],
+    "array_expression": [
+      "array_expression_semi",
+      "array_expression_list"
     ],
     "array_type": [
       "element",
@@ -452,6 +529,12 @@
     "attribute_item": [
       "attribute"
     ],
+    "await_expression": [
+      "expression"
+    ],
+    "base_field_initializer": [
+      "expression"
+    ],
     "binary_expression": [
       "left",
       "operator",
@@ -459,6 +542,7 @@
     ],
     "block": [
       "label",
+      "statement",
       "trailing_expression"
     ],
     "block_comment": [
@@ -468,18 +552,34 @@
       "left",
       "right"
     ],
+    "bracketed_type": [
+      "type"
+    ],
     "break_expression": [
-      "label"
+      "label",
+      "expression"
     ],
     "call_expression": [
       "function",
       "arguments"
     ],
+    "captured_pattern": [
+      "identifier",
+      "pattern"
+    ],
     "closure_expression_expr": [
       "body"
     ],
     "closure_expression": [
-      "parameters"
+      "parameters",
+      "closure_expression_block",
+      "closure_expression_expr"
+    ],
+    "closure_parameters": [
+      "pattern"
+    ],
+    "comment": [
+      "line_comment"
     ],
     "compound_assignment_expr": [
       "left",
@@ -503,8 +603,28 @@
     "continue_expression": [
       "label"
     ],
+    "declaration_list": [
+      "declaration_statement"
+    ],
+    "delim_token_tree_paren": [
+      "delim_tokens"
+    ],
+    "delim_token_tree_bracket": [
+      "delim_tokens"
+    ],
+    "delim_token_tree_brace": [
+      "delim_tokens"
+    ],
+    "delim_token_tree": [
+      "delim_token_tree_paren",
+      "delim_token_tree_bracket",
+      "delim_token_tree_brace"
+    ],
     "dynamic_type": [
       "trait"
+    ],
+    "else_clause": [
+      "block"
     ],
     "enum_item": [
       "visibility_modifier",
@@ -519,6 +639,19 @@
       "body",
       "value"
     ],
+    "enum_variant_list": [
+      "attributed_enum_variant"
+    ],
+    "expression_statement_with_semi": [
+      "expression"
+    ],
+    "expression_statement_block_ending": [
+      "expression_ending_with_block"
+    ],
+    "expression_statement": [
+      "expression_statement_with_semi",
+      "expression_statement_block_ending"
+    ],
     "extern_crate_declaration": [
       "visibility_modifier",
       "name",
@@ -532,16 +665,27 @@
       "name",
       "type"
     ],
+    "field_declaration_list": [
+      "attributed_field_declaration"
+    ],
     "field_expression": [
       "value",
       "field"
     ],
     "field_initializer": [
+      "attribute_item",
       "field",
       "value"
     ],
+    "field_initializer_list": [
+      "shorthand_field_initializer"
+    ],
     "field_pattern_shorthand": [
       "name"
+    ],
+    "field_pattern": [
+      "field_pattern_shorthand",
+      "field_pattern_named"
     ],
     "for_expression": [
       "label",
@@ -549,12 +693,16 @@
       "value",
       "body"
     ],
+    "for_lifetimes": [
+      "lifetime"
+    ],
     "foreign_mod_item_body": [
       "body"
     ],
     "foreign_mod_item": [
       "visibility_modifier",
-      "extern_modifier"
+      "extern_modifier",
+      "foreign_mod_item_body"
     ],
     "function_item": [
       "visibility_modifier",
@@ -578,11 +726,21 @@
       "return_type",
       "where_clause"
     ],
+    "function_type": [
+      "for_lifetimes",
+      "parameters",
+      "function_type_trait_form",
+      "return_type"
+    ],
     "gen_block": [
       "block"
     ],
     "generic_function": [
       "function",
+      "type_arguments"
+    ],
+    "generic_pattern": [
+      "identifier",
       "type_arguments"
     ],
     "generic_type": [
@@ -609,7 +767,8 @@
       "type_parameters",
       "trait",
       "type",
-      "where_clause"
+      "where_clause",
+      "impl_item_body"
     ],
     "index_expression": [
       "object",
@@ -622,6 +781,7 @@
       "identifier"
     ],
     "last_match_arm": [
+      "attribute_item",
       "pattern",
       "value"
     ],
@@ -642,12 +802,29 @@
       "name",
       "bounds"
     ],
+    "line_comment": [
+      "line_comment_regular_dslash",
+      "line_comment_doc",
+      "line_comment_content"
+    ],
     "loop_expression": [
       "label",
       "body"
     ],
+    "macro_definition_paren": [
+      "macro_rule"
+    ],
+    "macro_definition_bracket": [
+      "macro_rule"
+    ],
+    "macro_definition_brace": [
+      "macro_rule"
+    ],
     "macro_definition": [
-      "name"
+      "name",
+      "macro_definition_paren",
+      "macro_definition_bracket",
+      "macro_definition_brace"
     ],
     "macro_invocation": [
       "macro",
@@ -662,43 +839,81 @@
     ],
     "match_arm": [
       "attributes",
-      "pattern"
+      "pattern",
+      "match_arm_with_comma",
+      "match_arm_block_ending"
+    ],
+    "match_block": [
+      "match_arm"
     ],
     "match_expression": [
       "value",
       "body"
+    ],
+    "match_pattern": [
+      "pattern",
+      "condition"
     ],
     "mod_item_inline": [
       "body"
     ],
     "mod_item": [
       "visibility_modifier",
-      "name"
+      "name",
+      "mod_item_inline"
+    ],
+    "mut_pattern": [
+      "pattern"
     ],
     "negative_literal": [
       "value"
     ],
+    "or_pattern": [
+      "or_pattern_binary",
+      "or_pattern_prefix"
+    ],
     "ordered_field_declaration_list": [
+      "attribute_item",
+      "visibility_modifier",
       "type"
     ],
     "parameter": [
       "pattern",
       "type"
     ],
+    "parameters": [
+      "attributed_parameter"
+    ],
+    "parenthesized_expression": [
+      "expression"
+    ],
     "pointer_type": [
-      "type"
+      "type",
+      "pointer_type_mut"
     ],
     "qualified_type": [
       "type",
       "alias"
     ],
+    "range_expression": [
+      "range_expression_binary",
+      "range_expression_postfix",
+      "range_expression_prefix",
+      "range_expression_bare"
+    ],
     "range_pattern": [
-      "left"
+      "range_pattern_prefix",
+      "left",
+      "range_pattern_left_with_right"
     ],
     "raw_string_literal": [
       "string_content"
     ],
+    "ref_pattern": [
+      "pattern"
+    ],
     "reference_expression": [
+      "reference_expression_raw_const",
       "value"
     ],
     "reference_pattern": [
@@ -707,6 +922,12 @@
     "reference_type": [
       "lifetime",
       "type"
+    ],
+    "removed_trait_bound": [
+      "type"
+    ],
+    "return_expression": [
+      "expression"
     ],
     "scoped_identifier": [
       "path",
@@ -731,6 +952,9 @@
       "attributes",
       "identifier"
     ],
+    "slice_pattern": [
+      "pattern"
+    ],
     "source_file": [
       "shebang",
       "statements"
@@ -741,6 +965,9 @@
       "type",
       "value"
     ],
+    "string_literal": [
+      "escape_sequence"
+    ],
     "struct_expression": [
       "name",
       "body"
@@ -748,13 +975,53 @@
     "struct_item": [
       "visibility_modifier",
       "name",
-      "type_parameters"
+      "type_parameters",
+      "struct_item_brace",
+      "struct_item_tuple"
     ],
     "struct_pattern": [
-      "type"
+      "type",
+      "field_pattern"
     ],
     "token_binding_pattern": [
       "name",
+      "type"
+    ],
+    "token_repetition": [
+      "tokens"
+    ],
+    "token_repetition_pattern": [
+      "token_pattern"
+    ],
+    "token_tree_paren": [
+      "tokens"
+    ],
+    "token_tree_bracket": [
+      "tokens"
+    ],
+    "token_tree_brace": [
+      "tokens"
+    ],
+    "token_tree": [
+      "token_tree_paren",
+      "token_tree_bracket",
+      "token_tree_brace"
+    ],
+    "token_tree_pattern_paren": [
+      "token_pattern"
+    ],
+    "token_tree_pattern_bracket": [
+      "token_pattern"
+    ],
+    "token_tree_pattern_brace": [
+      "token_pattern"
+    ],
+    "token_tree_pattern": [
+      "token_tree_pattern_paren",
+      "token_tree_pattern_bracket",
+      "token_tree_pattern_brace"
+    ],
+    "trait_bounds": [
       "type"
     ],
     "trait_item": [
@@ -775,8 +1042,19 @@
       "attributes",
       "elements"
     ],
+    "tuple_pattern": [
+      "pattern"
+    ],
     "tuple_struct_pattern": [
+      "type",
+      "pattern"
+    ],
+    "tuple_type": [
       "type"
+    ],
+    "type_arguments": [
+      "type",
+      "trait_bounds"
     ],
     "type_binding": [
       "name",
@@ -821,15 +1099,29 @@
       "path",
       "alias"
     ],
+    "use_bounds": [
+      "lifetime"
+    ],
     "use_declaration": [
       "visibility_modifier",
       "argument"
+    ],
+    "use_list": [
+      "use_clause"
     ],
     "use_wildcard": [
       "path"
     ],
     "variadic_parameter": [
       "pattern"
+    ],
+    "visibility_modifier": [
+      "visibility_modifier_crate",
+      "visibility_modifier_pub",
+      "visibility_modifier_in_path"
+    ],
+    "where_clause": [
+      "where_predicate"
     ],
     "where_predicate": [
       "left",
@@ -839,6 +1131,12 @@
       "label",
       "condition",
       "body"
+    ],
+    "yield_expression": [
+      "expression"
+    ],
+    "_visibility_modifier_pub_parens": [
+      "self"
     ]
   },
   "factorySlots": {
@@ -850,15 +1148,15 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "elements": {
+      "attribute_item": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "elements": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -889,38 +1187,66 @@
       }
     },
     "_attributed_enum_variant": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
-        "required": true,
+      "attribute_item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": true,
+        "nonEmpty": false
+      },
+      "enum_variant": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
     "_attributed_field_declaration": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
-        "required": true,
+      "attribute_item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": true,
+        "nonEmpty": false
+      },
+      "field_declaration": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
     "_attributed_parameter": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "attribute_item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "parameter": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "_attributed_type_parameter": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
-        "required": true,
+      "attribute_item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": true,
+        "nonEmpty": false
+      },
+      "metavariable": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -950,8 +1276,8 @@
       }
     },
     "_delim_token_tree_brace": {
-      "children": {
-        "unnamed": true,
+      "delim_tokens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -959,8 +1285,8 @@
       }
     },
     "_delim_token_tree_bracket": {
-      "children": {
-        "unnamed": true,
+      "delim_tokens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -968,8 +1294,8 @@
       }
     },
     "_delim_token_tree_paren": {
-      "children": {
-        "unnamed": true,
+      "delim_tokens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -977,8 +1303,8 @@
       }
     },
     "_expression_statement_block_ending": {
-      "children": {
-        "unnamed": true,
+      "expression_ending_with_block": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -986,8 +1312,8 @@
       }
     },
     "_expression_statement_with_semi": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1029,8 +1355,8 @@
       }
     },
     "_function_type_fn_form": {
-      "children": {
-        "unnamed": true,
+      "function_modifiers": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1056,8 +1382,8 @@
       }
     },
     "_let_chain": {
-      "children": {
-        "unnamed": true,
+      "let_chain": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1088,8 +1414,8 @@
       }
     },
     "_macro_definition_brace": {
-      "children": {
-        "unnamed": true,
+      "macro_rule": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1097,8 +1423,8 @@
       }
     },
     "_macro_definition_bracket": {
-      "children": {
-        "unnamed": true,
+      "macro_rule": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1106,8 +1432,8 @@
       }
     },
     "_macro_definition_paren": {
-      "children": {
-        "unnamed": true,
+      "macro_rule": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1167,8 +1493,8 @@
       }
     },
     "_pointer_type_mut": {
-      "children": {
-        "unnamed": true,
+      "mutable_specifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1258,8 +1584,8 @@
       }
     },
     "_reference_expression_raw_mut": {
-      "children": {
-        "unnamed": true,
+      "mutable_specifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1267,17 +1593,17 @@
       }
     },
     "_struct_item_brace": {
+      "where_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1290,8 +1616,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "where_clause": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1299,8 +1625,8 @@
       }
     },
     "_token_tree_brace": {
-      "children": {
-        "unnamed": true,
+      "tokens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1308,8 +1634,8 @@
       }
     },
     "_token_tree_bracket": {
-      "children": {
-        "unnamed": true,
+      "tokens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1317,8 +1643,8 @@
       }
     },
     "_token_tree_paren": {
-      "children": {
-        "unnamed": true,
+      "tokens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1326,8 +1652,8 @@
       }
     },
     "_token_tree_pattern_brace": {
-      "children": {
-        "unnamed": true,
+      "token_pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1335,8 +1661,8 @@
       }
     },
     "_token_tree_pattern_bracket": {
-      "children": {
-        "unnamed": true,
+      "token_pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1344,8 +1670,8 @@
       }
     },
     "_token_tree_pattern_paren": {
-      "children": {
-        "unnamed": true,
+      "token_pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1353,8 +1679,8 @@
       }
     },
     "_visibility_modifier_crate": {
-      "children": {
-        "unnamed": true,
+      "crate": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1369,8 +1695,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "path": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1385,8 +1711,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "visibility_modifier_pub_parens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1419,9 +1745,16 @@
       }
     },
     "array_expression": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "array_expression_semi": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "array_expression_list": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -1538,8 +1871,8 @@
       }
     },
     "await_expression": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1547,8 +1880,8 @@
       }
     },
     "base_field_initializer": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1586,18 +1919,18 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "statement": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
       "trailing_expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -1641,8 +1974,8 @@
       }
     },
     "bracketed_type": {
-      "children": {
-        "unnamed": true,
+      "type": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1657,8 +1990,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -1689,8 +2022,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1735,17 +2068,24 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "closure_expression_block": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "closure_expression_expr": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "closure_parameters": {
-      "children": {
-        "unnamed": true,
+      "pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1753,8 +2093,8 @@
       }
     },
     "comment": {
-      "children": {
-        "unnamed": true,
+      "line_comment": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1856,8 +2196,8 @@
       }
     },
     "declaration_list": {
-      "children": {
-        "unnamed": true,
+      "declaration_statement": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1865,8 +2205,8 @@
       }
     },
     "delim_token_tree_paren": {
-      "children": {
-        "unnamed": true,
+      "delim_tokens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1874,8 +2214,8 @@
       }
     },
     "delim_token_tree_bracket": {
-      "children": {
-        "unnamed": true,
+      "delim_tokens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1883,8 +2223,8 @@
       }
     },
     "delim_token_tree_brace": {
-      "children": {
-        "unnamed": true,
+      "delim_tokens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1892,9 +2232,23 @@
       }
     },
     "delim_token_tree": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 3,
+      "delim_token_tree_paren": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "delim_token_tree_bracket": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "delim_token_tree_brace": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -1910,8 +2264,8 @@
       }
     },
     "else_clause": {
-      "children": {
-        "unnamed": true,
+      "block": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -1986,8 +2340,8 @@
       }
     },
     "enum_variant_list": {
-      "children": {
-        "unnamed": true,
+      "attributed_enum_variant": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -1995,8 +2349,8 @@
       }
     },
     "expression_statement_with_semi": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -2004,8 +2358,8 @@
       }
     },
     "expression_statement_block_ending": {
-      "children": {
-        "unnamed": true,
+      "expression_ending_with_block": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -2013,9 +2367,16 @@
       }
     },
     "expression_statement": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "expression_statement_with_semi": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "expression_statement_block_ending": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -2084,8 +2445,8 @@
       }
     },
     "field_declaration_list": {
-      "children": {
-        "unnamed": true,
+      "attributed_field_declaration": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -2109,6 +2470,13 @@
       }
     },
     "field_initializer": {
+      "attribute_item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
       "field": {
         "unnamed": false,
         "slotCount": 1,
@@ -2122,18 +2490,11 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
       }
     },
     "field_initializer_list": {
-      "children": {
-        "unnamed": true,
+      "shorthand_field_initializer": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -2164,9 +2525,16 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "field_pattern_shorthand": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "field_pattern_named": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -2203,8 +2571,8 @@
       }
     },
     "for_lifetimes": {
-      "children": {
-        "unnamed": true,
+      "lifetime": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -2235,9 +2603,16 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "foreign_mod_item_semi": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "foreign_mod_item_body": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -2376,17 +2751,17 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "function_type_trait_form": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "return_type": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2424,15 +2799,15 @@
       }
     },
     "generic_pattern": {
-      "type_arguments": {
+      "identifier": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "type_arguments": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -2569,9 +2944,16 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "impl_item_body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "impl_item_semi": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -2612,6 +2994,13 @@
       }
     },
     "last_match_arm": {
+      "attribute_item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
       "pattern": {
         "unnamed": false,
         "slotCount": 1,
@@ -2624,13 +3013,6 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -2713,9 +3095,23 @@
       }
     },
     "line_comment": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 3,
+      "line_comment_regular_dslash": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "line_comment_doc": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "line_comment_content": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -2738,8 +3134,8 @@
       }
     },
     "macro_definition_paren": {
-      "children": {
-        "unnamed": true,
+      "macro_rule": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -2747,8 +3143,8 @@
       }
     },
     "macro_definition_bracket": {
-      "children": {
-        "unnamed": true,
+      "macro_rule": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -2756,8 +3152,8 @@
       }
     },
     "macro_definition_brace": {
-      "children": {
-        "unnamed": true,
+      "macro_rule": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -2772,9 +3168,23 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 3,
+      "macro_definition_paren": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "macro_definition_bracket": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "macro_definition_brace": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -2836,17 +3246,24 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "match_arm_with_comma": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "match_arm_block_ending": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "match_block": {
-      "children": {
-        "unnamed": true,
+      "match_arm": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -2870,17 +3287,17 @@
       }
     },
     "match_pattern": {
+      "pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "condition": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2909,9 +3326,16 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "mod_item_external": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "mod_item_inline": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -2925,8 +3349,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -2943,25 +3367,39 @@
       }
     },
     "or_pattern": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "or_pattern_binary": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "or_pattern_prefix": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "ordered_field_declaration_list": {
-      "type": {
+      "attribute_item": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "visibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": true,
         "nonEmpty": false
@@ -2991,8 +3429,8 @@
       }
     },
     "parameters": {
-      "children": {
-        "unnamed": true,
+      "attributed_parameter": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3000,8 +3438,8 @@
       }
     },
     "parenthesized_expression": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -3009,8 +3447,8 @@
       }
     },
     "pointer_type_mut": {
-      "children": {
-        "unnamed": true,
+      "mutable_specifier": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -3018,6 +3456,13 @@
       }
     },
     "pointer_type": {
+      "pointer_type_const": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "type": {
         "unnamed": false,
         "slotCount": 1,
@@ -3025,9 +3470,9 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "pointer_type_mut": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -3059,15 +3504,43 @@
       }
     },
     "range_expression": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 4,
+      "range_expression_binary": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "range_expression_postfix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "range_expression_prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "range_expression_bare": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "range_pattern": {
+      "range_pattern_prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "left": {
         "unnamed": false,
         "slotCount": 1,
@@ -3075,9 +3548,16 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 3,
+      "range_pattern_left_with_right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "range_pattern_left_bare": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -3093,8 +3573,8 @@
       }
     },
     "ref_pattern": {
-      "children": {
-        "unnamed": true,
+      "pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -3102,17 +3582,17 @@
       }
     },
     "reference_expression": {
+      "reference_expression_raw_const": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "children": {
-        "unnamed": true,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3157,8 +3637,8 @@
       }
     },
     "removed_trait_bound": {
-      "children": {
-        "unnamed": true,
+      "type": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -3166,8 +3646,8 @@
       }
     },
     "return_expression": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -3285,8 +3765,8 @@
       }
     },
     "slice_pattern": {
-      "children": {
-        "unnamed": true,
+      "pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3347,8 +3827,8 @@
       }
     },
     "string_literal": {
-      "children": {
-        "unnamed": true,
+      "escape_sequence": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3393,9 +3873,23 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
-        "slotCount": 3,
+      "struct_item_brace": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "struct_item_tuple": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "struct_item_unit": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -3409,8 +3903,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "field_pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3434,8 +3928,8 @@
       }
     },
     "token_repetition": {
-      "children": {
-        "unnamed": true,
+      "tokens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3443,8 +3937,8 @@
       }
     },
     "token_repetition_pattern": {
-      "children": {
-        "unnamed": true,
+      "token_pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3452,8 +3946,8 @@
       }
     },
     "token_tree_paren": {
-      "children": {
-        "unnamed": true,
+      "tokens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3461,8 +3955,8 @@
       }
     },
     "token_tree_bracket": {
-      "children": {
-        "unnamed": true,
+      "tokens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3470,8 +3964,8 @@
       }
     },
     "token_tree_brace": {
-      "children": {
-        "unnamed": true,
+      "tokens": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3479,17 +3973,31 @@
       }
     },
     "token_tree": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 3,
+      "token_tree_paren": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "token_tree_bracket": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "token_tree_brace": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "token_tree_pattern_paren": {
-      "children": {
-        "unnamed": true,
+      "token_pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3497,8 +4005,8 @@
       }
     },
     "token_tree_pattern_bracket": {
-      "children": {
-        "unnamed": true,
+      "token_pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3506,8 +4014,8 @@
       }
     },
     "token_tree_pattern_brace": {
-      "children": {
-        "unnamed": true,
+      "token_pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3515,17 +4023,31 @@
       }
     },
     "token_tree_pattern": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 3,
+      "token_tree_pattern_paren": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "token_tree_pattern_bracket": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "token_tree_pattern_brace": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "trait_bounds": {
-      "children": {
-        "unnamed": true,
+      "type": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -3618,8 +4140,8 @@
       }
     },
     "tuple_pattern": {
-      "children": {
-        "unnamed": true,
+      "pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3634,8 +4156,8 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "children": {
-        "unnamed": true,
+      "pattern": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3643,8 +4165,8 @@
       }
     },
     "tuple_type": {
-      "children": {
-        "unnamed": true,
+      "type": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": true,
@@ -3652,12 +4174,19 @@
       }
     },
     "type_arguments": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 2,
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
         "multiple": true,
         "nonEmpty": true
+      },
+      "trait_bounds": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "type_binding": {
@@ -3854,8 +4383,8 @@
       }
     },
     "use_bounds": {
-      "children": {
-        "unnamed": true,
+      "lifetime": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3879,8 +4408,8 @@
       }
     },
     "use_list": {
-      "children": {
-        "unnamed": true,
+      "use_clause": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3913,8 +4442,8 @@
       }
     },
     "visibility_modifier_crate": {
-      "children": {
-        "unnamed": true,
+      "crate": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -3922,17 +4451,31 @@
       }
     },
     "visibility_modifier": {
-      "children": {
-        "unnamed": true,
-        "slotCount": 3,
+      "visibility_modifier_crate": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "visibility_modifier_pub": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "visibility_modifier_in_path": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "where_clause": {
-      "children": {
-        "unnamed": true,
+      "where_predicate": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
@@ -3979,8 +4522,8 @@
       }
     },
     "yield_expression": {
-      "children": {
-        "unnamed": true,
+      "expression": {
+        "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
@@ -3988,8 +4531,8 @@
       }
     },
     "_visibility_modifier_pub_parens": {
-      "children": {
-        "unnamed": true,
+      "self": {
+        "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
@@ -4202,6 +4745,56 @@
         "paren": "_delim_token_tree_paren",
         "bracket": "_delim_token_tree_bracket",
         "brace": "_delim_token_tree_brace"
+      },
+      "helperChildKind": {
+        "paren": [
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "mutable_specifier",
+          "self",
+          "super",
+          "crate",
+          "'",
+          "$",
+          "delim_token_tree"
+        ],
+        "bracket": [
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "mutable_specifier",
+          "self",
+          "super",
+          "crate",
+          "'",
+          "$",
+          "delim_token_tree"
+        ],
+        "brace": [
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "mutable_specifier",
+          "self",
+          "super",
+          "crate",
+          "'",
+          "$",
+          "delim_token_tree"
+        ]
       }
     },
     "expression_statement": {
@@ -4213,6 +4806,69 @@
       "helperKind": {
         "with_semi": "_expression_statement_with_semi",
         "block_ending": "_expression_statement_block_ending"
+      },
+      "helperChildKind": {
+        "with_semi": [
+          "unary_expression",
+          "reference_expression",
+          "try_expression",
+          "binary_expression",
+          "assignment_expression",
+          "compound_assignment_expr",
+          "type_cast_expression",
+          "call_expression",
+          "return_expression",
+          "yield_expression",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "reserved_identifier",
+          "self",
+          "scoped_identifier",
+          "generic_function",
+          "await_expression",
+          "field_expression",
+          "array_expression",
+          "tuple_expression",
+          "macro_invocation",
+          "unit_expression",
+          "break_expression",
+          "continue_expression",
+          "index_expression",
+          "metavariable",
+          "closure_expression",
+          "parenthesized_expression",
+          "struct_expression",
+          "unsafe_block",
+          "async_block",
+          "gen_block",
+          "try_block",
+          "block",
+          "if_expression",
+          "match_expression",
+          "while_expression",
+          "loop_expression",
+          "for_expression",
+          "const_block",
+          "range_expression"
+        ],
+        "block_ending": [
+          "unsafe_block",
+          "async_block",
+          "gen_block",
+          "try_block",
+          "block",
+          "if_expression",
+          "match_expression",
+          "while_expression",
+          "loop_expression",
+          "for_expression",
+          "const_block"
+        ]
       }
     },
     "field_pattern": {
@@ -4329,6 +4985,17 @@
         "paren": "_macro_definition_paren",
         "bracket": "_macro_definition_bracket",
         "brace": "_macro_definition_brace"
+      },
+      "helperChildKind": {
+        "paren": [
+          "macro_rule"
+        ],
+        "bracket": [
+          "macro_rule"
+        ],
+        "brace": [
+          "macro_rule"
+        ]
       }
     },
     "match_arm": {
@@ -4497,6 +5164,11 @@
       "helperKind": {
         "const": "_pointer_type_const",
         "mut": "_pointer_type_mut"
+      },
+      "helperChildKind": {
+        "mut": [
+          "mutable_specifier"
+        ]
       }
     },
     "range_expression": {
@@ -4734,10 +5406,12 @@
       },
       "helperChildKind": {
         "brace": [
+          "where_clause",
           "field_declaration_list"
         ],
         "tuple": [
-          "ordered_field_declaration_list"
+          "ordered_field_declaration_list",
+          "where_clause"
         ]
       }
     },
@@ -4752,6 +5426,59 @@
         "paren": "_token_tree_paren",
         "bracket": "_token_tree_bracket",
         "brace": "_token_tree_brace"
+      },
+      "helperChildKind": {
+        "paren": [
+          "token_tree",
+          "token_repetition",
+          "metavariable",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "mutable_specifier",
+          "self",
+          "super",
+          "crate",
+          "'"
+        ],
+        "bracket": [
+          "token_tree",
+          "token_repetition",
+          "metavariable",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "mutable_specifier",
+          "self",
+          "super",
+          "crate",
+          "'"
+        ],
+        "brace": [
+          "token_tree",
+          "token_repetition",
+          "metavariable",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "mutable_specifier",
+          "self",
+          "super",
+          "crate",
+          "'"
+        ]
       }
     },
     "token_tree_pattern": {
@@ -4765,6 +5492,62 @@
         "paren": "_token_tree_pattern_paren",
         "bracket": "_token_tree_pattern_bracket",
         "brace": "_token_tree_pattern_brace"
+      },
+      "helperChildKind": {
+        "paren": [
+          "token_tree_pattern",
+          "token_repetition_pattern",
+          "token_binding_pattern",
+          "metavariable",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "mutable_specifier",
+          "self",
+          "super",
+          "crate",
+          "'"
+        ],
+        "bracket": [
+          "token_tree_pattern",
+          "token_repetition_pattern",
+          "token_binding_pattern",
+          "metavariable",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "mutable_specifier",
+          "self",
+          "super",
+          "crate",
+          "'"
+        ],
+        "brace": [
+          "token_tree_pattern",
+          "token_repetition_pattern",
+          "token_binding_pattern",
+          "metavariable",
+          "string_literal",
+          "raw_string_literal",
+          "char_literal",
+          "boolean_literal",
+          "integer_literal",
+          "float_literal",
+          "identifier",
+          "mutable_specifier",
+          "self",
+          "super",
+          "crate",
+          "'"
+        ]
       }
     },
     "visibility_modifier": {
@@ -4778,6 +5561,23 @@
         "crate": "_visibility_modifier_crate",
         "pub": "_visibility_modifier_pub",
         "in_path": "_visibility_modifier_in_path"
+      },
+      "helperChildKind": {
+        "crate": [
+          "crate"
+        ],
+        "pub": [
+          "visibility_modifier_pub_parens"
+        ],
+        "in_path": [
+          "self",
+          "identifier",
+          "metavariable",
+          "super",
+          "crate",
+          "scoped_identifier",
+          "reserved_identifier"
+        ]
       }
     }
   }

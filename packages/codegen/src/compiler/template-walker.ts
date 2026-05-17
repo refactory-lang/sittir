@@ -305,10 +305,12 @@ function walkRuleForTemplate(
 ): string[] {
 	const clauses = _clauses;
 	const optionalFields = _optionalFields;
-	const emitChildren = (): string =>
-		optionalFields?.has('children')
-			? emitJinjaConditional('children', '$$$CHILDREN')
-			: '$$$CHILDREN';
+	const emitChildren = (slotName: string = 'children'): string => {
+		const placeholder = `$$$${slotName.toUpperCase()}`;
+		return optionalFields?.has(slotName)
+			? emitJinjaConditional(slotName, placeholder)
+			: placeholder;
+	};
 	switch (rule.type) {
 		case 'seq': {
 			// Sibling-repeated-field detection. When `inferFields` has
@@ -982,9 +984,10 @@ function walkRuleForTemplate(
 			// real kind. See spec:
 			//   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
 			if ((rule as { source?: string }).source === 'group-lift') {
-				if (seen.has('children')) return [];
-				seen.add('children');
-				return [emitChildren()];
+				const slotName = (rule as { name: string }).name.replace(/^_+/, '') || 'children';
+				if (seen.has(slotName)) return [];
+				seen.add(slotName);
+				return [emitChildren(slotName)];
 			}
 			if (symName.startsWith('_') && rules) {
 				const target = rules[symName];
@@ -1005,10 +1008,11 @@ function walkRuleForTemplate(
 				}
 			}
 			// Visible symbols (and hidden ones we can't expand) render
-			// as unconsumed named children.
-			if (seen.has('children')) return [];
-			seen.add('children');
-			return [emitChildren()];
+			// as their own kind-named slot.
+			const slotName = symName.replace(/^_+/, '');
+			if (seen.has(slotName)) return [];
+			seen.add(slotName);
+			return [emitChildren(slotName)];
 		}
 
 		case 'string':
