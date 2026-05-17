@@ -51,6 +51,7 @@ import { findGeneratedKindEntry } from './generated-metadata.ts';
 import { tokenToName } from './optimize.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { fieldContentIsMultiSibling } from './field-shape.ts';
+import type { SlotOrigin } from './slot-model.ts';
 
 // ---------------------------------------------------------------------------
 // NodeOrTerminal — unified slot-content type
@@ -880,11 +881,18 @@ function deriveFieldsRaw(
 			if (values.length === 0) return [];
 			const firstRef = values.find((v) => v.kind === 'node-ref') as NodeRef | undefined;
 			const isMultiSlot = values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
-			const baseName = firstRef
-				? ((firstRef.node as UnresolvedRef).name ?? '').replace(/^_+/, '') || (isMultiSlot ? 'children' : 'child')
-				: isMultiSlot
-					? 'children'
-					: 'child';
+			const refName = firstRef
+				? ((firstRef.node as UnresolvedRef).name ?? '').replace(/^_+/, '')
+				: '';
+			if (!refName) {
+				// No content kind to name the slot — should not produce a slot at all.
+				// Previously fell back to 'children'/'child' which caused storage-name collisions.
+				throw new Error(
+					`deriveSlots: seq positional has no node-ref to derive slot name from. ` +
+					`Values: ${JSON.stringify(values.map((v) => v.kind))}`
+				);
+			}
+			const baseName = refName;
 			const basePropertyName = snakeToCamel(baseName);
 			const propertyName = isMultiSlot ? pluralize(basePropertyName) : basePropertyName;
 			return [
@@ -892,12 +900,13 @@ function deriveFieldsRaw(
 					name: baseName,
 					propertyName,
 					configKey: basePropertyName,
-					storageName: 'children',
+					storageName: baseName,
 					paramName: safeParamName(propertyName),
 					values,
 					hasTrailing: false,
 					hasLeading: false,
-					source: 'inferred'
+					source: 'inferred',
+					origin: 'kind' as const
 				}
 			];
 		}
@@ -924,7 +933,7 @@ function deriveFieldsRaw(
 					name: cleanName,
 					propertyName,
 					configKey: basePropertyName,
-					storageName: 'children',
+					storageName: cleanName,
 					paramName: safeParamName(propertyName),
 					values: [
 						{
@@ -935,7 +944,8 @@ function deriveFieldsRaw(
 					],
 					hasTrailing: false,
 					hasLeading: false,
-					source: 'inferred'
+					source: 'inferred',
+					origin: 'kind' as const
 				}
 			];
 		}
@@ -952,7 +962,7 @@ function deriveFieldsRaw(
 					name: cleanName,
 					propertyName,
 					configKey: basePropertyName,
-					storageName: 'children',
+					storageName: cleanName,
 					paramName: safeParamName(propertyName),
 					values: rule.subtypes.map((name) => ({
 						kind: 'node-ref' as const,
@@ -961,7 +971,8 @@ function deriveFieldsRaw(
 					})),
 					hasTrailing: false,
 					hasLeading: false,
-					source: 'inferred'
+					source: 'inferred',
+					origin: 'kind' as const
 				}
 			];
 		}
@@ -1676,6 +1687,7 @@ export interface AssembledNonterminal {
 	readonly hasLeading: boolean;
 	readonly aliasSources?: Readonly<Record<string, string>>;
 	readonly source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
+	readonly origin?: SlotOrigin;
 	storageInfo?: FieldStorageInfo;
 }
 
