@@ -902,6 +902,37 @@
     }
   },
   {
+    "type": "attributed_type_parameter",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "const_parameter",
+          "named": true
+        },
+        {
+          "type": "lifetime_parameter",
+          "named": true
+        },
+        {
+          "type": "metavariable",
+          "named": true
+        },
+        {
+          "type": "type_parameter",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "await_expression",
     "named": true,
     "fields": {
@@ -6135,56 +6166,13 @@
   {
     "type": "type_parameters",
     "named": true,
-    "fields": {
-      "attributes": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "attribute_item",
-            "named": true
-          },
-          {
-            "type": "const_parameter",
-            "named": true
-          },
-          {
-            "type": "lifetime_parameter",
-            "named": true
-          },
-          {
-            "type": "metavariable",
-            "named": true
-          },
-          {
-            "type": "type_parameter",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
-          "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "const_parameter",
-          "named": true
-        },
-        {
-          "type": "lifetime_parameter",
-          "named": true
-        },
-        {
-          "type": "metavariable",
-          "named": true
-        },
-        {
-          "type": "type_parameter",
+          "type": "attributed_type_parameter",
           "named": true
         }
       ]

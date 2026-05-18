@@ -756,41 +756,42 @@ export const enum TSKindId {
   AttributedFieldDeclaration = 372,
   AttributedEnumVariant = 373,
   AttributedParameter = 374,
-  SourceFileRepeat1 = 375,
-  TokenRepetitionPatternRepeat1 = 376,
-  TokenRepetitionRepeat1 = 377,
-  _NonSpecialTokenRepeat1 = 378,
-  DeclarationListRepeat1 = 379,
-  EnumVariantListRepeat1 = 380,
-  FieldDeclarationListRepeat1 = 381,
-  OrderedFieldDeclarationListRepeat1 = 382,
-  OrderedFieldDeclarationListRepeat2 = 383,
-  FunctionModifiersRepeat1 = 384,
-  WhereClauseRepeat1 = 385,
-  TraitBoundsRepeat1 = 386,
-  TypeParametersRepeat1 = 387,
-  UseListRepeat1 = 388,
-  ParametersRepeat1 = 389,
-  ForLifetimesRepeat1 = 390,
-  TupleTypeRepeat1 = 391,
-  UseBoundsRepeat1 = 392,
-  TypeArgumentsRepeat1 = 393,
-  ArgumentsRepeat1 = 394,
-  TupleExpressionRepeat1 = 395,
-  FieldInitializerListRepeat1 = 396,
-  MatchBlockRepeat1 = 397,
-  MatchArmRepeat1 = 398,
-  ClosureParametersRepeat1 = 399,
-  TuplePatternRepeat1 = 400,
-  SlicePatternRepeat1 = 401,
-  StructPatternRepeat1 = 402,
-  StringLiteralRepeat1 = 403,
-  _ArrayExpressionListRepeat1 = 404,
-  _MacroDefinitionParenRepeat1 = 405,
-  _DelimTokenTreeParenRepeat1 = 406,
-  FieldIdentifier = 407,
-  _ShorthandFieldIdentifier = 409,
-  TypeIdentifier = 410,
+  AttributedTypeParameter = 375,
+  SourceFileRepeat1 = 376,
+  TokenRepetitionPatternRepeat1 = 377,
+  TokenRepetitionRepeat1 = 378,
+  _NonSpecialTokenRepeat1 = 379,
+  DeclarationListRepeat1 = 380,
+  EnumVariantListRepeat1 = 381,
+  FieldDeclarationListRepeat1 = 382,
+  OrderedFieldDeclarationListRepeat1 = 383,
+  OrderedFieldDeclarationListRepeat2 = 384,
+  FunctionModifiersRepeat1 = 385,
+  WhereClauseRepeat1 = 386,
+  TraitBoundsRepeat1 = 387,
+  TypeParametersRepeat1 = 388,
+  UseListRepeat1 = 389,
+  ParametersRepeat1 = 390,
+  ForLifetimesRepeat1 = 391,
+  TupleTypeRepeat1 = 392,
+  UseBoundsRepeat1 = 393,
+  TypeArgumentsRepeat1 = 394,
+  ArgumentsRepeat1 = 395,
+  TupleExpressionRepeat1 = 396,
+  FieldInitializerListRepeat1 = 397,
+  MatchBlockRepeat1 = 398,
+  MatchArmRepeat1 = 399,
+  ClosureParametersRepeat1 = 400,
+  TuplePatternRepeat1 = 401,
+  SlicePatternRepeat1 = 402,
+  StructPatternRepeat1 = 403,
+  StringLiteralRepeat1 = 404,
+  _ArrayExpressionListRepeat1 = 405,
+  _MacroDefinitionParenRepeat1 = 406,
+  _DelimTokenTreeParenRepeat1 = 407,
+  FieldIdentifier = 408,
+  _ShorthandFieldIdentifier = 410,
+  TypeIdentifier = 411,
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -1168,41 +1169,42 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [372, "_attributed_field_declaration"],
   [373, "_attributed_enum_variant"],
   [374, "_attributed_parameter"],
-  [375, "source_file_repeat1"],
-  [376, "token_repetition_pattern_repeat1"],
-  [377, "token_repetition_repeat1"],
-  [378, "_non_special_token_repeat1"],
-  [379, "declaration_list_repeat1"],
-  [380, "enum_variant_list_repeat1"],
-  [381, "field_declaration_list_repeat1"],
-  [382, "ordered_field_declaration_list_repeat1"],
-  [383, "ordered_field_declaration_list_repeat2"],
-  [384, "function_modifiers_repeat1"],
-  [385, "where_clause_repeat1"],
-  [386, "trait_bounds_repeat1"],
-  [387, "type_parameters_repeat1"],
-  [388, "use_list_repeat1"],
-  [389, "parameters_repeat1"],
-  [390, "for_lifetimes_repeat1"],
-  [391, "tuple_type_repeat1"],
-  [392, "use_bounds_repeat1"],
-  [393, "type_arguments_repeat1"],
-  [394, "arguments_repeat1"],
-  [395, "tuple_expression_repeat1"],
-  [396, "field_initializer_list_repeat1"],
-  [397, "match_block_repeat1"],
-  [398, "match_arm_repeat1"],
-  [399, "closure_parameters_repeat1"],
-  [400, "tuple_pattern_repeat1"],
-  [401, "slice_pattern_repeat1"],
-  [402, "struct_pattern_repeat1"],
-  [403, "string_literal_repeat1"],
-  [404, "_array_expression_list_repeat1"],
-  [405, "_macro_definition_paren_repeat1"],
-  [406, "_delim_token_tree_paren_repeat1"],
-  [407, "_field_identifier"],
-  [409, "_shorthand_field_identifier"],
-  [410, "_type_identifier"],
+  [375, "_attributed_type_parameter"],
+  [376, "source_file_repeat1"],
+  [377, "token_repetition_pattern_repeat1"],
+  [378, "token_repetition_repeat1"],
+  [379, "_non_special_token_repeat1"],
+  [380, "declaration_list_repeat1"],
+  [381, "enum_variant_list_repeat1"],
+  [382, "field_declaration_list_repeat1"],
+  [383, "ordered_field_declaration_list_repeat1"],
+  [384, "ordered_field_declaration_list_repeat2"],
+  [385, "function_modifiers_repeat1"],
+  [386, "where_clause_repeat1"],
+  [387, "trait_bounds_repeat1"],
+  [388, "type_parameters_repeat1"],
+  [389, "use_list_repeat1"],
+  [390, "parameters_repeat1"],
+  [391, "for_lifetimes_repeat1"],
+  [392, "tuple_type_repeat1"],
+  [393, "use_bounds_repeat1"],
+  [394, "type_arguments_repeat1"],
+  [395, "arguments_repeat1"],
+  [396, "tuple_expression_repeat1"],
+  [397, "field_initializer_list_repeat1"],
+  [398, "match_block_repeat1"],
+  [399, "match_arm_repeat1"],
+  [400, "closure_parameters_repeat1"],
+  [401, "tuple_pattern_repeat1"],
+  [402, "slice_pattern_repeat1"],
+  [403, "struct_pattern_repeat1"],
+  [404, "string_literal_repeat1"],
+  [405, "_array_expression_list_repeat1"],
+  [406, "_macro_definition_paren_repeat1"],
+  [407, "_delim_token_tree_paren_repeat1"],
+  [408, "_field_identifier"],
+  [410, "_shorthand_field_identifier"],
+  [411, "_type_identifier"],
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -1581,6 +1583,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_attributed_field_declaration": return TSKindId.AttributedFieldDeclaration;
     case "_attributed_enum_variant": return TSKindId.AttributedEnumVariant;
     case "_attributed_parameter": return TSKindId.AttributedParameter;
+    case "_attributed_type_parameter": return TSKindId.AttributedTypeParameter;
     case "source_file_repeat1": return TSKindId.SourceFileRepeat1;
     case "token_repetition_pattern_repeat1": return TSKindId.TokenRepetitionPatternRepeat1;
     case "token_repetition_repeat1": return TSKindId.TokenRepetitionRepeat1;
@@ -1732,6 +1735,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "attributed_field_declaration": return TSKindId.AttributedFieldDeclaration;
     case "attributed_enum_variant": return TSKindId.AttributedEnumVariant;
     case "attributed_parameter": return TSKindId.AttributedParameter;
+    case "attributed_type_parameter": return TSKindId.AttributedTypeParameter;
     case "field_identifier": return TSKindId.FieldIdentifier;
     case "shorthand_field_identifier": return TSKindId._ShorthandFieldIdentifier;
     case "type_identifier": return TSKindId.TypeIdentifier;
@@ -2163,7 +2167,7 @@ export interface AttributedParameter {
 }
 
 export interface AttributedTypeParameter {
-  readonly $type: "_attributed_type_parameter";
+  readonly $type: TSKindId.AttributedTypeParameter;
   readonly _attribute_item?: readonly (AttributeItem)[];
   readonly _metavariable: Metavariable | TypeParameter | LifetimeParameter | ConstParameter;
   attributeItems(): readonly (AttributeItem)[];
@@ -4038,8 +4042,8 @@ export interface TypeParameter {
 
 export interface TypeParameters {
   readonly $type: TSKindId.TypeParameters;
-  readonly _attributes: NonEmptyArray<AttributedTypeParameter>;
-  attributes(): NonEmptyArray<AttributedTypeParameter>;
+  readonly _attributed_type_parameter: NonEmptyArray<AttributedTypeParameter>;
+  attributedTypeParameters(): NonEmptyArray<AttributedTypeParameter>;
 }
 
 export interface UnaryExpression {

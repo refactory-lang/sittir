@@ -55,7 +55,11 @@ const config: WireConfig<RustGrammar> = {
 		[$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
 		// visibility_modifier variant extraction: `pub` vs `pub(x)`
 		// share the `pub` prefix; parser needs lookahead.
-		[$._visibility_modifier_pub]
+		[$._visibility_modifier_pub],
+		// `_attributed_type_parameter` (body-pattern in groups:) and `_type`
+		// both can begin with `metavariable` — declare the conflict so
+		// tree-sitter uses lookahead instead of failing parser generation.
+		[$._attributed_type_parameter, $._type]
 	],
 	polymorphs: {
 		array_expression: { '2/0': 'semi', '2/1': 'list' },
@@ -523,16 +527,10 @@ const config: WireConfig<RustGrammar> = {
 			7: field('trailing_where_clause') // where_clause [struct=2]
 		},
 
-		// type_parameters: seq('<', repeat1(seq(repeat(attribute_item),
-		// choice(metavariable, type_parameter, lifetime_parameter,
-		// const_parameter))), '>').
-		// storageName collision: repeat(attribute_item) at inner-seq pos 0
-		// and the choice at inner-seq pos 1 both infer storageName='children'.
-		// Promote attribute_item to named field; the type-param choice stays
-		// as $children.
-		type_parameters: {
-			'1/0': field('attributes')
-		},
+		// type_parameters: handled by `attributed_type_parameter` body-
+		// pattern in `groups:`. The parser conflict with `_type` (both
+		// begin with metavariable) is declared in `conflicts:` above.
+		// No override-side field-promotion needed.
 
 		// unary_expression — label both the operator token (pos 0) and
 		// the operand expression (pos 1). overrides.json promotes both

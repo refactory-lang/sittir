@@ -2361,7 +2361,7 @@ export interface TypeParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributes: Array<AttributedTypeParameterTransport>
+  _attributed_type_parameter: Array<AttributedTypeParameterTransport>
 }
 
 export interface TypeParameterTransport {

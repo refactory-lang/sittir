@@ -363,6 +363,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
   "trait_bounds": TSKindId.TraitBounds,
   "tuple_pattern": TSKindId.TuplePattern,
   "tuple_type": TSKindId.TupleType,
+  "type_parameters": TSKindId.TypeParameters,
   "use_bounds": TSKindId.UseBounds,
   "use_list": TSKindId.UseList,
   "where_clause": TSKindId.WhereClause,
@@ -419,6 +420,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "trait_bounds": return F.traitBounds(...(children as Parameters<typeof F.traitBounds>));
     case "tuple_pattern": return F.tuplePattern(...(children as Parameters<typeof F.tuplePattern>));
     case "tuple_type": return F.tupleType(...(children as Parameters<typeof F.tupleType>));
+    case "type_parameters": return F.typeParameters(...(children as Parameters<typeof F.typeParameters>));
     case "use_bounds": return F.useBounds(...(children as Parameters<typeof F.useBounds>));
     case "use_list": return F.useList(...(children as Parameters<typeof F.useList>));
     case "where_clause": return F.whereClause(...(children as Parameters<typeof F.whereClause>));
@@ -1179,7 +1181,7 @@ export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish.L
 export function higherRankedTraitBoundFrom(input: T.HigherRankedTraitBound.Loose): ReturnType<typeof F.higherRankedTraitBound> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.higherRankedTraitBound>;
   return F.higherRankedTraitBound({
-    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
+    typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters") ?? F.typeParameters(),
     type: _resolveOne<T._Type>(input.type, _K4, _K5),
   });
 }
@@ -2064,13 +2066,14 @@ export function typeParameterFrom(input: T.TypeParameter.Loose): ReturnType<type
   });
 }
 
-export function typeParametersFrom(input: T.TypeParameters.Loose): ReturnType<typeof F.typeParameters> {
-  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.typeParameters>;
-  const _ne_attributes = _resolveManyBranch<T.AttributedTypeParameter>(input.attributes, "_attributed_type_parameter");
-  _assertNonEmpty(_ne_attributes, 'type_parameters.attributes');
-  return F.typeParameters({
-    attributes: _ne_attributes,
-  });
+export function typeParametersFrom(...input: readonly (T.AttributedTypeParameter | T.TypeParameters)[]): ReturnType<typeof F.typeParameters> {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeParameters) {
+    const data = input[0];
+    const stored = (data as unknown as { _attributed_type_parameter?: unknown })._attributed_type_parameter;
+    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+    return F.typeParameters(...(children as unknown as Parameters<typeof F.typeParameters>));
+  }
+  return F.typeParameters(...(input as unknown as Parameters<typeof F.typeParameters>));
 }
 
 export function unaryExpressionFrom(input: T.UnaryExpression.Loose): ReturnType<typeof F.unaryExpression> {

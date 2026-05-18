@@ -15825,9 +15825,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attributes",
-          "propertyName": "attributes",
-          "paramName": "attributes",
+          "name": "attributed_type_parameter",
+          "propertyName": "attributedTypeParameters",
+          "paramName": "attributedTypeParameters",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -15839,19 +15839,17 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
               "_attributed_type_parameter"
             ]
-          },
-          "aliasSources": {
-            "attributed_type_parameter": "_attributed_type_parameter"
           }
         }
       ],
-      "children": []
+      "children": [],
+      "separator": ","
     },
     {
       "kind": "unary_expression",

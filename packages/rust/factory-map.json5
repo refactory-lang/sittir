@@ -229,7 +229,7 @@
     "type_cast_expression": "config",
     "type_item": "config",
     "type_parameter": "config",
-    "type_parameters": "config",
+    "type_parameters": "spread",
     "unary_expression": "config",
     "union_item": "config",
     "unit_expression": "text",
@@ -340,9 +340,6 @@
     },
     "tuple_struct_pattern.type": {
       "generic_type": "generic_type_with_turbofish"
-    },
-    "type_parameters.attributes": {
-      "attributed_type_parameter": "_attributed_type_parameter"
     },
     "where_predicate.left": {
       "primitive_type": "_primitive_type"
@@ -1082,7 +1079,7 @@
       "default_type"
     ],
     "type_parameters": [
-      "attributes"
+      "attributed_type_parameter"
     ],
     "unary_expression": [
       "operator",
@@ -4299,7 +4296,7 @@
       }
     },
     "type_parameters": {
-      "attributes": {
+      "attributed_type_parameter": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,

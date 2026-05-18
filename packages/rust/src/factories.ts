@@ -125,6 +125,24 @@ export function attributedParameter(config: T.AttributedParameter.Config) {
   }, methodsEngine);
 }
 
+export function attributedTypeParameter(config: T.AttributedTypeParameter.Config) {
+  const _attribute_item = config.attributeItem;
+  const _metavariable = config.metavariable;
+  return withMethods({
+    $type: TSKindId.AttributedTypeParameter as const,
+    $source: 2 as const,
+    $named: true as const,
+    _attribute_item,
+    _metavariable,
+    attributeItems() { return _attribute_item; },
+    metavariable() { return _metavariable; },
+    $with: {
+      attributeItems: (...values: T.AttributeItem[]) => attributedTypeParameter({ ...config, attributeItem: values }),
+      metavariable: (value: T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter) => attributedTypeParameter({ ...config, metavariable: value }),
+    },
+  }, methodsEngine);
+}
+
 export function _closureExpressionBlock(config: T.ClosureExpressionBlock.Config) {
   const _return_type = config.returnType;
   const _body = config.body;
@@ -4154,17 +4172,16 @@ export function typeParameter(config: T.TypeParameter.Config) {
   }, methodsEngine);
 }
 
-export function typeParameters(config: T.TypeParameters.Config) {
-  const _attributes = config.attributes;
+export function typeParameters(...children: T.AttributedTypeParameter[]) {
+  _assertNonEmpty(children, 'type_parameters.children');
+  const _attributed_type_parameter = children;
   return withMethods({
     $type: TSKindId.TypeParameters as const,
     $source: 2 as const,
     $named: true as const,
-    _attributes,
-    attributes() { return _attributes; },
-    $with: {
-      attributes: (...values: NonEmptyArray<T.AttributedTypeParameter>) => typeParameters({ ...config, attributes: values }),
-    },
+    _attributed_type_parameter,
+    attributedTypeParameters() { return _attributed_type_parameter; },
+    $with: { $children: (...vs: T.AttributedTypeParameter[]) => typeParameters(...vs) },
   }, methodsEngine);
 }
 
@@ -4527,6 +4544,7 @@ export type FluentKindMap = {
   "_attributed_enum_variant": FluentNode<"_attributed_enum_variant", T.AttributedEnumVariant.Config>;
   "_attributed_field_declaration": FluentNode<"_attributed_field_declaration", T.AttributedFieldDeclaration.Config>;
   "_attributed_parameter": FluentNode<"_attributed_parameter", T.AttributedParameter.Config>;
+  "_attributed_type_parameter": FluentNode<"_attributed_type_parameter", T.AttributedTypeParameter.Config>;
   "_closure_expression_block": T.ClosureExpressionBlock;
   "_closure_expression_expr": FluentNode<"_closure_expression_expr", T._ClosureExpressionExpr.Config>;
   "_delim_token_tree_brace": FluentNode<"_delim_token_tree_brace", T._DelimTokenTreeBrace.Config>;
@@ -4763,6 +4781,7 @@ export const _factoryMap = {
   "_attributed_enum_variant": attributedEnumVariant,
   "_attributed_field_declaration": attributedFieldDeclaration,
   "_attributed_parameter": attributedParameter,
+  "_attributed_type_parameter": attributedTypeParameter,
   "_closure_expression_block": _closureExpressionBlock,
   "_closure_expression_expr": _closureExpressionExpr,
   "_delim_token_tree_brace": _delimTokenTreeBrace,

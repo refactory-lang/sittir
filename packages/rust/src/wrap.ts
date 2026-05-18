@@ -103,11 +103,6 @@ function drillAs<T>(entry: unknown, tree: TreeHandle, fromType: string, toType: 
   }
   return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType }) as unknown as T;
 }
-function drillAsAll<T>(entries: unknown, tree: TreeHandle, fromType: string, toType: string): T[] {
-  if (!entries) return [];
-  const arr = Array.isArray(entries) ? entries : [entries];
-  return arr.map(e => drillAs<T>(e, tree, fromType, toType));
-}
 function projectKindEnumStorage<T>(value: T): T {
   if (!value) return value;
   if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry)) as unknown as T;
@@ -459,6 +454,23 @@ export function wrapAttributedParameter(data: T.AttributedParameter, tree: TreeH
     $with: {
       attributeItem: (v: NonNullable<T.AttributedParameter['_attribute_item']>) => wrapAttributedParameter({ ...data, _attribute_item: v }, tree),
       parameter: (v: NonNullable<T.AttributedParameter['_parameter']>) => wrapAttributedParameter({ ...data, _parameter: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapAttributedTypeParameter(data: T.AttributedTypeParameter, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.AttributedTypeParameter as const,
+    _attribute_item: normalizeRepeatedWrapSlot(data._attribute_item, false, "attribute_item"),
+    _metavariable: normalizeSingularWrapSlot((data._metavariable ?? data._type_parameter ?? data._lifetime_parameter ?? data._const_parameter), "metavariable", true, data.$type),
+
+    attributeItems() { return drillInAll<T.AttributeItem>(this._attribute_item as readonly T.AttributeItem[] | undefined, tree); },
+    metavariable() { return drillIn<T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>(this._metavariable, tree); },
+    $with: {
+      attributeItems: (...v: NonNullable<T.AttributedTypeParameter['_attribute_item']>[number][]) => wrapAttributedTypeParameter({ ...data, _attribute_item: v }, tree),
+      metavariable: (v: NonNullable<T.AttributedTypeParameter['_metavariable']>) => wrapAttributedTypeParameter({ ...data, _metavariable: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -3606,12 +3618,10 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeParameters as const,
-    _attributes: normalizeRepeatedWrapSlot(data._attributes, true, "attributes"),
+    _attributed_type_parameter: normalizeRepeatedWrapSlot(data._attributed_type_parameter, true, "attributed_type_parameter"),
 
-    attributes() { return drillAsAll<T.AttributedTypeParameter>(this._attributes, tree, "attributed_type_parameter", "_attributed_type_parameter"); },
-    $with: {
-      attributes: (...v: NonEmptyArray<NonNullable<T.TypeParameters['_attributes']>[number]>) => wrapTypeParameters({ ...data, _attributes: v }, tree),
-    },
+    attributedTypeParameters() { return drillInAll<T.AttributedTypeParameter>(this._attributed_type_parameter as readonly T.AttributedTypeParameter[] | undefined, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapTypeParameters({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3862,6 +3872,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_attributed_enum_variant': (d, t) => wrapAttributedEnumVariant(d as unknown as T.AttributedEnumVariant, t),
   '_attributed_field_declaration': (d, t) => wrapAttributedFieldDeclaration(d as unknown as T.AttributedFieldDeclaration, t),
   '_attributed_parameter': (d, t) => wrapAttributedParameter(d as unknown as T.AttributedParameter, t),
+  '_attributed_type_parameter': (d, t) => wrapAttributedTypeParameter(d as unknown as T.AttributedTypeParameter, t),
   '_closure_expression_block': (d, t) => wrapClosureExpressionBlock(d as unknown as T.ClosureExpressionBlock, t),
   '_closure_expression_expr': (d, t) => wrap_ClosureExpressionExpr(d as unknown as T._ClosureExpressionExpr, t),
   '_condition': (d, t) => wrapCondition(d as unknown as T.Condition, t),

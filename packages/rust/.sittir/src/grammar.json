@@ -3126,42 +3126,13 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "FIELD",
-                "name": "attributes",
+                "type": "ALIAS",
                 "content": {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "REPEAT",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "attribute_item"
-                      }
-                    },
-                    {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "metavariable"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "type_parameter"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "lifetime_parameter"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "const_parameter"
-                        }
-                      ]
-                    }
-                  ]
+                  "type": "SYMBOL",
+                  "name": "_attributed_type_parameter"
                 },
-                "source": "override"
+                "named": true,
+                "value": "attributed_type_parameter"
               },
               {
                 "type": "REPEAT",
@@ -3173,37 +3144,13 @@
                       "value": ","
                     },
                     {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "REPEAT",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "attribute_item"
-                          }
-                        },
-                        {
-                          "type": "CHOICE",
-                          "members": [
-                            {
-                              "type": "SYMBOL",
-                              "name": "metavariable"
-                            },
-                            {
-                              "type": "SYMBOL",
-                              "name": "type_parameter"
-                            },
-                            {
-                              "type": "SYMBOL",
-                              "name": "lifetime_parameter"
-                            },
-                            {
-                              "type": "SYMBOL",
-                              "name": "const_parameter"
-                            }
-                          ]
-                        }
-                      ]
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_attributed_type_parameter"
+                      },
+                      "named": true,
+                      "value": "attributed_type_parameter"
                     }
                   ]
                 }
@@ -11001,6 +10948,10 @@
     ],
     [
       "_visibility_modifier_pub"
+    ],
+    [
+      "_attributed_type_parameter",
+      "_type"
     ],
     [
       "_array_expression_semi",

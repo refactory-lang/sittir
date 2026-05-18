@@ -1491,7 +1491,7 @@ pub struct TypeParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_parameters.jinja", escape = "none")]
 pub struct TypeParametersTemplate<'a> {
-    pub attributes: ListNonterminalView<'a>,
+    pub attributed_type_parameter: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

@@ -1135,7 +1135,7 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 		});
 		return changed ? { ...r, members: newMembers } : rule;
 	}
-	if (t === 'optional' || t === 'repeat' || t === 'repeat1' || t === 'field') {
+	if (t === 'optional' || t === 'repeat' || t === 'repeat1' || t === 'field' || t === 'prec' || t === 'prec_left' || t === 'prec_right' || t === 'prec_dynamic' || t === 'token') {
 		const newContent = replaceInBodyRt(r.content, candidates);
 		return newContent !== r.content ? { ...r, content: newContent } : rule;
 	}

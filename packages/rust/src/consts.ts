@@ -678,8 +678,9 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "_attributed_field_declaration": 372,
   "_attributed_enum_variant": 373,
   "_attributed_parameter": 374,
-  "_field_identifier": 407,
-  "_type_identifier": 410,
+  "_attributed_type_parameter": 375,
+  "_field_identifier": 408,
+  "_type_identifier": 411,
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -933,8 +934,9 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [372]: "_attributed_field_declaration",
   [373]: "_attributed_enum_variant",
   [374]: "_attributed_parameter",
-  [407]: "_field_identifier",
-  [410]: "_type_identifier",
+  [375]: "_attributed_type_parameter",
+  [408]: "_field_identifier",
+  [411]: "_type_identifier",
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -1188,8 +1190,9 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "_attributed_field_declaration", id: 372, enumName: "AttributedFieldDeclaration", cName: "sym__attributed_field_declaration" },
   { name: "_attributed_enum_variant", id: 373, enumName: "AttributedEnumVariant", cName: "sym__attributed_enum_variant" },
   { name: "_attributed_parameter", id: 374, enumName: "AttributedParameter", cName: "sym__attributed_parameter" },
-  { name: "_field_identifier", id: 407, enumName: "AliasFieldIdentifier", cName: "alias_sym_field_identifier" },
-  { name: "_type_identifier", id: 410, enumName: "AliasTypeIdentifier", cName: "alias_sym_type_identifier" },
+  { name: "_attributed_type_parameter", id: 375, enumName: "AttributedTypeParameter", cName: "sym__attributed_type_parameter" },
+  { name: "_field_identifier", id: 408, enumName: "AliasFieldIdentifier", cName: "alias_sym_field_identifier" },
+  { name: "_type_identifier", id: 411, enumName: "AliasTypeIdentifier", cName: "alias_sym_type_identifier" },
 ] as const;
 
 export const enum TSFieldId {
@@ -2203,7 +2206,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'defaultType', required: false, multiple: false },
   ],
   'type_parameters': [
-    { name: 'attributes', required: true, multiple: true },
+    { name: 'attributedTypeParameters', required: true, multiple: true },
   ],
   'unary_expression': [
     { name: 'operator', required: true, multiple: false },

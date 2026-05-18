@@ -585,6 +585,23 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
+        375 => { // "_attributed_type_parameter" | "attributed_type_parameter"
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let children_renderables = children.renderable_items();
+            let template = AttributedTypeParameterTemplate {
+                attribute_item: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
+                metavariable: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+            };
+            template.render_into(dest)
+        }
         323 => { // "_closure_expression_block" | "closure_expression_block"
             let field_0 = resolve_slot(node, SlotAccessor::Field("body"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("return_type"), false)?;
@@ -2896,14 +2913,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         199 => { // "type_parameters"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("attributes"), true)?;
-            let field_0_renderables = field_0.renderable_items();
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let children_renderables = children.renderable_items();
             let template = TypeParametersTemplate {
-                attributes: ListNonterminalView {
-                    items: field_0_renderables.as_slice(),
-                    separator: field_0.separator,
-                    leading: field_0.leading_sep,
-                    trailing: field_0.trailing_sep,
+                attributed_type_parameter: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
                 },
             };
             template.render_into(dest)
