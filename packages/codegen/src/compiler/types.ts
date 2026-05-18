@@ -201,17 +201,17 @@ export interface RawGrammar {
 	 */
 	readonly polymorphsConfig?: Record<string, Record<string, string> | undefined>;
 	/**
-	 * Sittir-side alt rule bodies for external scanner symbols. Populated
-	 * by `externalAltDef:` in the override layer. The bodies enter
-	 * sittir's slot/render/factory pipeline as if they were regular
-	 * author-written rules; they are NOT present in the tree-sitter rules
-	 * map (the external scanner still produces these symbols).
+	 * Sittir-side render bodies for external scanner symbols. Populated
+	 * by `renderAs:` in the override layer. The bodies enter sittir's
+	 * slot/render/factory pipeline as if they were regular author-written
+	 * rules; they are NOT present in the tree-sitter rules map (the
+	 * external scanner still produces these symbols).
 	 *
 	 * Record keys are the external symbol names (e.g.
 	 * `_outer_block_doc_comment_marker`); values are the sittir-side Rule
 	 * bodies (e.g. `{ type: 'string', value: '!' }`).
 	 */
-	readonly externalAltDef?: Record<string, Rule>;
+	readonly renderAs?: Record<string, Rule>;
 	/**
 	 * Pattern-replacement candidate kinds: author-declared `_`-prefixed rules
 	 * whose bodies were used as structural patterns to rewrite the merged grammar.

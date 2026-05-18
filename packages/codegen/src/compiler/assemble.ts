@@ -75,8 +75,8 @@ export function assemble(
 	}
 
 	// Identify rule kinds whose resolved body is wholly optional. This
-	// happens primarily through `externalAltDef: blank()` stamping
-	// (`stampStaticExternalAltDefs` collapses `choice(X, blank)` →
+	// happens primarily through `renderAs: blank()` stamping
+	// (`stampStaticRenderAs` collapses `choice(X, blank)` →
 	// `optional(X)` at link time), but detection is generic: any rule
 	// body that's `optional(...)` or `choice(blank, ...)` qualifies. Set
 	// on a module-level pointer in node-map.ts for the slot-value
@@ -239,7 +239,7 @@ export function assemble(
  * (alias, token, terminal — none of which change "can this match
  * invisibly?" semantics), the top-level form is one of:
  *   - `optional(X)` — the canonical post-stamp shape (DSL-time
- *     `choice(blank, X)` lowers to this; `stampStaticExternalAltDefs`
+ *     `choice(blank, X)` lowers to this; `stampStaticRenderAs`
  *     re-applies the same lowering after blank substitution).
  *   - `choice(...)` containing the blank sentinel. Defensive — the stamp
  *     pass collapses these to `optional()` already, but authored rules

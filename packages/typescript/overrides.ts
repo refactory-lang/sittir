@@ -850,7 +850,7 @@ export default grammar(
 		// corpus entries. The grammar that reaches tree-sitter still has
 		// the externals intact; only sittir's slot/render/factory pipeline
 		// sees the blank body.
-		externalAltDef: (_$) => ({
+		renderAs: (_$) => ({
 			_automatic_semicolon: blank(),
 			_function_signature_automatic_semicolon: blank()
 		}),

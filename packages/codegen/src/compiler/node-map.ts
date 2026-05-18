@@ -73,7 +73,7 @@ export type Multiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray';
 // ---------------------------------------------------------------------------
 //
 // Some rule kinds, after Link-phase stamping (see
-// `stampStaticExternalAltDefs` for blank-bodied externalAltDef entries),
+// `stampStaticRenderAs` for blank-bodied renderAs entries),
 // resolve to a body that's wholly optional — `optional(X)` or a choice
 // containing the blank sentinel. References to such a kind are
 // effectively optional even when the SYMBOL ref itself sits at a

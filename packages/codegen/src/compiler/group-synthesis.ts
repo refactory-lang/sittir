@@ -307,26 +307,26 @@ function clone<T>(value: T): T {
 }
 
 // ---------------------------------------------------------------------------
-// stampStaticExternalAltDefs — inline string() alt-def bodies into rule trees
+// stampStaticRenderAs — inline string() renderAs bodies into rule trees
 // ---------------------------------------------------------------------------
 
 /**
- * Stamp static externalAltDef entries into rule bodies.
+ * Stamp static renderAs entries into rule bodies.
  *
- * For each externalAltDef entry with a `string(lit)` body, walk the
- * rule map and replace every occurrence of:
+ * For each renderAs entry with a `string(lit)` body, walk the rule map
+ * and replace every occurrence of:
  *   - `SYMBOL(x)` (bare)
  *   - `FIELD(name, SYMBOL(x))` (field-wrapped)
  *   - `FIELD(name, ALIAS(SYMBOL(x)))` (alias-wrapped — any depth)
  * with `STRING(lit)` at the same position. Pure transform — input rule
  * map not mutated.
  *
- * Symbol resolution is transitive: when `x` itself is not in `altDefs`
- * but `rules[x]` is a `StringRule` whose value matches an alt-def literal,
+ * Symbol resolution is transitive: when `x` itself is not in `renderAs`
+ * but `rules[x]` is a `StringRule` whose value matches a renderAs literal,
  * the stamp fires. This handles post-evaluate renaming — evaluate's
- * `synthesizeFieldEnumRules` replaces `field(n, SYMBOL(altDef))` with
+ * `synthesizeFieldEnumRules` replaces `field(n, SYMBOL(renderAs))` with
  * `field(n, SYMBOL(_parentKind_fieldName))` where the new hidden rule
- * has the same `string` body as the original alt-def entry.
+ * has the same `string` body as the original renderAs entry.
  *
  * After this pass, downstream phases (slot derivation, template walker,
  * factory emitter, from emitter) see bare string literals at those
@@ -334,48 +334,49 @@ function clone<T>(value: T): T {
  * the same as how `seq('mod', $.name)` renders `mod {{ name }}` with
  * `mod` stamped inline.
  */
-export function stampStaticExternalAltDefs(
+export function stampStaticRenderAs(
 	rules: Record<string, Rule>,
-	altDefs: Record<string, Rule>
+	renderAs: Record<string, Rule>
 ): Record<string, Rule> {
-	// Build the stamp lookup: altDef-key → literal value, for entries that
-	// are single string() bodies.
-	const altStamps: Record<string, string> = {};
-	// Blank-bodied altDef entries: zero-width-equivalent. References get
-	// replaced with `{ type: 'choice', members: [] }` (the blank sentinel),
-	// which the choice() collapse in `rewriteRuleForStamp` lowers to
-	// `optional(other)` when paired with another member. Use case:
-	// tree-sitter externals that fire invisibly at runtime (e.g. ASI's
-	// `_automatic_semicolon`). The slot-model look-through in node-map.ts
-	// propagates this optionality up to any SYMBOL ref pointing at the
-	// now-optional-bodied wrapper rule (`_semicolon`).
+	// Build the stamp lookup: renderAs-key → literal value, for entries
+	// that are single string() bodies.
+	const renderStamps: Record<string, string> = {};
+	// Blank-bodied renderAs entries: zero-width-equivalent. References
+	// get replaced with `{ type: 'choice', members: [] }` (the blank
+	// sentinel), which the choice() collapse in `rewriteRuleForStamp`
+	// lowers to `optional(other)` when paired with another member. Use
+	// case: tree-sitter externals that fire invisibly at runtime (e.g.
+	// ASI's `_automatic_semicolon`). The slot-model look-through in
+	// node-map.ts propagates this optionality up to any SYMBOL ref
+	// pointing at the now-optional-bodied wrapper rule (`_semicolon`).
 	const blankStamps = new Set<string>();
-	for (const [sym, body] of Object.entries(altDefs)) {
-		if (body.type === 'string') altStamps[sym] = body.value;
+	for (const [sym, body] of Object.entries(renderAs)) {
+		if (body.type === 'string') renderStamps[sym] = body.value;
 		else if (isBlankRule(body)) blankStamps.add(sym);
 	}
-	if (Object.keys(altStamps).length === 0 && blankStamps.size === 0) return rules;
+	if (Object.keys(renderStamps).length === 0 && blankStamps.size === 0) return rules;
 
 	// Build symToLit: symbol-name → literal to stamp.
 	// Includes:
-	//   1. The original altDef key names (exact match).
-	//   2. Names whose string body matches an altDef value AND whose name
-	//      ends with the altDef key (handling evaluate's synthesized renames:
-	//      `synthesizeFieldEnumRules` creates `_<parent>_<fieldName>` where
-	//      `<fieldName>` corresponds to the field that referenced the altDef
-	//      symbol — the altDef key itself ends with `_<fieldName>`).
+	//   1. The original renderAs key names (exact match).
+	//   2. Names whose string body matches a renderAs value AND whose
+	//      name ends with the renderAs key (handling evaluate's
+	//      synthesized renames: `synthesizeFieldEnumRules` creates
+	//      `_<parent>_<fieldName>` where `<fieldName>` corresponds to the
+	//      field that referenced the renderAs symbol — the renderAs key
+	//      itself ends with `_<fieldName>`).
 	// This is deliberately conservative: we do NOT match all string rules
 	// by value alone, to avoid stamping unrelated `_kw_*` helpers that
-	// happen to share a character with an altDef literal (e.g. `_kw_negative`
-	// has body `'!'` which clashes with the `_inner_*_doc_comment_marker`
-	// alt-def values).
-	const symToLit: Record<string, string> = { ...altStamps };
+	// happen to share a character with a renderAs literal (e.g.
+	// `_kw_negative` has body `'!'` which clashes with the
+	// `_inner_*_doc_comment_marker` renderAs values).
+	const symToLit: Record<string, string> = { ...renderStamps };
 	for (const [sym, body] of Object.entries(rules)) {
 		if (sym in symToLit) continue; // Already included via exact match.
 		if (body.type !== 'string') continue;
-		// Check whether any altDef key is a suffix of this symbol name.
-		for (const [altKey, lit] of Object.entries(altStamps)) {
-			if (sym.endsWith(altKey) && body.value === lit) {
+		// Check whether any renderAs key is a suffix of this symbol name.
+		for (const [renderKey, lit] of Object.entries(renderStamps)) {
+			if (sym.endsWith(renderKey) && body.value === lit) {
 				symToLit[sym] = lit;
 				break;
 			}

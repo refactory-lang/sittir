@@ -769,7 +769,7 @@ export function blank(): Rule {
  * explicit `string(value)` form. Sittir's `normalize()` already handles
  * both: bare strings normalize to `{ type: 'string', value }`.
  *
- * This explicit form is injected as a DSL global so that `externalAltDef`
+ * This explicit form is injected as a DSL global so that `renderAs`
  * bodies can use `string('x')` syntax (as specified) without relying on
  * bare string literals, and so that any author rule body that calls
  * `string(...)` explicitly continues to work.
@@ -853,12 +853,12 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const refineForms = drainRefineMetadata(opts);
 	const groups = drainGroupsMetadata(opts);
 	const polymorphsConfig = drainPolymorphsConfigMetadata(opts);
-	// externalAltDef must be drained BEFORE buildRuleCatalog so the
-	// synthesized rule bodies appear in the catalog. It also strips any
-	// base-grammar body for the same key (keeping the sittir-side def
-	// authoritative). The DSL globals (string, etc.) are still injected
-	// at this point — evaluate()'s try block is still active.
-	const externalAltDef = drainExternalAltDefMetadata(opts, rules, refs, provenanceByKind);
+	// renderAs must be drained BEFORE buildRuleCatalog so the synthesized
+	// rule bodies appear in the catalog. It also strips any base-grammar
+	// body for the same key (keeping the sittir-side def authoritative).
+	// The DSL globals (string, etc.) are still injected at this point —
+	// evaluate()'s try block is still active.
+	const renderAs = drainRenderAsMetadata(opts, rules, refs, provenanceByKind);
 
 	// Rules map mirrors tree-sitter's view: no synthesized top-level
 	// entry for alias TARGETS. The source (`_X`) is the canonical
@@ -895,7 +895,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 			refineForms,
 			groups,
 			polymorphsConfig,
-			externalAltDef,
+			renderAs,
 			patternReplacementKinds: patternReplacementKinds.size > 0 ? patternReplacementKinds : undefined
 		} satisfies RawGrammar
 	};
@@ -1731,36 +1731,38 @@ function drainPolymorphsConfigMetadata(opts: GrammarOptions): Record<string, Rec
 }
 
 /**
- * Evaluate the `externalAltDef:` fn from the wire context and inject the
+ * Evaluate the `renderAs:` fn from the wire context and inject the
  * resulting rule bodies into the rules map as 'evaluate-synthesized' entries.
  *
  * @remarks
  * Called AFTER `evaluateRulesAndInjectSynthetics` so the DSL globals are
  * still injected and a real `$` proxy is available. The fn is evaluated
  * with a fresh proxy so any `$.name` refs inside the fn body resolve
- * correctly (MVP only supports `string(...)` literals, which don't need
- * the proxy, but we keep the proxy for forward compatibility).
+ * correctly (current support: `string(...)` literals and `blank()` —
+ * neither needs the proxy, but we keep the proxy for forward
+ * compatibility).
  *
  * The keys returned by the fn are ALSO removed from `rules` (stripping the
  * tree-sitter-side body when the base grammar had one). This is safe: the
  * external scanner produces these symbols; the grammar rule body is
  * redundant for tree-sitter and harmful for sittir (sittir would pick up
- * the base IMMEDIATE_TOKEN body and use it instead of the alt def).
+ * the base IMMEDIATE_TOKEN body and use it instead of the sittir-side
+ * render body).
  *
- * @returns A Record<string, Rule> for `RawGrammar.externalAltDef`, or
- * `undefined` when no `externalAltDef:` was declared.
+ * @returns A Record<string, Rule> for `RawGrammar.renderAs`, or
+ * `undefined` when no `renderAs:` was declared.
  */
-function drainExternalAltDefMetadata(
+function drainRenderAsMetadata(
 	opts: GrammarOptions,
 	rules: Record<string, Rule>,
 	refs: SymbolRef[],
 	provenanceByKind: Map<string, RuleProvenance>
 ): Record<string, Rule> | undefined {
 	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
-	if (!wireCtx || !wireCtx.externalAltDef) return undefined;
+	if (!wireCtx || !wireCtx.renderAs) return undefined;
 
-	const $ = createProxy('_externalAltDef_', refs);
-	const rawEntries = wireCtx.externalAltDef($ as unknown as Record<string, unknown>);
+	const $ = createProxy('_renderAs_', refs);
+	const rawEntries = wireCtx.renderAs($ as unknown as Record<string, unknown>);
 	if (!rawEntries || Object.keys(rawEntries).length === 0) return undefined;
 
 	const result: Record<string, Rule> = {};
@@ -1774,7 +1776,7 @@ function drainExternalAltDefMetadata(
 		provenanceByKind.set(name, 'evaluate-synthesized');
 		// Strip any pre-existing tree-sitter-side body for this symbol.
 		// The assignment above already overwrites it; this comment documents
-		// the intentional overwrite: externalAltDef wins over base-grammar body.
+		// the intentional overwrite: renderAs wins over base-grammar body.
 	}
 	return result;
 }
