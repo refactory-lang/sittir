@@ -21,7 +21,7 @@
     "_call_expression_template_call": "config",
     "_class_body_member": "config",
     "_class_body_method": "config",
-    "_class_body_method_sig": "config",
+    "_class_body_method_sig": "spread",
     "_class_heritage_extends_clause": "config",
     "_class_heritage_implements_clause": "spread",
     "_const_marker": "text",
@@ -66,6 +66,7 @@
     "_public_field_definition_static_mods": "config",
     "_readonly_marker": "text",
     "_reserved_identifier": "text",
+    "_semicolon": "text",
     "_static_marker": "text",
     "_string_opening": "text",
     "_type_identifier": "text",
@@ -109,7 +110,7 @@
     "class_heritage_extends_clause": "config",
     "class_heritage_implements_clause": "direct",
     "class_heritage": "config",
-    "class_static_block": "config",
+    "class_static_block": "direct",
     "comment": "text",
     "computed_property_name": "direct",
     "conditional_type": "config",
@@ -275,12 +276,10 @@
     "while_statement": "config",
     "with_statement": "config",
     "yield_expression": "direct",
-    "_automatic_semicolon": "text",
     "_template_chars": "text",
     "html_comment": "text",
     "||": "text",
     "jsx_text": "text",
-    "_function_signature_automatic_semicolon": "text",
     "abstract": "text",
     "global": "text",
     "async": "text",
@@ -470,8 +469,7 @@
       "semicolon"
     ],
     "_class_body_method_sig": [
-      "method_signature",
-      "function_signature_automatic_semicolon"
+      "method_signature"
     ],
     "_class_heritage_extends_clause": [
       "extends_clause",
@@ -523,8 +521,7 @@
     ],
     "_for_header_let_const_kind": [
       "kind",
-      "left",
-      "automatic_semicolon"
+      "left"
     ],
     "_for_header_lhs": [
       "left"
@@ -743,7 +740,6 @@
       "class_heritage_implements_clause"
     ],
     "class_static_block": [
-      "automatic_semicolon",
       "body"
     ],
     "computed_property_name": [
@@ -882,8 +878,7 @@
       "type_parameters",
       "parameters",
       "return_type",
-      "body",
-      "automatic_semicolon"
+      "body"
     ],
     "function_expression": [
       "name",
@@ -916,8 +911,7 @@
       "type_parameters",
       "parameters",
       "return_type",
-      "body",
-      "automatic_semicolon"
+      "body"
     ],
     "generic_type": [
       "name",
@@ -1484,7 +1478,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1514,13 +1508,6 @@
     },
     "_class_body_method_sig": {
       "method_signature": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "function_signature_automatic_semicolon": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1603,7 +1590,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1619,7 +1606,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1676,7 +1663,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1692,7 +1679,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1715,7 +1702,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1732,13 +1719,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "automatic_semicolon": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2508,7 +2488,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2714,13 +2694,6 @@
       }
     },
     "class_static_block": {
-      "automatic_semicolon": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "body": {
         "unnamed": false,
         "slotCount": 1,
@@ -2848,7 +2821,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2857,7 +2830,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3065,7 +3038,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3081,7 +3054,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3097,7 +3070,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3143,7 +3116,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3339,13 +3312,6 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      },
-      "automatic_semicolon": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
       }
     },
     "function_expression": {
@@ -3431,7 +3397,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3545,13 +3511,6 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      },
-      "automatic_semicolon": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
       }
     },
     "generic_type": {
@@ -3620,7 +3579,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3764,7 +3723,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -4057,7 +4016,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -4845,7 +4804,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -5066,7 +5025,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -5144,7 +5103,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -5315,7 +5274,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -5453,8 +5412,7 @@
           "infer_type",
           "type_query_member_expression_in_type_annotation",
           "type_query_call_expression_in_type_annotation",
-          "automatic_semicolon",
-          ";"
+          "semicolon"
         ]
       }
     },
@@ -5641,8 +5599,7 @@
         "type_export": [
           "export_clause",
           "string",
-          "automatic_semicolon",
-          ";"
+          "semicolon"
         ],
         "equals_export": [
           "as_expression",
@@ -5683,13 +5640,11 @@
           "update_expression",
           "new_expression",
           "yield_expression",
-          "automatic_semicolon",
-          ";"
+          "semicolon"
         ],
         "namespace_export": [
           "identifier",
-          "automatic_semicolon",
-          ";"
+          "semicolon"
         ]
       }
     },

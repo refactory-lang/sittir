@@ -46,7 +46,8 @@ import {
 	isNodeRef,
 	isTerminalValue,
 	isUnresolvedRef,
-	allSlotsOf
+	allSlotsOf,
+	setOptionalBodyKinds
 } from './node-map.ts';
 import { simplifyRule, inlineGroupRefs, extractRepeatShape, hoistInnerFieldsForTemplate } from './simplify.ts';
 import { compileWordMatcher } from './common.ts';
@@ -72,6 +73,16 @@ export function assemble(
 		existing.push(`${v.parent}_${v.child}`);
 		variantChildrenByParent.set(v.parent, existing);
 	}
+
+	// Identify rule kinds whose resolved body is wholly optional. This
+	// happens primarily through `externalAltDef: blank()` stamping
+	// (`stampStaticExternalAltDefs` collapses `choice(X, blank)` →
+	// `optional(X)` at link time), but detection is generic: any rule
+	// body that's `optional(...)` or `choice(blank, ...)` qualifies. Set
+	// on a module-level pointer in node-map.ts for the slot-value
+	// constructors to consult during the rule walk below.
+	const optionalBodyKinds = collectOptionalBodyKinds(optimized.rules);
+	setOptionalBodyKinds(optionalBodyKinds);
 
 	for (const [kind, rule] of Object.entries(optimized.rules)) {
 		const assemblyRule = optimized.topLevelAliasBodies?.get(kind) ?? rule;
@@ -195,6 +206,11 @@ export function assemble(
 	markParameterlessKinds(nodes);
 	markUserFacing(nodes);
 	markVariantChildrenUserFacing(nodes, optimized.polymorphVariants ?? []);
+
+	// Clear the optional-body lookthrough — subsequent NodeMap consumers
+	// build slots from already-derived AssembledNonterminals and should
+	// not trigger the downgrade again. The set is per-assemble-call scope.
+	setOptionalBodyKinds(null);
 	// Slot-ref hydration is NOT done here — `hydrateSlotRefs(nodes)` is
 	// exported separately so the caller can serialize the unhydrated NodeMap
 	// (e.g. node-model.json5) BEFORE wiring up cyclic AssembledNode refs.
@@ -211,6 +227,52 @@ export function assemble(
 		polymorphFormKinds: computePolymorphFormKinds(nodes),
 		refineForms: optimized.refineForms
 	};
+}
+
+/**
+ * Identify rule kinds whose resolved body is wholly optional — references
+ * to these are effectively optional at every use site, regardless of how
+ * the SYMBOL ref sits in its parent rule. See `currentOptionalBodyKinds`
+ * in node-map.ts for the consumer side.
+ *
+ * A body counts as wholly optional when, stripping transparent wrappers
+ * (alias, token, terminal — none of which change "can this match
+ * invisibly?" semantics), the top-level form is one of:
+ *   - `optional(X)` — the canonical post-stamp shape (DSL-time
+ *     `choice(blank, X)` lowers to this; `stampStaticExternalAltDefs`
+ *     re-applies the same lowering after blank substitution).
+ *   - `choice(...)` containing the blank sentinel. Defensive — the stamp
+ *     pass collapses these to `optional()` already, but authored rules
+ *     might use this shape directly.
+ *
+ * Sittir's `terminal` wrapper appears in promoted rules (e.g.
+ * `_semicolon` becomes `terminal(optional(';'))` after the optimize
+ * fixpoint). Without stripping it, the optionality would be hidden one
+ * layer deep and the slot model would still treat references as
+ * required-single.
+ */
+function collectOptionalBodyKinds(rules: Record<string, Rule>): ReadonlySet<string> {
+	const out = new Set<string>();
+	const isBlank = (r: Rule): boolean =>
+		(r.type === 'choice' && r.members.length === 0) ||
+		(r.type === 'seq' && r.members.length === 0);
+	const unwrap = (r: Rule): Rule => {
+		if (r.type === 'alias' || r.type === 'token' || r.type === 'terminal') {
+			return unwrap((r as { content: Rule }).content);
+		}
+		return r;
+	};
+	for (const [kind, rule] of Object.entries(rules)) {
+		const body = unwrap(rule);
+		if (body.type === 'optional') {
+			out.add(kind);
+			continue;
+		}
+		if (body.type === 'choice' && body.members.some(isBlank)) {
+			out.add(kind);
+		}
+	}
+	return out;
 }
 
 // ---------------------------------------------------------------------------

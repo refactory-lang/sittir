@@ -210,7 +210,7 @@ export function classBodyMember(config: T.ClassBodyMember.Config) {
     semicolon() { return _semicolon; },
     $with: {
       abstractMethodSignature: (value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition) => classBodyMember({ ...config, abstractMethodSignature: value }),
-      semicolon: (value: T.Semicolon | ",") => classBodyMember({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon | ",") => classBodyMember({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -237,21 +237,15 @@ export function _classBodyMethod(config: T.ClassBodyMethod.Config) {
   }, methodsEngine);
 }
 
-export function classBodyMethodSig(config: T.ClassBodyMethodSig.Config) {
-  const _method_signature = config.methodSignature;
-  const _function_signature_automatic_semicolon = config.functionSignatureAutomaticSemicolon;
+export function classBodyMethodSig(child: T.MethodSignature) {
+  const _method_signature = child;
   return withMethods({
     $type: TSKindId.ClassBodyMethodSig as const,
     $source: 2 as const,
     $named: true as const,
     _method_signature,
-    _function_signature_automatic_semicolon,
     methodSignature() { return _method_signature; },
-    functionSignatureAutomaticSemicolon() { return _function_signature_automatic_semicolon; },
-    $with: {
-      methodSignature: (value: T.MethodSignature) => classBodyMethodSig({ ...config, methodSignature: value }),
-      functionSignatureAutomaticSemicolon: (value: T.FunctionSignatureAutomaticSemicolon | ",") => classBodyMethodSig({ ...config, functionSignatureAutomaticSemicolon: value }),
-    },
+    $with: { $child: (v: T.MethodSignature) => classBodyMethodSig(v) },
   }, methodsEngine);
 }
 
@@ -338,7 +332,7 @@ export function _exportStatementDefaultDeclArmDefaultKwValue(config: T.ExportSta
     semicolon() { return _semicolon; },
     $with: {
       value: (value: T.Expression) => _exportStatementDefaultDeclArmDefaultKwValue({ ...config, value: value }),
-      semicolon: (value: T.Semicolon) => _exportStatementDefaultDeclArmDefaultKwValue({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => _exportStatementDefaultDeclArmDefaultKwValue({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -356,7 +350,7 @@ export function exportStatementDefaultFromArm(config: T.ExportStatementDefaultFr
     semicolon() { return _semicolon; },
     $with: {
       exportStatementDefaultFromArmStarFrom: (value: T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause) => exportStatementDefaultFromArm({ ...config, exportStatementDefaultFromArmStarFrom: value }),
-      semicolon: (value: T.Semicolon) => exportStatementDefaultFromArm({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => exportStatementDefaultFromArm({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -424,7 +418,7 @@ export function _exportStatementEqualsExport(config: T._ExportStatementEqualsExp
     semicolon() { return _semicolon; },
     $with: {
       expression: (value: T.Expression) => _exportStatementEqualsExport({ ...config, expression: value }),
-      semicolon: (value: T.Semicolon) => _exportStatementEqualsExport({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => _exportStatementEqualsExport({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -442,7 +436,7 @@ export function _exportStatementNamespaceExport(config: T._ExportStatementNamesp
     semicolon() { return _semicolon; },
     $with: {
       identifier: (value: T.Identifier) => _exportStatementNamespaceExport({ ...config, identifier: value }),
-      semicolon: (value: T.Semicolon) => _exportStatementNamespaceExport({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => _exportStatementNamespaceExport({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -464,7 +458,7 @@ export function _exportStatementTypeExport(config: T._ExportStatementTypeExport.
     $with: {
       exportClause: (value: T.ExportClause) => _exportStatementTypeExport({ ...config, exportClause: value }),
       source: (value?: T.String) => _exportStatementTypeExport({ ...config, source: value }),
-      semicolon: (value: T.Semicolon) => _exportStatementTypeExport({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => _exportStatementTypeExport({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -512,21 +506,17 @@ export function _forHeader(config: T.ForHeader.Config) {
 export function _forHeaderLetConstKind(config: T.ForHeaderLetConstKind.Config) {
   const _kind = coerceKindEnumStorage(config.kind, [["let", TSKindId.Let] as const, ["const", TSKindId.Const] as const]);
   const _left = config.left;
-  const _automatic_semicolon = config.automaticSemicolon;
   return withMethods({
     $type: TSKindId.ForHeaderLetConstKind as const,
     $source: 2 as const,
     $named: true as const,
     _kind,
     _left,
-    _automatic_semicolon,
     kind() { return _kind; },
     left() { return _left; },
-    automaticSemicolon() { return _automatic_semicolon; },
     $with: {
       kind: (value: NonNullable<Parameters<typeof _forHeaderLetConstKind>[0]>['kind']) => _forHeaderLetConstKind({ ...config, kind: value }),
       left: (value: T.Identifier | T.DestructuringPattern) => _forHeaderLetConstKind({ ...config, left: value }),
-      automaticSemicolon: (value?: T.AutomaticSemicolon) => _forHeaderLetConstKind({ ...config, automaticSemicolon: value }),
     },
   }, methodsEngine);
 }
@@ -1489,7 +1479,7 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
   }, methodsEngine);
 }
 
-export function breakStatement(config: T.BreakStatement.Config) {
+export function breakStatement(config: Partial<T.BreakStatement.Config> = {}) {
   const _label = config.label;
   const _semicolon = config.semicolon;
   return withMethods({
@@ -1502,7 +1492,7 @@ export function breakStatement(config: T.BreakStatement.Config) {
     semicolon() { return _semicolon; },
     $with: {
       label: (value?: T.Identifier) => breakStatement({ ...config, label: value }),
-      semicolon: (value: T.Semicolon) => breakStatement({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => breakStatement({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -1676,7 +1666,7 @@ export function classDeclaration(config: T.ClassDeclaration.Config) {
       typeParameters: (value?: T.TypeParameters) => classDeclaration({ ...config, typeParameters: value }),
       classHeritage: (value?: T.ClassHeritage) => classDeclaration({ ...config, classHeritage: value }),
       body: (value: T.ClassBody) => classDeclaration({ ...config, body: value }),
-      automaticSemicolon: (value?: T.AutomaticSemicolon) => classDeclaration({ ...config, automaticSemicolon: value }),
+      automaticSemicolon: (value?: string) => classDeclaration({ ...config, automaticSemicolon: value }),
     },
   }, methodsEngine);
 }
@@ -1749,20 +1739,16 @@ export function classHeritageUFormImplementsClause(config: Omit<ConfigOf<T.Class
   }, methodsEngine);
 }
 
-export function classStaticBlock(config: T.ClassStaticBlock.Config) {
-  const _automatic_semicolon = config.automaticSemicolon;
-  const _body = config.body;
+export function classStaticBlock(body: T.ClassStaticBlock.Config['body']) {
+  const _body = body;
   return withMethods({
     $type: TSKindId.ClassStaticBlock as const,
     $source: 2 as const,
     $named: true as const,
-    _automatic_semicolon,
     _body,
-    automaticSemicolon() { return _automatic_semicolon; },
     body() { return _body; },
     $with: {
-      automaticSemicolon: (value?: T.AutomaticSemicolon) => classStaticBlock({ ...config, automaticSemicolon: value }),
-      body: (value: T.StatementBlock) => classStaticBlock({ ...config, body: value }),
+      body: (value: T.ClassStaticBlock.Config['body']) => classStaticBlock(value),
     },
   }, methodsEngine);
 }
@@ -1883,7 +1869,7 @@ export function constructorType(config: T.ConstructorType.Config) {
   }, methodsEngine);
 }
 
-export function continueStatement(config: T.ContinueStatement.Config) {
+export function continueStatement(config: Partial<T.ContinueStatement.Config> = {}) {
   const _label = config.label;
   const _semicolon = config.semicolon;
   return withMethods({
@@ -1896,12 +1882,12 @@ export function continueStatement(config: T.ContinueStatement.Config) {
     semicolon() { return _semicolon; },
     $with: {
       label: (value?: T.Identifier) => continueStatement({ ...config, label: value }),
-      semicolon: (value: T.Semicolon) => continueStatement({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => continueStatement({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
 
-export function debuggerStatement(semicolon: T.DebuggerStatement.Config['semicolon']) {
+export function debuggerStatement(semicolon?: T.DebuggerStatement.Config['semicolon']) {
   const _semicolon = semicolon;
   return withMethods({
     $type: TSKindId.DebuggerStatement as const,
@@ -1910,7 +1896,7 @@ export function debuggerStatement(semicolon: T.DebuggerStatement.Config['semicol
     _semicolon,
     semicolon() { return _semicolon; },
     $with: {
-      semicolon: (value: T.DebuggerStatement.Config['semicolon']) => debuggerStatement(value),
+      semicolon: (value?: T.DebuggerStatement.Config['semicolon']) => debuggerStatement(value),
     },
   }, methodsEngine);
 }
@@ -2148,7 +2134,7 @@ export function exportStatementTypeExport(config: T.ExportStatementTypeExport.Co
     $with: {
       exportClause: (value: T.ExportClause) => exportStatementTypeExport({ ...config, exportClause: value }),
       source: (value?: T.String) => exportStatementTypeExport({ ...config, source: value }),
-      semicolon: (value: T.Semicolon) => exportStatementTypeExport({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => exportStatementTypeExport({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -2166,7 +2152,7 @@ export function exportStatementEqualsExport(config: T.ExportStatementEqualsExpor
     semicolon() { return _semicolon; },
     $with: {
       expression: (value: T.Expression) => exportStatementEqualsExport({ ...config, expression: value }),
-      semicolon: (value: T.Semicolon) => exportStatementEqualsExport({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => exportStatementEqualsExport({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -2184,7 +2170,7 @@ export function exportStatementNamespaceExport(config: T.ExportStatementNamespac
     semicolon() { return _semicolon; },
     $with: {
       identifier: (value: T.Identifier) => exportStatementNamespaceExport({ ...config, identifier: value }),
-      semicolon: (value: T.Semicolon) => exportStatementNamespaceExport({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => exportStatementNamespaceExport({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -2272,7 +2258,7 @@ export function expressionStatement(config: T.ExpressionStatement.Config) {
     semicolon() { return _semicolon; },
     $with: {
       expressions: (value: T.Expressions) => expressionStatement({ ...config, expressions: value }),
-      semicolon: (value: T.Semicolon) => expressionStatement({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => expressionStatement({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -2421,7 +2407,6 @@ export function functionDeclaration(config: T.FunctionDeclaration.Config) {
   const _parameters = config.parameters;
   const _return_type = config.returnType;
   const _body = config.body;
-  const _automatic_semicolon = config.automaticSemicolon;
   return withMethods({
     $type: TSKindId.FunctionDeclaration as const,
     $source: 2 as const,
@@ -2432,14 +2417,12 @@ export function functionDeclaration(config: T.FunctionDeclaration.Config) {
     _parameters,
     _return_type,
     _body,
-    _automatic_semicolon,
     asyncMarker() { return _async_marker; },
     name() { return _name; },
     typeParameters() { return _type_parameters; },
     parameters() { return _parameters; },
     returnType() { return _return_type; },
     body() { return _body; },
-    automaticSemicolon() { return _automatic_semicolon; },
     $with: {
       asyncMarker: (value?: NonNullable<Parameters<typeof functionDeclaration>[0]>['asyncMarker']) => functionDeclaration({ ...config, asyncMarker: value }),
       name: (value: T.Identifier) => functionDeclaration({ ...config, name: value }),
@@ -2447,7 +2430,6 @@ export function functionDeclaration(config: T.FunctionDeclaration.Config) {
       parameters: (value: T.FormalParameters) => functionDeclaration({ ...config, parameters: value }),
       returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => functionDeclaration({ ...config, returnType: value }),
       body: (value: T.StatementBlock) => functionDeclaration({ ...config, body: value }),
-      automaticSemicolon: (value?: T.AutomaticSemicolon) => functionDeclaration({ ...config, automaticSemicolon: value }),
     },
   }, methodsEngine);
 }
@@ -2515,7 +2497,7 @@ export function functionSignature(config: T.FunctionSignature.Config) {
       typeParameters: (value?: T.TypeParameters) => functionSignature({ ...config, typeParameters: value }),
       parameters: (value: T.FormalParameters) => functionSignature({ ...config, parameters: value }),
       returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => functionSignature({ ...config, returnType: value }),
-      semicolon: (value: T.Semicolon | T.FunctionSignatureAutomaticSemicolon) => functionSignature({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => functionSignature({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -2583,7 +2565,6 @@ export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclarat
   const _parameters = config.parameters;
   const _return_type = config.returnType;
   const _body = config.body;
-  const _automatic_semicolon = config.automaticSemicolon;
   return withMethods({
     $type: TSKindId.GeneratorFunctionDeclaration as const,
     $source: 2 as const,
@@ -2594,14 +2575,12 @@ export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclarat
     _parameters,
     _return_type,
     _body,
-    _automatic_semicolon,
     asyncMarker() { return _async_marker; },
     name() { return _name; },
     typeParameters() { return _type_parameters; },
     parameters() { return _parameters; },
     returnType() { return _return_type; },
     body() { return _body; },
-    automaticSemicolon() { return _automatic_semicolon; },
     $with: {
       asyncMarker: (value?: NonNullable<Parameters<typeof generatorFunctionDeclaration>[0]>['asyncMarker']) => generatorFunctionDeclaration({ ...config, asyncMarker: value }),
       name: (value: T.Identifier) => generatorFunctionDeclaration({ ...config, name: value }),
@@ -2609,7 +2588,6 @@ export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclarat
       parameters: (value: T.FormalParameters) => generatorFunctionDeclaration({ ...config, parameters: value }),
       returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => generatorFunctionDeclaration({ ...config, returnType: value }),
       body: (value: T.StatementBlock) => generatorFunctionDeclaration({ ...config, body: value }),
-      automaticSemicolon: (value?: T.AutomaticSemicolon) => generatorFunctionDeclaration({ ...config, automaticSemicolon: value }),
     },
   }, methodsEngine);
 }
@@ -2713,7 +2691,7 @@ export function importAlias(config: T.ImportAlias.Config) {
     $with: {
       name: (value: T.Identifier) => importAlias({ ...config, name: value }),
       value: (value: T.Identifier | T.NestedIdentifier) => importAlias({ ...config, value: value }),
-      semicolon: (value: T.Semicolon) => importAlias({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => importAlias({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -2927,7 +2905,7 @@ export function importStatement(config: T.ImportStatement.Config) {
       importClause: (value?: NonNullable<Parameters<typeof importStatement>[0]>['importClause']) => importStatement({ ...config, importClause: value }),
       fromClauses: (...values: NonEmptyArray<T.ImportClause | "from" | T.String | T.ImportRequireClause>) => importStatement({ ...config, fromClause: values }),
       importAttribute: (value?: T.ImportAttribute) => importStatement({ ...config, importAttribute: value }),
-      semicolon: (value: T.Semicolon) => importStatement({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => importStatement({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -3145,7 +3123,7 @@ export function lexicalDeclaration(config: T.LexicalDeclaration.Config) {
     $with: {
       kind: (value: NonNullable<Parameters<typeof lexicalDeclaration>[0]>['kind']) => lexicalDeclaration({ ...config, kind: value }),
       declarators: (...values: NonEmptyArray<T.VariableDeclarator>) => lexicalDeclaration({ ...config, declarators: values }),
-      semicolon: (value: T.Semicolon) => lexicalDeclaration({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => lexicalDeclaration({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -4034,7 +4012,7 @@ export function restType(type: T.RestType.Config['type']) {
   }, methodsEngine);
 }
 
-export function returnStatement(config: T.ReturnStatement.Config) {
+export function returnStatement(config: Partial<T.ReturnStatement.Config> = {}) {
   const _expressions = config.expressions;
   const _semicolon = config.semicolon;
   return withMethods({
@@ -4047,7 +4025,7 @@ export function returnStatement(config: T.ReturnStatement.Config) {
     semicolon() { return _semicolon; },
     $with: {
       expressions: (value?: T.Expressions) => returnStatement({ ...config, expressions: value }),
-      semicolon: (value: T.Semicolon) => returnStatement({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => returnStatement({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -4110,7 +4088,7 @@ export function statementBlock(config: Partial<T.StatementBlock.Config> = {}) {
     automaticSemicolon() { return _automatic_semicolon; },
     $with: {
       statements: (...values: T.Statement[]) => statementBlock({ ...config, statements: values }),
-      automaticSemicolon: (value?: T.AutomaticSemicolon) => statementBlock({ ...config, automaticSemicolon: value }),
+      automaticSemicolon: (value?: string) => statementBlock({ ...config, automaticSemicolon: value }),
     },
   }, methodsEngine);
 }
@@ -4362,7 +4340,7 @@ export function throwStatement(config: T.ThrowStatement.Config) {
     semicolon() { return _semicolon; },
     $with: {
       expressions: (value: T.Expressions) => throwStatement({ ...config, expressions: value }),
-      semicolon: (value: T.Semicolon) => throwStatement({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => throwStatement({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -4449,7 +4427,7 @@ export function typeAliasDeclaration(config: T.TypeAliasDeclaration.Config) {
       name: (value: T.TypeIdentifier) => typeAliasDeclaration({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => typeAliasDeclaration({ ...config, typeParameters: value }),
       value: (value: T.Type) => typeAliasDeclaration({ ...config, value: value }),
-      semicolon: (value: T.Semicolon) => typeAliasDeclaration({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => typeAliasDeclaration({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -4698,7 +4676,7 @@ export function variableDeclaration(config: T.VariableDeclaration.Config) {
     semicolon() { return _semicolon; },
     $with: {
       declarators: (...values: NonEmptyArray<T.VariableDeclarator>) => variableDeclaration({ ...config, declarators: values }),
-      semicolon: (value: T.Semicolon) => variableDeclaration({ ...config, semicolon: value }),
+      semicolon: (value?: T.Semicolon) => variableDeclaration({ ...config, semicolon: value }),
     },
   }, methodsEngine);
 }
@@ -4775,16 +4753,6 @@ export function yieldExpression(expression?: T.YieldExpression.Config['expressio
   }, methodsEngine);
 }
 
-export function automaticSemicolon(text: string) {
-  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_automatic_semicolon: text must be non-empty`);
-  return withMethods({
-    $type: TSKindId.AutomaticSemicolon as const,
-    $source: 2 as const,
-    $named: true as const,
-    $text: text,
-  }, methodsEngine);
-}
-
 export function templateChars(text: string) {
   if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_template_chars: text must be non-empty`);
   return withMethods({
@@ -4829,16 +4797,6 @@ export function jsxText(text: string) {
   if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
   return withMethods({
     $type: TSKindId.JsxText as const,
-    $source: 2 as const,
-    $named: true as const,
-    $text: text,
-  }, methodsEngine);
-}
-
-export function functionSignatureAutomaticSemicolon(text: string) {
-  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_function_signature_automatic_semicolon: text must be non-empty`);
-  return withMethods({
-    $type: TSKindId.FunctionSignatureAutomaticSemicolon as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
@@ -5099,13 +5057,11 @@ export type FluentKindMap = {
   "while_statement": FluentNode<"while_statement", T.WhileStatement.Config>;
   "with_statement": FluentNode<"with_statement", T.WithStatement.Config>;
   "yield_expression": FluentNode<"yield_expression", T.YieldExpression.Config>;
-  "_automatic_semicolon": T.AutomaticSemicolon;
   "_template_chars": T.TemplateChars;
   "_ternary_qmark": T.TernaryQmark;
   "html_comment": T.HtmlComment;
   "||": T.Oror;
   "jsx_text": T.JsxText;
-  "_function_signature_automatic_semicolon": T.FunctionSignatureAutomaticSemicolon;
   "__error_recovery": T.ErrorRecovery;
 };
 
@@ -5353,13 +5309,11 @@ export const _factoryMap = {
   "while_statement": whileStatement,
   "with_statement": withStatement,
   "yield_expression": yieldExpression,
-  "_automatic_semicolon": automaticSemicolon,
   "_template_chars": templateChars,
   "_ternary_qmark": ternaryQmark,
   "html_comment": htmlComment,
   "||": oror,
   "jsx_text": jsxText,
-  "_function_signature_automatic_semicolon": functionSignatureAutomaticSemicolon,
   "__error_recovery": errorRecovery,
 } as const;
 export type _FactoryMap = typeof _factoryMap;

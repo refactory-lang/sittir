@@ -68,6 +68,48 @@ import type { SlotOrigin } from './slot-model.ts';
  */
 export type Multiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray';
 
+// ---------------------------------------------------------------------------
+// Optional-body lookthrough (module-level current pointer)
+// ---------------------------------------------------------------------------
+//
+// Some rule kinds, after Link-phase stamping (see
+// `stampStaticExternalAltDefs` for blank-bodied externalAltDef entries),
+// resolve to a body that's wholly optional — `optional(X)` or a choice
+// containing the blank sentinel. References to such a kind are
+// effectively optional even when the SYMBOL ref itself sits at a
+// non-optional position in the parent rule (e.g. tree-sitter externals
+// like `_automatic_semicolon` that fire invisibly at runtime — the
+// grammar requires them syntactically but the parser can match them
+// without producing a CST token).
+//
+// `currentOptionalBodyKinds` is set by `assemble.ts` for the duration of
+// the rule walk and consulted by the slot-value constructors to downgrade
+// the multiplicity of single-position refs to such kinds from `'single'`
+// to `'optional'`. Without this look-through, wrap-side reads would
+// assert required-singular and reject ASI-terminated corpus entries.
+let currentOptionalBodyKinds: ReadonlySet<string> | null = null;
+
+/** Set by `assemble.ts` before running the rule walk; cleared after. */
+export function setOptionalBodyKinds(kinds: ReadonlySet<string> | null): void {
+	currentOptionalBodyKinds = kinds;
+}
+
+/** True iff `kindName` resolves to a wholly-optional rule body. */
+function isOptionalBodyKind(kindName: string): boolean {
+	return currentOptionalBodyKinds !== null && currentOptionalBodyKinds.has(kindName);
+}
+
+/**
+ * Downgrade `'single'` → `'optional'` when the referenced kind has a
+ * wholly-optional resolved body. Pass-through otherwise.
+ */
+function relaxForOptionalBody(refName: string, multiplicity: Multiplicity): Multiplicity {
+	if (multiplicity !== 'single') return multiplicity;
+	const cleanName = refName.replace(/^_+/, '') || refName;
+	if (isOptionalBodyKind(refName) || isOptionalBodyKind(cleanName)) return 'optional';
+	return multiplicity;
+}
+
 /**
  * Unresolved kind reference — used during derivation, before the
  * `resolveSlotRefs` pass replaces it with the actual AssembledNode.
@@ -939,7 +981,7 @@ function deriveFieldsRaw(
 						{
 							kind: 'node-ref',
 							node: { kind: 'unresolved-ref', name: refName },
-							multiplicity: outerMultiplicity
+							multiplicity: relaxForOptionalBody(refName, outerMultiplicity)
 						}
 					],
 					hasTrailing: false,
@@ -967,7 +1009,7 @@ function deriveFieldsRaw(
 					values: rule.subtypes.map((name) => ({
 						kind: 'node-ref' as const,
 						node: { kind: 'unresolved-ref' as const, name },
-						multiplicity: outerMultiplicity
+						multiplicity: relaxForOptionalBody(name, outerMultiplicity)
 					})),
 					hasTrailing: false,
 					hasLeading: false,
@@ -1173,24 +1215,26 @@ function deriveValuesForRule(
 	kindEntries?: readonly GeneratedKindEntry[]
 ): NodeOrTerminal[] {
 	switch (rule.type) {
-		case 'symbol':
+		case 'symbol': {
 			// Ref kind: resolve to SOURCE kind (`aliasedFrom`, when the
 			// symbol came from an alias). Only source kinds exist in
 			// rules post-synthesis-removal.
+			const refName = rule.aliasedFrom ?? rule.name;
 			return [
 				{
 					kind: 'node-ref',
-					node: { kind: 'unresolved-ref', name: rule.aliasedFrom ?? rule.name },
-					multiplicity
+					node: { kind: 'unresolved-ref', name: refName },
+					multiplicity: relaxForOptionalBody(refName, multiplicity)
 				}
 			];
+		}
 		case 'supertype':
 			// Supertype refs expand to their subtype list — each subtype is a
 			// valid concrete kind the slot can hold.
 			return rule.subtypes.map((name) => ({
 				kind: 'node-ref' as const,
 				node: { kind: 'unresolved-ref' as const, name },
-				multiplicity
+				multiplicity: relaxForOptionalBody(name, multiplicity)
 			}));
 		case 'string':
 			return [

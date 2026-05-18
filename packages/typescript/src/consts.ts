@@ -211,10 +211,8 @@ export const LEAF_KINDS = [
   '_accessor_kind',
   '_async_marker',
   '_augmented_assignment_expression_operator',
-  '_automatic_semicolon',
   '_const_marker',
   '_export_specifier_export_kind',
-  '_function_signature_automatic_semicolon',
   '_import_attribute_object',
   '_kind',
   '_kw_abstract_marker',
@@ -233,6 +231,7 @@ export const LEAF_KINDS = [
   '_public_field_definition_optionality_marker',
   '_readonly_marker',
   '_reserved_identifier',
+  '_semicolon',
   '_static_marker',
   '_string_opening',
   '_template_chars',
@@ -560,12 +559,10 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "global": 154,
   "accessor": 155,
   "using": 156,
-  "_automatic_semicolon": 159,
   "_template_chars": 160,
   "_ternary_qmark": 161,
   "html_comment": 162,
   "jsx_text": 163,
-  "_function_signature_automatic_semicolon": 164,
   "__error_recovery": 165,
   "program": 166,
   "export_statement": 167,
@@ -839,12 +836,10 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [154]: "global",
   [155]: "accessor",
   [156]: "using",
-  [159]: "_automatic_semicolon",
   [160]: "_template_chars",
   [161]: "_ternary_qmark",
   [162]: "html_comment",
   [163]: "jsx_text",
-  [164]: "_function_signature_automatic_semicolon",
   [165]: "__error_recovery",
   [166]: "program",
   [167]: "export_statement",
@@ -1118,12 +1113,10 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "global", id: 154, enumName: "AnonGlobal", cName: "anon_sym_global" },
   { name: "accessor", id: 155, enumName: "AnonAccessor", cName: "anon_sym_accessor" },
   { name: "using", id: 156, enumName: "AnonUsing", cName: "anon_sym_using" },
-  { name: "_automatic_semicolon", id: 159, enumName: "AutomaticSemicolon", cName: "sym__automatic_semicolon" },
   { name: "_template_chars", id: 160, enumName: "TemplateChars", cName: "sym__template_chars" },
   { name: "_ternary_qmark", id: 161, enumName: "TernaryQmark", cName: "sym__ternary_qmark" },
   { name: "html_comment", id: 162, enumName: "HtmlComment", cName: "sym_html_comment" },
   { name: "jsx_text", id: 163, enumName: "JsxText", cName: "sym_jsx_text" },
-  { name: "_function_signature_automatic_semicolon", id: 164, enumName: "FunctionSignatureAutomaticSemicolon", cName: "sym__function_signature_automatic_semicolon" },
   { name: "__error_recovery", id: 165, enumName: "ErrorRecovery", cName: "sym___error_recovery" },
   { name: "program", id: 166, enumName: "Program", cName: "sym_program" },
   { name: "export_statement", id: 167, enumName: "ExportStatement", cName: "sym_export_statement" },
@@ -1640,11 +1633,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_class_body_member': [
     { name: 'abstractMethodSignature', required: true, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   '_class_body_method_sig': [
     { name: 'methodSignature', required: true, multiple: false },
-    { name: 'functionSignatureAutomaticSemicolon', required: true, multiple: false },
   ],
   '_class_heritage_extends_clause': [
     { name: 'extendsClause', required: true, multiple: false },
@@ -1655,7 +1647,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_export_statement_default_from_arm': [
     { name: 'exportStatementDefaultFromArmStarFrom', required: true, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   '_export_statement_default_from_arm_clause_from': [
     { name: 'exportClause', required: true, multiple: false },
@@ -1670,16 +1662,16 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_export_statement_equals_export': [
     { name: 'expression', required: true, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   '_export_statement_namespace_export': [
     { name: 'identifier', required: true, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   '_export_statement_type_export': [
     { name: 'exportClause', required: true, multiple: false },
     { name: 'source', required: false, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   '_for_header_lhs': [
     { name: 'left', required: true, multiple: false },
@@ -1803,7 +1795,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'break_statement': [
     { name: 'label', required: false, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'call_expression': [
     { name: 'callExpressionCall', required: true, multiple: false },
@@ -1850,7 +1842,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'implementsClause', required: true, multiple: false },
   ],
   'class_static_block': [
-    { name: 'automaticSemicolon', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'computed_property_name': [
@@ -1879,10 +1870,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'continue_statement': [
     { name: 'label', required: false, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'debugger_statement': [
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'decorator': [
     { name: 'identifier', required: true, multiple: false },
@@ -1939,20 +1930,20 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'export_statement_equals_export': [
     { name: 'expression', required: true, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'export_statement_namespace_export': [
     { name: 'identifier', required: true, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'export_statement_type_export': [
     { name: 'exportClause', required: true, multiple: false },
     { name: 'source', required: false, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'expression_statement': [
     { name: 'expressions', required: true, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'extends_clause': [
     { name: 'values', required: true, multiple: true },
@@ -1996,7 +1987,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'parameters', required: true, multiple: false },
     { name: 'returnType', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
-    { name: 'automaticSemicolon', required: false, multiple: false },
   ],
   'function_expression': [
     { name: 'asyncMarker', required: false, multiple: false },
@@ -2012,7 +2002,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
     { name: 'returnType', required: false, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'function_type': [
     { name: 'typeParameters', required: false, multiple: false },
@@ -2034,7 +2024,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'parameters', required: true, multiple: false },
     { name: 'returnType', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
-    { name: 'automaticSemicolon', required: false, multiple: false },
   ],
   'generic_type': [
     { name: 'name', required: true, multiple: false },
@@ -2051,7 +2040,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'import_alias': [
     { name: 'name', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'import_attribute': [
     { name: 'object', required: true, multiple: false },
@@ -2087,7 +2076,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'importClause', required: false, multiple: false },
     { name: 'fromClauses', required: true, multiple: true },
     { name: 'importAttribute', required: false, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'index_signature': [
     { name: 'sign', required: false, multiple: false },
@@ -2158,7 +2147,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'lexical_declaration': [
     { name: 'kind', required: true, multiple: false },
     { name: 'declarators', required: true, multiple: true },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'literal_type': [
     { name: 'number', required: true, multiple: false },
@@ -2334,7 +2323,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'return_statement': [
     { name: 'expressions', required: false, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'satisfies_expression': [
     { name: 'expression', required: true, multiple: false },
@@ -2393,7 +2382,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'throw_statement': [
     { name: 'expressions', required: true, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'try_statement': [
     { name: 'body', required: true, multiple: false },
@@ -2411,7 +2400,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'value', required: true, multiple: false },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'type_annotation': [
     { name: 'type', required: true, multiple: false },
@@ -2456,7 +2445,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'variable_declaration': [
     { name: 'declarators', required: true, multiple: true },
-    { name: 'semicolon', required: true, multiple: false },
+    { name: 'semicolon', required: false, multiple: false },
   ],
   'variable_declarator': [
     { name: 'name', required: true, multiple: false },

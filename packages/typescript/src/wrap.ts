@@ -131,7 +131,6 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
   "_module_export_name": new Set(["identifier","string"]),
   "_property_identifier": new Set(["identifier","_reserved_identifier","reserved_identifier"]),
   "_property_name": new Set(["_property_identifier","property_identifier","identifier","_reserved_identifier","reserved_identifier","private_property_identifier","string","number","computed_property_name"]),
-  "_semicolon": new Set(["_automatic_semicolon","automatic_semicolon",";"]),
   "_shorthand_property_identifier": new Set(["identifier","_reserved_identifier","reserved_identifier"]),
   "_shorthand_property_identifier_pattern": new Set(["identifier","_reserved_identifier","reserved_identifier"]),
   "_statement_identifier": new Set(["identifier","_reserved_identifier","reserved_identifier"]),
@@ -479,10 +478,10 @@ export function wrapClassBodyMember(data: T.ClassBodyMember, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ClassBodyMember as const,
     _abstract_method_signature: normalizeSingularWrapSlot((data._abstract_method_signature ?? data._index_signature ?? data._method_signature ?? data._public_field_definition), "abstract_method_signature", true, data.$type),
-    _semicolon: normalizeSingularWrapSlot((data._automatic_semicolon ?? data["_;"] ?? data._semicolon), "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     abstractMethodSignature() { return drillIn<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>(this._abstract_method_signature, tree); },
-    semicolon() { return drillIn<T.Semicolon | ",">(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | "," | undefined>(this._semicolon, tree); },
     $with: {
       abstractMethodSignature: (v: NonNullable<T.ClassBodyMember['_abstract_method_signature']>) => wrapClassBodyMember({ ...data, _abstract_method_signature: v }, tree),
       semicolon: (v: NonNullable<T.ClassBodyMember['_semicolon']>) => wrapClassBodyMember({ ...data, _semicolon: v }, tree),
@@ -497,7 +496,7 @@ export function wrapClassBodyMethod(data: T.ClassBodyMethod, tree: TreeHandle) {
     $type: TSKindId.ClassBodyMethod as const,
     _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator"),
     _method_definition: normalizeSingularWrapSlot(data._method_definition, "method_definition", true, data.$type),
-    _semicolon: normalizeSingularWrapSlot((data._automatic_semicolon ?? data["_;"] ?? data._semicolon), "semicolon", false, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     decorators() { return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree); },
     methodDefinition() { return drillIn<T.MethodDefinition>(this._method_definition, tree); },
@@ -516,14 +515,9 @@ export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHan
     ...data,
     $type: TSKindId.ClassBodyMethodSig as const,
     _method_signature: normalizeSingularWrapSlot(data._method_signature, "method_signature", true, data.$type),
-    _function_signature_automatic_semicolon: normalizeSingularWrapSlot(data._function_signature_automatic_semicolon, "function_signature_automatic_semicolon", true, data.$type),
 
     methodSignature() { return drillIn<T.MethodSignature>(this._method_signature, tree); },
-    functionSignatureAutomaticSemicolon() { return drillIn<T.FunctionSignatureAutomaticSemicolon | ",">(this._function_signature_automatic_semicolon, tree); },
-    $with: {
-      methodSignature: (v: NonNullable<T.ClassBodyMethodSig['_method_signature']>) => wrapClassBodyMethodSig({ ...data, _method_signature: v }, tree),
-      functionSignatureAutomaticSemicolon: (v: NonNullable<T.ClassBodyMethodSig['_function_signature_automatic_semicolon']>) => wrapClassBodyMethodSig({ ...data, _function_signature_automatic_semicolon: v }, tree),
-    },
+    $with: { $children: (...vs: readonly [never]) => wrapClassBodyMethodSig({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -607,10 +601,10 @@ export function wrapExportStatementDefaultDeclArmDefaultKwValue(data: T.ExportSt
     ...data,
     $type: TSKindId.ExportStatementDefaultDeclArmDefaultKwValue as const,
     _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
-    _semicolon: normalizeSingularWrapSlot((data._automatic_semicolon ?? data["_;"] ?? data._semicolon), "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     value() { return drillIn<T.Expression>(this._value, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       value: (v: NonNullable<T.ExportStatementDefaultDeclArmDefaultKwValue['_value']>) => wrapExportStatementDefaultDeclArmDefaultKwValue({ ...data, _value: v }, tree),
       semicolon: (v: NonNullable<T.ExportStatementDefaultDeclArmDefaultKwValue['_semicolon']>) => wrapExportStatementDefaultDeclArmDefaultKwValue({ ...data, _semicolon: v }, tree),
@@ -624,10 +618,10 @@ export function wrapExportStatementDefaultFromArm(data: T.ExportStatementDefault
     ...data,
     $type: TSKindId.ExportStatementDefaultFromArm as const,
     _export_statement_default_from_arm_star_from: normalizeSingularWrapSlot((data._export_statement_default_from_arm_star_from ?? data._export_statement_default_from_arm_ns_from ?? data._export_statement_default_from_arm_clause_from ?? data._export_clause), "export_statement_default_from_arm_star_from", true, data.$type),
-    _semicolon: normalizeSingularWrapSlot((data._automatic_semicolon ?? data["_;"] ?? data._semicolon), "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     exportStatementDefaultFromArmStarFrom() { return drillIn<T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause>(this._export_statement_default_from_arm_star_from, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       exportStatementDefaultFromArmStarFrom: (v: NonNullable<T.ExportStatementDefaultFromArm['_export_statement_default_from_arm_star_from']>) => wrapExportStatementDefaultFromArm({ ...data, _export_statement_default_from_arm_star_from: v }, tree),
       semicolon: (v: NonNullable<T.ExportStatementDefaultFromArm['_semicolon']>) => wrapExportStatementDefaultFromArm({ ...data, _semicolon: v }, tree),
@@ -689,10 +683,10 @@ export function wrap_ExportStatementEqualsExport(data: T._ExportStatementEqualsE
     ...data,
     $type: TSKindId._ExportStatementEqualsExport as const,
     _expression: normalizeSingularWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._expression), "expression", true, data.$type),
-    _semicolon: normalizeSingularWrapSlot((data._automatic_semicolon ?? data["_;"] ?? data._semicolon), "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     expression() { return drillIn<T.Expression>(this._expression, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       expression: (v: NonNullable<T._ExportStatementEqualsExport['_expression']>) => wrap_ExportStatementEqualsExport({ ...data, _expression: v }, tree),
       semicolon: (v: NonNullable<T._ExportStatementEqualsExport['_semicolon']>) => wrap_ExportStatementEqualsExport({ ...data, _semicolon: v }, tree),
@@ -706,10 +700,10 @@ export function wrap_ExportStatementNamespaceExport(data: T._ExportStatementName
     ...data,
     $type: TSKindId._ExportStatementNamespaceExport as const,
     _identifier: normalizeSingularWrapSlot(data._identifier, "identifier", true, data.$type),
-    _semicolon: normalizeSingularWrapSlot((data._automatic_semicolon ?? data["_;"] ?? data._semicolon), "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     identifier() { return drillIn<T.Identifier>(this._identifier, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       identifier: (v: NonNullable<T._ExportStatementNamespaceExport['_identifier']>) => wrap_ExportStatementNamespaceExport({ ...data, _identifier: v }, tree),
       semicolon: (v: NonNullable<T._ExportStatementNamespaceExport['_semicolon']>) => wrap_ExportStatementNamespaceExport({ ...data, _semicolon: v }, tree),
@@ -724,11 +718,11 @@ export function wrap_ExportStatementTypeExport(data: T._ExportStatementTypeExpor
     $type: TSKindId._ExportStatementTypeExport as const,
     _export_clause: normalizeSingularWrapSlot(data._export_clause, "export_clause", true, data.$type),
     _source: normalizeSingularWrapSlot(data._source, "source", false, data.$type),
-    _semicolon: normalizeSingularWrapSlot((data._automatic_semicolon ?? data["_;"] ?? data._semicolon), "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     exportClause() { return drillIn<T.ExportClause>(this._export_clause, tree); },
     source() { return drillIn<T.String | undefined>(this._source, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       exportClause: (v: NonNullable<T._ExportStatementTypeExport['_export_clause']>) => wrap_ExportStatementTypeExport({ ...data, _export_clause: v }, tree),
       source: (v: NonNullable<T._ExportStatementTypeExport['_source']>) => wrap_ExportStatementTypeExport({ ...data, _source: v }, tree),
@@ -781,15 +775,12 @@ export function wrapForHeaderLetConstKind(data: T.ForHeaderLetConstKind, tree: T
     $type: TSKindId.ForHeaderLetConstKind as const,
     _kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._kind, "kind", true, data.$type)),
     _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
-    _automatic_semicolon: normalizeSingularWrapSlot(data._automatic_semicolon, "automatic_semicolon", false, data.$type),
 
     kind() { return this._kind; },
     left() { return drillIn<T.Identifier | T.DestructuringPattern>(this._left, tree); },
-    automaticSemicolon() { return drillIn<T.AutomaticSemicolon | undefined>(this._automatic_semicolon, tree); },
     $with: {
       kind: (v: NonNullable<T.ForHeaderLetConstKind['_kind']>) => wrapForHeaderLetConstKind({ ...data, _kind: v }, tree),
       left: (v: NonNullable<T.ForHeaderLetConstKind['_left']>) => wrapForHeaderLetConstKind({ ...data, _left: v }, tree),
-      automaticSemicolon: (v: NonNullable<T.ForHeaderLetConstKind['_automatic_semicolon']>) => wrapForHeaderLetConstKind({ ...data, _automatic_semicolon: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1666,10 +1657,10 @@ export function wrapBreakStatement(data: T.BreakStatement, tree: TreeHandle) {
     ...data,
     $type: TSKindId.BreakStatement as const,
     _label: normalizeSingularWrapSlot(data._label, "label", false, data.$type),
-    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     label() { return drillAs<T.Identifier | undefined>(this._label, tree, "statement_identifier", "identifier"); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       label: (v: NonNullable<T.BreakStatement['_label']>) => wrapBreakStatement({ ...data, _label: v }, tree),
       semicolon: (v: NonNullable<T.BreakStatement['_semicolon']>) => wrapBreakStatement({ ...data, _semicolon: v }, tree),
@@ -1792,7 +1783,7 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     classHeritage() { return drillIn<T.ClassHeritage | undefined>(this._class_heritage, tree); },
     body() { return drillIn<T.ClassBody>(this._body, tree); },
-    automaticSemicolon() { return drillIn<T.AutomaticSemicolon | undefined>(this._automatic_semicolon, tree); },
+    automaticSemicolon() { return drillIn<string | undefined>(this._automatic_semicolon, tree); },
     $with: {
       decorators: (...v: NonNullable<T.ClassDeclaration['_decorator']>[number][]) => wrapClassDeclaration({ ...data, _decorator: v }, tree),
       name: (v: NonNullable<T.ClassDeclaration['_name']>) => wrapClassDeclaration({ ...data, _name: v }, tree),
@@ -1853,13 +1844,10 @@ export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassStaticBlock as const,
-    _automatic_semicolon: normalizeSingularWrapSlot(data._automatic_semicolon, "automatic_semicolon", false, data.$type),
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
-    automaticSemicolon() { return drillIn<T.AutomaticSemicolon | undefined>(this._automatic_semicolon, tree); },
     body() { return drillIn<T.StatementBlock>(this._body, tree); },
     $with: {
-      automaticSemicolon: (v: NonNullable<T.ClassStaticBlock['_automatic_semicolon']>) => wrapClassStaticBlock({ ...data, _automatic_semicolon: v }, tree),
       body: (v: NonNullable<T.ClassStaticBlock['_body']>) => wrapClassStaticBlock({ ...data, _body: v }, tree),
     },
   }, methodsEngine);
@@ -1968,10 +1956,10 @@ export function wrapContinueStatement(data: T.ContinueStatement, tree: TreeHandl
     ...data,
     $type: TSKindId.ContinueStatement as const,
     _label: normalizeSingularWrapSlot(data._label, "label", false, data.$type),
-    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     label() { return drillAs<T.Identifier | undefined>(this._label, tree, "statement_identifier", "identifier"); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       label: (v: NonNullable<T.ContinueStatement['_label']>) => wrapContinueStatement({ ...data, _label: v }, tree),
       semicolon: (v: NonNullable<T.ContinueStatement['_semicolon']>) => wrapContinueStatement({ ...data, _semicolon: v }, tree),
@@ -1984,9 +1972,9 @@ export function wrapDebuggerStatement(data: T.DebuggerStatement, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.DebuggerStatement as const,
-    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       semicolon: (v: NonNullable<T.DebuggerStatement['_semicolon']>) => wrapDebuggerStatement({ ...data, _semicolon: v }, tree),
     },
@@ -2198,11 +2186,11 @@ export function wrapExportStatementTypeExport(data: T.ExportStatementTypeExport,
     ...data,
     _export_clause: normalizeSingularWrapSlot(data._export_clause, "export_clause", true, data.$type),
     _source: normalizeSingularWrapSlot(data._source, "source", false, data.$type),
-    _semicolon: normalizeSingularWrapSlot((data._automatic_semicolon ?? data["_;"] ?? data._semicolon), "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     exportClause() { return drillIn<T.ExportClause>(this._export_clause, tree); },
     source() { return drillIn<T.String | undefined>(this._source, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       exportClause: (v: NonNullable<T.ExportStatementTypeExport['_export_clause']>) => wrapExportStatementTypeExport({ ...data, _export_clause: v }, tree),
       source: (v: NonNullable<T.ExportStatementTypeExport['_source']>) => wrapExportStatementTypeExport({ ...data, _source: v }, tree),
@@ -2216,10 +2204,10 @@ export function wrapExportStatementEqualsExport(data: T.ExportStatementEqualsExp
   const _node = withMethods({
     ...data,
     _expression: normalizeSingularWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._expression), "expression", true, data.$type),
-    _semicolon: normalizeSingularWrapSlot((data._automatic_semicolon ?? data["_;"] ?? data._semicolon), "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     expression() { return drillIn<T.Expression>(this._expression, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       expression: (v: NonNullable<T.ExportStatementEqualsExport['_expression']>) => wrapExportStatementEqualsExport({ ...data, _expression: v }, tree),
       semicolon: (v: NonNullable<T.ExportStatementEqualsExport['_semicolon']>) => wrapExportStatementEqualsExport({ ...data, _semicolon: v }, tree),
@@ -2232,10 +2220,10 @@ export function wrapExportStatementNamespaceExport(data: T.ExportStatementNamesp
   const _node = withMethods({
     ...data,
     _identifier: normalizeSingularWrapSlot(data._identifier, "identifier", true, data.$type),
-    _semicolon: normalizeSingularWrapSlot((data._automatic_semicolon ?? data["_;"] ?? data._semicolon), "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     identifier() { return drillIn<T.Identifier>(this._identifier, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       identifier: (v: NonNullable<T.ExportStatementNamespaceExport['_identifier']>) => wrapExportStatementNamespaceExport({ ...data, _identifier: v }, tree),
       semicolon: (v: NonNullable<T.ExportStatementNamespaceExport['_semicolon']>) => wrapExportStatementNamespaceExport({ ...data, _semicolon: v }, tree),
@@ -2276,10 +2264,10 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
     ...data,
     $type: TSKindId.ExpressionStatement as const,
     _expressions: normalizeSingularWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._sequence_expression ?? data._expressions), "expressions", true, data.$type),
-    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     expressions() { return drillIn<T.Expressions>(this._expressions, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       expressions: (v: NonNullable<T.ExpressionStatement['_expressions']>) => wrapExpressionStatement({ ...data, _expressions: v }, tree),
       semicolon: (v: NonNullable<T.ExpressionStatement['_semicolon']>) => wrapExpressionStatement({ ...data, _semicolon: v }, tree),
@@ -2418,7 +2406,6 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
     _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
     _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
-    _automatic_semicolon: normalizeSingularWrapSlot(data._automatic_semicolon, "automatic_semicolon", false, data.$type),
 
     asyncMarker() { return this._async_marker; },
     name() { return drillIn<T.Identifier>(this._name, tree); },
@@ -2426,7 +2413,6 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
     parameters() { return drillIn<T.FormalParameters>(this._parameters, tree); },
     returnType() { return drillIn<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this._return_type, tree); },
     body() { return drillIn<T.StatementBlock>(this._body, tree); },
-    automaticSemicolon() { return drillIn<T.AutomaticSemicolon | undefined>(this._automatic_semicolon, tree); },
     $with: {
       asyncMarker: (v: NonNullable<T.FunctionDeclaration['_async_marker']>) => wrapFunctionDeclaration({ ...data, _async_marker: v }, tree),
       name: (v: NonNullable<T.FunctionDeclaration['_name']>) => wrapFunctionDeclaration({ ...data, _name: v }, tree),
@@ -2434,7 +2420,6 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
       parameters: (v: NonNullable<T.FunctionDeclaration['_parameters']>) => wrapFunctionDeclaration({ ...data, _parameters: v }, tree),
       returnType: (v: NonNullable<T.FunctionDeclaration['_return_type']>) => wrapFunctionDeclaration({ ...data, _return_type: v }, tree),
       body: (v: NonNullable<T.FunctionDeclaration['_body']>) => wrapFunctionDeclaration({ ...data, _body: v }, tree),
-      automaticSemicolon: (v: NonNullable<T.FunctionDeclaration['_automatic_semicolon']>) => wrapFunctionDeclaration({ ...data, _automatic_semicolon: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2478,14 +2463,14 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
     _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
     _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
     _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
-    _semicolon: normalizeSingularWrapSlot((data._automatic_semicolon ?? data["_;"] ?? data._function_signature_automatic_semicolon ?? data._semicolon), "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     asyncMarker() { return this._async_marker; },
     name() { return drillIn<T.Identifier>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     parameters() { return drillIn<T.FormalParameters>(this._parameters, tree); },
     returnType() { return drillIn<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this._return_type, tree); },
-    semicolon() { return drillIn<T.Semicolon | T.FunctionSignatureAutomaticSemicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       asyncMarker: (v: NonNullable<T.FunctionSignature['_async_marker']>) => wrapFunctionSignature({ ...data, _async_marker: v }, tree),
       name: (v: NonNullable<T.FunctionSignature['_name']>) => wrapFunctionSignature({ ...data, _name: v }, tree),
@@ -2557,7 +2542,6 @@ export function wrapGeneratorFunctionDeclaration(data: T.GeneratorFunctionDeclar
     _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
     _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
-    _automatic_semicolon: normalizeSingularWrapSlot(data._automatic_semicolon, "automatic_semicolon", false, data.$type),
 
     asyncMarker() { return this._async_marker; },
     name() { return drillIn<T.Identifier>(this._name, tree); },
@@ -2565,7 +2549,6 @@ export function wrapGeneratorFunctionDeclaration(data: T.GeneratorFunctionDeclar
     parameters() { return drillIn<T.FormalParameters>(this._parameters, tree); },
     returnType() { return drillIn<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this._return_type, tree); },
     body() { return drillIn<T.StatementBlock>(this._body, tree); },
-    automaticSemicolon() { return drillIn<T.AutomaticSemicolon | undefined>(this._automatic_semicolon, tree); },
     $with: {
       asyncMarker: (v: NonNullable<T.GeneratorFunctionDeclaration['_async_marker']>) => wrapGeneratorFunctionDeclaration({ ...data, _async_marker: v }, tree),
       name: (v: NonNullable<T.GeneratorFunctionDeclaration['_name']>) => wrapGeneratorFunctionDeclaration({ ...data, _name: v }, tree),
@@ -2573,7 +2556,6 @@ export function wrapGeneratorFunctionDeclaration(data: T.GeneratorFunctionDeclar
       parameters: (v: NonNullable<T.GeneratorFunctionDeclaration['_parameters']>) => wrapGeneratorFunctionDeclaration({ ...data, _parameters: v }, tree),
       returnType: (v: NonNullable<T.GeneratorFunctionDeclaration['_return_type']>) => wrapGeneratorFunctionDeclaration({ ...data, _return_type: v }, tree),
       body: (v: NonNullable<T.GeneratorFunctionDeclaration['_body']>) => wrapGeneratorFunctionDeclaration({ ...data, _body: v }, tree),
-      automaticSemicolon: (v: NonNullable<T.GeneratorFunctionDeclaration['_automatic_semicolon']>) => wrapGeneratorFunctionDeclaration({ ...data, _automatic_semicolon: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2634,11 +2616,11 @@ export function wrapImportAlias(data: T.ImportAlias, tree: TreeHandle) {
     $type: TSKindId.ImportAlias as const,
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
     _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
-    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     name() { return drillIn<T.Identifier>(this._name, tree); },
     value() { return drillIn<T.Identifier | T.NestedIdentifier>(this._value, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       name: (v: NonNullable<T.ImportAlias['_name']>) => wrapImportAlias({ ...data, _name: v }, tree),
       value: (v: NonNullable<T.ImportAlias['_value']>) => wrapImportAlias({ ...data, _value: v }, tree),
@@ -2777,12 +2759,12 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
     _import_clause: projectKindEnumStorage(normalizeSingularWrapSlot(data._import_clause, "import_clause", false, data.$type)),
     _from_clause: normalizeRepeatedWrapSlot(data._from_clause, true, "from_clause"),
     _import_attribute: normalizeSingularWrapSlot(data._import_attribute, "import_attribute", false, data.$type),
-    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     importClause() { return this._import_clause; },
     fromClauses() { return drillInAll<T.ImportClause | "from" | T.String | T.ImportRequireClause>(this._from_clause as readonly (T.ImportClause | "from" | T.String | T.ImportRequireClause)[] | undefined, tree); },
     importAttribute() { return drillIn<T.ImportAttribute | undefined>(this._import_attribute, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       importClause: (v: NonNullable<T.ImportStatement['_import_clause']>) => wrapImportStatement({ ...data, _import_clause: v }, tree),
       fromClauses: (...v: NonEmptyArray<NonNullable<T.ImportStatement['_from_clause']>[number]>) => wrapImportStatement({ ...data, _from_clause: v }, tree),
@@ -2955,11 +2937,11 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
     $type: TSKindId.LexicalDeclaration as const,
     _kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._kind, "kind", true, data.$type)),
     _declarators: normalizeRepeatedWrapSlot(data._declarators, true, "declarators"),
-    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     kind() { return this._kind; },
     declarators() { return drillInAll<T.VariableDeclarator>(this._declarators as readonly T.VariableDeclarator[] | undefined, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       kind: (v: NonNullable<T.LexicalDeclaration['_kind']>) => wrapLexicalDeclaration({ ...data, _kind: v }, tree),
       declarators: (...v: NonEmptyArray<NonNullable<T.LexicalDeclaration['_declarators']>[number]>) => wrapLexicalDeclaration({ ...data, _declarators: v }, tree),
@@ -3667,10 +3649,10 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ReturnStatement as const,
     _expressions: normalizeSingularWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._sequence_expression ?? data._expressions), "expressions", false, data.$type),
-    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     expressions() { return drillIn<T.Expressions | undefined>(this._expressions, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       expressions: (v: NonNullable<T.ReturnStatement['_expressions']>) => wrapReturnStatement({ ...data, _expressions: v }, tree),
       semicolon: (v: NonNullable<T.ReturnStatement['_semicolon']>) => wrapReturnStatement({ ...data, _semicolon: v }, tree),
@@ -3734,7 +3716,7 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle) {
     _automatic_semicolon: normalizeSingularWrapSlot(data._automatic_semicolon, "automatic_semicolon", false, data.$type),
 
     statements() { return drillInAll<T.Statement>(this._statements as readonly T.Statement[] | undefined, tree); },
-    automaticSemicolon() { return drillIn<T.AutomaticSemicolon | undefined>(this._automatic_semicolon, tree); },
+    automaticSemicolon() { return drillIn<string | undefined>(this._automatic_semicolon, tree); },
     $with: {
       statements: (...v: NonNullable<T.StatementBlock['_statements']>[number][]) => wrapStatementBlock({ ...data, _statements: v }, tree),
       automaticSemicolon: (v: NonNullable<T.StatementBlock['_automatic_semicolon']>) => wrapStatementBlock({ ...data, _automatic_semicolon: v }, tree),
@@ -3916,10 +3898,10 @@ export function wrapThrowStatement(data: T.ThrowStatement, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ThrowStatement as const,
     _expressions: normalizeSingularWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._sequence_expression ?? data._expressions), "expressions", true, data.$type),
-    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     expressions() { return drillIn<T.Expressions>(this._expressions, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       expressions: (v: NonNullable<T.ThrowStatement['_expressions']>) => wrapThrowStatement({ ...data, _expressions: v }, tree),
       semicolon: (v: NonNullable<T.ThrowStatement['_semicolon']>) => wrapThrowStatement({ ...data, _semicolon: v }, tree),
@@ -3988,12 +3970,12 @@ export function wrapTypeAliasDeclaration(data: T.TypeAliasDeclaration, tree: Tre
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
     _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
     _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
-    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     value() { return drillIn<T.Type>(this._value, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       name: (v: NonNullable<T.TypeAliasDeclaration['_name']>) => wrapTypeAliasDeclaration({ ...data, _name: v }, tree),
       typeParameters: (v: NonNullable<T.TypeAliasDeclaration['_type_parameters']>) => wrapTypeAliasDeclaration({ ...data, _type_parameters: v }, tree),
@@ -4181,10 +4163,10 @@ export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeH
     ...data,
     $type: TSKindId.VariableDeclaration as const,
     _declarators: normalizeRepeatedWrapSlot(data._declarators, true, "declarators"),
-    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     declarators() { return drillInAll<T.VariableDeclarator>(this._declarators as readonly T.VariableDeclarator[] | undefined, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       declarators: (...v: NonEmptyArray<NonNullable<T.VariableDeclaration['_declarators']>[number]>) => wrapVariableDeclaration({ ...data, _declarators: v }, tree),
       semicolon: (v: NonNullable<T.VariableDeclaration['_semicolon']>) => wrapVariableDeclaration({ ...data, _semicolon: v }, tree),
@@ -4523,13 +4505,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'while_statement': (d, t) => wrapWhileStatement(d as unknown as T.WhileStatement, t),
   'with_statement': (d, t) => wrapWithStatement(d as unknown as T.WithStatement, t),
   'yield_expression': (d, t) => wrapYieldExpression(d as unknown as T.YieldExpression, t),
-  '_automatic_semicolon': (d) => ({ ...d, $type: TSKindId.AutomaticSemicolon as const }),
   '_template_chars': (d) => ({ ...d, $type: TSKindId.TemplateChars as const }),
   '_ternary_qmark': (d) => ({ ...d, $type: TSKindId.TernaryQmark as const }),
   'html_comment': (d) => ({ ...d, $type: TSKindId.HtmlComment as const }),
   '||': (d) => d,
   'jsx_text': (d) => ({ ...d, $type: TSKindId.JsxText as const }),
-  '_function_signature_automatic_semicolon': (d) => ({ ...d, $type: TSKindId.FunctionSignatureAutomaticSemicolon as const }),
   '__error_recovery': (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const }),
 };
 
@@ -4540,7 +4520,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'ambient_declaration_module': '_ambient_declaration_module',
   'async_marker': '_async_marker',
   'augmented_assignment_expression_operator': '_augmented_assignment_expression_operator',
-  'automatic_semicolon': '_automatic_semicolon',
   'call_expression_call': '_call_expression_call',
   'call_expression_member': '_call_expression_member',
   'call_expression_template_call': '_call_expression_template_call',
@@ -4564,7 +4543,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'for_header_operator': '__for_header_operator',
   'for_header_var_kind': '_for_header_var_kind',
   'formal_parameter': '_formal_parameter',
-  'function_signature_automatic_semicolon': '_function_signature_automatic_semicolon',
   'import_attribute_object': '_import_attribute_object',
   'import_identifier': '_import_identifier',
   'import_specifier_as': '_import_specifier_as',

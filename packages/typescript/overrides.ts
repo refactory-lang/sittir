@@ -835,6 +835,25 @@ export default grammar(
 				1: variant('prefix')
 			}
 		},
+		// Sittir-side rule bodies for external scanner symbols. The grammar's
+		// external scanner triggers ASI (Automatic Semicolon Insertion) by
+		// producing `_automatic_semicolon` and `_function_signature_automatic_semicolon`
+		// as zero-width terminator tokens. Tree-sitter sees them as required
+		// (they're SEQ-positional, not optional-wrapped) — but at runtime
+		// they can match invisibly. Mapping them to `blank()` makes sittir's
+		// IR resolve `_semicolon = choice(_automatic_semicolon, ';')` to
+		// `choice(blank(), ';')`, which the stamp pass auto-collapses to
+		// `optional(';')`. The slot-model look-through in node-map.ts then
+		// propagates that optionality up to any SYMBOL ref pointing at
+		// `_semicolon`, so wrapped fields like `field('semicolon', _semicolon)`
+		// no longer assert required-singular at wrap time on ASI-terminated
+		// corpus entries. The grammar that reaches tree-sitter still has
+		// the externals intact; only sittir's slot/render/factory pipeline
+		// sees the blank body.
+		externalAltDef: (_$) => ({
+			_automatic_semicolon: blank(),
+			_function_signature_automatic_semicolon: blank()
+		}),
 		rules: {
 			// parenthesized_expression: held. Base is plain `seq('(',
 			// _expressions, ')')` with no outer prec — my hoist's prec

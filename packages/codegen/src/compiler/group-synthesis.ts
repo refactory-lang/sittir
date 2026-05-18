@@ -341,10 +341,20 @@ export function stampStaticExternalAltDefs(
 	// Build the stamp lookup: altDef-key → literal value, for entries that
 	// are single string() bodies.
 	const altStamps: Record<string, string> = {};
+	// Blank-bodied altDef entries: zero-width-equivalent. References get
+	// replaced with `{ type: 'choice', members: [] }` (the blank sentinel),
+	// which the choice() collapse in `rewriteRuleForStamp` lowers to
+	// `optional(other)` when paired with another member. Use case:
+	// tree-sitter externals that fire invisibly at runtime (e.g. ASI's
+	// `_automatic_semicolon`). The slot-model look-through in node-map.ts
+	// propagates this optionality up to any SYMBOL ref pointing at the
+	// now-optional-bodied wrapper rule (`_semicolon`).
+	const blankStamps = new Set<string>();
 	for (const [sym, body] of Object.entries(altDefs)) {
 		if (body.type === 'string') altStamps[sym] = body.value;
+		else if (isBlankRule(body)) blankStamps.add(sym);
 	}
-	if (Object.keys(altStamps).length === 0) return rules;
+	if (Object.keys(altStamps).length === 0 && blankStamps.size === 0) return rules;
 
 	// Build symToLit: symbol-name → literal to stamp.
 	// Includes:
@@ -371,20 +381,44 @@ export function stampStaticExternalAltDefs(
 			}
 		}
 	}
-	if (Object.keys(symToLit).length === 0) return rules;
+	if (Object.keys(symToLit).length === 0 && blankStamps.size === 0) return rules;
 
 	const out: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
-		out[name] = rewriteRuleForStamp(rule, symToLit);
+		// Blank-stamped entries are removed from the rules map: their
+		// references have been replaced inline with the blank sentinel
+		// (which `rewriteRuleForStamp` collapses to `optional(...)` in
+		// containing choices). Keeping the entry would cause assemble to
+		// classify an empty `choice` body as an empty AssembledEnum and
+		// throw.
+		if (blankStamps.has(name)) continue;
+		out[name] = rewriteRuleForStamp(rule, symToLit, blankStamps);
 	}
 	return out;
 }
 
-function rewriteRuleForStamp(rule: Rule, symToLit: Record<string, string>): Rule {
+/**
+ * `blank()` produces `{ type: 'choice', members: [] }` (see evaluate.ts).
+ * Same shape detection used by choice()'s optional-collapse pass.
+ */
+function isBlankRule(rule: Rule): boolean {
+	return (
+		(rule.type === 'choice' && rule.members.length === 0) ||
+		(rule.type === 'seq' && rule.members.length === 0)
+	);
+}
+
+function rewriteRuleForStamp(
+	rule: Rule,
+	symToLit: Record<string, string>,
+	blankStamps: ReadonlySet<string>
+): Rule {
 	switch (rule.type) {
 		case 'symbol': {
 			const lit = symToLit[rule.name];
-			return lit !== undefined ? { type: 'string', value: lit } : rule;
+			if (lit !== undefined) return { type: 'string', value: lit };
+			if (blankStamps.has(rule.name)) return { type: 'choice', members: [] };
+			return rule;
 		}
 
 		case 'field': {
@@ -395,12 +429,16 @@ function rewriteRuleForStamp(rule: Rule, symToLit: Record<string, string>): Rule
 					// Drop the field wrapper; stamp the literal inline.
 					return { type: 'string', value: lit };
 				}
+				// Blank-stamped: the field references a zero-width-equivalent
+				// external. Replace the whole field with blank so the parent
+				// seq/choice collapse handles cardinality.
+				if (blankStamps.has(inner.name)) return { type: 'choice', members: [] };
 			}
-			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit) };
+			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
 		}
 
 		case 'alias':
-			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit) };
+			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) };
 
 		case 'token':
 		case 'optional':
@@ -409,11 +447,24 @@ function rewriteRuleForStamp(rule: Rule, symToLit: Record<string, string>): Rule
 		case 'variant':
 		case 'clause':
 		case 'group':
-			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit) } as Rule;
+			return { ...rule, content: rewriteRuleForStamp(rule.content, symToLit, blankStamps) } as Rule;
 
 		case 'seq':
-		case 'choice':
-			return { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, symToLit)) };
+			return { ...rule, members: rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps)) };
+
+		case 'choice': {
+			// Recursively stamp members, then re-apply the blank-collapse that
+			// evaluate.ts's choice() applies at DSL time. `choice(X, blank)` →
+			// `optional(X)`. Re-applied here because stamping may have
+			// synthesized new blank members the DSL-time pass didn't see.
+			const members = rule.members.map((m) => rewriteRuleForStamp(m, symToLit, blankStamps));
+			const nonBlank = members.filter((m) => !isBlankRule(m));
+			const hadBlank = nonBlank.length < members.length;
+			if (!hadBlank) return { ...rule, members };
+			if (nonBlank.length === 0) return { type: 'choice', members: [] };
+			if (nonBlank.length === 1) return { type: 'optional', content: nonBlank[0]! };
+			return { type: 'optional', content: { type: 'choice', members: nonBlank } };
+		}
 
 		default:
 			return rule;

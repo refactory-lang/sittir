@@ -23,7 +23,6 @@ import type {
     PrimaryType,
     PropertyIdentifier,
     PropertyName,
-    Semicolon,
     ShorthandPropertyIdentifier,
     ShorthandPropertyIdentifierPattern,
     Statement,
@@ -228,7 +227,6 @@ export interface IsGuards {
     moduleExportName(v: { readonly $type: string | number }): v is ModuleExportName;
     propertyIdentifier(v: { readonly $type: string | number }): v is PropertyIdentifier;
     propertyName(v: { readonly $type: string | number }): v is PropertyName;
-    semicolon(v: { readonly $type: string | number }): v is Semicolon;
     shorthandPropertyIdentifier(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifier;
     shorthandPropertyIdentifierPattern(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifierPattern;
     statementIdentifier(v: { readonly $type: string | number }): v is StatementIdentifier;
@@ -434,7 +432,6 @@ export interface AssertGuards {
     moduleExportName(v: { readonly $type: string | number }): asserts v is ModuleExportName;
     propertyIdentifier(v: { readonly $type: string | number }): asserts v is PropertyIdentifier;
     propertyName(v: { readonly $type: string | number }): asserts v is PropertyName;
-    semicolon(v: { readonly $type: string | number }): asserts v is Semicolon;
     shorthandPropertyIdentifier(v: { readonly $type: string | number }): asserts v is ShorthandPropertyIdentifier;
     shorthandPropertyIdentifierPattern(v: { readonly $type: string | number }): asserts v is ShorthandPropertyIdentifierPattern;
     statementIdentifier(v: { readonly $type: string | number }): asserts v is StatementIdentifier;
@@ -469,7 +466,6 @@ const _supertype_jsxIdentifier_ids = new Set<number>([1]);
 const _supertype_moduleExportName_ids = new Set<number>([1, 247]);
 const _supertype_propertyIdentifier_ids = new Set<number>([1]);
 const _supertype_propertyName_ids = new Set<number>([1, 106, 247, 105, 265]);
-const _supertype_semicolon_ids = new Set<number>([159]);
 const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1]);
 const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1]);
 const _supertype_statementIdentifier_ids = new Set<number>([1]);
@@ -547,12 +543,10 @@ const _kindIdByKind = new Map<string, number>([
     ["global", TSKindId.Global],
     ["accessor", TSKindId.Accessor],
     ["using", TSKindId.Using],
-    ["_automatic_semicolon", TSKindId.AutomaticSemicolon],
     ["_template_chars", TSKindId.TemplateChars],
     ["_ternary_qmark", TSKindId.TernaryQmark],
     ["html_comment", TSKindId.HtmlComment],
     ["jsx_text", TSKindId.JsxText],
-    ["_function_signature_automatic_semicolon", TSKindId.FunctionSignatureAutomaticSemicolon],
     ["__error_recovery", TSKindId.ErrorRecovery],
     ["program", TSKindId.Program],
     ["export_statement", TSKindId.ExportStatement],
@@ -963,7 +957,6 @@ export const is = {
     moduleExportName: _sg(_supertype_moduleExportName_ids),
     propertyIdentifier: _sg(_supertype_propertyIdentifier_ids),
     propertyName: _sg(_supertype_propertyName_ids),
-    semicolon: _sg(_supertype_semicolon_ids),
     shorthandPropertyIdentifier: _sg(_supertype_shorthandPropertyIdentifier_ids),
     shorthandPropertyIdentifierPattern: _sg(_supertype_shorthandPropertyIdentifierPattern_ids),
     statementIdentifier: _sg(_supertype_statementIdentifier_ids),
@@ -1190,7 +1183,6 @@ export const assert = {
     moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),
     propertyIdentifier: _makeAssert('propertyIdentifier', is.propertyIdentifier as _AnyGuard),
     propertyName: _makeAssert('propertyName', is.propertyName as _AnyGuard),
-    semicolon: _makeAssert('semicolon', is.semicolon as _AnyGuard),
     shorthandPropertyIdentifier: _makeAssert('shorthandPropertyIdentifier', is.shorthandPropertyIdentifier as _AnyGuard),
     shorthandPropertyIdentifierPattern: _makeAssert('shorthandPropertyIdentifierPattern', is.shorthandPropertyIdentifierPattern as _AnyGuard),
     statementIdentifier: _makeAssert('statementIdentifier', is.statementIdentifier as _AnyGuard),

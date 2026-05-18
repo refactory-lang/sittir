@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   88  (81 applied, 7 held)
+// Rule promotions:   87  (81 applied, 6 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -27,12 +27,6 @@
 export const suggestedTransforms = {
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   _class_body_member: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  _class_body_method_sig: {
       "1/0": variant("form0"),
       "1/1": variant("form1"),
   },
@@ -129,9 +123,6 @@ export const suggestedRules = {
 
   // [applied] promoted supertype
   _property_name: $ => choice($._property_identifier, $.identifier, $.private_property_identifier, $.string, $.number, $.computed_property_name),
-
-  // [applied] promoted supertype
-  _semicolon: $ => choice($._automatic_semicolon, $.;),
 
   // [applied] promoted supertype
   _shorthand_property_identifier: $ => choice($.identifier, $._reserved_identifier),
@@ -331,7 +322,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_module_export_name", classification: "supertype", applied: true },
   { kind: "_property_identifier", classification: "supertype", applied: true },
   { kind: "_property_name", classification: "supertype", applied: true },
-  { kind: "_semicolon", classification: "supertype", applied: true },
   { kind: "_shorthand_property_identifier", classification: "supertype", applied: true },
   { kind: "_shorthand_property_identifier_pattern", classification: "supertype", applied: true },
   { kind: "_statement_identifier", classification: "supertype", applied: true },
@@ -344,6 +334,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "statement", classification: "supertype", applied: true },
   { kind: "type", classification: "supertype", applied: true },
   { kind: "_reserved_identifier", classification: "terminal", applied: true },
+  { kind: "_semicolon", classification: "terminal", applied: true },
   { kind: "comment", classification: "terminal", applied: true },
   { kind: "escape_sequence", classification: "terminal", applied: true },
   { kind: "identifier", classification: "terminal", applied: true },
@@ -353,7 +344,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "private_property_identifier", classification: "terminal", applied: true },
   { kind: "regex_pattern", classification: "terminal", applied: true },
   { kind: "_class_body_member", classification: "polymorph", applied: false },
-  { kind: "_class_body_method_sig", classification: "polymorph", applied: false },
   { kind: "_export_statement_default_from_arm_clause_from", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm_ns_from", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm_star_from", classification: "polymorph", applied: true },
