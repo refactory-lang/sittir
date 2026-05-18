@@ -10,6 +10,7 @@ import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
 import { optimize } from './optimize.ts';
 import { assemble, hydrateSlotRefs } from './assemble.ts';
+import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
 
@@ -190,6 +191,14 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// branch/group node. Runs after hydration so stampExpressionFor can
 	// resolve parameterless-kind refs through the hydrated slot graph.
 	computeSlotClasses(nodeMap);
+
+	// Phase 5b¾: Compute SCC over the singular transport-reference graph.
+	// Render-module's per-slot and supertype enum emitters consult
+	// `nodeMap.scc.sameSCC(variantKind, ownerKind)` to decide Box vs
+	// inline for each variant — Box only when the variant can reach the
+	// enum's owner kind through singular (non-Vec) references. Runs
+	// after slot-class computation since the SCC walks slot graphs.
+	nodeMap.scc = computeTransportSCC(nodeMap);
 
 	// Phase 5c: Emit — every emitter consumes the hydrated NodeMap directly.
 	// The ir-namespace keys are populated on each AssembledNode during

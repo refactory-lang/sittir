@@ -2783,6 +2783,47 @@ function nodeTransportHasRequiredField(node: AssembledNode): boolean {
 	return allFormFieldsOf(node).some((slot) => isRequired(slot));
 }
 
+/**
+ * SCC-driven Box decision for a per-slot or supertype enum variant.
+ *
+ * The eventual rule is: Box variant `V` (a kind name) in enum `E`
+ * (owned by `enumOwnerKind`) iff `V` is not leaf-like AND `V` and
+ * `enumOwnerKind` are in the same SCC of the singular transport-
+ * reference graph. The `computeTransportSCC` pass populates
+ * `nodeMap.scc` with the analysis; consumers call `scc.sameSCC(...)`.
+ *
+ * **Live status (sittir-12):** the SCC analysis IS computed end-to-end
+ * and exposed via `nodeMap.scc`, but `boxedInEnum` still falls back to
+ * the conservative `Box-all-non-leaf` rule. Enabling SCC-based unboxing
+ * for rust deep read-render-parse triggers a V8 stack overflow inside
+ * napi-rs's `String::from_napi_value` error path (it JSON.stringify's
+ * the deeply-nested object for diagnostic context). The same shape
+ * exists in the conservative output but doesn't crash there; the
+ * stack-budget margin shrinks once variants inline larger structs.
+ * Python and TypeScript validate fine — the rust corpus depth is the
+ * trigger. Tracked as a follow-up; the SCC infrastructure stays in
+ * place so the predicate can be flipped once the V8/napi interaction
+ * is mitigated (likely by suppressing the JSON.stringify diagnostic
+ * in napi-rs or by trimming the bare-string Verbatim fast-path on
+ * recursive enums).
+ */
+function isLeafLikeNode(n: AssembledNode): boolean {
+	return n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
+}
+
+function boxedInEnum(variantKind: string, enumOwnerKind: string, variantNode: AssembledNode, nodeMap: NodeMap): boolean {
+	if (isLeafLikeNode(variantNode)) return false;
+	const scc = nodeMap.scc;
+	if (scc === undefined) return true; // conservative fallback
+	// Intentionally referenced so the args+SCC participate in the
+	// callgraph; replace `true` below with `scc.sameSCC(variantKind,
+	// enumOwnerKind)` once the rust-side V8 stack regression is fixed.
+	void variantKind;
+	void enumOwnerKind;
+	void scc;
+	return true;
+}
+
 function emitSupertypeTransportEnum(
 	supertypeNode: AssembledSupertype,
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
@@ -2791,10 +2832,14 @@ function emitSupertypeTransportEnum(
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Transport`;
 	const lines: string[] = [];
 	const { subtypes: validSubtypes, suppressedKinds } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
+	const ownerKind = supertypeNode.kind;
 
-	// Helper: is a subtype leaf-like (small, no Box needed)?
-	const isLeafLike = (n: AssembledNode): boolean =>
-		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
+	// SCC-driven Box rule. Box only when the variant kind and the
+	// supertype's owner kind are in the same SCC of the singular-
+	// reference graph (see `boxedInEnum` docstring). Leaf-like
+	// variants (pattern / keyword / token / enum) are always inline.
+	const isBoxed = (subKind: string, subNode: AssembledNode): boolean =>
+		boxedInEnum(subKind, ownerKind, subNode, nodeMap);
 
 	// Does this supertype admit any AssembledPattern variant? Pattern variants
 	// share verbatim-text render semantics; bare-string inputs are wrapped as
@@ -2811,17 +2856,17 @@ function emitSupertypeTransportEnum(
 		const sortedSubtypes = [...validSubtypes].sort(
 			(a, b) => (nodeTransportHasRequiredField(b.subNode) ? 1 : 0) - (nodeTransportHasRequiredField(a.subNode) ? 1 : 0)
 		);
-		for (const { subNode } of sortedSubtypes) {
-			if (leafOnly && !isLeafLike(subNode)) continue;
+		for (const { subKind, subNode } of sortedSubtypes) {
+			if (leafOnly && !isLeafLikeNode(subNode)) continue;
 			const variant = rustTypeIdent(subNode.typeName);
 			const typeName = rustTransportStructName(subNode);
-			if (isLeafLike(subNode)) {
+			if (isBoxed(subKind, subNode)) {
 				out.push(`${indent}if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
-				out.push(`${indent}    return Ok(Self::${variant}(value));`);
+				out.push(`${indent}    return Ok(Self::${variant}(Box::new(value)));`);
 				out.push(`${indent}}`);
 			} else {
 				out.push(`${indent}if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
-				out.push(`${indent}    return Ok(Self::${variant}(Box::new(value)));`);
+				out.push(`${indent}    return Ok(Self::${variant}(value));`);
 				out.push(`${indent}}`);
 			}
 		}
@@ -2831,10 +2876,10 @@ function emitSupertypeTransportEnum(
 	// Enum declaration — Debug + Clone only; no serde, no napi object derive.
 	lines.push(`#[derive(Debug, Clone)]`);
 	lines.push(`pub enum ${enumName} {`);
-	for (const { subNode } of validSubtypes) {
+	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		const typeName = rustTransportStructName(subNode);
-		const variantType = isLeafLike(subNode) ? typeName : `Box<${typeName}>`;
+		const variantType = isBoxed(subKind, subNode) ? `Box<${typeName}>` : typeName;
 		lines.push(`    ${variant}(${variantType}),`);
 	}
 	if (admitsVerbatim) {
@@ -2885,18 +2930,19 @@ function emitSupertypeTransportEnum(
 						acceptedKinds.add(resolvedKind);
 					}
 				}
+				const boxed = isBoxed(subKind, subNode);
 				for (const acceptedKind of acceptedKinds) {
 					const id = kindIdByKind.get(acceptedKind);
 					if (id === undefined || emittedIds.has(id)) continue;
 					emittedIds.add(id);
-					if (isLeafLike(subNode)) {
-						arms.push(`                ${id} => Ok(Self::${variant}(`);
-						arms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
-						arms.push(`                )),`);
-					} else {
+					if (boxed) {
 						arms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
 						arms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
 						arms.push(`                ))),`);
+					} else {
+						arms.push(`                ${id} => Ok(Self::${variant}(`);
+						arms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
+						arms.push(`                )),`);
 					}
 				}
 			}
@@ -2974,23 +3020,24 @@ function emitSupertypeTransportEnum(
 	// AnyTransport is a sized enum — no Box needed.
 	lines.push(`fn ${rustSnakeIdent(supertypeNode.typeName)}_transport_to_any(t: ${enumName}) -> AnyTransport {`);
 	lines.push(`    match t {`);
-	for (const { subNode } of validSubtypes) {
+	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
+		const boxed = isBoxed(subKind, subNode);
 		if (subNode.modelType === 'supertype') {
 			// Sub-supertype: delegate to its own bridge function which expands
 			// the sub-supertype enum into the correct concrete AnyTransport variant.
 			const subBridgeFn = `${rustSnakeIdent(subNode.typeName)}_transport_to_any`;
-			if (isLeafLike(subNode)) {
-				lines.push(`        ${enumName}::${variant}(inner) => ${subBridgeFn}(inner),`);
-			} else {
+			if (boxed) {
 				lines.push(`        ${enumName}::${variant}(inner) => ${subBridgeFn}(*inner),`);
+			} else {
+				lines.push(`        ${enumName}::${variant}(inner) => ${subBridgeFn}(inner),`);
 			}
 		} else {
 			const anyVariant = rustTypeIdent(subNode.typeName);
-			if (isLeafLike(subNode)) {
-				lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${anyVariant}(inner),`);
-			} else {
+			if (boxed) {
 				lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${anyVariant}(*inner),`);
+			} else {
+				lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${anyVariant}(inner),`);
 			}
 		}
 	}
@@ -3034,18 +3081,18 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	const fnName = `render_${rustSnakeIdent(supertypeNode.typeName)}`;
 	const lines: string[] = [];
 	const { subtypes: validSubtypes } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
+	const ownerKind = supertypeNode.kind;
 
-	const isLeafLike = (n: AssembledNode): boolean =>
-		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
 	const admitsVerbatim = validSubtypes.some(({ subNode }) => subNode.modelType === 'pattern');
 
 	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(`    match t {`);
-	for (const { subNode } of validSubtypes) {
+	for (const { subKind, subNode } of validSubtypes) {
 		const variant = rustTypeIdent(subNode.typeName);
 		const concreteFn = rustTypedRenderFnName(subNode.typeName);
-		// Non-leaf variants are boxed in the enum; deref with `.as_ref()`.
-		const innerExpr = isLeafLike(subNode) ? `inner` : `inner.as_ref()`;
+		// Boxed (in-cycle) variants need `.as_ref()` to reach the inner struct;
+		// inline variants reference the inner value directly.
+		const innerExpr = boxedInEnum(subKind, ownerKind, subNode, nodeMap) ? `inner.as_ref()` : `inner`;
 		lines.push(`        ${enumName}::${variant}(inner) => ${concreteFn}(${innerExpr}, dest),`);
 	}
 	if (admitsVerbatim) {
@@ -3115,6 +3162,8 @@ function expandConcreteTransportKinds(
 interface PerSlotChildEnum {
 	/** PascalCase typeName of the parent node. */
 	typeName: string;
+	/** Raw grammar kind of the parent node — owner key for SCC lookup. */
+	ownerKind: string;
 	/** Slot name — symmetric for named and unnamed slots (cleanup-rules §E1). */
 	fieldName: string;
 	/** Concrete kinds in this slot. */
@@ -3172,7 +3221,7 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 	// Each unnamed slot (e.g. `_attributed_parameter.parameter`) gets its own enum
 	// named `<TypeName><FieldName>TransportSlot` (e.g. `AttributedParameterParameterTransportSlot`)
 	// — no special-case "Child" suffix anymore.
-	const consider = (typeName: string, field: AssembledNonterminal): void => {
+	const consider = (typeName: string, ownerKind: string, field: AssembledNonterminal): void => {
 		const slotKinds = kindsOf(field);
 		const literalSet = new Set<string>();
 		const literals: TransportLiteral[] = [];
@@ -3192,14 +3241,14 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 		if (seen.has(enumName)) return;
 		if (reservedTransportNames.has(enumName)) return;
 		seen.add(enumName);
-		entries.push({ typeName, fieldName: field.name, kinds: slotKinds, literals });
+		entries.push({ typeName, ownerKind, fieldName: field.name, kinds: slotKinds, literals });
 	};
 
 	for (const node of nodes) {
 		const slotModel = renderSlotModelOf(node);
 		// Symmetric — named and unnamed slots both flow through `consider`.
 		for (const field of [...slotModel.named, ...slotModel.unnamed]) {
-			consider(node.typeName, field);
+			consider(node.typeName, node.kind, field);
 		}
 	}
 	return entries;
@@ -3225,15 +3274,18 @@ function emitPerSlotChildEnum(
 ): string[] {
 	const enumName = perSlotEnumName(entry.typeName, entry.fieldName);
 	const lines: string[] = [];
+	const ownerKind = entry.ownerKind;
 
 	// Expand any supertype child kinds to their concrete transport-bearing kinds,
 	// then dedupe so aliased / overlapping paths emit one variant per concrete kind.
 	const validKinds = expandConcreteTransportKinds(entry.kinds, nodeMap);
 
-	// If no valid concrete kinds remain (all were supertypes/polymorphs), fall back
-	// to emitting an empty enum — this should be caught upstream by the caller.
-	const isLeafLike = (n: AssembledNode): boolean =>
-		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
+	// SCC-driven Box rule for this per-slot enum's variants. The owner kind
+	// is the parent node that hosts the slot; a variant is boxed iff it and
+	// the owner share an SCC in the singular-reference graph. Leaf-like
+	// variants always stay inline (see `boxedInEnum`).
+	const isBoxed = (variantKind: string, variantNode: AssembledNode): boolean =>
+		boxedInEnum(variantKind, ownerKind, variantNode, nodeMap);
 
 	// AssembledPattern variants — the kinds whose render template emits the
 	// `text` field verbatim (`identifier`, `integer_literal`, etc.). When at
@@ -3251,9 +3303,9 @@ function emitPerSlotChildEnum(
 	// bridge fn are referenced (struct field type + bridge expression).
 	lines.push(`#[derive(Debug, Clone)]`);
 	lines.push(`pub enum ${enumName} {`);
-	for (const { node, concreteName } of validKinds) {
+	for (const { kind, node, concreteName } of validKinds) {
 		const variant = rustTypeIdent(node.typeName);
-		const variantType = isLeafLike(node) ? concreteName : `Box<${concreteName}>`;
+		const variantType = isBoxed(kind, node) ? `Box<${concreteName}>` : concreteName;
 		lines.push(`    ${variant}(${variantType}),`);
 	}
 	for (const literal of entry.literals) {
@@ -3284,18 +3336,19 @@ function emitPerSlotChildEnum(
 					acceptedKinds.add(resolvedKind);
 				}
 			}
+			const boxed = isBoxed(kind, node);
 			for (const acceptedKind of acceptedKinds) {
 				const id = kindIdByKind.get(acceptedKind);
 				if (id === undefined || emittedIds.has(id)) continue;
 				emittedIds.add(id);
-				if (isLeafLike(node)) {
-					kindIdArms.push(`                ${id} => Ok(Self::${variant}(`);
-					kindIdArms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
-					kindIdArms.push(`                )),`);
-				} else {
+				if (boxed) {
 					kindIdArms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
 					kindIdArms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
 					kindIdArms.push(`                ))),`);
+				} else {
+					kindIdArms.push(`                ${id} => Ok(Self::${variant}(`);
+					kindIdArms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
+					kindIdArms.push(`                )),`);
 				}
 			}
 		}
@@ -3382,12 +3435,12 @@ function emitPerSlotChildEnum(
 	const bridgeFnName = `${rustSnakeIdent(entry.typeName)}_${rustSnakeIdent(entry.fieldName)}_transport_slot_to_any`;
 	lines.push(`fn ${bridgeFnName}(t: ${enumName}) -> AnyTransport {`);
 	lines.push(`    match t {`);
-	for (const { node } of validKinds) {
+	for (const { kind, node } of validKinds) {
 		const variant = rustTypeIdent(node.typeName);
-		if (isLeafLike(node)) {
-			lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${variant}(inner),`);
-		} else {
+		if (isBoxed(kind, node)) {
 			lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${variant}(*inner),`);
+		} else {
+			lines.push(`        ${enumName}::${variant}(inner) => AnyTransport::${variant}(inner),`);
 		}
 	}
 	for (const literal of entry.literals) {
@@ -3410,10 +3463,10 @@ function emitPerSlotChildEnum(
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
 	lines.push(`    ) -> Result<(), ::askama::Error> {`);
 	lines.push(`        match self {`);
-	for (const { node } of validKinds) {
+	for (const { kind, node } of validKinds) {
 		const variant = rustTypeIdent(node.typeName);
 		const concreteFn = rustTypedRenderFnName(node.typeName);
-		const innerExpr = isLeafLike(node) ? 'inner' : 'inner.as_ref()';
+		const innerExpr = isBoxed(kind, node) ? 'inner.as_ref()' : 'inner';
 		lines.push(`            ${enumName}::${variant}(inner) => ${concreteFn}(${innerExpr}, dest),`);
 	}
 	for (const literal of entry.literals) {

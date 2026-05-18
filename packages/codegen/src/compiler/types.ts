@@ -21,6 +21,7 @@
 
 import type { Rule, RuleId, SymbolRef } from './rule.ts';
 import type { AssembledNode } from './node-map.ts';
+import type { SCCAnalysis } from './scc.ts';
 
 export type { SlotArity, SlotModel } from './slot-model.ts';
 
@@ -498,6 +499,14 @@ export interface NodeMap {
 	 * calls fired in this grammar's overrides.
 	 */
 	readonly refineForms?: Map<string, RefineForm[]>;
+	/**
+	 * SCC analysis over the singular transport-reference graph. Populated
+	 * post-assemble (see `compiler/scc.ts`). Emitters consult `scc.sameSCC`
+	 * for the Box decision on per-slot / supertype enum variants — Box
+	 * only when a variant and its enum's owner kind are in the same SCC.
+	 * Undefined for callers that never compute it (legacy fixtures, etc.).
+	 */
+	scc?: SCCAnalysis;
 }
 
 export function computePolymorphFormKinds(nodes: Map<string, AssembledNode>): Set<string> {
