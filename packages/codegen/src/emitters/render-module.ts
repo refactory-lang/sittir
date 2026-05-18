@@ -691,12 +691,46 @@ function emitStruct(kind: string, node: AssembledNode | undefined, surface: Rend
 	const unnamedNames = new Set<string>();
 	if (node) {
 		for (const f of [...slotModel.named, ...slotModel.unnamed]) {
-			multipleByName.set(f.name, isMultiple(f));
-			requiredByName.set(f.name, isRequired(f));
+			const mul = isMultiple(f);
+			const req = isRequired(f);
+			multipleByName.set(f.name, mul);
+			requiredByName.set(f.name, req);
 			storageByName.set(f.name, f.storageName);
+			// Template walker emits one template var per kind referenced by an
+			// unnamed slot (e.g. a slot with kinds [escape_sequence, string_content]
+			// surfaces both names in the template). Register every kind as an
+			// alias that points back to the slot's single storage so the template
+			// variables all bind to the same transport field. Skip aliases that
+			// collide with another slot's own name — declared fields take
+			// precedence. Only register aliases for inferred MULTIPLE slots:
+			// single-value slots store one transport-shaped value that cannot
+			// be re-routed through a kind-named template variable, and the
+			// template-walker's "kind as variable" pattern only applies to the
+			// list-style `{{ kind | join(...) }}` emission.
+			if (f.source === 'inferred' && mul) {
+				for (const k of kindsOf(f)) {
+					const alias = k.replace(/^_+/, '');
+					if (alias === f.name) continue;
+					if (storageByName.has(alias)) continue;
+					multipleByName.set(alias, mul);
+					requiredByName.set(alias, req);
+					storageByName.set(alias, f.storageName);
+				}
+			}
 		}
 		for (const f of slotModel.unnamed) {
 			unnamedNames.add(f.name);
+			if (f.source === 'inferred' && isMultiple(f)) {
+				for (const k of kindsOf(f)) {
+					const alias = k.replace(/^_+/, '');
+					if (alias === f.name) continue;
+					// Only mark as unnamed-alias when the alias resolves to this
+					// inferred slot — see storageByName guard above.
+					if (storageByName.get(alias) === f.storageName) {
+						unnamedNames.add(alias);
+					}
+				}
+			}
 		}
 	}
 	const fields: EmittedField[] = surface.slots.map((slot) => ({
@@ -1959,7 +1993,7 @@ function renderTypedBranchFn(node: AssembledNode, struct: EmittedStruct, meta: M
 	const fieldMixedByName = buildFieldMixedByName(allSlots);
 
 	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
-	lines.push(...buildTypedTemplateBody(struct, separator, fieldKindsByName, fieldMixedByName, nodeMap));
+	lines.push(...buildTypedTemplateBody(struct, separator, fieldKindsByName, fieldMixedByName, nodeMap, slotModel));
 	lines.push(`}`);
 	lines.push('');
 
@@ -2059,12 +2093,58 @@ function buildTypedTemplateBody(
 	separator: string,
 	fieldKindsByName: ReadonlyMap<string, readonly string[]> = new Map(),
 	fieldMixedByName: ReadonlySet<string> = new Set(),
-	nodeMap: NodeMap | undefined = undefined
+	nodeMap: NodeMap | undefined = undefined,
+	slotModel: RenderSlotModel | undefined = undefined
 ): string[] {
 	const lines: string[] = [];
 	const templateName = struct.name;
 	const sepLiteral = JSON.stringify(separator);
 	const R = RENDERABLE_PREFIX;
+
+	// `$text` fast-path — match JS render's `nodeHasStructure` short-circuit.
+	// Shallow validator reads only `$type` + `$text` for nested nodes. With
+	// per-slot Option<...> fields, those nodes deserialize successfully (no
+	// throw) but every slot is `None`, so the template renders empty content.
+	// JS render handles this by short-circuiting to `node.$text` when no slot
+	// has data; mirror that here so native render produces matching bytes.
+	//
+	// Only emit when every slot is "checkable" — Option<T>, Option<Vec<T>>,
+	// or Vec<T>. A required non-Optional non-Vec slot is always present, so
+	// the structure check would always be `false` and the fast-path is dead
+	// code; skip emission in that case.
+	if (slotModel !== undefined) {
+		const allSlots = [...slotModel.named, ...slotModel.unnamed];
+		const allCheckable = allSlots.every((slot) => {
+			if (isMultiple(slot)) return true; // Vec<T> or Option<Vec<T>> — both checkable.
+			return !isRequired(slot); // Option<T> is checkable; required T is not.
+		});
+		if (allCheckable && allSlots.length > 0) {
+			const seenStorage = new Set<string>();
+			const checks: string[] = [];
+			for (const slot of allSlots) {
+				if (seenStorage.has(slot.storageName)) continue;
+				seenStorage.add(slot.storageName);
+				const rIdent = rustFieldIdent(slot.storageName);
+				if (isMultiple(slot) && isRequired(slot)) {
+					// Vec<T> — empty when length 0.
+					checks.push(`node.${rIdent}.is_empty()`);
+				} else if (isMultiple(slot)) {
+					// Option<Vec<T>>
+					checks.push(`node.${rIdent}.as_deref().is_none_or(<[_]>::is_empty)`);
+				} else {
+					// Option<T>
+					checks.push(`node.${rIdent}.is_none()`);
+				}
+			}
+			if (checks.length > 0) {
+				lines.push(`    if ${checks.join(' && ')} {`);
+				lines.push(`        if let Some(text) = node.transport_text.as_deref() {`);
+				lines.push(`            return dest.write_str(text).map_err(::askama::Error::from);`);
+				lines.push(`        }`);
+				lines.push(`    }`);
+			}
+		}
+	}
 
 	// Classify helper — use classifySlotForEmit when nodeMap is available so
 	// that supertype/multi single-kind slots fall back to heterogeneous (Phase 1).
@@ -2086,11 +2166,21 @@ function buildTypedTemplateBody(
 
 	// Emit per-slot list buffers. Named and unnamed slots flow through one path
 	// (cleanup-rules §E1 — no special-case for `children`).
+	//
+	// Deduplicate by `storageName`: when an unnamed slot's projection covers
+	// multiple kinds, the template walker surfaces one template variable per
+	// kind. emitStruct registers each kind as an alias pointing back to the
+	// same storage, so several `EmittedField`s share a `storageName`. The
+	// transport struct has exactly one Vec field per storage — emit the
+	// `*_buf` once per unique storage to avoid duplicate `let` bindings.
+	const emittedBufferIdents = new Set<string>();
 	for (const f of struct.fields) {
 		if (f.view === 'scalar') continue;
 		if (!f.hasTransportField) continue;
 		const rIdent = rustFieldIdent(f.storageName);
 		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
+			if (emittedBufferIdents.has(rIdent)) continue;
+			emittedBufferIdents.add(rIdent);
 			lines.push(...emitListSlotBuffer(rIdent, f.required));
 		}
 	}

@@ -22028,6 +22028,11 @@ fn render_augmented_assignment_operator(t: &AugmentedAssignmentOperatorEnum, des
 }
 
 fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.for_in_clause.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let for_in_clause_owned = node.for_in_clause.as_deref().unwrap_or(&[]);
     let for_in_clause_buf: Vec<::sittir_core::filters::Renderable<'_>> = for_in_clause_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -22040,7 +22045,7 @@ fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut
             trailing: false,
         },
         if_clause: ListNonterminalView {
-            items: &[],
+            items: for_in_clause_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -22095,6 +22100,11 @@ fn render_match_block(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Wri
 }
 
 fn render_match_block_block(node: &MatchBlockBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.alternative.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let alternative_owned = node.alternative.as_deref().unwrap_or(&[]);
     let alternative_buf: Vec<::sittir_core::filters::Renderable<'_>> = alternative_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -22126,6 +22136,11 @@ fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, dest: &
 }
 
 fn render_simple_statements(node: &SimpleStatementsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.simple_statement.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let simple_statement_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.simple_statement.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -22166,6 +22181,11 @@ fn render_unary_operator_operator(t: &UnaryOperatorOperatorEnum, dest: &mut dyn 
 }
 
 fn render__with_clause_paren(node: &_WithClauseParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.with_item.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let with_item_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.with_item.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -22189,13 +22209,18 @@ fn render_aliased_import(node: &AliasedImportTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_argument_list(node: &ArgumentListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.expression.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let expression_owned = node.expression.as_deref().unwrap_or(&[]);
     let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = expression_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ArgumentListTemplate {
         dictionary_splat: ListNonterminalView {
-            items: &[],
+            items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -22207,13 +22232,13 @@ fn render_argument_list(node: &ArgumentListTransport, dest: &mut dyn ::std::fmt:
             trailing: false,
         },
         keyword_argument: ListNonterminalView {
-            items: &[],
+            items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
         },
         list_splat: ListNonterminalView {
-            items: &[],
+            items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -22237,6 +22262,11 @@ fn render_as_pattern(node: &AsPatternTransport, dest: &mut dyn ::std::fmt::Write
 }
 
 fn render_assert_statement(node: &AssertStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.expression.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.expression.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -22296,6 +22326,11 @@ fn render_binary_operator(node: &BinaryOperatorTransport, dest: &mut dyn ::std::
 }
 
 fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.statement.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let statement_owned = node.statement.as_deref().unwrap_or(&[]);
     let statement_buf: Vec<::sittir_core::filters::Renderable<'_>> = statement_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -22459,6 +22494,11 @@ fn render_complex_pattern(node: &ComplexPatternTransport, dest: &mut dyn ::std::
 }
 
 fn render_concatenated_string(node: &ConcatenatedStringTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.string.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let string_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.string.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -22537,6 +22577,11 @@ fn render_delete_statement(node: &DeleteStatementTransport, dest: &mut dyn ::std
 }
 
 fn render_dict_pattern(node: &DictPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.dict_pattern_kv.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let dict_pattern_kv_owned = node.dict_pattern_kv.as_deref().unwrap_or(&[]);
     let dict_pattern_kv_buf: Vec<::sittir_core::filters::Renderable<'_>> = dict_pattern_kv_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -22553,13 +22598,18 @@ fn render_dict_pattern(node: &DictPatternTransport, dest: &mut dyn ::std::fmt::W
 }
 
 fn render_dictionary(node: &DictionaryTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.pair.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let pair_owned = node.pair.as_deref().unwrap_or(&[]);
     let pair_buf: Vec<::sittir_core::filters::Renderable<'_>> = pair_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = DictionaryTemplate {
         dictionary_splat: ListNonterminalView {
-            items: &[],
+            items: pair_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -22626,6 +22676,11 @@ fn render_dictionary_splat_pattern(node: &DictionarySplatPatternTransport, dest:
 }
 
 fn render_dotted_name(node: &DottedNameTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.identifier.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let identifier_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.identifier.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -22707,6 +22762,11 @@ fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_expression_list(node: &ExpressionListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.expression.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.expression.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -22722,6 +22782,11 @@ fn render_expression_list(node: &ExpressionListTransport, dest: &mut dyn ::std::
 }
 
 fn render_expression_statement_tuple(node: &ExpressionStatementTupleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.expression.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.expression.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -22801,6 +22866,11 @@ fn render_for_statement(node: &ForStatementTransport, dest: &mut dyn ::std::fmt:
 }
 
 fn render_format_specifier(node: &FormatSpecifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.interpolation.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let template = FormatSpecifierTemplate {
         format_expression: ListNonterminalView {
             items: &[],
@@ -22834,6 +22904,11 @@ fn render_function_definition(node: &FunctionDefinitionTransport, dest: &mut dyn
 }
 
 fn render_future_import_statement(node: &FutureImportStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.name.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let name_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.name.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -22876,6 +22951,11 @@ fn render_generic_type(node: &GenericTypeTransport, dest: &mut dyn ::std::fmt::W
 }
 
 fn render_global_statement(node: &GlobalStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.identifier.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let identifier_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.identifier.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -22935,6 +23015,11 @@ fn render_import_prefix(t: &ImportPrefixTransport, dest: &mut dyn ::std::fmt::Wr
 }
 
 fn render_import_statement(node: &ImportStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.name.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let name_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.name.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -23007,6 +23092,11 @@ fn render_lambda(node: &LambdaTransport, dest: &mut dyn ::std::fmt::Write) -> Re
 }
 
 fn render_lambda_parameters(node: &LambdaParametersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.parameter.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let parameter_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.parameter.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -23037,6 +23127,11 @@ fn render_line_continuation(t: &LineContinuationTransport, dest: &mut dyn ::std:
 }
 
 fn render_list(node: &ListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.expression.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let expression_owned = node.expression.as_deref().unwrap_or(&[]);
     let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = expression_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -23049,19 +23144,19 @@ fn render_list(node: &ListTransport, dest: &mut dyn ::std::fmt::Write) -> Result
             trailing: false,
         },
         list_splat: ListNonterminalView {
-            items: &[],
+            items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
         },
         parenthesized_list_splat: ListNonterminalView {
-            items: &[],
+            items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
         },
         yield_: ListNonterminalView {
-            items: &[],
+            items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -23090,6 +23185,11 @@ fn render_list_comprehension(node: &ListComprehensionTransport, dest: &mut dyn :
 }
 
 fn render_list_pattern(node: &ListPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.pattern.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let pattern_owned = node.pattern.as_deref().unwrap_or(&[]);
     let pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = pattern_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -23162,6 +23262,11 @@ fn render_member_type(node: &MemberTypeTransport, dest: &mut dyn ::std::fmt::Wri
 }
 
 fn render_module(node: &ModuleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.statement.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let statement_owned = node.statement.as_deref().unwrap_or(&[]);
     let statement_buf: Vec<::sittir_core::filters::Renderable<'_>> = statement_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -23190,6 +23295,11 @@ fn render_none(t: &NoneTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
 }
 
 fn render_nonlocal_statement(node: &NonlocalStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.identifier.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let identifier_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.identifier.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -23220,6 +23330,11 @@ fn render_pair(node: &PairTransport, dest: &mut dyn ::std::fmt::Write) -> Result
 }
 
 fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.parameter.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let parameter_owned = node.parameter.as_deref().unwrap_or(&[]);
     let parameter_buf: Vec<::sittir_core::filters::Renderable<'_>> = parameter_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -23271,6 +23386,11 @@ fn render_pass_statement(t: &PassStatementTransport, dest: &mut dyn ::std::fmt::
 }
 
 fn render_pattern_list(node: &PatternListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.pattern.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.pattern.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -23290,6 +23410,11 @@ fn render_positional_separator(t: &PositionalSeparatorTransport, dest: &mut dyn 
 }
 
 fn render_print_statement(node: &PrintStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.argument.as_deref().is_none_or(<[_]>::is_empty) && node.chevron.is_none() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let argument_owned = node.argument.as_deref().unwrap_or(&[]);
     let argument_buf: Vec<::sittir_core::filters::Renderable<'_>> = argument_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -23310,6 +23435,11 @@ fn render_print_statement(node: &PrintStatementTransport, dest: &mut dyn ::std::
 }
 
 fn render_raise_statement(node: &RaiseStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.cause.is_none() && node.expressions.is_none() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let template = RaiseStatementTemplate {
         cause: match &node.cause {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -23335,6 +23465,11 @@ fn render_relative_import(node: &RelativeImportTransport, dest: &mut dyn ::std::
 }
 
 fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.expressions.is_none() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let template = ReturnStatementTemplate {
         expressions: match &node.expressions {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -23345,6 +23480,11 @@ fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std
 }
 
 fn render_set(node: &SetTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.expression.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.expression.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -23356,19 +23496,19 @@ fn render_set(node: &SetTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(
             trailing: false,
         },
         list_splat: ListNonterminalView {
-            items: &[],
+            items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
         },
         parenthesized_list_splat: ListNonterminalView {
-            items: &[],
+            items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
         },
         yield_: ListNonterminalView {
-            items: &[],
+            items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -23397,6 +23537,11 @@ fn render_set_comprehension(node: &SetComprehensionTransport, dest: &mut dyn ::s
 }
 
 fn render_slice(node: &SliceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.start.is_none() && node.stop.is_none() && node.step.is_none() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let template = SliceTemplate {
         expression1: OptionalNonterminalView::Missing,
         expression2: OptionalNonterminalView::Missing,
@@ -23430,6 +23575,11 @@ fn render_string(node: &StringTransport, dest: &mut dyn ::std::fmt::Write) -> Re
 }
 
 fn render_string_content(node: &StringContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.escape_interpolation.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let escape_interpolation_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.escape_interpolation.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -23441,19 +23591,19 @@ fn render_string_content(node: &StringContentTransport, dest: &mut dyn ::std::fm
             trailing: false,
         },
         escape_sequence: ListNonterminalView {
-            items: &[],
+            items: escape_interpolation_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
         not_escape_sequence: ListNonterminalView {
-            items: &[],
+            items: escape_interpolation_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
         string_content: ListNonterminalView {
-            items: &[],
+            items: escape_interpolation_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -23508,6 +23658,11 @@ fn render_try_statement(node: &TryStatementTransport, dest: &mut dyn ::std::fmt:
 }
 
 fn render_tuple(node: &TupleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.expression.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let expression_owned = node.expression.as_deref().unwrap_or(&[]);
     let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = expression_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -23520,19 +23675,19 @@ fn render_tuple(node: &TupleTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             trailing: false,
         },
         list_splat: ListNonterminalView {
-            items: &[],
+            items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
         },
         parenthesized_list_splat: ListNonterminalView {
-            items: &[],
+            items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
         },
         yield_: ListNonterminalView {
-            items: &[],
+            items: expression_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -23542,6 +23697,11 @@ fn render_tuple(node: &TupleTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
 }
 
 fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.pattern.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let pattern_owned = node.pattern.as_deref().unwrap_or(&[]);
     let pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = pattern_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -23608,6 +23768,11 @@ fn render_type_conversion(t: &TypeConversionTransport, dest: &mut dyn ::std::fmt
 }
 
 fn render_type_parameter(node: &TypeParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.type_.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let type__buf: Vec<::sittir_core::filters::Renderable<'_>> = node.type_.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -23660,6 +23825,11 @@ fn render_unary_operator(node: &UnaryOperatorTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_union_pattern(node: &UnionPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.simple_pattern.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let simple_pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.simple_pattern.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -23699,6 +23869,11 @@ fn render_wildcard_import(t: &WildcardImportTransport, dest: &mut dyn ::std::fmt
 }
 
 fn render_with_clause_bare(node: &WithClauseBareTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.with_item.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let with_item_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.with_item.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -23714,6 +23889,11 @@ fn render_with_clause_bare(node: &WithClauseBareTransport, dest: &mut dyn ::std:
 }
 
 fn render_with_clause_paren(node: &WithClauseParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.with_item.is_empty() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let with_item_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.with_item.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -23757,6 +23937,11 @@ fn render_with_statement(node: &WithStatementTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_yield(node: &YieldTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.expression.is_none() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let template = YieldTemplate {
         expression: match &node.expression {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
