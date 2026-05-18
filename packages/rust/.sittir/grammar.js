@@ -1142,13 +1142,12 @@ function resolvePatch(patch, originalMember, precStack) {
 function resolveFieldPlaceholder(patch, originalMember, precStack) {
   let content = originalMember;
   if (isFieldLike(content) && (content.source === "enriched" || content.source === "inferred")) {
-    if (!process.env.SITTIR_QUIET) {
+    const overrideName = patch.name;
+    const enrichName = content.name ?? "(unknown)";
+    if (overrideName === enrichName && !process.env.SITTIR_QUIET) {
       const parentKind = wireGetCurrentRuleKind() ?? "(unknown)";
-      const overrideName = patch.name;
-      const enrichName = content.name ?? "(unknown)";
-      const tag = overrideName === enrichName ? `duplicate name ('${overrideName}')` : `override renames '${enrichName}' \u2192 '${overrideName}'`;
       process.stderr.write(
-        `transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD \u2014 ${tag}. Drop the override entry if the names match; enrich will cover it automatically.
+        `transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD \u2014 duplicate name ('${overrideName}'). Drop the override entry; enrich will cover it automatically.
 `
       );
     }

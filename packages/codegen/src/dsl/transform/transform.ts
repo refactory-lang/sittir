@@ -662,17 +662,17 @@ function resolveFieldPlaceholder(
 		// Both 'enriched' (dsl/enrich.ts) and 'inferred' (compiler/link.ts)
 		// mark fields we synthesized — neither should leak into the override
 		// result as a nested wrapper.
-		if (!process.env.SITTIR_QUIET) {
+		const overrideName = patch.name;
+		const enrichName = (content as { name?: string }).name ?? '(unknown)';
+		// Only warn for the redundant-duplicate case (override matches enrich's
+		// auto-name). The rename case (override picks a different name like
+		// 'object'/'index' instead of enrich's 'expression1'/'expression2') is
+		// the intended override-trumps-enrich behavior — silent by design.
+		if (overrideName === enrichName && !process.env.SITTIR_QUIET) {
 			const parentKind = wireGetCurrentRuleKind() ?? '(unknown)';
-			const overrideName = patch.name;
-			const enrichName = (content as { name?: string }).name ?? '(unknown)';
-			const tag =
-				overrideName === enrichName
-					? `duplicate name ('${overrideName}')`
-					: `override renames '${enrichName}' → '${overrideName}'`;
 			process.stderr.write(
-				`transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD — ${tag}. ` +
-					`Drop the override entry if the names match; enrich will cover it automatically.\n`
+				`transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD — ` +
+					`duplicate name ('${overrideName}'). Drop the override entry; enrich will cover it automatically.\n`
 			);
 		}
 		content = content.content;
