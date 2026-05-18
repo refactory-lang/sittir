@@ -1704,9 +1704,18 @@ function drainRefineMetadata(opts: GrammarOptions): Map<string, RefineForm[]> | 
 function drainGroupsMetadata(opts: GrammarOptions): Record<string, Record<string, string> | undefined> | undefined {
 	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 	if (!wireCtx || !wireCtx.groups) return undefined;
-	const g = wireCtx.groups as Record<string, Record<string, string> | undefined>;
+	const raw = wireCtx.groups as Record<string, unknown>;
+	// Filter out body-pattern entries (function values) — those are
+	// consumed by applyPatternReplacement and produce alias() rewrites,
+	// not lift-based synthesis. Only path-map entries reach link's
+	// applyGroupOverrides.
+	const g: Record<string, Record<string, string> | undefined> = {};
+	for (const [k, v] of Object.entries(raw)) {
+		if (v === undefined || typeof v === 'function') continue;
+		g[k] = v as Record<string, string>;
+	}
 	if (Object.keys(g).length === 0) return undefined;
-	return { ...g };
+	return g;
 }
 
 /**
@@ -1854,7 +1863,7 @@ function evaluateRulesAndInjectSynthetics(
 	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 	if (wireCtx) {
 		injectSyntheticRules(wireCtx.deposits, rules, provenanceByKind);
-		const patternKinds = applyPatternReplacement(wireCtx.authoredRuleNames, baseRules, rules, provenanceByKind);
+		const patternKinds = applyPatternReplacement(wireCtx.authoredRuleNames, baseRules, rules, provenanceByKind, wireCtx);
 		prunePlaceholderOrphans(wireCtx, rules);
 		return patternKinds;
 	}
@@ -1911,10 +1920,17 @@ function isBlankRule(rule: Rule): boolean {
 /**
  * A pattern candidate: an author-declared `_`-prefixed rule whose body is
  * complex enough to serve as a structural replacement target.
+ *
+ * When `aliasAs` is set, replacement sites emit
+ * `alias($._<name>, $.<aliasAs>)` so tree-sitter exposes a visible CST
+ * node at each match. This is the body-pattern-groups path. Without
+ * `aliasAs`, replacement emits a bare hidden `symbol(<name>)` reference
+ * (the legacy `_`-prefix path).
  */
 interface PatternCandidate {
 	readonly name: string;
 	readonly body: Rule;
+	readonly aliasAs?: string;
 }
 
 /**
@@ -1947,9 +1963,11 @@ function applyPatternReplacement(
 	authoredRuleNames: ReadonlySet<string>,
 	baseRules: Record<string, Rule>,
 	rules: Record<string, Rule>,
-	provenanceByKind: Map<string, RuleProvenance>
+	provenanceByKind: Map<string, RuleProvenance>,
+	wireCtx?: WireContext
 ): ReadonlySet<string> {
-	// Step 1: identify pattern candidates
+	// Step 1: identify pattern candidates.
+	// Path A — legacy `_`-prefix candidates declared in `rules:`.
 	const candidates: PatternCandidate[] = [];
 	for (const name of authoredRuleNames) {
 		if (!name.startsWith('_')) continue;
@@ -1958,6 +1976,22 @@ function applyPatternReplacement(
 		if (!body) continue;
 		if (!isComplexBody(body)) continue;
 		candidates.push({ name, body });
+	}
+	// Path B — body-pattern entries in `groups:` whose value is a RuleFn.
+	// The author declares the VISIBLE kind name (no `_`); codegen synthesizes
+	// the hidden `_<key>` body and rewrites match sites as
+	// `alias($._<key>, $.<key>)` so tree-sitter exposes the visible kind as
+	// a CST node. The hidden body was already injected into `rules` by
+	// wire's `applyWirePatternReplacement` (so the body-pattern fn ran).
+	if (wireCtx?.groups) {
+		for (const [key, value] of Object.entries(wireCtx.groups)) {
+			if (typeof value !== 'function') continue;
+			const hiddenName = `_${key}`;
+			const body = rules[hiddenName];
+			if (!body) continue;
+			if (!isComplexBody(body)) continue;
+			candidates.push({ name: hiddenName, body, aliasAs: key });
+		}
 	}
 	if (candidates.length === 0) return new Set();
 
@@ -2014,7 +2048,13 @@ function replacePatterns(rule: Rule, candidates: PatternCandidate[]): Rule {
 	// Check if this node itself matches any candidate.
 	for (const c of candidates) {
 		if (patternRulesEqual(rule, c.body)) {
-			return { type: 'symbol', name: c.name, hidden: true } satisfies SymbolRule;
+			const symRef: SymbolRule = { type: 'symbol', name: c.name, hidden: true };
+			// Body-pattern groups path: wrap the hidden symbol in an
+			// alias() so tree-sitter emits the visible kind as a CST node.
+			if (c.aliasAs !== undefined) {
+				return { type: 'alias', content: symRef, named: true, value: c.aliasAs } satisfies AliasRule;
+			}
+			return symRef;
 		}
 	}
 	// Otherwise recurse into children.

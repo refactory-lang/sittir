@@ -15845,6 +15845,9 @@
             "kinds": [
               "_attributed_type_parameter"
             ]
+          },
+          "aliasSources": {
+            "attributed_type_parameter": "_attributed_type_parameter"
           }
         }
       ],

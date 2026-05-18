@@ -120,7 +120,48 @@ const config: WireConfig<RustGrammar> = {
 		// See: docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
 		_visibility_modifier_pub: {
 			'1': 'parens'
-		}
+		},
+
+		// --- body-pattern groups: tree-sitter visible-kind synthesis ---
+		// Each function-valued entry below declares a STRUCTURAL PATTERN.
+		// Codegen creates `_<key>` as the hidden rule body and rewrites every
+		// matching sub-tree as `alias($._<key>, $.<key>)` so tree-sitter emits
+		// the visible kind as a CST node. Without alias, tree-sitter inlines
+		// the hidden `_*` rule and the kind never appears at runtime — the
+		// transport-side slot remains permanently empty.
+
+		// Pattern: attribute_item(s) attached to a struct field.
+		// Used inline at every comma-separated position in
+		// field_declaration_list. Without this lift, the parent's $children
+		// flattens to alternating attribute_item / field_declaration entries
+		// joined by commas (e.g. `#[attr],y: i32` instead of `#[attr] y: i32`).
+		attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
+
+		// Pattern: attribute_item(s) attached to an enum variant.
+		// enum_variant_list uses SEQ(REPEAT(attribute_item), enum_variant)
+		// inline at every comma-separated position.
+		attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
+
+		// Pattern: optional attribute_item attached to a function parameter.
+		// parameters uses SEQ(CHOICE(attribute_item, BLANK), CHOICE(...)).
+		// The sittir IR normalizes CHOICE(x, BLANK) to optional(x).
+		// Members: parameter | self_parameter | variadic_parameter |
+		// '_' wildcard | _type (anonymous type).
+		attributed_parameter: ($) =>
+			seq(
+				optional($.attribute_item),
+				choice($.parameter, $.self_parameter, $.variadic_parameter, '_', $._type)
+			),
+
+		// Pattern: attribute_item(s) attached to a type parameter.
+		// type_parameters uses SEQ(REPEAT(attribute_item), CHOICE(metavariable,
+		// type_parameter, lifetime_parameter, const_parameter)) inline at every
+		// comma-separated position.
+		attributed_type_parameter: ($) =>
+			seq(
+				repeat($.attribute_item),
+				choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)
+			)
 	},
 	transforms: {
 		// abstract_type: 1 field(s)
@@ -635,55 +676,7 @@ const config: WireConfig<RustGrammar> = {
 		// The hidden rule `_wildcard_pattern` is just the `_` literal;
 		// the named alias on `_pattern` above promotes it to a proper
 		// `wildcard_pattern` kind at parse time.
-		_wildcard_pattern: ($) => '_',
-
-		// Pattern rule: attribute_item(s) attached to a struct field.
-		//
-		// The base grammar uses `seq(repeat($.attribute_item), $.field_declaration)`
-		// inline at every comma-separated position in field_declaration_list. Wire's
-		// pattern find-and-replace detects this body as a STRUCTURAL PATTERN and
-		// replaces every occurrence with a reference to `_attributed_field_declaration`,
-		// so tree-sitter produces a real CST node for the group instead of
-		// flattening attributes and their target into the parent's child list.
-		//
-		// Without this, the parent slot model gets a flat `$children` list of
-		// alternating attribute_item / field_declaration nodes joined by the
-		// comma separator, causing attribute items and their field to be rendered
-		// with commas between them (e.g. `#[attr],y: i32` instead of
-		// `#[attr] y: i32`).
-		_attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
-
-		// Pattern rule: attribute_item(s) attached to an enum variant.
-		//
-		// enum_variant_list uses the same SEQ(REPEAT(attribute_item), enum_variant)
-		// shape inline at every comma-separated position. Wire's pattern replacement
-		// lifts each occurrence into a real _attributed_enum_variant CST node.
-		_attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
-
-		// Pattern rule: optional attribute_item attached to a function parameter.
-		//
-		// parameters uses SEQ(CHOICE(attribute_item, BLANK), CHOICE(...)) — i.e.
-		// an optional single attribute followed by the parameter kind. The sittir
-		// IR normalizes CHOICE(x, BLANK) to optional(x), so the pattern body uses
-		// optional(). Members: parameter | self_parameter | variadic_parameter |
-		// '_' wildcard | _type (anonymous type).
-		_attributed_parameter: ($) =>
-			seq(
-				optional($.attribute_item),
-				choice($.parameter, $.self_parameter, $.variadic_parameter, '_', $._type)
-			),
-
-		// Pattern rule: attribute_item(s) attached to a type parameter.
-		//
-		// type_parameters uses SEQ(REPEAT(attribute_item), CHOICE(metavariable,
-		// type_parameter, lifetime_parameter, const_parameter)) inline at every
-		// comma-separated position. Wire lifts each occurrence into a real
-		// _attributed_type_parameter CST node.
-		_attributed_type_parameter: ($) =>
-			seq(
-				repeat($.attribute_item),
-				choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)
-			)
+		_wildcard_pattern: ($) => '_'
 	},
 
 	// externalAltDef — sittir-side rule bodies for external scanner symbols.
@@ -727,4 +720,11 @@ const config: WireConfig<RustGrammar> = {
 // The typed `config` above is validated against WireConfig<RustGrammar>.
 // `grammar()` is tree-sitter's injected global (declared at top of file);
 // `base` comes from the untyped `grammar.js` import.
-export default grammar(enrich(base), wire<RustGrammar>(config));
+//
+// Pass `enrich(base)` to wire so body-pattern groups (function-valued
+// entries in `groups:`) can walk base rules and inject pattern-replacing
+// passthroughs. Without the base arg, unoverridden base rules bypass
+// pattern replacement and tree-sitter never emits the alias()-wrapped
+// visible kinds. Evaluating `enrich(base)` twice is intentional and cheap.
+const enrichedBase = enrich(base);
+export default grammar(enrichedBase, wire<RustGrammar>(config, enrichedBase));

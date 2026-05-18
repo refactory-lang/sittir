@@ -458,7 +458,7 @@ function wireRegisterRefineForms(kind, forms) {
 function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
 }
-function wire(config) {
+function wire(config, base2) {
   const context = {
     deposits: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
@@ -478,8 +478,15 @@ function wire(config) {
   composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
   injectTransformHiddenRulePlaceholders(outRules, transforms, context);
+  if (base2 && config.groups && hasBodyPatternGroups(config.groups)) {
+    const baseRules = base2.grammar?.rules ?? base2.rules ?? {};
+    for (const baseName of Object.keys(baseRules)) {
+      if (baseName in outRules) continue;
+      outRules[baseName] = passthroughBaseRuleFn;
+    }
+  }
   wrapAllRuleFns(outRules, context);
-  applyWirePatternReplacement(outRules, context.authoredRuleNames);
+  applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
   const conflicts = wrapConflictsCallback(config.conflicts, context);
   const inline = wrapInlineCallback(config.inline, context);
   const wired = {
@@ -653,6 +660,15 @@ function nativeInlineRef($, name) {
 function symbolizeRef(_$, name) {
   return { type: "SYMBOL", name };
 }
+function hasBodyPatternGroups(groups) {
+  for (const value of Object.values(groups)) {
+    if (typeof value === "function") return true;
+  }
+  return false;
+}
+function passthroughBaseRuleFn(_$, previous) {
+  return previous;
+}
 function makeSimpleDollarProxy() {
   return new Proxy({}, {
     get(_target, name) {
@@ -682,6 +698,7 @@ function patternBodyEqual(a, b) {
   const t = ra.type.toLowerCase();
   if (t === "string" || t === "pattern") return ra.value === rb.value;
   if (t === "symbol") return ra.name === rb.name;
+  if (t === "blank") return true;
   if (t === "seq" || t === "choice") {
     const ma = ra.members;
     const mb = rb.members;
@@ -702,6 +719,19 @@ function replaceInBodyRt(rule, candidates) {
   const r = rule;
   for (const c of candidates) {
     if (patternBodyEqual(rule, c.body)) {
+      if (c.aliasAs !== void 0) {
+        return c.uppercase ? {
+          type: "ALIAS",
+          content: { type: "SYMBOL", name: c.name },
+          named: true,
+          value: c.aliasAs
+        } : {
+          type: "alias",
+          content: { type: "symbol", name: c.name, hidden: true },
+          named: true,
+          value: c.aliasAs
+        };
+      }
       return c.uppercase ? { type: "SYMBOL", name: c.name } : { type: "symbol", name: c.name, hidden: true };
     }
   }
@@ -729,7 +759,7 @@ function buildPatternReplacingFn(fn, candidates) {
     return replaceInBodyRt(result, candidates);
   };
 }
-function applyWirePatternReplacement(rules, authoredRuleNames) {
+function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) {
   const candidates = [];
   const $ = makeSimpleDollarProxy();
   for (const name of authoredRuleNames) {
@@ -747,6 +777,35 @@ function applyWirePatternReplacement(rules, authoredRuleNames) {
     if (!isComplexBodyRt(body)) continue;
     const uppercase = body.type === body.type.toUpperCase();
     candidates.push({ name, body, uppercase });
+  }
+  if (groups) {
+    for (const [key, value] of Object.entries(groups)) {
+      if (typeof value !== "function") continue;
+      if (key.startsWith("_")) {
+        throw new Error(
+          `groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); codegen will create '_${key}' internally`
+        );
+      }
+      const hiddenName = `_${key}`;
+      let body;
+      try {
+        const result = value.call(void 0, $, void 0);
+        if (!result || typeof result !== "object" || typeof result.type !== "string") {
+          throw new Error(`groups['${key}']: body fn did not return a rule object`);
+        }
+        body = result;
+      } catch (e) {
+        throw new Error(`groups['${key}']: failed to evaluate body fn: ${e.message}`);
+      }
+      if (!isComplexBodyRt(body)) {
+        throw new Error(
+          `groups['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
+        );
+      }
+      const uppercase = body.type === body.type.toUpperCase();
+      candidates.push({ name: hiddenName, body, uppercase, aliasAs: key });
+      rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+    }
   }
   if (candidates.length === 0) return;
   const candidateNames = new Set(candidates.map((c) => c.name));

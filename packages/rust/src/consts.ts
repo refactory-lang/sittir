@@ -675,8 +675,11 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "_delim_token_tree_paren": 369,
   "_delim_token_tree_bracket": 370,
   "_delim_token_tree_brace": 371,
-  "_field_identifier": 404,
-  "_type_identifier": 407,
+  "_attributed_field_declaration": 372,
+  "_attributed_enum_variant": 373,
+  "_attributed_parameter": 374,
+  "_field_identifier": 407,
+  "_type_identifier": 410,
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -927,8 +930,11 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [369]: "_delim_token_tree_paren",
   [370]: "_delim_token_tree_bracket",
   [371]: "_delim_token_tree_brace",
-  [404]: "_field_identifier",
-  [407]: "_type_identifier",
+  [372]: "_attributed_field_declaration",
+  [373]: "_attributed_enum_variant",
+  [374]: "_attributed_parameter",
+  [407]: "_field_identifier",
+  [410]: "_type_identifier",
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -1179,8 +1185,11 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "_delim_token_tree_paren", id: 369, enumName: "DelimTokenTreeParen", cName: "sym__delim_token_tree_paren" },
   { name: "_delim_token_tree_bracket", id: 370, enumName: "DelimTokenTreeBracket", cName: "sym__delim_token_tree_bracket" },
   { name: "_delim_token_tree_brace", id: 371, enumName: "DelimTokenTreeBrace", cName: "sym__delim_token_tree_brace" },
-  { name: "_field_identifier", id: 404, enumName: "AliasFieldIdentifier", cName: "alias_sym_field_identifier" },
-  { name: "_type_identifier", id: 407, enumName: "AliasTypeIdentifier", cName: "alias_sym_type_identifier" },
+  { name: "_attributed_field_declaration", id: 372, enumName: "AttributedFieldDeclaration", cName: "sym__attributed_field_declaration" },
+  { name: "_attributed_enum_variant", id: 373, enumName: "AttributedEnumVariant", cName: "sym__attributed_enum_variant" },
+  { name: "_attributed_parameter", id: 374, enumName: "AttributedParameter", cName: "sym__attributed_parameter" },
+  { name: "_field_identifier", id: 407, enumName: "AliasFieldIdentifier", cName: "alias_sym_field_identifier" },
+  { name: "_type_identifier", id: 410, enumName: "AliasTypeIdentifier", cName: "alias_sym_type_identifier" },
 ] as const;
 
 export const enum TSFieldId {

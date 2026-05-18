@@ -8,9 +8,9 @@ type _TypeExtends<A, B> = A extends B ? true : false;
 type _TypeAssert<T extends true> = T;
 
 // --- Concrete interface `$type` discriminant ---
-export type _Type_AttributedEnumVariant = _TypeAssert<_TypeExtends<AttributedEnumVariant['$type'], '_attributed_enum_variant'>>;
-export type _Type_AttributedFieldDeclaration = _TypeAssert<_TypeExtends<AttributedFieldDeclaration['$type'], '_attributed_field_declaration'>>;
-export type _Type_AttributedParameter = _TypeAssert<_TypeExtends<AttributedParameter['$type'], '_attributed_parameter'>>;
+export type _Type_AttributedEnumVariant = _TypeAssert<_TypeExtends<AttributedEnumVariant['$type'], TSKindId.AttributedEnumVariant>>;
+export type _Type_AttributedFieldDeclaration = _TypeAssert<_TypeExtends<AttributedFieldDeclaration['$type'], TSKindId.AttributedFieldDeclaration>>;
+export type _Type_AttributedParameter = _TypeAssert<_TypeExtends<AttributedParameter['$type'], TSKindId.AttributedParameter>>;
 export type _Type_AttributedTypeParameter = _TypeAssert<_TypeExtends<AttributedTypeParameter['$type'], '_attributed_type_parameter'>>;
 export type _Type__ClosureExpressionExpr = _TypeAssert<_TypeExtends<_ClosureExpressionExpr['$type'], TSKindId._ClosureExpressionExpr>>;
 export type _Type__DelimTokenTreeBrace = _TypeAssert<_TypeExtends<_DelimTokenTreeBrace['$type'], TSKindId._DelimTokenTreeBrace>>;

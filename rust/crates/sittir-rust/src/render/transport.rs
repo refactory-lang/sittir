@@ -429,6 +429,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 321 => Ok(AnyTransport::ArrayExpressionSemi(
                     ArrayExpressionSemiTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _attributed_enum_variant (_ATTRIBUTED_ENUM_VARIANT)
+                373 => Ok(AnyTransport::AttributedEnumVariant(
+                    AttributedEnumVariantTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _attributed_field_declaration (_ATTRIBUTED_FIELD_DECLARATION)
+                372 => Ok(AnyTransport::AttributedFieldDeclaration(
+                    AttributedFieldDeclarationTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _attributed_parameter (_ATTRIBUTED_PARAMETER)
+                374 => Ok(AnyTransport::AttributedParameter(
+                    AttributedParameterTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _closure_expression_block (_CLOSURE_EXPRESSION_BLOCK)
                 323 => Ok(AnyTransport::ClosureExpressionBlock(
                     ClosureExpressionBlockTransport::from_napi_value(env, napi_val)?
@@ -458,7 +470,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     _ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _field_identifier (_FIELD_IDENTIFIER)
-                404 => Ok(AnyTransport::FieldIdentifier(
+                407 => Ok(AnyTransport::FieldIdentifier(
                     FieldIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _field_pattern_named (_FIELD_PATTERN_NAMED)
@@ -650,7 +662,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     _TokenTreePatternParenTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_identifier (_TYPE_IDENTIFIER)
-                407 => Ok(AnyTransport::TypeIdentifier(
+                410 => Ok(AnyTransport::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _visibility_modifier_crate (_VISIBILITY_MODIFIER_CRATE)
@@ -6887,7 +6899,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
                 222 => Ok(Self::FunctionType(Box::new(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 ))),
-                407 => Ok(Self::TypeIdentifier(
+                410 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(Box::new(
@@ -7313,7 +7325,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterParameterTran
                 222 => return Ok(Self::FunctionType(Box::new(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 ))),
-                407 => return Ok(Self::TypeIdentifier(
+                410 => return Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => return Ok(Self::MacroInvocation(Box::new(
@@ -9493,7 +9505,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeLeftTransportSlot {
                 222 => return Ok(Self::FunctionType(Box::new(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 ))),
-                407 => return Ok(Self::TypeIdentifier(
+                410 => return Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => return Ok(Self::MacroInvocation(Box::new(
@@ -9770,7 +9782,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeRightTransportSlot {
                 222 => return Ok(Self::FunctionType(Box::new(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 ))),
-                407 => return Ok(Self::TypeIdentifier(
+                410 => return Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => return Ok(Self::MacroInvocation(Box::new(
@@ -10043,7 +10055,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeTypeTransportSlot {
                 222 => return Ok(Self::FunctionType(Box::new(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 ))),
-                407 => return Ok(Self::TypeIdentifier(
+                410 => return Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => return Ok(Self::MacroInvocation(Box::new(
@@ -11287,7 +11299,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DynamicTypeTraitTransportSlot {
                 197 => return Ok(Self::HigherRankedTraitBound(Box::new(
                     HigherRankedTraitBoundTransport::from_napi_value(env, napi_val)?
                 ))),
-                407 => return Ok(Self::TypeIdentifier(
+                410 => return Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 245 => return Ok(Self::ScopedTypeIdentifier(Box::new(
@@ -11462,7 +11474,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldExpressionFieldTransportSlo
         };
         if let Some(kind_id) = kind_id {
             match kind_id {
-                404 => return Ok(Self::FieldIdentifier(
+                407 => return Ok(Self::FieldIdentifier(
                     FieldIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 126 => return Ok(Self::IntegerLiteral(
@@ -11535,7 +11547,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldInitializerFieldTransportSl
         };
         if let Some(kind_id) = kind_id {
             match kind_id {
-                404 => return Ok(Self::FieldIdentifier(
+                407 => return Ok(Self::FieldIdentifier(
                     FieldIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 126 => return Ok(Self::IntegerLiteral(
@@ -11864,7 +11876,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeTypeTransportSlot {
         };
         if let Some(kind_id) = kind_id {
             match kind_id {
-                407 => return Ok(Self::TypeIdentifier(
+                410 => return Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 90 => return Ok(Self::ReservedIdentifier(
@@ -11951,7 +11963,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeWithTurbofishTypeTran
         };
         if let Some(kind_id) = kind_id {
             match kind_id {
-                407 => return Ok(Self::TypeIdentifier(
+                410 => return Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 243 => return Ok(Self::ScopedIdentifier(Box::new(
@@ -13328,7 +13340,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructExpressionNameTransportSlo
         };
         if let Some(kind_id) = kind_id {
             match kind_id {
-                407 => return Ok(Self::TypeIdentifier(
+                410 => return Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 244 => return Ok(Self::ScopedTypeIdentifierInExpressionPosition(Box::new(
@@ -13529,7 +13541,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsTypeTransportSlot {
                 222 => return Ok(Self::FunctionType(Box::new(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 ))),
-                407 => return Ok(Self::TypeIdentifier(
+                410 => return Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => return Ok(Self::MacroInvocation(Box::new(
@@ -14199,7 +14211,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsTypeTransportSlot {
                 222 => return Ok(Self::FunctionType(Box::new(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 ))),
-                407 => return Ok(Self::TypeIdentifier(
+                410 => return Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => return Ok(Self::MacroInvocation(Box::new(
@@ -14494,7 +14506,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseBoundsLifetimeTransportSlot {
                 219 => return Ok(Self::Lifetime(Box::new(
                     LifetimeTransport::from_napi_value(env, napi_val)?
                 ))),
-                407 => return Ok(Self::TypeIdentifier(
+                410 => return Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 other => return Err(::napi::Error::from_reason(format!(
@@ -14575,7 +14587,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WherePredicateLeftTransportSlot 
                 219 => return Ok(Self::Lifetime(Box::new(
                     LifetimeTransport::from_napi_value(env, napi_val)?
                 ))),
-                407 => return Ok(Self::TypeIdentifier(
+                410 => return Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 245 => return Ok(Self::ScopedTypeIdentifier(Box::new(
@@ -34559,25 +34571,7 @@ fn render_attributed_type_parameter(node: &AttributedTypeParameterTransport, des
             leading: false,
             trailing: false,
         },
-        const_parameter: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        lifetime_parameter: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         metavariable: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.metavariable)),
-        type_parameter: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -35473,24 +35467,12 @@ fn render_bounded_type(node: &BoundedTypeTransport, dest: &mut dyn ::std::fmt::W
             leading: false,
             trailing: false,
         },
-        use_bounds: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
 
 fn render_bracketed_type(node: &BracketedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = BracketedTypeTemplate {
-        qualified_type: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
     template.render_into(dest)
@@ -35575,12 +35557,6 @@ fn render_closure_parameters(node: &ClosureParametersTransport, dest: &mut dyn :
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ClosureParametersTemplate {
-        parameter: ListNonterminalView {
-            items: pattern_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
         pattern: ListNonterminalView {
             items: pattern_buf.as_slice(),
             separator: ",",
@@ -35593,12 +35569,6 @@ fn render_closure_parameters(node: &ClosureParametersTransport, dest: &mut dyn :
 
 fn render_comment(node: &CommentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = CommentTemplate {
-        block_comment: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         line_comment: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.line_comment)),
     };
     template.render_into(dest)
@@ -35771,12 +35741,6 @@ fn render_dynamic_type(node: &DynamicTypeTransport, dest: &mut dyn ::std::fmt::W
 fn render_else_clause(node: &ElseClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ElseClauseTemplate {
         block: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.block)),
-        if_expression: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -35830,15 +35794,13 @@ fn render_enum_variant_list(node: &EnumVariantListTransport, dest: &mut dyn ::st
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
+    let attributed_enum_variant_owned = node.attributed_enum_variant.as_deref().unwrap_or(&[]);
+    let attributed_enum_variant_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributed_enum_variant_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = EnumVariantListTemplate {
-        attribute_item: ListNonterminalView {
-            items: &[],
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        enum_variant: ListNonterminalView {
-            items: &[],
+        attributed_enum_variant: ListNonterminalView {
+            items: attributed_enum_variant_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -35923,15 +35885,13 @@ fn render_field_declaration_list(node: &FieldDeclarationListTransport, dest: &mu
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
+    let attributed_field_declaration_owned = node.attributed_field_declaration.as_deref().unwrap_or(&[]);
+    let attributed_field_declaration_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributed_field_declaration_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = FieldDeclarationListTemplate {
-        attribute_item: ListNonterminalView {
-            items: &[],
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        field_declaration: ListNonterminalView {
-            items: &[],
+        attributed_field_declaration: ListNonterminalView {
+            items: attributed_field_declaration_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -35977,18 +35937,6 @@ fn render_field_initializer_list(node: &FieldInitializerListTransport, dest: &mu
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = FieldInitializerListTemplate {
-        base_field_initializer: ListNonterminalView {
-            items: shorthand_field_initializer_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        field_initializer: ListNonterminalView {
-            items: shorthand_field_initializer_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
         shorthand_field_initializer: ListNonterminalView {
             items: shorthand_field_initializer_buf.as_slice(),
             separator: ",",
@@ -36119,12 +36067,6 @@ fn render_function_modifiers(node: &FunctionModifiersTransport, dest: &mut dyn :
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = FunctionModifiersTemplate {
-        extern_modifier: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         modifier: ListNonterminalView {
             items: modifier_buf.as_slice(),
             separator: "",
@@ -36207,12 +36149,6 @@ fn render_generic_function(node: &GenericFunctionTransport, dest: &mut dyn ::std
 fn render_generic_pattern(node: &GenericPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = GenericPatternTemplate {
         identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
-        scoped_identifier: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_arguments)),
     };
     template.render_into(dest)
@@ -36328,12 +36264,6 @@ fn render_last_match_arm(node: &LastMatchArmTransport, dest: &mut dyn ::std::fmt
         .collect();
     let template = LastMatchArmTemplate {
         attribute_item: ListNonterminalView {
-            items: attribute_item_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        inner_attribute_item: ListNonterminalView {
             items: attribute_item_buf.as_slice(),
             separator: "",
             leading: false,
@@ -36610,12 +36540,6 @@ fn render_mutable_specifier(t: &MutableSpecifierTransport, dest: &mut dyn ::std:
 
 fn render_negative_literal(node: &NegativeLiteralTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = NegativeLiteralTemplate {
-        float_literal: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         integer_literal: ListNonterminalView {
             items: &[],
             separator: "",
@@ -36693,33 +36617,13 @@ fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Writ
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
+    let attributed_parameter_owned = node.attributed_parameter.as_deref().unwrap_or(&[]);
+    let attributed_parameter_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributed_parameter_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = ParametersTemplate {
-        attribute_item: ListNonterminalView {
-            items: &[],
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        parameter: ListNonterminalView {
-            items: &[],
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        self_parameter: ListNonterminalView {
-            items: &[],
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        type_: ListNonterminalView {
-            items: &[],
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        variadic_parameter: ListNonterminalView {
-            items: &[],
+        attributed_parameter: ListNonterminalView {
+            items: attributed_parameter_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -36817,12 +36721,6 @@ fn render_reference_expression(node: &ReferenceExpressionTransport, dest: &mut d
         reference_expression_raw_const: match &node.reference_expression_raw_const {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
-        },
-        reference_expression_raw_mut: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
         },
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
@@ -37053,12 +36951,6 @@ fn render_string_literal(node: &StringLiteralTransport, dest: &mut dyn ::std::fm
             leading: false,
             trailing: false,
         },
-        string_content: ListNonterminalView {
-            items: escape_sequence_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -37096,12 +36988,6 @@ fn render_struct_pattern(node: &StructPatternTransport, dest: &mut dyn ::std::fm
         .collect();
     let template = StructPatternTemplate {
         field_pattern: ListNonterminalView {
-            items: field_pattern_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        remaining_field_pattern: ListNonterminalView {
             items: field_pattern_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -37322,18 +37208,6 @@ fn render_trait_bounds(node: &TraitBoundsTransport, dest: &mut dyn ::std::fmt::W
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TraitBoundsTemplate {
-        higher_ranked_trait_bound: ListNonterminalView {
-            items: type__buf.as_slice(),
-            separator: "+",
-            leading: false,
-            trailing: false,
-        },
-        lifetime: ListNonterminalView {
-            items: type__buf.as_slice(),
-            separator: "+",
-            leading: false,
-            trailing: false,
-        },
         type_: ListNonterminalView {
             items: type__buf.as_slice(),
             separator: "+",
@@ -37428,12 +37302,6 @@ fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt:
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TuplePatternTemplate {
-        closure_expression: ListNonterminalView {
-            items: pattern_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
         pattern: ListNonterminalView {
             items: pattern_buf.as_slice(),
             separator: ",",
@@ -37491,35 +37359,11 @@ fn render_type_arguments(node: &TypeArgumentsTransport, dest: &mut dyn ::std::fm
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TypeArgumentsTemplate {
-        block: ListNonterminalView {
-            items: type__buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        lifetime: ListNonterminalView {
-            items: type__buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        literal: ListNonterminalView {
-            items: type__buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
         trait_bounds: match &node.trait_bounds {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
         type_: ListNonterminalView {
-            items: type__buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        type_binding: ListNonterminalView {
             items: type__buf.as_slice(),
             separator: ",",
             leading: false,
@@ -37665,12 +37509,6 @@ fn render_use_bounds(node: &UseBoundsTransport, dest: &mut dyn ::std::fmt::Write
         .collect();
     let template = UseBoundsTemplate {
         lifetime: ListNonterminalView {
-            items: lifetime_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        type_identifier: ListNonterminalView {
             items: lifetime_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -37847,25 +37685,7 @@ fn render_error_sentinel(t: &ErrorSentinelTransport, dest: &mut dyn ::std::fmt::
 
 fn render_visibility_modifier_pub_parens(node: &VisibilityModifierPubParensTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = VisibilityModifierPubParensTemplate {
-        crate_: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         self_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.self_)),
-        super_: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        visibility_modifier_in_path: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -39848,7 +39668,7 @@ fn transport_to_node_attributed_enum_variant(transport: AttributedEnumVariantTra
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "_attributed_enum_variant" — no parser symbol */,
+        TransportKindId(373) /* "_attributed_enum_variant" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39877,7 +39697,7 @@ fn transport_to_node_attributed_field_declaration(transport: AttributedFieldDecl
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "_attributed_field_declaration" — no parser symbol */,
+        TransportKindId(372) /* "_attributed_field_declaration" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -39906,7 +39726,7 @@ fn transport_to_node_attributed_parameter(transport: AttributedParameterTranspor
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "_attributed_parameter" — no parser symbol */,
+        TransportKindId(374) /* "_attributed_parameter" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -40183,7 +40003,7 @@ fn transport_to_node__expression_statement_with_semi(transport: _ExpressionState
 fn transport_to_node_field_identifier(transport: FieldIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(404) /* "_field_identifier" */,
+        TransportKindId(407) /* "_field_identifier" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -41603,7 +41423,7 @@ fn transport_to_node__token_tree_pattern_paren(transport: _TokenTreePatternParen
 fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(407) /* "_type_identifier" */,
+        TransportKindId(410) /* "_type_identifier" */,
         transport.transport_source,
         transport.transport_named,
         true,

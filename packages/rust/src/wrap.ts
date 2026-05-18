@@ -103,6 +103,11 @@ function drillAs<T>(entry: unknown, tree: TreeHandle, fromType: string, toType: 
   }
   return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType }) as unknown as T;
 }
+function drillAsAll<T>(entries: unknown, tree: TreeHandle, fromType: string, toType: string): T[] {
+  if (!entries) return [];
+  const arr = Array.isArray(entries) ? entries : [entries];
+  return arr.map(e => drillAs<T>(e, tree, fromType, toType));
+}
 function projectKindEnumStorage<T>(value: T): T {
   if (!value) return value;
   if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry)) as unknown as T;
@@ -403,6 +408,57 @@ export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeH
       attributes: (...v: NonNullable<T.ArrayExpressionSemi['_attributes']>[number][]) => wrapArrayExpressionSemi({ ...data, _attributes: v }, tree),
       elements: (v: NonNullable<T.ArrayExpressionSemi['_elements']>) => wrapArrayExpressionSemi({ ...data, _elements: v }, tree),
       length: (v: NonNullable<T.ArrayExpressionSemi['_length']>) => wrapArrayExpressionSemi({ ...data, _length: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapAttributedEnumVariant(data: T.AttributedEnumVariant, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.AttributedEnumVariant as const,
+    _attribute_item: normalizeRepeatedWrapSlot(data._attribute_item, false, "attribute_item"),
+    _enum_variant: normalizeSingularWrapSlot(data._enum_variant, "enum_variant", true, data.$type),
+
+    attributeItems() { return drillInAll<T.AttributeItem>(this._attribute_item as readonly T.AttributeItem[] | undefined, tree); },
+    enumVariant() { return drillIn<T.EnumVariant>(this._enum_variant, tree); },
+    $with: {
+      attributeItems: (...v: NonNullable<T.AttributedEnumVariant['_attribute_item']>[number][]) => wrapAttributedEnumVariant({ ...data, _attribute_item: v }, tree),
+      enumVariant: (v: NonNullable<T.AttributedEnumVariant['_enum_variant']>) => wrapAttributedEnumVariant({ ...data, _enum_variant: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapAttributedFieldDeclaration(data: T.AttributedFieldDeclaration, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.AttributedFieldDeclaration as const,
+    _attribute_item: normalizeRepeatedWrapSlot(data._attribute_item, false, "attribute_item"),
+    _field_declaration: normalizeSingularWrapSlot(data._field_declaration, "field_declaration", true, data.$type),
+
+    attributeItems() { return drillInAll<T.AttributeItem>(this._attribute_item as readonly T.AttributeItem[] | undefined, tree); },
+    fieldDeclaration() { return drillIn<T.FieldDeclaration>(this._field_declaration, tree); },
+    $with: {
+      attributeItems: (...v: NonNullable<T.AttributedFieldDeclaration['_attribute_item']>[number][]) => wrapAttributedFieldDeclaration({ ...data, _attribute_item: v }, tree),
+      fieldDeclaration: (v: NonNullable<T.AttributedFieldDeclaration['_field_declaration']>) => wrapAttributedFieldDeclaration({ ...data, _field_declaration: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapAttributedParameter(data: T.AttributedParameter, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.AttributedParameter as const,
+    _attribute_item: normalizeSingularWrapSlot(data._attribute_item, "attribute_item", false, data.$type),
+    _parameter: normalizeSingularWrapSlot((data._parameter ?? data._self_parameter ?? data._variadic_parameter ?? data._abstract_type ?? data._reference_type ?? data._metavariable ?? data._pointer_type ?? data._generic_type ?? data._scoped_type_identifier ?? data._tuple_type ?? data._unit_type ?? data._array_type ?? data._function_type ?? data._type_identifier ?? data._macro_invocation ?? data._never_type ?? data._dynamic_type ?? data._bounded_type ?? data._removed_trait_bound ?? data._primitive_type), "parameter", true, data.$type),
+
+    attributeItem() { return drillIn<T.AttributeItem | undefined>(this._attribute_item, tree); },
+    parameter() { return drillIn<T.Parameter | T.SelfParameter | T.VariadicParameter | "_" | T._Type>(this._parameter, tree); },
+    $with: {
+      attributeItem: (v: NonNullable<T.AttributedParameter['_attribute_item']>) => wrapAttributedParameter({ ...data, _attribute_item: v }, tree),
+      parameter: (v: NonNullable<T.AttributedParameter['_parameter']>) => wrapAttributedParameter({ ...data, _parameter: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -3552,7 +3608,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
     $type: TSKindId.TypeParameters as const,
     _attributes: normalizeRepeatedWrapSlot(data._attributes, true, "attributes"),
 
-    attributes() { return drillInAll<T.AttributedTypeParameter>(this._attributes as readonly T.AttributedTypeParameter[] | undefined, tree); },
+    attributes() { return drillAsAll<T.AttributedTypeParameter>(this._attributes, tree, "attributed_type_parameter", "_attributed_type_parameter"); },
     $with: {
       attributes: (...v: NonEmptyArray<NonNullable<T.TypeParameters['_attributes']>[number]>) => wrapTypeParameters({ ...data, _attributes: v }, tree),
     },
@@ -3803,6 +3859,9 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
   '_array_expression_list': (d, t) => wrapArrayExpressionList(d as unknown as T.ArrayExpressionList, t),
   '_array_expression_semi': (d, t) => wrapArrayExpressionSemi(d as unknown as T.ArrayExpressionSemi, t),
+  '_attributed_enum_variant': (d, t) => wrapAttributedEnumVariant(d as unknown as T.AttributedEnumVariant, t),
+  '_attributed_field_declaration': (d, t) => wrapAttributedFieldDeclaration(d as unknown as T.AttributedFieldDeclaration, t),
+  '_attributed_parameter': (d, t) => wrapAttributedParameter(d as unknown as T.AttributedParameter, t),
   '_closure_expression_block': (d, t) => wrapClosureExpressionBlock(d as unknown as T.ClosureExpressionBlock, t),
   '_closure_expression_expr': (d, t) => wrap_ClosureExpressionExpr(d as unknown as T._ClosureExpressionExpr, t),
   '_condition': (d, t) => wrapCondition(d as unknown as T.Condition, t),

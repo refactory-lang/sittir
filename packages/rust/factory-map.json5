@@ -341,6 +341,9 @@
     "tuple_struct_pattern.type": {
       "generic_type": "generic_type_with_turbofish"
     },
+    "type_parameters.attributes": {
+      "attributed_type_parameter": "_attributed_type_parameter"
+    },
     "where_predicate.left": {
       "primitive_type": "_primitive_type"
     }

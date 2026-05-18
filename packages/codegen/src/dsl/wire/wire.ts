@@ -316,17 +316,25 @@ export type PolymorphsConfig<Base extends GrammarBase = GrammarBase> = Partial<
 >;
 
 /**
- * Per-kind group-lift map. Each entry's key is the parent kind whose
- * rule body contains the sub-rule to lift; the inner map is
- * `path → discriminator`, where the path is the same slash-separated
- * positional path used by `polymorphs:` and `transforms:` and the
- * discriminator is a non-empty identifier that becomes the leaf
- * segment of the synthesized hidden kind name.
+ * Per-kind group-lift map. Each entry's key is either:
+ *   1. A parent kind whose rule body contains a sub-rule to lift —
+ *      the value is `path → discriminator`, same slash-separated path
+ *      semantics as `polymorphs:` / `transforms:`, with the
+ *      discriminator becoming the leaf segment of the synthesized
+ *      hidden kind name. (Path-mode — existing behavior.)
+ *   2. A visible kind name (NO leading underscore) whose value is a
+ *      RuleFn (body-pattern function). Codegen synthesizes the hidden
+ *      `_<key>` rule from the function body and rewrites every
+ *      structurally-matching sub-tree in the grammar as
+ *      `alias($._<key>, $.<key>)` so tree-sitter emits the visible kind
+ *      as a CST node. (Body-pattern mode — for tree-sitter inlining
+ *      workarounds where a hidden helper would otherwise vanish from
+ *      the parse tree.)
  *
- * The synthesized kind name follows polymorph-ancestor context: each
- * path segment that ALSO appears in `polymorphs:` for the same kind
- * contributes its variant name to the synthesized kind. Non-polymorph
- * segments don't contribute. See:
+ * For path-mode entries the synthesized kind name follows polymorph-
+ * ancestor context: each path segment that ALSO appears in `polymorphs:`
+ * for the same kind contributes its variant name to the synthesized
+ * kind. Non-polymorph segments don't contribute. See:
  *   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
  *
  * Keys are plain `string` rather than `BaseKind<Base>` because the
@@ -336,7 +344,8 @@ export type PolymorphsConfig<Base extends GrammarBase = GrammarBase> = Partial<
  * type error on those keys that was masked by `--noCheck` but would
  * fail when the build check is re-enabled.
  */
-export type GroupsConfig = Partial<Record<string, Record<string, string>>>;
+export type GroupsConfigValue = Record<string, string> | RuleFn;
+export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
 
 /**
  * Declarative transforms map: each rule kind → a patch-map (or array
@@ -441,12 +450,25 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
  *
  * @param config - Options to pass to `grammar()` plus an optional
  *   `polymorphs` declaration.
+ * @param base - Optional enriched-base grammar object. When supplied AND
+ *   `config.groups` declares body-pattern entries (function values), wire
+ *   walks every base rule and injects a pattern-replacing override for it.
+ *   This is necessary because tree-sitter only invokes override rule fns
+ *   for entries the author put in `config.rules`; unoverridden base rules
+ *   would otherwise bypass pattern replacement entirely. Passing `base`
+ *   keeps the body-pattern groups mechanism honest for grammars where the
+ *   matching positions live in base rules. Pass `enrich(base)` (the same
+ *   value handed to `grammar()` as the base arg) so the patterns match
+ *   the same evaluated rule bodies tree-sitter will see.
  * @returns A new options object suitable for `grammar()`. Tree-sitter's
  *   own iteration observes the injected hidden-rule entries at its
  *   `Object.keys()` snapshot; content resolves via deferred-content fns
  *   as tree-sitter iterates.
  */
-export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<Base>): WiredOpts {
+export function wire<Base extends GrammarBase = GrammarBase>(
+	config: WireConfig<Base>,
+	base?: { grammar?: { rules?: Record<string, RuleFn> }; rules?: Record<string, RuleFn> }
+): WiredOpts {
 	const context: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
@@ -484,12 +506,26 @@ export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<
 	composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
 	injectHiddenRulePlaceholders(outRules, polymorphs, context);
 	injectTransformHiddenRulePlaceholders(outRules, transforms, context);
+	// Body-pattern groups: when `base` is supplied AND the groups config has
+	// function-valued entries, scan base rule names and inject a passthrough
+	// override for any base rule not already overridden. Tree-sitter calls
+	// each override with `previous` (the base body); our passthrough returns
+	// `previous` unchanged but then `applyWirePatternReplacement` wraps the
+	// passthrough so the body undergoes pattern replacement. Without this,
+	// unoverridden base rules bypass replacement entirely.
+	if (base && config.groups && hasBodyPatternGroups(config.groups)) {
+		const baseRules = (base.grammar?.rules ?? base.rules ?? {}) as Record<string, RuleFn>;
+		for (const baseName of Object.keys(baseRules)) {
+			if (baseName in outRules) continue;
+			outRules[baseName] = passthroughBaseRuleFn;
+		}
+	}
 	wrapAllRuleFns(outRules, context);
 	// Wire-phase pattern find-and-replace: runs after wrapAllRuleFns so
 	// each candidate fn executes inside a proper wire context when eagerly
 	// evaluated. This is the tree-sitter-runtime path; evaluate.ts has its
 	// own post-evaluation pass for the sittir-pipeline path.
-	applyWirePatternReplacement(outRules, context.authoredRuleNames);
+	applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
 
 	const conflicts = wrapConflictsCallback(config.conflicts, context);
 	const inline = wrapInlineCallback(config.inline, context);
@@ -922,12 +958,34 @@ function symbolizeRef(_$: unknown, name: string): unknown {
 // Wire-phase pattern find-and-replace
 // ---------------------------------------------------------------------------
 
+/** True when any value in `groups` is a function (body-pattern entry). */
+function hasBodyPatternGroups(groups: GroupsConfig): boolean {
+	for (const value of Object.values(groups)) {
+		if (typeof value === 'function') return true;
+	}
+	return false;
+}
+
+/**
+ * Passthrough rule fn for base rules that wire couldn't otherwise reach.
+ * Returns `previous` unchanged; the pattern-replacement pass wraps this
+ * fn so the returned body is structurally walked and substituted.
+ */
+function passthroughBaseRuleFn(this: unknown, _$: unknown, previous?: unknown): unknown {
+	return previous;
+}
+
 /** Minimal candidate record for wire-phase pattern replacement. */
 interface WirePatternCandidate {
 	readonly name: string;
 	readonly body: RuntimeRule;
 	/** True when the body type uses uppercase (tree-sitter CLI runtime). */
 	readonly uppercase: boolean;
+	/** When set, every replacement site emits
+	 *  `alias($._<name>, $.<aliasAs>)` so tree-sitter produces a visible
+	 *  `aliasAs` CST node at each substitution. Set by `groups:` body-
+	 *  pattern entries; absent for legacy `_`-prefix candidates. */
+	readonly aliasAs?: string;
 }
 
 /**
@@ -1010,6 +1068,7 @@ function patternBodyEqual(a: unknown, b: unknown): boolean {
 	const t = ra.type.toLowerCase();
 	if (t === 'string' || t === 'pattern') return ra.value === rb.value;
 	if (t === 'symbol') return ra.name === rb.name;
+	if (t === 'blank') return true; // BLANK is a singleton — type match is sufficient
 	if (t === 'seq' || t === 'choice') {
 		const ma = ra.members;
 		const mb = rb.members;
@@ -1041,6 +1100,25 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 	for (const c of candidates) {
 		if (patternBodyEqual(rule, c.body)) {
 			// Emit a SYMBOL reference in the shape matching the candidate's body.
+			// When the candidate has an aliasAs target, wrap the symbol in an
+			// ALIAS so tree-sitter emits the visible kind at every match site
+			// (otherwise tree-sitter inlines the hidden `_<name>` body and the
+			// kind never appears as a CST node).
+			if (c.aliasAs !== undefined) {
+				return c.uppercase
+					? {
+							type: 'ALIAS',
+							content: { type: 'SYMBOL', name: c.name },
+							named: true,
+							value: c.aliasAs
+						}
+					: {
+							type: 'alias',
+							content: { type: 'symbol', name: c.name, hidden: true },
+							named: true,
+							value: c.aliasAs
+						};
+			}
 			return c.uppercase ? { type: 'SYMBOL', name: c.name } : { type: 'symbol', name: c.name, hidden: true };
 		}
 	}
@@ -1093,10 +1171,19 @@ function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCan
  * handles the sittir-pipeline path (after all rule fns have run). This wire.ts
  * pass handles the tree-sitter-CLI path, where evaluate.ts does not run.
  */
-function applyWirePatternReplacement(rules: Record<string, RuleFn>, authoredRuleNames: ReadonlySet<string>): void {
+function applyWirePatternReplacement(
+	rules: Record<string, RuleFn>,
+	authoredRuleNames: ReadonlySet<string>,
+	groups?: GroupsConfig,
+	context?: WireContext
+): void {
 	const candidates: WirePatternCandidate[] = [];
 	const $ = makeSimpleDollarProxy();
 
+	// Legacy auto-detection: any `_`-prefixed rule the author declared in
+	// `rules:` is a structural pattern candidate. Maintained for the
+	// TypeScript `_ambient_declaration_*` entries that still rely on this
+	// path; new patterns should go in `groups:` with a body fn.
 	for (const name of authoredRuleNames) {
 		if (!name.startsWith('_')) continue;
 		const fn = rules[name];
@@ -1119,6 +1206,47 @@ function applyWirePatternReplacement(rules: Record<string, RuleFn>, authoredRule
 		// reflects which runtime's DSL globals produced them.
 		const uppercase = body.type === body.type.toUpperCase();
 		candidates.push({ name, body, uppercase });
+	}
+
+	// New body-pattern groups path: each `groups:` entry whose value is a
+	// function is a body-pattern candidate. The KEY is the visible kind
+	// name; internally we synthesize a hidden `_<key>` rule with the body,
+	// and emit `alias($._<key>, $.<key>)` at every match site so tree-
+	// sitter exposes the visible kind as a CST node.
+	if (groups) {
+		for (const [key, value] of Object.entries(groups)) {
+			if (typeof value !== 'function') continue;
+			if (key.startsWith('_')) {
+				throw new Error(
+					`groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); codegen will create '_${key}' internally`
+				);
+			}
+			const hiddenName = `_${key}`;
+			let body: RuntimeRule;
+			try {
+				const result = (value as RuleFn).call(undefined, $, undefined);
+				if (!result || typeof result !== 'object' || typeof (result as { type?: unknown }).type !== 'string') {
+					throw new Error(`groups['${key}']: body fn did not return a rule object`);
+				}
+				body = result as RuntimeRule;
+			} catch (e) {
+				throw new Error(`groups['${key}']: failed to evaluate body fn: ${(e as Error).message}`);
+			}
+			if (!isComplexBodyRt(body)) {
+				throw new Error(
+					`groups['${key}']: body is not a complex structural pattern (need SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial content)`
+				);
+			}
+			const uppercase = body.type === body.type.toUpperCase();
+			candidates.push({ name: hiddenName, body, uppercase, aliasAs: key });
+			// Register the hidden rule body so tree-sitter has a definition
+			// for the symbol the alias() wrappers will reference. Wrap via
+			// wrapOneRuleFn directly (this fn runs after wrapAllRuleFns) so
+			// the body fn evaluates inside a proper wire context.
+			rules[hiddenName] = context
+				? wrapOneRuleFn(hiddenName, value as RuleFn, context)
+				: (value as RuleFn);
+		}
 	}
 
 	if (candidates.length === 0) return;

@@ -71,6 +71,60 @@ export function _arrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
   }, methodsEngine);
 }
 
+export function attributedEnumVariant(config: T.AttributedEnumVariant.Config) {
+  const _attribute_item = config.attributeItem;
+  const _enum_variant = config.enumVariant;
+  return withMethods({
+    $type: TSKindId.AttributedEnumVariant as const,
+    $source: 2 as const,
+    $named: true as const,
+    _attribute_item,
+    _enum_variant,
+    attributeItems() { return _attribute_item; },
+    enumVariant() { return _enum_variant; },
+    $with: {
+      attributeItems: (...values: T.AttributeItem[]) => attributedEnumVariant({ ...config, attributeItem: values }),
+      enumVariant: (value: T.EnumVariant) => attributedEnumVariant({ ...config, enumVariant: value }),
+    },
+  }, methodsEngine);
+}
+
+export function attributedFieldDeclaration(config: T.AttributedFieldDeclaration.Config) {
+  const _attribute_item = config.attributeItem;
+  const _field_declaration = config.fieldDeclaration;
+  return withMethods({
+    $type: TSKindId.AttributedFieldDeclaration as const,
+    $source: 2 as const,
+    $named: true as const,
+    _attribute_item,
+    _field_declaration,
+    attributeItems() { return _attribute_item; },
+    fieldDeclaration() { return _field_declaration; },
+    $with: {
+      attributeItems: (...values: T.AttributeItem[]) => attributedFieldDeclaration({ ...config, attributeItem: values }),
+      fieldDeclaration: (value: T.FieldDeclaration) => attributedFieldDeclaration({ ...config, fieldDeclaration: value }),
+    },
+  }, methodsEngine);
+}
+
+export function attributedParameter(config: T.AttributedParameter.Config) {
+  const _attribute_item = config.attributeItem;
+  const _parameter = config.parameter;
+  return withMethods({
+    $type: TSKindId.AttributedParameter as const,
+    $source: 2 as const,
+    $named: true as const,
+    _attribute_item,
+    _parameter,
+    attributeItem() { return _attribute_item; },
+    parameter() { return _parameter; },
+    $with: {
+      attributeItem: (value?: T.AttributeItem) => attributedParameter({ ...config, attributeItem: value }),
+      parameter: (value: T.Parameter | T.SelfParameter | T.VariadicParameter | "_" | T._Type) => attributedParameter({ ...config, parameter: value }),
+    },
+  }, methodsEngine);
+}
+
 export function _closureExpressionBlock(config: T.ClosureExpressionBlock.Config) {
   const _return_type = config.returnType;
   const _body = config.body;
@@ -4470,6 +4524,9 @@ export function errorSentinel(text: string) {
 export type FluentKindMap = {
   "_array_expression_list": T.ArrayExpressionList;
   "_array_expression_semi": T.ArrayExpressionSemi;
+  "_attributed_enum_variant": FluentNode<"_attributed_enum_variant", T.AttributedEnumVariant.Config>;
+  "_attributed_field_declaration": FluentNode<"_attributed_field_declaration", T.AttributedFieldDeclaration.Config>;
+  "_attributed_parameter": FluentNode<"_attributed_parameter", T.AttributedParameter.Config>;
   "_closure_expression_block": T.ClosureExpressionBlock;
   "_closure_expression_expr": FluentNode<"_closure_expression_expr", T._ClosureExpressionExpr.Config>;
   "_delim_token_tree_brace": FluentNode<"_delim_token_tree_brace", T._DelimTokenTreeBrace.Config>;
@@ -4703,6 +4760,9 @@ export type FluentKindMap = {
 export const _factoryMap = {
   "_array_expression_list": _arrayExpressionList,
   "_array_expression_semi": _arrayExpressionSemi,
+  "_attributed_enum_variant": attributedEnumVariant,
+  "_attributed_field_declaration": attributedFieldDeclaration,
+  "_attributed_parameter": attributedParameter,
   "_closure_expression_block": _closureExpressionBlock,
   "_closure_expression_expr": _closureExpressionExpr,
   "_delim_token_tree_brace": _delimTokenTreeBrace,

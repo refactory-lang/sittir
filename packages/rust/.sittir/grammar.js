@@ -471,7 +471,7 @@ function wireRegisterConflict(names) {
 function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
 }
-function wire(config2) {
+function wire(config2, base2) {
   const context = {
     deposits: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
@@ -491,8 +491,15 @@ function wire(config2) {
   composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
   injectTransformHiddenRulePlaceholders(outRules, transforms, context);
+  if (base2 && config2.groups && hasBodyPatternGroups(config2.groups)) {
+    const baseRules = base2.grammar?.rules ?? base2.rules ?? {};
+    for (const baseName of Object.keys(baseRules)) {
+      if (baseName in outRules) continue;
+      outRules[baseName] = passthroughBaseRuleFn;
+    }
+  }
   wrapAllRuleFns(outRules, context);
-  applyWirePatternReplacement(outRules, context.authoredRuleNames);
+  applyWirePatternReplacement(outRules, context.authoredRuleNames, config2.groups, context);
   const conflicts = wrapConflictsCallback(config2.conflicts, context);
   const inline = wrapInlineCallback(config2.inline, context);
   const wired = {
@@ -666,6 +673,15 @@ function nativeInlineRef($, name) {
 function symbolizeRef(_$, name) {
   return { type: "SYMBOL", name };
 }
+function hasBodyPatternGroups(groups) {
+  for (const value of Object.values(groups)) {
+    if (typeof value === "function") return true;
+  }
+  return false;
+}
+function passthroughBaseRuleFn(_$, previous) {
+  return previous;
+}
 function makeSimpleDollarProxy() {
   return new Proxy({}, {
     get(_target, name) {
@@ -695,6 +711,7 @@ function patternBodyEqual(a, b) {
   const t = ra.type.toLowerCase();
   if (t === "string" || t === "pattern") return ra.value === rb.value;
   if (t === "symbol") return ra.name === rb.name;
+  if (t === "blank") return true;
   if (t === "seq" || t === "choice") {
     const ma = ra.members;
     const mb = rb.members;
@@ -715,6 +732,19 @@ function replaceInBodyRt(rule, candidates) {
   const r = rule;
   for (const c of candidates) {
     if (patternBodyEqual(rule, c.body)) {
+      if (c.aliasAs !== void 0) {
+        return c.uppercase ? {
+          type: "ALIAS",
+          content: { type: "SYMBOL", name: c.name },
+          named: true,
+          value: c.aliasAs
+        } : {
+          type: "alias",
+          content: { type: "symbol", name: c.name, hidden: true },
+          named: true,
+          value: c.aliasAs
+        };
+      }
       return c.uppercase ? { type: "SYMBOL", name: c.name } : { type: "symbol", name: c.name, hidden: true };
     }
   }
@@ -742,7 +772,7 @@ function buildPatternReplacingFn(fn, candidates) {
     return replaceInBodyRt(result, candidates);
   };
 }
-function applyWirePatternReplacement(rules, authoredRuleNames) {
+function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) {
   const candidates = [];
   const $ = makeSimpleDollarProxy();
   for (const name of authoredRuleNames) {
@@ -760,6 +790,35 @@ function applyWirePatternReplacement(rules, authoredRuleNames) {
     if (!isComplexBodyRt(body)) continue;
     const uppercase = body.type === body.type.toUpperCase();
     candidates.push({ name, body, uppercase });
+  }
+  if (groups) {
+    for (const [key, value] of Object.entries(groups)) {
+      if (typeof value !== "function") continue;
+      if (key.startsWith("_")) {
+        throw new Error(
+          `groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); codegen will create '_${key}' internally`
+        );
+      }
+      const hiddenName = `_${key}`;
+      let body;
+      try {
+        const result = value.call(void 0, $, void 0);
+        if (!result || typeof result !== "object" || typeof result.type !== "string") {
+          throw new Error(`groups['${key}']: body fn did not return a rule object`);
+        }
+        body = result;
+      } catch (e) {
+        throw new Error(`groups['${key}']: failed to evaluate body fn: ${e.message}`);
+      }
+      if (!isComplexBodyRt(body)) {
+        throw new Error(
+          `groups['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
+        );
+      }
+      const uppercase = body.type === body.type.toUpperCase();
+      candidates.push({ name: hiddenName, body, uppercase, aliasAs: key });
+      rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+    }
   }
   if (candidates.length === 0) return;
   const candidateNames = new Set(candidates.map((c) => c.name));
@@ -1825,7 +1884,41 @@ var config = {
     // See: docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
     _visibility_modifier_pub: {
       "1": "parens"
-    }
+    },
+    // --- body-pattern groups: tree-sitter visible-kind synthesis ---
+    // Each function-valued entry below declares a STRUCTURAL PATTERN.
+    // Codegen creates `_<key>` as the hidden rule body and rewrites every
+    // matching sub-tree as `alias($._<key>, $.<key>)` so tree-sitter emits
+    // the visible kind as a CST node. Without alias, tree-sitter inlines
+    // the hidden `_*` rule and the kind never appears at runtime — the
+    // transport-side slot remains permanently empty.
+    // Pattern: attribute_item(s) attached to a struct field.
+    // Used inline at every comma-separated position in
+    // field_declaration_list. Without this lift, the parent's $children
+    // flattens to alternating attribute_item / field_declaration entries
+    // joined by commas (e.g. `#[attr],y: i32` instead of `#[attr] y: i32`).
+    attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
+    // Pattern: attribute_item(s) attached to an enum variant.
+    // enum_variant_list uses SEQ(REPEAT(attribute_item), enum_variant)
+    // inline at every comma-separated position.
+    attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
+    // Pattern: optional attribute_item attached to a function parameter.
+    // parameters uses SEQ(CHOICE(attribute_item, BLANK), CHOICE(...)).
+    // The sittir IR normalizes CHOICE(x, BLANK) to optional(x).
+    // Members: parameter | self_parameter | variadic_parameter |
+    // '_' wildcard | _type (anonymous type).
+    attributed_parameter: ($) => seq(
+      optional($.attribute_item),
+      choice($.parameter, $.self_parameter, $.variadic_parameter, "_", $._type)
+    ),
+    // Pattern: attribute_item(s) attached to a type parameter.
+    // type_parameters uses SEQ(REPEAT(attribute_item), CHOICE(metavariable,
+    // type_parameter, lifetime_parameter, const_parameter)) inline at every
+    // comma-separated position.
+    attributed_type_parameter: ($) => seq(
+      repeat($.attribute_item),
+      choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)
+    )
   },
   transforms: {
     // abstract_type: 1 field(s)
@@ -2311,49 +2404,7 @@ var config = {
     // The hidden rule `_wildcard_pattern` is just the `_` literal;
     // the named alias on `_pattern` above promotes it to a proper
     // `wildcard_pattern` kind at parse time.
-    _wildcard_pattern: ($) => "_",
-    // Pattern rule: attribute_item(s) attached to a struct field.
-    //
-    // The base grammar uses `seq(repeat($.attribute_item), $.field_declaration)`
-    // inline at every comma-separated position in field_declaration_list. Wire's
-    // pattern find-and-replace detects this body as a STRUCTURAL PATTERN and
-    // replaces every occurrence with a reference to `_attributed_field_declaration`,
-    // so tree-sitter produces a real CST node for the group instead of
-    // flattening attributes and their target into the parent's child list.
-    //
-    // Without this, the parent slot model gets a flat `$children` list of
-    // alternating attribute_item / field_declaration nodes joined by the
-    // comma separator, causing attribute items and their field to be rendered
-    // with commas between them (e.g. `#[attr],y: i32` instead of
-    // `#[attr] y: i32`).
-    _attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
-    // Pattern rule: attribute_item(s) attached to an enum variant.
-    //
-    // enum_variant_list uses the same SEQ(REPEAT(attribute_item), enum_variant)
-    // shape inline at every comma-separated position. Wire's pattern replacement
-    // lifts each occurrence into a real _attributed_enum_variant CST node.
-    _attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
-    // Pattern rule: optional attribute_item attached to a function parameter.
-    //
-    // parameters uses SEQ(CHOICE(attribute_item, BLANK), CHOICE(...)) — i.e.
-    // an optional single attribute followed by the parameter kind. The sittir
-    // IR normalizes CHOICE(x, BLANK) to optional(x), so the pattern body uses
-    // optional(). Members: parameter | self_parameter | variadic_parameter |
-    // '_' wildcard | _type (anonymous type).
-    _attributed_parameter: ($) => seq(
-      optional($.attribute_item),
-      choice($.parameter, $.self_parameter, $.variadic_parameter, "_", $._type)
-    ),
-    // Pattern rule: attribute_item(s) attached to a type parameter.
-    //
-    // type_parameters uses SEQ(REPEAT(attribute_item), CHOICE(metavariable,
-    // type_parameter, lifetime_parameter, const_parameter)) inline at every
-    // comma-separated position. Wire lifts each occurrence into a real
-    // _attributed_type_parameter CST node.
-    _attributed_type_parameter: ($) => seq(
-      repeat($.attribute_item),
-      choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)
-    )
+    _wildcard_pattern: ($) => "_"
   },
   // externalAltDef — sittir-side rule bodies for external scanner symbols.
   // These bodies are used by sittir's slot/render/factory pipeline ONLY;
@@ -2396,5 +2447,6 @@ var config = {
     _raw_string_literal_end: string('"#')
   })
 };
-var overrides_default = grammar(enrich(import_grammar.default), wire(config));
+var enrichedBase = enrich(import_grammar.default);
+var overrides_default = grammar(enrichedBase, wire(config, enrichedBase));
 if (module.exports && module.exports.default) module.exports = module.exports.default;
