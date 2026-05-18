@@ -1,1 +1,0 @@
-{"version":3,"file":"variant.d.ts","sourceRoot":"","sources":["variant.ts"],"names":[],"mappings":"AAAA;;;;;;;;;;;;;;GAcG;AAEH,MAAM,WAAW,kBAAkB;IAClC,QAAQ,CAAC,mBAAmB,EAAE,SAAS,CAAC;IACxC,QAAQ,CAAC,IAAI,EAAE,MAAM,CAAC;CACtB;AAED,wBAAgB,oBAAoB,CAAC,CAAC,EAAE,OAAO,GAAG,CAAC,IAAI,kBAAkB,CAExE;AAED,wBAAgB,OAAO,CAAC,IAAI,EAAE,MAAM,GAAG,kBAAkB,CAExD"}
