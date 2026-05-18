@@ -1798,6 +1798,10 @@ function renderTypedDispatch(
 			`            AnyTransport::${variant} => dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from),`
 		);
 	}
+	// Verbatim variant — text carried verbatim from a bare-string input.
+	lines.push(
+		`            AnyTransport::Verbatim(t) => dest.write_str(&t.text).map_err(::askama::Error::from),`
+	);
 	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`}`);
@@ -2496,6 +2500,7 @@ function renderTransportSupport(
 	return [
 		...anyTransportLines,
 		'',
+		...renderVerbatimTransportStruct(),
 		...renderLiteralTransportStruct(projection.literals),
 		'',
 		// Per-supertype transport enums must precede per-kind transport structs
@@ -2708,6 +2713,11 @@ function renderAnyTransportWithStringTag(
 			const variant = rustLiteralTransportVariantName(literal, index);
 			return [`    #[serde(rename = ${JSON.stringify(literal.kind)})]`, `    ${variant},`].join('\n');
 		}),
+		// Verbatim mirror — string-tag fallback path. Same semantics as the
+		// napi-FromNapiValue path; required so per-slot-enum bridge fns can
+		// reference AnyTransport::Verbatim(...) without conditional emission.
+		'    #[serde(skip)]',
+		'    Verbatim(VerbatimTransport),',
 		'}'
 	];
 }
@@ -2786,11 +2796,18 @@ function emitSupertypeTransportEnum(
 	const isLeafLike = (n: AssembledNode): boolean =>
 		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
 
-	const emitDecodeTrials = (leafOnly = false, indent = '                ') => {
-		// Sort required-field variants first so all-optional structs (e.g.
-		// ReturnExpressionTransport) don't shadow required-field ones
-		// (e.g. IdentifierTransport) in the string-fallback dispatch chain.
-		// Stable sort: preserve original order within each group.
+	// Does this supertype admit any AssembledPattern variant? Pattern variants
+	// share verbatim-text render semantics; bare-string inputs are wrapped as
+	// Verbatim. See VerbatimTransport docstring for rationale.
+	const admitsVerbatim = validSubtypes.some(({ subNode }) => subNode.modelType === 'pattern');
+
+	const emitDecodeTrials = (leafOnly = false, indent = '                '): string[] => {
+		// Self-alias / reserved-supertype kind_id: parser sent the supertype's
+		// own kind_id rather than a concrete variant's. We don't know which
+		// variant — try each in turn. Pattern/keyword/token/enum leaves have
+		// safe FromNapiValue impls; branches/groups are skipped here unless
+		// leafOnly=false because their impls can match coerced inputs greedily.
+		const out: string[] = [];
 		const sortedSubtypes = [...validSubtypes].sort(
 			(a, b) => (nodeTransportHasRequiredField(b.subNode) ? 1 : 0) - (nodeTransportHasRequiredField(a.subNode) ? 1 : 0)
 		);
@@ -2799,15 +2816,16 @@ function emitSupertypeTransportEnum(
 			const variant = rustTypeIdent(subNode.typeName);
 			const typeName = rustTransportStructName(subNode);
 			if (isLeafLike(subNode)) {
-				lines.push(`${indent}if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
-				lines.push(`${indent}    return Ok(Self::${variant}(value));`);
-				lines.push(`${indent}}`);
+				out.push(`${indent}if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
+				out.push(`${indent}    return Ok(Self::${variant}(value));`);
+				out.push(`${indent}}`);
 			} else {
-				lines.push(`${indent}if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
-				lines.push(`${indent}    return Ok(Self::${variant}(Box::new(value)));`);
-				lines.push(`${indent}}`);
+				out.push(`${indent}if let Ok(value) = ${typeName}::from_napi_value(env, napi_val) {`);
+				out.push(`${indent}    return Ok(Self::${variant}(Box::new(value)));`);
+				out.push(`${indent}}`);
 			}
 		}
+		return out;
 	};
 
 	// Enum declaration — Debug + Clone only; no serde, no napi object derive.
@@ -2819,85 +2837,106 @@ function emitSupertypeTransportEnum(
 		const variantType = isLeafLike(subNode) ? typeName : `Box<${typeName}>`;
 		lines.push(`    ${variant}(${variantType}),`);
 	}
+	if (admitsVerbatim) {
+		lines.push(`    Verbatim(VerbatimTransport),`);
+	}
 	lines.push(`}`);
 	lines.push(``);
 
 	if (kindIdByKind !== undefined) {
-		// Custom FromNapiValue — reads $type as u16 and dispatches per known ID.
+		// Build kind_id match arms shared between the raw-u16 input shape and
+		// the object-with-$type input shape. Self-alias and suppressed-supertype
+		// kind_ids fall back to emitDecodeTrials (we don't statically know which
+		// variant the parser meant).
+		const buildKindIdArms = (): string[] => {
+			const arms: string[] = [];
+			const emittedIds = new Set<number>();
+			const selfId = kindIdByKind.get(supertypeNode.kind);
+			if (selfId !== undefined) {
+				arms.push(`                ${selfId} => {`);
+				for (const t of emitDecodeTrials(false, '                    ')) arms.push(t);
+				arms.push(
+					`                    Err(::napi::Error::from_reason(${JSON.stringify(
+						`unknown aliased kind id {kind_id} in ${enumName}`
+					)}))`
+				);
+				arms.push(`                },`);
+				emittedIds.add(selfId);
+			}
+			for (const suppressedKind of suppressedKinds) {
+				const id = kindIdByKind.get(suppressedKind);
+				if (id === undefined || emittedIds.has(id)) continue;
+				arms.push(`                ${id} => {`);
+				for (const t of emitDecodeTrials(false, '                    ')) arms.push(t);
+				arms.push(
+					`                    Err(::napi::Error::from_reason(${JSON.stringify(
+						`unknown reserved supertype kind id {kind_id} in ${enumName}`
+					)}))`
+				);
+				arms.push(`                },`);
+				emittedIds.add(id);
+			}
+			for (const { subKind, subNode } of validSubtypes) {
+				const variant = rustTypeIdent(subNode.typeName);
+				const typeName = rustTransportStructName(subNode);
+				const acceptedKinds = new Set([subKind, ...collectConcreteTransportKinds(subKind, nodeMap)]);
+				if (subNode instanceof AssembledEnum) {
+					for (const resolvedKind of subNode.resolvedKinds) {
+						acceptedKinds.add(resolvedKind);
+					}
+				}
+				for (const acceptedKind of acceptedKinds) {
+					const id = kindIdByKind.get(acceptedKind);
+					if (id === undefined || emittedIds.has(id)) continue;
+					emittedIds.add(id);
+					if (isLeafLike(subNode)) {
+						arms.push(`                ${id} => Ok(Self::${variant}(`);
+						arms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
+						arms.push(`                )),`);
+					} else {
+						arms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
+						arms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
+						arms.push(`                ))),`);
+					}
+				}
+			}
+			arms.push(`                other => Err(::napi::Error::from_reason(format!(`);
+			arms.push(`                    "unknown kind id {other} in ${enumName}",`);
+			arms.push(`                ))),`);
+			return arms;
+		};
+		const kindIdArms = buildKindIdArms();
+
 		lines.push(`#[cfg(feature = "napi-bindings")]`);
 		lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${enumName} {`);
 		lines.push(`    unsafe fn from_napi_value(`);
 		lines.push(`        env: ::napi::sys::napi_env,`);
 		lines.push(`        napi_val: ::napi::sys::napi_value,`);
 		lines.push(`    ) -> ::napi::Result<Self> {`);
-		lines.push(`        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
-		lines.push(`            Some(kind_id)`);
-		lines.push(`        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {`);
-		lines.push(`            obj.get::<u16>("$type")?`);
-		lines.push(`        } else {`);
-		lines.push(`            None`);
-		lines.push(`        };`);
-		lines.push(`        if let Some(kind_id) = kind_id {`);
+		// (a) Raw u16 input: kind_id sent directly (value-less kinds).
+		lines.push(`        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
 		lines.push(`            return match kind_id {`);
-		const emittedIds = new Set<number>();
-		const selfId = kindIdByKind.get(supertypeNode.kind);
-		if (selfId !== undefined) {
-			lines.push(`                ${selfId} => {`);
-			emitDecodeTrials();
-			lines.push(
-				`                    Err(::napi::Error::from_reason(${JSON.stringify(
-					`unknown aliased kind id {kind_id} in ${enumName}`
-				)}))`
-			);
-			lines.push(`                },`);
-			emittedIds.add(selfId);
-		}
-		for (const suppressedKind of suppressedKinds) {
-			const id = kindIdByKind.get(suppressedKind);
-			if (id === undefined || emittedIds.has(id)) continue;
-			lines.push(`                ${id} => {`);
-			emitDecodeTrials();
-			lines.push(
-				`                    Err(::napi::Error::from_reason(${JSON.stringify(
-					`unknown reserved supertype kind id {kind_id} in ${enumName}`
-				)}))`
-			);
-			lines.push(`                },`);
-			emittedIds.add(id);
-		}
-		for (const { subKind, subNode } of validSubtypes) {
-			const variant = rustTypeIdent(subNode.typeName);
-			const typeName = rustTransportStructName(subNode);
-			const acceptedKinds = new Set([subKind, ...collectConcreteTransportKinds(subKind, nodeMap)]);
-			if (subNode instanceof AssembledEnum) {
-				for (const resolvedKind of subNode.resolvedKinds) {
-					acceptedKinds.add(resolvedKind);
-				}
-			}
-			for (const acceptedKind of acceptedKinds) {
-				const id = kindIdByKind.get(acceptedKind);
-				if (id === undefined || emittedIds.has(id)) continue;
-				emittedIds.add(id);
-				if (isLeafLike(subNode)) {
-					lines.push(`                ${id} => Ok(Self::${variant}(`);
-					lines.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
-					lines.push(`                )),`);
-				} else {
-					lines.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
-					lines.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
-					lines.push(`                ))),`);
-				}
-			}
-		}
-		lines.push(`                other => Err(::napi::Error::from_reason(format!(`);
-		lines.push(`                    "unknown kind id {other} in ${enumName}",`);
-		lines.push(`                ))),`);
+		for (const arm of kindIdArms) lines.push(arm);
 		lines.push(`            };`);
 		lines.push(`        }`);
-		lines.push(`        if String::from_napi_value(env, napi_val).is_ok() {`);
-		emitDecodeTrials(false, '            ');
+		// (b) Bare string: wrap as Verbatim (only when this enum admits a
+		//     pattern variant; bare strings carry no kind tag).
+		if (admitsVerbatim) {
+			lines.push(`        if let Ok(text) = String::from_napi_value(env, napi_val) {`);
+			lines.push(`            return Ok(Self::Verbatim(VerbatimTransport { text }));`);
+			lines.push(`        }`);
+		}
+		// (c) Object with numeric $type: strict kind_id dispatch.
+		lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)`);
+		lines.push(`            .map_err(|_| ::napi::Error::from_reason(${JSON.stringify(
+			`${enumName}: expected u16 kind_id, string, or object with $type`
+		)}))?;`);
+		lines.push(`        let kind_id: u16 = obj.get("$type")?.ok_or_else(||`);
+		lines.push(`            ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)})`);
+		lines.push(`        )?;`);
+		lines.push(`        match kind_id {`);
+		for (const arm of kindIdArms) lines.push(arm);
 		lines.push(`        }`);
-		lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))`);
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -2955,6 +2994,9 @@ function emitSupertypeTransportEnum(
 			}
 		}
 	}
+	if (admitsVerbatim) {
+		lines.push(`        ${enumName}::Verbatim(inner) => AnyTransport::Verbatim(inner),`);
+	}
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push(``);
@@ -2995,6 +3037,7 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 
 	const isLeafLike = (n: AssembledNode): boolean =>
 		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
+	const admitsVerbatim = validSubtypes.some(({ subNode }) => subNode.modelType === 'pattern');
 
 	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(`    match t {`);
@@ -3004,6 +3047,9 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 		// Non-leaf variants are boxed in the enum; deref with `.as_ref()`.
 		const innerExpr = isLeafLike(subNode) ? `inner` : `inner.as_ref()`;
 		lines.push(`        ${enumName}::${variant}(inner) => ${concreteFn}(${innerExpr}, dest),`);
+	}
+	if (admitsVerbatim) {
+		lines.push(`        ${enumName}::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),`);
 	}
 	lines.push(`    }`);
 	lines.push(`}`);
@@ -3179,7 +3225,6 @@ function emitPerSlotChildEnum(
 ): string[] {
 	const enumName = perSlotEnumName(entry.typeName, entry.fieldName);
 	const lines: string[] = [];
-	const hasSupertypeSourceKinds = entry.kinds.some((kind) => nodeMap.nodes.get(kind)?.modelType === 'supertype');
 
 	// Expand any supertype child kinds to their concrete transport-bearing kinds,
 	// then dedupe so aliased / overlapping paths emit one variant per concrete kind.
@@ -3189,6 +3234,15 @@ function emitPerSlotChildEnum(
 	// to emitting an empty enum — this should be caught upstream by the caller.
 	const isLeafLike = (n: AssembledNode): boolean =>
 		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
+
+	// AssembledPattern variants — the kinds whose render template emits the
+	// `text` field verbatim (`identifier`, `integer_literal`, etc.). When at
+	// least one is present in this enum, we admit bare-string inputs via the
+	// `Verbatim(VerbatimTransport)` variant. Bare strings carry no kind tag,
+	// and any pattern variant would render their text identically — Verbatim
+	// is the explicit "untyped text" carrier that avoids the ambiguity of
+	// picking among interchangeable pattern variants.
+	const admitsVerbatim = validKinds.some(({ node }) => node.modelType === 'pattern');
 
 	// Spec 024 cleanup-§E1: named-slot enums are load-bearing alongside unnamed
 	// `$children` enums — `rustTransportSlotType` returns the per-slot enum name
@@ -3208,25 +3262,18 @@ function emitPerSlotChildEnum(
 			lines.push(`    ${variant},`);
 		}
 	}
+	if (admitsVerbatim) {
+		lines.push(`    Verbatim(VerbatimTransport),`);
+	}
 	lines.push(`}`);
 	lines.push(``);
 
 	if (kindIdByKind !== undefined) {
-		lines.push(`#[cfg(feature = "napi-bindings")]`);
-		lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${enumName} {`);
-		lines.push(`    unsafe fn from_napi_value(`);
-		lines.push(`        env: ::napi::sys::napi_env,`);
-		lines.push(`        napi_val: ::napi::sys::napi_value,`);
-		lines.push(`    ) -> ::napi::Result<Self> {`);
-		lines.push(`        let kind_id = if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
-		lines.push(`            Some(kind_id)`);
-		lines.push(`        } else if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {`);
-		lines.push(`            obj.get::<u16>("$type")?`);
-		lines.push(`        } else {`);
-		lines.push(`            None`);
-		lines.push(`        };`);
-		lines.push(`        if let Some(kind_id) = kind_id {`);
-		lines.push(`            match kind_id {`);
+		// Build the kind_id match arms shared between the raw-u16 input shape
+		// and the object-with-$type input shape. Each accepted kind_id maps
+		// to a typed variant — pattern/keyword/token/enum inline, branch/
+		// group/polymorph boxed.
+		const kindIdArms: string[] = [];
 		const emittedIds = new Set<number>();
 		for (const { kind, node, concreteName } of validKinds) {
 			const variant = rustTypeIdent(node.typeName);
@@ -3242,13 +3289,13 @@ function emitPerSlotChildEnum(
 				if (id === undefined || emittedIds.has(id)) continue;
 				emittedIds.add(id);
 				if (isLeafLike(node)) {
-					lines.push(`                ${id} => return Ok(Self::${variant}(`);
-					lines.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
-					lines.push(`                )),`);
+					kindIdArms.push(`                ${id} => Ok(Self::${variant}(`);
+					kindIdArms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
+					kindIdArms.push(`                )),`);
 				} else {
-					lines.push(`                ${id} => return Ok(Self::${variant}(Box::new(`);
-					lines.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
-					lines.push(`                ))),`);
+					kindIdArms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
+					kindIdArms.push(`                    ${typeName}::from_napi_value(env, napi_val)?`);
+					kindIdArms.push(`                ))),`);
 				}
 			}
 		}
@@ -3257,42 +3304,45 @@ function emitPerSlotChildEnum(
 			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
 			emittedIds.add(id);
-			lines.push(`                ${id} => return Ok(Self::${variant}),`);
+			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
 		}
-		if (hasSupertypeSourceKinds) {
-			lines.push(`                _ => {}`);
-		} else {
-			lines.push(`                other => return Err(::napi::Error::from_reason(format!(`);
-			lines.push(`                    "unknown kind id {other} in ${enumName}",`);
-			lines.push(`                ))),`);
-		}
-		lines.push(`            }`);
+		kindIdArms.push(`                other => Err(::napi::Error::from_reason(format!(`);
+		kindIdArms.push(`                    "unknown kind id {other} in ${enumName}",`);
+		kindIdArms.push(`                ))),`);
+
+		lines.push(`#[cfg(feature = "napi-bindings")]`);
+		lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${enumName} {`);
+		lines.push(`    unsafe fn from_napi_value(`);
+		lines.push(`        env: ::napi::sys::napi_env,`);
+		lines.push(`        napi_val: ::napi::sys::napi_value,`);
+		lines.push(`    ) -> ::napi::Result<Self> {`);
+		// (a) Raw u16: kind_id sent directly. Value-less kinds (keywords,
+		//     value-less enums) carry no payload other than their kind tag.
+		lines.push(`        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {`);
+		lines.push(`            return match kind_id {`);
+		for (const arm of kindIdArms) lines.push(arm);
+		lines.push(`            };`);
 		lines.push(`        }`);
-		const fallbackGuard = hasSupertypeSourceKinds
-			? 'String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok()'
-			: 'String::from_napi_value(env, napi_val).is_ok()';
-		lines.push(`        if ${fallbackGuard} {`);
-		for (const { node, concreteName } of validKinds) {
-			const variant = rustTypeIdent(node.typeName);
-			if (isLeafLike(node)) {
-				lines.push(`            if let Ok(value) = ${concreteName}::from_napi_value(env, napi_val) {`);
-				lines.push(`                return Ok(Self::${variant}(value));`);
-				lines.push(`            }`);
-			} else {
-				lines.push(`            if let Ok(value) = ${concreteName}::from_napi_value(env, napi_val) {`);
-				lines.push(`                return Ok(Self::${variant}(Box::new(value)));`);
-				lines.push(`            }`);
-			}
-		}
-		lines.push(`        }`);
-		if (hasSupertypeSourceKinds) {
-			lines.push(`        if let Some(other) = kind_id {`);
-			lines.push(`            return Err(::napi::Error::from_reason(format!(`);
-			lines.push(`                "unknown kind id {other} in ${enumName}",`);
-			lines.push(`            )));`);
+		// (b) Bare string: text-bearing input with no kind annotation. Wrap
+		//     as Verbatim — pattern-modeled variants in this enum render
+		//     text verbatim, so no specific kind is meaningful. Emitted only
+		//     when this enum admits at least one pattern variant.
+		if (admitsVerbatim) {
+			lines.push(`        if let Ok(text) = String::from_napi_value(env, napi_val) {`);
+			lines.push(`            return Ok(Self::Verbatim(VerbatimTransport { text }));`);
 			lines.push(`        }`);
 		}
-		lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))`);
+		// (c) Object with numeric $type: strict kind_id dispatch.
+		lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)`);
+		lines.push(`            .map_err(|_| ::napi::Error::from_reason(${JSON.stringify(
+			`${enumName}: expected u16 kind_id, string, or object with $type`
+		)}))?;`);
+		lines.push(`        let kind_id: u16 = obj.get("$type")?.ok_or_else(||`);
+		lines.push(`            ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)})`);
+		lines.push(`        )?;`);
+		lines.push(`        match kind_id {`);
+		for (const arm of kindIdArms) lines.push(arm);
+		lines.push(`        }`);
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -3346,6 +3396,9 @@ function emitPerSlotChildEnum(
 			lines.push(`        ${enumName}::${variant} => AnyTransport::${variant},`);
 		}
 	}
+	if (admitsVerbatim) {
+		lines.push(`        ${enumName}::Verbatim(inner) => AnyTransport::Verbatim(inner),`);
+	}
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push(``);
@@ -3370,6 +3423,11 @@ function emitPerSlotChildEnum(
 				`            ${enumName}::${variant} => dest.write_str(${JSON.stringify(literal.text)}).map_err(::askama::Error::from),`
 			);
 		}
+	}
+	if (admitsVerbatim) {
+		lines.push(
+			`            ${enumName}::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),`
+		);
 	}
 	lines.push(`        }`);
 	lines.push(`    }`);
@@ -3436,6 +3494,12 @@ function renderAnyTransportWithNapiFromValue(
 		const variant = rustLiteralTransportVariantName(literal, index);
 		lines.push(`    ${variant},`);
 	}
+	// Verbatim is a synthetic variant: pattern-modeled per-slot enums upcast
+	// their bare-string inputs (via VerbatimTransport) into AnyTransport
+	// through their `*_transport_slot_to_any` bridge. AnyTransport itself
+	// never constructs Verbatim directly — its FromNapiValue requires an
+	// object with $type or a numeric kind_id. See VerbatimTransport docstring.
+	lines.push('    Verbatim(VerbatimTransport),');
 	lines.push('}');
 	lines.push('');
 
@@ -3496,21 +3560,13 @@ function renderAnyTransportWithNapiFromValue(
 	lines.push('                ))),');
 	lines.push('            };');
 	lines.push('        }');
-	lines.push('        if String::from_napi_value(env, napi_val).is_ok() {');
-	// Sort required-field variants first so all-optional structs don't shadow
-	// required-field ones in the string-fallback dispatch chain. Stable sort.
-	const sortedNodes = [...nodes].sort(
-		(a, b) => (nodeTransportHasRequiredField(b) ? 1 : 0) - (nodeTransportHasRequiredField(a) ? 1 : 0)
-	);
-	for (const node of sortedNodes) {
-		const variant = rustTransportVariantName(node);
-		const structName = rustTransportStructName(node);
-		lines.push(`            if let Ok(value) = ${structName}::from_napi_value(env, napi_val) {`);
-		lines.push(`                return Ok(AnyTransport::${variant}(value));`);
-		lines.push('            }');
-	}
-	lines.push('        }');
-	lines.push('        Err(::napi::Error::from_reason("$type property missing in AnyTransport"))');
+	// AnyTransport is kind_id-only: it admits the universe of typed nodes, so
+	// no bare-string fast-path can pick the "right" variant. Per-slot enums
+	// handle bare-string inputs via VerbatimTransport upstream. By the time
+	// we reach AnyTransport, a missing kind_id is a real error.
+	lines.push('        Err(::napi::Error::from_reason(');
+	lines.push('            "AnyTransport: expected u16 kind_id or object with $type",');
+	lines.push('        ))');
 	lines.push('    }');
 	lines.push('}');
 
@@ -3675,6 +3731,10 @@ function renderTransportBridge(
 					: `TransportKindId(0) /* ${safeKind} — no parser symbol */`;
 			return `        AnyTransport::${rustLiteralTransportVariantName(literal, index)} => Ok(transport_node_data(${kindArg}, None, None, false, Some(${JSON.stringify(literal.text)}.to_string()), None, None, None, None, None, None)),`;
 		}),
+		// Synthetic Verbatim carrier — no kind tag, text-only. Placed in the
+		// transport-node data with kind_id 0 (matches the "no parser symbol"
+		// shape literals already use).
+		'        AnyTransport::Verbatim(data) => Ok(transport_node_data(TransportKindId(0) /* Verbatim — synthetic */, None, None, false, Some(data.text), None, None, None, None, None, None)),',
 		'    }',
 		'}',
 		'',
@@ -4079,6 +4139,54 @@ function renderTerminalTransportToNodeFn(node: AssembledNode, kindIdByKind?: Rea
  */
 function renderLiteralTransportStruct(_literals: readonly TransportLiteral[]): string[] {
 	return [];
+}
+
+/**
+ * Emit the `VerbatimTransport` struct — a synthetic carrier for bare-string
+ * inputs that have no `$type` annotation. Used by per-slot and supertype
+ * enums that admit at least one AssembledPattern variant (kinds whose render
+ * template emits the text verbatim — `identifier`, `integer_literal`, etc.).
+ *
+ * The struct itself has no kind_id, no factory or from-side production —
+ * it ONLY appears via the `FromNapiValue` bare-string fast-path. The render
+ * arm in the enclosing enum writes `self.text` directly to the destination.
+ *
+ * Rationale: AssembledPattern variants are interchangeable at the render
+ * boundary (they all emit `{{ text }}`). On the recursive deep-read path,
+ * leaf positions sometimes send text without a `$type` annotation; previously
+ * the variant-trial fallback silently matched whatever variant's FromNapiValue
+ * happened to accept the input first (e.g., StringLiteralTransport matched
+ * bare strings and rendered as `""`). Verbatim removes the ambiguity.
+ */
+function renderVerbatimTransportStruct(): string[] {
+	return [
+		'#[derive(Debug, Clone)]',
+		'pub struct VerbatimTransport {',
+		'    pub text: String,',
+		'}',
+		'',
+		'#[cfg(feature = "napi-bindings")]',
+		'impl ::napi::bindgen_prelude::FromNapiValue for VerbatimTransport {',
+		'    unsafe fn from_napi_value(',
+		'        env: ::napi::sys::napi_env,',
+		'        napi_val: ::napi::sys::napi_value,',
+		'    ) -> ::napi::Result<Self> {',
+		'        let text = String::from_napi_value(env, napi_val)?;',
+		'        Ok(Self { text })',
+		'    }',
+		'}',
+		'',
+		'#[cfg(feature = "napi-bindings")]',
+		'impl ::napi::bindgen_prelude::ToNapiValue for VerbatimTransport {',
+		'    unsafe fn to_napi_value(',
+		'        _env: ::napi::sys::napi_env,',
+		'        _val: Self,',
+		'    ) -> ::napi::Result<::napi::sys::napi_value> {',
+		'        Err(::napi::Error::from_reason("VerbatimTransport is receive-only"))',
+		'    }',
+		'}',
+		''
+	];
 }
 
 function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): string | undefined {
