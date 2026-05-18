@@ -480,7 +480,7 @@ function wire(config2, base2) {
     refineForms: /* @__PURE__ */ new Map(),
     groups: config2.groups,
     polymorphsConfig: config2.polymorphs,
-    externalAltDef: config2.externalAltDef,
+    renderAs: config2.renderAs,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(config2.rules))
   };
@@ -2403,15 +2403,15 @@ var config = {
     // `wildcard_pattern` kind at parse time.
     _wildcard_pattern: ($) => "_"
   },
-  // externalAltDef — sittir-side rule bodies for external scanner symbols.
+  // renderAs — sittir-side rule bodies for external scanner symbols.
   // These bodies are used by sittir's slot/render/factory pipeline ONLY;
   // they are stripped before the grammar reaches tree-sitter (the C
   // external scanner still produces these symbols during parsing).
   //
   // Doc comment markers — sittir-side declarations of the marker character.
-  // Tree-sitter's external scanner still produces these tokens; alt defs let
-  // sittir's render/factory/from pipelines know the literal text without
-  // depending on tree-sitter to expose it.
+  // Tree-sitter's external scanner still produces these tokens; renderAs
+  // entries let sittir's render/factory/from pipelines know the literal
+  // text without depending on tree-sitter to expose it.
   //
   // Line markers (_outer_line / _inner_line) DO have IMMEDIATE_TOKEN bodies
   // in grammar.json — those are stripped by wire so tree-sitter never sees
@@ -2427,7 +2427,7 @@ var config = {
   // Raw string literal delimiters — static (1-hash form only).
   // Round-trip will fail for `r##"..."##` etc. Factory-side benefit: no
   // delimiter-count parameter needed.
-  externalAltDef: (_$) => ({
+  renderAs: (_$) => ({
     // Doc comment markers
     _outer_line_doc_comment_marker: string("/"),
     // /// outer line doc

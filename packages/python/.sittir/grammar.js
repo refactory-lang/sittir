@@ -478,7 +478,7 @@ function wire(config, base2) {
     refineForms: /* @__PURE__ */ new Map(),
     groups: config.groups,
     polymorphsConfig: config.polymorphs,
-    externalAltDef: config.externalAltDef,
+    renderAs: config.renderAs,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(config.rules))
   };
