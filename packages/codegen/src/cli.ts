@@ -400,6 +400,27 @@ if (shouldEmitRustRender) {
 			);
 			throw e;
 		}
+
+		// Workspace-wide compile check — codegen changes in render-module.ts
+		// affect all three grammars' emitted transport.rs. Without a check
+		// across the whole workspace, breakage in non-targeted grammars
+		// (e.g. python or typescript) would silently persist until the next
+		// per-grammar regen. cargo check is incremental: a no-op for the
+		// crate just rebuilt by napi, and only compiles other crates whose
+		// source changed since their last build.
+		console.log(`  → cargo check --workspace (catches cross-grammar breakage)…`);
+		try {
+			execSync('cargo check --workspace --features napi-bindings', {
+				stdio: 'inherit',
+				cwd: process.cwd()
+			});
+		} catch (e) {
+			console.error(
+				`    Workspace cargo check failed. Other grammars' generated code does not compile — ` +
+					`render-module.ts changes likely emit invalid code for them. Fix and re-run.`
+			);
+			throw e;
+		}
 	}
 }
 
