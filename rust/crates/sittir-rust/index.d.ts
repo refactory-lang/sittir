@@ -227,7 +227,7 @@ export interface AwaitExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': ExpressionTransport
+  _expression: ExpressionTransport
 }
 
 export interface BaseFieldInitializerTransport {
@@ -238,7 +238,7 @@ export interface BaseFieldInitializerTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': ExpressionTransport
+  _expression: ExpressionTransport
 }
 
 export interface BinaryExpressionTransport {
@@ -336,7 +336,7 @@ export interface CapturedPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _identifier: IdentifierTransport
-  '$children': PatternTransport
+  _pattern: PatternTransport
 }
 
 export interface ClosureExpressionBlockTransport {
@@ -1403,8 +1403,8 @@ export interface MatchPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _pattern: PatternTransport
   _condition?: ConditionTransport
-  '$children': PatternTransport
 }
 
 export interface ModItemInlineTransport {
@@ -1451,7 +1451,7 @@ export interface MutPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _mutable_specifier: _MutableSpecifierTransport
-  '$children': PatternTransport
+  _pattern: PatternTransport
 }
 
 export interface NegativeLiteralTransport {
@@ -1554,7 +1554,7 @@ export interface ParenthesizedExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': ExpressionTransport
+  _expression: ExpressionTransport
 }
 
 export interface PointerTypeMutTransport {
@@ -1774,7 +1774,7 @@ export interface RefPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': PatternTransport
+  _pattern: PatternTransport
 }
 
 export interface RemovedTraitBoundTransport {
@@ -1785,7 +1785,7 @@ export interface RemovedTraitBoundTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  '$children': _TypeTransport
+  _type: _TypeTransport
 }
 
 export interface ReturnExpressionTransport {

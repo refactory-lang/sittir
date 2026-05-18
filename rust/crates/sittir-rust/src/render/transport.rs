@@ -1655,6 +1655,18 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = ArrayExpressionSemiTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ArrayExpressionSemi(value));
             }
+            if let Ok(value) = AttributedEnumVariantTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::AttributedEnumVariant(value));
+            }
+            if let Ok(value) = AttributedFieldDeclarationTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::AttributedFieldDeclaration(value));
+            }
+            if let Ok(value) = AttributedParameterTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::AttributedParameter(value));
+            }
+            if let Ok(value) = AttributedTypeParameterTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::AttributedTypeParameter(value));
+            }
             if let Ok(value) = ClosureExpressionAsyncMarkerTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ClosureExpressionAsyncMarker(value));
             }
@@ -1669,6 +1681,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = CompoundAssignmentExprOperatorEnum::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::CompoundAssignmentExprOperator(value));
+            }
+            if let Ok(value) = _ExpressionStatementBlockEndingTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::_ExpressionStatementBlockEnding(value));
+            }
+            if let Ok(value) = _ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::_ExpressionStatementWithSemi(value));
             }
             if let Ok(value) = FieldIdentifierTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::FieldIdentifier(value));
@@ -1733,6 +1751,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = KwUnsafeMarkerTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::KwUnsafeMarker(value));
             }
+            if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::LetChain(value));
+            }
             if let Ok(value) = LineCommentContentTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::LineCommentContent(value));
             }
@@ -1760,6 +1781,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = _MutableSpecifierTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::_MutableSpecifier(value));
             }
+            if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::NonSpecialToken(value));
+            }
             if let Ok(value) = OperatorTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Operator(value));
             }
@@ -1777,6 +1801,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = PointerTypeConstTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::PointerTypeConst(value));
+            }
+            if let Ok(value) = _PointerTypeMutTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::_PointerTypeMut(value));
             }
             if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::PrimitiveType(value));
@@ -1820,6 +1847,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = ReferenceExpressionRawConstTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ReferenceExpressionRawConst(value));
             }
+            if let Ok(value) = ReferenceExpressionRawMutTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ReferenceExpressionRawMut(value));
+            }
             if let Ok(value) = ReservedIdentifierEnum::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ReservedIdentifier(value));
             }
@@ -1844,6 +1874,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = UnsafeMarkerTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::UnsafeMarker(value));
             }
+            if let Ok(value) = _VisibilityModifierCrateTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::_VisibilityModifierCrate(value));
+            }
             if let Ok(value) = VisibilityModifierInPathTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::VisibilityModifierInPath(value));
             }
@@ -1855,6 +1888,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = AbstractTypeTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::AbstractType(value));
+            }
+            if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ArrayExpression(value));
             }
             if let Ok(value) = ArrayTypeTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ArrayType(value));
@@ -1874,6 +1910,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = AttributeItemTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::AttributeItem(value));
             }
+            if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::AwaitExpression(value));
+            }
+            if let Ok(value) = BaseFieldInitializerTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::BaseFieldInitializer(value));
+            }
             if let Ok(value) = BinaryExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::BinaryExpression(value));
             }
@@ -1882,6 +1924,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = BoundedTypeTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::BoundedType(value));
+            }
+            if let Ok(value) = BracketedTypeTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::BracketedType(value));
             }
             if let Ok(value) = CallExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::CallExpression(value));
@@ -1898,6 +1943,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = ClosureExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ClosureExpression(value));
             }
+            if let Ok(value) = CommentTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::Comment(value));
+            }
             if let Ok(value) = CompoundAssignmentExprTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::CompoundAssignmentExpr(value));
             }
@@ -1913,8 +1961,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Crate(value));
             }
+            if let Ok(value) = DelimTokenTreeTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::DelimTokenTree(value));
+            }
             if let Ok(value) = DynamicTypeTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::DynamicType(value));
+            }
+            if let Ok(value) = ElseClauseTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ElseClause(value));
             }
             if let Ok(value) = EmptyStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::EmptyStatement(value));
@@ -1927,6 +1981,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = EscapeSequenceTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::EscapeSequence(value));
+            }
+            if let Ok(value) = ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ExpressionStatementWithSemi(value));
+            }
+            if let Ok(value) = ExpressionStatementBlockEndingTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ExpressionStatementBlockEnding(value));
+            }
+            if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ExpressionStatement(value));
             }
             if let Ok(value) = ExternCrateDeclarationTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ExternCrateDeclaration(value));
@@ -1943,8 +2006,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = FieldPatternShorthandTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::FieldPatternShorthand(value));
             }
+            if let Ok(value) = FieldPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::FieldPattern(value));
+            }
             if let Ok(value) = ForExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ForExpression(value));
+            }
+            if let Ok(value) = ForLifetimesTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ForLifetimes(value));
             }
             if let Ok(value) = ForeignModItemBodyTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ForeignModItemBody(value));
@@ -2024,6 +2093,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = LifetimeParameterTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::LifetimeParameter(value));
             }
+            if let Ok(value) = LineCommentTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::LineComment(value));
+            }
             if let Ok(value) = LoopExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::LoopExpression(value));
             }
@@ -2044,6 +2116,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = MatchExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::MatchExpression(value));
+            }
+            if let Ok(value) = MatchPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::MatchPattern(value));
             }
             if let Ok(value) = MetavariableTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Metavariable(value));
@@ -2066,8 +2141,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = NeverTypeTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::NeverType(value));
             }
+            if let Ok(value) = OrPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::OrPattern(value));
+            }
             if let Ok(value) = ParameterTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Parameter(value));
+            }
+            if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::ParenthesizedExpression(value));
+            }
+            if let Ok(value) = PointerTypeMutTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::PointerTypeMut(value));
             }
             if let Ok(value) = PointerTypeTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::PointerType(value));
@@ -2078,11 +2162,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = RangeExpressionBareTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::RangeExpressionBare(value));
             }
+            if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::RangeExpression(value));
+            }
             if let Ok(value) = RangePatternTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::RangePattern(value));
             }
             if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::RawStringLiteral(value));
+            }
+            if let Ok(value) = RefPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::RefPattern(value));
             }
             if let Ok(value) = ReferenceExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ReferenceExpression(value));
@@ -2095,6 +2185,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = RemainingFieldPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::RemainingFieldPattern(value));
+            }
+            if let Ok(value) = RemovedTraitBoundTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::RemovedTraitBound(value));
             }
             if let Ok(value) = ScopedIdentifierTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ScopedIdentifier(value));
@@ -2138,6 +2231,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = TokenBindingPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TokenBindingPattern(value));
             }
+            if let Ok(value) = TokenTreeTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::TokenTree(value));
+            }
+            if let Ok(value) = TokenTreePatternTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::TokenTreePattern(value));
+            }
+            if let Ok(value) = TraitBoundsTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::TraitBounds(value));
+            }
             if let Ok(value) = TraitItemTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TraitItem(value));
             }
@@ -2149,6 +2251,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = TupleStructPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TupleStructPattern(value));
+            }
+            if let Ok(value) = TupleTypeTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::TupleType(value));
+            }
+            if let Ok(value) = TypeArgumentsTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::TypeArguments(value));
             }
             if let Ok(value) = TypeBindingTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TypeBinding(value));
@@ -2186,6 +2294,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = UseDeclarationTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::UseDeclaration(value));
             }
+            if let Ok(value) = VisibilityModifierCrateTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::VisibilityModifierCrate(value));
+            }
+            if let Ok(value) = VisibilityModifierTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::VisibilityModifier(value));
+            }
             if let Ok(value) = WherePredicateTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::WherePredicate(value));
             }
@@ -2206,6 +2320,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = ErrorSentinelTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ErrorSentinel(value));
+            }
+            if let Ok(value) = VisibilityModifierPubParensTransport::from_napi_value(env, napi_val) {
+                return Ok(AnyTransport::VisibilityModifierPubParens(value));
             }
             if let Ok(value) = BracketTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Bracket(value));
@@ -2447,18 +2564,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = ArrayExpressionListTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ArrayExpressionList(value));
             }
-            if let Ok(value) = AttributedEnumVariantTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::AttributedEnumVariant(value));
-            }
-            if let Ok(value) = AttributedFieldDeclarationTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::AttributedFieldDeclaration(value));
-            }
-            if let Ok(value) = AttributedParameterTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::AttributedParameter(value));
-            }
-            if let Ok(value) = AttributedTypeParameterTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::AttributedTypeParameter(value));
-            }
             if let Ok(value) = _DelimTokenTreeBraceTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::_DelimTokenTreeBrace(value));
             }
@@ -2468,17 +2573,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = _DelimTokenTreeParenTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::_DelimTokenTreeParen(value));
             }
-            if let Ok(value) = _ExpressionStatementBlockEndingTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::_ExpressionStatementBlockEnding(value));
-            }
-            if let Ok(value) = _ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::_ExpressionStatementWithSemi(value));
-            }
             if let Ok(value) = FunctionTypeFnFormTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::FunctionTypeFnForm(value));
-            }
-            if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::LetChain(value));
             }
             if let Ok(value) = _MacroDefinitionBraceTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::_MacroDefinitionBrace(value));
@@ -2488,15 +2584,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = _MacroDefinitionParenTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::_MacroDefinitionParen(value));
-            }
-            if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::NonSpecialToken(value));
-            }
-            if let Ok(value) = _PointerTypeMutTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::_PointerTypeMut(value));
-            }
-            if let Ok(value) = ReferenceExpressionRawMutTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ReferenceExpressionRawMut(value));
             }
             if let Ok(value) = _TokenTreeBraceTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::_TokenTreeBrace(value));
@@ -2516,20 +2603,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = _TokenTreePatternParenTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::_TokenTreePatternParen(value));
             }
-            if let Ok(value) = _VisibilityModifierCrateTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::_VisibilityModifierCrate(value));
-            }
             if let Ok(value) = ArgumentsTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Arguments(value));
-            }
-            if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ArrayExpression(value));
-            }
-            if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::AwaitExpression(value));
-            }
-            if let Ok(value) = BaseFieldInitializerTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::BaseFieldInitializer(value));
             }
             if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Block(value));
@@ -2537,17 +2612,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = BlockCommentTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::BlockComment(value));
             }
-            if let Ok(value) = BracketedTypeTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::BracketedType(value));
-            }
             if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::BreakExpression(value));
             }
             if let Ok(value) = ClosureParametersTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ClosureParameters(value));
-            }
-            if let Ok(value) = CommentTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::Comment(value));
             }
             if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ContinueExpression(value));
@@ -2564,23 +2633,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = DelimTokenTreeBraceTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::DelimTokenTreeBrace(value));
             }
-            if let Ok(value) = DelimTokenTreeTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::DelimTokenTree(value));
-            }
-            if let Ok(value) = ElseClauseTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ElseClause(value));
-            }
             if let Ok(value) = EnumVariantListTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::EnumVariantList(value));
-            }
-            if let Ok(value) = ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ExpressionStatementWithSemi(value));
-            }
-            if let Ok(value) = ExpressionStatementBlockEndingTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ExpressionStatementBlockEnding(value));
-            }
-            if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ExpressionStatement(value));
             }
             if let Ok(value) = ExternModifierTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ExternModifier(value));
@@ -2590,15 +2644,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             }
             if let Ok(value) = FieldInitializerListTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::FieldInitializerList(value));
-            }
-            if let Ok(value) = FieldPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::FieldPattern(value));
-            }
-            if let Ok(value) = ForLifetimesTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ForLifetimes(value));
-            }
-            if let Ok(value) = LineCommentTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::LineComment(value));
             }
             if let Ok(value) = MacroDefinitionParenTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::MacroDefinitionParen(value));
@@ -2612,32 +2657,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = MatchBlockTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::MatchBlock(value));
             }
-            if let Ok(value) = MatchPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::MatchPattern(value));
-            }
-            if let Ok(value) = OrPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::OrPattern(value));
-            }
             if let Ok(value) = OrderedFieldDeclarationListTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::OrderedFieldDeclarationList(value));
             }
             if let Ok(value) = ParametersTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::Parameters(value));
-            }
-            if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::ParenthesizedExpression(value));
-            }
-            if let Ok(value) = PointerTypeMutTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::PointerTypeMut(value));
-            }
-            if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::RangeExpression(value));
-            }
-            if let Ok(value) = RefPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::RefPattern(value));
-            }
-            if let Ok(value) = RemovedTraitBoundTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::RemovedTraitBound(value));
             }
             if let Ok(value) = ReturnExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::ReturnExpression(value));
@@ -2666,9 +2690,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = TokenTreeBraceTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TokenTreeBrace(value));
             }
-            if let Ok(value) = TokenTreeTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::TokenTree(value));
-            }
             if let Ok(value) = TokenTreePatternParenTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TokenTreePatternParen(value));
             }
@@ -2678,23 +2699,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = TokenTreePatternBraceTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TokenTreePatternBrace(value));
             }
-            if let Ok(value) = TokenTreePatternTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::TokenTreePattern(value));
-            }
-            if let Ok(value) = TraitBoundsTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::TraitBounds(value));
-            }
             if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TupleExpression(value));
             }
             if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::TuplePattern(value));
-            }
-            if let Ok(value) = TupleTypeTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::TupleType(value));
-            }
-            if let Ok(value) = TypeArgumentsTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::TypeArguments(value));
             }
             if let Ok(value) = UseBoundsTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::UseBounds(value));
@@ -2708,20 +2717,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             if let Ok(value) = VariadicParameterTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::VariadicParameter(value));
             }
-            if let Ok(value) = VisibilityModifierCrateTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::VisibilityModifierCrate(value));
-            }
-            if let Ok(value) = VisibilityModifierTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::VisibilityModifier(value));
-            }
             if let Ok(value) = WhereClauseTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::WhereClause(value));
             }
             if let Ok(value) = YieldExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(AnyTransport::YieldExpression(value));
-            }
-            if let Ok(value) = VisibilityModifierPubParensTransport::from_napi_value(env, napi_val) {
-                return Ok(AnyTransport::VisibilityModifierPubParens(value));
             }
         }
         Err(::napi::Error::from_reason("$type property missing in AnyTransport"))
@@ -2809,7 +2809,6 @@ pub enum ConditionTransport {
     RangeExpression(Box<RangeExpressionTransport>),
     LetCondition(Box<LetConditionTransport>),
     LetChain(Box<LetChainTransport>),
-    Condition(Box<ConditionTransport>),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -2879,8 +2878,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                 if let Ok(value) = GenericFunctionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::GenericFunction(Box::new(value)));
                 }
+                if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::AwaitExpression(Box::new(value)));
+                }
                 if let Ok(value) = FieldExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::FieldExpression(Box::new(value)));
+                }
+                if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ArrayExpression(Box::new(value)));
                 }
                 if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::MacroInvocation(Box::new(value)));
@@ -2896,6 +2901,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                 }
                 if let Ok(value) = ClosureExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ClosureExpression(Box::new(value)));
+                }
+                if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ParenthesizedExpression(Box::new(value)));
                 }
                 if let Ok(value) = StructExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::StructExpression(Box::new(value)));
@@ -2930,8 +2938,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                 if let Ok(value) = ConstBlockTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ConstBlock(Box::new(value)));
                 }
+                if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::RangeExpression(Box::new(value)));
+                }
                 if let Ok(value) = LetConditionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::LetCondition(Box::new(value)));
+                }
+                if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::LetChain(Box::new(value)));
                 }
                 if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::Expression(Box::new(value)));
@@ -2945,12 +2959,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                 if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::StringLiteral(Box::new(value)));
                 }
-                if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::AwaitExpression(Box::new(value)));
-                }
-                if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ArrayExpression(Box::new(value)));
-                }
                 if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::TupleExpression(Box::new(value)));
                 }
@@ -2960,20 +2968,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                 if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ContinueExpression(Box::new(value)));
                 }
-                if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ParenthesizedExpression(Box::new(value)));
-                }
                 if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::Block(Box::new(value)));
-                }
-                if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::RangeExpression(Box::new(value)));
-                }
-                if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::LetChain(Box::new(value)));
-                }
-                if let Ok(value) = ConditionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::Condition(Box::new(value)));
                 }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ConditionTransport"))
                 },
@@ -3184,8 +3180,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
             if let Ok(value) = GenericFunctionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::GenericFunction(Box::new(value)));
             }
+            if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::AwaitExpression(Box::new(value)));
+            }
             if let Ok(value) = FieldExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::FieldExpression(Box::new(value)));
+            }
+            if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ArrayExpression(Box::new(value)));
             }
             if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::MacroInvocation(Box::new(value)));
@@ -3201,6 +3203,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
             }
             if let Ok(value) = ClosureExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ClosureExpression(Box::new(value)));
+            }
+            if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ParenthesizedExpression(Box::new(value)));
             }
             if let Ok(value) = StructExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::StructExpression(Box::new(value)));
@@ -3235,8 +3240,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
             if let Ok(value) = ConstBlockTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ConstBlock(Box::new(value)));
             }
+            if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::RangeExpression(Box::new(value)));
+            }
             if let Ok(value) = LetConditionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::LetCondition(Box::new(value)));
+            }
+            if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::LetChain(Box::new(value)));
             }
             if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Expression(Box::new(value)));
@@ -3250,12 +3261,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
             if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::StringLiteral(Box::new(value)));
             }
-            if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::AwaitExpression(Box::new(value)));
-            }
-            if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ArrayExpression(Box::new(value)));
-            }
             if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::TupleExpression(Box::new(value)));
             }
@@ -3265,20 +3270,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
             if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ContinueExpression(Box::new(value)));
             }
-            if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ParenthesizedExpression(Box::new(value)));
-            }
             if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Block(Box::new(value)));
-            }
-            if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::RangeExpression(Box::new(value)));
-            }
-            if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::LetChain(Box::new(value)));
-            }
-            if let Ok(value) = ConditionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::Condition(Box::new(value)));
             }
         }
         Err(::napi::Error::from_reason("$type property missing in ConditionTransport"))
@@ -3345,7 +3338,6 @@ fn condition_transport_to_any(t: ConditionTransport) -> AnyTransport {
         ConditionTransport::RangeExpression(inner) => AnyTransport::RangeExpression(*inner),
         ConditionTransport::LetCondition(inner) => AnyTransport::LetCondition(*inner),
         ConditionTransport::LetChain(inner) => AnyTransport::LetChain(*inner),
-        ConditionTransport::Condition(inner) => condition_transport_to_any(*inner),
     }
 }
 
@@ -3651,14 +3643,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                 if let Ok(value) = TokDollarTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::TokDollar(value));
                 }
+                if let Ok(value) = DelimTokenTreeTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::DelimTokenTree(Box::new(value)));
+                }
                 if let Ok(value) = NonDelimTokenTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::NonDelimToken(Box::new(value)));
                 }
                 if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::StringLiteral(Box::new(value)));
-                }
-                if let Ok(value) = DelimTokenTreeTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::DelimTokenTree(Box::new(value)));
                 }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in DelimTokensTransport"))
                 },
@@ -3755,14 +3747,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
             if let Ok(value) = TokDollarTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::TokDollar(value));
             }
+            if let Ok(value) = DelimTokenTreeTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::DelimTokenTree(Box::new(value)));
+            }
             if let Ok(value) = NonDelimTokenTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::NonDelimToken(Box::new(value)));
             }
             if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::StringLiteral(Box::new(value)));
-            }
-            if let Ok(value) = DelimTokenTreeTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::DelimTokenTree(Box::new(value)));
             }
         }
         Err(::napi::Error::from_reason("$type property missing in DelimTokensTransport"))
@@ -3925,8 +3917,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                 if let Ok(value) = GenericFunctionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::GenericFunction(Box::new(value)));
                 }
+                if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::AwaitExpression(Box::new(value)));
+                }
                 if let Ok(value) = FieldExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::FieldExpression(Box::new(value)));
+                }
+                if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ArrayExpression(Box::new(value)));
                 }
                 if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::MacroInvocation(Box::new(value)));
@@ -3942,6 +3940,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                 }
                 if let Ok(value) = ClosureExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ClosureExpression(Box::new(value)));
+                }
+                if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ParenthesizedExpression(Box::new(value)));
                 }
                 if let Ok(value) = StructExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::StructExpression(Box::new(value)));
@@ -3976,6 +3977,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                 if let Ok(value) = ConstBlockTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ConstBlock(Box::new(value)));
                 }
+                if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::RangeExpression(Box::new(value)));
+                }
                 if let Ok(value) = ExpressionExceptRangeTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ExpressionExceptRange(Box::new(value)));
                 }
@@ -3988,12 +3992,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                 if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::StringLiteral(Box::new(value)));
                 }
-                if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::AwaitExpression(Box::new(value)));
-                }
-                if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ArrayExpression(Box::new(value)));
-                }
                 if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::TupleExpression(Box::new(value)));
                 }
@@ -4003,14 +4001,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                 if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ContinueExpression(Box::new(value)));
                 }
-                if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ParenthesizedExpression(Box::new(value)));
-                }
                 if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::Block(Box::new(value)));
-                }
-                if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::RangeExpression(Box::new(value)));
                 }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionTransport"))
                 },
@@ -4215,8 +4207,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
             if let Ok(value) = GenericFunctionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::GenericFunction(Box::new(value)));
             }
+            if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::AwaitExpression(Box::new(value)));
+            }
             if let Ok(value) = FieldExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::FieldExpression(Box::new(value)));
+            }
+            if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ArrayExpression(Box::new(value)));
             }
             if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::MacroInvocation(Box::new(value)));
@@ -4232,6 +4230,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
             }
             if let Ok(value) = ClosureExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ClosureExpression(Box::new(value)));
+            }
+            if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ParenthesizedExpression(Box::new(value)));
             }
             if let Ok(value) = StructExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::StructExpression(Box::new(value)));
@@ -4266,6 +4267,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
             if let Ok(value) = ConstBlockTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ConstBlock(Box::new(value)));
             }
+            if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::RangeExpression(Box::new(value)));
+            }
             if let Ok(value) = ExpressionExceptRangeTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ExpressionExceptRange(Box::new(value)));
             }
@@ -4278,12 +4282,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
             if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::StringLiteral(Box::new(value)));
             }
-            if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::AwaitExpression(Box::new(value)));
-            }
-            if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ArrayExpression(Box::new(value)));
-            }
             if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::TupleExpression(Box::new(value)));
             }
@@ -4293,14 +4291,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
             if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ContinueExpression(Box::new(value)));
             }
-            if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ParenthesizedExpression(Box::new(value)));
-            }
             if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Block(Box::new(value)));
-            }
-            if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::RangeExpression(Box::new(value)));
             }
         }
         Err(::napi::Error::from_reason("$type property missing in ExpressionTransport"))
@@ -4639,8 +4631,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                 if let Ok(value) = GenericFunctionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::GenericFunction(Box::new(value)));
                 }
+                if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::AwaitExpression(Box::new(value)));
+                }
                 if let Ok(value) = FieldExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::FieldExpression(Box::new(value)));
+                }
+                if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ArrayExpression(Box::new(value)));
                 }
                 if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::MacroInvocation(Box::new(value)));
@@ -4656,6 +4654,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                 }
                 if let Ok(value) = ClosureExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ClosureExpression(Box::new(value)));
+                }
+                if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ParenthesizedExpression(Box::new(value)));
                 }
                 if let Ok(value) = StructExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::StructExpression(Box::new(value)));
@@ -4699,12 +4700,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                 if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::StringLiteral(Box::new(value)));
                 }
-                if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::AwaitExpression(Box::new(value)));
-                }
-                if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ArrayExpression(Box::new(value)));
-                }
                 if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::TupleExpression(Box::new(value)));
                 }
@@ -4713,9 +4708,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                 }
                 if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ContinueExpression(Box::new(value)));
-                }
-                if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ParenthesizedExpression(Box::new(value)));
                 }
                 if let Ok(value) = ExpressionEndingWithBlockTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ExpressionEndingWithBlock(Box::new(value)));
@@ -4780,8 +4772,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                 if let Ok(value) = GenericFunctionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::GenericFunction(Box::new(value)));
                 }
+                if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::AwaitExpression(Box::new(value)));
+                }
                 if let Ok(value) = FieldExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::FieldExpression(Box::new(value)));
+                }
+                if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ArrayExpression(Box::new(value)));
                 }
                 if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::MacroInvocation(Box::new(value)));
@@ -4797,6 +4795,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                 }
                 if let Ok(value) = ClosureExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ClosureExpression(Box::new(value)));
+                }
+                if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ParenthesizedExpression(Box::new(value)));
                 }
                 if let Ok(value) = StructExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::StructExpression(Box::new(value)));
@@ -4840,12 +4841,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                 if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::StringLiteral(Box::new(value)));
                 }
-                if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::AwaitExpression(Box::new(value)));
-                }
-                if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ArrayExpression(Box::new(value)));
-                }
                 if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::TupleExpression(Box::new(value)));
                 }
@@ -4854,9 +4849,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
                 }
                 if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ContinueExpression(Box::new(value)));
-                }
-                if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ParenthesizedExpression(Box::new(value)));
                 }
                 if let Ok(value) = ExpressionEndingWithBlockTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ExpressionEndingWithBlock(Box::new(value)));
@@ -5073,8 +5065,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
             if let Ok(value) = GenericFunctionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::GenericFunction(Box::new(value)));
             }
+            if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::AwaitExpression(Box::new(value)));
+            }
             if let Ok(value) = FieldExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::FieldExpression(Box::new(value)));
+            }
+            if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ArrayExpression(Box::new(value)));
             }
             if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::MacroInvocation(Box::new(value)));
@@ -5090,6 +5088,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
             }
             if let Ok(value) = ClosureExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ClosureExpression(Box::new(value)));
+            }
+            if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ParenthesizedExpression(Box::new(value)));
             }
             if let Ok(value) = StructExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::StructExpression(Box::new(value)));
@@ -5133,12 +5134,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
             if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::StringLiteral(Box::new(value)));
             }
-            if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::AwaitExpression(Box::new(value)));
-            }
-            if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ArrayExpression(Box::new(value)));
-            }
             if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::TupleExpression(Box::new(value)));
             }
@@ -5147,9 +5142,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionExceptRangeTransport {
             }
             if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ContinueExpression(Box::new(value)));
-            }
-            if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ParenthesizedExpression(Box::new(value)));
             }
             if let Ok(value) = ExpressionEndingWithBlockTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ExpressionEndingWithBlock(Box::new(value)));
@@ -5776,6 +5768,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                 if let Ok(value) = ReservedIdentifierEnum::from_napi_value(env, napi_val) {
                     return Ok(Self::ReservedIdentifier(value));
                 }
+                if let Ok(value) = RefPatternTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::RefPattern(Box::new(value)));
+                }
                 if let Ok(value) = CapturedPatternTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::CapturedPattern(Box::new(value)));
                 }
@@ -5790,6 +5785,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                 }
                 if let Ok(value) = RangePatternTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::RangePattern(Box::new(value)));
+                }
+                if let Ok(value) = OrPatternTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::OrPattern(Box::new(value)));
                 }
                 if let Ok(value) = ConstBlockTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ConstBlock(Box::new(value)));
@@ -5809,14 +5807,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                 if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::TuplePattern(Box::new(value)));
                 }
-                if let Ok(value) = RefPatternTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::RefPattern(Box::new(value)));
-                }
                 if let Ok(value) = SlicePatternTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::SlicePattern(Box::new(value)));
-                }
-                if let Ok(value) = OrPatternTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::OrPattern(Box::new(value)));
                 }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PatternTransport"))
                 },
@@ -5952,6 +5944,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
             if let Ok(value) = ReservedIdentifierEnum::from_napi_value(env, napi_val) {
                 return Ok(Self::ReservedIdentifier(value));
             }
+            if let Ok(value) = RefPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::RefPattern(Box::new(value)));
+            }
             if let Ok(value) = CapturedPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::CapturedPattern(Box::new(value)));
             }
@@ -5966,6 +5961,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
             }
             if let Ok(value) = RangePatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::RangePattern(Box::new(value)));
+            }
+            if let Ok(value) = OrPatternTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::OrPattern(Box::new(value)));
             }
             if let Ok(value) = ConstBlockTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ConstBlock(Box::new(value)));
@@ -5985,14 +5983,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
             if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::TuplePattern(Box::new(value)));
             }
-            if let Ok(value) = RefPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::RefPattern(Box::new(value)));
-            }
             if let Ok(value) = SlicePatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::SlicePattern(Box::new(value)));
-            }
-            if let Ok(value) = OrPatternTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::OrPattern(Box::new(value)));
             }
         }
         Err(::napi::Error::from_reason("$type property missing in PatternTransport"))
@@ -6092,6 +6084,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
         if let Some(kind_id) = kind_id {
             return match kind_id {
                 158 => {
+                if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::ExpressionStatement(Box::new(value)));
+                }
                 if let Ok(value) = ConstItemTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ConstItem(Box::new(value)));
                 }
@@ -6154,9 +6149,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                 }
                 if let Ok(value) = StaticItemTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::StaticItem(Box::new(value)));
-                }
-                if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::ExpressionStatement(Box::new(value)));
                 }
                 if let Ok(value) = DeclarationStatementTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::DeclarationStatement(Box::new(value)));
@@ -6235,6 +6227,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
             };
         }
         if String::from_napi_value(env, napi_val).is_ok() {
+            if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::ExpressionStatement(Box::new(value)));
+            }
             if let Ok(value) = ConstItemTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ConstItem(Box::new(value)));
             }
@@ -6297,9 +6292,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
             }
             if let Ok(value) = StaticItemTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::StaticItem(Box::new(value)));
-            }
-            if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::ExpressionStatement(Box::new(value)));
             }
             if let Ok(value) = DeclarationStatementTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::DeclarationStatement(Box::new(value)));
@@ -6392,6 +6384,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
         if let Some(kind_id) = kind_id {
             return match kind_id {
                 163 => {
+                if let Ok(value) = TokenTreePatternTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::TokenTreePattern(Box::new(value)));
+                }
                 if let Ok(value) = TokenBindingPatternTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::TokenBindingPattern(Box::new(value)));
                 }
@@ -6430,9 +6425,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                 }
                 if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::TokSq(value));
-                }
-                if let Ok(value) = TokenTreePatternTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::TokenTreePattern(Box::new(value)));
                 }
                 if let Ok(value) = TokenRepetitionPatternTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::TokenRepetitionPattern(Box::new(value)));
@@ -6502,6 +6494,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
             };
         }
         if String::from_napi_value(env, napi_val).is_ok() {
+            if let Ok(value) = TokenTreePatternTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::TokenTreePattern(Box::new(value)));
+            }
             if let Ok(value) = TokenBindingPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::TokenBindingPattern(Box::new(value)));
             }
@@ -6540,9 +6535,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
             }
             if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::TokSq(value));
-            }
-            if let Ok(value) = TokenTreePatternTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::TokenTreePattern(Box::new(value)));
             }
             if let Ok(value) = TokenRepetitionPatternTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::TokenRepetitionPattern(Box::new(value)));
@@ -6686,6 +6678,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
             };
         }
         if String::from_napi_value(env, napi_val).is_ok() {
+            if let Ok(value) = TokenTreeTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::TokenTree(Box::new(value)));
+            }
             if let Ok(value) = MetavariableTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::Metavariable(value));
             }
@@ -6721,9 +6716,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
             }
             if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::TokSq(value));
-            }
-            if let Ok(value) = TokenTreeTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::TokenTree(Box::new(value)));
             }
             if let Ok(value) = TokenRepetitionTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::TokenRepetition(Box::new(value)));
@@ -6830,6 +6822,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
                 if let Ok(value) = ScopedTypeIdentifierTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::ScopedTypeIdentifier(Box::new(value)));
                 }
+                if let Ok(value) = TupleTypeTransport::from_napi_value(env, napi_val) {
+                    return Ok(Self::TupleType(Box::new(value)));
+                }
                 if let Ok(value) = UnitTypeTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::UnitType(value));
                 }
@@ -6854,14 +6849,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
                 if let Ok(value) = BoundedTypeTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::BoundedType(Box::new(value)));
                 }
-                if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
-                    return Ok(Self::PrimitiveType(value));
-                }
-                if let Ok(value) = TupleTypeTransport::from_napi_value(env, napi_val) {
-                    return Ok(Self::TupleType(Box::new(value)));
-                }
                 if let Ok(value) = RemovedTraitBoundTransport::from_napi_value(env, napi_val) {
                     return Ok(Self::RemovedTraitBound(Box::new(value)));
+                }
+                if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                    return Ok(Self::PrimitiveType(value));
                 }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in _TypeTransport"))
                 },
@@ -6988,6 +6980,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
             if let Ok(value) = ScopedTypeIdentifierTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::ScopedTypeIdentifier(Box::new(value)));
             }
+            if let Ok(value) = TupleTypeTransport::from_napi_value(env, napi_val) {
+                return Ok(Self::TupleType(Box::new(value)));
+            }
             if let Ok(value) = UnitTypeTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::UnitType(value));
             }
@@ -7012,14 +7007,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
             if let Ok(value) = BoundedTypeTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::BoundedType(Box::new(value)));
             }
-            if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
-                return Ok(Self::PrimitiveType(value));
-            }
-            if let Ok(value) = TupleTypeTransport::from_napi_value(env, napi_val) {
-                return Ok(Self::TupleType(Box::new(value)));
-            }
             if let Ok(value) = RemovedTraitBoundTransport::from_napi_value(env, napi_val) {
                 return Ok(Self::RemovedTraitBound(Box::new(value)));
+            }
+            if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                return Ok(Self::PrimitiveType(value));
             }
         }
         Err(::napi::Error::from_reason("$type property missing in _TypeTransport"))
@@ -17613,6 +17605,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemSemiTransport {
             text
         } else if u16::from_napi_value(env, napi_val).is_ok() {
             ";".to_string()
+        } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("ForeignModItemSemiTransport received false; omit the field instead of sending false"));
+            }
+            ";".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
             obj.get("$text")?.unwrap_or_else(|| ";".to_string())
@@ -17635,6 +17632,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemSemiTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(false),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text,
+            });
+        }
+        if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("ForeignModItemSemiTransport received false; omit the field instead of sending false"));
+            }
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(false),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text: ";".to_string(),
+            });
+        }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_else(|| ";".to_string());
         let transport_source = obj.get("$source")?;
@@ -17897,6 +17919,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemSemiTransport {
             text
         } else if u16::from_napi_value(env, napi_val).is_ok() {
             ";".to_string()
+        } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("ImplItemSemiTransport received false; omit the field instead of sending false"));
+            }
+            ";".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
             obj.get("$text")?.unwrap_or_else(|| ";".to_string())
@@ -17919,6 +17946,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemSemiTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(false),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text,
+            });
+        }
+        if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("ImplItemSemiTransport received false; omit the field instead of sending false"));
+            }
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(false),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text: ";".to_string(),
+            });
+        }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_else(|| ";".to_string());
         let transport_source = obj.get("$source")?;
@@ -19397,6 +19449,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModItemExternalTransport {
             text
         } else if u16::from_napi_value(env, napi_val).is_ok() {
             ";".to_string()
+        } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("ModItemExternalTransport received false; omit the field instead of sending false"));
+            }
+            ";".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
             obj.get("$text")?.unwrap_or_else(|| ";".to_string())
@@ -19419,6 +19476,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModItemExternalTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(false),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text,
+            });
+        }
+        if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("ModItemExternalTransport received false; omit the field instead of sending false"));
+            }
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(false),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text: ";".to_string(),
+            });
+        }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_else(|| ";".to_string());
         let transport_source = obj.get("$source")?;
@@ -20131,6 +20213,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeConstTransport {
             text
         } else if u16::from_napi_value(env, napi_val).is_ok() {
             "const".to_string()
+        } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("PointerTypeConstTransport received false; omit the field instead of sending false"));
+            }
+            "const".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
             obj.get("$text")?.unwrap_or_else(|| "const".to_string())
@@ -20153,6 +20240,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeConstTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(true),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text,
+            });
+        }
+        if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("PointerTypeConstTransport received false; omit the field instead of sending false"));
+            }
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(true),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text: "const".to_string(),
+            });
+        }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_else(|| "const".to_string());
         let transport_source = obj.get("$source")?;
@@ -20569,6 +20681,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftBareTransport {
             text
         } else if u16::from_napi_value(env, napi_val).is_ok() {
             "..".to_string()
+        } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("RangePatternLeftBareTransport received false; omit the field instead of sending false"));
+            }
+            "..".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
             obj.get("$text")?.unwrap_or_else(|| "..".to_string())
@@ -20591,6 +20708,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftBareTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(false),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text,
+            });
+        }
+        if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("RangePatternLeftBareTransport received false; omit the field instead of sending false"));
+            }
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(false),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text: "..".to_string(),
+            });
+        }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_else(|| "..".to_string());
         let transport_source = obj.get("$source")?;
@@ -21411,6 +21553,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructItemUnitTransport {
             text
         } else if u16::from_napi_value(env, napi_val).is_ok() {
             ";".to_string()
+        } else if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("StructItemUnitTransport received false; omit the field instead of sending false"));
+            }
+            ";".to_string()
         } else {
             let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
             obj.get("$text")?.unwrap_or_else(|| ";".to_string())
@@ -21433,6 +21580,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructItemUnitTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(false),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text,
+            });
+        }
+        if let Ok(present) = bool::from_napi_value(env, napi_val) {
+            if !present {
+                return Err(::napi::Error::from_reason("StructItemUnitTransport received false; omit the field instead of sending false"));
+            }
+            return Ok(Self {
+                transport_source: None,
+                transport_named: Some(false),
+                transport_span: None,
+                transport_node_handle: None,
+                transport_child_index: None,
+                transport_trivia_data: None,
+                text: ";".to_string(),
+            });
+        }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_else(|| ";".to_string());
         let transport_source = obj.get("$source")?;
@@ -22584,8 +22756,8 @@ pub struct AwaitExpressionTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: ExpressionTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    pub expression: ExpressionTransport,
 }
 
 impl RenderableTransport for AwaitExpressionTransport {
@@ -22614,8 +22786,8 @@ pub struct BaseFieldInitializerTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: ExpressionTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    pub expression: ExpressionTransport,
 }
 
 impl RenderableTransport for BaseFieldInitializerTransport {
@@ -22952,8 +23124,8 @@ pub struct CapturedPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
     pub identifier: IdentifierTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: PatternTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    pub pattern: PatternTransport,
 }
 
 impl RenderableTransport for CapturedPatternTransport {
@@ -25848,10 +26020,10 @@ pub struct MatchPatternTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    pub pattern: PatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: Option<ConditionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: PatternTransport,
 }
 
 impl RenderableTransport for MatchPatternTransport {
@@ -26026,8 +26198,8 @@ pub struct MutPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
     pub mutable_specifier: _MutableSpecifierTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: PatternTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    pub pattern: PatternTransport,
 }
 
 impl RenderableTransport for MutPatternTransport {
@@ -26376,8 +26548,8 @@ pub struct ParenthesizedExpressionTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: ExpressionTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
+    pub expression: ExpressionTransport,
 }
 
 impl RenderableTransport for ParenthesizedExpressionTransport {
@@ -26622,8 +26794,8 @@ pub struct RefPatternTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: PatternTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    pub pattern: PatternTransport,
 }
 
 impl RenderableTransport for RefPatternTransport {
@@ -26832,8 +27004,8 @@ pub struct RemovedTraitBoundTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: _TypeTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    pub type_: _TypeTransport,
 }
 
 impl RenderableTransport for RemovedTraitBoundTransport {
@@ -35907,9 +36079,6 @@ fn render_range_expression_binary_operator(t: &RangeExpressionBinaryOperatorEnum
 }
 
 fn render_array_expression_list(node: &ArrayExpressionListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let attributes_owned = node.attributes.as_deref().unwrap_or(&[]);
     let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = attributes_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -35919,12 +36088,7 @@ fn render_array_expression_list(node: &ArrayExpressionListTransport, dest: &mut 
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ArrayExpressionListTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
+        attribute_item: OptionalNonterminalView::Missing,
         attributes: ListNonterminalView {
             items: attributes_buf.as_slice(),
             separator: ",",
@@ -35960,42 +36124,39 @@ fn render_array_expression_semi(node: &ArrayExpressionSemiTransport, dest: &mut 
 }
 
 fn render_attributed_enum_variant(node: &AttributedEnumVariantTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = AttributedEnumVariantTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        attribute_item: OptionalNonterminalView::Missing,
+        enum_variant: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
 
 fn render_attributed_field_declaration(node: &AttributedFieldDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = AttributedFieldDeclarationTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        attribute_item: OptionalNonterminalView::Missing,
+        field_declaration: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
 
 fn render_attributed_parameter(node: &AttributedParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = AttributedParameterTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        attribute_item: OptionalNonterminalView::Missing,
+        parameter: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        self_parameter: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        type_: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        variadic_parameter: ListNonterminalView {
+            items: &[],
             separator: "",
             leading: false,
             trailing: false,
@@ -36005,12 +36166,23 @@ fn render_attributed_parameter(node: &AttributedParameterTransport, dest: &mut d
 }
 
 fn render_attributed_type_parameter(node: &AttributedTypeParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = AttributedTypeParameterTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        attribute_item: OptionalNonterminalView::Missing,
+        const_parameter: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        lifetime_parameter: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        metavariable: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        type_parameter: ListNonterminalView {
+            items: &[],
             separator: "",
             leading: false,
             trailing: false,
@@ -36050,60 +36222,36 @@ fn render_compound_assignment_expr_operator(t: &CompoundAssignmentExprOperatorEn
 }
 
 fn render__delim_token_tree_brace(node: &_DelimTokenTreeBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _DelimTokenTreeBraceTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        delim_tokens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render__delim_token_tree_bracket(node: &_DelimTokenTreeBracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _DelimTokenTreeBracketTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        delim_tokens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render__delim_token_tree_paren(node: &_DelimTokenTreeParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _DelimTokenTreeParenTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        delim_tokens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render__expression_statement_block_ending(node: &_ExpressionStatementBlockEndingTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = _ExpressionStatementBlockEndingTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        expression_ending_with_block: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
 
 fn render__expression_statement_with_semi(node: &_ExpressionStatementWithSemiTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = _ExpressionStatementWithSemiTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -36140,10 +36288,7 @@ fn render_foreign_mod_item_semi(t: &ForeignModItemSemiTransport, dest: &mut dyn 
 
 fn render_function_type_fn_form(node: &FunctionTypeFnFormTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = FunctionTypeFnFormTemplate {
-        children: match &node.children {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        function_modifiers: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -36220,7 +36365,19 @@ fn render_kw_unsafe_marker(t: &KwUnsafeMarkerTransport, dest: &mut dyn ::std::fm
 
 fn render_let_chain(node: &LetChainTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LetChainTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        expression: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        let_chain: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        let_condition: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
     };
     template.render_into(dest)
 }
@@ -36245,46 +36402,22 @@ fn render_line_comment_regular_dslash(t: &LineCommentRegularDslashTransport, des
 }
 
 fn render__macro_definition_brace(node: &_MacroDefinitionBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _MacroDefinitionBraceTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ";",
-            leading: false,
-            trailing: false,
-        },
+        macro_rule: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render__macro_definition_bracket(node: &_MacroDefinitionBracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _MacroDefinitionBracketTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ";",
-            leading: false,
-            trailing: false,
-        },
+        macro_rule: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render__macro_definition_paren(node: &_MacroDefinitionParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _MacroDefinitionParenTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ";",
-            leading: false,
-            trailing: false,
-        },
+        macro_rule: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -36362,7 +36495,7 @@ fn render_pointer_type_const(t: &PointerTypeConstTransport, dest: &mut dyn ::std
 
 fn render__pointer_type_mut(node: &_PointerTypeMutTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = _PointerTypeMutTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        mutable_specifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -36447,7 +36580,7 @@ fn render_reference_expression_raw_const(t: &ReferenceExpressionRawConstTranspor
 
 fn render_reference_expression_raw_mut(node: &ReferenceExpressionRawMutTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ReferenceExpressionRawMutTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        mutable_specifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -36458,22 +36591,16 @@ fn render_reserved_identifier(t: &ReservedIdentifierEnum, dest: &mut dyn ::std::
 
 fn render_struct_item_brace(node: &StructItemBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = StructItemBraceTemplate {
-        children: match &node.children {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        where_clause: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_struct_item_tuple(node: &StructItemTupleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = StructItemTupleTemplate {
-        children: match &node.children {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        where_clause: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -36487,91 +36614,43 @@ fn render_token_binding_pattern_type(t: &TokenBindingPatternTypeEnum, dest: &mut
 }
 
 fn render__token_tree_brace(node: &_TokenTreeBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _TokenTreeBraceTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        tokens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render__token_tree_bracket(node: &_TokenTreeBracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _TokenTreeBracketTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        tokens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render__token_tree_paren(node: &_TokenTreeParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _TokenTreeParenTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        tokens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render__token_tree_pattern_brace(node: &_TokenTreePatternBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _TokenTreePatternBraceTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        token_pattern: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render__token_tree_pattern_bracket(node: &_TokenTreePatternBracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _TokenTreePatternBracketTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        token_pattern: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render__token_tree_pattern_paren(node: &_TokenTreePatternParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = _TokenTreePatternParenTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        token_pattern: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -36590,26 +36669,23 @@ fn render_unsafe_marker(t: &UnsafeMarkerTransport, dest: &mut dyn ::std::fmt::Wr
 
 fn render__visibility_modifier_crate(node: &_VisibilityModifierCrateTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = _VisibilityModifierCrateTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        crate_: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
 
 fn render_visibility_modifier_in_path(node: &VisibilityModifierInPathTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = VisibilityModifierInPathTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
         in_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.in_.as_ref())),
+        path: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
 
 fn render_visibility_modifier_pub(node: &VisibilityModifierPubTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = VisibilityModifierPubTemplate {
-        children: match &node.children {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
         pub_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.pub_.as_ref())),
+        visibility_modifier_pub_parens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -36647,7 +36723,9 @@ fn render_arguments(node: &ArgumentsTransport, dest: &mut dyn ::std::fmt::Write)
 
 fn render_array_expression(node: &ArrayExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ArrayExpressionTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        array_expression_list: OptionalNonterminalView::Missing,
+        array_expression_semi: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -36725,14 +36803,14 @@ fn render_attribute_item(node: &AttributeItemTransport, dest: &mut dyn ::std::fm
 
 fn render_await_expression(node: &AwaitExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AwaitExpressionTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
     template.render_into(dest)
 }
 
 fn render_base_field_initializer(node: &BaseFieldInitializerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = BaseFieldInitializerTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
     template.render_into(dest)
 }
@@ -36747,20 +36825,12 @@ fn render_binary_expression(node: &BinaryExpressionTransport, dest: &mut dyn ::s
 }
 
 fn render_block(node: &BlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = BlockTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         label: match &node.label {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
+        statement: OptionalNonterminalView::Missing,
         trailing_expression: match &node.trailing_expression {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -36789,26 +36859,46 @@ fn render_boolean_literal(t: &BooleanLiteralEnum, dest: &mut dyn ::std::fmt::Wri
 
 fn render_bounded_type(node: &BoundedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = BoundedTypeTemplate {
-        children: OptionalNonterminalView::Missing,
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        lifetime: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
+        type_: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        use_bounds: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
     };
     template.render_into(dest)
 }
 
 fn render_bracketed_type(node: &BracketedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = BracketedTypeTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        qualified_type: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
 
 fn render_break_expression(node: &BreakExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = BreakExpressionTemplate {
-        children: match &node.children {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        expression: OptionalNonterminalView::Missing,
         label: match &node.label {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -36827,8 +36917,8 @@ fn render_call_expression(node: &CallExpressionTransport, dest: &mut dyn ::std::
 
 fn render_captured_pattern(node: &CapturedPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = CapturedPatternTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
         identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
+        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
     };
     template.render_into(dest)
 }
@@ -36846,11 +36936,13 @@ fn render_closure_expression_expr(node: &ClosureExpressionExprTransport, dest: &
 
 fn render_closure_expression(node: &ClosureExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ClosureExpressionTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
         async_marker: match &node.async_marker {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
+        closure_expression_block: OptionalNonterminalView::Missing,
+        closure_expression_expr: OptionalNonterminalView::Missing,
         move_marker: match &node.move_marker {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -36865,23 +36957,27 @@ fn render_closure_expression(node: &ClosureExpressionTransport, dest: &mut dyn :
 }
 
 fn render_closure_parameters(node: &ClosureParametersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ClosureParametersTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        parameter: ListNonterminalView {
+            items: &[],
             separator: ",",
             leading: false,
             trailing: false,
         },
+        pattern: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_comment(node: &CommentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = CommentTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        block_comment: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        line_comment: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -36945,68 +37041,39 @@ fn render_crate(t: &CrateTransport, dest: &mut dyn ::std::fmt::Write) -> Result<
 }
 
 fn render_declaration_list(node: &DeclarationListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = DeclarationListTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        declaration_statement: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_delim_token_tree_paren(node: &DelimTokenTreeParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = DelimTokenTreeParenTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        delim_tokens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_delim_token_tree_bracket(node: &DelimTokenTreeBracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = DelimTokenTreeBracketTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        delim_tokens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_delim_token_tree_brace(node: &DelimTokenTreeBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = DelimTokenTreeBraceTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        delim_tokens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_delim_token_tree(node: &DelimTokenTreeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = DelimTokenTreeTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        delim_token_tree_brace: OptionalNonterminalView::Missing,
+        delim_token_tree_bracket: OptionalNonterminalView::Missing,
+        delim_token_tree_paren: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -37020,7 +37087,13 @@ fn render_dynamic_type(node: &DynamicTypeTransport, dest: &mut dyn ::std::fmt::W
 
 fn render_else_clause(node: &ElseClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ElseClauseTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        block: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        if_expression: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
     };
     template.render_into(dest)
 }
@@ -37069,12 +37142,15 @@ fn render_enum_variant(node: &EnumVariantTransport, dest: &mut dyn ::std::fmt::W
 }
 
 fn render_enum_variant_list(node: &EnumVariantListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = EnumVariantListTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        attribute_item: ListNonterminalView {
+            items: &[],
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+        enum_variant: ListNonterminalView {
+            items: &[],
             separator: ",",
             leading: false,
             trailing: false,
@@ -37089,21 +37165,23 @@ fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt
 
 fn render_expression_statement_with_semi(node: &ExpressionStatementWithSemiTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExpressionStatementWithSemiTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
 
 fn render_expression_statement_block_ending(node: &ExpressionStatementBlockEndingTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExpressionStatementBlockEndingTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        expression_ending_with_block: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
 
 fn render_expression_statement(node: &ExpressionStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExpressionStatementTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        expression_statement_block_ending: OptionalNonterminalView::Missing,
+        expression_statement_with_semi: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -37147,12 +37225,15 @@ fn render_field_declaration(node: &FieldDeclarationTransport, dest: &mut dyn ::s
 }
 
 fn render_field_declaration_list(node: &FieldDeclarationListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = FieldDeclarationListTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        attribute_item: ListNonterminalView {
+            items: &[],
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+        field_declaration: ListNonterminalView {
+            items: &[],
             separator: ",",
             leading: false,
             trailing: false,
@@ -37170,16 +37251,8 @@ fn render_field_expression(node: &FieldExpressionTransport, dest: &mut dyn ::std
 }
 
 fn render_field_initializer(node: &FieldInitializerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = FieldInitializerTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        attribute_item: OptionalNonterminalView::Missing,
         field: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.field)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
@@ -37187,16 +37260,20 @@ fn render_field_initializer(node: &FieldInitializerTransport, dest: &mut dyn ::s
 }
 
 fn render_field_initializer_list(node: &FieldInitializerListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = FieldInitializerListTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        base_field_initializer: ListNonterminalView {
+            items: &[],
             separator: ",",
             leading: false,
             trailing: false,
         },
+        field_initializer: ListNonterminalView {
+            items: &[],
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+        shorthand_field_initializer: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -37210,7 +37287,9 @@ fn render_field_pattern_shorthand(node: &FieldPatternShorthandTransport, dest: &
 
 fn render_field_pattern(node: &FieldPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = FieldPatternTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        field_pattern_named: OptionalNonterminalView::Missing,
+        field_pattern_shorthand: OptionalNonterminalView::Missing,
         mutable_specifier: match &node.mutable_specifier {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -37237,16 +37316,8 @@ fn render_for_expression(node: &ForExpressionTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_for_lifetimes(node: &ForLifetimesTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ForLifetimesTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
+        lifetime: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -37260,8 +37331,9 @@ fn render_foreign_mod_item_body(node: &ForeignModItemBodyTransport, dest: &mut d
 
 fn render_foreign_mod_item(node: &ForeignModItemTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ForeignModItemTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
         extern_modifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.extern_modifier)),
+        foreign_mod_item_body: OptionalNonterminalView::Missing,
         visibility_modifier: match &node.visibility_modifier {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -37308,7 +37380,12 @@ fn render_function_modifiers(node: &FunctionModifiersTransport, dest: &mut dyn :
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = FunctionModifiersTemplate {
-        children: OptionalNonterminalView::Missing,
+        extern_modifier: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
         modifier: ListNonterminalView {
             items: modifier_buf.as_slice(),
             separator: "",
@@ -37349,11 +37426,17 @@ fn render_function_signature_item(node: &FunctionSignatureItemTransport, dest: &
 
 fn render_function_type(node: &FunctionTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = FunctionTypeTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
         for_lifetimes: match &node.for_lifetimes {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
+        function_type_fn_form: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        function_type_trait_form: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
         parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
         return_type: match &node.return_type {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -37384,7 +37467,13 @@ fn render_generic_function(node: &GenericFunctionTransport, dest: &mut dyn ::std
 
 fn render_generic_pattern(node: &GenericPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = GenericPatternTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        scoped_identifier: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
         type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_arguments)),
     };
     template.render_into(dest)
@@ -37440,7 +37529,8 @@ fn render_impl_item_body(node: &ImplItemBodyTransport, dest: &mut dyn ::std::fmt
 
 fn render_impl_item(node: &ImplItemTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ImplItemTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        impl_item_body: OptionalNonterminalView::Missing,
         negative: match &node.negative {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -37493,12 +37583,10 @@ fn render_label(node: &LabelTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
 }
 
 fn render_last_match_arm(node: &LastMatchArmTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = LastMatchArmTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        attribute_item: OptionalNonterminalView::Missing,
+        inner_attribute_item: ListNonterminalView {
+            items: &[],
             separator: "",
             leading: false,
             trailing: false,
@@ -37560,7 +37648,10 @@ fn render_lifetime_parameter(node: &LifetimeParameterTransport, dest: &mut dyn :
 
 fn render_line_comment(node: &LineCommentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LineCommentTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        line_comment_content: OptionalNonterminalView::Missing,
+        line_comment_doc: OptionalNonterminalView::Missing,
+        line_comment_regular_dslash: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -37577,53 +37668,32 @@ fn render_loop_expression(node: &LoopExpressionTransport, dest: &mut dyn ::std::
 }
 
 fn render_macro_definition_paren(node: &MacroDefinitionParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = MacroDefinitionParenTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ";",
-            leading: false,
-            trailing: false,
-        },
+        macro_rule: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_macro_definition_bracket(node: &MacroDefinitionBracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = MacroDefinitionBracketTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ";",
-            leading: false,
-            trailing: false,
-        },
+        macro_rule: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_macro_definition_brace(node: &MacroDefinitionBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = MacroDefinitionBraceTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ";",
-            leading: false,
-            trailing: false,
-        },
+        macro_rule: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_macro_definition(node: &MacroDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = MacroDefinitionTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        macro_definition_brace: OptionalNonterminalView::Missing,
+        macro_definition_bracket: OptionalNonterminalView::Missing,
+        macro_definition_paren: OptionalNonterminalView::Missing,
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
     };
     template.render_into(dest)
@@ -37658,29 +37728,23 @@ fn render_match_arm(node: &MatchArmTransport, dest: &mut dyn ::std::fmt::Write) 
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = MatchArmTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
         attributes: ListNonterminalView {
             items: attributes_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
+        match_arm_block_ending: OptionalNonterminalView::Missing,
+        match_arm_with_comma: OptionalNonterminalView::Missing,
         pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
     };
     template.render_into(dest)
 }
 
 fn render_match_block(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = MatchBlockTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        match_arm: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -37695,11 +37759,11 @@ fn render_match_expression(node: &MatchExpressionTransport, dest: &mut dyn ::std
 
 fn render_match_pattern(node: &MatchPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = MatchPatternTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
         condition: match &node.condition {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
+        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
     };
     template.render_into(dest)
 }
@@ -37717,7 +37781,8 @@ fn render_mod_item_inline(node: &ModItemInlineTransport, dest: &mut dyn ::std::f
 
 fn render_mod_item(node: &ModItemTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ModItemTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        mod_item_inline: OptionalNonterminalView::Missing,
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         visibility_modifier: match &node.visibility_modifier {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -37729,8 +37794,8 @@ fn render_mod_item(node: &ModItemTransport, dest: &mut dyn ::std::fmt::Write) ->
 
 fn render_mut_pattern(node: &MutPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = MutPatternTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
         mutable_specifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.mutable_specifier)),
+        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
     };
     template.render_into(dest)
 }
@@ -37741,7 +37806,18 @@ fn render_mutable_specifier(t: &MutableSpecifierTransport, dest: &mut dyn ::std:
 
 fn render_negative_literal(node: &NegativeLiteralTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = NegativeLiteralTemplate {
-        children: OptionalNonterminalView::Missing,
+        float_literal: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        integer_literal: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
@@ -37753,32 +37829,27 @@ fn render_never_type(t: &NeverTypeTransport, dest: &mut dyn ::std::fmt::Write) -
 
 fn render_or_pattern(node: &OrPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = OrPatternTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        or_pattern_binary: OptionalNonterminalView::Missing,
+        or_pattern_prefix: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_ordered_field_declaration_list(node: &OrderedFieldDeclarationListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let type__owned = node.type_.as_deref().unwrap_or(&[]);
     let type__buf: Vec<::sittir_core::filters::Renderable<'_>> = type__owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = OrderedFieldDeclarationListTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
+        attribute_item: OptionalNonterminalView::Missing,
         type_: ListNonterminalView {
             items: type__buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
         },
+        visibility_modifier: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -37796,12 +37867,33 @@ fn render_parameter(node: &ParameterTransport, dest: &mut dyn ::std::fmt::Write)
 }
 
 fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ParametersTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        attribute_item: ListNonterminalView {
+            items: &[],
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+        parameter: ListNonterminalView {
+            items: &[],
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+        self_parameter: ListNonterminalView {
+            items: &[],
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+        type_: ListNonterminalView {
+            items: &[],
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+        variadic_parameter: ListNonterminalView {
+            items: &[],
             separator: ",",
             leading: false,
             trailing: false,
@@ -37812,21 +37904,27 @@ fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Writ
 
 fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ParenthesizedExpressionTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
     template.render_into(dest)
 }
 
 fn render_pointer_type_mut(node: &PointerTypeMutTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = PointerTypeMutTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        mutable_specifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
 
 fn render_pointer_type(node: &PointerTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = PointerTypeTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        mutable_specifier: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
     template.render_into(dest)
@@ -37849,15 +37947,21 @@ fn render_range_expression_bare(node: &RangeExpressionBareTransport, dest: &mut 
 
 fn render_range_expression(node: &RangeExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = RangeExpressionTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        range_expression_binary: OptionalNonterminalView::Missing,
+        range_expression_postfix: OptionalNonterminalView::Missing,
+        range_expression_prefix: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_range_pattern(node: &RangePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = RangePatternTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        range_pattern_left_with_right: OptionalNonterminalView::Missing,
+        range_pattern_prefix: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -37871,16 +37975,25 @@ fn render_raw_string_literal(node: &RawStringLiteralTransport, dest: &mut dyn ::
 
 fn render_ref_pattern(node: &RefPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = RefPatternTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
     };
     template.render_into(dest)
 }
 
 fn render_reference_expression(node: &ReferenceExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ReferenceExpressionTemplate {
-        children: match &node.children {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
+        mutable_specifier: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        reference_expression_raw_const: OptionalNonterminalView::Missing,
+        reference_expression_raw_mut: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
         },
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
@@ -37919,17 +38032,14 @@ fn render_remaining_field_pattern(t: &RemainingFieldPatternTransport, dest: &mut
 
 fn render_removed_trait_bound(node: &RemovedTraitBoundTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = RemovedTraitBoundTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
     template.render_into(dest)
 }
 
 fn render_return_expression(node: &ReturnExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ReturnExpressionTemplate {
-        children: match &node.children {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        expression: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -38023,16 +38133,8 @@ fn render_shorthand_field_initializer(node: &ShorthandFieldInitializerTransport,
 }
 
 fn render_slice_pattern(node: &SlicePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = SlicePatternTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
+        pattern: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -38079,12 +38181,10 @@ fn render_static_item(node: &StaticItemTransport, dest: &mut dyn ::std::fmt::Wri
 }
 
 fn render_string_literal(node: &StringLiteralTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = StringLiteralTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        escape_sequence: OptionalNonterminalView::Missing,
+        string_content: ListNonterminalView {
+            items: &[],
             separator: "",
             leading: false,
             trailing: false,
@@ -38103,8 +38203,10 @@ fn render_struct_expression(node: &StructExpressionTransport, dest: &mut dyn ::s
 
 fn render_struct_item(node: &StructItemTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = StructItemTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        struct_item_brace: OptionalNonterminalView::Missing,
+        struct_item_tuple: OptionalNonterminalView::Missing,
         type_parameters: match &node.type_parameters {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -38118,12 +38220,10 @@ fn render_struct_item(node: &StructItemTransport, dest: &mut dyn ::std::fmt::Wri
 }
 
 fn render_struct_pattern(node: &StructPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = StructPatternTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        field_pattern: OptionalNonterminalView::Missing,
+        remaining_field_pattern: ListNonterminalView {
+            items: &[],
             separator: ",",
             leading: false,
             trailing: false,
@@ -38146,150 +38246,96 @@ fn render_token_binding_pattern(node: &TokenBindingPatternTransport, dest: &mut 
 }
 
 fn render_token_repetition(node: &TokenRepetitionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TokenRepetitionTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        tokens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_token_repetition_pattern(node: &TokenRepetitionPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TokenRepetitionPatternTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        token_pattern: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_token_tree_paren(node: &TokenTreeParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TokenTreeParenTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        tokens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_token_tree_bracket(node: &TokenTreeBracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TokenTreeBracketTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        tokens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_token_tree_brace(node: &TokenTreeBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TokenTreeBraceTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        tokens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_token_tree(node: &TokenTreeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TokenTreeTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        token_tree_brace: OptionalNonterminalView::Missing,
+        token_tree_bracket: OptionalNonterminalView::Missing,
+        token_tree_paren: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_token_tree_pattern_paren(node: &TokenTreePatternParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TokenTreePatternParenTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        token_pattern: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_token_tree_pattern_bracket(node: &TokenTreePatternBracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TokenTreePatternBracketTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        token_pattern: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_token_tree_pattern_brace(node: &TokenTreePatternBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TokenTreePatternBraceTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        token_pattern: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_token_tree_pattern(node: &TokenTreePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TokenTreePatternTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        token_tree_pattern_brace: OptionalNonterminalView::Missing,
+        token_tree_pattern_bracket: OptionalNonterminalView::Missing,
+        token_tree_pattern_paren: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_trait_bounds(node: &TraitBoundsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TraitBoundsTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        higher_ranked_trait_bound: ListNonterminalView {
+            items: &[],
             separator: "+",
             leading: false,
             trailing: false,
         },
+        lifetime: ListNonterminalView {
+            items: &[],
+            separator: "+",
+            leading: false,
+            trailing: false,
+        },
+        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -38363,58 +38409,57 @@ fn render_tuple_expression(node: &TupleExpressionTransport, dest: &mut dyn ::std
 }
 
 fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TuplePatternTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        closure_expression: ListNonterminalView {
+            items: &[],
             separator: ",",
             leading: false,
             trailing: false,
         },
+        pattern: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_tuple_struct_pattern(node: &TupleStructPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TupleStructPatternTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
+        pattern: OptionalNonterminalView::Missing,
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
     template.render_into(dest)
 }
 
 fn render_tuple_type(node: &TupleTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TupleTypeTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
+        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
 
 fn render_type_arguments(node: &TypeArgumentsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = TypeArgumentsTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        block: ListNonterminalView {
+            items: &[],
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+        lifetime: ListNonterminalView {
+            items: &[],
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+        literal: ListNonterminalView {
+            items: &[],
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+        trait_bounds: OptionalNonterminalView::Missing,
+        type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        type_binding: ListNonterminalView {
+            items: &[],
             separator: ",",
             leading: false,
             trailing: false,
@@ -38446,10 +38491,6 @@ fn render_type_cast_expression(node: &TypeCastExpressionTransport, dest: &mut dy
 fn render_type_item(node: &TypeItemTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TypeItemTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        trailing_where_clause: match &node.trailing_where_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
         type_parameters: match &node.type_parameters {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -38459,10 +38500,8 @@ fn render_type_item(node: &TypeItemTransport, dest: &mut dyn ::std::fmt::Write) 
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        where_clause: match &node.where_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        where_clause1: OptionalNonterminalView::Missing,
+        where_clause2: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -38549,12 +38588,10 @@ fn render_use_as_clause(node: &UseAsClauseTransport, dest: &mut dyn ::std::fmt::
 }
 
 fn render_use_bounds(node: &UseBoundsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = UseBoundsTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
+        lifetime: OptionalNonterminalView::Missing,
+        type_identifier: ListNonterminalView {
+            items: &[],
             separator: ",",
             leading: false,
             trailing: false,
@@ -38575,16 +38612,8 @@ fn render_use_declaration(node: &UseDeclarationTransport, dest: &mut dyn ::std::
 }
 
 fn render_use_list(node: &UseListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = UseListTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
+        use_clause: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -38615,29 +38644,30 @@ fn render_variadic_parameter(node: &VariadicParameterTransport, dest: &mut dyn :
 
 fn render_visibility_modifier_crate(node: &VisibilityModifierCrateTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = VisibilityModifierCrateTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        crate_: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
 
 fn render_visibility_modifier(node: &VisibilityModifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = VisibilityModifierTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        variant: "",
+        crate_: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        pub_: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        visibility_modifier_in_path: OptionalNonterminalView::Missing,
+        visibility_modifier_pub_parens: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
 
 fn render_where_clause(node: &WhereClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = WhereClauseTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
+        where_predicate: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -38664,10 +38694,7 @@ fn render_while_expression(node: &WhileExpressionTransport, dest: &mut dyn ::std
 
 fn render_yield_expression(node: &YieldExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = YieldExpressionTemplate {
-        children: match &node.children {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        expression: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -38694,7 +38721,25 @@ fn render_error_sentinel(t: &ErrorSentinelTransport, dest: &mut dyn ::std::fmt::
 
 fn render_visibility_modifier_pub_parens(node: &VisibilityModifierPubParensTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = VisibilityModifierPubParensTemplate {
-        children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),
+        crate_: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        self_: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        super_: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        visibility_modifier_in_path: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
     };
     template.render_into(dest)
 }
@@ -39065,7 +39110,6 @@ fn render_condition(t: &ConditionTransport, dest: &mut dyn ::std::fmt::Write) ->
         ConditionTransport::RangeExpression(inner) => render_range_expression(inner.as_ref(), dest),
         ConditionTransport::LetCondition(inner) => render_let_condition(inner.as_ref(), dest),
         ConditionTransport::LetChain(inner) => render_let_chain(inner.as_ref(), dest),
-        ConditionTransport::Condition(inner) => render_condition(inner.as_ref(), dest),
     }
 }
 
@@ -42588,8 +42632,9 @@ fn transport_to_node_attribute_item(transport: AttributeItemTransport) -> Result
 
 fn transport_to_node_await_expression(transport: AwaitExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(287) /* "await_expression" */,
@@ -42608,8 +42653,9 @@ fn transport_to_node_await_expression(transport: AwaitExpressionTransport) -> Re
 
 fn transport_to_node_base_field_initializer(transport: BaseFieldInitializerTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(266) /* "base_field_initializer" */,
@@ -42813,8 +42859,9 @@ fn transport_to_node_call_expression(transport: CallExpressionTransport) -> Resu
 fn transport_to_node_captured_pattern(transport: CapturedPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("identifier".to_string(), transport_field_value(AnyTransport::Identifier(transport.identifier))?);
+    fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(transport.pattern))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(305) /* "captured_pattern" */,
@@ -44523,11 +44570,12 @@ fn transport_to_node_match_expression(transport: MatchExpressionTransport) -> Re
 
 fn transport_to_node_match_pattern(transport: MatchPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(transport.pattern))?);
     if let Some(value) = transport.condition {
         fields.insert("condition".to_string(), transport_field_value(condition_transport_to_any(value))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(276) /* "match_pattern" */,
@@ -44609,8 +44657,9 @@ fn transport_to_node_mod_item(transport: ModItemTransport) -> Result<TransportNo
 fn transport_to_node_mut_pattern(transport: MutPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("mutable_specifier".to_string(), transport_field_value(AnyTransport::_MutableSpecifier(transport.mutable_specifier))?);
+    fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(transport.pattern))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(302) /* "mut_pattern" */,
@@ -44772,8 +44821,9 @@ fn transport_to_node_parameters(transport: ParametersTransport) -> Result<Transp
 
 fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(259) /* "parenthesized_expression" */,
@@ -44938,8 +44988,9 @@ fn transport_to_node_raw_string_literal(transport: RawStringLiteralTransport) ->
 
 fn transport_to_node_ref_pattern(transport: RefPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(transport.pattern))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(304) /* "ref_pattern" */,
@@ -45050,8 +45101,9 @@ fn transport_to_node_remaining_field_pattern(transport: RemainingFieldPatternTra
 
 fn transport_to_node_removed_trait_bound(transport: RemovedTraitBoundTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(transport.type_))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![_type_transport_to_any(transport.children)])?);
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(198) /* "removed_trait_bound" */,

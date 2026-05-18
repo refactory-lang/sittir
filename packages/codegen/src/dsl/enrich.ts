@@ -163,32 +163,56 @@ function applyEnrichPasses(
  */
 function extractSupertypeNames(base: unknown, hasWrapper: boolean): ReadonlySet<string> {
 	const root = hasWrapper ? (base as { grammar?: Record<string, unknown> }).grammar : (base as Record<string, unknown>);
-	const fn = root?.supertypes;
-	if (typeof fn !== 'function') return new Set();
-	// Proxy that returns a SYMBOL-shaped object for any property access —
-	// matches tree-sitter's grammar-authoring protocol where `$.foo`
-	// produces a SYMBOL reference named 'foo'. Enough to let the
-	// callback return its array; any `.field()` / `.optional()` calls
-	// inside would miss but no grammars we've seen do that in
-	// supertypes:.
-	const dollar = new Proxy(
-		{},
-		{
-			get(_t, prop) {
-				if (typeof prop === 'string') return { type: 'SYMBOL', name: prop };
-				return undefined;
+	const supertypes = root?.supertypes;
+	// Callback form (raw author grammar): `$ => [$._expr, ...]`. Invoke
+	// with a symbol-shaped proxy and harvest the names.
+	if (typeof supertypes === 'function') {
+		// Proxy that returns a SYMBOL-shaped object for any property access —
+		// matches tree-sitter's grammar-authoring protocol where `$.foo`
+		// produces a SYMBOL reference named 'foo'. Enough to let the
+		// callback return its array; any `.field()` / `.optional()` calls
+		// inside would miss but no grammars we've seen do that in
+		// supertypes:.
+		const dollar = new Proxy(
+			{},
+			{
+				get(_t, prop) {
+					if (typeof prop === 'string') return { type: 'SYMBOL', name: prop };
+					return undefined;
+				}
 			}
+		);
+		let result: unknown;
+		try {
+			result = (supertypes as (proxy: unknown) => unknown)(dollar);
+		} catch {
+			return new Set();
 		}
-	);
-	let result: unknown;
-	try {
-		result = (fn as (proxy: unknown) => unknown)(dollar);
-	} catch {
-		return new Set();
+		return harvestSupertypeNames(result);
 	}
-	if (!Array.isArray(result)) return new Set();
+	// Pre-evaluated form: tree-sitter's native grammar() and sittir's
+	// evaluate() both convert the supertypes callback to an array before
+	// returning. Tree-sitter native emits `[{type:'SYMBOL', name:'_expr'}, …]`;
+	// sittir evaluate() emits `['_expr', …]`. Accept both forms.
+	if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
+	return new Set();
+}
+
+/**
+ * @internal — extract supertype names from a result array. Accepts both
+ * `[{name:'_expr'}, ...]` (SYMBOL-shaped) and `['_expr', ...]` (plain
+ * strings). Returns names WITH the leading underscore so callers can
+ * test membership and still strip the prefix when composing the field
+ * name.
+ */
+function harvestSupertypeNames(result: unknown): Set<string> {
 	const names = new Set<string>();
+	if (!Array.isArray(result)) return names;
 	for (const r of result) {
+		if (typeof r === 'string') {
+			names.add(r);
+			continue;
+		}
 		const n = (r as { name?: unknown })?.name;
 		if (typeof n === 'string') names.add(n);
 	}
@@ -379,6 +403,18 @@ interface SymbolTarget {
 	wrap(fieldNode: Rule): Rule;
 }
 
+/**
+ * @internal — true when `target` corresponds to Shape 1 (bare SYMBOL
+ * at the seq position). Distinguishable by `target.symbolRule` being
+ * `===` to the original `member`: bare-shape's wrap is identity, so the
+ * detected symbol IS the seq-position rule itself. Used by the
+ * supertype-prefixed guard in `applySymbolToField` —
+ * see that function for the rationale.
+ */
+function isBareShapeTarget(member: Rule, target: SymbolTarget): boolean {
+	return target.symbolRule === member;
+}
+
 /** @internal — detect which of the three shapes (bare / optional /
  *  optional-seq) the seq member is, and return a SymbolTarget that
  *  knows how to rebuild it once the inner SYMBOL is FIELD-wrapped.
@@ -492,26 +528,66 @@ function applySymbolToField(ruleName: string, rule: Rule, supertypeNames: Readon
 		return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames);
 	}
 	const members = (cursor as unknown as { members: Rule[] }).members;
-	// Count symbols across all shapes + inside repeats to prevent collisions.
-	const kindCounts = new Map<string, number>();
-	const targetByIdx: Array<SymbolTarget | null> = members.map(detectSymbolTarget);
+	// Direct-position counts power the duplicate-numbering decision:
+	// when the same kind appears at >1 direct seq positions, those get
+	// numbered (`<kind>1`, `<kind>2`). Nested-repeat appearances are
+	// tracked separately and disqualify direct positions entirely so
+	// the direct-position field doesn't collide with whatever
+	// `promoteInsideRepeatMembers` does inside the repeat's seq.
+	const directKindCounts = new Map<string, number>();
+	const targetByIdx: Array<SymbolTarget | null> = members.map((m) => {
+		const t = detectSymbolTarget(m);
+		if (!t) return null;
+		// Supertype-prefixed kinds (`_expression`, `_type`, ...) only
+		// wrap when the member IS the bare SYMBOL (Shape 1). Wrapping
+		// Shape 2 (`optional($._expression)`) or Shape 3
+		// (`optional(seq($._expression, anon))`) adds an enriched FIELD
+		// inside an OPTIONAL — and user overrides often apply
+		// `field('newname')` patches to the SAME position via
+		// `transform()`. `resolveFieldPlaceholder` (transform.ts) only
+		// peels a direct enriched FIELD; one nested inside OPTIONAL
+		// survives, producing `FIELD(override, OPTIONAL(FIELD(enriched,
+		// SYMBOL)))` that downstream codegen can't handle. Non-supertype
+		// kinds keep the original three-shape behavior — their wrap
+		// names are the kind itself (e.g. `visibility_modifier`) and
+		// rarely collide with override targets.
+		if (t.name.startsWith('_') && !isBareShapeTarget(m, t)) return null;
+		return t;
+	});
 	for (const t of targetByIdx) {
-		if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+		if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
 	}
+	// Nested-repeat counts disqualify direct-position wrapping for any
+	// kind that also surfaces inside a repeat — splitting it across
+	// $fields (direct) and $children (inside-repeat) breaks variadic
+	// factory reconstruction.
+	const nestedRepeatCounts = new Map<string, number>();
 	for (const m of members) {
-		countSymbolsInRepeat(m, kindCounts);
+		countSymbolsInRepeat(m, nestedRepeatCounts);
 	}
 	const existing = collectFieldNamesRuntime(cursor);
+	// Per-rule sequence counters for numbered-duplicate naming. Reset
+	// per seq so each numbered-suffix sequence starts at 1 within its
+	// own outer seq.
+	const sequenceCounters = new Map<string, number>();
 	let changed = false;
 	const newMembers = members.map((m, i) => {
 		const t = targetByIdx[i];
 		if (!t) return m;
-		let fieldName = t.name;
+		let baseFieldName = t.name;
 		if (t.name.startsWith('_')) {
 			if (!supertypeNames.has(t.name)) return m;
-			fieldName = t.name.slice(1);
+			baseFieldName = t.name.slice(1);
 		}
-		if ((kindCounts.get(t.name) ?? 0) > 1) return m;
+		if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return m;
+		const directCount = directKindCounts.get(t.name) ?? 0;
+		let fieldName = baseFieldName;
+		if (directCount > 1) {
+			// Numbered duplicates: 1-based sequence index per kind.
+			const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
+			sequenceCounters.set(t.name, seqIdx);
+			fieldName = `${baseFieldName}${seqIdx}`;
+		}
 		if (existing.has(fieldName)) {
 			reportSkip('symbol-to-field', ruleName, `field '${fieldName}' already exists`);
 			return m;
@@ -525,7 +601,13 @@ function applySymbolToField(ruleName: string, rule: Rule, supertypeNames: Readon
 	// seq. Promotes bare symbols inside the inner seq to field() wrappers.
 	// Pattern: seq("(", repeat(seq($.attr, $.content)), ")")
 	// → the repeat member's inner seq gets its bare symbols field-wrapped.
-	const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, existing, kindCounts);
+	// Pass the combined kindCounts (direct + nested) so the repeat-inner
+	// pass keeps the same outer-shadow-prevention invariant as before.
+	const combinedKindCounts = new Map<string, number>(directKindCounts);
+	for (const [k, v] of nestedRepeatCounts) {
+		combinedKindCounts.set(k, (combinedKindCounts.get(k) ?? 0) + v);
+	}
+	const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, existing, combinedKindCounts);
 	if (finalMembers === newMembers && !changed) return rule;
 	let result: Rule = { ...cursor, members: finalMembers } as Rule;
 	for (let i = precStack.length - 1; i >= 0; i--) {
@@ -600,12 +682,20 @@ function tryPromoteInRepeatMember(
 	if (!isSeqType(inner.type)) return null;
 
 	const innerMembers = (inner as unknown as { members: Rule[] }).members;
-	const innerTargets = innerMembers.map(detectSymbolTarget);
+	const innerTargets: Array<SymbolTarget | null> = innerMembers.map((m) => {
+		const t = detectSymbolTarget(m);
+		if (!t) return null;
+		// Same supertype-only-bare gate as `applySymbolToField` —
+		// see that function for the rationale.
+		if (t.name.startsWith('_') && !isBareShapeTarget(m, t)) return null;
+		return t;
+	});
 
-	// Count symbols within the inner seq for uniqueness check.
-	const innerKindCounts = new Map<string, number>();
+	// Direct-position counts within the repeat's inner seq drive the
+	// numbered-duplicate naming; deeper-nested repeats disqualify entirely.
+	const directKindCounts = new Map<string, number>();
 	for (const t of innerTargets) {
-		if (t) innerKindCounts.set(t.name, (innerKindCounts.get(t.name) ?? 0) + 1);
+		if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
 	}
 	const nestedRepeatCounts = new Map<string, number>();
 	for (const im of innerMembers) {
@@ -613,23 +703,30 @@ function tryPromoteInRepeatMember(
 	}
 
 	const innerExisting = collectFieldNamesRuntime(inner);
+	const sequenceCounters = new Map<string, number>();
 
 	let innerChanged = false;
 	const newInnerMembers = innerMembers.map((im, i) => {
 		const t = innerTargets[i];
 		if (!t) return im;
-		let fieldName = t.name;
+		let baseFieldName = t.name;
 		if (t.name.startsWith('_')) {
 			if (!supertypeNames.has(t.name)) return im;
-			fieldName = t.name.slice(1);
+			baseFieldName = t.name.slice(1);
 		}
-		if ((innerKindCounts.get(t.name) ?? 0) > 1) return im;
-		if (innerExisting.has(fieldName)) return im;
 		if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return im;
 		// Skip when the same symbol kind appears in the outer seq — promoting
 		// it here would split the kind across $fields (inner) and $children
 		// (outer bare symbol), which variadic factories can't reconstruct.
 		if ((outerKindCounts.get(t.name) ?? 0) > 0) return im;
+		const directCount = directKindCounts.get(t.name) ?? 0;
+		let fieldName = baseFieldName;
+		if (directCount > 1) {
+			const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
+			sequenceCounters.set(t.name, seqIdx);
+			fieldName = `${baseFieldName}${seqIdx}`;
+		}
+		if (innerExisting.has(fieldName)) return im;
 		if (existing.has(fieldName)) {
 			reportSkip('symbol-to-field', ruleName, `field '${fieldName}' already exists (outer seq)`);
 			return im;
@@ -686,28 +783,43 @@ function tryPromoteInRepeatSeq(
 	}
 	if (!isSeqType(inner.type)) return rule;
 	const members = (inner as unknown as { members: Rule[] }).members;
-	const kindCounts = new Map<string, number>();
-	const targetByIdx: Array<SymbolTarget | null> = members.map(detectSymbolTarget);
+	const directKindCounts = new Map<string, number>();
+	// Same supertype-only-bare gate as `applySymbolToField`.
+	const targetByIdx: Array<SymbolTarget | null> = members.map((m) => {
+		const t = detectSymbolTarget(m);
+		if (!t) return null;
+		if (t.name.startsWith('_') && !isBareShapeTarget(m, t)) return null;
+		return t;
+	});
 	for (const t of targetByIdx) {
-		if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+		if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
 	}
 	// Count symbols in further-nested repeats within the inner seq so
 	// a symbol appearing both as a direct seq member and inside a
-	// nested repeat is disqualified.
+	// nested repeat is disqualified from numbering/wrapping.
+	const nestedRepeatCounts = new Map<string, number>();
 	for (const m of members) {
-		countSymbolsInRepeat(m, kindCounts);
+		countSymbolsInRepeat(m, nestedRepeatCounts);
 	}
 	const existing = collectFieldNamesRuntime(inner);
+	const sequenceCounters = new Map<string, number>();
 	let changed = false;
 	const newMembers = members.map((m, i) => {
 		const t = targetByIdx[i];
 		if (!t) return m;
-		let fieldName = t.name;
+		let baseFieldName = t.name;
 		if (t.name.startsWith('_')) {
 			if (!supertypeNames.has(t.name)) return m;
-			fieldName = t.name.slice(1);
+			baseFieldName = t.name.slice(1);
 		}
-		if ((kindCounts.get(t.name) ?? 0) > 1) return m;
+		if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return m;
+		const directCount = directKindCounts.get(t.name) ?? 0;
+		let fieldName = baseFieldName;
+		if (directCount > 1) {
+			const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
+			sequenceCounters.set(t.name, seqIdx);
+			fieldName = `${baseFieldName}${seqIdx}`;
+		}
 		if (existing.has(fieldName)) {
 			reportSkip('symbol-to-field', ruleName, `field '${fieldName}' already exists`);
 			return m;

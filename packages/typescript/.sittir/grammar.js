@@ -1224,26 +1224,36 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames) {
 }
 function extractSupertypeNames(base2, hasWrapper) {
   const root = hasWrapper ? base2.grammar : base2;
-  const fn = root?.supertypes;
-  if (typeof fn !== "function") return /* @__PURE__ */ new Set();
-  const dollar = new Proxy(
-    {},
-    {
-      get(_t, prop) {
-        if (typeof prop === "string") return { type: "SYMBOL", name: prop };
-        return void 0;
+  const supertypes = root?.supertypes;
+  if (typeof supertypes === "function") {
+    const dollar = new Proxy(
+      {},
+      {
+        get(_t, prop) {
+          if (typeof prop === "string") return { type: "SYMBOL", name: prop };
+          return void 0;
+        }
       }
+    );
+    let result;
+    try {
+      result = supertypes(dollar);
+    } catch {
+      return /* @__PURE__ */ new Set();
     }
-  );
-  let result;
-  try {
-    result = fn(dollar);
-  } catch {
-    return /* @__PURE__ */ new Set();
+    return harvestSupertypeNames(result);
   }
-  if (!Array.isArray(result)) return /* @__PURE__ */ new Set();
+  if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
+  return /* @__PURE__ */ new Set();
+}
+function harvestSupertypeNames(result) {
   const names = /* @__PURE__ */ new Set();
+  if (!Array.isArray(result)) return names;
   for (const r of result) {
+    if (typeof r === "string") {
+      names.add(r);
+      continue;
+    }
     const n = r?.name;
     if (typeof n === "string") names.add(n);
   }
@@ -1343,6 +1353,9 @@ function reportSkip(pass, ruleName, reason) {
   process.stderr.write(`enrich: skipped ${pass} on ${ruleName} (${reason})
 `);
 }
+function isBareShapeTarget(member, target) {
+  return target.symbolRule === member;
+}
 function detectSymbolTarget(member) {
   if (isSymbolType(member.type) && typeof member.name === "string") {
     const name = member.name;
@@ -1433,25 +1446,39 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
     return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames);
   }
   const members = cursor.members;
-  const kindCounts = /* @__PURE__ */ new Map();
-  const targetByIdx = members.map(detectSymbolTarget);
+  const directKindCounts = /* @__PURE__ */ new Map();
+  const targetByIdx = members.map((m) => {
+    const t = detectSymbolTarget(m);
+    if (!t) return null;
+    if (t.name.startsWith("_") && !isBareShapeTarget(m, t)) return null;
+    return t;
+  });
   for (const t of targetByIdx) {
-    if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+    if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
   }
+  const nestedRepeatCounts = /* @__PURE__ */ new Map();
   for (const m of members) {
-    countSymbolsInRepeat(m, kindCounts);
+    countSymbolsInRepeat(m, nestedRepeatCounts);
   }
   const existing = collectFieldNamesRuntime(cursor);
+  const sequenceCounters = /* @__PURE__ */ new Map();
   let changed = false;
   const newMembers = members.map((m, i) => {
     const t = targetByIdx[i];
     if (!t) return m;
-    let fieldName = t.name;
+    let baseFieldName = t.name;
     if (t.name.startsWith("_")) {
       if (!supertypeNames.has(t.name)) return m;
-      fieldName = t.name.slice(1);
+      baseFieldName = t.name.slice(1);
     }
-    if ((kindCounts.get(t.name) ?? 0) > 1) return m;
+    if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return m;
+    const directCount = directKindCounts.get(t.name) ?? 0;
+    let fieldName = baseFieldName;
+    if (directCount > 1) {
+      const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
+      sequenceCounters.set(t.name, seqIdx);
+      fieldName = `${baseFieldName}${seqIdx}`;
+    }
     if (existing.has(fieldName)) {
       reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists`);
       return m;
@@ -1461,7 +1488,11 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
     const fieldNode = makeField(cursor, fieldName, t.symbolRule);
     return t.wrap(fieldNode);
   });
-  const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, existing, kindCounts);
+  const combinedKindCounts = new Map(directKindCounts);
+  for (const [k, v] of nestedRepeatCounts) {
+    combinedKindCounts.set(k, (combinedKindCounts.get(k) ?? 0) + v);
+  }
+  const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, existing, combinedKindCounts);
   if (finalMembers === newMembers && !changed) return rule;
   let result = { ...cursor, members: finalMembers };
   for (let i = precStack.length - 1; i >= 0; i--) {
@@ -1496,29 +1527,41 @@ function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing, ou
   }
   if (!isSeqType(inner.type)) return null;
   const innerMembers = inner.members;
-  const innerTargets = innerMembers.map(detectSymbolTarget);
-  const innerKindCounts = /* @__PURE__ */ new Map();
+  const innerTargets = innerMembers.map((m) => {
+    const t = detectSymbolTarget(m);
+    if (!t) return null;
+    if (t.name.startsWith("_") && !isBareShapeTarget(m, t)) return null;
+    return t;
+  });
+  const directKindCounts = /* @__PURE__ */ new Map();
   for (const t of innerTargets) {
-    if (t) innerKindCounts.set(t.name, (innerKindCounts.get(t.name) ?? 0) + 1);
+    if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
   }
   const nestedRepeatCounts = /* @__PURE__ */ new Map();
   for (const im of innerMembers) {
     countSymbolsInRepeat(im, nestedRepeatCounts);
   }
   const innerExisting = collectFieldNamesRuntime(inner);
+  const sequenceCounters = /* @__PURE__ */ new Map();
   let innerChanged = false;
   const newInnerMembers = innerMembers.map((im, i) => {
     const t = innerTargets[i];
     if (!t) return im;
-    let fieldName = t.name;
+    let baseFieldName = t.name;
     if (t.name.startsWith("_")) {
       if (!supertypeNames.has(t.name)) return im;
-      fieldName = t.name.slice(1);
+      baseFieldName = t.name.slice(1);
     }
-    if ((innerKindCounts.get(t.name) ?? 0) > 1) return im;
-    if (innerExisting.has(fieldName)) return im;
     if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return im;
     if ((outerKindCounts.get(t.name) ?? 0) > 0) return im;
+    const directCount = directKindCounts.get(t.name) ?? 0;
+    let fieldName = baseFieldName;
+    if (directCount > 1) {
+      const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
+      sequenceCounters.set(t.name, seqIdx);
+      fieldName = `${baseFieldName}${seqIdx}`;
+    }
+    if (innerExisting.has(fieldName)) return im;
     if (existing.has(fieldName)) {
       reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists (outer seq)`);
       return im;
@@ -1549,25 +1592,39 @@ function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertype
   }
   if (!isSeqType(inner.type)) return rule;
   const members = inner.members;
-  const kindCounts = /* @__PURE__ */ new Map();
-  const targetByIdx = members.map(detectSymbolTarget);
+  const directKindCounts = /* @__PURE__ */ new Map();
+  const targetByIdx = members.map((m) => {
+    const t = detectSymbolTarget(m);
+    if (!t) return null;
+    if (t.name.startsWith("_") && !isBareShapeTarget(m, t)) return null;
+    return t;
+  });
   for (const t of targetByIdx) {
-    if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+    if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
   }
+  const nestedRepeatCounts = /* @__PURE__ */ new Map();
   for (const m of members) {
-    countSymbolsInRepeat(m, kindCounts);
+    countSymbolsInRepeat(m, nestedRepeatCounts);
   }
   const existing = collectFieldNamesRuntime(inner);
+  const sequenceCounters = /* @__PURE__ */ new Map();
   let changed = false;
   const newMembers = members.map((m, i) => {
     const t = targetByIdx[i];
     if (!t) return m;
-    let fieldName = t.name;
+    let baseFieldName = t.name;
     if (t.name.startsWith("_")) {
       if (!supertypeNames.has(t.name)) return m;
-      fieldName = t.name.slice(1);
+      baseFieldName = t.name.slice(1);
     }
-    if ((kindCounts.get(t.name) ?? 0) > 1) return m;
+    if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return m;
+    const directCount = directKindCounts.get(t.name) ?? 0;
+    let fieldName = baseFieldName;
+    if (directCount > 1) {
+      const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
+      sequenceCounters.set(t.name, seqIdx);
+      fieldName = `${baseFieldName}${seqIdx}`;
+    }
     if (existing.has(fieldName)) {
       reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists`);
       return m;

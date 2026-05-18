@@ -1378,13 +1378,13 @@ export const enum TSFieldId {
   FieldStatements = 66,
   FieldStaticMarker = 67,
   FieldType = 68,
-  FieldTypeAnnotation = 69,
-  FieldTypeArguments = 70,
-  FieldTypeIdentifier = 71,
-  FieldTypeParameters = 72,
-  FieldTypePredicate = 73,
-  FieldUsingMarker = 74,
-  FieldValue = 75,
+  FieldTypeAnnotation = 70,
+  FieldTypeArguments = 71,
+  FieldTypeIdentifier = 72,
+  FieldTypeParameters = 73,
+  FieldTypePredicate = 74,
+  FieldUsingMarker = 75,
+  FieldValue = 76,
 }
 
 export const TREE_SITTER_FIELD_ID_BY_NAME = {
@@ -1612,13 +1612,13 @@ export const TREE_SITTER_FIELD_ID_JSON = [
   { name: "statements", id: 66, enumName: "FieldStatements", cName: "field_statements" },
   { name: "static_marker", id: 67, enumName: "FieldStaticMarker", cName: "field_static_marker" },
   { name: "type", id: 68, enumName: "FieldType", cName: "field_type" },
-  { name: "type_annotation", id: 69, enumName: "FieldTypeAnnotation", cName: "field_type_annotation" },
-  { name: "type_arguments", id: 70, enumName: "FieldTypeArguments", cName: "field_type_arguments" },
-  { name: "type_identifier", id: 71, enumName: "FieldTypeIdentifier", cName: "field_type_identifier" },
-  { name: "type_parameters", id: 72, enumName: "FieldTypeParameters", cName: "field_type_parameters" },
-  { name: "type_predicate", id: 73, enumName: "FieldTypePredicate", cName: "field_type_predicate" },
-  { name: "using_marker", id: 74, enumName: "FieldUsingMarker", cName: "field_using_marker" },
-  { name: "value", id: 75, enumName: "FieldValue", cName: "field_value" },
+  { name: "type_annotation", id: 70, enumName: "FieldTypeAnnotation", cName: "field_type_annotation" },
+  { name: "type_arguments", id: 71, enumName: "FieldTypeArguments", cName: "field_type_arguments" },
+  { name: "type_identifier", id: 72, enumName: "FieldTypeIdentifier", cName: "field_type_identifier" },
+  { name: "type_parameters", id: 73, enumName: "FieldTypeParameters", cName: "field_type_parameters" },
+  { name: "type_predicate", id: 74, enumName: "FieldTypePredicate", cName: "field_type_predicate" },
+  { name: "using_marker", id: 75, enumName: "FieldUsingMarker", cName: "field_using_marker" },
+  { name: "value", id: 76, enumName: "FieldValue", cName: "field_value" },
 ] as const;
 
 /** Per-node-kind field metadata. */

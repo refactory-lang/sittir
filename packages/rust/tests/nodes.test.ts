@@ -114,17 +114,25 @@ describe('attribute_item', () => {
 
 describe('await_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.awaitExpression();
+    const node = ir.awaitExpression({ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.AwaitExpression);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.awaitExpression({ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
 describe('base_field_initializer', () => {
   it('factory produces correct type', () => {
-    const node = ir.baseFieldInitializer();
+    const node = ir.baseFieldInitializer({ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.BaseFieldInitializer);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.baseFieldInitializer({ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1093,9 +1101,13 @@ describe('mod_item', () => {
 
 describe('mut_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.mutPattern();
+    const node = ir.mutPattern({ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.MutPattern);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.mutPattern({ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1167,9 +1179,13 @@ describe('parameters', () => {
 
 describe('parenthesized_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.parenthesizedExpression();
+    const node = ir.parenthesizedExpression({ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.ParenthesizedExpression);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.parenthesizedExpression({ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1277,9 +1293,13 @@ describe('raw_string_literal', () => {
 
 describe('ref_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.refPattern();
+    const node = ir.refPattern({ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.RefPattern);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.refPattern({ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1321,9 +1341,13 @@ describe('reference_type', () => {
 
 describe('removed_trait_bound', () => {
   it('factory produces correct type', () => {
-    const node = ir.removedTraitBound();
+    const node = ir.removedTraitBound({ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.RemovedTraitBound);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.removedTraitBound({ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 

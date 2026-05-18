@@ -14,7 +14,7 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  9  (0 applied, 9 held)
+// Field inferences:  5  (0 applied, 5 held)
 // Rule promotions:   100  (91 applied, 9 held)
 // Repeated shapes:   4  (advisory — suggested supertypes/groups)
 
@@ -52,33 +52,9 @@ export const suggestedTransforms = {
   },
 
 
-  // captured_pattern: 1 inferred field(s)
-  captured_pattern: {
-      // [held] 100% agreement, 6 parents
-      2: field("pattern"),  // $._pattern
-  },
-
   // closure_parameters: 1 inferred field(s)
   // [held] closure_parameters field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
-  // match_pattern: 1 inferred field(s)
-  match_pattern: {
-      // [held] 100% agreement, 6 parents
-      0: field("pattern"),  // $._pattern
-  },
-
-  // mut_pattern: 1 inferred field(s)
-  mut_pattern: {
-      // [held] 100% agreement, 6 parents
-      1: field("pattern"),  // $._pattern
-  },
-
-
-  // ref_pattern: 1 inferred field(s)
-  ref_pattern: {
-      // [held] 100% agreement, 6 parents
-      1: field("pattern"),  // $._pattern
-  },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   reference_expression: {
@@ -489,11 +465,7 @@ export interface InferredField {
   readonly applied: boolean;
 }
 export const inferredFields: readonly InferredField[] = [
-  { kind: "captured_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "closure_parameters", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
-  { kind: "match_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
-  { kind: "mut_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
-  { kind: "ref_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "slice_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "tuple_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "tuple_struct_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },

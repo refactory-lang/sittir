@@ -907,27 +907,31 @@ export function attributeItem(attribute: T.AttributeItem.Config['attribute']) {
   }, methodsEngine);
 }
 
-export function awaitExpression(child?: never) {
-  const children = child != null ? [child] : [];
+export function awaitExpression(expression: T.AwaitExpression.Config['expression']) {
+  const _expression = expression;
   return withMethods({
     $type: TSKindId.AwaitExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => awaitExpression(v) },
+    _expression,
+    expression() { return _expression; },
+    $with: {
+      expression: (value: T.AwaitExpression.Config['expression']) => awaitExpression(value),
+    },
   }, methodsEngine);
 }
 
-export function baseFieldInitializer(child?: never) {
-  const children = child != null ? [child] : [];
+export function baseFieldInitializer(expression: T.BaseFieldInitializer.Config['expression']) {
+  const _expression = expression;
   return withMethods({
     $type: TSKindId.BaseFieldInitializer as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => baseFieldInitializer(v) },
+    _expression,
+    expression() { return _expression; },
+    $with: {
+      expression: (value: T.BaseFieldInitializer.Config['expression']) => baseFieldInitializer(value),
+    },
   }, methodsEngine);
 }
 
@@ -2801,15 +2805,20 @@ export function modItemUFormInline(config: Omit<ConfigOf<T.ModItemUFormInline>, 
   }, methodsEngine);
 }
 
-export function mutPattern(child?: never) {
-  const children = child != null ? [child] : [];
+export function mutPattern(pattern: T.MutPattern.Config['pattern']) {
+  const _mutable_specifier = "mut" as const;
+  const _pattern = pattern;
   return withMethods({
     $type: TSKindId.MutPattern as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => mutPattern(v) },
+    _mutable_specifier,
+    _pattern,
+    mutableSpecifier() { return _mutable_specifier; },
+    pattern() { return _pattern; },
+    $with: {
+      pattern: (value: T.MutPattern.Config['pattern']) => mutPattern(value),
+    },
   }, methodsEngine);
 }
 
@@ -2930,15 +2939,17 @@ export function parameters(child?: never) {
   }, methodsEngine);
 }
 
-export function parenthesizedExpression(child?: never) {
-  const children = child != null ? [child] : [];
+export function parenthesizedExpression(expression: T.ParenthesizedExpression.Config['expression']) {
+  const _expression = expression;
   return withMethods({
     $type: TSKindId.ParenthesizedExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => parenthesizedExpression(v) },
+    _expression,
+    expression() { return _expression; },
+    $with: {
+      expression: (value: T.ParenthesizedExpression.Config['expression']) => parenthesizedExpression(value),
+    },
   }, methodsEngine);
 }
 
@@ -3174,15 +3185,17 @@ export function rawStringLiteral(stringContent: T.RawStringLiteral.Config['strin
   }, methodsEngine);
 }
 
-export function refPattern(child?: never) {
-  const children = child != null ? [child] : [];
+export function refPattern(pattern: T.RefPattern.Config['pattern']) {
+  const _pattern = pattern;
   return withMethods({
     $type: TSKindId.RefPattern as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => refPattern(v) },
+    _pattern,
+    pattern() { return _pattern; },
+    $with: {
+      pattern: (value: T.RefPattern.Config['pattern']) => refPattern(value),
+    },
   }, methodsEngine);
 }
 
@@ -3244,15 +3257,17 @@ export function referenceType(config: T.ReferenceType.Config) {
   }, methodsEngine);
 }
 
-export function removedTraitBound(child?: never) {
-  const children = child != null ? [child] : [];
+export function removedTraitBound(type: T.RemovedTraitBound.Config['type']) {
+  const _type = type;
   return withMethods({
     $type: TSKindId.RemovedTraitBound as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => removedTraitBound(v) },
+    _type,
+    type() { return _type; },
+    $with: {
+      type: (value: T.RemovedTraitBound.Config['type']) => removedTraitBound(value),
+    },
   }, methodsEngine);
 }
 

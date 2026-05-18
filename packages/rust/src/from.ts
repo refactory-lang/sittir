@@ -331,8 +331,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
   "_token_tree_pattern_brace": TSKindId._TokenTreePatternBrace,
   "_token_tree_pattern_bracket": TSKindId._TokenTreePatternBracket,
   "_token_tree_pattern_paren": TSKindId._TokenTreePatternParen,
-  "await_expression": TSKindId.AwaitExpression,
-  "base_field_initializer": TSKindId.BaseFieldInitializer,
   "bracketed_type": TSKindId.BracketedType,
   "closure_parameters": TSKindId.ClosureParameters,
   "declaration_list": TSKindId.DeclarationList,
@@ -350,11 +348,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
   "macro_definition_bracket": TSKindId._MacroDefinitionBracket,
   "macro_definition_brace": TSKindId._MacroDefinitionBrace,
   "match_block": TSKindId.MatchBlock,
-  "mut_pattern": TSKindId.MutPattern,
   "parameters": TSKindId.Parameters,
-  "parenthesized_expression": TSKindId.ParenthesizedExpression,
-  "ref_pattern": TSKindId.RefPattern,
-  "removed_trait_bound": TSKindId.RemovedTraitBound,
   "return_expression": TSKindId.ReturnExpression,
   "slice_pattern": TSKindId.SlicePattern,
   "string_literal": TSKindId.StringLiteral,
@@ -393,8 +387,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "_token_tree_pattern_brace": return F._tokenTreePatternBrace(...(children as Parameters<typeof F._tokenTreePatternBrace>));
     case "_token_tree_pattern_bracket": return F._tokenTreePatternBracket(...(children as Parameters<typeof F._tokenTreePatternBracket>));
     case "_token_tree_pattern_paren": return F._tokenTreePatternParen(...(children as Parameters<typeof F._tokenTreePatternParen>));
-    case "await_expression": return F.awaitExpression(children[0] as Parameters<typeof F.awaitExpression>[0]);
-    case "base_field_initializer": return F.baseFieldInitializer(children[0] as Parameters<typeof F.baseFieldInitializer>[0]);
     case "bracketed_type": return F.bracketedType(children[0] as Parameters<typeof F.bracketedType>[0]);
     case "closure_parameters": return F.closureParameters(...(children as Parameters<typeof F.closureParameters>));
     case "declaration_list": return F.declarationList(...(children as Parameters<typeof F.declarationList>));
@@ -412,11 +404,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "macro_definition_bracket": return F.macroDefinitionBracket(...(children as Parameters<typeof F.macroDefinitionBracket>));
     case "macro_definition_brace": return F.macroDefinitionBrace(...(children as Parameters<typeof F.macroDefinitionBrace>));
     case "match_block": return F.matchBlock(...(children as Parameters<typeof F.matchBlock>));
-    case "mut_pattern": return F.mutPattern(children[0] as Parameters<typeof F.mutPattern>[0]);
     case "parameters": return F.parameters(...(children as Parameters<typeof F.parameters>));
-    case "parenthesized_expression": return F.parenthesizedExpression(children[0] as Parameters<typeof F.parenthesizedExpression>[0]);
-    case "ref_pattern": return F.refPattern(children[0] as Parameters<typeof F.refPattern>[0]);
-    case "removed_trait_bound": return F.removedTraitBound(children[0] as Parameters<typeof F.removedTraitBound>[0]);
     case "return_expression": return F.returnExpression(children[0] as Parameters<typeof F.returnExpression>[0]);
     case "slice_pattern": return F.slicePattern(...(children as Parameters<typeof F.slicePattern>));
     case "string_literal": return F.stringLiteral(...(children as Parameters<typeof F.stringLiteral>));
@@ -662,22 +650,14 @@ export function attributeItemFrom(input: T.AttributeItem.Loose): ReturnType<type
   return F.attributeItem(_resolveOneBranch<T.Attribute>((input !== null && typeof input === 'object' && !isNodeData(input) && "attribute" in input ? input.attribute : input), "attribute"));
 }
 
-export function awaitExpressionFrom(input?: NonNullable<T.AwaitExpression['$children']> extends readonly [infer E] ? E : NonNullable<T.AwaitExpression['$children']> | T.AwaitExpression): ReturnType<typeof F.awaitExpression> {
-  if (isNodeData(input) && input.$type === TSKindId.AwaitExpression) {
-    const data = input;
-    const child = data.$children;
-    return F.awaitExpression(child as Parameters<typeof F.awaitExpression>[0]);
-  }
-  return F.awaitExpression(input as Parameters<typeof F.awaitExpression>[0]);
+export function awaitExpressionFrom(input: T.AwaitExpression.Loose): ReturnType<typeof F.awaitExpression> {
+  if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("await_expression")) return input as unknown as ReturnType<typeof F.awaitExpression>;
+  return F.awaitExpression(_resolveOne<T.Expression>((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K2, _K6));
 }
 
-export function baseFieldInitializerFrom(input?: NonNullable<T.BaseFieldInitializer['$children']> extends readonly [infer E] ? E : NonNullable<T.BaseFieldInitializer['$children']> | T.BaseFieldInitializer): ReturnType<typeof F.baseFieldInitializer> {
-  if (isNodeData(input) && input.$type === TSKindId.BaseFieldInitializer) {
-    const data = input;
-    const child = data.$children;
-    return F.baseFieldInitializer(child as Parameters<typeof F.baseFieldInitializer>[0]);
-  }
-  return F.baseFieldInitializer(input as Parameters<typeof F.baseFieldInitializer>[0]);
+export function baseFieldInitializerFrom(input: T.BaseFieldInitializer.Loose): ReturnType<typeof F.baseFieldInitializer> {
+  if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("base_field_initializer")) return input as unknown as ReturnType<typeof F.baseFieldInitializer>;
+  return F.baseFieldInitializer(_resolveOne<T.Expression>((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K2, _K6));
 }
 
 export function binaryExpressionFrom(input: T.BinaryExpression.Loose): ReturnType<typeof F.binaryExpression> {
@@ -1487,13 +1467,9 @@ export function modItemUFormInlineFrom(input: Omit<ConfigOf<T.ModItemUFormInline
   });
 }
 
-export function mutPatternFrom(input?: NonNullable<T.MutPattern['$children']> extends readonly [infer E] ? E : NonNullable<T.MutPattern['$children']> | T.MutPattern): ReturnType<typeof F.mutPattern> {
-  if (isNodeData(input) && input.$type === TSKindId.MutPattern) {
-    const data = input;
-    const child = data.$children;
-    return F.mutPattern(child as Parameters<typeof F.mutPattern>[0]);
-  }
-  return F.mutPattern(input as Parameters<typeof F.mutPattern>[0]);
+export function mutPatternFrom(input: T.MutPattern.Loose): ReturnType<typeof F.mutPattern> {
+  if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("mut_pattern")) return input as unknown as ReturnType<typeof F.mutPattern>;
+  return F.mutPattern(_resolveOne<T.Pattern>((input !== null && typeof input === 'object' && !isNodeData(input) && "pattern" in input ? input.pattern : input), _K13, _K14));
 }
 
 export function mutableSpecifierFrom(input?: T.MutableSpecifier): ReturnType<typeof F.mutableSpecifier> {
@@ -1552,13 +1528,9 @@ export function parametersFrom(input?: NonNullable<T.Parameters['$children']> ex
   return F.parameters(input as Parameters<typeof F.parameters>[0]);
 }
 
-export function parenthesizedExpressionFrom(input?: NonNullable<T.ParenthesizedExpression['$children']> extends readonly [infer E] ? E : NonNullable<T.ParenthesizedExpression['$children']> | T.ParenthesizedExpression): ReturnType<typeof F.parenthesizedExpression> {
-  if (isNodeData(input) && input.$type === TSKindId.ParenthesizedExpression) {
-    const data = input;
-    const child = data.$children;
-    return F.parenthesizedExpression(child as Parameters<typeof F.parenthesizedExpression>[0]);
-  }
-  return F.parenthesizedExpression(input as Parameters<typeof F.parenthesizedExpression>[0]);
+export function parenthesizedExpressionFrom(input: T.ParenthesizedExpression.Loose): ReturnType<typeof F.parenthesizedExpression> {
+  if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("parenthesized_expression")) return input as unknown as ReturnType<typeof F.parenthesizedExpression>;
+  return F.parenthesizedExpression(_resolveOne<T.Expression>((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K2, _K6));
 }
 
 export function pointerTypeMutFrom(input: T.PointerTypeMut.Loose): ReturnType<typeof F.pointerTypeMut> {
@@ -1667,13 +1639,9 @@ export function rawStringLiteralFrom(input: T.RawStringLiteral.Loose): ReturnTyp
   return F.rawStringLiteral(_resolveOneLeaf<T.RawStringLiteralContent>((input !== null && typeof input === 'object' && !isNodeData(input) && "stringContent" in input ? input.stringContent : input), "raw_string_literal_content"));
 }
 
-export function refPatternFrom(input?: NonNullable<T.RefPattern['$children']> extends readonly [infer E] ? E : NonNullable<T.RefPattern['$children']> | T.RefPattern): ReturnType<typeof F.refPattern> {
-  if (isNodeData(input) && input.$type === TSKindId.RefPattern) {
-    const data = input;
-    const child = data.$children;
-    return F.refPattern(child as Parameters<typeof F.refPattern>[0]);
-  }
-  return F.refPattern(input as Parameters<typeof F.refPattern>[0]);
+export function refPatternFrom(input: T.RefPattern.Loose): ReturnType<typeof F.refPattern> {
+  if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("ref_pattern")) return input as unknown as ReturnType<typeof F.refPattern>;
+  return F.refPattern(_resolveOne<T.Pattern>((input !== null && typeof input === 'object' && !isNodeData(input) && "pattern" in input ? input.pattern : input), _K13, _K14));
 }
 
 export function referenceExpressionFrom(input: T.ReferenceExpression.Loose): ReturnType<typeof F.referenceExpression> {
@@ -1701,13 +1669,9 @@ export function referenceTypeFrom(input: T.ReferenceType.Loose): ReturnType<type
   });
 }
 
-export function removedTraitBoundFrom(input?: NonNullable<T.RemovedTraitBound['$children']> extends readonly [infer E] ? E : NonNullable<T.RemovedTraitBound['$children']> | T.RemovedTraitBound): ReturnType<typeof F.removedTraitBound> {
-  if (isNodeData(input) && input.$type === TSKindId.RemovedTraitBound) {
-    const data = input;
-    const child = data.$children;
-    return F.removedTraitBound(child as Parameters<typeof F.removedTraitBound>[0]);
-  }
-  return F.removedTraitBound(input as Parameters<typeof F.removedTraitBound>[0]);
+export function removedTraitBoundFrom(input: T.RemovedTraitBound.Loose): ReturnType<typeof F.removedTraitBound> {
+  if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("removed_trait_bound")) return input as unknown as ReturnType<typeof F.removedTraitBound>;
+  return F.removedTraitBound(_resolveOne<T._Type>((input !== null && typeof input === 'object' && !isNodeData(input) && "type" in input ? input.type : input), _K4, _K5));
 }
 
 export function returnExpressionFrom(input?: NonNullable<T.ReturnExpression['$children']> extends readonly [infer E] ? E : NonNullable<T.ReturnExpression['$children']> | T.ReturnExpression): ReturnType<typeof F.returnExpression> {
