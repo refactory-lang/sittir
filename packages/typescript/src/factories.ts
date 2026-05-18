@@ -29,15 +29,15 @@ const _leafRe_unescapedDoubleStringFragment = /^(?:[^"\\\r\n]+)/u;
 const _leafRe_unescapedSingleJsxStringFragment = /^(?:([^'&]|&[^#A-Za-z])+)/u;
 const _leafRe_unescapedSingleStringFragment = /^(?:[^'\\\r\n]+)/u;
 
-export function _ambientDeclarationDeclaration(child?: never) {
-  const children = child != null ? [child] : [];
+export function _ambientDeclarationDeclaration(child: T.Declaration) {
+  const _declaration = child;
   return withMethods({
     $type: TSKindId._AmbientDeclarationDeclaration as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _ambientDeclarationDeclaration(v) },
+    _declaration,
+    declaration() { return _declaration; },
+    $with: { $child: (v: T.Declaration) => _ambientDeclarationDeclaration(v) },
   }, methodsEngine);
 }
 
@@ -273,15 +273,15 @@ export function _classHeritageExtendsClause(config: T._ClassHeritageExtendsClaus
   }, methodsEngine);
 }
 
-export function _classHeritageImplementsClause(child?: never) {
-  const children = child != null ? [child] : [];
+export function _classHeritageImplementsClause(child: T.ImplementsClause) {
+  const _implements_clause = child;
   return withMethods({
     $type: TSKindId._ClassHeritageImplementsClause as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _classHeritageImplementsClause(v) },
+    _implements_clause,
+    implementsClause() { return _implements_clause; },
+    $with: { $child: (v: T.ImplementsClause) => _classHeritageImplementsClause(v) },
   }, methodsEngine);
 }
 
@@ -598,27 +598,27 @@ export function _importClauseDefaultImport(config: T._ImportClauseDefaultImport.
   }, methodsEngine);
 }
 
-export function _importClauseNamedImports(child?: never) {
-  const children = child != null ? [child] : [];
+export function _importClauseNamedImports(child: T.NamedImports) {
+  const _named_imports = child;
   return withMethods({
     $type: TSKindId._ImportClauseNamedImports as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _importClauseNamedImports(v) },
+    _named_imports,
+    namedImports() { return _named_imports; },
+    $with: { $child: (v: T.NamedImports) => _importClauseNamedImports(v) },
   }, methodsEngine);
 }
 
-export function _importClauseNamespaceImport(child?: never) {
-  const children = child != null ? [child] : [];
+export function _importClauseNamespaceImport(child: T.NamespaceImport) {
+  const _namespace_import = child;
   return withMethods({
     $type: TSKindId._ImportClauseNamespaceImport as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _importClauseNamespaceImport(v) },
+    _namespace_import,
+    namespaceImport() { return _namespace_import; },
+    $with: { $child: (v: T.NamespaceImport) => _importClauseNamespaceImport(v) },
   }, methodsEngine);
 }
 
@@ -672,15 +672,15 @@ export function _indexSignatureColon(config: T.IndexSignatureColon.Config) {
   }, methodsEngine);
 }
 
-export function _indexSignatureMappedTypeClause(child?: never) {
-  const children = child != null ? [child] : [];
+export function _indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
+  const _mapped_type_clause = child;
   return withMethods({
     $type: TSKindId._IndexSignatureMappedTypeClause as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _indexSignatureMappedTypeClause(v) },
+    _mapped_type_clause,
+    mappedTypeClause() { return _mapped_type_clause; },
+    $with: { $child: (v: T.MappedTypeClause) => _indexSignatureMappedTypeClause(v) },
   }, methodsEngine);
 }
 
@@ -764,15 +764,15 @@ export function _parameterName(config: T.ParameterName.Config) {
   }, methodsEngine);
 }
 
-export function _parenthesizedExpressionSequence(child?: never) {
-  const children = child != null ? [child] : [];
+export function _parenthesizedExpressionSequence(child: T.SequenceExpression) {
+  const _sequence_expression = child;
   return withMethods({
     $type: TSKindId._ParenthesizedExpressionSequence as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _parenthesizedExpressionSequence(v) },
+    _sequence_expression,
+    sequenceExpression() { return _sequence_expression; },
+    $with: { $child: (v: T.SequenceExpression) => _parenthesizedExpressionSequence(v) },
   }, methodsEngine);
 }
 
@@ -842,15 +842,15 @@ export function publicFieldDefinitionAccessorOpt(_config?: T.PublicFieldDefiniti
   }, methodsEngine);
 }
 
-export function publicFieldDefinitionDeclareFirst(child?: never) {
-  const children = child != null ? [child] : [];
+export function publicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifier) {
+  const _accessibility_modifier = child;
   return withMethods({
     $type: TSKindId.PublicFieldDefinitionDeclareFirst as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => publicFieldDefinitionDeclareFirst(v) },
+    _accessibility_modifier,
+    accessibilityModifier() { return _accessibility_modifier; },
+    $with: { $child: (v: T.AccessibilityModifier) => publicFieldDefinitionDeclareFirst(v) },
   }, methodsEngine);
 }
 
@@ -1141,15 +1141,15 @@ export function addingTypeAnnotation(type: T.AddingTypeAnnotation.Config['type']
   }, methodsEngine);
 }
 
-export function ambientDeclarationDeclaration(child?: never) {
-  const children = child != null ? [child] : [];
+export function ambientDeclarationDeclaration(child: T.Declaration) {
+  const _declaration = child;
   return withMethods({
     $type: TSKindId._AmbientDeclarationDeclaration as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => ambientDeclarationDeclaration(v) },
+    _declaration,
+    declaration() { return _declaration; },
+    $with: { $child: (v: T.Declaration) => ambientDeclarationDeclaration(v) },
   }, methodsEngine);
 }
 
@@ -1207,39 +1207,39 @@ export function ambientDeclarationUFormModule(config: Omit<ConfigOf<T.AmbientDec
   }, methodsEngine);
 }
 
-export function arguments_(child?: never) {
-  const children = child != null ? [child] : [];
+export function arguments_(...children: (T.Expression | T.SpreadElement)[]) {
+  const _expression = children;
   return withMethods({
     $type: TSKindId.Arguments as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => arguments_(v) },
+    _expression,
+    expressions() { return _expression; },
+    $with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => arguments_(...vs) },
   }, methodsEngine);
 }
 
-export function array(child?: never) {
-  const children = child != null ? [child] : [];
+export function array(...children: (T.Expression | T.SpreadElement)[]) {
+  const _expression = children;
   return withMethods({
     $type: TSKindId.Array as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => array(v) },
+    _expression,
+    expressions() { return _expression; },
+    $with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => array(...vs) },
   }, methodsEngine);
 }
 
-export function arrayPattern(child?: never) {
-  const children = child != null ? [child] : [];
+export function arrayPattern(...children: (T.Pattern | T.AssignmentPattern)[]) {
+  const _pattern = children;
   return withMethods({
     $type: TSKindId.ArrayPattern as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => arrayPattern(v) },
+    _pattern,
+    patterns() { return _pattern; },
+    $with: { $children: (...vs: (T.Pattern | T.AssignmentPattern)[]) => arrayPattern(...vs) },
   }, methodsEngine);
 }
 
@@ -1365,15 +1365,15 @@ export function asExpression(config: T.AsExpression.Config) {
   }, methodsEngine);
 }
 
-export function asserts(child?: never) {
-  const children = child != null ? [child] : [];
+export function asserts(child: (T.TypePredicate | T.Identifier | T.This)) {
+  const _type_predicate = child;
   return withMethods({
     $type: TSKindId.Asserts as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => asserts(v) },
+    _type_predicate,
+    typePredicate() { return _type_predicate; },
+    $with: { $child: (v: (T.TypePredicate | T.Identifier | T.This)) => asserts(v) },
   }, methodsEngine);
 }
 
@@ -1635,15 +1635,15 @@ export function class_(config: T.Class.Config) {
   }, methodsEngine);
 }
 
-export function classBody(child?: never) {
-  const children = child != null ? [child] : [];
+export function classBody(...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) {
+  const _class_body_method = children;
   return withMethods({
     $type: TSKindId.ClassBody as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => classBody(v) },
+    _class_body_method,
+    classBodyMethods() { return _class_body_method; },
+    $with: { $children: (...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) => classBody(...vs) },
   }, methodsEngine);
 }
 
@@ -1699,15 +1699,15 @@ export function classHeritageExtendsClause(config: T.ClassHeritageExtendsClause.
   }, methodsEngine);
 }
 
-export function classHeritageImplementsClause(child?: never) {
-  const children = child != null ? [child] : [];
+export function classHeritageImplementsClause(child: T.ImplementsClause) {
+  const _implements_clause = child;
   return withMethods({
     $type: TSKindId._ClassHeritageImplementsClause as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => classHeritageImplementsClause(v) },
+    _implements_clause,
+    implementsClause() { return _implements_clause; },
+    $with: { $child: (v: T.ImplementsClause) => classHeritageImplementsClause(v) },
   }, methodsEngine);
 }
 
@@ -1915,15 +1915,15 @@ export function debuggerStatement(semicolon: T.DebuggerStatement.Config['semicol
   }, methodsEngine);
 }
 
-export function decorator(child?: never) {
-  const children = child != null ? [child] : [];
+export function decorator(child: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) {
+  const _identifier = child;
   return withMethods({
     $type: TSKindId.Decorator as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => decorator(v) },
+    _identifier,
+    identifier() { return _identifier; },
+    $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) => decorator(v) },
   }, methodsEngine);
 }
 
@@ -1967,15 +1967,15 @@ export function decoratorMemberExpression(config: T.DecoratorMemberExpression.Co
   }, methodsEngine);
 }
 
-export function decoratorParenthesizedExpression(child?: never) {
-  const children = child != null ? [child] : [];
+export function decoratorParenthesizedExpression(child: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) {
+  const _identifier = child;
   return withMethods({
     $type: TSKindId.DecoratorParenthesizedExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => decoratorParenthesizedExpression(v) },
+    _identifier,
+    identifier() { return _identifier; },
+    $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) => decoratorParenthesizedExpression(v) },
   }, methodsEngine);
 }
 
@@ -2097,15 +2097,15 @@ export function escapeSequence(text: string) {
   }, methodsEngine);
 }
 
-export function exportClause(child?: never) {
-  const children = child != null ? [child] : [];
+export function exportClause(...children: T.ExportSpecifier[]) {
+  const _export_specifier = children;
   return withMethods({
     $type: TSKindId.ExportClause as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => exportClause(v) },
+    _export_specifier,
+    exportSpecifiers() { return _export_specifier; },
+    $with: { $children: (...vs: T.ExportSpecifier[]) => exportClause(...vs) },
   }, methodsEngine);
 }
 
@@ -2402,15 +2402,15 @@ export function forStatement(config: T.ForStatement.Config) {
   }, methodsEngine);
 }
 
-export function formalParameters(child?: never) {
-  const children = child != null ? [child] : [];
+export function formalParameters(...children: T.FormalParameter[]) {
+  const _formal_parameter = children;
   return withMethods({
     $type: TSKindId.FormalParameters as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => formalParameters(v) },
+    _formal_parameter,
+    formalParameters() { return _formal_parameter; },
+    $with: { $children: (...vs: T.FormalParameter[]) => formalParameters(...vs) },
   }, methodsEngine);
 }
 
@@ -2674,15 +2674,16 @@ export function ifStatement(config: T.IfStatement.Config) {
   }, methodsEngine);
 }
 
-export function implementsClause(child?: never) {
-  const children = child != null ? [child] : [];
+export function implementsClause(...children: T.Type[]) {
+  _assertNonEmpty(children, 'implements_clause.children');
+  const _type = children;
   return withMethods({
     $type: TSKindId.ImplementsClause as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => implementsClause(v) },
+    _type,
+    types() { return _type; },
+    $with: { $children: (...vs: T.Type[]) => implementsClause(...vs) },
   }, methodsEngine);
 }
 
@@ -2731,27 +2732,27 @@ export function importAttribute(object: T.ImportAttribute.Config['object']) {
   }, methodsEngine);
 }
 
-export function importClauseNamespaceImport(child?: never) {
-  const children = child != null ? [child] : [];
+export function importClauseNamespaceImport(child: T.NamespaceImport) {
+  const _namespace_import = child;
   return withMethods({
     $type: TSKindId._ImportClauseNamespaceImport as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => importClauseNamespaceImport(v) },
+    _namespace_import,
+    namespaceImport() { return _namespace_import; },
+    $with: { $child: (v: T.NamespaceImport) => importClauseNamespaceImport(v) },
   }, methodsEngine);
 }
 
-export function importClauseNamedImports(child?: never) {
-  const children = child != null ? [child] : [];
+export function importClauseNamedImports(child: T.NamedImports) {
+  const _named_imports = child;
   return withMethods({
     $type: TSKindId._ImportClauseNamedImports as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => importClauseNamedImports(v) },
+    _named_imports,
+    namedImports() { return _named_imports; },
+    $with: { $child: (v: T.NamedImports) => importClauseNamedImports(v) },
   }, methodsEngine);
 }
 
@@ -2931,15 +2932,15 @@ export function importStatement(config: T.ImportStatement.Config) {
   }, methodsEngine);
 }
 
-export function indexSignatureMappedTypeClause(child?: never) {
-  const children = child != null ? [child] : [];
+export function indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
+  const _mapped_type_clause = child;
   return withMethods({
     $type: TSKindId._IndexSignatureMappedTypeClause as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => indexSignatureMappedTypeClause(v) },
+    _mapped_type_clause,
+    mappedTypeClause() { return _mapped_type_clause; },
+    $with: { $child: (v: T.MappedTypeClause) => indexSignatureMappedTypeClause(v) },
   }, methodsEngine);
 }
 
@@ -3149,15 +3150,15 @@ export function lexicalDeclaration(config: T.LexicalDeclaration.Config) {
   }, methodsEngine);
 }
 
-export function literalType(child?: never) {
-  const children = child != null ? [child] : [];
+export function literalType(child: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) {
+  const _number = child;
   return withMethods({
     $type: TSKindId.LiteralType as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => literalType(v) },
+    _number,
+    number() { return _number; },
+    $with: { $child: (v: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) => literalType(v) },
   }, methodsEngine);
 }
 
@@ -3363,27 +3364,27 @@ export function module(config: T.Module.Config) {
   }, methodsEngine);
 }
 
-export function namedImports(child?: never) {
-  const children = child != null ? [child] : [];
+export function namedImports(...children: T.ImportSpecifier[]) {
+  const _import_specifier = children;
   return withMethods({
     $type: TSKindId.NamedImports as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => namedImports(v) },
+    _import_specifier,
+    importSpecifiers() { return _import_specifier; },
+    $with: { $children: (...vs: T.ImportSpecifier[]) => namedImports(...vs) },
   }, methodsEngine);
 }
 
-export function namespaceExport(child?: never) {
-  const children = child != null ? [child] : [];
+export function namespaceExport(child: T.ModuleExportName) {
+  const _module_export_name = child;
   return withMethods({
     $type: TSKindId.NamespaceExport as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => namespaceExport(v) },
+    _module_export_name,
+    moduleExportName() { return _module_export_name; },
+    $with: { $child: (v: T.ModuleExportName) => namespaceExport(v) },
   }, methodsEngine);
 }
 
@@ -3492,15 +3493,15 @@ export function number(text: string) {
   }, methodsEngine);
 }
 
-export function object(child?: never) {
-  const children = child != null ? [child] : [];
+export function object(...children: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) {
+  const _pair = children;
   return withMethods({
     $type: TSKindId.Object as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => object(v) },
+    _pair,
+    pair() { return _pair; },
+    $with: { $children: (...vs: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) => object(...vs) },
   }, methodsEngine);
 }
 
@@ -3522,15 +3523,15 @@ export function objectAssignmentPattern(config: T.ObjectAssignmentPattern.Config
   }, methodsEngine);
 }
 
-export function objectPattern(child?: never) {
-  const children = child != null ? [child] : [];
+export function objectPattern(...children: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) {
+  const _pair_pattern = children;
   return withMethods({
     $type: TSKindId.ObjectPattern as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => objectPattern(v) },
+    _pair_pattern,
+    pairPattern() { return _pair_pattern; },
+    $with: { $children: (...vs: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) => objectPattern(...vs) },
   }, methodsEngine);
 }
 
@@ -3739,15 +3740,15 @@ export function pairPattern(config: T.PairPattern.Config) {
   }, methodsEngine);
 }
 
-export function parenthesizedExpressionSequence(child?: never) {
-  const children = child != null ? [child] : [];
+export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
+  const _sequence_expression = child;
   return withMethods({
     $type: TSKindId._ParenthesizedExpressionSequence as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => parenthesizedExpressionSequence(v) },
+    _sequence_expression,
+    sequenceExpression() { return _sequence_expression; },
+    $with: { $child: (v: T.SequenceExpression) => parenthesizedExpressionSequence(v) },
   }, methodsEngine);
 }
 
@@ -4007,15 +4008,15 @@ export function requiredParameter(config: T.RequiredParameter.Config) {
   }, methodsEngine);
 }
 
-export function restPattern(child?: never) {
-  const children = child != null ? [child] : [];
+export function restPattern(child: T.LhsExpression) {
+  const _lhs_expression = child;
   return withMethods({
     $type: TSKindId.RestPattern as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => restPattern(v) },
+    _lhs_expression,
+    lhsExpression() { return _lhs_expression; },
+    $with: { $child: (v: T.LhsExpression) => restPattern(v) },
   }, methodsEngine);
 }
 
@@ -4069,15 +4070,16 @@ export function satisfiesExpression(config: T.SatisfiesExpression.Config) {
   }, methodsEngine);
 }
 
-export function sequenceExpression(child?: never) {
-  const children = child != null ? [child] : [];
+export function sequenceExpression(...children: T.Expression[]) {
+  _assertNonEmpty(children, 'sequence_expression.children');
+  const _expression = children;
   return withMethods({
     $type: TSKindId.SequenceExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => sequenceExpression(v) },
+    _expression,
+    expressions() { return _expression; },
+    $with: { $children: (...vs: T.Expression[]) => sequenceExpression(...vs) },
   }, methodsEngine);
 }
 
@@ -4206,15 +4208,15 @@ export function super_() {
   }, methodsEngine);
 }
 
-export function switchBody(child?: never) {
-  const children = child != null ? [child] : [];
+export function switchBody(...children: (T.SwitchCase | T.SwitchDefault)[]) {
+  const _switch_case = children;
   return withMethods({
     $type: TSKindId.SwitchBody as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => switchBody(v) },
+    _switch_case,
+    switchCases() { return _switch_case; },
+    $with: { $children: (...vs: (T.SwitchCase | T.SwitchDefault)[]) => switchBody(...vs) },
   }, methodsEngine);
 }
 
@@ -4268,51 +4270,51 @@ export function switchStatement(config: T.SwitchStatement.Config) {
   }, methodsEngine);
 }
 
-export function templateLiteralType(child?: never) {
-  const children = child != null ? [child] : [];
+export function templateLiteralType(...children: (T.TemplateChars | T.TemplateType)[]) {
+  const _template_chars = children;
   return withMethods({
     $type: TSKindId.TemplateLiteralType as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => templateLiteralType(v) },
+    _template_chars,
+    templateChars() { return _template_chars; },
+    $with: { $children: (...vs: (T.TemplateChars | T.TemplateType)[]) => templateLiteralType(...vs) },
   }, methodsEngine);
 }
 
-export function templateString(child?: never) {
-  const children = child != null ? [child] : [];
+export function templateString(...children: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) {
+  const _template_chars = children;
   return withMethods({
     $type: TSKindId.TemplateString as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => templateString(v) },
+    _template_chars,
+    templateChars() { return _template_chars; },
+    $with: { $children: (...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) => templateString(...vs) },
   }, methodsEngine);
 }
 
-export function templateSubstitution(child?: never) {
-  const children = child != null ? [child] : [];
+export function templateSubstitution(child: T.Expressions) {
+  const _expressions = child;
   return withMethods({
     $type: TSKindId.TemplateSubstitution as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => templateSubstitution(v) },
+    _expressions,
+    expressions() { return _expressions; },
+    $with: { $child: (v: T.Expressions) => templateSubstitution(v) },
   }, methodsEngine);
 }
 
-export function templateType(child?: never) {
-  const children = child != null ? [child] : [];
+export function templateType(child: (T.PrimaryType | T.InferType)) {
+  const _primary_type = child;
   return withMethods({
     $type: TSKindId.TemplateType as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => templateType(v) },
+    _primary_type,
+    primaryType() { return _primary_type; },
+    $with: { $child: (v: (T.PrimaryType | T.InferType)) => templateType(v) },
   }, methodsEngine);
 }
 
@@ -4414,15 +4416,15 @@ export function tupleParameter(config: T.TupleParameter.Config) {
   }, methodsEngine);
 }
 
-export function tupleType(child?: never) {
-  const children = child != null ? [child] : [];
+export function tupleType(...children: T.TupleTypeMember[]) {
+  const _tuple_type_member = children;
   return withMethods({
     $type: TSKindId.TupleType as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => tupleType(v) },
+    _tuple_type_member,
+    tupleTypeMembers() { return _tuple_type_member; },
+    $with: { $children: (...vs: T.TupleTypeMember[]) => tupleType(...vs) },
   }, methodsEngine);
 }
 
@@ -4466,15 +4468,16 @@ export function typeAnnotation(type: T.TypeAnnotation.Config['type']) {
   }, methodsEngine);
 }
 
-export function typeArguments(child?: never) {
-  const children = child != null ? [child] : [];
+export function typeArguments(...children: T.Type[]) {
+  _assertNonEmpty(children, 'type_arguments.children');
+  const _type = children;
   return withMethods({
     $type: TSKindId.TypeArguments as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => typeArguments(v) },
+    _type,
+    types() { return _type; },
+    $with: { $children: (...vs: T.Type[]) => typeArguments(...vs) },
   }, methodsEngine);
 }
 
@@ -4522,15 +4525,16 @@ export function typeParameter(config: T.TypeParameter.Config) {
   }, methodsEngine);
 }
 
-export function typeParameters(child?: never) {
-  const children = child != null ? [child] : [];
+export function typeParameters(...children: T.TypeParameter[]) {
+  _assertNonEmpty(children, 'type_parameters.children');
+  const _type_parameter = children;
   return withMethods({
     $type: TSKindId.TypeParameters as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => typeParameters(v) },
+    _type_parameter,
+    typeParameters() { return _type_parameter; },
+    $with: { $children: (...vs: T.TypeParameter[]) => typeParameters(...vs) },
   }, methodsEngine);
 }
 
@@ -4566,15 +4570,15 @@ export function typePredicateAnnotation(typePredicate: T.TypePredicateAnnotation
   }, methodsEngine);
 }
 
-export function typeQuery(child?: never) {
-  const children = child != null ? [child] : [];
+export function typeQuery(child: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) {
+  const _type_query_subscript_expression = child;
   return withMethods({
     $type: TSKindId.TypeQuery as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => typeQuery(v) },
+    _type_query_subscript_expression,
+    typeQuerySubscriptExpression() { return _type_query_subscript_expression; },
+    $with: { $child: (v: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) => typeQuery(v) },
   }, methodsEngine);
 }
 

@@ -48,6 +48,8 @@ import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/node-ma
 import type { NodeOrTerminal } from '../compiler/node-map.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
+const SAFE_IDENT_KEY = /^[A-Za-z_$][\w$]*$/;
+
 export interface EmitFromConfig {
 	grammar: string;
 	nodeMap: NodeMap;
@@ -374,7 +376,8 @@ export namespace from {
 					typeName: node.typeName,
 					rawFactoryName: node.rawFactoryName,
 					fromFunctionName: node.fromFunctionName,
-					children: node.children
+					children: node.children,
+					fields: node.fields
 				},
 				kindEntries,
 				nodeMap
@@ -796,6 +799,9 @@ interface ContainerFromNode {
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
 	readonly children: readonly { readonly values: readonly NodeOrTerminal[] }[];
+	// Post-unification: the unnamed-child slot is exposed via `fields[0]`. Its
+	// `storageName` drives the `_<name>` data key we read here.
+	readonly fields?: readonly AssembledNonterminal[];
 }
 
 /**
@@ -849,19 +855,18 @@ function emitRepeatedContainerFrom(
 	elementType: string,
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	storageKey: string
 ): string {
 	// The accepted-input union allows callers to hand back an existing
 	// <kind> NodeData OR a flat list of element children. The single-arg
-	// self-NodeData path unwraps `$children`; otherwise every item must
-	// already be an element. The `as readonly ${elementType}[]` assertion
-	// funnels the post-guard input into the factory's accepted shape — at
-	// this point any `${tName}` element has been ruled out by structural
-	// selection (the only way to land here with the union is a single
-	// self-NodeData first arg, handled above). The unwrap branch's
-	// `data.$children` is typed as singular-or-array `NodeChildren` on the loose
-	// `AnyNodeData` shape; normalize to an array before the same boundary cast funnels it
-	// into the factory's narrow children-element type.
+	// self-NodeData path unwraps the post-unification per-slot storage key
+	// (`data._<slot.storageName>`); otherwise every item must already be an
+	// element. The `as readonly ${elementType}[]` assertion funnels the
+	// post-guard input into the factory's accepted shape — at this point any
+	// `${tName}` element has been ruled out by structural selection. The
+	// unwrap branch's storage value is typed as singular-or-array on the loose
+	// `AnyNodeData` shape; normalize to an array before the boundary cast.
 	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
 	// TSGrammar-only kinds (string $type) can't satisfy isNodeData() (which
 	// requires numeric $type). Skip the node-data pass-through guard entirely
@@ -871,18 +876,22 @@ function emitRepeatedContainerFrom(
 		return [
 			`export function ${fn}(...input: readonly (${elementType} | ${tName})[]): ${factoryReturnTypeExpr(factory)} {`,
 			// as unknown as Parameters<>: elementType may include separator literals (e.g. ",")
-			// from $children that factory doesn't accept directly. Route through unknown.
+			// the factory doesn't accept directly. Route through unknown.
 			`  return ${factory}(...(input as unknown as Parameters<typeof ${factory}>));`,
 			'}'
 		].join('\n');
 	}
+	const storageAccess = SAFE_IDENT_KEY.test(storageKey)
+		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
+		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
 		`export function ${fn}(...input: readonly (${elementType} | ${tName})[]): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
 		`    const data = input[0];`,
 		// as unknown as Parameters<>: normalized children still include string|number
 		// separator literals; factory accepts only semantic nodes.
-		`    const children = data.$children === undefined ? [] : Array.isArray(data.$children) ? data.$children : [data.$children];`,
+		`    const stored = ${storageAccess};`,
+		`    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];`,
 		`    return ${factory}(...(children as unknown as Parameters<typeof ${factory}>));`,
 		`  }`,
 		// as unknown as Parameters<>: input may include separator literals.
@@ -890,6 +899,7 @@ function emitRepeatedContainerFrom(
 		'}'
 	].join('\n');
 }
+
 
 /**
  * Emits the singular-child variant of a container from() function.
@@ -922,7 +932,8 @@ function emitSingularContainerFrom(
 	elementType: string,
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	storageKey: string
 ): string {
 	// The factory's child parameter inferred type may be required or optional
 	// depending on grammar shape. Cast at the boundary funnels both shapes
@@ -941,11 +952,14 @@ function emitSingularContainerFrom(
 			'}'
 		].join('\n');
 	}
+	const storageAccess = SAFE_IDENT_KEY.test(storageKey)
+		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
+		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
 		`export function ${fn}(input?: ${elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (isNodeData(input) && input.$type === ${typeCheck}) {`,
 		`    const data = input;`,
-		`    const child = data.$children;`,
+		`    const child = ${storageAccess};`,
 		`    return ${factory}(child as Parameters<typeof ${factory}>[0]);`,
 		`  }`,
 		// Post-guard `input` is necessarily an `${elementType}` (the self-
@@ -964,12 +978,47 @@ function emitContainerFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const tName = `T.${node.typeName}`;
-	const elementType = `NonNullable<T.${node.typeName}['$children']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$children']>`;
-	const childrenMultiple = node.children.some((c) => isMultiple(c));
+	// Post-unification: the unnamed slot lives in `node.fields[0]` with a
+	// kind-derived `storageName`. The interface declares `_<storageName>` per
+	// slot (no `$children`), so the element type is the slot's element type and
+	// the data read is `data._<storageName>`.
+	const slot = node.fields?.[0];
+	const elementType = slot
+		? containerSlotElementType(slot, nodeMap)
+		: `NonNullable<T.${node.typeName}['$children']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$children']>`;
+	const childrenMultiple = slot ? isMultiple(slot) : node.children.some((c) => isMultiple(c));
+	const storageKey = slot ? `_${slot.storageName}` : '$children';
 	if (childrenMultiple) {
-		return emitRepeatedContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap);
+		return emitRepeatedContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
 	}
-	return emitSingularContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap);
+	return emitSingularContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
+}
+
+/**
+ * Compute the TypeScript element-type union for a single unnamed-child slot.
+ * Mirrors `childElementType` but operates on the post-unification slot in
+ * `node.fields[0]` rather than the legacy `node.children` list.
+ */
+function containerSlotElementType(slot: AssembledNonterminal, nodeMap: NodeMap): string {
+	const parts = new Set<string>();
+	for (const v of slot.values) {
+		if (isTerminalValue(v)) {
+			parts.add(JSON.stringify(v.value));
+			continue;
+		}
+		if (!isNodeRef(v)) continue;
+		const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+		const ref = nodeMap.nodes.get(name);
+		if (!ref) {
+			parts.add(JSON.stringify(name));
+			continue;
+		}
+		const typeName = ref.typeName;
+		parts.add(/^[A-Za-z_$][\w$]*$/.test(typeName) ? `T.${typeName}` : JSON.stringify(name));
+	}
+	if (parts.size === 0) return 'never';
+	const union = [...parts].join(' | ');
+	return parts.size > 1 ? `(${union})` : union;
 }
 
 // ---------------------------------------------------------------------------

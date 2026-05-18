@@ -103,63 +103,63 @@ export function _closureExpressionExpr(config: T._ClosureExpressionExpr.Config) 
   }, methodsEngine);
 }
 
-export function _delimTokenTreeBrace(child?: never) {
-  const children = child != null ? [child] : [];
+export function _delimTokenTreeBrace(...children: T.DelimTokens[]) {
+  const _delim_tokens = children;
   return withMethods({
     $type: TSKindId._DelimTokenTreeBrace as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _delimTokenTreeBrace(v) },
+    _delim_tokens,
+    delimTokens() { return _delim_tokens; },
+    $with: { $children: (...vs: T.DelimTokens[]) => _delimTokenTreeBrace(...vs) },
   }, methodsEngine);
 }
 
-export function _delimTokenTreeBracket(child?: never) {
-  const children = child != null ? [child] : [];
+export function _delimTokenTreeBracket(...children: T.DelimTokens[]) {
+  const _delim_tokens = children;
   return withMethods({
     $type: TSKindId._DelimTokenTreeBracket as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _delimTokenTreeBracket(v) },
+    _delim_tokens,
+    delimTokens() { return _delim_tokens; },
+    $with: { $children: (...vs: T.DelimTokens[]) => _delimTokenTreeBracket(...vs) },
   }, methodsEngine);
 }
 
-export function _delimTokenTreeParen(child?: never) {
-  const children = child != null ? [child] : [];
+export function _delimTokenTreeParen(...children: T.DelimTokens[]) {
+  const _delim_tokens = children;
   return withMethods({
     $type: TSKindId._DelimTokenTreeParen as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _delimTokenTreeParen(v) },
+    _delim_tokens,
+    delimTokens() { return _delim_tokens; },
+    $with: { $children: (...vs: T.DelimTokens[]) => _delimTokenTreeParen(...vs) },
   }, methodsEngine);
 }
 
-export function _expressionStatementBlockEnding(child?: never) {
-  const children = child != null ? [child] : [];
+export function _expressionStatementBlockEnding(child: T.ExpressionEndingWithBlock) {
+  const _expression_ending_with_block = child;
   return withMethods({
     $type: TSKindId._ExpressionStatementBlockEnding as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _expressionStatementBlockEnding(v) },
+    _expression_ending_with_block,
+    expressionEndingWithBlock() { return _expression_ending_with_block; },
+    $with: { $child: (v: T.ExpressionEndingWithBlock) => _expressionStatementBlockEnding(v) },
   }, methodsEngine);
 }
 
-export function _expressionStatementWithSemi(child?: never) {
-  const children = child != null ? [child] : [];
+export function _expressionStatementWithSemi(child: T.Expression) {
+  const _expression = child;
   return withMethods({
     $type: TSKindId._ExpressionStatementWithSemi as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _expressionStatementWithSemi(v) },
+    _expression,
+    expression() { return _expression; },
+    $with: { $child: (v: T.Expression) => _expressionStatementWithSemi(v) },
   }, methodsEngine);
 }
 
@@ -219,15 +219,15 @@ export function _foreignModItemBody(config: T._ForeignModItemBody.Config) {
   }, methodsEngine);
 }
 
-export function functionTypeFnForm(child?: never) {
-  const children = child != null ? [child] : [];
+export function functionTypeFnForm(child?: T.FunctionModifiers) {
+  const _function_modifiers = child;
   return withMethods({
     $type: TSKindId.FunctionTypeFnForm as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => functionTypeFnForm(v) },
+    _function_modifiers,
+    functionModifiers() { return _function_modifiers; },
+    $with: { $child: (v: T.FunctionModifiers) => functionTypeFnForm(v) },
   }, methodsEngine);
 }
 
@@ -259,15 +259,15 @@ export function _implItemBody(config: T._ImplItemBody.Config) {
   }, methodsEngine);
 }
 
-export function letChain(child?: never) {
-  const children = child != null ? [child] : [];
+export function letChain(child: (T.LetChain | T.LetCondition | T.Expression)) {
+  const _let_chain = child;
   return withMethods({
     $type: TSKindId.LetChain as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => letChain(v) },
+    _let_chain,
+    letChain() { return _let_chain; },
+    $with: { $child: (v: (T.LetChain | T.LetCondition | T.Expression)) => letChain(v) },
   }, methodsEngine);
 }
 
@@ -313,39 +313,39 @@ export function lineCommentRegularDslash(text: string) {
   }, methodsEngine);
 }
 
-export function _macroDefinitionBrace(child?: never) {
-  const children = child != null ? [child] : [];
+export function _macroDefinitionBrace(...children: T.MacroRule[]) {
+  const _macro_rule = children;
   return withMethods({
     $type: TSKindId._MacroDefinitionBrace as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _macroDefinitionBrace(v) },
+    _macro_rule,
+    macroRules() { return _macro_rule; },
+    $with: { $children: (...vs: T.MacroRule[]) => _macroDefinitionBrace(...vs) },
   }, methodsEngine);
 }
 
-export function _macroDefinitionBracket(child?: never) {
-  const children = child != null ? [child] : [];
+export function _macroDefinitionBracket(...children: T.MacroRule[]) {
+  const _macro_rule = children;
   return withMethods({
     $type: TSKindId._MacroDefinitionBracket as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _macroDefinitionBracket(v) },
+    _macro_rule,
+    macroRules() { return _macro_rule; },
+    $with: { $children: (...vs: T.MacroRule[]) => _macroDefinitionBracket(...vs) },
   }, methodsEngine);
 }
 
-export function _macroDefinitionParen(child?: never) {
-  const children = child != null ? [child] : [];
+export function _macroDefinitionParen(...children: T.MacroRule[]) {
+  const _macro_rule = children;
   return withMethods({
     $type: TSKindId._MacroDefinitionParen as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _macroDefinitionParen(v) },
+    _macro_rule,
+    macroRules() { return _macro_rule; },
+    $with: { $children: (...vs: T.MacroRule[]) => _macroDefinitionParen(...vs) },
   }, methodsEngine);
 }
 
@@ -592,75 +592,75 @@ export function _structItemTuple(config: T.StructItemTuple.Config) {
   }, methodsEngine);
 }
 
-export function _tokenTreeBrace(child?: never) {
-  const children = child != null ? [child] : [];
+export function _tokenTreeBrace(...children: T.Tokens[]) {
+  const _tokens = children;
   return withMethods({
     $type: TSKindId._TokenTreeBrace as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _tokenTreeBrace(v) },
+    _tokens,
+    tokens() { return _tokens; },
+    $with: { $children: (...vs: T.Tokens[]) => _tokenTreeBrace(...vs) },
   }, methodsEngine);
 }
 
-export function _tokenTreeBracket(child?: never) {
-  const children = child != null ? [child] : [];
+export function _tokenTreeBracket(...children: T.Tokens[]) {
+  const _tokens = children;
   return withMethods({
     $type: TSKindId._TokenTreeBracket as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _tokenTreeBracket(v) },
+    _tokens,
+    tokens() { return _tokens; },
+    $with: { $children: (...vs: T.Tokens[]) => _tokenTreeBracket(...vs) },
   }, methodsEngine);
 }
 
-export function _tokenTreeParen(child?: never) {
-  const children = child != null ? [child] : [];
+export function _tokenTreeParen(...children: T.Tokens[]) {
+  const _tokens = children;
   return withMethods({
     $type: TSKindId._TokenTreeParen as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _tokenTreeParen(v) },
+    _tokens,
+    tokens() { return _tokens; },
+    $with: { $children: (...vs: T.Tokens[]) => _tokenTreeParen(...vs) },
   }, methodsEngine);
 }
 
-export function _tokenTreePatternBrace(child?: never) {
-  const children = child != null ? [child] : [];
+export function _tokenTreePatternBrace(...children: T.TokenPattern[]) {
+  const _token_pattern = children;
   return withMethods({
     $type: TSKindId._TokenTreePatternBrace as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _tokenTreePatternBrace(v) },
+    _token_pattern,
+    tokenPatterns() { return _token_pattern; },
+    $with: { $children: (...vs: T.TokenPattern[]) => _tokenTreePatternBrace(...vs) },
   }, methodsEngine);
 }
 
-export function _tokenTreePatternBracket(child?: never) {
-  const children = child != null ? [child] : [];
+export function _tokenTreePatternBracket(...children: T.TokenPattern[]) {
+  const _token_pattern = children;
   return withMethods({
     $type: TSKindId._TokenTreePatternBracket as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _tokenTreePatternBracket(v) },
+    _token_pattern,
+    tokenPatterns() { return _token_pattern; },
+    $with: { $children: (...vs: T.TokenPattern[]) => _tokenTreePatternBracket(...vs) },
   }, methodsEngine);
 }
 
-export function _tokenTreePatternParen(child?: never) {
-  const children = child != null ? [child] : [];
+export function _tokenTreePatternParen(...children: T.TokenPattern[]) {
+  const _token_pattern = children;
   return withMethods({
     $type: TSKindId._TokenTreePatternParen as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => _tokenTreePatternParen(v) },
+    _token_pattern,
+    tokenPatterns() { return _token_pattern; },
+    $with: { $children: (...vs: T.TokenPattern[]) => _tokenTreePatternParen(...vs) },
   }, methodsEngine);
 }
 
@@ -1028,15 +1028,15 @@ export function boundedType(config: T.BoundedType.Config) {
   }, methodsEngine);
 }
 
-export function bracketedType(child?: never) {
-  const children = child != null ? [child] : [];
+export function bracketedType(child: (T._Type | T.QualifiedType)) {
+  const _type = child;
   return withMethods({
     $type: TSKindId.BracketedType as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => bracketedType(v) },
+    _type,
+    type() { return _type; },
+    $with: { $child: (v: (T._Type | T.QualifiedType)) => bracketedType(v) },
   }, methodsEngine);
 }
 
@@ -1188,15 +1188,15 @@ export function closureExpressionUFormExpr(config: Omit<ConfigOf<T.ClosureExpres
   }, methodsEngine);
 }
 
-export function closureParameters(child?: never) {
-  const children = child != null ? [child] : [];
+export function closureParameters(...children: (T.Pattern | T.Parameter)[]) {
+  const _pattern = children;
   return withMethods({
     $type: TSKindId.ClosureParameters as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => closureParameters(v) },
+    _pattern,
+    patterns() { return _pattern; },
+    $with: { $children: (...vs: (T.Pattern | T.Parameter)[]) => closureParameters(...vs) },
   }, methodsEngine);
 }
 
@@ -1307,51 +1307,51 @@ export function crate() {
   }, methodsEngine);
 }
 
-export function declarationList(child?: never) {
-  const children = child != null ? [child] : [];
+export function declarationList(...children: T.DeclarationStatement[]) {
+  const _declaration_statement = children;
   return withMethods({
     $type: TSKindId.DeclarationList as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => declarationList(v) },
+    _declaration_statement,
+    declarationStatements() { return _declaration_statement; },
+    $with: { $children: (...vs: T.DeclarationStatement[]) => declarationList(...vs) },
   }, methodsEngine);
 }
 
-export function delimTokenTreeParen(child?: never) {
-  const children = child != null ? [child] : [];
+export function delimTokenTreeParen(...children: T.DelimTokens[]) {
+  const _delim_tokens = children;
   return withMethods({
     $type: TSKindId._DelimTokenTreeParen as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => delimTokenTreeParen(v) },
+    _delim_tokens,
+    delimTokens() { return _delim_tokens; },
+    $with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeParen(...vs) },
   }, methodsEngine);
 }
 
-export function delimTokenTreeBracket(child?: never) {
-  const children = child != null ? [child] : [];
+export function delimTokenTreeBracket(...children: T.DelimTokens[]) {
+  const _delim_tokens = children;
   return withMethods({
     $type: TSKindId._DelimTokenTreeBracket as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => delimTokenTreeBracket(v) },
+    _delim_tokens,
+    delimTokens() { return _delim_tokens; },
+    $with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeBracket(...vs) },
   }, methodsEngine);
 }
 
-export function delimTokenTreeBrace(child?: never) {
-  const children = child != null ? [child] : [];
+export function delimTokenTreeBrace(...children: T.DelimTokens[]) {
+  const _delim_tokens = children;
   return withMethods({
     $type: TSKindId._DelimTokenTreeBrace as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => delimTokenTreeBrace(v) },
+    _delim_tokens,
+    delimTokens() { return _delim_tokens; },
+    $with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeBrace(...vs) },
   }, methodsEngine);
 }
 
@@ -1423,15 +1423,15 @@ export function dynamicType(trait: T.DynamicType.Config['trait']) {
   }, methodsEngine);
 }
 
-export function elseClause(child?: never) {
-  const children = child != null ? [child] : [];
+export function elseClause(child: (T.Block | T.IfExpression)) {
+  const _block = child;
   return withMethods({
     $type: TSKindId.ElseClause as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => elseClause(v) },
+    _block,
+    block() { return _block; },
+    $with: { $child: (v: (T.Block | T.IfExpression)) => elseClause(v) },
   }, methodsEngine);
 }
 
@@ -1491,15 +1491,15 @@ export function enumVariant(config: T.EnumVariant.Config) {
   }, methodsEngine);
 }
 
-export function enumVariantList(child?: never) {
-  const children = child != null ? [child] : [];
+export function enumVariantList(...children: T.AttributedEnumVariant[]) {
+  const _attributed_enum_variant = children;
   return withMethods({
     $type: TSKindId.EnumVariantList as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => enumVariantList(v) },
+    _attributed_enum_variant,
+    attributedEnumVariants() { return _attributed_enum_variant; },
+    $with: { $children: (...vs: T.AttributedEnumVariant[]) => enumVariantList(...vs) },
   }, methodsEngine);
 }
 
@@ -1513,27 +1513,27 @@ export function escapeSequence(text: string) {
   }, methodsEngine);
 }
 
-export function expressionStatementWithSemi(child?: never) {
-  const children = child != null ? [child] : [];
+export function expressionStatementWithSemi(child: T.Expression) {
+  const _expression = child;
   return withMethods({
     $type: TSKindId._ExpressionStatementWithSemi as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => expressionStatementWithSemi(v) },
+    _expression,
+    expression() { return _expression; },
+    $with: { $child: (v: T.Expression) => expressionStatementWithSemi(v) },
   }, methodsEngine);
 }
 
-export function expressionStatementBlockEnding(child?: never) {
-  const children = child != null ? [child] : [];
+export function expressionStatementBlockEnding(child: T.ExpressionEndingWithBlock) {
+  const _expression_ending_with_block = child;
   return withMethods({
     $type: TSKindId._ExpressionStatementBlockEnding as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => expressionStatementBlockEnding(v) },
+    _expression_ending_with_block,
+    expressionEndingWithBlock() { return _expression_ending_with_block; },
+    $with: { $child: (v: T.ExpressionEndingWithBlock) => expressionStatementBlockEnding(v) },
   }, methodsEngine);
 }
 
@@ -1636,15 +1636,15 @@ export function fieldDeclaration(config: T.FieldDeclaration.Config) {
   }, methodsEngine);
 }
 
-export function fieldDeclarationList(child?: never) {
-  const children = child != null ? [child] : [];
+export function fieldDeclarationList(...children: T.AttributedFieldDeclaration[]) {
+  const _attributed_field_declaration = children;
   return withMethods({
     $type: TSKindId.FieldDeclarationList as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => fieldDeclarationList(v) },
+    _attributed_field_declaration,
+    attributedFieldDeclarations() { return _attributed_field_declaration; },
+    $with: { $children: (...vs: T.AttributedFieldDeclaration[]) => fieldDeclarationList(...vs) },
   }, methodsEngine);
 }
 
@@ -1688,15 +1688,15 @@ export function fieldInitializer(config: T.FieldInitializer.Config) {
   }, methodsEngine);
 }
 
-export function fieldInitializerList(child?: never) {
-  const children = child != null ? [child] : [];
+export function fieldInitializerList(...children: (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]) {
+  const _shorthand_field_initializer = children;
   return withMethods({
     $type: TSKindId.FieldInitializerList as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => fieldInitializerList(v) },
+    _shorthand_field_initializer,
+    shorthandFieldInitializers() { return _shorthand_field_initializer; },
+    $with: { $children: (...vs: (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]) => fieldInitializerList(...vs) },
   }, methodsEngine);
 }
 
@@ -1794,15 +1794,16 @@ export function forExpression(config: T.ForExpression.Config) {
   }, methodsEngine);
 }
 
-export function forLifetimes(child?: never) {
-  const children = child != null ? [child] : [];
+export function forLifetimes(...children: T.Lifetime[]) {
+  _assertNonEmpty(children, 'for_lifetimes.children');
+  const _lifetime = children;
   return withMethods({
     $type: TSKindId.ForLifetimes as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => forLifetimes(v) },
+    _lifetime,
+    lifetimes() { return _lifetime; },
+    $with: { $children: (...vs: T.Lifetime[]) => forLifetimes(...vs) },
   }, methodsEngine);
 }
 
@@ -2474,39 +2475,39 @@ export function loopExpression(config: T.LoopExpression.Config) {
   }, methodsEngine);
 }
 
-export function macroDefinitionParen(child?: never) {
-  const children = child != null ? [child] : [];
+export function macroDefinitionParen(...children: T.MacroRule[]) {
+  const _macro_rule = children;
   return withMethods({
     $type: TSKindId._MacroDefinitionParen as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => macroDefinitionParen(v) },
+    _macro_rule,
+    macroRules() { return _macro_rule; },
+    $with: { $children: (...vs: T.MacroRule[]) => macroDefinitionParen(...vs) },
   }, methodsEngine);
 }
 
-export function macroDefinitionBracket(child?: never) {
-  const children = child != null ? [child] : [];
+export function macroDefinitionBracket(...children: T.MacroRule[]) {
+  const _macro_rule = children;
   return withMethods({
     $type: TSKindId._MacroDefinitionBracket as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => macroDefinitionBracket(v) },
+    _macro_rule,
+    macroRules() { return _macro_rule; },
+    $with: { $children: (...vs: T.MacroRule[]) => macroDefinitionBracket(...vs) },
   }, methodsEngine);
 }
 
-export function macroDefinitionBrace(child?: never) {
-  const children = child != null ? [child] : [];
+export function macroDefinitionBrace(...children: T.MacroRule[]) {
+  const _macro_rule = children;
   return withMethods({
     $type: TSKindId._MacroDefinitionBrace as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => macroDefinitionBrace(v) },
+    _macro_rule,
+    macroRules() { return _macro_rule; },
+    $with: { $children: (...vs: T.MacroRule[]) => macroDefinitionBrace(...vs) },
   }, methodsEngine);
 }
 
@@ -2680,15 +2681,15 @@ export function matchArmUFormBlockEnding(config: Omit<ConfigOf<T.MatchArmUFormBl
   }, methodsEngine);
 }
 
-export function matchBlock(child?: never) {
-  const children = child != null ? [child] : [];
+export function matchBlock(...children: (T.MatchArm | T.LastMatchArm)[]) {
+  const _match_arm = children;
   return withMethods({
     $type: TSKindId.MatchBlock as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => matchBlock(v) },
+    _match_arm,
+    matchArms() { return _match_arm; },
+    $with: { $children: (...vs: (T.MatchArm | T.LastMatchArm)[]) => matchBlock(...vs) },
   }, methodsEngine);
 }
 
@@ -2927,15 +2928,15 @@ export function parameter(config: T.Parameter.Config) {
   }, methodsEngine);
 }
 
-export function parameters(child?: never) {
-  const children = child != null ? [child] : [];
+export function parameters(...children: T.AttributedParameter[]) {
+  const _attributed_parameter = children;
   return withMethods({
     $type: TSKindId.Parameters as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => parameters(v) },
+    _attributed_parameter,
+    attributedParameters() { return _attributed_parameter; },
+    $with: { $children: (...vs: T.AttributedParameter[]) => parameters(...vs) },
   }, methodsEngine);
 }
 
@@ -3271,15 +3272,15 @@ export function removedTraitBound(type: T.RemovedTraitBound.Config['type']) {
   }, methodsEngine);
 }
 
-export function returnExpression(child?: never) {
-  const children = child != null ? [child] : [];
+export function returnExpression(child?: T.Expression) {
+  const _expression = child;
   return withMethods({
     $type: TSKindId.ReturnExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => returnExpression(v) },
+    _expression,
+    expression() { return _expression; },
+    $with: { $child: (v: T.Expression) => returnExpression(v) },
   }, methodsEngine);
 }
 
@@ -3417,15 +3418,15 @@ export function shorthandFieldInitializer(config: T.ShorthandFieldInitializer.Co
   }, methodsEngine);
 }
 
-export function slicePattern(child?: never) {
-  const children = child != null ? [child] : [];
+export function slicePattern(...children: T.Pattern[]) {
+  const _pattern = children;
   return withMethods({
     $type: TSKindId.SlicePattern as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => slicePattern(v) },
+    _pattern,
+    patterns() { return _pattern; },
+    $with: { $children: (...vs: T.Pattern[]) => slicePattern(...vs) },
   }, methodsEngine);
 }
 
@@ -3477,15 +3478,15 @@ export function staticItem(config: T.StaticItem.Config) {
   }, methodsEngine);
 }
 
-export function stringLiteral(child?: never) {
-  const children = child != null ? [child] : [];
+export function stringLiteral(...children: (T.EscapeSequence | T.StringContent)[]) {
+  const _escape_sequence = children;
   return withMethods({
     $type: TSKindId.StringLiteral as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => stringLiteral(v) },
+    _escape_sequence,
+    escapeSequences() { return _escape_sequence; },
+    $with: { $children: (...vs: (T.EscapeSequence | T.StringContent)[]) => stringLiteral(...vs) },
   }, methodsEngine);
 }
 
@@ -3641,63 +3642,63 @@ export function tokenBindingPattern(config: T.TokenBindingPattern.Config) {
   }, methodsEngine);
 }
 
-export function tokenRepetition(child?: never) {
-  const children = child != null ? [child] : [];
+export function tokenRepetition(...children: T.Tokens[]) {
+  const _tokens = children;
   return withMethods({
     $type: TSKindId.TokenRepetition as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => tokenRepetition(v) },
+    _tokens,
+    tokens() { return _tokens; },
+    $with: { $children: (...vs: T.Tokens[]) => tokenRepetition(...vs) },
   }, methodsEngine);
 }
 
-export function tokenRepetitionPattern(child?: never) {
-  const children = child != null ? [child] : [];
+export function tokenRepetitionPattern(...children: T.TokenPattern[]) {
+  const _token_pattern = children;
   return withMethods({
     $type: TSKindId.TokenRepetitionPattern as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => tokenRepetitionPattern(v) },
+    _token_pattern,
+    tokenPatterns() { return _token_pattern; },
+    $with: { $children: (...vs: T.TokenPattern[]) => tokenRepetitionPattern(...vs) },
   }, methodsEngine);
 }
 
-export function tokenTreeParen(child?: never) {
-  const children = child != null ? [child] : [];
+export function tokenTreeParen(...children: T.Tokens[]) {
+  const _tokens = children;
   return withMethods({
     $type: TSKindId._TokenTreeParen as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => tokenTreeParen(v) },
+    _tokens,
+    tokens() { return _tokens; },
+    $with: { $children: (...vs: T.Tokens[]) => tokenTreeParen(...vs) },
   }, methodsEngine);
 }
 
-export function tokenTreeBracket(child?: never) {
-  const children = child != null ? [child] : [];
+export function tokenTreeBracket(...children: T.Tokens[]) {
+  const _tokens = children;
   return withMethods({
     $type: TSKindId._TokenTreeBracket as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => tokenTreeBracket(v) },
+    _tokens,
+    tokens() { return _tokens; },
+    $with: { $children: (...vs: T.Tokens[]) => tokenTreeBracket(...vs) },
   }, methodsEngine);
 }
 
-export function tokenTreeBrace(child?: never) {
-  const children = child != null ? [child] : [];
+export function tokenTreeBrace(...children: T.Tokens[]) {
+  const _tokens = children;
   return withMethods({
     $type: TSKindId._TokenTreeBrace as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => tokenTreeBrace(v) },
+    _tokens,
+    tokens() { return _tokens; },
+    $with: { $children: (...vs: T.Tokens[]) => tokenTreeBrace(...vs) },
   }, methodsEngine);
 }
 
@@ -3755,39 +3756,39 @@ export function tokenTreeUFormBrace(config: Omit<ConfigOf<T.TokenTreeUFormBrace>
   }, methodsEngine);
 }
 
-export function tokenTreePatternParen(child?: never) {
-  const children = child != null ? [child] : [];
+export function tokenTreePatternParen(...children: T.TokenPattern[]) {
+  const _token_pattern = children;
   return withMethods({
     $type: TSKindId._TokenTreePatternParen as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => tokenTreePatternParen(v) },
+    _token_pattern,
+    tokenPatterns() { return _token_pattern; },
+    $with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternParen(...vs) },
   }, methodsEngine);
 }
 
-export function tokenTreePatternBracket(child?: never) {
-  const children = child != null ? [child] : [];
+export function tokenTreePatternBracket(...children: T.TokenPattern[]) {
+  const _token_pattern = children;
   return withMethods({
     $type: TSKindId._TokenTreePatternBracket as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => tokenTreePatternBracket(v) },
+    _token_pattern,
+    tokenPatterns() { return _token_pattern; },
+    $with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternBracket(...vs) },
   }, methodsEngine);
 }
 
-export function tokenTreePatternBrace(child?: never) {
-  const children = child != null ? [child] : [];
+export function tokenTreePatternBrace(...children: T.TokenPattern[]) {
+  const _token_pattern = children;
   return withMethods({
     $type: TSKindId._TokenTreePatternBrace as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => tokenTreePatternBrace(v) },
+    _token_pattern,
+    tokenPatterns() { return _token_pattern; },
+    $with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternBrace(...vs) },
   }, methodsEngine);
 }
 
@@ -3845,15 +3846,16 @@ export function tokenTreePatternUFormBrace(config: Omit<ConfigOf<T.TokenTreePatt
   }, methodsEngine);
 }
 
-export function traitBounds(child?: never) {
-  const children = child != null ? [child] : [];
+export function traitBounds(...children: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) {
+  _assertNonEmpty(children, 'trait_bounds.children');
+  const _type = children;
   return withMethods({
     $type: TSKindId.TraitBounds as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => traitBounds(v) },
+    _type,
+    types() { return _type; },
+    $with: { $children: (...vs: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) => traitBounds(...vs) },
   }, methodsEngine);
 }
 
@@ -3941,15 +3943,15 @@ export function tupleExpression(config: Partial<T.TupleExpression.Config> = {}) 
   }, methodsEngine);
 }
 
-export function tuplePattern(child?: never) {
-  const children = child != null ? [child] : [];
+export function tuplePattern(...children: (T.Pattern | T.ClosureExpression)[]) {
+  const _pattern = children;
   return withMethods({
     $type: TSKindId.TuplePattern as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => tuplePattern(v) },
+    _pattern,
+    patterns() { return _pattern; },
+    $with: { $children: (...vs: (T.Pattern | T.ClosureExpression)[]) => tuplePattern(...vs) },
   }, methodsEngine);
 }
 
@@ -3971,15 +3973,16 @@ export function tupleStructPattern(config: T.TupleStructPattern.Config) {
   }, methodsEngine);
 }
 
-export function tupleType(child?: never) {
-  const children = child != null ? [child] : [];
+export function tupleType(...children: T._Type[]) {
+  _assertNonEmpty(children, 'tuple_type.children');
+  const _type = children;
   return withMethods({
     $type: TSKindId.TupleType as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => tupleType(v) },
+    _type,
+    types() { return _type; },
+    $with: { $children: (...vs: T._Type[]) => tupleType(...vs) },
   }, methodsEngine);
 }
 
@@ -4211,15 +4214,15 @@ export function useAsClause(config: T.UseAsClause.Config) {
   }, methodsEngine);
 }
 
-export function useBounds(child?: never) {
-  const children = child != null ? [child] : [];
+export function useBounds(...children: (T.Lifetime | T.TypeIdentifier)[]) {
+  const _lifetime = children;
   return withMethods({
     $type: TSKindId.UseBounds as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => useBounds(v) },
+    _lifetime,
+    lifetimes() { return _lifetime; },
+    $with: { $children: (...vs: (T.Lifetime | T.TypeIdentifier)[]) => useBounds(...vs) },
   }, methodsEngine);
 }
 
@@ -4241,15 +4244,15 @@ export function useDeclaration(config: T.UseDeclaration.Config) {
   }, methodsEngine);
 }
 
-export function useList(child?: never) {
-  const children = child != null ? [child] : [];
+export function useList(...children: T.UseClause[]) {
+  const _use_clause = children;
   return withMethods({
     $type: TSKindId.UseList as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => useList(v) },
+    _use_clause,
+    useClauses() { return _use_clause; },
+    $with: { $children: (...vs: T.UseClause[]) => useList(...vs) },
   }, methodsEngine);
 }
 
@@ -4350,15 +4353,15 @@ export function visibilityModifierUFormInPath(config: Omit<ConfigOf<T.Visibility
   }, methodsEngine);
 }
 
-export function whereClause(child?: never) {
-  const children = child != null ? [child] : [];
+export function whereClause(...children: T.WherePredicate[]) {
+  const _where_predicate = children;
   return withMethods({
     $type: TSKindId.WhereClause as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => whereClause(v) },
+    _where_predicate,
+    wherePredicates() { return _where_predicate; },
+    $with: { $children: (...vs: T.WherePredicate[]) => whereClause(...vs) },
   }, methodsEngine);
 }
 
@@ -4402,15 +4405,15 @@ export function whileExpression(config: T.WhileExpression.Config) {
   }, methodsEngine);
 }
 
-export function yieldExpression(child?: never) {
-  const children = child != null ? [child] : [];
+export function yieldExpression(child?: T.Expression) {
+  const _expression = child;
   return withMethods({
     $type: TSKindId.YieldExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $child: (v: never) => yieldExpression(v) },
+    _expression,
+    expression() { return _expression; },
+    $with: { $child: (v: T.Expression) => yieldExpression(v) },
   }, methodsEngine);
 }
 

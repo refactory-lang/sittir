@@ -525,7 +525,8 @@ export namespace factory {
 					typeName: node.typeName,
 					treeTypeName: node.treeTypeName,
 					rawFactoryName: node.rawFactoryName,
-					children: node.children
+					children: node.children,
+					fields: node.fields
 				},
 				nodeMap,
 				kindEntries
@@ -861,24 +862,14 @@ function emitFieldCarryingFactory(
 		return emitSingleFieldFactory(node, fields, sc.slot, nodeMap, kindEntries);
 	}
 
-	// `childrenUserConfigurable` is false when every required child
-	// auto-stamps AND there are no optional children. In that case
-	// the Config (post-ConfigOf) has no `children` slot — ConfigOf
-	// filters auto-stamp entries out — so the factory must neither
-	// read `config.children` nor expose a child setter. Canonical
-	// case: `visibility_modifier__form_0` (single required child
-	// auto-stamps from `_crate`; Config is empty).
-	const requiredChildren = hasChildren ? children.filter((c) => isRequired(c)) : [];
-	const optionalChildren = hasChildren ? children.filter((c) => !isRequired(c)) : [];
-	const allRequiredAutoStamp =
-		hasChildren && requiredChildren.length > 0 && requiredChildren.every((c) => isAutoStampSlot(c, nodeMap));
-	const childrenUserConfigurable = hasChildren && !(allRequiredAutoStamp && optionalChildren.length === 0);
+	// Post-unification: `children` is always empty — the former dedicated
+	// child slot is replaced by per-slot fields with kind-based names.
 
 	// When opt is '?' (all fields optional), emit a local `_config` default so
 	// property access can use `config.x` (no optional chaining). Only emit
 	// the default when the body actually reads from config — avoids dead code
 	// when all fields auto-stamp.
-	const hasConfigReads = fields.some((f) => autoStampExpression(f, nodeMap) === undefined) || childrenUserConfigurable;
+	const hasConfigReads = fields.some((f) => autoStampExpression(f, nodeMap) === undefined);
 	const configAccess = 'config';
 
 	const lines: string[] = [];
@@ -888,27 +879,9 @@ function emitFieldCarryingFactory(
 			: `export function ${fn}(config${opt}: ${configType}) {`;
 	lines.push(signature);
 
-	// Build children local variable.
-	if (hasChildren) {
-		// Stamp expressions use child-context (NodeData wrapper) so
-		// the resulting `$children` array matches the parent's
-		// interface shape (`readonly [Crate]` = NodeData tuples, not
-		// raw strings).
-		if (allRequiredAutoStamp) {
-			const stampedItems = requiredChildren.map((c) => stampExpressionFor(c, nodeMap, 'child') ?? 'undefined');
-			if (!childrenUserConfigurable) {
-				lines.push(`  const children = [${stampedItems.join(', ')}] as const;`);
-			} else {
-				lines.push(
-					`  const children = _configChildren<T.${node.typeName}['$children']>(${configAccess}, [${stampedItems.join(', ')}] as unknown as T.${node.typeName}['$children']);`
-				);
-			}
-		} else {
-			lines.push(
-				`  const children = _configChildren<T.${node.typeName}['$children']>(${configAccess}, [] as unknown as T.${node.typeName}['$children']);`
-			);
-		}
-	}
+	// Post-unification (slot-model spec 2026-05-17): `children` is always empty —
+	// kind-named slots flow through `fields`. The former `$children` storage path
+	// is dead code; per-slot storage emits below via `_<f.name>`.
 
 	const variantName = node.modelType == 'group' ? resolvePolymorphFormVariantName(node) : undefined;
 
@@ -942,15 +915,11 @@ function emitFieldCarryingFactory(
 	for (const f of fields) {
 		lines.push(`    _${f.name},`);
 	}
-	if (hasChildren) lines.push('    $children: children,');
 
 	// Pure getters — method shorthand, body returns the local const.
 	for (const f of fields) {
 		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return _${f.name}; },`);
-	}
-	if (hasChildren) {
-		lines.push('    children() { return children; },');
 	}
 
 	// $with: setters call the factory directly with a patched config —
@@ -976,14 +945,8 @@ function emitFieldCarryingFactory(
 			);
 		}
 	}
-	if (childrenUserConfigurable) {
-		const childElem = childElementType({ children }, nodeMap);
-		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
-		const restType = childrenSetterRestType(children, childElem, childRest);
-		lines.push(
-			`      children: (...items: ${restType}) => ${fn}({ ...${configAccess}, children: items } as unknown as Parameters<typeof ${fn}>[0]),`
-		);
-	}
+	// Post-unification: the legacy `children` setter is gone — per-slot setters
+	// above cover every slot through the unified `fields` loop.
 	lines.push('    },');
 	lines.push('  }, methodsEngine);');
 	lines.push('}');
@@ -1142,7 +1105,6 @@ function emitRefineFormFactory(
 	for (const n of form.narrowedFields) narrowed.set(n.fieldName, n.literal);
 	const fields = node.fields;
 	const children = node.children;
-	const hasChildren = children.length > 0;
 	const opt = resolveRefineFormConfigOptional(fields, children, nodeMap, narrowed);
 	const formTypeName = refineFormTypeName(info.typeName, form.name);
 	const formShortName = formTypeName.slice(info.typeName.length);
@@ -1151,11 +1113,8 @@ function emitRefineFormFactory(
 	// emitRefineFormSubNamespaces — the flat `T.<ParentForm>` identifier
 	// is not emitted as a top-level namespace.
 	lines.push(`export function ${formFn}(config${opt}: T.${info.typeName}.${formShortName}.Config) {`);
-	if (hasChildren) {
-		lines.push(
-			`  const children = _configChildren<T.${formTypeName}['$children']>(config${opt}, [] as unknown as T.${formTypeName}['$children']);`
-		);
-	}
+	// Post-unification: kind-named slots flow through `fields`; no separate
+	// `$children` storage path remains.
 	// Shape A: storage hoist + property shorthand + pure getters + $with.
 	for (const f of fields) {
 		const narrowedLit = narrowed.get(f.name);
@@ -1179,13 +1138,9 @@ function emitRefineFormFactory(
 	for (const f of fields) {
 		lines.push(`    _${f.name},`);
 	}
-	if (hasChildren) lines.push('    $children: children,');
 	for (const f of fields) {
 		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return _${f.name}; },`);
-	}
-	if (hasChildren) {
-		lines.push('    children() { return children; },');
 	}
 	lines.push('    $with: {');
 	for (const f of fields) {
@@ -1207,14 +1162,8 @@ function emitRefineFormFactory(
 			);
 		}
 	}
-	if (hasChildren) {
-		const childElem = childElementType({ children: node.children }, nodeMap);
-		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
-		const restType = childrenSetterRestType(node.children, childElem, childRest);
-		lines.push(
-			`      children: (...items: ${restType}) => ${formFn}({ ...config, children: items } as unknown as Parameters<typeof ${formFn}>[0]),`
-		);
-	}
+	// Post-unification: legacy children setter is gone — per-slot setters above
+	// cover every slot.
 	lines.push('    },');
 	lines.push('  }, methodsEngine);');
 	lines.push('}');
@@ -1340,6 +1289,7 @@ interface ContainerNode {
 	readonly treeTypeName: string;
 	readonly rawFactoryName?: string;
 	readonly children: readonly AssembledNonterminal[];
+	readonly fields: readonly AssembledNonterminal[];
 }
 
 function emitContainerFactory(
@@ -1349,22 +1299,34 @@ function emitContainerFactory(
 ): string {
 	const fn = node.rawFactoryName!;
 	const lines: string[] = [];
-	const anyMultiple = resolveContainerMultiple(node);
-	const anyNonEmpty = node.children.some((c) => isNonEmpty(c));
+	// Post-unification (slot-model spec 2026-05-17): the unnamed-child slot now
+	// lives in `node.fields` with a kind-derived `storageName` (e.g. `type`).
+	// Storage uses `_<storageName>` per slot rather than a flat `$children` key.
+	// Surface argument naming (`child` / `...children`) is preserved for
+	// caller-side ergonomics; the slot drives where the data is stored.
+	const slot = node.fields[0];
+	const anyMultiple = slot ? isMultiple(slot) : resolveContainerMultiple(node);
+	const anyNonEmpty = slot ? isNonEmpty(slot) : node.children.some((c) => isNonEmpty(c));
 	const elementType = resolveContainerElementType(node, nodeMap);
+	// Storage key + property name for the single unnamed slot. Falls back to the
+	// legacy `$children` / `children` shape only if no slot exists (defensive —
+	// shouldn't happen for branches that classifyChildFactorySurface accepts).
+	const storageKey = slot ? `_${slot.storageName}` : '$children';
+	const propName = slot ? slot.propertyName : 'children';
 	if (anyMultiple) {
 		lines.push(`export function ${fn}(...children: ${elementType}[]) {`);
 		if (anyNonEmpty) {
 			lines.push(`  _assertNonEmpty(children, '${node.kind}.children');`);
 		}
+		lines.push(`  const ${storageKey} = children;`);
 	} else {
-		const firstChild = node.children[0];
-		const required = firstChild ? isRequired(firstChild) : false;
+		const required = slot ? isRequired(slot) : (node.children[0] ? isRequired(node.children[0]) : false);
 		const optMark = required ? '' : '?';
 		lines.push(`export function ${fn}(child${optMark}: ${elementType}) {`);
-		// Required child: type guarantees non-null, wrap directly.
-		// Optional child: null/undefined is valid → wrap only if present.
-		lines.push(required ? `  const children = [child];` : `  const children = child != null ? [child] : [];`);
+		// Required: store the value directly. Optional: store undefined when absent.
+		// For singular slots the storage holds the bare value (not an array) so
+		// the per-slot getter returns the element type the interface declares.
+		lines.push(required ? `  const ${storageKey} = child;` : `  const ${storageKey} = child;`);
 	}
 	// Inline literal wrapped by withMethods<T>. No defineProperty,
 	// no spread, no Record cast.
@@ -1372,10 +1334,11 @@ function emitContainerFactory(
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
-	lines.push('    $children: children,');
-	lines.push('    children() { return children; },');
+	lines.push(`    ${storageKey},`);
+	lines.push(`    ${propName}() { return ${storageKey}; },`);
 	// Container $with: unnamed slot updater. Multiple → `$children`; single → `$child`.
-	// Both call the factory directly (no config object).
+	// Both call the factory directly (no config object). These meta-keys are
+	// part of the runtime $with convention and intentionally NOT kind-named.
 	if (anyMultiple) {
 		lines.push(`    $with: { $children: (...vs: ${elementType}[]) => ${fn}(...vs) },`);
 	} else {
@@ -1412,6 +1375,12 @@ function resolveContainerMultiple(node: ContainerNode): boolean {
  *   hover/autocomplete with no indirection.
  */
 function resolveContainerElementType(node: ContainerNode, nodeMap: NodeMap): string {
+	// Post-unification: when the unnamed-child slot is in `node.fields`, derive
+	// the element type from it. Fall back to `node.children` for any legacy
+	// caller that still threads the old shape.
+	if (node.fields.length > 0) {
+		return childElementType({ children: node.fields }, nodeMap);
+	}
 	return childElementType(node, nodeMap);
 }
 
