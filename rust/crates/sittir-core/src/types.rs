@@ -812,6 +812,16 @@ pub trait RenderableTransport {
     }
 }
 
+/// Blanket impl: `Box<T>` is `RenderableTransport` whenever `T` is. The
+/// generated transport types use `Box<T>` for fields whose singular slot
+/// closes a size cycle (see codegen `rustTransportSlotType`); this impl
+/// lets those boxed fields participate uniformly in the dispatch.
+impl<T: RenderableTransport + ?Sized> RenderableTransport for Box<T> {
+    fn render_into(&self, dest: &mut dyn std::fmt::Write) -> Result<(), ::askama::Error> {
+        (**self).render_into(dest)
+    }
+}
+
 /// Leading / trailing delimiters for a format region. Mirrors
 /// `FormatBoundary` in `@sittir/types` (FR-008).
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

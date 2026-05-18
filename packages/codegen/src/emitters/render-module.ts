@@ -2812,16 +2812,17 @@ function isLeafLikeNode(n: AssembledNode): boolean {
 }
 
 function boxedInEnum(variantKind: string, enumOwnerKind: string, variantNode: AssembledNode, nodeMap: NodeMap): boolean {
-	if (isLeafLikeNode(variantNode)) return false;
-	const scc = nodeMap.scc;
-	if (scc === undefined) return true; // conservative fallback
-	// Intentionally referenced so the args+SCC participate in the
-	// callgraph; replace `true` below with `scc.sameSCC(variantKind,
-	// enumOwnerKind)` once the rust-side V8 stack regression is fixed.
+	// All transport enum variants are now inline. Box decisions moved to
+	// the slot-field level (see `rustTransportSlotType` — singular slots
+	// whose admit-set intersects parentKind's SCC get `Box<T>` at the
+	// source of the back-edge). This keeps enums uniformly small in stack
+	// frames and pushes the heap-indirection cost to the exact field that
+	// creates the size cycle, not every variant of the enum.
 	void variantKind;
 	void enumOwnerKind;
-	void scc;
-	return true;
+	void variantNode;
+	void nodeMap;
+	return false;
 }
 
 function emitSupertypeTransportEnum(
@@ -3013,6 +3014,11 @@ function emitSupertypeTransportEnum(
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push(``);
+
+	// Box<EnumName> napi-trait impls. Required because `Box-at-back-edge`
+	// slot typing in rustTransportSlotType emits `Box<EnumName>` as a struct
+	// field type whenever an enum-typed slot closes a singular size cycle.
+	lines.push(...renderBoxedEnumNapiImpls(enumName));
 
 	// Bridge helper: converts <Supertype>Transport → AnyTransport for the
 	// NodeData bridge (transport_field_value / transport_children). Each variant
@@ -3424,6 +3430,9 @@ function emitPerSlotChildEnum(
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push(``);
+
+	// Box<EnumName> napi-trait impls. See note on `renderBoxedEnumNapiImpls`.
+	lines.push(...renderBoxedEnumNapiImpls(enumName));
 
 	// Bridge helper: converts per-slot enum → AnyTransport for the NodeData
 	// bridge (used by `render_nodedata_into` / `render_dispatch`). AnyTransport
@@ -3886,11 +3895,11 @@ function renderTransportDataToNodeFn(
 				lines.push('    }');
 			}
 		} else if (isRequired(field)) {
-			const bridged = buildBridgeSingleRequired(field, access, nodeMap, ownerTypeName);
+			const bridged = buildBridgeSingleRequired(field, access, nodeMap, ownerTypeName, kind);
 			lines.push(`    fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_value(${bridged})?);`);
 		} else {
 			lines.push(`    if let Some(value) = ${access} {`);
-			const bridged = buildBridgeOptionalSingle(field, 'value', nodeMap, ownerTypeName);
+			const bridged = buildBridgeOptionalSingle(field, 'value', nodeMap, ownerTypeName, kind);
 			lines.push(
 				`        fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_value(${bridged})?);`
 			);
@@ -3898,7 +3907,7 @@ function renderTransportDataToNodeFn(
 		}
 	}
 	lines.push('    let fields = if fields.is_empty() { None } else { Some(fields) };');
-	lines.push(...renderTransportChildrenBinding(slotModel, nodeMap, ownerTypeName));
+	lines.push(...renderTransportChildrenBinding(slotModel, nodeMap, ownerTypeName, kind));
 	lines.push('    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());');
 	lines.push('    Ok(transport_node_data(');
 	lines.push(`        ${kindArg},`);
@@ -3982,13 +3991,19 @@ function buildBridgeSingleRequired(
 	field: AssembledNonterminal,
 	access: string,
 	nodeMap: NodeMap | undefined,
-	ownerTypeName: string | undefined
+	ownerTypeName: string | undefined,
+	parentKind: string | undefined
 ): string {
 	const bc = bridgeClassForField(field, nodeMap, ownerTypeName);
+	// Singular slot may have been Boxed by `rustTransportSlotType` to break a
+	// size cycle. Deref before passing to bridge fns / variant constructors.
+	const boxed = nodeMap !== undefined && parentKind !== undefined
+		&& slotCreatesBackEdge(field, parentKind, nodeMap);
+	const inner = boxed ? `*${access}` : access;
 	if (bc === undefined) return `*${access}`; // Box<AnyTransport> → deref to AnyTransport
-	if (bc.kind === 'concrete') return `AnyTransport::${bc.variant}(${access})`;
+	if (bc.kind === 'concrete') return `AnyTransport::${bc.variant}(${inner})`;
 	// supertype + transportSlot both carry toAnyFn — same emission shape.
-	return `${bc.toAnyFn}(${access})`;
+	return `${bc.toAnyFn}(${inner})`;
 }
 
 /**
@@ -4018,13 +4033,19 @@ function buildBridgeOptionalSingle(
 	field: AssembledNonterminal,
 	valueExpr: string,
 	nodeMap: NodeMap | undefined,
-	ownerTypeName: string | undefined
+	ownerTypeName: string | undefined,
+	parentKind: string | undefined
 ): string {
 	const bc = bridgeClassForField(field, nodeMap, ownerTypeName);
+	// Optional singular slot may have been Boxed by `rustTransportSlotType`;
+	// when so, the unwrapped `value` is a `Box<T>` — deref to `T`.
+	const boxed = nodeMap !== undefined && parentKind !== undefined
+		&& slotCreatesBackEdge(field, parentKind, nodeMap);
+	const inner = boxed ? `*${valueExpr}` : valueExpr;
 	if (bc === undefined) return `*${valueExpr}`; // Box<AnyTransport> → deref to AnyTransport
-	if (bc.kind === 'concrete') return `AnyTransport::${bc.variant}(${valueExpr})`;
+	if (bc.kind === 'concrete') return `AnyTransport::${bc.variant}(${inner})`;
 	// supertype + transportSlot both carry toAnyFn — same emission shape.
-	return `${bc.toAnyFn}(${valueExpr})`;
+	return `${bc.toAnyFn}(${inner})`;
 }
 
 /**
@@ -4051,7 +4072,11 @@ function renderTransportChildrenBinding(
 	nodeMap?: NodeMap,
 	/** PascalCase typeName of the owning struct — used for the per-slot
 	 *  enum bridge function name when a slot is heterogeneous. */
-	ownerTypeName?: string
+	ownerTypeName?: string,
+	/** Owning struct's grammar kind — used for SCC back-edge detection so
+	 *  bridge expression builders can emit a `*` deref on Boxed singular
+	 *  slot fields. */
+	parentKind?: string
 ): string[] {
 	if (slotModel.unnamed.length === 0) return ['    let children = None;'];
 	const lines: string[] = ['    let mut children_buf: Vec<AnyTransport> = Vec::new();'];
@@ -4072,11 +4097,11 @@ function renderTransportChildrenBinding(
 				lines.push('    }');
 			}
 		} else if (isRequired(slot)) {
-			const bridged = buildBridgeSingleRequired(slot, access, nodeMap, ownerTypeName);
+			const bridged = buildBridgeSingleRequired(slot, access, nodeMap, ownerTypeName, parentKind);
 			lines.push(`    children_buf.push(${bridged});`);
 		} else {
 			lines.push(`    if let Some(value) = ${access} {`);
-			const bridged = buildBridgeOptionalSingle(slot, 'value', nodeMap, ownerTypeName);
+			const bridged = buildBridgeOptionalSingle(slot, 'value', nodeMap, ownerTypeName, parentKind);
 			lines.push(`        children_buf.push(${bridged});`);
 			lines.push('    }');
 		}
@@ -4314,7 +4339,7 @@ function renderTransportDataStruct(
 			// slot regardless of named-ness, so the napi struct must declare a field
 			// per slot with the matching `js_name` to deserialize.
 			for (const field of [...slotModel.named, ...slotModel.unnamed]) {
-				lines.push(...renderTransportField(field, node.typeName, nodeMap));
+				lines.push(...renderTransportField(field, node.kind, node.typeName, nodeMap));
 			}
 			break;
 		case 'pattern':
@@ -4367,6 +4392,14 @@ function renderTransportDataStruct(
 			)
 		);
 	}
+	// Emit Box<StructName> napi impls so the `Box-at-back-edge` slot-field
+	// typing in rustTransportSlotType can produce `Box<ConcreteTransport>`
+	// without compile-time "trait FromNapiValue is not implemented" errors.
+	// napi-rs's derive doesn't auto-generate Box wrappers; we forward
+	// manually to the inner struct's impls (which the #[napi(object)] derive
+	// or the manual leaf impls above provide). Dead Box impls for structs
+	// never actually boxed get DCE'd by the compiler.
+	lines.push(...renderBoxedEnumNapiImpls(structName));
 	return lines;
 }
 
@@ -4651,7 +4684,12 @@ function renderLeafTransportPlainFields(): string[] {
 	return [...TRANSPORT_METADATA_FIELDS.map((f) => `    pub ${f.rustName}: ${f.rustType},`), '    pub text: String,'];
 }
 
-function renderTransportField(field: AssembledNonterminal, typeName: string, nodeMap: NodeMap): string[] {
+function renderTransportField(
+	field: AssembledNonterminal,
+	parentKind: string,
+	typeName: string,
+	nodeMap: NodeMap
+): string[] {
 	const lines: string[] = [];
 	const rustName = rustFieldIdent(field.storageName);
 	// Generator-owned NodeData stores raw fields as `_<storageName>` top-level
@@ -4664,6 +4702,7 @@ function renderTransportField(field: AssembledNonterminal, typeName: string, nod
 			kindsOf(field),
 			nodeMap,
 			{ required: isRequired(field), multiple: isMultiple(field) },
+			parentKind,
 			typeName,
 			field.name,
 			slotLiteralValues(field)
@@ -4699,19 +4738,12 @@ function rustTransportSlotType(
 	slotKinds: readonly string[],
 	nodeMap: NodeMap,
 	cardinality: { required: boolean; multiple: boolean },
+	parentKind: string,
 	typeName: string,
 	fieldName: string,
 	literalTexts: readonly string[] = []
 ): string {
 	const { required, multiple } = cardinality;
-	const wrap = (inner: string): string => {
-		if (multiple) {
-			const vec = `Vec<${inner}>`;
-			if (required) return vec;
-			return `Option<${vec}>`;
-		}
-		return required ? inner : `Option<${inner}>`;
-	};
 	// Mixed-content override: a field with named kinds AND anonymous literal
 	// content is heterogeneous regardless of classifier (e.g. `function_modifiers.modifier`
 	// which accepts `extern_modifier` OR bare keywords like `async`/`const`/`unsafe`).
@@ -4719,13 +4751,51 @@ function rustTransportSlotType(
 	// check the slot would be misclassified as `concrete`.
 	const hasMixedContent = slotKinds.length > 0 && literalTexts.length > 0;
 	const cls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(slotKinds, nodeMap);
+
+	// Back-edge detection: a singular (non-Vec) slot creates a size cycle when
+	// the slot's actual emitted type can hold a value that transitively
+	// references parentKind. The "reachable kind set" depends on slot
+	// classification:
+	//   - concrete: the single kind admitted
+	//   - supertype: the supertype kind itself (which the SCC graph treats as
+	//     a relay node — edges flow supertype → subtypes)
+	//   - heterogeneous: the slot's direct admit set (per-slot enum has no
+	//     graph node; edges are direct parent → admits)
+	// Vec slots don't propagate size cycles (Vec is heap-allocated, fixed size)
+	// so they never need an extra Box.
+	const scc = nodeMap.scc;
+	let reachableKinds: readonly string[] = [];
+	if (!multiple && scc !== undefined) {
+		if (cls.tag === 'concrete') {
+			reachableKinds = [cls.kind];
+		} else if (cls.tag === 'supertype') {
+			const supertypeKind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
+			reachableKinds = supertypeKind !== undefined ? [supertypeKind] : slotKinds;
+		} else {
+			// heterogeneous — per-slot enum admits slotKinds directly
+			reachableKinds = slotKinds;
+		}
+	}
+	const createsBackEdge = scc !== undefined && reachableKinds.some((k) => scc.sameSCC(parentKind, k));
+
+	const wrap = (inner: string): string => {
+		if (multiple) {
+			const vec = `Vec<${inner}>`;
+			if (required) return vec;
+			return `Option<${vec}>`;
+		}
+		const sized = createsBackEdge ? `Box<${inner}>` : inner;
+		return required ? sized : `Option<${sized}>`;
+	};
+
 	switch (cls.tag) {
 		case 'concrete': {
 			const base = concreteTransportTypeName(cls.kind, nodeMap);
 			if (base !== null) return wrap(base);
 			// Unknown kind — fall back to AnyTransport.
 			// Vec<AnyTransport> is safe (Vec provides indirection). Single-value
-			// AnyTransport fields need Box<> to break recursive size cycles.
+			// AnyTransport fields need Box<> to break recursive size cycles
+			// (AnyTransport is potentially recursive through any singular slot).
 			return wrap(multiple ? 'AnyTransport' : 'Box<AnyTransport>');
 		}
 		case 'supertype': {
@@ -4743,6 +4813,90 @@ function rustTransportSlotType(
 		default:
 			return assertNever(cls);
 	}
+}
+
+// Memoized lookup: supertype typeName → supertype kind. Used by back-edge
+// detection in rustTransportSlotType to map a supertype-classified slot
+// to the supertype kind that the SCC graph carries as a relay node.
+let supertypeKindByTypeNameCache: WeakMap<NodeMap, Map<string, string>> = new WeakMap();
+function findSupertypeKindByTypeName(supertypeName: string, nodeMap: NodeMap): string | undefined {
+	let map = supertypeKindByTypeNameCache.get(nodeMap);
+	if (map === undefined) {
+		map = new Map<string, string>();
+		for (const [kind, node] of nodeMap.nodes) {
+			if (node.modelType === 'supertype') {
+				map.set(node.typeName, kind);
+			}
+		}
+		supertypeKindByTypeNameCache.set(nodeMap, map);
+	}
+	return map.get(supertypeName);
+}
+
+/**
+ * Returns true when a singular slot's emitted Rust type is `Box<T>` because
+ * the slot closes a size cycle through the singular-reference graph. Mirrors
+ * the logic in `rustTransportSlotType` so bridge expression builders (which
+ * pass field values to `*_transport_to_any` fns expecting unboxed types) can
+ * emit a `*` deref when needed. Vec slots are never Boxed (they don't
+ * propagate size cycles), so this returns false for `isMultiple(field)`.
+ */
+function slotCreatesBackEdge(
+	field: AssembledNonterminal,
+	parentKind: string,
+	nodeMap: NodeMap
+): boolean {
+	if (isMultiple(field)) return false;
+	const scc = nodeMap.scc;
+	if (scc === undefined) return false;
+	const slotKinds = kindsOf(field);
+	const hasMixedContent = slotKinds.length > 0 && slotLiteralValues(field).length > 0;
+	const cls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(slotKinds, nodeMap);
+	let reachableKinds: readonly string[] = [];
+	if (cls.tag === 'concrete') {
+		reachableKinds = [cls.kind];
+	} else if (cls.tag === 'supertype') {
+		const supertypeKind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
+		reachableKinds = supertypeKind !== undefined ? [supertypeKind] : slotKinds;
+	} else {
+		reachableKinds = slotKinds;
+	}
+	return reachableKinds.some((k) => scc.sameSCC(parentKind, k));
+}
+
+/**
+ * Emit `FromNapiValue` / `ToNapiValue` impls for `Box<EnumName>`. napi-rs's
+ * derive does not auto-generate Box-wrapping impls for custom enums, but
+ * `Box-at-back-edge` slot typing makes `Box<EnumName>` show up as a field
+ * type wherever an enum-typed slot closes a singular size cycle. Without
+ * these impls the generated transport structs (which derive `#[napi(object)]`)
+ * fail to compile with "trait FromNapiValue is not implemented for Box<…>".
+ *
+ * Pattern mirrors the existing `Box<AnyTransport>` impls.
+ */
+function renderBoxedEnumNapiImpls(enumName: string): string[] {
+	return [
+		`#[cfg(feature = "napi-bindings")]`,
+		`impl ::napi::bindgen_prelude::FromNapiValue for Box<${enumName}> {`,
+		`    unsafe fn from_napi_value(`,
+		`        env: ::napi::sys::napi_env,`,
+		`        napi_val: ::napi::sys::napi_value,`,
+		`    ) -> ::napi::Result<Self> {`,
+		`        ${enumName}::from_napi_value(env, napi_val).map(Box::new)`,
+		`    }`,
+		`}`,
+		``,
+		`#[cfg(feature = "napi-bindings")]`,
+		`impl ::napi::bindgen_prelude::ToNapiValue for Box<${enumName}> {`,
+		`    unsafe fn to_napi_value(`,
+		`        env: ::napi::sys::napi_env,`,
+		`        val: Self,`,
+		`    ) -> ::napi::Result<::napi::sys::napi_value> {`,
+		`        ${enumName}::to_napi_value(env, *val)`,
+		`    }`,
+		`}`,
+		``
+	];
 }
 
 /**
