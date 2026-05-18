@@ -120,7 +120,7 @@ pub struct AssignmentTypedTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_comprehension_clauses.jinja", escape = "none")]
 pub struct ComprehensionClausesTemplate<'a> {
-    pub for_in_clause: OptionalNonterminalView<'a>,
+    pub for_in_clause: ListNonterminalView<'a>,
     pub if_clause: ListNonterminalView<'a>,
 }
 
@@ -145,7 +145,7 @@ pub struct SimplePatternNegativeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_simple_statements.jinja", escape = "none")]
 pub struct SimpleStatementsTemplate<'a> {
-    pub simple_statement: SingleNonterminalView<'a>,
+    pub simple_statement: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -157,7 +157,7 @@ pub struct SuiteTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_with_clause_paren.jinja", escape = "none")]
 pub struct _WithClauseParenTemplate<'a> {
-    pub with_item: SingleNonterminalView<'a>,
+    pub with_item: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -171,7 +171,7 @@ pub struct AliasedImportTemplate<'a> {
 #[template(path = "argument_list.jinja", escape = "none")]
 pub struct ArgumentListTemplate<'a> {
     pub dictionary_splat: ListNonterminalView<'a>,
-    pub expression: OptionalNonterminalView<'a>,
+    pub expression: ListNonterminalView<'a>,
     pub keyword_argument: ListNonterminalView<'a>,
     pub list_splat: ListNonterminalView<'a>,
     pub parenthesized_expression: ListNonterminalView<'a>,
@@ -187,16 +187,16 @@ pub struct AsPatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "assert_statement.jinja", escape = "none")]
 pub struct AssertStatementTemplate<'a> {
-    pub expression: SingleNonterminalView<'a>,
+    pub expression: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "assignment.jinja", escape = "none")]
 pub struct AssignmentTemplate<'a> {
     pub variant: &'a str,
-    pub assignment_eq: OptionalNonterminalView<'a>,
-    pub assignment_type: OptionalNonterminalView<'a>,
-    pub assignment_typed: OptionalNonterminalView<'a>,
+    pub assignment_eq: SingleNonterminalView<'a>,
+    pub assignment_type: SingleNonterminalView<'a>,
+    pub assignment_typed: SingleNonterminalView<'a>,
     pub left: SingleNonterminalView<'a>,
 }
 
@@ -232,7 +232,7 @@ pub struct BinaryOperatorTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "block.jinja", escape = "none")]
 pub struct BlockTemplate<'a> {
-    pub statement: OptionalNonterminalView<'a>,
+    pub statement: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -253,7 +253,7 @@ pub struct CallTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "case_clause.jinja", escape = "none")]
 pub struct CaseClauseTemplate<'a> {
-    pub case_pattern: SingleNonterminalView<'a>,
+    pub case_pattern: ListNonterminalView<'a>,
     pub consequence: SingleNonterminalView<'a>,
     pub guard: OptionalNonterminalView<'a>,
 }
@@ -293,7 +293,7 @@ pub struct ClassPatternTemplate<'a> {
 pub struct ComparisonOperatorTemplate<'a> {
     pub left: SingleNonterminalView<'a>,
     pub operators: ListNonterminalView<'a>,
-    pub primary_expression: SingleNonterminalView<'a>,
+    pub primary_expression: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -308,7 +308,7 @@ pub struct ComplexPatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "concatenated_string.jinja", escape = "none")]
 pub struct ConcatenatedStringTemplate<'a> {
-    pub string: SingleNonterminalView<'a>,
+    pub string: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -329,7 +329,7 @@ pub struct ConstrainedTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "decorated_definition.jinja", escape = "none")]
 pub struct DecoratedDefinitionTemplate<'a> {
-    pub decorator: SingleNonterminalView<'a>,
+    pub decorator: ListNonterminalView<'a>,
     pub definition: SingleNonterminalView<'a>,
 }
 
@@ -356,7 +356,7 @@ pub struct DeleteStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "dict_pattern.jinja", escape = "none")]
 pub struct DictPatternTemplate<'a> {
-    pub dict_pattern_kv: OptionalNonterminalView<'a>,
+    pub dict_pattern_kv: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -386,13 +386,13 @@ pub struct DictionarySplatTemplate<'a> {
 #[template(path = "dictionary.jinja", escape = "none")]
 pub struct DictionaryTemplate<'a> {
     pub dictionary_splat: ListNonterminalView<'a>,
-    pub pair: OptionalNonterminalView<'a>,
+    pub pair: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "dotted_name.jinja", escape = "none")]
 pub struct DottedNameTemplate<'a> {
-    pub identifier: SingleNonterminalView<'a>,
+    pub identifier: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -426,24 +426,24 @@ pub struct ExecStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "expression_list.jinja", escape = "none")]
 pub struct ExpressionListTemplate<'a> {
-    pub expression: SingleNonterminalView<'a>,
+    pub expression: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "expression_statement_tuple.jinja", escape = "none")]
 pub struct ExpressionStatementTupleTemplate<'a> {
-    pub expression: SingleNonterminalView<'a>,
+    pub expression: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "expression_statement.jinja", escape = "none")]
 pub struct ExpressionStatementTemplate<'a> {
     pub variant: &'a str,
-    pub assignment: OptionalNonterminalView<'a>,
-    pub augmented_assignment: OptionalNonterminalView<'a>,
-    pub expression: OptionalNonterminalView<'a>,
-    pub expression_statement_tuple: OptionalNonterminalView<'a>,
-    pub yield_: OptionalNonterminalView<'a>,
+    pub assignment: SingleNonterminalView<'a>,
+    pub augmented_assignment: SingleNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
+    pub expression_statement_tuple: SingleNonterminalView<'a>,
+    pub yield_: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -511,7 +511,7 @@ pub struct GenericTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "global_statement.jinja", escape = "none")]
 pub struct GlobalStatementTemplate<'a> {
-    pub identifier: SingleNonterminalView<'a>,
+    pub identifier: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -572,7 +572,7 @@ pub struct KeywordPatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "lambda_parameters.jinja", escape = "none")]
 pub struct LambdaParametersTemplate<'a> {
-    pub parameter: SingleNonterminalView<'a>,
+    pub parameter: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -600,7 +600,7 @@ pub struct ListComprehensionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "list_pattern.jinja", escape = "none")]
 pub struct ListPatternTemplate<'a> {
-    pub pattern: OptionalNonterminalView<'a>,
+    pub pattern: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -621,7 +621,7 @@ pub struct ListSplatTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "list.jinja", escape = "none")]
 pub struct ListTemplate<'a> {
-    pub expression: OptionalNonterminalView<'a>,
+    pub expression: ListNonterminalView<'a>,
     pub list_splat: ListNonterminalView<'a>,
     pub parenthesized_list_splat: ListNonterminalView<'a>,
     pub yield_: ListNonterminalView<'a>,
@@ -644,7 +644,7 @@ pub struct MemberTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "module.jinja", escape = "none")]
 pub struct ModuleTemplate<'a> {
-    pub statement: OptionalNonterminalView<'a>,
+    pub statement: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -657,7 +657,7 @@ pub struct NamedExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "nonlocal_statement.jinja", escape = "none")]
 pub struct NonlocalStatementTemplate<'a> {
-    pub identifier: SingleNonterminalView<'a>,
+    pub identifier: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -676,7 +676,7 @@ pub struct PairTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "parameters.jinja", escape = "none")]
 pub struct ParametersTemplate<'a> {
-    pub parameter: OptionalNonterminalView<'a>,
+    pub parameter: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -696,7 +696,7 @@ pub struct ParenthesizedListSplatTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "pattern_list.jinja", escape = "none")]
 pub struct PatternListTemplate<'a> {
-    pub pattern: SingleNonterminalView<'a>,
+    pub pattern: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -737,7 +737,7 @@ pub struct SetComprehensionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "set.jinja", escape = "none")]
 pub struct SetTemplate<'a> {
-    pub expression: SingleNonterminalView<'a>,
+    pub expression: ListNonterminalView<'a>,
     pub list_splat: ListNonterminalView<'a>,
     pub parenthesized_list_splat: ListNonterminalView<'a>,
     pub yield_: ListNonterminalView<'a>,
@@ -766,7 +766,7 @@ pub struct SplatTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "string_content.jinja", escape = "none")]
 pub struct StringContentTemplate<'a> {
-    pub escape_interpolation: SingleNonterminalView<'a>,
+    pub escape_interpolation: ListNonterminalView<'a>,
     pub escape_sequence: ListNonterminalView<'a>,
     pub not_escape_sequence: ListNonterminalView<'a>,
     pub string_content: ListNonterminalView<'a>,
@@ -797,13 +797,13 @@ pub struct TryStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "tuple_pattern.jinja", escape = "none")]
 pub struct TuplePatternTemplate<'a> {
-    pub pattern: OptionalNonterminalView<'a>,
+    pub pattern: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "tuple.jinja", escape = "none")]
 pub struct TupleTemplate<'a> {
-    pub expression: OptionalNonterminalView<'a>,
+    pub expression: ListNonterminalView<'a>,
     pub list_splat: ListNonterminalView<'a>,
     pub parenthesized_list_splat: ListNonterminalView<'a>,
     pub yield_: ListNonterminalView<'a>,
@@ -820,7 +820,7 @@ pub struct TypeAliasStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_parameter.jinja", escape = "none")]
 pub struct TypeParameterTemplate<'a> {
-    pub type_: SingleNonterminalView<'a>,
+    pub type_: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -861,7 +861,7 @@ pub struct UnaryOperatorTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "union_pattern.jinja", escape = "none")]
 pub struct UnionPatternTemplate<'a> {
-    pub simple_pattern: SingleNonterminalView<'a>,
+    pub simple_pattern: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -882,21 +882,21 @@ pub struct WhileStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "with_clause_bare.jinja", escape = "none")]
 pub struct WithClauseBareTemplate<'a> {
-    pub with_item: SingleNonterminalView<'a>,
+    pub with_item: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "with_clause_paren.jinja", escape = "none")]
 pub struct WithClauseParenTemplate<'a> {
-    pub with_item: SingleNonterminalView<'a>,
+    pub with_item: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "with_clause.jinja", escape = "none")]
 pub struct WithClauseTemplate<'a> {
     pub variant: &'a str,
-    pub with_clause_bare: OptionalNonterminalView<'a>,
-    pub with_clause_paren: OptionalNonterminalView<'a>,
+    pub with_clause_bare: SingleNonterminalView<'a>,
+    pub with_clause_paren: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
