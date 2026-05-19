@@ -555,11 +555,24 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 			polymorphs,
 			config.groups
 		);
-		applyAutoGroups(
-			base as Parameters<typeof applyAutoGroups>[0],
-			context,
-			authoredSynthesisKinds
-		);
+		// DISABLED for PR0 close-out: activation introduces a downstream regression —
+		// sittir's codegen pipeline (link → node-model → factories) does not yet
+		// consult `context.syntheticInline` when emitting slots for synthesized
+		// hidden kinds. Reader expects child nodes for `_<parent>_repeat<N>` that
+		// tree-sitter inlined away → "repeated slot requires at least one value"
+		// errors + rust RT 134→103 / cov 178→164 regression.
+		//
+		// Re-enabling is the LAST step of PR1, after the new template emitter +
+		// slot emission honor synthesizedInline membership. `applyAutoGroups`
+		// itself is correct (21 tests in auto-groups.test.ts); only the
+		// downstream slot-emission wiring is missing.
+		void (() => {
+			applyAutoGroups(
+				base as Parameters<typeof applyAutoGroups>[0],
+				context,
+				authoredSynthesisKinds
+			);
+		});
 	}
 
 	const conflicts = wrapConflictsCallback(config.conflicts, context);
