@@ -305,6 +305,9 @@
     "_line_comment_doc.doc": {
       "doc_comment": "_line_doc_content"
     },
+    "_non_special_token.literal": {
+      "primitive_type": "_primitive_type"
+    },
     "attribute.arguments": {
       "token_tree": "delim_token_tree"
     },
@@ -320,11 +323,19 @@
     "field_pattern_shorthand.name": {
       "shorthand_field_identifier": "identifier"
     },
+    "function_type.function_type_trait_form": {
+      "function_type_trait_form": "_function_type_trait_form",
+      "function_type_fn_form": "_function_type_fn_form"
+    },
     "macro_invocation.token_tree": {
       "token_tree": "delim_token_tree"
     },
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
+    },
+    "reference_expression.reference_expression_raw_const": {
+      "reference_expression_raw_const": "_reference_expression_raw_const",
+      "reference_expression_raw_mut": "_reference_expression_raw_mut"
     },
     "scoped_identifier.path": {
       "generic_type": "generic_type_with_turbofish"
@@ -343,6 +354,9 @@
     },
     "where_predicate.left": {
       "primitive_type": "_primitive_type"
+    },
+    "_visibility_modifier_pub_parens.self": {
+      "visibility_modifier_in_path": "_visibility_modifier_in_path"
     }
   },
   "factoryFields": {

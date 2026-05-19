@@ -481,7 +481,20 @@ function collectConcreteStorageKeys(
 	if (refKinds.length === 0) return undefined;
 	const concrete = expandRuntimeDiscriminatorKinds(refKinds, nodeMap);
 	if (concrete.length === 0) return undefined;
-	const storageKeys = [...new Set(concrete.map((k) => `_${k}`))];
+	// Map source-kind names to the runtime CST kind (alias target) where the
+	// data actually lands. The slot's `aliasSources` is keyed `{target: source}`;
+	// invert it so we can rewrite source → target. When no alias applies the
+	// source name IS the runtime kind and the lookup is identity. See
+	// project-alias-target-routing for the bug class this fixes (decorator,
+	// required_parameter.pattern, rest_pattern, type_query — places where
+	// `alias($.source, $.target)` shifts the visible CST kind to the target).
+	const sourceToTarget: Record<string, string> = {};
+	if (slot.aliasSources) {
+		for (const [target, source] of Object.entries(slot.aliasSources)) {
+			sourceToTarget[source] = target;
+		}
+	}
+	const storageKeys = [...new Set(concrete.map((k) => `_${sourceToTarget[k] ?? k}`))];
 	const legacyKey = `_${slot.name}`;
 	if (storageKeys.length === 1 && storageKeys[0] === legacyKey) {
 		return undefined;

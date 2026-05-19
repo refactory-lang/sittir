@@ -937,6 +937,11 @@ function deriveFieldsRaw(
 			const baseName = refName;
 			const basePropertyName = snakeToCamel(baseName);
 			const propertyName = isMultiSlot ? pluralize(basePropertyName) : basePropertyName;
+			// Capture alias mapping so wrap can probe the runtime CST kind
+			// (alias target) when looking up `data._<kind>`. For choice arms
+			// declared via `alias($.source, $.target)`, the CST emits children
+			// typed by the target — but slot value names use the source.
+			const aliasSources = deriveAliasSources(rule);
 			return [
 				{
 					name: baseName,
@@ -947,6 +952,7 @@ function deriveFieldsRaw(
 					values,
 					hasTrailing: false,
 					hasLeading: false,
+					aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
 					source: 'inferred',
 					origin: 'kind' as const
 				}

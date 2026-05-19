@@ -2096,7 +2096,7 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
 
     forLifetimes() { return drillIn<T.ForLifetimes | undefined>(this._for_lifetimes, tree); },
     parameters() { return drillIn<T.Parameters>(this._parameters, tree); },
-    functionTypeTraitForm() { return drillIn<T.FunctionTypeTraitForm | T.FunctionTypeFnForm>(this._function_type_trait_form, tree); },
+    functionTypeTraitForm() { return drillAs<T.FunctionTypeTraitForm | T.FunctionTypeFnForm>(this._function_type_trait_form, tree, "function_type_trait_form", "_function_type_trait_form"); },
     returnType() { return drillIn<T._Type | undefined>(this._return_type, tree); },
     $with: {
       forLifetimes: (v: NonNullable<T.FunctionType['_for_lifetimes']>) => wrapFunctionType({ ...data, _for_lifetimes: v }, tree),
@@ -2923,7 +2923,7 @@ export function wrapReferenceExpression(data: T.ReferenceExpression, tree: TreeH
     _reference_expression_raw_const: normalizeSingularWrapSlot((data._reference_expression_raw_const ?? data._reference_expression_raw_mut ?? data._mutable_specifier), "reference_expression_raw_const", false, data.$type),
     _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
 
-    referenceExpressionRawConst() { return drillIn<T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier | undefined>(this._reference_expression_raw_const, tree); },
+    referenceExpressionRawConst() { return drillAs<T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier | undefined>(this._reference_expression_raw_const, tree, "reference_expression_raw_const", "_reference_expression_raw_const"); },
     value() { return drillIn<T.Expression>(this._value, tree); },
     $with: {
       referenceExpressionRawConst: (v: NonNullable<T.ReferenceExpression['_reference_expression_raw_const']>) => wrapReferenceExpression({ ...data, _reference_expression_raw_const: v }, tree),

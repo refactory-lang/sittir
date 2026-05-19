@@ -183,8 +183,26 @@
     "with": "text"
   },
   "fieldAliasMap": {
+    "_match_block.match_block_block": {
+      "match_block_block": "_match_block_block"
+    },
+    "_suite.simple_statements": {
+      "block": "_newline"
+    },
+    "argument_list.expression": {
+      "parenthesized_expression": "parenthesized_list_splat"
+    },
+    "case_pattern.as_pattern": {
+      "as_pattern": "_as_pattern"
+    },
+    "format_specifier.interpolation": {
+      "format_expression": "interpolation"
+    },
     "match_statement.body": {
       "block": "_match_block"
+    },
+    "parenthesized_list_splat.parenthesized_list_splat": {
+      "parenthesized_expression": "parenthesized_list_splat"
     }
   },
   "factoryFields": {

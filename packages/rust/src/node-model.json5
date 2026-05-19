@@ -2735,6 +2735,9 @@
               "crate",
               "_primitive_type"
             ]
+          },
+          "aliasSources": {
+            "primitive_type": "_primitive_type"
           }
         }
       ],
@@ -4137,6 +4140,9 @@
               "crate",
               "_visibility_modifier_in_path"
             ]
+          },
+          "aliasSources": {
+            "visibility_modifier_in_path": "_visibility_modifier_in_path"
           }
         }
       ],
@@ -8783,6 +8789,10 @@
               "_function_type_trait_form",
               "_function_type_fn_form"
             ]
+          },
+          "aliasSources": {
+            "function_type_trait_form": "_function_type_trait_form",
+            "function_type_fn_form": "_function_type_fn_form"
           }
         },
         {
@@ -12767,6 +12777,10 @@
               "_reference_expression_raw_mut",
               "mutable_specifier"
             ]
+          },
+          "aliasSources": {
+            "reference_expression_raw_const": "_reference_expression_raw_const",
+            "reference_expression_raw_mut": "_reference_expression_raw_mut"
           }
         },
         {

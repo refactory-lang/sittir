@@ -1421,8 +1421,8 @@ export interface SimpleStatements {
 
 export interface Suite {
   readonly $type: "_suite";
-  readonly _simple_statements: SimpleStatements | Block | Newline;
-  simpleStatements(): SimpleStatements | Block | Newline;
+  readonly _simple_statements: SimpleStatements | Newline;
+  simpleStatements(): SimpleStatements | Newline;
 }
 
 export interface _TuplePattern {

@@ -103,6 +103,11 @@ function drillAs<T>(entry: unknown, tree: TreeHandle, fromType: string, toType: 
   }
   return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType }) as unknown as T;
 }
+function drillAsAll<T>(entries: unknown, tree: TreeHandle, fromType: string, toType: string): T[] {
+  if (!entries) return [];
+  const arr = Array.isArray(entries) ? entries : [entries];
+  return arr.map(e => drillAs<T>(e, tree, fromType, toType));
+}
 function projectKindEnumStorage<T>(value: T): T {
   if (!value) return value;
   if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry)) as unknown as T;
@@ -416,7 +421,7 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
     $type: TSKindId.MatchBlock as const,
     _match_block_block: normalizeSingularWrapSlot(data._match_block_block, "match_block_block", true, data.$type),
 
-    matchBlockBlock() { return drillIn<T.MatchBlockBlock>(this._match_block_block, tree); },
+    matchBlockBlock() { return drillAs<T.MatchBlockBlock>(this._match_block_block, tree, "match_block_block", "_match_block_block"); },
     $with: { $children: (...vs: readonly [never]) => wrapMatchBlock({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -521,9 +526,9 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ArgumentList as const,
-    _expression: normalizeRepeatedWrapSlot((data._comparison_operator ?? data._not_operator ?? data._boolean_operator ?? data._lambda ?? data._await ?? data._binary_operator ?? data._identifier ?? data._keyword_identifier ?? data._string ?? data._concatenated_string ?? data._integer ?? data._float ?? data._true ?? data._false ?? data._none ?? data._unary_operator ?? data._attribute ?? data._subscript ?? data._call ?? data._list ?? data._list_comprehension ?? data._dictionary ?? data._dictionary_comprehension ?? data._set ?? data._set_comprehension ?? data._tuple ?? data._parenthesized_expression ?? data._generator_expression ?? data._ellipsis ?? data._list_splat_pattern ?? data._conditional_expression ?? data._named_expression ?? data._as_pattern ?? data._list_splat ?? data._dictionary_splat ?? data._parenthesized_list_splat ?? data._keyword_argument ?? data._expression), false, "expression"),
+    _expression: normalizeRepeatedWrapSlot((data._comparison_operator ?? data._not_operator ?? data._boolean_operator ?? data._lambda ?? data._await ?? data._binary_operator ?? data._identifier ?? data._keyword_identifier ?? data._string ?? data._concatenated_string ?? data._integer ?? data._float ?? data._true ?? data._false ?? data._none ?? data._unary_operator ?? data._attribute ?? data._subscript ?? data._call ?? data._list ?? data._list_comprehension ?? data._dictionary ?? data._dictionary_comprehension ?? data._set ?? data._set_comprehension ?? data._tuple ?? data._parenthesized_expression ?? data._generator_expression ?? data._ellipsis ?? data._list_splat_pattern ?? data._conditional_expression ?? data._named_expression ?? data._as_pattern ?? data._list_splat ?? data._dictionary_splat ?? data._keyword_argument ?? data._expression), false, "expression"),
 
-    expression() { return drillInAll<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(this._expression as readonly (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[] | undefined, tree); },
+    expression() { return drillAsAll<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(this._expression, tree, "parenthesized_expression", "parenthesized_list_splat"); },
     $with: { $children: (...vs: readonly [never]) => wrapArgumentList({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -727,7 +732,7 @@ export function wrapCasePattern(data: T.CasePattern, tree: TreeHandle) {
     $type: TSKindId.CasePattern as const,
     _as_pattern: normalizeSingularWrapSlot((data._as_pattern ?? data._keyword_pattern ?? data._class_pattern ?? data._splat_pattern ?? data._union_pattern ?? data._list_pattern ?? data._tuple_pattern ?? data._dict_pattern ?? data._string ?? data._concatenated_string ?? data._true ?? data._false ?? data._none ?? data._simple_pattern_negative ?? data._complex_pattern ?? data._dotted_name), "as_pattern", true, data.$type),
 
-    asPattern() { return drillIn<T._AsPattern | T.KeywordPattern | T.SimplePattern>(this._as_pattern, tree); },
+    asPattern() { return drillAs<T._AsPattern | T.KeywordPattern | T.SimplePattern>(this._as_pattern, tree, "as_pattern", "_as_pattern"); },
     $with: { $children: (...vs: readonly [never]) => wrapCasePattern({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -1203,9 +1208,9 @@ export function wrapFormatSpecifier(data: T.FormatSpecifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FormatSpecifier as const,
-    _interpolation: normalizeRepeatedWrapSlot(data._interpolation, false, "interpolation"),
+    _interpolation: normalizeRepeatedWrapSlot((data._format_expression ?? data._interpolation), false, "interpolation"),
 
-    interpolations() { return drillInAll<T.Interpolation>(this._interpolation as readonly T.Interpolation[] | undefined, tree); },
+    interpolations() { return drillAsAll<T.Interpolation>(this._interpolation, tree, "format_expression", "interpolation"); },
     $with: { $children: (...vs: readonly [never]) => wrapFormatSpecifier({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -1673,9 +1678,9 @@ export function wrapParenthesizedListSplat(data: T.ParenthesizedListSplat, tree:
   const _node = withMethods({
     ...data,
     $type: TSKindId.ParenthesizedListSplat as const,
-    _parenthesized_list_splat: normalizeSingularWrapSlot((data._parenthesized_list_splat ?? data._list_splat), "parenthesized_list_splat", true, data.$type),
+    _parenthesized_list_splat: normalizeSingularWrapSlot((data._parenthesized_expression ?? data._list_splat ?? data._parenthesized_list_splat), "parenthesized_list_splat", true, data.$type),
 
-    parenthesizedListSplat() { return drillIn<T.ParenthesizedListSplat | T.ListSplat>(this._parenthesized_list_splat, tree); },
+    parenthesizedListSplat() { return drillAs<T.ParenthesizedListSplat | T.ListSplat>(this._parenthesized_list_splat, tree, "parenthesized_expression", "parenthesized_list_splat"); },
     $with: { $children: (...vs: readonly [never]) => wrapParenthesizedListSplat({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;

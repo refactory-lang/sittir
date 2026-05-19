@@ -863,6 +863,9 @@
             "kinds": [
               "_match_block_block"
             ]
+          },
+          "aliasSources": {
+            "match_block_block": "_match_block_block"
           }
         }
       ],
@@ -1175,6 +1178,9 @@
               "block",
               "_newline"
             ]
+          },
+          "aliasSources": {
+            "block": "_newline"
           }
         }
       ],
@@ -1439,6 +1445,9 @@
               "parenthesized_list_splat",
               "keyword_argument"
             ]
+          },
+          "aliasSources": {
+            "parenthesized_expression": "parenthesized_list_splat"
           }
         }
       ],
@@ -2447,6 +2456,9 @@
               "keyword_pattern",
               "_simple_pattern"
             ]
+          },
+          "aliasSources": {
+            "as_pattern": "_as_pattern"
           }
         }
       ],
@@ -4501,6 +4513,9 @@
             "kinds": [
               "interpolation"
             ]
+          },
+          "aliasSources": {
+            "format_expression": "interpolation"
           }
         }
       ],
@@ -6345,6 +6360,9 @@
               "parenthesized_list_splat",
               "list_splat"
             ]
+          },
+          "aliasSources": {
+            "parenthesized_expression": "parenthesized_list_splat"
           }
         }
       ],
