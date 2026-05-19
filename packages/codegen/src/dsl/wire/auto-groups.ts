@@ -1,21 +1,25 @@
 /**
- * dsl/wire/auto-decompose.ts — auto-group-synthesis for nested seq content
+ * dsl/wire/auto-groups.ts — auto-group-synthesis for nested seq content
  * inside optional / repeat / repeat1 wrappers.
  *
- * Co-located with wire because authored `groups:` synthesis runs in the
- * same phase. Authored synthesis wins by construction: this pass runs
- * AFTER `applyWirePatternReplacement` has been configured, so authored
- * declared rules survive untouched and auto-decomp only synthesizes
- * helpers for the seq-shapes the author didn't address.
+ * SCOPE: synthesis only — creates a hidden helper rule + a symbol-ref
+ * replacement in the parent body. Mechanism identical to authored
+ * `groups:` synthesis (the path-mode case), which is why this pass
+ * lives in wire and runs AFTER the authored path has had its chance.
+ *
+ * EXPLICITLY OUT OF SCOPE: decomposition. This pass does NOT touch
+ *   - `separator` / `trailing` / `leading` metadata on existing Rule
+ *     objects (separator-lift)
+ *   - any other shape-rewriting on existing Rule objects
+ * Those concerns operate on sittir's internal Rule-object copy and
+ * belong in link or evaluate, not here. The prior conflation
+ * (`auto-decompose.ts`) caused the renderer-reads-separator-on-all-
+ * repeats regression — keeping the two concerns separate avoids it.
  *
  * Trigger — strictly seq content:
  *
  *   optional(seq(...))                                  → synthesize
  *   repeat(seq(...)) / repeat1(seq(...))                → synthesize
- *     UNLESS separator / trailing / leading is already populated
- *     (separator-lift is the canonical comma-list shape — the rule
- *     already carries structured separator metadata, so wrapping the
- *     seq in a hidden helper would lose that information).
  *
  * Everything else (field, choice, symbol, leaf rules, literal-only seqs):
  * pass through untouched. In particular the function-modifier shape
@@ -42,8 +46,6 @@
 import type { Rule } from '../../compiler/rule.ts';
 import {
 	isSeqType,
-	isStringType,
-	isSymbolType,
 	isFieldType,
 	isOptionalType,
 	isChoiceType,
@@ -59,7 +61,7 @@ interface SynthCounterState {
 }
 
 /**
- * Apply auto-decomposition to `base.grammar.rules`. Mutates the rules
+ * Apply auto-group-synthesis to `base.grammar.rules`. Mutates the rules
  * map in place: each parent rule's body is rewritten (optional/repeat
  * content swapped for a SymbolRule when the trigger fires), and the
  * synthesized hidden-group rules are appended.
@@ -70,14 +72,14 @@ interface SynthCounterState {
  *
  * `authoredSynthesisKinds` is the set of rule kinds the author has
  * already opted into authored synthesis via `transforms:`, `polymorphs:`,
- * or path-mode `groups:` entries. Auto-decomp skips those rules so the
- * authored path-based machinery (`transform()`, polymorph splits, group
- * lifts) sees the rule body the author wrote, not a post-decomp shape
- * that would invalidate every `'1/0/2'` style path patch.
+ * or path-mode `groups:` entries. Auto-group-synthesis skips those rules
+ * so the authored path-based machinery (`transform()`, polymorph splits,
+ * group lifts) sees the rule body the author wrote, not a post-synth
+ * shape that would invalidate every `'1/0/2'` style path patch.
  *
  * No-op when `base` is undefined or carries no rules.
  */
-export function applyAutoDecompose(
+export function applyAutoGroups(
 	base: { grammar?: { rules?: Record<string, Rule> }; rules?: Record<string, Rule> } | undefined,
 	context: WireContext,
 	authoredSynthesisKinds: ReadonlySet<string> = new Set()
@@ -94,7 +96,7 @@ export function applyAutoDecompose(
 	// owns the name; subsequent parents reuse it without consuming a
 	// counter slot. Matches tree-sitter's `existing_repeats` pattern.
 	const dedupe: Record<string, string> = {};
-	// Per-enrich hidden-rule bag: synthesized rules are accumulated here
+	// Per-apply hidden-rule bag: synthesized rules are accumulated here
 	// and merged into the grammar rule map after iteration.
 	const synthRules: Record<string, Rule> = {};
 
@@ -108,8 +110,8 @@ export function applyAutoDecompose(
 		if (!rule) continue;
 		const state: SynthCounterState = { opt: 0, rep: 0 };
 		let next = rule;
-		next = decomposeOptional(next, synthRules, name, state, dedupe);
-		next = decomposeRepeat(next, synthRules, name, state, dedupe);
+		next = synthesizeOptionalGroups(next, synthRules, name, state, dedupe);
+		next = synthesizeRepeatGroups(next, synthRules, name, state, dedupe);
 		if (next !== rule) {
 			rulesBag[name] = next;
 		}
@@ -125,10 +127,10 @@ export function applyAutoDecompose(
 }
 
 // ---------------------------------------------------------------------------
-// Pass: decomposeOptional — auto-group-synthesis for seq optional content
+// Pass: synthesizeOptionalGroups — for seq optional content
 // ---------------------------------------------------------------------------
 
-function decomposeOptional(
+function synthesizeOptionalGroups(
 	rule: Rule,
 	synthRules: Record<string, Rule>,
 	parentKind: string,
@@ -136,16 +138,16 @@ function decomposeOptional(
 	dedupe: Record<string, string>
 ): Rule {
 	const recursed = recurseChildren(rule, (r) =>
-		decomposeOptional(r, synthRules, parentKind, state, dedupe)
+		synthesizeOptionalGroups(r, synthRules, parentKind, state, dedupe)
 	);
 	if (!isOptionalType(recursed.type)) return recursed;
 	const content = (recursed as unknown as { content?: Rule }).content;
 	if (!content || typeof content !== 'object') return recursed;
 	const t = (content as { type?: string }).type;
 	// STRICT trigger: only seq content. Drops the prior choice case so
-	// authored choices and polymorphs survive untouched.
+	// authored choices and polymorphs survive untouched. No
+	// hasSlotBearingMember filter — strict-seq is the trigger.
 	if (!isSeqType(t)) return recursed;
-	if (!hasSlotBearingMember(content)) return recursed;
 
 	const synName = synthesizeGroupName(content, parentKind, 'optional', state, dedupe);
 	if (!(synName in synthRules)) {
@@ -160,10 +162,10 @@ function decomposeOptional(
 }
 
 // ---------------------------------------------------------------------------
-// Pass: decomposeRepeat — auto-group-synthesis for seq repeat / repeat1 content
+// Pass: synthesizeRepeatGroups — for seq repeat / repeat1 content
 // ---------------------------------------------------------------------------
 
-function decomposeRepeat(
+function synthesizeRepeatGroups(
 	rule: Rule,
 	synthRules: Record<string, Rule>,
 	parentKind: string,
@@ -171,65 +173,18 @@ function decomposeRepeat(
 	dedupe: Record<string, string>
 ): Rule {
 	const recursed = recurseChildren(rule, (r) =>
-		decomposeRepeat(r, synthRules, parentKind, state, dedupe)
+		synthesizeRepeatGroups(r, synthRules, parentKind, state, dedupe)
 	);
 	if (!isRepeatType(recursed.type)) return recursed;
 	const content = (recursed as unknown as { content?: Rule }).content;
 	if (!content || typeof content !== 'object') return recursed;
 	const t = (content as { type?: string }).type;
-	// STRICT trigger: only seq content.
+	// STRICT trigger: only seq content. No hasSlotBearingMember filter —
+	// strict-seq is the trigger. No separator carve-out — separator
+	// metadata is not synthesis's concern (decomposition is a separate
+	// pass that belongs in link/evaluate).
 	if (!isSeqType(t)) return recursed;
-	// CARVE-OUT: skip if the repeat already carries separator / trailing /
-	// leading attributes. Those are populated when the base grammar's
-	// `repeat(seq(X, ','))` shape was already lifted into structured
-	// metadata — wrapping the seq in a hidden helper would lose that.
-	const r = recursed as unknown as { separator?: unknown; trailing?: unknown; leading?: unknown };
-	if (r.separator !== undefined || r.trailing !== undefined || r.leading !== undefined) {
-		return recursed;
-	}
 
-	const members = ((content as { members?: Rule[] }).members ?? []) as Rule[];
-	const slotBearing: Rule[] = [];
-	const stringMembers: Rule[] = [];
-	for (const m of members) {
-		const mt = (m as { type?: string }).type;
-		if (
-			isFieldType(mt) ||
-			isSymbolType(mt) ||
-			isOptionalType(mt) ||
-			isRepeatType(mt) ||
-			((isSeqType(mt) || isChoiceType(mt)) && hasSlotBearingMember(m))
-		) {
-			slotBearing.push(m);
-		} else if (isStringType(mt)) {
-			stringMembers.push(m);
-		}
-	}
-
-	if (slotBearing.length === 0) return recursed; // pure-literal — no slot
-	if (slotBearing.length === 1) {
-		// Single-slot seq with literal flank(s): stamp the `separator`
-		// metadata for sittir-side consumers WITHOUT mutating `content`.
-		// The prior design swapped `content = slot` — that change DID reach
-		// tree-sitter, and the resulting `repeat(slot)` (no literal
-		// delimiter) altered every comma-list rule's recognized language.
-		// Rust's `enum_variant_list` / `field_declaration_list` / … lost
-		// their commas, destabilizing the LR(1) tables for surrounding
-		// rules — tree-sitter surfaced the regression as "Unresolved
-		// conflict for symbol sequence … _pattern / range_pattern".
-		// Keep `content` intact so the parse shape matches what the
-		// grammar author wrote; downstream sittir passes read the
-		// `separator` field independently.
-		if (stringMembers.length === 0) return recursed; // bare single-slot seq — no metadata to add
-		const existing = recursed as unknown as { separator?: unknown };
-		if (existing.separator !== undefined) return recursed; // already stamped (idempotent)
-		return {
-			...(recursed as object),
-			separator: stringMembers as readonly Rule[]
-		} as unknown as Rule;
-	}
-
-	// Multi-slot seq: synthesize a hidden group.
 	const synName = synthesizeGroupName(content, parentKind, 'repeat', state, dedupe);
 	if (!(synName in synthRules)) {
 		synthRules[synName] = content;
@@ -249,34 +204,6 @@ function decomposeRepeat(
 function detectCase(referenceRule: unknown): 'upper' | 'lower' {
 	const t = (referenceRule as { type?: string })?.type ?? '';
 	return t.length > 0 && t === t.toUpperCase() ? 'upper' : 'lower';
-}
-
-/** @internal — true when a seq/choice has at least one slot-bearing
- *  member: a field, a bare symbol reference, a multiplicity wrapper
- *  (optional/repeat/repeat1), or a nested seq/choice that itself bears
- *  slots. Pure-literal seqs (`seq('(', ')')`) return false. */
-function hasSlotBearingMember(rule: unknown): boolean {
-	if (!rule || typeof rule !== 'object') return false;
-	const r = rule as { type?: string; members?: unknown[] };
-	const t = r.type;
-	if (!isSeqType(t) && !isChoiceType(t)) return false;
-	const members = Array.isArray(r.members) ? r.members : [];
-	for (const m of members) {
-		if (!m || typeof m !== 'object') continue;
-		const mt = (m as { type?: string }).type;
-		if (
-			isFieldType(mt) ||
-			isSymbolType(mt) ||
-			isOptionalType(mt) ||
-			isRepeatType(mt)
-		) {
-			return true;
-		}
-		if ((isSeqType(mt) || isChoiceType(mt)) && hasSlotBearingMember(m)) {
-			return true;
-		}
-	}
-	return false;
 }
 
 /** @internal — synthesize (or reuse) a hidden-group rule name for the

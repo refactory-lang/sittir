@@ -41,7 +41,7 @@ import { transform as transformFn } from '../transform/transform.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
-import { applyAutoDecompose } from './auto-decompose.ts';
+import { applyAutoGroups } from './auto-groups.ts';
 
 // ---------------------------------------------------------------------------
 // RenderAsConfig — sittir-side rule bodies for external scanner symbols
@@ -534,44 +534,33 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 	// own post-evaluation pass for the sittir-pipeline path.
 	applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
 
-	// Auto-decomposition is intentionally NOT invoked here. The pass
-	// mutates `base.grammar.rules` (separator metadata on top-level
-	// REPEATs, hidden helper synthesis for multi-slot seq content). Every
-	// observable surface — tree-sitter's parser generator, sittir's
-	// transform-path patches, the renderer's NodeMap walk — reads the
-	// same enriched-base rule objects, so the mutation is visible to all
-	// downstream consumers, not just the sittir slot/render pipeline. The
-	// concrete regressions PR0 surfaced when applyAutoDecompose was
-	// wired in:
+	// Auto-group-synthesis: SYNTHESIS-ONLY. Creates hidden helper rules
+	// for `optional(seq(...))` / `repeat(seq(...))` / `repeat1(seq(...))`
+	// shapes and rewrites the parent's content to a SYMBOL ref. Runs AFTER
+	// `applyWirePatternReplacement` so authored body-pattern `groups:`
+	// have had their chance to reshape rule bodies; auto-synth also skips
+	// any kind the author opted into via `transforms:`, `polymorphs:`, or
+	// path-mode `groups:` (see `collectAuthoredSynthesisKinds`) so the
+	// path-based machinery sees the rule body the author wrote.
 	//
-	//   - Tree-sitter "Unresolved conflict for symbol sequence …
-	//     _pattern / range_pattern". The earlier separator-lift swapped
-	//     `content = slot`, stripping the literal delimiter from rust's
-	//     comma-list rules and destabilizing surrounding LR(1) states.
-	//     The current non-mutating separator-lift fixes that specific
-	//     break, but…
-	//
-	//   - Renderer reads the `separator` field even on rules where
-	//     decomposition never reshaped the body. That changed the
-	//     emitted text for downstream parents (rust `let_declaration`
-	//     etc.) — read-render-parse AST-match regresses by ~29 entries
-	//     and cov drops from 178/184 to 165/184.
-	//
-	//   - Multi-slot synthesis rewrites `repeat(seq(...))` to a SYMBOL
-	//     ref into a hidden `_<parent>_repeat<N>` rule. Authored
-	//     transform patches that address sub-paths through the original
-	//     SEQ then bottom out on the SYMBOL and throw `ApplyPathSkip`.
-	//
-	// Auto-decomp ultimately belongs in a sittir-side post-evaluate pass
-	// that operates on a private copy of the rule tree (where it can
-	// rewrite freely without affecting tree-sitter's view or invalidating
-	// override paths and renderer expectations). Until that lands, leave
-	// `base.grammar.rules` alone here. `applyAutoDecompose` /
-	// `collectAuthoredSynthesisKinds` stay imported for unit-test
-	// callability via the `auto-decompose.test.ts` suite and to keep
-	// future re-enablement a one-line change.
-	void applyAutoDecompose;
-	void collectAuthoredSynthesisKinds;
+	// NOTE: this pass does NOT touch `separator` / `trailing` / `leading`
+	// metadata or otherwise reshape Rule objects beyond the
+	// optional/repeat → SYMBOL replacement. Decomposition (separator-lift,
+	// attribute stamping) is a separate concern that belongs in
+	// link/evaluate where it can operate on sittir's private rule-tree
+	// copy without affecting tree-sitter's view.
+	if (base) {
+		const authoredSynthesisKinds = collectAuthoredSynthesisKinds(
+			transforms,
+			polymorphs,
+			config.groups
+		);
+		applyAutoGroups(
+			base as Parameters<typeof applyAutoGroups>[0],
+			context,
+			authoredSynthesisKinds
+		);
+	}
 
 	const conflicts = wrapConflictsCallback(config.conflicts, context);
 	const inline = wrapInlineCallback(config.inline, context);
@@ -597,7 +586,7 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 /**
  * Collect the set of rule kinds the author opted into the structured
  * authoring pipeline (`transforms:`, `polymorphs:`, or path-mode `groups:`).
- * `applyAutoDecompose` skips these so the rule tree stays in the shape the
+ * `applyAutoGroups` skips these so the rule tree stays in the shape the
  * path-based machinery (`transform()`, polymorph splits, group lifts)
  * expects. Body-pattern `groups:` entries do NOT contribute — their keys
  * are NEW visible kind names, not existing base rules.
@@ -613,7 +602,7 @@ function collectAuthoredSynthesisKinds(
 	if (groups) {
 		for (const [k, v] of Object.entries(groups)) {
 			// Body-pattern entries (function values) introduce a NEW visible
-			// kind; they do NOT name an existing base rule that auto-decomp
+			// kind; they do NOT name an existing base rule that auto-groups
 			// might mutate. Only path-mode entries (object values) skip.
 			if (typeof v === 'function') continue;
 			kinds.add(k);
