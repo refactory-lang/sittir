@@ -22,6 +22,7 @@ Generate typed factories, render templates, and native bindings from tree-sitter
 - [TypeScript and codegen conventions](.claude/codegen-conventions.md)
 - [Grammar, templates, and overrides workflow](.claude/grammar-workflow.md)
 - [Validation and project workflow](.claude/project-workflow.md)
+- [Compiler phase glossary](docs/compiler-phase-glossary.md) — per-function reference for every phase. Updated 2026-05-19 to flag changes from the planned [rule-attribute / template-emitter refactor](docs/superpowers/specs/2026-05-18-rule-attributes-and-template-emitter-design.md) (4 PRs: IR attribute enrichment, parallel template emitter, legacy walker + ClauseRule deletion, wrapper rule type deletion). When working in `dsl/enrich.ts`, `compiler/link.ts`, `compiler/simplify.ts`, `compiler/template-walker.ts`, or `emitters/templates.ts`, read the glossary entry + the spec first.
 
 ## Current investigation handoff (`023-native-read-parity`)
 
