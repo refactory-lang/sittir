@@ -1637,11 +1637,9 @@ export function objectPatternFrom(...input: readonly ((T.PairPattern | T.RestPat
 
 export function objectTypeFrom(input: T.ObjectType.Loose): ReturnType<typeof F.objectType> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.objectType>;
-  const _ne_members = _resolveMany<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>(input.members, _K36, _K37);
-  _assertNonEmpty(_ne_members, 'object_type.members');
   return F.objectType({
     opening: coerceKindEnumStorage(_resolveOneLeaf<T.ObjectTypeOpening>(input.opening, "_object_type_opening"), [["{", kindIdFromName("{")] as const, ["{|", kindIdFromName("{|")] as const]),
-    members: _ne_members,
+    members: _resolveMany<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>(input.members, _K36, _K37),
     closing: coerceKindEnumStorage(_resolveOneLeaf<T.ObjectTypeClosing>(input.closing, "_object_type_closing"), [["}", kindIdFromName("}")] as const, ["|}", kindIdFromName("|}")] as const]),
   });
 }

@@ -3882,7 +3882,7 @@
           "paramName": "inClauses",
           "required": false,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "terminal",
@@ -3891,7 +3891,7 @@
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "expression",
               "unresolved": true
             }

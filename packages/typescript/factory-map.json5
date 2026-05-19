@@ -4411,7 +4411,7 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": true
+        "nonEmpty": false
       },
       "closing": {
         "unnamed": false,

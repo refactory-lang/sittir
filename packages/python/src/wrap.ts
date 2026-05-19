@@ -1074,13 +1074,13 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ExecStatement as const,
     _code: normalizeSingularWrapSlot(data._code, "code", true, data.$type),
-    _in_clause: normalizeRepeatedWrapSlot(data._in_clause, true, "in_clause"),
+    _in_clause: normalizeRepeatedWrapSlot(data._in_clause, false, "in_clause"),
 
     code() { return drillIn<T.String | T.Identifier>(this._code, tree); },
     inClauses() { return drillInAll<"in" | T.Expression>(this._in_clause as readonly ("in" | T.Expression)[] | undefined, tree); },
     $with: {
       code: (v: NonNullable<T.ExecStatement['_code']>) => wrapExecStatement({ ...data, _code: v }, tree),
-      inClauses: (...v: NonEmptyArray<NonNullable<T.ExecStatement['_in_clause']>[number]>) => wrapExecStatement({ ...data, _in_clause: v }, tree),
+      inClauses: (...v: NonNullable<T.ExecStatement['_in_clause']>[number][]) => wrapExecStatement({ ...data, _in_clause: v }, tree),
     },
   }, methodsEngine);
   return _node;

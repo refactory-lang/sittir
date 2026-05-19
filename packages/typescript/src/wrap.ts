@@ -3280,7 +3280,7 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ObjectType as const,
     _opening: projectKindEnumStorage(normalizeSingularWrapSlot(data._opening, "opening", true, data.$type)),
-    _members: normalizeRepeatedWrapSlot(data._members, true, "members"),
+    _members: normalizeRepeatedWrapSlot(data._members, false, "members"),
     _closing: projectKindEnumStorage(normalizeSingularWrapSlot(data._closing, "closing", true, data.$type)),
 
     opening() { return this._opening; },
@@ -3288,7 +3288,7 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle) {
     closing() { return this._closing; },
     $with: {
       opening: (v: NonNullable<T.ObjectType['_opening']>) => wrapObjectType({ ...data, _opening: v }, tree),
-      members: (...v: NonEmptyArray<NonNullable<T.ObjectType['_members']>[number]>) => wrapObjectType({ ...data, _members: v }, tree),
+      members: (...v: NonNullable<T.ObjectType['_members']>[number][]) => wrapObjectType({ ...data, _members: v }, tree),
       closing: (v: NonNullable<T.ObjectType['_closing']>) => wrapObjectType({ ...data, _closing: v }, tree),
     },
   }, methodsEngine);

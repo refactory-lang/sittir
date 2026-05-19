@@ -3864,14 +3864,14 @@ export interface ObjectPattern {
 export interface ObjectType {
   readonly $type: TSKindId.ObjectType;
   readonly _opening: number;
-  readonly _members?: NonEmptyArray<"," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon>;
+  readonly _members?: readonly ("," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon)[];
   readonly _closing: number;
   readonly __inputHints__?: {
     readonly opening: KindEnum<"{" | "{|", TSKindId.Lbrace | TSKindId.LbracePipe>;
     readonly closing: KindEnum<"}" | "|}", TSKindId.Rbrace | TSKindId.PipeRbrace>;
   };
   opening(): number;
-  members(): NonEmptyArray<"," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon>;
+  members(): readonly ("," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon)[];
   closing(): number;
 }
 

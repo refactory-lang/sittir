@@ -935,7 +935,7 @@ export function execStatement(config: T.ExecStatement.Config) {
     inClauses() { return _in_clause; },
     $with: {
       code: (value: T.String | T.Identifier) => execStatement({ ...config, code: value }),
-      inClauses: (...values: NonEmptyArray<"in" | T.Expression>) => execStatement({ ...config, inClause: values }),
+      inClauses: (...values: ("in" | T.Expression)[]) => execStatement({ ...config, inClause: values }),
     },
   }, methodsEngine);
 }

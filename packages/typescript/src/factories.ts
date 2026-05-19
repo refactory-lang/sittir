@@ -3529,7 +3529,7 @@ export function objectType(config: ConfigOf<T.ObjectType>) {
     closing() { return _closing; },
     $with: {
       opening: (value: NonNullable<Parameters<typeof objectType>[0]>['opening']) => objectType({ ...config, opening: value }),
-      members: (...values: NonEmptyArray<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>) => objectType({ ...config, members: values }),
+      members: (...values: ("," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon)[]) => objectType({ ...config, members: values }),
       closing: (value: NonNullable<Parameters<typeof objectType>[0]>['closing']) => objectType({ ...config, closing: value }),
     },
   }, methodsEngine);
@@ -3550,7 +3550,7 @@ export function objectTypeCurly(config?: T.ObjectType.Curly.Config) {
     members() { return _members; },
     closing() { return _closing; },
     $with: {
-      members: (...values: NonEmptyArray<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>) => objectTypeCurly({ ...config, members: values }),
+      members: (...values: ("," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon)[]) => objectTypeCurly({ ...config, members: values }),
     },
   }, methodsEngine);
 }
@@ -3570,7 +3570,7 @@ export function objectTypeFlow(config?: T.ObjectType.Flow.Config) {
     members() { return _members; },
     closing() { return _closing; },
     $with: {
-      members: (...values: NonEmptyArray<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>) => objectTypeFlow({ ...config, members: values }),
+      members: (...values: ("," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon)[]) => objectTypeFlow({ ...config, members: values }),
     },
   }, methodsEngine);
 }

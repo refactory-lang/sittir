@@ -814,11 +814,9 @@ export function exceptClauseFrom(input: T.ExceptClause.Loose): ReturnType<typeof
 
 export function execStatementFrom(input: T.ExecStatement.Loose): ReturnType<typeof F.execStatement> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.execStatement>;
-  const _ne_inClauses = _resolveMany<"in" | T.Expression>(input.inClause, _K0, _K1);
-  _assertNonEmpty(_ne_inClauses, 'exec_statement.inClauses');
   return F.execStatement({
     code: _resolveOne<T.String | T.Identifier>(input.code, _K2, _K14),
-    inClause: _ne_inClauses,
+    inClause: _resolveMany<"in" | T.Expression>(input.inClause, _K0, _K1),
   });
 }
 

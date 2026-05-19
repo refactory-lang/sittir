@@ -1072,6 +1072,38 @@ function fieldContentMultiplicity(content: Rule, outerMultiplicity: Multiplicity
 			if (inner === 'nonEmptyArray') return 'array';
 			return 'optional';
 		}
+		case 'choice': {
+			// `choice(X, blank)` is functionally `optional(X)` — the blank arm
+			// makes the entire field content optional. Tree-sitter's grammar.json
+			// emits BLANK which sittir normalizes to an empty choice (`{type:
+			// 'choice', members: []}`). Recognizing this pattern downgrades the
+			// inner multiplicity the same way `optional(...)` would, fixing slot
+			// declarations like `object_type.members` (whose body is `choice(
+			// seq(member, repeat(seq(sep, member))), blank)` — valid syntax for
+			// empty `{}` types). Mirrors `collectOptionalBodyKinds` in
+			// assemble.ts but operates one level deeper: inside a field body
+			// rather than at top-level rule body.
+			const isBlank = (r: Rule): boolean =>
+				(r.type === 'choice' && r.members.length === 0) ||
+				(r.type === 'seq' && r.members.length === 0);
+			const nonBlank = content.members.filter((m) => !isBlank(m));
+			const hasBlank = nonBlank.length < content.members.length;
+			if (hasBlank && nonBlank.length === 1) {
+				const inner = fieldContentMultiplicity(nonBlank[0]!, outerMultiplicity);
+				if (inner === 'nonEmptyArray') return 'array';
+				if (inner === 'single') return 'optional';
+				return inner;
+			}
+			// Mixed choice (no blank, or blank + multiple non-blank arms) — fall
+			// through to the default treatment.
+			if (fieldContentIsMultiSibling(content)) {
+				if (outerMultiplicity === 'optional') return 'array';
+				return outerMultiplicity === 'array' || outerMultiplicity === 'nonEmptyArray'
+					? outerMultiplicity
+					: 'nonEmptyArray';
+			}
+			return outerMultiplicity;
+		}
 		default:
 			if (fieldContentIsMultiSibling(content)) {
 				if (outerMultiplicity === 'optional') return 'array';
@@ -1253,11 +1285,30 @@ function deriveValuesForRule(
 				resolvedKind: findGeneratedKindEntry(kindEntries ?? [], m.value)?.kind,
 				multiplicity
 			}));
-		case 'choice':
+		case 'choice': {
+			// `choice(X, blank)` is functionally `optional(X)` — the blank arm
+			// makes the entire choice optional. Downgrade nonEmptyArray → array
+			// and single → optional when recursing into the non-blank arms.
+			// Mirrors the fieldContentMultiplicity choice handling and the
+			// rule-body lookthrough in assemble.ts.
+			const isBlank = (r: Rule): boolean =>
+				(r.type === 'choice' && r.members.length === 0) ||
+				(r.type === 'seq' && r.members.length === 0);
+			const nonBlank = rule.members.filter((m) => !isBlank(m));
+			const hasBlank = nonBlank.length < rule.members.length;
+			const armMult: Multiplicity =
+				hasBlank && nonBlank.length >= 1
+					? multiplicity === 'nonEmptyArray'
+						? 'array'
+						: multiplicity === 'single'
+							? 'optional'
+							: multiplicity
+					: multiplicity;
 			// Each arm is independent — union all entries. Arms may differ in
 			// their own multiplicity if they wrap repeat/optional differently.
-			return rule.members.flatMap((m) => deriveValuesForRule(m, multiplicity, kindEntries));
-		case 'optional':
+			return nonBlank.flatMap((m) => deriveValuesForRule(m, armMult, kindEntries));
+		}
+		case 'optional': {
 			// `optional(repeat1(X, sep))` survives evaluate when the
 			// optional wraps the canonical commaSep1 lift (e.g. python's
 			// `parameters: seq('(', optional(_parameters), ')')`).
@@ -1270,7 +1321,17 @@ function deriveValuesForRule(
 			if (rule.content.type === 'repeat1') {
 				return deriveValuesForRule(rule.content.content, 'array', kindEntries);
 			}
-			return deriveValuesForRule(rule.content, 'optional', kindEntries);
+			// For `optional(seq(..., repeat1(...), ...))` and similar nested
+			// shapes (which is the form `choice(seq(...), blank)` folds to
+			// during simplify), the outer optional makes the entire content
+			// empty-allowed. Any `nonEmptyArray` produced by an inner repeat1
+			// is therefore relaxed to `array` at the outer slot — empty inputs
+			// like `{}` (object_type with zero members) are valid.
+			const inner = deriveValuesForRule(rule.content, 'optional', kindEntries);
+			return inner.map((v) =>
+				v.multiplicity === 'nonEmptyArray' ? { ...v, multiplicity: 'array' as const } : v
+			);
+		}
 		case 'repeat':
 			return deriveValuesForRule(rule.content, 'array', kindEntries);
 		case 'repeat1':
