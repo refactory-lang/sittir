@@ -28,7 +28,12 @@ import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
 import { AssembledGroup } from '../compiler/node-map.ts';
-import type { AssembledNode } from '../compiler/node-map.ts';
+import type {
+	AssembledBranch,
+	AssembledMulti,
+	AssembledNode,
+	AssembledPolymorph
+} from '../compiler/node-map.ts';
 import type { Rule } from '../compiler/rule.ts';
 import { compileWordMatcher } from '../compiler/common.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -42,6 +47,13 @@ export interface EmitTemplatesConfig {
 
 export interface EmittedTemplates {
 	bodies: Map<string, string>;
+}
+
+interface EmitCtx {
+	readonly nodeMap: NodeMap;
+	readonly wordMatcher: RegExp;
+	readonly externals: readonly string[];
+	readonly rules: Record<string, Rule>;
 }
 
 // Nunjucks whitespace control (`{#- ... -#}`) strips whitespace
@@ -93,6 +105,46 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		if (body === null) return;
 		this.#bodies.set(node.kind, `${GENERATED_HEADER}\n${body}`);
 	}
+}
+
+function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
+	switch (node.modelType) {
+		case 'branch':
+			return emitBranchTemplate(node, ctx);
+		case 'polymorph':
+			return emitPolymorphTemplate(node, ctx);
+		case 'group':
+			return emitGroupTemplate(node, ctx);
+		case 'multi':
+			return emitMultiTemplate(node, ctx);
+		case 'supertype':
+		case 'pattern':
+		case 'keyword':
+		case 'token':
+		case 'enum':
+			return undefined;
+		default: {
+			const _exhaustive: never = node;
+			throw new Error(`emitOne: unhandled modelType ${(_exhaustive as AssembledNode).modelType}`);
+		}
+	}
+}
+
+// Stubs — Task 2.4 fills these in:
+function emitBranchTemplate(_n: AssembledBranch, _ctx: EmitCtx): string {
+	return '';
+}
+
+function emitPolymorphTemplate(_n: AssembledPolymorph, _ctx: EmitCtx): string {
+	return '';
+}
+
+function emitGroupTemplate(_n: AssembledGroup, _ctx: EmitCtx): string {
+	return '';
+}
+
+function emitMultiTemplate(_n: AssembledMulti, _ctx: EmitCtx): string {
+	return '';
 }
 
 /**
