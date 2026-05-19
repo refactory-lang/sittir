@@ -59,6 +59,7 @@
  * picks them up via line-315 `Object.assign({}, baseGrammar.rules)`.
  */
 
+import { createHash } from 'node:crypto';
 import type { Rule } from '../compiler/rule.ts';
 import {
 	isSeqType,
@@ -155,6 +156,7 @@ function applyEnrichPasses(
 		// ordering-invariance test in enrich-multiplicity-wrappers.test.ts).
 		r = enrichFieldWrappers(r);
 		r = enrichMultiplicityWrappers(r);
+		r = decomposeOptional(r, kwRules);
 		if (r === before) return r;
 	}
 	if (!process.env.SITTIR_QUIET) {
@@ -1147,4 +1149,119 @@ function rebuildOptional(optionalRule: Rule, newInner: Rule): Rule {
 		return t === 'BLANK' || t === 'blank' ? m : newInner;
 	});
 	return { ...optionalRule, members: newMembers } as Rule;
+}
+
+// ---------------------------------------------------------------------------
+// Pass: decomposeOptional — auto-group-synthesis for non-leaf optional content
+// ---------------------------------------------------------------------------
+// Per Option A (spec "Universal canonical shape"): when `optional(content)`
+// wraps a seq/choice with slot-bearing members, the content is lifted into
+// a synthesized hidden group rule (`_opt_grp_<hex>`) and the optional's
+// content is rewritten to a SymbolRule referencing the synthesized name.
+//
+// Synthesized rules ride the existing per-enrich `kwRules` accumulator
+// (same path as `_kw_<name>` keyword helpers), so they end up merged into
+// the final grammar rules map at the end of `enrich()`. The TS surface
+// (wrap.ts, from.ts) already handles synthesized hidden kinds — Option A
+// is implemented entirely TS-side without changing the tree-sitter parse
+// shape.
+//
+// Three cases:
+//   1. Leaf content (symbol / string / enum without slot attributes):
+//      no synthesis — multiplicity already stamped by
+//      `enrichMultiplicityWrappers`.
+//   2. seq/choice with at least one slot-bearing member (field, symbol,
+//      optional, repeat, repeat1, or nested seq/choice with slots):
+//      synthesize a hidden group; replace the optional content with a
+//      SymbolRule.
+//   3. Pure-literal seq/choice (no fields, no symbols, no nested slots):
+//      no synthesis — just an optionally-rendered text fragment.
+//
+// Hash-stable naming: the synthesized name is `_opt_grp_<sha1(content)[:12]>`.
+// Identical content bodies dedupe to the same synthesized rule. Stability
+// across runs is verified by the deterministic-name test.
+
+function decomposeOptional(rule: Rule, kwRules: Record<string, Rule>): Rule {
+	const recursed = recurseChildren(rule, (r) => decomposeOptional(r, kwRules));
+	if (!isOptionalType(recursed.type)) return recursed;
+	const content = (recursed as unknown as { content?: Rule }).content;
+	if (!content || typeof content !== 'object') return recursed;
+	const t = (content as { type?: string }).type;
+	if (!isSeqType(t) && !isChoiceType(t)) return recursed;
+	if (!hasSlotBearingMember(content)) return recursed;
+
+	const synName = computeOptGroupName(content);
+	if (!(synName in kwRules)) {
+		kwRules[synName] = content;
+	}
+
+	const symbolRef = {
+		type: detectCase(recursed) === 'upper' ? 'SYMBOL' : 'symbol',
+		name: synName,
+		source: 'group-lift'
+	} as unknown as Rule;
+	return { ...recursed, content: symbolRef } as Rule;
+}
+
+/** @internal — true when a seq/choice has at least one slot-bearing
+ *  member: a field, a bare symbol reference, a multiplicity wrapper
+ *  (optional/repeat/repeat1), or a nested seq/choice that itself bears
+ *  slots. Pure-literal seqs (`seq('(', ')')`) return false. */
+function hasSlotBearingMember(rule: unknown): boolean {
+	if (!rule || typeof rule !== 'object') return false;
+	const r = rule as { type?: string; members?: unknown[] };
+	const t = r.type;
+	if (!isSeqType(t) && !isChoiceType(t)) return false;
+	const members = Array.isArray(r.members) ? r.members : [];
+	for (const m of members) {
+		if (!m || typeof m !== 'object') continue;
+		const mt = (m as { type?: string }).type;
+		if (
+			isFieldType(mt) ||
+			isSymbolType(mt) ||
+			isOptionalType(mt) ||
+			isRepeatType(mt)
+		) {
+			return true;
+		}
+		if ((isSeqType(mt) || isChoiceType(mt)) && hasSlotBearingMember(m)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/** @internal — hash-stable synthesized-group name. Pure function of the
+ *  content body's structure (via canonical JSON), so identical bodies
+ *  produce identical synthesized names across runs and across rule sites.
+ *  sha1 truncated to 12 hex chars — collisions are vanishingly unlikely
+ *  in any realistic grammar and the `_opt_grp_` prefix prevents
+ *  collisions with user-authored rule names. */
+function computeOptGroupName(content: Rule): string {
+	const json = canonicalStringify(content);
+	const hash = createHash('sha1').update(json).digest('hex').slice(0, 12);
+	return `_opt_grp_${hash}`;
+}
+
+/** @internal — canonical JSON stringify with sorted object keys. Ensures
+ *  that two structurally-equal rule bodies hash to the same name even
+ *  when property insertion order differs between rule construction
+ *  paths. Skips functions and undefined values (consistent with
+ *  JSON.stringify). */
+function canonicalStringify(value: unknown): string {
+	if (value === null || typeof value !== 'object') {
+		return JSON.stringify(value);
+	}
+	if (Array.isArray(value)) {
+		return '[' + value.map((v) => canonicalStringify(v)).join(',') + ']';
+	}
+	const obj = value as Record<string, unknown>;
+	const keys = Object.keys(obj).sort();
+	const parts: string[] = [];
+	for (const k of keys) {
+		const v = obj[k];
+		if (typeof v === 'function' || typeof v === 'undefined') continue;
+		parts.push(JSON.stringify(k) + ':' + canonicalStringify(v));
+	}
+	return '{' + parts.join(',') + '}';
 }
