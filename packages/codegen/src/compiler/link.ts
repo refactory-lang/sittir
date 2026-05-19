@@ -1708,13 +1708,13 @@ function resolveRule(
 	switch (rule.type) {
 		case 'seq':
 			return {
-				type: 'seq',
+				...rule,
 				members: rule.members.map((m) => resolveRule(m, currentName, allRules, supertypes, externalRoles))
 			};
 
 		case 'choice':
 			return {
-				type: 'choice',
+				...rule,
 				members: rule.members.map((m) => resolveRule(m, currentName, allRules, supertypes, externalRoles))
 			};
 
