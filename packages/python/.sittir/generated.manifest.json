@@ -1,7 +1,7 @@
 {
   "grammar": "python",
-  "generated_at": "2026-05-19T14:04:38.886Z",
-  "source_hash": "1f5cf277d2f9b6555a8ed1bb9a4d1c94eafb879915f215e683eb1a4cdf39cf27",
+  "generated_at": "2026-05-19T14:23:16.054Z",
+  "source_hash": "42fa6c16ba3e82fecfbea34dd3c3516939e91aab7ec491408294c7cee4684296",
   "files": {
     "packages/python/.sittir/grammar.js": "64b9b8cd86639e2055864a811dcb747ceb79c492390aae7f720fd90ca7d4f660",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",

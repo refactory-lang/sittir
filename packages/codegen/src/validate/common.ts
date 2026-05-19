@@ -44,7 +44,7 @@ export type TSTree = TS.Tree;
  * Parse a tree-sitter test corpus file.
  * Format: `====` header, test name, `====`, source, `----`, expected tree.
  */
-export function parseCorpus(content: string): CorpusEntry[] {
+export function parseCorpus(content: string, grammar?: string): CorpusEntry[] {
 	const entries: CorpusEntry[] = [];
 	const lines = content.split('\n');
 	let i = 0;
@@ -59,7 +59,28 @@ export function parseCorpus(content: string): CorpusEntry[] {
 		const name = lines[i]?.trim() ?? '';
 		i++;
 
-		while (i < lines.length && lines[i]!.startsWith('====')) i++;
+		// Capture optional `:language(...)` directive lines that may appear
+		// between the name and the closing `====` (e.g. `:language(tsx)`).
+		// The directive selects which sub-grammar variant to use; when it
+		// names a grammar other than the one being validated, the entry is
+		// skipped entirely (sittir's validator loads a single parser per
+		// grammar — it cannot parse TSX-only entries with the TS parser, so
+		// counting them as failures would skew the numbers).
+		let declaredLanguage: string | undefined;
+		while (i < lines.length) {
+			const line = lines[i]!;
+			if (line.startsWith('====')) {
+				i++;
+				continue;
+			}
+			const directiveMatch = line.trim().match(/^:language\((.+?)\)$/);
+			if (directiveMatch) {
+				declaredLanguage = directiveMatch[1];
+				i++;
+				continue;
+			}
+			break;
+		}
 
 		const sourceLines: string[] = [];
 		while (i < lines.length && !lines[i]!.match(/^-{3,}$/)) {
@@ -70,7 +91,14 @@ export function parseCorpus(content: string): CorpusEntry[] {
 		while (i < lines.length && !lines[i]!.startsWith('====')) i++;
 
 		const source = sourceLines.join('\n').trim();
-		if (source) entries.push({ name, source });
+		if (!source) continue;
+		if (grammar !== undefined && declaredLanguage !== undefined && declaredLanguage !== grammar) {
+			// Entry is declared for a different sub-grammar (e.g.
+			// `:language(tsx)` when validating `typescript`). Skip it
+			// entirely — don't include in totals.
+			continue;
+		}
+		entries.push({ name, source });
 	}
 
 	return entries;
@@ -87,7 +115,7 @@ export function loadCorpusEntries(grammar: string): CorpusEntry[] {
 	const files = readdirSync(FIXTURES_DIR).filter((f) => f.startsWith(`${grammar}-`) && f.endsWith('.txt'));
 	for (const file of files) {
 		const content = readFileSync(join(FIXTURES_DIR, file), 'utf-8');
-		entries.push(...parseCorpus(content));
+		entries.push(...parseCorpus(content, grammar));
 	}
 	return entries;
 }
