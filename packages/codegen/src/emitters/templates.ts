@@ -520,16 +520,14 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 		return rule.literal !== undefined ? escapeLiteral(rule.literal) : '';
 	}
 	// Slot back-pointer wins: when assembly registered a slot for this
-	// rule position, prefer it over hidden-helper inlining. Use the raw
-	// kind name lowercased (matches walker's `$$$KIND` → `{{ kind }}`
-	// translation, NOT slot.propertyName which is camelCase+plural).
+	// rule position, prefer it over hidden-helper inlining. Walker emits
+	// `$$$KIND` (list form) for visible symbol refs regardless of slot
+	// multiplicity — `translateToJinja` always produces
+	// `{{ kind | join(" ") }}` for the triple-dollar shape. Use raw
+	// snake_case name lowercased (NOT slot.propertyName).
 	const slot = lookupSlot(rule, ctx);
 	if (slot) {
-		const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
-		if (isMultiple(slot)) {
-			return emitListSlot(slotName, rule);
-		}
-		return emitScalarSlot(slotName);
+		return emitSymbolSlot(rule.name, ctx);
 	}
 	// Group-lifted symbols carry their own template; emit as a
 	// kind-named slot, never inline-expand.
