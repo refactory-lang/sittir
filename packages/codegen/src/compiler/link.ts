@@ -1721,7 +1721,10 @@ function resolveRule(
 		case 'optional': {
 			const content = resolveRule(rule.content, currentName, allRules, supertypes, externalRoles);
 			// Clause detection: optional(seq(STRING, FIELD, ...))
-			return detectClause(content, currentName);
+			// Preserve original rule.id through detectClause's fresh object construction
+			// so NodeMap.nodeByRuleId can register optional-rooted kinds.
+			const detected = detectClause(content, currentName);
+			return rule.id !== undefined ? { ...detected, id: rule.id } : detected;
 		}
 
 		case 'repeat':

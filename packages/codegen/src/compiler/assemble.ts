@@ -228,6 +228,12 @@ export function assemble(
 		if (!node) continue;
 		if (rule.id) nodeByRuleId.set(rule.id, node);
 	}
+	// KNOWN LIMITATION: `mergeFieldsByName` (node-map.ts) folds multi-contributor
+	// slots by spreading the first contributor's data. After merging, the slot's
+	// `sourceRuleId` reflects only one source rule. Other contributors' rule ids
+	// will not resolve via `slotByRuleId` — downstream lookups must fall back to
+	// owner traversal for those edge cases. Tracked for follow-up; storing
+	// `sourceRuleIds: RuleId[]` on the slot is the structural fix.
 	for (const node of nodes.values()) {
 		for (const slot of allSlotsOf(node)) {
 			if (slot.sourceRuleId) slotByRuleId.set(slot.sourceRuleId, slot);
