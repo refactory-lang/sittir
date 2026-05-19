@@ -145,7 +145,16 @@ function applyEnrichPasses(
 		// generator tables, breaking unrelated rules' reparse (rust corpus
 		// regresses by ~47/136 with this pass on).
 		r = applyOptionalKeyword(ruleName, r, kwRules);
+		// Order: field wrappers BEFORE multiplicity wrappers so that an
+		// `optional(field(name, X))` shape first stamps fieldName on the
+		// inner FIELD's content, then the outer OPTIONAL stamps
+		// multiplicity onto the inner FIELD. The fixed-point loop in
+		// applyEnrichPasses re-runs both until convergence, so the reverse
+		// authoring shape `field(name, optional(X))` also converges to
+		// the same attribute set on the leaf (verified by the
+		// ordering-invariance test in enrich-multiplicity-wrappers.test.ts).
 		r = enrichFieldWrappers(r);
+		r = enrichMultiplicityWrappers(r);
 		if (r === before) return r;
 	}
 	if (!process.env.SITTIR_QUIET) {
@@ -859,7 +868,7 @@ function tryPromoteInRepeatSeq(
 // the `r === before` convergence check in applyEnrichPasses.
 
 function enrichFieldWrappers(rule: Rule): Rule {
-	const recursed = recurseFieldWrappers(rule);
+	const recursed = recurseChildren(rule, enrichFieldWrappers);
 	if (!isFieldType(recursed.type)) return recursed;
 	const name = (recursed as unknown as { name?: unknown }).name;
 	const content = (recursed as unknown as { content?: unknown }).content;
@@ -871,11 +880,13 @@ function enrichFieldWrappers(rule: Rule): Rule {
 }
 
 /** @internal — descend into structural children of `rule` and apply
- *  enrichFieldWrappers to each. Mirrors the shape-walk used by other
- *  passes (seq/choice members; optional/repeat/repeat1/prec/field/alias
+ *  `visit` to each. Mirrors the shape-walk used by both
+ *  `enrichFieldWrappers` and `enrichMultiplicityWrappers`
+ *  (seq/choice members; optional/repeat/repeat1/prec/field/alias
  *  content). Returns the original rule reference when no descendant
- *  changes — preserves the fixed-point identity check. */
-function recurseFieldWrappers(rule: Rule): Rule {
+ *  changes — preserves the fixed-point identity check in
+ *  `applyEnrichPasses`. */
+function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 	if (!rule || typeof rule !== 'object') return rule;
 	const t = (rule as { type?: string }).type;
 	if (!t) return rule;
@@ -884,7 +895,7 @@ function recurseFieldWrappers(rule: Rule): Rule {
 		if (!Array.isArray(members)) return rule;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = enrichFieldWrappers(m);
+			const out = visit(m);
 			if (out !== m) changed = true;
 			return out;
 		});
@@ -904,11 +915,113 @@ function recurseFieldWrappers(rule: Rule): Rule {
 	) {
 		const content = (rule as unknown as { content?: Rule }).content;
 		if (content === undefined) return rule;
-		const out = enrichFieldWrappers(content);
+		const out = visit(content);
 		if (out === content) return rule;
 		return { ...rule, content: out } as Rule;
 	}
 	return rule;
+}
+
+// ---------------------------------------------------------------------------
+// Pass: multiplicity-wrapper attribute propagation
+// ---------------------------------------------------------------------------
+// For every OPTIONAL / REPEAT / REPEAT1 wrapper, stamp the corresponding
+// multiplicity ('optional' / 'array' / 'nonEmptyArray') and `nonterminal:
+// true` on the wrapper node itself AND propagate down through any
+// transparent wrappers (field/alias/token/prec) in the content path so
+// the inner leaf carries the multiplicity too. Mirrors how
+// `propagateFieldName` (used by enrich-promoted field wrappers) stamps
+// fieldName on inner refs.
+//
+// The dual stamping (wrapper-self + inner-leaf) ensures that both
+// authoring shapes converge on the same effective attribute set
+// regardless of nesting order:
+//
+//   optional(field(name, X))   → field gets multiplicity, X gets fieldName+multiplicity
+//   field(name, optional(X))   → optional gets fieldName+multiplicity, X gets multiplicity
+//
+// Post-order recursion via the shared `recurseChildren` helper;
+// identity-preserving on no-op; idempotent (short-circuits when the
+// attributes already match the wrapper's intended values). The
+// fixed-point loop in `applyEnrichPasses` re-runs this and
+// `enrichFieldWrappers` until convergence.
+
+const MULTIPLICITY_BY_TYPE: Record<string, 'optional' | 'array' | 'nonEmptyArray'> = {
+	optional: 'optional',
+	OPTIONAL: 'optional',
+	repeat: 'array',
+	REPEAT: 'array',
+	repeat1: 'nonEmptyArray',
+	REPEAT1: 'nonEmptyArray'
+};
+
+function enrichMultiplicityWrappers(rule: Rule): Rule {
+	const recursed = recurseChildren(rule, enrichMultiplicityWrappers);
+	const t = (recursed as { type?: string }).type;
+	const multiplicity = t ? MULTIPLICITY_BY_TYPE[t] : undefined;
+	if (!multiplicity) return recursed;
+	const self = recursed as unknown as { multiplicity?: unknown; nonterminal?: unknown };
+	const selfNeedsStamp = self.multiplicity !== multiplicity || self.nonterminal !== true;
+	const content = (recursed as unknown as { content?: unknown }).content;
+	const stampedContent = content && typeof content === 'object'
+		? stampMultiplicityThroughWrappers(content as object, multiplicity)
+		: content;
+	if (!selfNeedsStamp && stampedContent === content) return recursed;
+	const next: Record<string, unknown> = { ...(recursed as unknown as Record<string, unknown>) };
+	if (selfNeedsStamp) {
+		next.multiplicity = multiplicity;
+		next.nonterminal = true;
+	}
+	if (stampedContent !== content) {
+		next.content = stampedContent;
+	}
+	return next as unknown as Rule;
+}
+
+/** @internal — stamp `multiplicity` + `nonterminal: true` on `node` and,
+ *  if `node` is a transparent wrapper (field/alias/token/prec), recurse
+ *  into its content so the inner leaf carries the same attributes. Stops
+ *  at structural boundaries (seq/choice) and at nested multiplicity
+ *  wrappers (those carry their own multiplicity). Returns the original
+ *  reference when nothing changes — preserves the fixed-point identity
+ *  check. */
+function stampMultiplicityThroughWrappers(
+	node: object,
+	multiplicity: 'optional' | 'array' | 'nonEmptyArray'
+): object {
+	const existing = node as { multiplicity?: unknown; nonterminal?: unknown };
+	const selfNeedsStamp = existing.multiplicity !== multiplicity || existing.nonterminal !== true;
+	const t = (node as { type?: string }).type;
+	// Transparent wrappers — descend into `content` and stamp deeper.
+	const isTransparent = !!t && (
+		isFieldType(t) ||
+		isPrecWrapper(node as { type: string }) ||
+		t === 'alias' ||
+		t === 'ALIAS' ||
+		t === 'token' ||
+		t === 'TOKEN' ||
+		t === 'immediate_token' ||
+		t === 'IMMEDIATE_TOKEN'
+	);
+	let newContent: unknown;
+	let contentChanged = false;
+	if (isTransparent) {
+		const content = (node as { content?: unknown }).content;
+		if (content && typeof content === 'object') {
+			newContent = stampMultiplicityThroughWrappers(content as object, multiplicity);
+			contentChanged = newContent !== content;
+		}
+	}
+	if (!selfNeedsStamp && !contentChanged) return node;
+	const next: Record<string, unknown> = { ...(node as Record<string, unknown>) };
+	if (selfNeedsStamp) {
+		next.multiplicity = multiplicity;
+		next.nonterminal = true;
+	}
+	if (contentChanged) {
+		next.content = newContent;
+	}
+	return next;
 }
 
 // ---------------------------------------------------------------------------
