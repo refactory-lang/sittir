@@ -32,6 +32,7 @@ import type {
 	AssembledBranch,
 	AssembledMulti,
 	AssembledNode,
+	AssembledNonterminal,
 	AssembledPolymorph
 } from '../compiler/node-map.ts';
 import type { Rule } from '../compiler/rule.ts';
@@ -49,7 +50,7 @@ export interface EmittedTemplates {
 	bodies: Map<string, string>;
 }
 
-interface EmitCtx {
+export interface EmitCtx {
 	readonly nodeMap: NodeMap;
 	readonly wordMatcher: RegExp;
 	readonly externals: readonly string[];
@@ -168,6 +169,358 @@ function emitGroupTemplate(_n: AssembledGroup, _ctx: EmitCtx): string {
 
 function emitMultiTemplate(_n: AssembledMulti, _ctx: EmitCtx): string {
 	return '';
+}
+
+// ---------------------------------------------------------------------------
+// emitRule — Rule.type dispatcher
+//
+// Walks a Rule subtree producing Jinja directly. Replaces the legacy
+// `template-walker.ts` + `translateToJinja` two-pass pipeline.
+//
+// Per PR1 design:
+// - Reads PR0-enriched attributes (`fieldName`, `multiplicity`, `nonterminal`,
+//   `separator`) directly from the rule.
+// - Looks up slot facts (propertyName / storageName / paramName) via
+//   `ctx.nodeMap.slotByRuleId.get(rule.id)` rather than re-deriving from
+//   names.
+// - Returns Jinja text (`{{ name }}`, `{% if name | isPresent %}…{% endif %}`,
+//   `{{ items | join("…") }}`) — no `$NAME` placeholders, no translation
+//   pass downstream.
+// ---------------------------------------------------------------------------
+
+export function emitRule(rule: Rule, ctx: EmitCtx): string {
+	switch (rule.type) {
+		case 'string':
+			return escapeLiteral(rule.value);
+
+		case 'pattern':
+			// Patterns are token shapes — the renderer falls back to
+			// `$TEXT` or other slot machinery; the template proper emits
+			// nothing for a raw pattern.
+			return '';
+
+		case 'enum':
+			return rule.members.length > 0 ? escapeLiteral(rule.members[0]!.value) : '';
+
+		case 'seq':
+			return rule.members.map((m) => emitRule(m, ctx)).join('');
+
+		// Transparent wrappers — recurse into content. Variant / group /
+		// terminal / token / unnamed-alias have no template-level surface
+		// of their own; the inner rule's emission is what the renderer sees.
+		case 'token':
+		case 'terminal':
+		case 'variant':
+		case 'group':
+			return emitRule(rule.content, ctx);
+
+		case 'alias':
+			// Named aliases (`alias($._x, $.visible)`) create a visible
+			// parse-tree kind; they're a slot reference like a symbol.
+			// Unnamed aliases just relabel content; recurse.
+			if (rule.named) {
+				return emitSymbolSlot(rule.value, ctx);
+			}
+			return emitRule(rule.content, ctx);
+
+		case 'field':
+			return emitField(rule, ctx);
+
+		case 'symbol':
+			return emitSymbol(rule, ctx);
+
+		case 'optional':
+			return emitOptional(rule, ctx);
+
+		case 'repeat':
+		case 'repeat1':
+			return emitRepeat(rule, ctx);
+
+		case 'choice':
+			return emitChoice(rule, ctx);
+
+		case 'clause':
+			return emitClause(rule, ctx);
+
+		case 'indent':
+			return '\n  ';
+		case 'dedent':
+			return '\n';
+		case 'newline':
+			return '\n';
+
+		case 'supertype':
+		case 'polymorph':
+			// Supertype + polymorph rules are dispatched at the modelType
+			// boundary (`emitPolymorphTemplate` / supertype short-circuit
+			// in `emitOne`), not inside nested rule walks. Reaching them
+			// here means we're emitting an inline supertype/polymorph
+			// reference; defer to per-modelType emit by returning empty.
+			return '';
+
+		default: {
+			const _exhaustive: never = rule;
+			throw new Error(`emitRule: unhandled Rule.type ${(_exhaustive as Rule).type}`);
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Slot emission helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Look up an `AssembledNonterminal` from `slotByRuleId` for a rule that
+ * carries an `id`. Returns `undefined` for rules without an id (test
+ * fixtures, transient sub-rules) — callers fall back to name-based
+ * derivation.
+ */
+function lookupSlot(rule: Rule, ctx: EmitCtx): AssembledNonterminal | undefined {
+	if (!rule.id) return undefined;
+	return ctx.nodeMap.slotByRuleId.get(rule.id);
+}
+
+/**
+ * Project a rule's separator metadata onto a primitive `string`. The
+ * shared `RuleBase.separator` is a union of (string | Rule[] | object);
+ * the rendering layer only needs the primitive textual separator. For
+ * structured separators we stringify each rule and concatenate so the
+ * resulting join filter still represents the source text faithfully.
+ */
+function separatorToString(rule: Rule): string | undefined {
+	const sep = rule.separator;
+	if (sep === undefined) return undefined;
+	if (typeof sep === 'string') return sep;
+	if (Array.isArray(sep)) return sep.map(stringifyRule).join('');
+	// object form: { rules, trailing?, leading? }
+	const obj = sep as { rules: readonly Rule[] };
+	return obj.rules.map(stringifyRule).join('');
+}
+
+/**
+ * Pick the join-filter name based on a rule's flank metadata. Matches
+ * the legacy `filterForFlanks` decision tree but reads attributes off
+ * the rule directly (no `JinjaTranslateMeta` indirection).
+ */
+function selectJoinFilter(rule: Rule): 'join' | 'joinWithTrailing' | 'joinWithLeading' | 'joinWithFlanks' {
+	const repeatLike = rule as { trailing?: boolean; leading?: boolean };
+	const trailing = repeatLike.trailing === true;
+	const leading = repeatLike.leading === true;
+	if (trailing && leading) return 'joinWithFlanks';
+	if (trailing) return 'joinWithTrailing';
+	if (leading) return 'joinWithLeading';
+	// Also honour the structured-separator object form when carrying
+	// the flank flags directly.
+	const sep = rule.separator;
+	if (sep && typeof sep === 'object' && !Array.isArray(sep)) {
+		const obj = sep as { trailing?: boolean; leading?: boolean };
+		const t = obj.trailing === true;
+		const l = obj.leading === true;
+		if (t && l) return 'joinWithFlanks';
+		if (t) return 'joinWithTrailing';
+		if (l) return 'joinWithLeading';
+	}
+	return 'join';
+}
+
+/**
+ * Default join separator. Mirrors the legacy walker's default of a
+ * single space between elements when the grammar didn't capture an
+ * explicit separator literal.
+ */
+const DEFAULT_JOIN_SEPARATOR = ' ';
+
+/**
+ * Emit Jinja for a list-shaped slot: `{{ name | join("…") }}` (or one
+ * of the trailing/leading/flanks variants). Reads the separator from
+ * the supplied rule's attributes.
+ */
+function emitListSlot(propertyName: string, rule: Rule): string {
+	const filter = selectJoinFilter(rule);
+	const sep = separatorToString(rule) ?? DEFAULT_JOIN_SEPARATOR;
+	return `{{ ${propertyName} | ${filter}("${escapeJinjaString(sep)}") }}`;
+}
+
+/**
+ * Emit Jinja for a scalar slot: `{{ name }}`.
+ */
+function emitScalarSlot(propertyName: string): string {
+	return `{{ ${propertyName} }}`;
+}
+
+/**
+ * Emit a kind-named slot for a symbol reference whose target is a
+ * visible nonterminal kind (or named alias). The kind name itself is
+ * the slot key — matches the legacy walker's `emitChildren(slotName)`
+ * behavior where the slot lives under the kind's bare name.
+ */
+function emitSymbolSlot(kindName: string, _ctx: EmitCtx): string {
+	const slotName = snakeToCamel(kindName.replace(/^_+/, '') || 'children');
+	return emitScalarSlot(slotName);
+}
+
+// ---------------------------------------------------------------------------
+// Per-Rule.type helpers
+// ---------------------------------------------------------------------------
+
+function emitField(rule: Extract<Rule, { type: 'field' }>, ctx: EmitCtx): string {
+	const slot = lookupSlot(rule, ctx);
+	const propertyName = slot?.propertyName ?? snakeToCamel(rule.name);
+	const multiplicity = rule.multiplicity ?? rule.content.multiplicity;
+	const isArray = multiplicity === 'array' || multiplicity === 'nonEmptyArray';
+	if (isArray) {
+		// Prefer the field rule's own separator, then fall back to the
+		// inner content's separator (set by `decomposeRepeat`-style enrich
+		// that pushes the wrapper's separator onto the inner rule).
+		const separatorCarrier: Rule = rule.separator !== undefined ? rule : rule.content;
+		return emitListSlot(propertyName, separatorCarrier);
+	}
+	return emitScalarSlot(propertyName);
+}
+
+function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): string {
+	// Link-synthesized symbols carry their original literal text — render
+	// it verbatim so keyword tokens lifted from `_kw_foo` helpers emit as
+	// `foo` not as a slot reference.
+	if (rule.source === 'link') {
+		return rule.literal !== undefined ? escapeLiteral(rule.literal) : '';
+	}
+	// Slot back-pointer wins: when assembly registered a slot for this
+	// rule position, prefer its propertyName / multiplicity over any
+	// inlining we might otherwise do.
+	const slot = lookupSlot(rule, ctx);
+	if (slot) {
+		return emitScalarSlot(slot.propertyName);
+	}
+	// Group-lifted symbols carry their own template; emit as a
+	// kind-named slot, never inline-expand.
+	if (rule.source === 'group-lift') {
+		return emitSymbolSlot(rule.name, ctx);
+	}
+	// Hidden helper rules (e.g. python's `_import_list`) are inlined by
+	// tree-sitter at parse time. Recurse into the target rule's body so
+	// the helper's content surfaces in place.
+	if (rule.name.startsWith('_') && ctx.rules[rule.name]) {
+		const target = ctx.rules[rule.name]!;
+		return emitRule(target, ctx);
+	}
+	return emitSymbolSlot(rule.name, ctx);
+}
+
+/**
+ * Pick a Jinja conditional predicate name for an optional/clause whose
+ * body emits a slot. The predicate is the (camelCased) field name when
+ * one is reachable through transparent wrappers — falling back to the
+ * literal `value` keyword when no field anchors the conditional.
+ */
+function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
+	// Direct: a wrapping field declares the gate name.
+	if (content.type === 'field') {
+		const slot = lookupSlot(content, ctx);
+		return slot?.propertyName ?? snakeToCamel(content.name);
+	}
+	// Transparent wrappers — recurse.
+	if (
+		content.type === 'variant' ||
+		content.type === 'group' ||
+		content.type === 'token' ||
+		content.type === 'terminal'
+	) {
+		return pickConditionalKey(content.content, ctx);
+	}
+	if (content.type === 'alias' && !content.named) {
+		return pickConditionalKey(content.content, ctx);
+	}
+	// A seq with a single nested field — use that field.
+	if (content.type === 'seq') {
+		for (const m of content.members) {
+			const key = pickConditionalKey(m, ctx);
+			if (key) return key;
+		}
+		return undefined;
+	}
+	// A symbol with a slot back-pointer — gate on its property name.
+	if (content.type === 'symbol') {
+		const slot = lookupSlot(content, ctx);
+		if (slot) return slot.propertyName;
+	}
+	return undefined;
+}
+
+function emitOptional(rule: Extract<Rule, { type: 'optional' }>, ctx: EmitCtx): string {
+	const body = emitRule(rule.content, ctx);
+	if (!body) return '';
+	const key = pickConditionalKey(rule.content, ctx);
+	if (!key) {
+		// No field/slot to gate on — the legacy walker falls back to
+		// emitting the body unconditionally; mirror that so we don't
+		// silently drop punctuation-only optionals.
+		return body;
+	}
+	return `{%- if ${key} | isPresent %}${body}{%- endif %}`;
+}
+
+function emitRepeat(rule: Extract<Rule, { type: 'repeat' | 'repeat1' }>, ctx: EmitCtx): string {
+	const content = rule.content;
+	// When the inner rule already declares the slot (field or symbol),
+	// the slot itself encodes the list shape — emit it directly with
+	// the repeat's separator metadata propagated.
+	const inner = unwrapTransparent(content);
+	if (inner.type === 'field') {
+		const slot = lookupSlot(inner, ctx);
+		const propertyName = slot?.propertyName ?? snakeToCamel(inner.name);
+		return emitListSlot(propertyName, rule);
+	}
+	if (inner.type === 'symbol') {
+		const slot = lookupSlot(inner, ctx);
+		const propertyName = slot?.propertyName ?? snakeToCamel(inner.name.replace(/^_+/, ''));
+		return emitListSlot(propertyName, rule);
+	}
+	// Generic fallback — emit the inner rule's body. The renderer's
+	// children slot will carry the actual list values.
+	return emitRule(content, ctx);
+}
+
+function emitChoice(rule: Extract<Rule, { type: 'choice' }>, ctx: EmitCtx): string {
+	// Legacy walker picks the first non-empty branch for homogeneous
+	// choices. Heterogeneous choices require `variant()` adoption in
+	// overrides — at that point each arm becomes its own kind with its
+	// own template and this code never sees a heterogeneous choice.
+	for (const member of rule.members) {
+		const text = emitRule(member, ctx);
+		if (text) return text;
+	}
+	return '';
+}
+
+function emitClause(rule: Extract<Rule, { type: 'clause' }>, ctx: EmitCtx): string {
+	const body = emitRule(rule.content, ctx);
+	if (!body) return '';
+	// The clause name is the field name to gate on per `detectClause`'s
+	// invariant. CamelCase the clause name to match property naming —
+	// slot back-pointers (when available) provide the canonical form,
+	// but the clause itself isn't a slot, so we derive from the name.
+	const slotKey = pickConditionalKey(rule.content, ctx) ?? snakeToCamel(rule.name);
+	return `{%- if ${slotKey} | isPresent %}${body}{%- endif %}`;
+}
+
+/**
+ * Peel transparent wrappers (variant / group / token / terminal /
+ * unnamed alias) off a rule. Used by `emitRepeat` to inspect the inner
+ * shape without losing the wrapper-stripped path.
+ */
+function unwrapTransparent(rule: Rule): Rule {
+	switch (rule.type) {
+		case 'variant':
+		case 'group':
+		case 'token':
+		case 'terminal':
+			return unwrapTransparent(rule.content);
+		case 'alias':
+			return rule.named ? rule : unwrapTransparent(rule.content);
+		default:
+			return rule;
+	}
 }
 
 /**
