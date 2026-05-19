@@ -42,7 +42,8 @@ import type {
 	PolymorphRule,
 	PolymorphForm,
 	TerminalRule,
-	Multiplicity
+	Multiplicity,
+	RuleId
 } from './rule.ts';
 import { isSeq, isField } from './rule.ts';
 import { renderRuleTemplate, deriveWalkSlots, findRepeatSeparator, findRepeatFlag } from './template-walker.ts';
@@ -884,7 +885,8 @@ function deriveFieldsRaw(
 				hasTrailing,
 				hasLeading,
 				aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
-				source: rule.source ?? 'grammar'
+				source: rule.source ?? 'grammar',
+				sourceRuleId: rule.id
 				// projection field eliminated — consumers use kindsOf(slot)
 			};
 
@@ -959,7 +961,8 @@ function deriveFieldsRaw(
 					hasLeading: false,
 					aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
 					source: 'inferred',
-					origin: 'kind' as const
+					origin: 'kind' as const,
+					sourceRuleId: rule.id
 				}
 			];
 		}
@@ -998,7 +1001,8 @@ function deriveFieldsRaw(
 					hasTrailing: false,
 					hasLeading: false,
 					source: 'inferred',
-					origin: 'kind' as const
+					origin: 'kind' as const,
+					sourceRuleId: rule.id
 				}
 			];
 		}
@@ -1025,7 +1029,8 @@ function deriveFieldsRaw(
 					hasTrailing: false,
 					hasLeading: false,
 					source: 'inferred',
-					origin: 'kind' as const
+					origin: 'kind' as const,
+					sourceRuleId: rule.id
 				}
 			];
 		}
@@ -1804,6 +1809,16 @@ export interface AssembledNonterminal {
 	readonly aliasSources?: Readonly<Record<string, string>>;
 	readonly source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
 	readonly origin?: SlotOrigin;
+	/**
+	 * Rule-id of the rule that produced this slot — the `field()` /
+	 * `symbol` / `supertype` / `choice` rule whose walk in
+	 * `deriveFieldsRaw` constructed this AssembledNonterminal. Used by
+	 * `NodeMap.slotByRuleId` to back-pointer from a rule-tree position
+	 * to the owning slot without owner traversal. Optional because the
+	 * source rule may not carry an `id` (hand-constructed test fixtures
+	 * that bypass `buildRuleCatalog`). See feedback_ruleid_backpointer.
+	 */
+	readonly sourceRuleId?: RuleId;
 	storageInfo?: FieldStorageInfo;
 }
 
