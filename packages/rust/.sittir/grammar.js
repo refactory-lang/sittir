@@ -437,6 +437,186 @@ function alias(rule, value) {
   return native(rule, rule);
 }
 
+// packages/codegen/src/dsl/wire/auto-decompose.ts
+function applyAutoDecompose(base2, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
+  if (!base2) return;
+  const hasWrapper = "grammar" in base2 && base2.grammar !== void 0;
+  const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
+  if (!rulesBag) return;
+  const dedupe = {};
+  const synthRules = {};
+  for (const name of Object.keys(rulesBag)) {
+    if (authoredSynthesisKinds.has(name)) continue;
+    const rule = rulesBag[name];
+    if (!rule) continue;
+    const state = { opt: 0, rep: 0 };
+    let next = rule;
+    next = decomposeOptional(next, synthRules, name, state, dedupe);
+    next = decomposeRepeat(next, synthRules, name, state, dedupe);
+    if (next !== rule) {
+      rulesBag[name] = next;
+    }
+  }
+  for (const synName of Object.keys(synthRules)) {
+    if (synName in rulesBag) continue;
+    rulesBag[synName] = synthRules[synName];
+    context.syntheticInline.add(synName);
+  }
+}
+function decomposeOptional(rule, synthRules, parentKind, state, dedupe) {
+  const recursed = recurseChildren(
+    rule,
+    (r) => decomposeOptional(r, synthRules, parentKind, state, dedupe)
+  );
+  if (!isOptionalType(recursed.type)) return recursed;
+  const content = recursed.content;
+  if (!content || typeof content !== "object") return recursed;
+  const t = content.type;
+  if (!isSeqType(t)) return recursed;
+  if (!hasSlotBearingMember(content)) return recursed;
+  const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
+  if (!(synName in synthRules)) {
+    synthRules[synName] = content;
+  }
+  const symbolRef = {
+    type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
+    name: synName,
+    source: "group-lift"
+  };
+  return { ...recursed, content: symbolRef };
+}
+function decomposeRepeat(rule, synthRules, parentKind, state, dedupe) {
+  const recursed = recurseChildren(
+    rule,
+    (r2) => decomposeRepeat(r2, synthRules, parentKind, state, dedupe)
+  );
+  if (!isRepeatType(recursed.type)) return recursed;
+  const content = recursed.content;
+  if (!content || typeof content !== "object") return recursed;
+  const t = content.type;
+  if (!isSeqType(t)) return recursed;
+  const r = recursed;
+  if (r.separator !== void 0 || r.trailing !== void 0 || r.leading !== void 0) {
+    return recursed;
+  }
+  const members = content.members ?? [];
+  const slotBearing = [];
+  const stringMembers = [];
+  for (const m of members) {
+    const mt = m.type;
+    if (isFieldType(mt) || isSymbolType(mt) || isOptionalType(mt) || isRepeatType(mt) || (isSeqType(mt) || isChoiceType(mt)) && hasSlotBearingMember(m)) {
+      slotBearing.push(m);
+    } else if (isStringType(mt)) {
+      stringMembers.push(m);
+    }
+  }
+  if (slotBearing.length === 0) return recursed;
+  if (slotBearing.length === 1) {
+    if (stringMembers.length === 0) return recursed;
+    const existing = recursed;
+    if (existing.separator !== void 0) return recursed;
+    return {
+      ...recursed,
+      separator: stringMembers
+    };
+  }
+  const synName = synthesizeGroupName(content, parentKind, "repeat", state, dedupe);
+  if (!(synName in synthRules)) {
+    synthRules[synName] = content;
+  }
+  const symbolRef = {
+    type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
+    name: synName,
+    source: "group-lift"
+  };
+  return { ...recursed, content: symbolRef };
+}
+function detectCase(referenceRule) {
+  const t = referenceRule?.type ?? "";
+  return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
+}
+function hasSlotBearingMember(rule) {
+  if (!rule || typeof rule !== "object") return false;
+  const r = rule;
+  const t = r.type;
+  if (!isSeqType(t) && !isChoiceType(t)) return false;
+  const members = Array.isArray(r.members) ? r.members : [];
+  for (const m of members) {
+    if (!m || typeof m !== "object") continue;
+    const mt = m.type;
+    if (isFieldType(mt) || isSymbolType(mt) || isOptionalType(mt) || isRepeatType(mt)) {
+      return true;
+    }
+    if ((isSeqType(mt) || isChoiceType(mt)) && hasSlotBearingMember(m)) {
+      return true;
+    }
+  }
+  return false;
+}
+function synthesizeGroupName(content, parentKind, kind, state, dedupe) {
+  const key = canonicalStringify(content);
+  const existing = dedupe[key];
+  if (existing !== void 0) return existing;
+  const counterKey = kind === "optional" ? "opt" : "rep";
+  state[counterKey] += 1;
+  const n = state[counterKey];
+  const name = `_${parentKind}_${kind}${n}`;
+  dedupe[key] = name;
+  return name;
+}
+function canonicalStringify(value) {
+  if (value === null || typeof value !== "object") {
+    return JSON.stringify(value);
+  }
+  if (Array.isArray(value)) {
+    return "[" + value.map((v) => canonicalStringify(v)).join(",") + "]";
+  }
+  const obj = value;
+  const keys = Object.keys(obj).sort();
+  const parts = [];
+  for (const k of keys) {
+    const v = obj[k];
+    if (typeof v === "function" || typeof v === "undefined") continue;
+    parts.push(JSON.stringify(k) + ":" + canonicalStringify(v));
+  }
+  return "{" + parts.join(",") + "}";
+}
+function recurseChildren(rule, visit) {
+  if (!rule || typeof rule !== "object") return rule;
+  const t = rule.type;
+  if (!t) return rule;
+  if (isSeqType(t) || isChoiceType(t)) {
+    const members = rule.members;
+    if (!Array.isArray(members)) return rule;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const out = visit(m);
+      if (out !== m) changed = true;
+      return out;
+    });
+    return changed ? { ...rule, members: newMembers } : rule;
+  }
+  if (isOptionalType(t) || isRepeatType(t) || isFieldType(t) || isPrecWrapper(rule) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN" || t === "group" || t === "variant" || t === "clause") {
+    const content = rule.content;
+    if (content === void 0) return rule;
+    const out = visit(content);
+    if (out === content) return rule;
+    return { ...rule, content: out };
+  }
+  if (t === "polymorph") {
+    const forms = rule.forms;
+    if (!Array.isArray(forms)) return rule;
+    let changed = false;
+    const newForms = forms.map((f) => {
+      const out = visit(f.content);
+      if (out !== f.content) changed = true;
+      return changed ? { ...f, content: out } : f;
+    });
+    return changed ? { ...rule, forms: newForms } : rule;
+  }
+  return rule;
+}
+
 // packages/codegen/src/dsl/wire/wire.ts
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
@@ -500,6 +680,8 @@ function wire(config2, base2) {
   }
   wrapAllRuleFns(outRules, context);
   applyWirePatternReplacement(outRules, context.authoredRuleNames, config2.groups, context);
+  void applyAutoDecompose;
+  void collectAuthoredSynthesisKinds;
   const conflicts = wrapConflictsCallback(config2.conflicts, context);
   const inline = wrapInlineCallback(config2.inline, context);
   const wired = {
@@ -514,6 +696,18 @@ function wire(config2, base2) {
     configurable: true
   });
   return wired;
+}
+function collectAuthoredSynthesisKinds(transforms, polymorphs, groups) {
+  const kinds = /* @__PURE__ */ new Set();
+  for (const k of Object.keys(transforms)) kinds.add(k);
+  for (const k of Object.keys(polymorphs)) kinds.add(k);
+  if (groups) {
+    for (const [k, v] of Object.entries(groups)) {
+      if (typeof v === "function") continue;
+      kinds.add(k);
+    }
+  }
+  return kinds;
 }
 function composeOrSynthesizePolymorphParents(rules, polymorphs, context) {
   for (const [parent, armMap] of Object.entries(polymorphs)) {
@@ -1285,6 +1479,8 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames) {
     const before = r;
     r = applySymbolToField(ruleName, r, supertypeNames);
     r = applyOptionalKeyword(ruleName, r, kwRules);
+    r = enrichFieldWrappers(r);
+    r = enrichMultiplicityWrappers(r);
     if (r === before) return r;
   }
   if (!process.env.SITTIR_QUIET) {
@@ -1330,14 +1526,14 @@ function harvestSupertypeNames(result) {
   }
   return names;
 }
-function detectCase(referenceRule) {
+function detectCase2(referenceRule) {
   const t = referenceRule?.type ?? "";
   return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
 }
 function makeField(referenceRule, name, content) {
   propagateFieldName(content, name);
   return {
-    type: detectCase(referenceRule) === "upper" ? "FIELD" : "field",
+    type: detectCase2(referenceRule) === "upper" ? "FIELD" : "field",
     name,
     content,
     source: "enriched"
@@ -1361,7 +1557,7 @@ function propagateFieldName(rule, fieldName) {
 }
 function makeSymbol(referenceRule, name) {
   return {
-    type: detectCase(referenceRule) === "upper" ? "SYMBOL" : "symbol",
+    type: detectCase2(referenceRule) === "upper" ? "SYMBOL" : "symbol",
     name
   };
 }
@@ -1715,6 +1911,105 @@ function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertype
     result = { ...outerPrecStack[i], content: result };
   }
   return result;
+}
+function enrichFieldWrappers(rule) {
+  const recursed = recurseChildren2(rule, enrichFieldWrappers);
+  if (!isFieldType(recursed.type)) return recursed;
+  const name = recursed.name;
+  const content = recursed.content;
+  if (typeof name !== "string" || !content || typeof content !== "object") return recursed;
+  const existing = content;
+  if (existing.fieldName === name && existing.nonterminal === true) return recursed;
+  const newContent = { ...content, fieldName: name, nonterminal: true };
+  return { ...recursed, content: newContent };
+}
+function recurseChildren2(rule, visit) {
+  if (!rule || typeof rule !== "object") return rule;
+  const t = rule.type;
+  if (!t) return rule;
+  if (isSeqType(t) || isChoiceType(t)) {
+    const members = rule.members;
+    if (!Array.isArray(members)) return rule;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const out = visit(m);
+      if (out !== m) changed = true;
+      return out;
+    });
+    return changed ? { ...rule, members: newMembers } : rule;
+  }
+  if (isOptionalType(t) || isRepeatType(t) || isFieldType(t) || isPrecWrapper(rule) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN" || t === "group" || t === "variant" || t === "clause") {
+    const content = rule.content;
+    if (content === void 0) return rule;
+    const out = visit(content);
+    if (out === content) return rule;
+    return { ...rule, content: out };
+  }
+  if (t === "polymorph") {
+    const forms = rule.forms;
+    if (!Array.isArray(forms)) return rule;
+    let changed = false;
+    const newForms = forms.map((f) => {
+      const out = visit(f.content);
+      if (out !== f.content) changed = true;
+      return changed ? { ...f, content: out } : f;
+    });
+    return changed ? { ...rule, forms: newForms } : rule;
+  }
+  return rule;
+}
+var MULTIPLICITY_BY_TYPE = {
+  optional: "optional",
+  OPTIONAL: "optional",
+  repeat: "array",
+  REPEAT: "array",
+  repeat1: "nonEmptyArray",
+  REPEAT1: "nonEmptyArray"
+};
+function enrichMultiplicityWrappers(rule) {
+  const recursed = recurseChildren2(rule, enrichMultiplicityWrappers);
+  const t = recursed.type;
+  const multiplicity = t ? MULTIPLICITY_BY_TYPE[t] : void 0;
+  if (!multiplicity) return recursed;
+  const self = recursed;
+  const selfNeedsStamp = self.multiplicity !== multiplicity || self.nonterminal !== true;
+  const content = recursed.content;
+  const stampedContent = content && typeof content === "object" ? stampMultiplicityThroughWrappers(content, multiplicity) : content;
+  if (!selfNeedsStamp && stampedContent === content) return recursed;
+  const next = { ...recursed };
+  if (selfNeedsStamp) {
+    next.multiplicity = multiplicity;
+    next.nonterminal = true;
+  }
+  if (stampedContent !== content) {
+    next.content = stampedContent;
+  }
+  return next;
+}
+function stampMultiplicityThroughWrappers(node, multiplicity) {
+  const existing = node;
+  const selfNeedsStamp = existing.multiplicity !== multiplicity || existing.nonterminal !== true;
+  const t = node.type;
+  const isTransparent = !!t && (isFieldType(t) || isPrecWrapper(node) || t === "alias" || t === "ALIAS" || t === "token" || t === "TOKEN" || t === "immediate_token" || t === "IMMEDIATE_TOKEN");
+  let newContent;
+  let contentChanged = false;
+  if (isTransparent) {
+    const content = node.content;
+    if (content && typeof content === "object") {
+      newContent = stampMultiplicityThroughWrappers(content, multiplicity);
+      contentChanged = newContent !== content;
+    }
+  }
+  if (!selfNeedsStamp && !contentChanged) return node;
+  const next = { ...node };
+  if (selfNeedsStamp) {
+    next.multiplicity = multiplicity;
+    next.nonterminal = true;
+  }
+  if (contentChanged) {
+    next.content = newContent;
+  }
+  return next;
 }
 function applyOptionalKeyword(ruleName, rule, kwRules) {
   const inner = peelPrec(rule);
