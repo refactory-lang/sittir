@@ -59,7 +59,6 @@
  * picks them up via line-315 `Object.assign({}, baseGrammar.rules)`.
  */
 
-import { createHash } from 'node:crypto';
 import type { Rule } from '../compiler/rule.ts';
 import {
 	isSeqType,
@@ -103,10 +102,16 @@ export function enrich(base: GrammarResult): GrammarResult {
 	// via `registerKwRule` below; the final rule map merges it with the
 	// enriched user rules.
 	const kwRules: Record<string, Rule> = {};
+	// Cross-parent dedupe map for synthesized hidden groups. Keyed by
+	// `canonicalStringify(content)`. When the same canonical content is
+	// synthesized again from a different parent, we reuse the first
+	// owner's name (matches tree-sitter's `existing_repeats` pattern in
+	// rule_transformations.rs).
+	const synthDedupe: Record<string, string> = {};
 	const enrichedRules: Record<string, Rule> = {};
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
-		enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames) : rule!;
+		enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames, synthDedupe) : rule!;
 	}
 	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
 	// (they start with `_kw_`, a reserved prefix).
@@ -124,7 +129,8 @@ function applyEnrichPasses(
 	ruleName: string,
 	rule: Rule,
 	kwRules: Record<string, Rule>,
-	supertypeNames: ReadonlySet<string>
+	supertypeNames: ReadonlySet<string>,
+	synthDedupe: Record<string, string>
 ): Rule {
 	// Fixed-point loop. The current pass set has well-defined
 	// non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
@@ -137,6 +143,13 @@ function applyEnrichPasses(
 	// that accidentally produces ever-changing output.
 	const MAX_ITERATIONS = 8;
 	let r = rule;
+	// Per-parent positional counters for synthesized hidden groups.
+	// `opt` and `rep` are independent (matches tree-sitter's aux-rule
+	// numbering, which treats each multiplicity flavor as its own
+	// sequence). Counters PERSIST across fixed-point iterations: on
+	// re-runs, the dedupe map (`synthDedupe`) re-hits any already-
+	// synthesized content without incrementing, so iteration is safe.
+	const synthState = { opt: 0, rep: 0 };
 	for (let i = 0; i < MAX_ITERATIONS; i++) {
 		const before = r;
 		r = applySymbolToField(ruleName, r, supertypeNames);
@@ -156,8 +169,8 @@ function applyEnrichPasses(
 		// ordering-invariance test in enrich-multiplicity-wrappers.test.ts).
 		r = enrichFieldWrappers(r);
 		r = enrichMultiplicityWrappers(r);
-		r = decomposeOptional(r, kwRules);
-		r = decomposeRepeat(r, kwRules);
+		r = decomposeOptional(r, kwRules, ruleName, synthState, synthDedupe);
+		r = decomposeRepeat(r, kwRules, ruleName, synthState, synthDedupe);
 		if (r === before) return r;
 	}
 	if (!process.env.SITTIR_QUIET) {
@@ -1157,8 +1170,9 @@ function rebuildOptional(optionalRule: Rule, newInner: Rule): Rule {
 // ---------------------------------------------------------------------------
 // Per Option A (spec "Universal canonical shape"): when `optional(content)`
 // wraps a seq/choice with slot-bearing members, the content is lifted into
-// a synthesized hidden group rule (`_opt_grp_<hex>`) and the optional's
-// content is rewritten to a SymbolRule referencing the synthesized name.
+// a synthesized hidden group rule (`_<parent>_optional<N>`) and the
+// optional's content is rewritten to a SymbolRule referencing the
+// synthesized name.
 //
 // Synthesized rules ride the existing per-enrich `kwRules` accumulator
 // (same path as `_kw_<name>` keyword helpers), so they end up merged into
@@ -1178,12 +1192,34 @@ function rebuildOptional(optionalRule: Rule, newInner: Rule): Rule {
 //   3. Pure-literal seq/choice (no fields, no symbols, no nested slots):
 //      no synthesis — just an optionally-rendered text fragment.
 //
-// Hash-stable naming: the synthesized name is `_opt_grp_<sha1(content)[:12]>`.
-// Identical content bodies dedupe to the same synthesized rule. Stability
-// across runs is verified by the deterministic-name test.
+// Naming convention follows tree-sitter's aux-rule pattern:
+// `_<parent_kind>_optional<N>` where N is a 1-indexed positional counter
+// scoped to the parent rule + multiplicity type (optional vs repeat have
+// independent counters within the same parent). The leading `_` marks
+// the rule hidden (sittir convention; tree-sitter uses a VariableType
+// marker instead).
+//
+// Cross-parent dedupe: identical canonical content always maps to the
+// same synthesized rule. The first parent that synthesizes the content
+// owns the name; subsequent parents with matching content reuse it
+// without consuming a new counter slot. Matches tree-sitter's
+// `existing_repeats` pattern in rule_transformations.rs.
 
-function decomposeOptional(rule: Rule, kwRules: Record<string, Rule>): Rule {
-	const recursed = recurseChildren(rule, (r) => decomposeOptional(r, kwRules));
+interface SynthCounterState {
+	opt: number;
+	rep: number;
+}
+
+function decomposeOptional(
+	rule: Rule,
+	kwRules: Record<string, Rule>,
+	parentKind: string,
+	state: SynthCounterState,
+	dedupe: Record<string, string>
+): Rule {
+	const recursed = recurseChildren(rule, (r) =>
+		decomposeOptional(r, kwRules, parentKind, state, dedupe)
+	);
 	if (!isOptionalType(recursed.type)) return recursed;
 	const content = (recursed as unknown as { content?: Rule }).content;
 	if (!content || typeof content !== 'object') return recursed;
@@ -1191,7 +1227,7 @@ function decomposeOptional(rule: Rule, kwRules: Record<string, Rule>): Rule {
 	if (!isSeqType(t) && !isChoiceType(t)) return recursed;
 	if (!hasSlotBearingMember(content)) return recursed;
 
-	const synName = computeOptGroupName(content);
+	const synName = synthesizeGroupName(content, parentKind, 'optional', state, dedupe);
 	if (!(synName in kwRules)) {
 		kwRules[synName] = content;
 	}
@@ -1232,24 +1268,41 @@ function hasSlotBearingMember(rule: unknown): boolean {
 	return false;
 }
 
-/** @internal — hash-stable synthesized-group name. Pure function of the
- *  content body's structure (via canonical JSON), so identical bodies
- *  produce identical synthesized names across runs and across rule sites.
- *  sha1 truncated to 12 hex chars — collisions are vanishingly unlikely
- *  in any realistic grammar and the reserved prefix (`_opt_grp_`,
- *  `_rep_grp_`) prevents collisions with user-authored rule names. */
-function computeGroupName(content: Rule, prefix: string): string {
-	const json = canonicalStringify(content);
-	const hash = createHash('sha1').update(json).digest('hex').slice(0, 12);
-	return `${prefix}${hash}`;
-}
-
-function computeOptGroupName(content: Rule): string {
-	return computeGroupName(content, '_opt_grp_');
+/** @internal — synthesize (or reuse) a hidden-group rule name for the
+ *  given content body. Naming convention: `_<parentKind>_<kind><N>` where
+ *  `kind` is `optional` or `repeat` and `N` is a 1-indexed counter
+ *  scoped to the (parent, kind) pair via `state`.
+ *
+ *  Cross-parent dedupe: `dedupe` is keyed by `canonicalStringify(content)`
+ *  and shared across all parents within a single `enrich()` call. The
+ *  first parent to synthesize a given content body owns the name;
+ *  subsequent parents with matching content reuse it without consuming
+ *  a counter slot (matches tree-sitter's `existing_repeats` pattern).
+ *
+ *  Determinism: identical canonical content within a single enrich call
+ *  always returns the same name; across enrich calls on the same grammar,
+ *  the names are stable because rule iteration order is stable
+ *  (`Object.keys(rulesBag)` reflects insertion order in V8/JSC). */
+function synthesizeGroupName(
+	content: Rule,
+	parentKind: string,
+	kind: 'optional' | 'repeat',
+	state: SynthCounterState,
+	dedupe: Record<string, string>
+): string {
+	const key = canonicalStringify(content);
+	const existing = dedupe[key];
+	if (existing !== undefined) return existing;
+	const counterKey = kind === 'optional' ? 'opt' : 'rep';
+	state[counterKey] += 1;
+	const n = state[counterKey];
+	const name = `_${parentKind}_${kind}${n}`;
+	dedupe[key] = name;
+	return name;
 }
 
 /** @internal — canonical JSON stringify with sorted object keys. Ensures
- *  that two structurally-equal rule bodies hash to the same name even
+ *  that two structurally-equal rule bodies stringify identically even
  *  when property insertion order differs between rule construction
  *  paths. Skips functions and undefined values (consistent with
  *  JSON.stringify). */
@@ -1291,14 +1344,22 @@ function canonicalStringify(value: unknown): string {
 //      separator-lift. Replace content with the slot-bearing member;
 //      stamp `separator` (Rule[]) on the repeat.
 //   3. seq/choice with two-or-more slot-bearing members: synthesize a
-//      hidden group (`_rep_grp_<hex>`) and replace content with a
+//      hidden group (`_<parent>_repeat<N>`) and replace content with a
 //      SymbolRule, same as decomposeOptional's group path. If a separator
 //      is also present it stays on the repeat — group-lift and
 //      separator-lift compose.
 //   4. Pure-literal seq (no slots at all): no synthesis.
 
-function decomposeRepeat(rule: Rule, kwRules: Record<string, Rule>): Rule {
-	const recursed = recurseChildren(rule, (r) => decomposeRepeat(r, kwRules));
+function decomposeRepeat(
+	rule: Rule,
+	kwRules: Record<string, Rule>,
+	parentKind: string,
+	state: SynthCounterState,
+	dedupe: Record<string, string>
+): Rule {
+	const recursed = recurseChildren(rule, (r) =>
+		decomposeRepeat(r, kwRules, parentKind, state, dedupe)
+	);
 	if (!isRepeatType(recursed.type)) return recursed;
 	const content = (recursed as unknown as { content?: Rule }).content;
 	if (!content || typeof content !== 'object') return recursed;
@@ -1340,7 +1401,7 @@ function decomposeRepeat(rule: Rule, kwRules: Record<string, Rule>): Rule {
 	}
 
 	// Multi-slot (seq OR choice): synthesize a hidden group.
-	const synName = computeGroupName(content, '_rep_grp_');
+	const synName = synthesizeGroupName(content, parentKind, 'repeat', state, dedupe);
 	if (!(synName in kwRules)) {
 		kwRules[synName] = content;
 	}

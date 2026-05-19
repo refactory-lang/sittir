@@ -414,7 +414,7 @@ describe('enrich()', () => {
 			};
 			expect(rule.content.type).toBe('symbol');
 			const synName = rule.content.name;
-			expect(synName.startsWith('_rep_grp_')).toBe(true);
+			expect(/^_block_repeat\d+$/.test(synName)).toBe(true);
 			const syn = out.grammar.rules[synName] as {
 				type: 'seq';
 				members: Rule[];
