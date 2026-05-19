@@ -435,8 +435,8 @@ function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
 }
 
-// packages/codegen/src/dsl/wire/auto-groups.ts
-function applyAutoGroups(base2, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
+// packages/codegen/src/dsl/wire/auto-decompose.ts
+function applyAutoDecompose(base2, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
   if (!base2) return;
   const hasWrapper = "grammar" in base2 && base2.grammar !== void 0;
   const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
@@ -449,8 +449,8 @@ function applyAutoGroups(base2, context, authoredSynthesisKinds = /* @__PURE__ *
     if (!rule) continue;
     const state = { opt: 0, rep: 0 };
     let next = rule;
-    next = synthesizeOptionalGroups(next, synthRules, name, state, dedupe);
-    next = synthesizeRepeatGroups(next, synthRules, name, state, dedupe);
+    next = decomposeOptional(next, synthRules, name, state, dedupe);
+    next = decomposeRepeat(next, synthRules, name, state, dedupe);
     if (next !== rule) {
       rulesBag[name] = next;
     }
@@ -461,16 +461,17 @@ function applyAutoGroups(base2, context, authoredSynthesisKinds = /* @__PURE__ *
     context.syntheticInline.add(synName);
   }
 }
-function synthesizeOptionalGroups(rule, synthRules, parentKind, state, dedupe) {
+function decomposeOptional(rule, synthRules, parentKind, state, dedupe) {
   const recursed = recurseChildren(
     rule,
-    (r) => synthesizeOptionalGroups(r, synthRules, parentKind, state, dedupe)
+    (r) => decomposeOptional(r, synthRules, parentKind, state, dedupe)
   );
   if (!isOptionalType(recursed.type)) return recursed;
   const content = recursed.content;
   if (!content || typeof content !== "object") return recursed;
   const t = content.type;
   if (!isSeqType(t)) return recursed;
+  if (!hasSlotBearingMember(content)) return recursed;
   const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
   if (!(synName in synthRules)) {
     synthRules[synName] = content;
@@ -482,16 +483,41 @@ function synthesizeOptionalGroups(rule, synthRules, parentKind, state, dedupe) {
   };
   return { ...recursed, content: symbolRef };
 }
-function synthesizeRepeatGroups(rule, synthRules, parentKind, state, dedupe) {
+function decomposeRepeat(rule, synthRules, parentKind, state, dedupe) {
   const recursed = recurseChildren(
     rule,
-    (r) => synthesizeRepeatGroups(r, synthRules, parentKind, state, dedupe)
+    (r2) => decomposeRepeat(r2, synthRules, parentKind, state, dedupe)
   );
   if (!isRepeatType(recursed.type)) return recursed;
   const content = recursed.content;
   if (!content || typeof content !== "object") return recursed;
   const t = content.type;
   if (!isSeqType(t)) return recursed;
+  const r = recursed;
+  if (r.separator !== void 0 || r.trailing !== void 0 || r.leading !== void 0) {
+    return recursed;
+  }
+  const members = content.members ?? [];
+  const slotBearing = [];
+  const stringMembers = [];
+  for (const m of members) {
+    const mt = m.type;
+    if (isFieldType(mt) || isSymbolType(mt) || isOptionalType(mt) || isRepeatType(mt) || (isSeqType(mt) || isChoiceType(mt)) && hasSlotBearingMember(m)) {
+      slotBearing.push(m);
+    } else if (isStringType(mt)) {
+      stringMembers.push(m);
+    }
+  }
+  if (slotBearing.length === 0) return recursed;
+  if (slotBearing.length === 1) {
+    if (stringMembers.length === 0) return recursed;
+    const existing = recursed;
+    if (existing.separator !== void 0) return recursed;
+    return {
+      ...recursed,
+      separator: stringMembers
+    };
+  }
   const synName = synthesizeGroupName(content, parentKind, "repeat", state, dedupe);
   if (!(synName in synthRules)) {
     synthRules[synName] = content;
@@ -506,6 +532,24 @@ function synthesizeRepeatGroups(rule, synthRules, parentKind, state, dedupe) {
 function detectCase(referenceRule) {
   const t = referenceRule?.type ?? "";
   return t.length > 0 && t === t.toUpperCase() ? "upper" : "lower";
+}
+function hasSlotBearingMember(rule) {
+  if (!rule || typeof rule !== "object") return false;
+  const r = rule;
+  const t = r.type;
+  if (!isSeqType(t) && !isChoiceType(t)) return false;
+  const members = Array.isArray(r.members) ? r.members : [];
+  for (const m of members) {
+    if (!m || typeof m !== "object") continue;
+    const mt = m.type;
+    if (isFieldType(mt) || isSymbolType(mt) || isOptionalType(mt) || isRepeatType(mt)) {
+      return true;
+    }
+    if ((isSeqType(mt) || isChoiceType(mt)) && hasSlotBearingMember(m)) {
+      return true;
+    }
+  }
+  return false;
 }
 function synthesizeGroupName(content, parentKind, kind, state, dedupe) {
   const key = canonicalStringify(content);
@@ -634,20 +678,8 @@ function wire(config, base2) {
   }
   wrapAllRuleFns(outRules, context);
   applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
-  if (base2) {
-    const authoredSynthesisKinds = collectAuthoredSynthesisKinds(
-      transforms,
-      polymorphs,
-      config.groups
-    );
-    void (() => {
-      applyAutoGroups(
-        base2,
-        context,
-        authoredSynthesisKinds
-      );
-    });
-  }
+  void applyAutoDecompose;
+  void collectAuthoredSynthesisKinds;
   const conflicts = wrapConflictsCallback(config.conflicts, context);
   const inline = wrapInlineCallback(config.inline, context);
   const wired = {

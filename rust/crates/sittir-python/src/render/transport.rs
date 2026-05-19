@@ -27621,15 +27621,8 @@ fn render_not_in(t: &NotInTransport, dest: &mut dyn ::std::fmt::Write) -> Result
 }
 
 fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let integer_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.integer)];
     let template = SimplePatternNegativeTemplate {
         text: node.transport_text.as_deref().unwrap_or(""),
-        integer: ListNonterminalView {
-            items: integer_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -27765,24 +27758,6 @@ fn render_assert_statement(node: &AssertStatementTransport, dest: &mut dyn ::std
 fn render_assignment(node: &AssignmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AssignmentTemplate {
         variant: "",
-        assignment__form_eq: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        assignment__form_type: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        assignment__form_typed: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         assignment_eq: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.assignment_eq)),
         assignment_type: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.assignment_type)),
         assignment_typed: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.assignment_typed)),
@@ -27945,12 +27920,6 @@ fn render_comparison_operator(node: &ComparisonOperatorTransport, dest: &mut dyn
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ComparisonOperatorTemplate {
-        comparators: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         operators: ListNonterminalView {
             items: operators_buf.as_slice(),
@@ -28276,36 +28245,6 @@ fn render_expression_statement(node: &ExpressionStatementTransport, dest: &mut d
         assignment: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.assignment)),
         augmented_assignment: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.augmented_assignment)),
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
-        expression_statement__form_assignment: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        expression_statement__form_augmented_assignment: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        expression_statement__form_expression: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        expression_statement__form_tuple: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        expression_statement__form_yield: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         expression_statement_tuple: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.expression_statement_tuple.as_ref())),
         yield_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.yield_)),
     };
@@ -29001,20 +28940,8 @@ fn render_splat_type(node: &SplatTypeTransport, dest: &mut dyn ::std::fmt::Write
 }
 
 fn render_string(node: &StringTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let content_owned = node.content.as_deref().unwrap_or(&[]);
-    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = StringTemplate {
         text: node.transport_text.as_deref().unwrap_or(""),
-        content: ListNonterminalView {
-            items: content_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        string_end: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.string_end)),
-        string_start: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.string_start)),
     };
     template.render_into(dest)
 }
@@ -29278,18 +29205,6 @@ fn render_with_clause_paren(node: &WithClauseParenTransport, dest: &mut dyn ::st
 fn render_with_clause(node: &WithClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = WithClauseTemplate {
         variant: "",
-        with_clause__form_bare: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        with_clause__form_paren: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         with_clause_bare: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.with_clause_bare.as_ref())),
         with_clause_paren: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.with_clause_paren)),
     };
