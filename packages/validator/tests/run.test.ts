@@ -1,25 +1,25 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock the underlying codegen validate modules so tests don't run live validation.
-vi.mock('@sittir/codegen/validate/from', () => ({
+vi.mock('../../codegen/src/validate/from.ts', () => ({
 	validateFrom: vi.fn().mockResolvedValue({
 		grammar: 'rust', total: 5, pass: 5, fail: 0, skip: 0, undefinedCount: 0, divergentCount: 0, errors: [],
 	}),
 	formatFromReport: vi.fn().mockReturnValue('mock from report'),
 }));
-vi.mock('@sittir/codegen/validate/factory-render-parse', () => ({
+vi.mock('../../codegen/src/validate/factory-render-parse.ts', () => ({
 	validateFactoryRenderParse: vi.fn().mockResolvedValue({
 		grammar: 'rust', total: 5, pass: 5, fail: 0, skip: 0, astMatchPass: 5, errors: [], astMismatches: [],
 	}),
 	formatFactoryRenderParseReport: vi.fn().mockReturnValue('mock factory report'),
 }));
-vi.mock('@sittir/codegen/validate/read-render-parse', () => ({
+vi.mock('../../codegen/src/validate/read-render-parse.ts', () => ({
 	validateReadRenderParse: vi.fn().mockResolvedValue({
 		grammar: 'rust', total: 5, pass: 5, fail: 0, skip: 0, astMatchPass: 5, errors: [], astMismatches: [],
 	}),
 	formatReadRenderParseReport: vi.fn().mockReturnValue('mock rt report'),
 }));
-vi.mock('@sittir/codegen/validate/template-coverage', () => ({
+vi.mock('../../codegen/src/validate/template-coverage.ts', () => ({
 	validateTemplateCoverage: vi.fn().mockReturnValue({ grammar: 'rust', total: 5, pass: 5, fail: 0, issues: [] }),
 }));
 
@@ -33,10 +33,10 @@ import {
 	formatFactoryRenderParseReport,
 	formatReadRenderParseReport,
 } from '../src/run.ts';
-import { validateFrom } from '@sittir/codegen/validate/from';
-import { validateFactoryRenderParse } from '@sittir/codegen/validate/factory-render-parse';
-import { validateReadRenderParse } from '@sittir/codegen/validate/read-render-parse';
-import { validateTemplateCoverage } from '@sittir/codegen/validate/template-coverage';
+import { validateFrom } from '../../codegen/src/validate/from.ts';
+import { validateFactoryRenderParse } from '../../codegen/src/validate/factory-render-parse.ts';
+import { validateReadRenderParse } from '../../codegen/src/validate/read-render-parse.ts';
+import { validateTemplateCoverage } from '../../codegen/src/validate/template-coverage.ts';
 
 describe('@sittir/validator run surface — exports', () => {
 	it('exports runFrom as a function', () => {

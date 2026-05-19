@@ -65,6 +65,29 @@ describe('createRendererFromConfig({ templatesDir }) — T025', () => {
 		}
 	});
 
+	it('renders boolean keyword and punctuation fields before Nunjucks interpolation', () => {
+		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
+		try {
+			writeFileSync(
+				join(tmp, 'flagged.jinja'),
+				'{% if async_marker | isPresent %}{{ async_marker }} {% endif %}{{ optional_marker }}'
+			);
+			const { render } = createRendererFromConfig(emptyConfig, {
+				templatesDir: tmp
+			});
+			const node: AnyNodeData = {
+				$type: 'flagged',
+				$fields: {
+					async_marker: true,
+					optional_marker: true
+				}
+			};
+			expect(render(node)).toBe('async ?');
+		} finally {
+			rmSync(tmp, { recursive: true, force: true });
+		}
+	});
+
 	it('dispatches polymorph via $variant', () => {
 		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
 		try {

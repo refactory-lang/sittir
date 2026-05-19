@@ -102,6 +102,12 @@ export default grammar(
 			[$._type_query_call_expression_in_type_annotation, $._call_expression_call],
 			[$._type_query_call_expression, $._call_expression_call],
 			[$.primary_expression, $._export_statement_default],
+			// string refine rewrite: one fielded `seq` with a correlated
+			// `contents` choice replaces the old top-level variant split.
+			// Both content arms accept `escape_sequence`, so after the
+			// opening quote tree-sitter needs GLR to defer which repeat arm
+			// owns the fragment stream until more input arrives.
+			[$.string],
 			// update_expression variant extraction: the hoisted
 			// `_update_expression_postfix` / `_update_expression_prefix`
 			// hidden rules inherit the outer `prec.left(0, ...)`, but after
@@ -176,38 +182,10 @@ export default grammar(
 			$._public_field_definition_abstract_first,
 			$._public_field_definition_readonly_first,
 			$._public_field_definition_accessor_opt,
-			// Wave-3 follow-up (016 task #28): inline `_kw_readonly_marker`
-			// so the synthesized hidden rule's body folds into every
-			// reference site at LR-table generation. Without inlining, the
-			// hidden rule's `prec(-1, 'readonly')` body diverges from the
-			// bare `'readonly'` token in sibling rules at runtime — the
-			// parser takes `readonly` as the property identifier instead
-			// of the marker on `class C { readonly foo() {} }`. Same
-			// pattern as wave-1 follow-up's `_kw_async_marker` for rust
-			// (commit c00636a5). The FIELD wrapper survives inlining so
-			// the parse tree still surfaces the named `readonly_marker`
-			// child.
-			$._kw_readonly_marker,
-			// Wave-3 follow-up (016 task #28): same mechanism for the
-			// function-family `async_marker` promotion (function_signature,
-			// function_expression, function_declaration, generator_function,
-			// generator_function_declaration, arrow_function). Without
-			// inlining, the synthesized `_kw_async_marker` rule's body
-			// collides with `primary_expression` and `_property_name` on
-			// `{ async (` (method-shorthand vs async-function ambiguity)
-			// and with the bare `'async'` token on `'async' • 'function'`
-			// lookahead in sibling function rules. Inlining folds the body
-			// into each function rule's state machine — same shape as the
-			// pre-promotion grammar — while the FIELD wrapper survives in
-			// the parse tree. NOTE: the default `_kw_async_marker` body is
-			// `prec(-1, 'async')`, which would be inlined as a strictly
-			// lower-precedence wrap and lose to primary_expression's bare
-			// `'async'` (prec 0) on `async () =>` (parser commits to call
-			// expression and ERRORs at `=>`). To prevent this, the rule is
-			// re-authored below in `rules:` as `() => 'async'` (prec 0) so
-			// the existing `[primary_expression, arrow_function]` conflict
-			// can engage GLR to disambiguate.
-			$._kw_async_marker
+			// `_kw_readonly_marker` / `_kw_async_marker` are now
+			// auto-inlined by wire() whenever field promotion synthesizes
+			// them, so only the polymorph helpers remain explicitly listed
+			// here.
 		],
 		polymorphs: {
 			arrow_function: { '1/0': 'parameter', '1/1': '_call_signature' },
@@ -219,6 +197,11 @@ export default grammar(
 			},
 			import_specifier: { '1/0': 'name', '1/1': 'as' },
 			index_signature: { '2/0': 'colon', '2/1': 'mapped_type_clause' },
+			ambient_declaration: {
+				'1/0': 'declaration',
+				'1/1': 'global',
+				'1/2': 'module'
+			},
 
 			// _export_statement_default — synthesized by
 			// `export_statement: { 0: variant('default') }` transform. Body
@@ -333,10 +316,18 @@ export default grammar(
 				'5/0': field('optional_marker')
 			},
 
-			// ambient_declaration: 3 field(s)
-			ambient_declaration: {
-				1: field('declaration') // declaration | statement_block | property_identifier [struct=0]
-			},
+			// ambient_declaration: split the heterogeneous declaration choice
+			// so each arm owns its own literal scaffold (`declare global …`,
+			// `declare module.<name>: <type>;`, or direct declaration).
+			ambient_declaration: ($, original) =>
+				transform(
+					original,
+					{
+						'1/0': variant('declaration'),
+						'1/1': variant('global'),
+						'1/2': variant('module')
+					}
+				),
 
 			// array_type: 1 field(s)
 			array_type: {},
@@ -588,20 +579,35 @@ export default grammar(
 			},
 
 			// function_signature: seq(
-			//   optional('async'),  // pos 0  →  '0/0'  (async_marker)
-			//   'function', field('name'), _call_signature,
+			//   optional('async'),
+			//   'function',
+			//   field('name'),
+			//   _call_signature,
 			//   choice(_semicolon, _function_signature_automatic_semicolon))
-			// The trailing choice carries the semi (either explicit or auto);
-			// labeling pos 4 as a semicolon field lets it render.
-			// Wave-3 follow-up (016 task #28): adds `async_marker` along with
-			// the JS-inherited function family — see the inline declaration
-			// above for `_kw_async_marker`. Kept hand-promoted because the
-			// factoryRoundtrip AST match fails when only enrich auto-promotes
-			// (the synthesized `_kw_async_marker` content shape diverges).
-			function_signature: {
-				'0/0': field('async_marker'),
-				4: field('semicolon')
-			},
+			// Keep the trailing semicolon field optional in the override
+			// surface. The declarations corpus includes EOF-terminated
+			// ambient exports like `export async function …` that parse as a
+			// function_signature without surfacing either semicolon token.
+			// Model the real read surface instead of forcing a missing slot.
+			function_signature: ($) =>
+				choice(
+					seq(
+						optional(field('async_marker', 'async')),
+						'function',
+						field('name', $.identifier),
+						$._call_signature,
+						choice(
+							field('semicolon', $._semicolon),
+							field('semicolon', $._function_signature_automatic_semicolon)
+						)
+					),
+					seq(
+						optional(field('async_marker', 'async')),
+						'function',
+						field('name', $.identifier),
+						$._call_signature
+					)
+				),
 
 			// JS-inherited function family — all start with `optional('async')` at pos 0.
 			//
@@ -823,24 +829,31 @@ export default grammar(
 				2: variant('member')
 			},
 
-			// string: variant() adoption on the quote-style choice. Base
-			// grammar: `choice(seq('"', …, '"'), seq("'", …, "'"))`. The
-			// walker's primary-branch-wins would always pick the first
-			// (double-quoted) branch as the template, so `'x'` source
-			// round-trips as `"x"` — AST mismatch. Splitting into variant
-			// children (`string_double` / `string_single`) gives each its
-			// own template that preserves the quote style.
-			string: {
-				0: variant('double'),
-				1: variant('single')
-			},
-
 			// update_expression: postfix vs prefix `++` / `--`.
 			update_expression: {
 				0: variant('postfix'),
 				1: variant('prefix')
 			}
 		},
+		// Sittir-side rule bodies for external scanner symbols. The grammar's
+		// external scanner triggers ASI (Automatic Semicolon Insertion) by
+		// producing `_automatic_semicolon` and `_function_signature_automatic_semicolon`
+		// as zero-width terminator tokens. Tree-sitter sees them as required
+		// (they're SEQ-positional, not optional-wrapped) — but at runtime
+		// they can match invisibly. Mapping them to `blank()` makes sittir's
+		// IR resolve `_semicolon = choice(_automatic_semicolon, ';')` to
+		// `choice(blank(), ';')`, which the stamp pass auto-collapses to
+		// `optional(';')`. The slot-model look-through in node-map.ts then
+		// propagates that optionality up to any SYMBOL ref pointing at
+		// `_semicolon`, so wrapped fields like `field('semicolon', _semicolon)`
+		// no longer assert required-singular at wrap time on ASI-terminated
+		// corpus entries. The grammar that reaches tree-sitter still has
+		// the externals intact; only sittir's slot/render/factory pipeline
+		// sees the blank body.
+		renderAs: (_$) => ({
+			_automatic_semicolon: blank(),
+			_function_signature_automatic_semicolon: blank()
+		}),
 		rules: {
 			// parenthesized_expression: held. Base is plain `seq('(',
 			// _expressions, ')')` with no outer prec — my hoist's prec
@@ -875,6 +888,18 @@ export default grammar(
 			// doesn't exist at runtime, clobbering all five declared fields.
 			// Positions 1/2/3 (the `?`, the type field, and the initializer)
 			// are already correctly structured in the base rule.
+			_ambient_declaration_global: ($) => seq('global', field('body', $.statement_block)),
+			_ambient_declaration_module: ($) =>
+				prec.right(
+					seq(
+						'module',
+						'.',
+						field('name', alias($.identifier, $.property_identifier)),
+						':',
+						field('type', $.type),
+						optional(field('semicolon', $._semicolon))
+					)
+				),
 			optional_parameter: ($, original) => original,
 
 			// public_field_definition: pos 0 is decorator repeat (real base
@@ -889,18 +914,29 @@ export default grammar(
 			// let the walker inline the `_parameter_name` helper's fields.
 			required_parameter: ($, original) => original,
 
-			// Wave-3 follow-up (016 task #28): override the synthesized
-			// `_kw_async_marker` body to drop the default `prec(-1, …)`
-			// wrapper. The default body is `prec(-1, 'async')` which makes
-			// the bare `'async'` token strictly LOWER precedence than
-			// primary_expression's bare `'async'` (prec 0). When inlined
-			// into arrow_function (`async • _arrow_function__call_signature
-			// => …`), the parser commits to the higher-precedence
-			// primary_expression path and ERRORs at `=>`. Authoring the
-			// hidden rule with no precedence wrap puts both at prec 0 so the
-			// existing `[primary_expression, arrow_function]` conflict
-			// declaration can engage GLR to disambiguate.
-			_kw_async_marker: () => 'async',
+			// string — model quote style as one fielded structural shape
+			// instead of a top-level polymorph split. `opening` / `contents`
+			// / `closing` are real field-wrapped choices in the override
+			// grammar; refine correlates them so the double/single forms
+			// share one NodeData shape with auto-stamped delimiters.
+			string: ($) =>
+				refine(
+					seq(
+						field('opening', choice('"', '\'')),
+						field(
+							'contents',
+							choice(
+								repeat(choice(alias($.unescaped_double_string_fragment, $.string_fragment), $.escape_sequence)),
+								repeat(choice(alias($.unescaped_single_string_fragment, $.string_fragment), $.escape_sequence))
+							)
+						),
+						field('closing', choice('"', '\''))
+					),
+					{
+						double: { 'opening:': '"', 'contents:': 0, 'closing:': '"' },
+						single: { 'opening:': '\'', 'contents:': 1, 'closing:': '\'' }
+					}
+				),
 
 			// object_type / interface_body — correlated choice selection
 			// across non-adjacent positions: the opening and closing

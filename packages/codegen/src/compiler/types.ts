@@ -20,7 +20,10 @@
  */
 
 import type { Rule, RuleId, SymbolRef } from './rule.ts';
-import type { AssembledNode } from './node-map.ts';
+import type { AssembledNode, AssembledNonterminal } from './node-map.ts';
+import type { SCCAnalysis } from './scc.ts';
+
+export type { SlotArity, SlotModel } from './slot-model.ts';
 
 /**
  * One entry in the {@link LinkedGrammar.polymorphVariants} /
@@ -184,6 +187,40 @@ export interface RawGrammar {
 	 * See refine() DSL primitive for the full design.
 	 */
 	readonly refineForms?: Map<string, RefineForm[]>;
+	/**
+	 * Per-kind group-lift map from `groups:` in the override layer.
+	 * Link reads this to synthesize nested sub-rules into hidden
+	 * AssembledGroup kinds. See:
+	 *   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+	 */
+	readonly groups?: Record<string, Record<string, string> | undefined>;
+	/**
+	 * Raw polymorphs path→variant-name config from the override layer.
+	 * Link passes this to applyGroupOverrides so synthesized kind names
+	 * include polymorph-ancestor context segments.
+	 */
+	readonly polymorphsConfig?: Record<string, Record<string, string> | undefined>;
+	/**
+	 * Sittir-side render bodies for external scanner symbols. Populated
+	 * by `renderAs:` in the override layer. The bodies enter sittir's
+	 * slot/render/factory pipeline as if they were regular author-written
+	 * rules; they are NOT present in the tree-sitter rules map (the
+	 * external scanner still produces these symbols).
+	 *
+	 * Record keys are the external symbol names (e.g.
+	 * `_outer_block_doc_comment_marker`); values are the sittir-side Rule
+	 * bodies (e.g. `{ type: 'string', value: '!' }`).
+	 */
+	readonly renderAs?: Record<string, Rule>;
+	/**
+	 * Pattern-replacement candidate kinds: author-declared `_`-prefixed rules
+	 * whose bodies were used as structural patterns to rewrite the merged grammar.
+	 * These rules must NOT be inlined by `inlineSingleUseHidden` (they exist to
+	 * group sub-trees that the IR pipeline treats as atomic units). Threaded
+	 * through RawGrammar → LinkedGrammar → OptimizedGrammar so optimize's
+	 * inlining pass can skip them.
+	 */
+	readonly patternReplacementKinds?: ReadonlySet<string>;
 }
 
 /**
@@ -344,6 +381,8 @@ export interface LinkedGrammar {
 	readonly topLevelAliasBodies?: Map<string, Rule>;
 	readonly polymorphVariants?: PolymorphVariant[];
 	readonly refineForms?: Map<string, RefineForm[]>;
+	/** @see {@link RawGrammar.patternReplacementKinds} */
+	readonly patternReplacementKinds?: ReadonlySet<string>;
 }
 
 /**
@@ -385,6 +424,8 @@ export interface OptimizedGrammar {
 	readonly derivations: DerivationLog;
 	readonly polymorphVariants?: PolymorphVariant[];
 	readonly refineForms?: Map<string, RefineForm[]>;
+	/** @see {@link RawGrammar.patternReplacementKinds} */
+	readonly patternReplacementKinds?: ReadonlySet<string>;
 }
 
 // ---------------------------------------------------------------------------
@@ -404,6 +445,20 @@ export interface SignaturePool {
 export interface NodeMap {
 	readonly name: string;
 	readonly nodes: Map<string, AssembledNode>;
+	/**
+	 * Rule-id → AssembledNode back-pointer. Populated at assembly when the
+	 * root rule for each kind is registered. Lets consumers walking a rule
+	 * tree look up the owning AssembledNode without owner traversal.
+	 * See feedback_ruleid_backpointer.
+	 */
+	readonly nodeByRuleId: ReadonlyMap<RuleId, AssembledNode>;
+	/**
+	 * Rule-id → AssembledNonterminal back-pointer. Populated at assembly when
+	 * each slot's source rule is registered. Lets consumers walking a rule
+	 * tree look up the slot's propertyName / storageName / paramName directly.
+	 * See feedback_ruleid_backpointer.
+	 */
+	readonly slotByRuleId: ReadonlyMap<RuleId, AssembledNonterminal>;
 	readonly signatures: SignaturePool;
 	/**
 	 * Sidecar log of every derivation Link produced. Emitters read
@@ -458,6 +513,14 @@ export interface NodeMap {
 	 * calls fired in this grammar's overrides.
 	 */
 	readonly refineForms?: Map<string, RefineForm[]>;
+	/**
+	 * SCC analysis over the singular transport-reference graph. Populated
+	 * post-assemble (see `compiler/scc.ts`). Emitters consult `scc.sameSCC`
+	 * for the Box decision on per-slot / supertype enum variants — Box
+	 * only when a variant and its enum's owner kind are in the same SCC.
+	 * Undefined for callers that never compute it (legacy fixtures, etc.).
+	 */
+	scc?: SCCAnalysis;
 }
 
 export function computePolymorphFormKinds(nodes: Map<string, AssembledNode>): Set<string> {

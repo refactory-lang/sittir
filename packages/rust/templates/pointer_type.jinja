@@ -2,5 +2,5 @@
 {%- if variant == "const" -%}
 *const {{ type }}
 {%- elif variant == "mut" -%}
-*{{ children | join(" ") }} {{ type }}
+*{{ mutable_specifier | join(" ") }} {{ type }}
 {%- endif -%}

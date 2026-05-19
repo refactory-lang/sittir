@@ -24,64 +24,119 @@
 
 export type RuleId = string;
 
-export interface RuleIdentity {
+/**
+ * Per-rule cardinality + optionality tag. Mirrors NodeOrTerminal.multiplicity
+ * (see compiler/node-map.ts) — same values, same semantic. When a rule is
+ * pushed-down from a wrapper, this attribute records what the wrapper meant.
+ *
+ * - `'optional'`      → T | undefined            (from `optional(X)`)
+ * - `'single'`        → T                        (default — no wrapper)
+ * - `'array'`         → readonly T[]              (from `repeat(X)`)
+ * - `'nonEmptyArray'` → NonEmptyArray<T>          (from `repeat1(X)`)
+ */
+export type Multiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray';
+
+/**
+ * Shared base every Rule type extends via the intersection on `Rule` below.
+ *
+ * - `id` is the existing identity tag (see RuleIdentity history).
+ * - `fieldName` / `multiplicity` / `nonterminal` / `separator` are modifier
+ *   attributes populated by enrich passes when a rule was originally wrapped
+ *   by `field` / `optional` / `repeat` / `repeat1`. The wrapper continues
+ *   to exist until PR3; these attributes are additive and let downstream
+ *   consumers (the new template emitter, future consumers) read modifier
+ *   facts directly from the inner rule.
+ *
+ * Vocabulary matches NodeOrTerminal (node-map.ts:117, 144) so values that
+ * flow from rules to slots use identical field names. See
+ * feedback_rule_slot_vocabulary_alignment.
+ *
+ * Per spec's universal-shape decision: NO `leading`/`trailing` `Rule[]` at
+ * rule level. Flanking literals live as adjacent seq members. Separator
+ * placement (`trailing`/`leading` booleans) lives ON the structured
+ * `separator` object below.
+ */
+export interface RuleBase {
 	readonly id?: RuleId;
+
+	readonly fieldName?: string;
+	readonly multiplicity?: Multiplicity;
+	readonly nonterminal?: boolean;
+
+	readonly separator?:
+		| string
+		| readonly Rule[]
+		| {
+				readonly rules: readonly Rule[];
+				readonly trailing?: boolean;
+				readonly leading?: boolean;
+		  };
 }
 
-export type Rule = RuleIdentity &
+/**
+ * @deprecated Renamed to {@link RuleBase} now that this interface carries
+ * modifier attributes in addition to identity. Retained as an alias so any
+ * external consumer keeps working through PR0; remove when callers migrate.
+ */
+export type RuleIdentity = RuleBase;
+
+/**
+ * Discriminated union of every Rule shape. Each member interface extends
+ * {@link RuleBase}, so the modifier attributes are reachable on every
+ * variant without an intersection here.
+ */
+export type Rule =
 	// Structural grouping — Optimize restructures these
-	(
-		| SeqRule
-		| OptionalRule
-		| ChoiceRule
-		| RepeatRule
-		| Repeat1Rule
+	| SeqRule
+	| OptionalRule
+	| ChoiceRule
+	| RepeatRule
+	| Repeat1Rule
 
-		// Named patterns — clean wrappers, no derived metadata
-		| FieldRule
-		| VariantRule
-		| ClauseRule
-		| EnumRule
-		| SupertypeRule
-		| GroupRule
-		| TerminalRule
-		| PolymorphRule
+	// Named patterns — clean wrappers, no derived metadata
+	| FieldRule
+	| VariantRule
+	| ClauseRule
+	| EnumRule
+	| SupertypeRule
+	| GroupRule
+	| TerminalRule
+	| PolymorphRule
 
-		// Terminals
-		| StringRule
-		| PatternRule
+	// Terminals
+	| StringRule
+	| PatternRule
 
-		// Structural whitespace
-		| IndentRule
-		| DedentRule
-		| NewlineRule
+	// Structural whitespace
+	| IndentRule
+	| DedentRule
+	| NewlineRule
 
-		// References — Link resolves these; absent after Link
-		| SymbolRule
-		| AliasRule
-		| TokenRule
-	);
+	// References — Link resolves these; absent after Link
+	| SymbolRule
+	| AliasRule
+	| TokenRule;
 
 // ---------------------------------------------------------------------------
 // Structural grouping
 // ---------------------------------------------------------------------------
 
-export interface SeqRule {
+export interface SeqRule extends RuleBase {
 	readonly type: 'seq';
 	readonly members: Rule[];
 }
 
-export interface OptionalRule {
+export interface OptionalRule extends RuleBase {
 	readonly type: 'optional';
 	readonly content: Rule;
 }
 
-export interface ChoiceRule {
+export interface ChoiceRule extends RuleBase {
 	readonly type: 'choice';
 	readonly members: Rule[];
 }
 
-export interface RepeatRule {
+export interface RepeatRule extends RuleBase {
 	readonly type: 'repeat';
 	readonly content: Rule;
 	readonly separator?: string;
@@ -89,7 +144,7 @@ export interface RepeatRule {
 	readonly leading?: boolean;
 }
 
-export interface Repeat1Rule {
+export interface Repeat1Rule extends RuleBase {
 	readonly type: 'repeat1';
 	readonly content: Rule;
 	readonly separator?: string;
@@ -101,7 +156,7 @@ export interface Repeat1Rule {
 // Named patterns
 // ---------------------------------------------------------------------------
 
-export interface FieldRule {
+export interface FieldRule extends RuleBase {
 	readonly type: 'field';
 	readonly name: string;
 	readonly content: Rule;
@@ -124,13 +179,13 @@ export interface FieldRule {
 	readonly _needsContent?: boolean;
 }
 
-export interface VariantRule {
+export interface VariantRule extends RuleBase {
 	readonly type: 'variant';
 	readonly name: string;
 	readonly content: Rule;
 }
 
-export interface ClauseRule {
+export interface ClauseRule extends RuleBase {
 	readonly type: 'clause';
 	readonly name: string;
 	readonly content: Rule;
@@ -160,7 +215,7 @@ export type RuleSource = 'grammar' | 'promoted' | 'override';
  * uniformly across choice/enum works for free; code that wants the raw
  * string list reads `.members.map(m => m.value)`.
  */
-export interface EnumRule {
+export interface EnumRule extends RuleBase {
 	readonly type: 'enum';
 	readonly members: readonly StringRule[];
 	readonly source?: RuleSource;
@@ -186,14 +241,14 @@ export function normalizeEnumMembers(
 	} satisfies EnumRule;
 }
 
-export interface SupertypeRule {
+export interface SupertypeRule extends RuleBase {
 	readonly type: 'supertype';
 	readonly name: string;
 	readonly subtypes: string[];
 	readonly source?: RuleSource;
 }
 
-export interface GroupRule {
+export interface GroupRule extends RuleBase {
 	readonly type: 'group';
 	readonly name: string;
 	readonly content: Rule;
@@ -211,7 +266,7 @@ export interface GroupRule {
  * Added by Link (see `promoteTerminals`). Not present after Evaluate.
  * Assemble routes this to `modelType: 'pattern'` without inspecting content.
  */
-export interface TerminalRule {
+export interface TerminalRule extends RuleBase {
 	readonly type: 'terminal';
 	readonly content: Rule;
 	/** Always 'promoted' today — Link synthesises terminals from shape. */
@@ -246,7 +301,7 @@ export interface PolymorphForm {
 	readonly discriminatorKinds?: readonly string[];
 }
 
-export interface PolymorphRule {
+export interface PolymorphRule extends RuleBase {
 	readonly type: 'polymorph';
 	/** Ordered list of forms (one per variant, in declaration order). */
 	readonly forms: Array<PolymorphForm>;
@@ -258,12 +313,12 @@ export interface PolymorphRule {
 // Terminals
 // ---------------------------------------------------------------------------
 
-export interface StringRule {
+export interface StringRule extends RuleBase {
 	readonly type: 'string';
 	readonly value: string;
 }
 
-export interface PatternRule {
+export interface PatternRule extends RuleBase {
 	readonly type: 'pattern';
 	readonly value: string;
 }
@@ -272,15 +327,15 @@ export interface PatternRule {
 // Structural whitespace
 // ---------------------------------------------------------------------------
 
-export interface IndentRule {
+export interface IndentRule extends RuleBase {
 	readonly type: 'indent';
 }
 
-export interface DedentRule {
+export interface DedentRule extends RuleBase {
 	readonly type: 'dedent';
 }
 
-export interface NewlineRule {
+export interface NewlineRule extends RuleBase {
 	readonly type: 'newline';
 }
 
@@ -288,10 +343,10 @@ export interface NewlineRule {
 // References — resolved by Link; absent after Link
 // ---------------------------------------------------------------------------
 
-export interface SymbolRule {
+export interface SymbolRule extends RuleBase {
 	readonly type: 'symbol';
 	readonly name: string;
-	readonly source?: 'grammar' | 'link';
+	readonly source?: 'grammar' | 'link' | 'group-lift';
 	/** Original literal text when Link synthesized this ref from a string token. */
 	readonly literal?: string;
 	readonly hidden?: boolean;
@@ -307,14 +362,14 @@ export interface SymbolRule {
 	readonly aliasedFrom?: string;
 }
 
-export interface AliasRule {
+export interface AliasRule extends RuleBase {
 	readonly type: 'alias';
 	readonly content: Rule;
 	readonly named: boolean;
 	readonly value: string;
 }
 
-export interface TokenRule {
+export interface TokenRule extends RuleBase {
 	readonly type: 'token';
 	readonly content: Rule;
 	readonly immediate: boolean;
@@ -410,4 +465,52 @@ export interface SymbolRef {
 	optional?: boolean;
 	repeated?: boolean;
 	position?: number; // Link adds: index within parent's SEQ
+}
+
+// ---------------------------------------------------------------
+// Path-addressed rule rewriting
+//
+// Slash-separated positional paths (e.g. '1/1/0/1/3') used by
+// `polymorphs:` / `transforms:` / `groups:` in overrides.ts. See
+// docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+// for the path semantics.
+// ---------------------------------------------------------------
+
+/**
+ * Return a new rule tree with the sub-rule at `path` replaced by
+ * `replacement`. Pure — no mutation of input. Path segments index into:
+ *   - seq.members[i] / choice.members[i]
+ *   - wrapper.content (path '0' for optional/repeat/repeat1/field/
+ *     token/alias/variant/clause/group)
+ *
+ * Throws if any segment fails to address.
+ */
+export function replaceAtPath(rule: Rule, path: string, replacement: Rule): Rule {
+	const segments = path.split('/').filter((s) => s.length > 0);
+	return replaceAtPathRec(rule, segments, 0, replacement);
+}
+
+function replaceAtPathRec(rule: Rule, segments: readonly string[], depth: number, replacement: Rule): Rule {
+	if (depth === segments.length) return replacement;
+	const idx = parseInt(segments[depth]!, 10);
+	switch (rule.type) {
+		case 'seq':
+		case 'choice': {
+			const members = rule.members.slice();
+			members[idx] = replaceAtPathRec(members[idx]!, segments, depth + 1, replacement);
+			return { ...rule, members };
+		}
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'field':
+		case 'token':
+		case 'alias':
+		case 'variant':
+		case 'clause':
+		case 'group':
+			return { ...rule, content: replaceAtPathRec((rule as { content: Rule }).content, segments, depth + 1, replacement) } as Rule;
+		default:
+			throw new Error(`replaceAtPath: cannot descend into '${rule.type}' at segment ${depth}`);
+	}
 }

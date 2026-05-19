@@ -833,33 +833,135 @@
     }
   },
   {
-    "type": "await_expression",
+    "type": "attributed_enum_variant",
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "_expression",
+          "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "enum_variant",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "base_field_initializer",
+    "type": "attributed_field_declaration",
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "_expression",
+          "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "field_declaration",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "attributed_parameter",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "_type",
+          "named": true
+        },
+        {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "parameter",
+          "named": true
+        },
+        {
+          "type": "self_parameter",
+          "named": true
+        },
+        {
+          "type": "variadic_parameter",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "attributed_type_parameter",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "const_parameter",
+          "named": true
+        },
+        {
+          "type": "lifetime_parameter",
+          "named": true
+        },
+        {
+          "type": "metavariable",
+          "named": true
+        },
+        {
+          "type": "type_parameter",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "await_expression",
+    "named": true,
+    "fields": {
+      "expression": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "base_field_initializer",
+    "named": true,
+    "fields": {
+      "expression": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -1326,17 +1428,17 @@
             "named": true
           }
         ]
+      },
+      "pattern": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_pattern",
+            "named": true
+          }
+        ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "_pattern",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -1981,11 +2083,7 @@
       "required": false,
       "types": [
         {
-          "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "enum_variant",
+          "type": "attributed_enum_variant",
           "named": true
         }
       ]
@@ -2187,11 +2285,7 @@
       "required": false,
       "types": [
         {
-          "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "field_declaration",
+          "type": "attributed_field_declaration",
           "named": true
         }
       ]
@@ -3761,17 +3855,17 @@
             "named": true
           }
         ]
+      },
+      "pattern": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_pattern",
+            "named": true
+          }
+        ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "_pattern",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -3848,17 +3942,17 @@
             "named": true
           }
         ]
+      },
+      "pattern": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_pattern",
+            "named": true
+          }
+        ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "_pattern",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -4039,23 +4133,7 @@
       "required": false,
       "types": [
         {
-          "type": "_type",
-          "named": true
-        },
-        {
-          "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "parameter",
-          "named": true
-        },
-        {
-          "type": "self_parameter",
-          "named": true
-        },
-        {
-          "type": "variadic_parameter",
+          "type": "attributed_parameter",
           "named": true
         }
       ]
@@ -4064,16 +4142,17 @@
   {
     "type": "parenthesized_expression",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "_expression",
-          "named": true
-        }
-      ]
+    "fields": {
+      "expression": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -4453,16 +4532,17 @@
   {
     "type": "ref_pattern",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "_pattern",
-          "named": true
-        }
-      ]
+    "fields": {
+      "pattern": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_pattern",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -4589,16 +4669,17 @@
   {
     "type": "removed_trait_bound",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "_type",
-          "named": true
-        }
-      ]
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_type",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -5994,16 +6075,6 @@
           }
         ]
       },
-      "trailing_where_clause": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "where_clause",
-            "named": true
-          }
-        ]
-      },
       "type": {
         "multiple": false,
         "required": true,
@@ -6034,7 +6105,17 @@
           }
         ]
       },
-      "where_clause": {
+      "where_clause1": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "where_clause",
+            "named": true
+          }
+        ]
+      },
+      "where_clause2": {
         "multiple": false,
         "required": false,
         "types": [
@@ -6085,56 +6166,13 @@
   {
     "type": "type_parameters",
     "named": true,
-    "fields": {
-      "attributes": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "attribute_item",
-            "named": true
-          },
-          {
-            "type": "const_parameter",
-            "named": true
-          },
-          {
-            "type": "lifetime_parameter",
-            "named": true
-          },
-          {
-            "type": "metavariable",
-            "named": true
-          },
-          {
-            "type": "type_parameter",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
-          "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "const_parameter",
-          "named": true
-        },
-        {
-          "type": "lifetime_parameter",
-          "named": true
-        },
-        {
-          "type": "metavariable",
-          "named": true
-        },
-        {
-          "type": "type_parameter",
+          "type": "attributed_type_parameter",
           "named": true
         }
       ]
@@ -6439,13 +6477,9 @@
     "named": true,
     "fields": {
       "path": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
-          {
-            "type": "::",
-            "named": false
-          },
           {
             "type": "crate",
             "named": true

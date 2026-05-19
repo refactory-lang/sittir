@@ -1,15 +1,23 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { basename, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { AssembledBranch, AssembledKeyword, AssembledPattern } from '../compiler/node-map.ts';
+import {
+	AssembledBranch,
+	AssembledGroup,
+	AssembledKeyword,
+	AssembledPattern,
+	AssembledPolymorph
+} from '../compiler/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type { SeqRule } from '../compiler/rule.ts';
+import type { ChoiceRule, SeqRule } from '../compiler/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { emitHashFiles, emitRenderModule } from '../emitters/render-module.ts';
 import { fixturesOutputPath } from '../emitters/parity-fixtures.ts';
+import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
 
 const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 
@@ -37,6 +45,278 @@ function makeMinimalNodeMap(): NodeMap {
 		externals: new Set(),
 		word: undefined
 	} as unknown as NodeMap;
+}
+
+function makeRequiredChildrenNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'identifier' }]
+	};
+	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
+		['required_child_parent', new AssembledBranch('required_child_parent', parentRule, parentRule)],
+		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })]
+	]);
+	return {
+		grammar: 'rust',
+		grammarSha: 'test-sha',
+		rules: {},
+		nodes,
+		externals: new Set(),
+		word: undefined
+	} as unknown as NodeMap;
+}
+
+function makeOptionalChildrenNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'optional',
+				content: { type: 'symbol', name: 'identifier' }
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
+		['optional_child_parent', new AssembledBranch('optional_child_parent', parentRule, parentRule)],
+		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })]
+	]);
+	return {
+		grammar: 'rust',
+		grammarSha: 'test-sha',
+		rules: {},
+		nodes,
+		externals: new Set(),
+		word: undefined
+	} as unknown as NodeMap;
+}
+
+function makeRepeatedChildrenNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'repeat1',
+				content: { type: 'symbol', name: 'identifier' }
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
+		['repeated_child_parent', new AssembledBranch('repeated_child_parent', parentRule, parentRule)],
+		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })]
+	]);
+	return {
+		grammar: 'rust',
+		grammarSha: 'test-sha',
+		rules: {},
+		nodes,
+		externals: new Set(),
+		word: undefined
+	} as unknown as NodeMap;
+}
+
+function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'repeat',
+				content: { type: 'symbol', name: 'identifier' }
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
+		['optional_repeated_child_parent', new AssembledBranch('optional_repeated_child_parent', parentRule, parentRule)],
+		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })]
+	]);
+	return {
+		grammar: 'rust',
+		grammarSha: 'test-sha',
+		rules: {},
+		nodes,
+		externals: new Set(),
+		word: undefined
+	} as unknown as NodeMap;
+}
+
+function makeTokenOnlyChildrenNodeMap(): NodeMap {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'kw_j' }]
+	};
+	const nodes = new Map<string, AssembledBranch | AssembledKeyword>([
+		['token_child_parent', new AssembledBranch('token_child_parent', parentRule, parentRule)],
+		['kw_j', new AssembledKeyword('kw_j', { type: 'string', value: 'jjjj' })]
+	]);
+	return {
+		grammar: 'rust',
+		grammarSha: 'test-sha',
+		rules: {},
+		nodes,
+		externals: new Set(),
+		word: undefined
+	} as unknown as NodeMap;
+}
+
+function makePolymorphSingularChildrenNodeMap(): NodeMap {
+	const identifierRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'identifier' }]
+	};
+	const integerRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'integer' }]
+	};
+	const parentRule: ChoiceRule = {
+		type: 'choice',
+		members: [
+			{ type: 'symbol', name: 'expression__form_identifier' },
+			{ type: 'symbol', name: 'expression__form_integer' }
+		]
+	};
+	const identifierForm = new AssembledGroup('expression__form_identifier', identifierRule, identifierRule, {
+		name: 'identifier',
+		parentKind: 'expression'
+	});
+	const integerForm = new AssembledGroup('expression__form_integer', integerRule, integerRule, {
+		name: 'integer',
+		parentKind: 'expression'
+	});
+	const nodes = new Map<string, AssembledPolymorph | AssembledPattern>([
+		['expression', new AssembledPolymorph('expression', parentRule, [identifierForm, integerForm])],
+		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })],
+		['integer', new AssembledPattern('integer', { type: 'pattern', value: '[0-9]+' })]
+	]);
+	return makeNodeMapWith(nodes, new Set(['expression__form_identifier', 'expression__form_integer']));
+}
+
+function makeTokenOnlyGeneratedIdTables(): GeneratedIdTables {
+	return {
+		kindIds: {
+			token_child_parent: {
+				id: 1,
+				parser: {
+					cSymbol: 'sym_token_child_parent',
+					parserName: 'token_child_parent',
+					anon: false,
+					aux: false,
+					alias: false,
+					hidden: false
+				}
+			},
+			kw_j: {
+				id: 2,
+				parser: {
+					cSymbol: 'anon_sym_jjjj',
+					parserName: 'kw_j',
+					anon: true,
+					aux: false,
+					alias: false,
+					hidden: false
+				}
+			}
+		},
+		sourceArtifact: 'parser.wasm'
+	};
+}
+
+function assertRustRenderRuntimeBehavior(): void {
+	const emitted = emitRenderModule(
+		'rust',
+		[
+			{
+				filename: 'token_child_parent.jinja',
+				content: '{{ children }}'
+			}
+		],
+		makeTokenOnlyChildrenNodeMap(),
+		makeTokenOnlyGeneratedIdTables()
+	);
+	const runtimeDir = resolve(repoRoot, 'scratch/render-module-runtime-fixture');
+	rmSync(runtimeDir, { recursive: true, force: true });
+	try {
+		mkdirSync(resolve(runtimeDir, 'src/render'), { recursive: true });
+		mkdirSync(resolve(runtimeDir, 'templates'), { recursive: true });
+		mkdirSync(resolve(runtimeDir, 'tests'), { recursive: true });
+
+		writeFileSync(
+			resolve(runtimeDir, 'Cargo.toml'),
+			`[package]
+name = "render_runtime_fixture"
+version = "0.0.0"
+edition = "2021"
+
+[workspace]
+
+[features]
+napi-bindings = []
+debug-transport = []
+
+[dependencies]
+sittir-core = { path = ${JSON.stringify(resolve(repoRoot, 'rust/crates/sittir-core'))} }
+askama = "0.15"
+serde = { version = "1", features = ["derive"] }
+`
+		);
+		writeFileSync(resolve(runtimeDir, 'src/lib.rs'), 'pub mod render;\n');
+		for (const file of [
+			emitted.hashRs,
+			emitted.templatesRs,
+			emitted.dispatchRs,
+			emitted.transportRs,
+			emitted.bridgeRs,
+			emitted.libRs
+		]) {
+			writeFileSync(resolve(runtimeDir, 'src/render', basename(file.path)), file.contents);
+		}
+		writeFileSync(resolve(runtimeDir, 'src/render/kind_ids.rs'), '');
+		writeFileSync(resolve(runtimeDir, 'templates/token_child_parent.jinja'), '{{ children }}');
+		writeFileSync(
+			resolve(runtimeDir, 'tests/runtime.rs'),
+			`use render_runtime_fixture::render::render_dispatch;
+use sittir_core::types::{KindId, NodeData, Source};
+
+fn node(kind: u16, named: bool, text: Option<&str>, children: Option<Vec<NodeData>>) -> NodeData {
+    NodeData {
+        type_: KindId(kind),
+        source: Source::Factory,
+        named,
+        fields: None,
+        children,
+        text: text.map(str::to_string),
+        span: None,
+        node_handle: None,
+        child_index: None,
+        trivia_data: None,
+    }
+}
+
+#[test]
+fn token_only_child_renders_exactly() {
+    let parent = node(1, true, None, Some(vec![node(2, true, Some("jjjj"), None)]));
+    let rendered = render_dispatch(&parent).expect("render succeeds");
+    assert_eq!(rendered, "jjjj");
+}
+
+#[test]
+fn missing_required_children_errors() {
+    let parent = node(1, true, None, None);
+    let err = render_dispatch(&parent).expect_err("missing required children should fail");
+    let message = err.to_string();
+    assert!(
+        message.contains("missing required field 'children'"),
+        "unexpected error: {message}"
+    );
+}
+`
+		);
+
+		execFileSync('cargo', ['test', '--quiet'], {
+			cwd: runtimeDir,
+			stdio: 'pipe'
+		});
+	} finally {
+		rmSync(runtimeDir, { recursive: true, force: true });
+	}
 }
 
 describe('render pipeline optimization — retained baseline convergence', () => {
@@ -92,6 +372,145 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		expect(emitted.templatesRs.contents).not.toContain('    pub name_leading_sep: bool,');
 		expect(emitted.templatesRs.contents).not.toContain('    pub name_trailing_sep: bool,');
 		expect(emitted.templatesRs.contents).not.toContain('.cloned().unwrap_or_default()');
+	});
+
+	it('emits cardinality-aware children views for singular and repeated child slots', () => {
+		const required = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'required_child_parent.jinja',
+					content: '{# @generated #}\n{{ children }}'
+				}
+			],
+			makeRequiredChildrenNodeMap()
+		);
+		const optional = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'optional_child_parent.jinja',
+					content: '{# @generated #}\n{% if children | isPresent %}{{ children }}{% endif %}'
+				}
+			],
+			makeOptionalChildrenNodeMap()
+		);
+		const repeated = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'repeated_child_parent.jinja',
+					content: '{# @generated #}\n{{ children | join(" ") }}'
+				}
+			],
+			makeRepeatedChildrenNodeMap()
+		);
+
+		expect(required.templatesRs.contents).toContain("pub struct RequiredChildParentTemplate<'a> {");
+		expect(required.templatesRs.contents).toContain("    pub children: SingleNonterminalView<'a>,");
+		expect(optional.templatesRs.contents).toContain("pub struct OptionalChildParentTemplate<'a> {");
+		expect(optional.templatesRs.contents).toContain("    pub children: OptionalNonterminalView<'a>,");
+		expect(optional.bridgeRs.contents).toContain('if children.is_empty() {');
+		expect(optional.bridgeRs.contents).toContain('return Ok(ResolvedField::default());');
+		expect(repeated.templatesRs.contents).toContain("pub struct RepeatedChildParentTemplate<'a> {");
+		expect(repeated.templatesRs.contents).toContain("    pub children: ListNonterminalView<'a>,");
+	});
+
+	it('keeps token-only singular children on direct transport views so jjjj does not widen', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'token_child_parent.jinja',
+					content: '{{ children }}'
+				}
+			],
+			makeTokenOnlyChildrenNodeMap()
+		);
+
+		expect(emitted.templatesRs.contents).toContain("    pub children: SingleNonterminalView<'a>,");
+		expect(emitted.transportRs.contents).toContain(
+			'children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),'
+		);
+		expect(emitted.transportRs.contents).not.toContain('let children_buf: Vec<::sittir_core::filters::Renderable');
+		assertRustRenderRuntimeBehavior();
+	}, 20_000);
+
+	it('keeps polymorph singular unnamed children on direct transport views', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'expression.jinja',
+					content: '{{ children }}'
+				}
+			],
+			makePolymorphSingularChildrenNodeMap()
+		);
+		const renderStart = emitted.transportRs.contents.indexOf('fn render_expression(');
+		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
+		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
+
+		expect(emitted.templatesRs.contents).toContain("pub struct ExpressionTemplate<'a> {");
+		expect(emitted.templatesRs.contents).toContain("    pub children: SingleNonterminalView<'a>,");
+		expect(renderBody).toContain(
+			'children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),'
+		);
+		expect(renderBody).not.toContain('let children_buf: Vec<::sittir_core::filters::Renderable');
+		expect(renderBody).not.toContain('children: ListNonterminalView {');
+	});
+
+	it('keeps repeated unnamed children on direct Vec-backed transport views', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'optional_repeated_child_parent.jinja',
+					content: '{{ children | join(" ") }}'
+				}
+			],
+			makeOptionalRepeatedChildrenNodeMap()
+		);
+		const renderStart = emitted.transportRs.contents.indexOf('fn render_optional_repeated_child_parent(');
+		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
+		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
+
+		expect(emitted.templatesRs.contents).toContain("pub struct OptionalRepeatedChildParentTemplate<'a> {");
+		expect(emitted.templatesRs.contents).toContain("    pub children: ListNonterminalView<'a>,");
+		expect(renderBody).toContain(
+			"let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()"
+		);
+		expect(renderBody).not.toContain('node.children.as_deref().unwrap_or(&[])');
+	});
+
+	it('keeps fallback repeated unnamed children on direct Vec-backed transport views', () => {
+		const emitted = emitRenderModule('rust', [], makeOptionalRepeatedChildrenNodeMap());
+		const renderStart = emitted.transportRs.contents.indexOf('fn render_optional_repeated_child_parent(');
+		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
+		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
+
+		expect(renderBody).toContain('for child in node.children.iter() {');
+		expect(renderBody).not.toContain('if let Some(children) = &node.children {');
+	});
+
+	it('renders polymorphs through the parent helper without per-form typed helpers', () => {
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'expression.jinja',
+					content: '{{ children }}'
+				}
+			],
+			makePolymorphSingularChildrenNodeMap()
+		);
+		const source = readFileSync(resolve(repoRoot, 'packages/codegen/src/emitters/render-module.ts'), 'utf8');
+
+		expect(emitted.transportRs.contents).toContain('fn render_expression(');
+		expect(emitted.transportRs.contents).not.toContain('fn render_expression__form_identifier(');
+		expect(emitted.transportRs.contents).not.toContain('fn render_expression__form_integer(');
+		expect(source).not.toContain('function renderTypedPolymorphFn(');
+		expect(source).not.toContain('function renderTypedFormFn(');
 	});
 });
 
@@ -155,15 +574,22 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.bridgeRs.contents).toContain('fn resolve_optional');
 		expect(emitted.bridgeRs.contents).toContain('fn resolve_required');
 		expect(emitted.bridgeRs.contents).toContain('fn missing_required_field');
-		expect(emitted.bridgeRs.contents).toContain('fn resolve_children');
+		expect(emitted.bridgeRs.contents).toContain("enum SlotAccessor<'a>");
+		expect(emitted.bridgeRs.contents).toContain('fn resolve_slot(');
+		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_unnamed_children');
+		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_children');
+		expect(emitted.bridgeRs.contents).not.toContain('consumed_fields');
 		// render_dispatch is a thin shim in dispatch.rs delegating to bridge::render_nodedata_into.
+		expect(emitted.dispatchRs.contents).toContain('/// Legacy direct NodeData render entrypoint.');
 		expect(emitted.dispatchRs.contents).toContain('pub fn render_dispatch(node: &NodeData)');
 		expect(emitted.dispatchRs.contents).toContain('render_nodedata_into(node, &mut buf)');
 		// Per-kind render functions are inlined into bridge::render_nodedata_into.
+		expect(emitted.bridgeRs.contents).toContain('/// Legacy direct NodeData render bridge.');
 		expect(emitted.bridgeRs.contents).toContain('fn render_nodedata_into(');
 		// Phase D: dispatch inlined into bridge uses numeric KindId (42).
 		expect(emitted.bridgeRs.contents).toContain('42 =>');
-		expect(emitted.bridgeRs.contents).toContain('resolve_field(node, "name", true)');
+		expect(emitted.bridgeRs.contents).toContain('resolve_slot(node, SlotAccessor::Field("name"), true)');
+		expect(emitted.bridgeRs.contents).not.toContain('resolve_slot(node, SlotAccessor::Children');
 		expect(emitted.bridgeRs.contents).toContain(
 			`format!("render_nodedata_into: missing required field '{}' on '{}'", name, node.type_)`
 		);
@@ -172,6 +598,13 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.templatesRs.contents).not.toContain('TemplateContext');
 		expect(emitted.templatesRs.contents).not.toContain('pub struct RustGrammarMeta');
 		// mod.rs re-exports from dispatch and transport (spec 024 split).
+		expect(emitted.libRs.contents).toContain(
+			'#[deprecated(note = "legacy direct NodeData render bridge; normal native flow uses render_transport_dispatch via typed transport")]'
+		);
+		expect(emitted.libRs.contents).toContain('pub use bridge::render_nodedata_into;');
+		expect(emitted.libRs.contents).toContain(
+			'#[deprecated(note = "legacy direct NodeData render entrypoint; normal native flow uses render_transport_dispatch via typed transport")]'
+		);
 		expect(emitted.libRs.contents).toContain('pub use dispatch::render_dispatch;');
 		expect(emitted.libRs.contents).toContain(
 			'pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
@@ -207,7 +640,53 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap(), generatedIdTables);
 
 		// Per-kind render logic is inlined into bridge::render_nodedata_into.
-		expect(emitted.bridgeRs.contents).toContain('resolve_field(node, "name", true)');
+		expect(emitted.bridgeRs.contents).toContain('resolve_slot(node, SlotAccessor::Field("name"), true)');
+	});
+
+	it('routes unnamed children through the shared slot accessor path', () => {
+		const generatedIdTables: GeneratedIdTables = {
+			kindIds: {
+				required_child_parent: {
+					id: 7,
+					parser: {
+						cSymbol: 'sym_required_child_parent',
+						parserName: 'required_child_parent',
+						anon: false,
+						aux: false,
+						alias: false,
+						hidden: false
+					}
+				},
+				identifier: {
+					id: 1,
+					parser: {
+						cSymbol: 'sym_identifier',
+						parserName: 'identifier',
+						anon: false,
+						aux: false,
+						alias: false,
+						hidden: false
+					}
+				}
+			},
+			sourceArtifact: 'parser.wasm'
+		};
+
+		const emitted = emitRenderModule(
+			'rust',
+			[
+				{
+					filename: 'required_child_parent.jinja',
+					content: '{# @generated #}\n{{ children }}'
+				}
+			],
+			makeRequiredChildrenNodeMap(),
+			generatedIdTables
+		);
+
+		expect(emitted.bridgeRs.contents).toContain('resolve_slot(node, SlotAccessor::Children, true)');
+		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_unnamed_children');
+		expect(emitted.bridgeRs.contents).not.toContain('fn resolve_children');
 	});
 
 	it('removes the shared prepare bridge while keeping the native render boundary unchanged', () => {

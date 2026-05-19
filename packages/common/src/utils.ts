@@ -37,7 +37,7 @@ export function isNodeData(v: unknown): v is AnyNodeData {
 	const hasStoredFields = Object.keys(o).some((k) => k.startsWith('_'));
 	return hasStoredFields
 		|| typeof o.$text === 'string'
-		|| Array.isArray(o.$children)
+		|| o.$children !== undefined
 		|| o.$source === 0
 		|| o.$source === 1
 		|| o.$source === 2;

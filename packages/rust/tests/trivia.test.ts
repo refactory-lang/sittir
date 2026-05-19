@@ -20,7 +20,7 @@ function makeFn(name: string) {
  *  interface's required tuple (`readonly [LineCommentContent]`). */
 function makeComment(text: string): LineComment {
 	return F.lineCommentUFormContent({
-		children: [F.lineCommentContent(text)]
+		children: F.lineCommentContent(text)
 	}) as unknown as LineComment;
 }
 

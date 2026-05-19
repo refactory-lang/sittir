@@ -39,6 +39,14 @@ export interface NodeTrivia {
 export type NodeMemberValue = AnyNodeData | string | number;
 
 /**
+ * Anonymous-child storage shape.
+ *
+ * Unnamed slots may remain scalar when the grammar slot is singular, or array-
+ * shaped when the grammar slot is repeated.
+ */
+export type NodeChildren = NodeMemberValue | readonly NodeMemberValue[];
+
+/**
  * @deprecated NodeId branded type removed in ADR-0017. Use plain `number` instead.
  * Kept as a simple alias during migration so downstream imports resolve without error.
  */
@@ -64,7 +72,7 @@ export interface AnyNodeData {
 	$source?: 0 | 1 | 2;
 	/** Variant subtype name — set by factory, absent on readNode output. */
 	$variant?: string;
-	$children?: readonly NodeMemberValue[];
+	$children?: NodeChildren;
 	/**
 	 * Source text for this node.
 	 *

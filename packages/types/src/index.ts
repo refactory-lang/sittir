@@ -416,7 +416,7 @@ type Pluralize<S extends string> = S extends `${string}s`
 					? `${Pre}Children`
 					: S extends `${infer Pre}child`
 						? `${Pre}children`
-						: S extends `${infer Pre}${Vowel}y`
+						: S extends `${string}${Vowel}y`
 							? `${S}s`
 							: S extends `${infer Pre}y`
 								? `${Pre}ies`
@@ -549,7 +549,7 @@ type FieldInputType<T, K extends keyof FieldsOf<T>> = K extends keyof InputHints
  * consumer code writes `config.children`, not `config.$children`. The
  * `$`-prefixed metadata shape is internal NodeData.
  */
-type ChildSlotsOf<T> = T extends { readonly $children: infer C } ? { readonly children: C } : {};
+type ChildSlotsOf<T> = T extends { readonly $children?: infer C } ? { readonly children: C } : {};
 
 /**
  * RuntimeChildSlots<T> — runtime (factory output) child-slot shape.
@@ -557,7 +557,7 @@ type ChildSlotsOf<T> = T extends { readonly $children: infer C } ? { readonly ch
  * never converts singular to array — the concrete interface's `$children`
  * is already the grammar-declared shape.
  */
-type RuntimeChildSlots<T> = T extends { readonly $children: infer C } ? { readonly $children: C } : {};
+type RuntimeChildSlots<T> = T extends { readonly $children?: infer C } ? { readonly $children: C } : {};
 
 /**
  * WrappedNode<T> — the read-only lazy view produced by the generated
@@ -571,7 +571,7 @@ export type WrappedNode<T> = Simplify<
 	T & {
 		readonly [K in keyof FieldsOf<T> & string as FieldKey<K, FieldsOf<T>[K]>]: FieldsOf<T>[K];
 	} & (T extends {
-			readonly $children: infer C;
+			readonly $children?: infer C;
 		}
 			? NonNullable<C> extends readonly [infer Only]
 				? { readonly child: Only }
@@ -580,16 +580,16 @@ export type WrappedNode<T> = Simplify<
 >;
 
 /**
- * ChildOf<T> — element type of a node's `children` slot. Works on
- * both tuple-shaped singular slots (`readonly [X]` → X) and array
- * shaped repeated slots (`readonly X[]` → X). Used by factories and
- * resolvers to type child parameters without repeating the
- * `NonNullable<ConfigOf<T>['children']>[number]` ceremony.
+ * ChildOf<T> — child type of a node's `children` slot. Works on
+ * tuple-shaped singular slots (`readonly [X]` → X), scalar singular
+ * slots (`X` → X), and array-shaped repeated slots (`readonly X[]`
+ * → X). Used by factories and resolvers to type child parameters
+ * without repeating the slot-unwrapping ceremony.
  */
-export type ChildOf<T> = T extends { readonly $children: infer C }
+export type ChildOf<T> = T extends { readonly $children?: infer C }
 	? NonNullable<C> extends readonly (infer E)[]
 		? E
-		: never
+		: NonNullable<C>
 	: never;
 
 /**
@@ -603,8 +603,8 @@ export type ChildOf<T> = T extends { readonly $children: infer C }
  *    at runtime; callers can omit `children` on zero-occurrence rules.
  *
  * 2. **Polymorph form variant** — a node with `$variant` and a single-child
- *    tuple `$children: readonly [C]`. The inner child's Config is hoisted
- *    into the parent so callers write
+ *    slot (`$children: C` or legacy `$children: readonly [C]`). The inner
+ *    child's Config is hoisted into the parent so callers write
  *    `ir.assignment.eq({ left, right })` instead of
  *    `ir.assignment.eq({ left, children: [ir.assignmentEq({ right })] })`.
  *    Parent-level shared fields + inner-level variant fields appear together
@@ -626,7 +626,7 @@ export type ConfigOf<T> = T extends unknown
 							? KindEnumSlotInput<FieldInputType<T, K>> | undefined
 						: FieldInputType<T, K>;
 			} &
-				// Child surface: polymorph variants with a single-child tuple hoist
+				// Child surface: polymorph variants with a single-child slot hoist
 				// the inner child's Config up when the inner has meaningful Config
 				// content (fields or further hoists). Two corner cases:
 				//
@@ -658,14 +658,25 @@ export type ConfigOf<T> = T extends unknown
 				// `Partial<{ children }>` directly.
 				(T extends {
 					readonly $variant: string;
-					readonly $children: readonly [infer C];
+					readonly $children?: readonly [infer C];
 				}
 					? IsSingleType<C> extends true
 						? keyof ConfigOf<C> extends never
 							? Partial<ChildSlotsOf<T>>
 							: Omit<ConfigOf<C>, '$variant'>
 						: Partial<ChildSlotsOf<T>>
-					: Partial<ChildSlotsOf<T>>) &
+					: T extends {
+								readonly $variant: string;
+								readonly $children?: infer C;
+						  }
+						? NonNullable<C> extends readonly unknown[]
+							? Partial<ChildSlotsOf<T>>
+							: IsSingleType<NonNullable<C>> extends true
+								? keyof ConfigOf<NonNullable<C>> extends never
+									? Partial<ChildSlotsOf<T>>
+									: Omit<ConfigOf<NonNullable<C>>, '$variant'>
+								: Partial<ChildSlotsOf<T>>
+						: Partial<ChildSlotsOf<T>>) &
 				// $variant discriminator: carried verbatim on the Config surface
 				// whenever the interface declares one (independent of whether the
 				// child-hoist fires). Forms without their own $children still need
@@ -796,7 +807,7 @@ type FromInputBody<T, Scalars, Strings, Depth extends number[], NsMap, Visited e
 	readonly [K in keyof FieldsOf<T> as K extends OptionalNonAutoStampKeys<FieldsOf<T>>
 		? CamelCase<K>
 		: never]?: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
-} & (T extends { readonly $children: infer C }
+} & (T extends { readonly $children?: infer C }
 		? {
 				readonly children?: WidenChildSlot<C, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 			}

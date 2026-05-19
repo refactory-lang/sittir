@@ -40,6 +40,17 @@ import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { extractParityFixtures, serializeFixtures, fixturesOutputPath } from './emitters/parity-fixtures.ts';
+import { writeManifestForGrammar, type Grammar } from './scripts/generated-manifest.ts';
+
+// Codegen IS the writer of the per-grammar manifest. Internal validator runs
+// invoked from inside this CLI (e.g. extractParityFixtures uses
+// validateReadRenderParse to extract parity fixtures BEFORE the manifest is
+// rewritten) would otherwise verify the manifest mid-write — checking the
+// codegen process against its own incomplete output, which is meaningless.
+// Set the env so `loadLanguageForGrammar` skips verification for these
+// internal calls. External callers (validator CLI, probe-validate, etc.) do
+// not run this CLI and therefore do not inherit this env.
+process.env.SITTIR_INTERNAL_CODEGEN_RUN = '1';
 
 type ToolsDispatch = (argv: string[]) => Promise<number>;
 
@@ -389,6 +400,27 @@ if (shouldEmitRustRender) {
 			);
 			throw e;
 		}
+
+		// Workspace-wide compile check — codegen changes in render-module.ts
+		// affect all three grammars' emitted transport.rs. Without a check
+		// across the whole workspace, breakage in non-targeted grammars
+		// (e.g. python or typescript) would silently persist until the next
+		// per-grammar regen. cargo check is incremental: a no-op for the
+		// crate just rebuilt by napi, and only compiles other crates whose
+		// source changed since their last build.
+		console.log(`  → cargo check --workspace (catches cross-grammar breakage)…`);
+		try {
+			execSync('cargo check --workspace --features napi-bindings', {
+				stdio: 'inherit',
+				cwd: process.cwd()
+			});
+		} catch (e) {
+			console.error(
+				`    Workspace cargo check failed. Other grammars' generated code does not compile — ` +
+					`render-module.ts changes likely emit invalid code for them. Fix and re-run.`
+			);
+			throw e;
+		}
 	}
 }
 
@@ -427,6 +459,15 @@ if (renderable.missing.length > 0) {
 		`\n${renderable.missing.length} un-renderable kind(s) — render() will throw if called on these instances.`
 	);
 }
+
+// Write the per-grammar generated.manifest.json after all bulk writes complete
+// and before any validation runs. Always happens regardless of --roundtrip,
+// because the manifest needs to track the current on-disk state for any
+// downstream validator (this CLI's roundtrip probes OR the external validator
+// CLI). The only post-validation write is overrides.suggested.ts, which is
+// intentionally excluded from the manifest (see pathsFor()).
+writeManifestForGrammar(config.grammar as Grammar);
+console.log(`  → packages/${config.grammar}/.sittir/generated.manifest.json updated`);
 
 // --- Validation probes (optional, requires web-tree-sitter) ---
 if (cliArgs.roundtrip) {

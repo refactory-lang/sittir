@@ -14,8 +14,8 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  9  (0 applied, 9 held)
-// Rule promotions:   99  (91 applied, 8 held)
+// Field inferences:  5  (0 applied, 5 held)
+// Rule promotions:   100  (91 applied, 9 held)
 // Repeated shapes:   4  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -25,6 +25,15 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
+  // [held] polymorph — 1 choice position(s), 5 arm(s) total
+  _attributed_parameter: {
+      "1/0": variant("form0"),
+      "1/1": variant("form1"),
+      "1/2": variant("form2"),
+      "1/3": variant("form3"),
+      "1/4": variant("form4"),
+  },
+
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: body
@@ -43,33 +52,9 @@ export const suggestedTransforms = {
   },
 
 
-  // captured_pattern: 1 inferred field(s)
-  captured_pattern: {
-      // [held] 100% agreement, 6 parents
-      2: field("pattern"),  // $._pattern
-  },
-
   // closure_parameters: 1 inferred field(s)
   // [held] closure_parameters field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
-  // match_pattern: 1 inferred field(s)
-  match_pattern: {
-      // [held] 100% agreement, 6 parents
-      0: field("pattern"),  // $._pattern
-  },
-
-  // mut_pattern: 1 inferred field(s)
-  mut_pattern: {
-      // [held] 100% agreement, 6 parents
-      1: field("pattern"),  // $._pattern
-  },
-
-
-  // ref_pattern: 1 inferred field(s)
-  ref_pattern: {
-      // [held] 100% agreement, 6 parents
-      1: field("pattern"),  // $._pattern
-  },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   reference_expression: {
@@ -169,6 +154,197 @@ export const suggestedRules = {
 };
 
 // ---------------------------------------------------------------
+// suggestedGroups — drop entries into your overrides.ts
+// `groups:` block. Each entry lifts a nested sub-rule into
+// a hidden synthesized kind materialized as AssembledGroup.
+// All entries are held — none are auto-applied.
+//
+// CAVEAT: paths here are from the POST-LINK rule map. The synthesis
+// pass runs on POST-EVALUATE rules (before polymorph alias rewrites).
+// If a kind has been polymorph-aliased, the original-kind path may
+// differ from what is shown here. Pick the kind that exists at
+// synthesis time (often the polymorph-variant kind such as
+// `_visibility_modifier_pub`) and adjust the path accordingly.
+// validateGroupsConfig E2 will catch unresolvable paths with an
+// actionable error.
+// ---------------------------------------------------------------
+export const suggestedGroups = {
+  // [held] 1 candidate(s)
+  _array_expression_list: {
+    '0/2': 'attribute_item',
+  },
+
+  // [held] 1 candidate(s)
+  _array_expression_semi: {
+    '0/2': 'elements',
+  },
+
+  // [held] 1 candidate(s)
+  _closure_expression_block: {
+    '0/0/0': 'return_type',
+  },
+
+  // [held] 5 candidate(s)
+  _let_chain: {
+    '0': 'let_chain',
+    '1': 'let_chain',
+    '2': 'let_condition',
+    '3': 'let_condition',
+    '4': 'expression',
+  },
+
+  // [held] 1 candidate(s)
+  _macro_definition_brace: {
+    '1': 'macro_rule',
+  },
+
+  // [held] 1 candidate(s)
+  _macro_definition_bracket: {
+    '1': 'macro_rule',
+  },
+
+  // [held] 1 candidate(s)
+  _macro_definition_paren: {
+    '1': 'macro_rule',
+  },
+
+  // [held] 1 candidate(s)
+  abstract_type: {
+    '1/0': 'type_parameters',
+  },
+
+  // [held] 1 candidate(s)
+  arguments: {
+    '1/0/0': 'attribute_item',
+  },
+
+  // [held] 1 candidate(s)
+  array_type: {
+    '2/0': 'length',
+  },
+
+  // [held] 1 candidate(s)
+  attribute: {
+    '1/0/0': 'value',
+  },
+
+  // [held] 1 candidate(s)
+  block: {
+    '0/0': 'label',
+  },
+
+  // [held] 1 candidate(s)
+  block_comment: {
+    '1/0/0': 'outer',
+  },
+
+  // [held] 1 candidate(s)
+  const_item: {
+    '5/0': 'value',
+  },
+
+  // [held] 1 candidate(s)
+  const_parameter: {
+    '4/0': 'value',
+  },
+
+  // [held] 1 candidate(s)
+  enum_variant: {
+    '3/0': 'value',
+  },
+
+  // [held] 1 candidate(s)
+  extern_crate_declaration: {
+    '4/0': 'alias',
+  },
+
+  // [held] 1 candidate(s)
+  for_expression: {
+    '0/0': 'label',
+  },
+
+  // [held] 1 candidate(s)
+  function_item: {
+    '6/0': 'return_type',
+  },
+
+  // [held] 1 candidate(s)
+  function_signature_item: {
+    '6/0': 'return_type',
+  },
+
+  // [held] 3 candidate(s)
+  function_type: {
+    '1/0': 'function_type_trait_form',
+    '1/1': 'function_type_fn_form',
+    '2/0': 'return_type',
+  },
+
+  // [held] 3 candidate(s)
+  let_declaration: {
+    '3/0': 'type',
+    '4/0': 'value',
+    '5/0': 'alternative',
+  },
+
+  // [held] 1 candidate(s)
+  loop_expression: {
+    '0/0': 'label',
+  },
+
+  // [held] 1 candidate(s)
+  match_block: {
+    '1': 'match_arm',
+  },
+
+  // [held] 1 candidate(s)
+  match_pattern: {
+    '1/0': 'condition',
+  },
+
+  // [held] 1 candidate(s)
+  ordered_field_declaration_list: {
+    '1/0': 'attribute_item',
+  },
+
+  // [held] 1 candidate(s)
+  static_item: {
+    '7/0': 'value',
+  },
+
+  // [held] 1 candidate(s)
+  tuple_expression: {
+    '2': 'elements',
+  },
+
+  // [held] 1 candidate(s)
+  type_arguments: {
+    '1': 'type',
+  },
+
+  // [held] 1 candidate(s)
+  type_parameter: {
+    '2/0': 'default_type',
+  },
+
+  // [held] 1 candidate(s)
+  use_wildcard: {
+    '0/0': 'path',
+  },
+
+  // [held] 1 candidate(s)
+  variadic_parameter: {
+    '1/0': 'pattern',
+  },
+
+  // [held] 1 candidate(s)
+  while_expression: {
+    '0/0': 'label',
+  },
+
+};
+
+// ---------------------------------------------------------------
 // Raw derivation data — typed arrays for tooling
 // ---------------------------------------------------------------
 export interface PromotedRule {
@@ -199,6 +375,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "integer_literal", classification: "terminal", applied: true },
   { kind: "unit_expression", classification: "terminal", applied: true },
   { kind: "unit_type", classification: "terminal", applied: true },
+  { kind: "_attributed_parameter", classification: "polymorph", applied: false },
   { kind: "_block_doc_comment_marker", classification: "polymorph", applied: false },
   { kind: "_closure_expression_expr", classification: "polymorph", applied: false },
   { kind: "_let_chain", classification: "polymorph", applied: false },
@@ -288,11 +465,7 @@ export interface InferredField {
   readonly applied: boolean;
 }
 export const inferredFields: readonly InferredField[] = [
-  { kind: "captured_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "closure_parameters", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
-  { kind: "match_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
-  { kind: "mut_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
-  { kind: "ref_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "slice_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "tuple_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "tuple_struct_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },

@@ -25,15 +25,15 @@
 
 import type { Rule } from '../../compiler/rule.ts';
 import type { FieldLike } from '../runtime-shapes.ts';
-import { wireRegisterSyntheticRule } from '../wire/wire.ts';
+import { wireRegisterSyntheticInline, wireRegisterSyntheticRule } from '../wire/wire.ts';
 import { isStringType, isOptionalType, isChoiceType } from '../runtime-shapes.ts';
 import type { RuntimeRule } from '../runtime-shapes.ts';
 
 /**
  * Shared `FIELD(name, <shape-containing-STRING>)` →
  * `FIELD(name, <shape with STRING replaced by SYMBOL(_kw_<name>)>)`
- * transformation. Synthesizes a hidden `_kw_<name>: prec.left(1, 'kw')`
- * rule via registerSyntheticRule and rewrites the content so
+ * transformation. Synthesizes a hidden `_kw_<name>: 'kw'` rule via
+ * registerSyntheticRule, marks it for wire-managed `inline:`, and rewrites the content so
  * tree-sitter's normalizer preserves the FIELD wrapper.
  *
  * Tree-sitter strips FIELD wrappers around bare STRING nodes at grammar-
@@ -43,8 +43,7 @@ import type { RuntimeRule } from '../runtime-shapes.ts';
  * Shapes handled:
  *
  *   - **Bare STRING** — direct `field('x', 'literal')` case. The STRING
- *     is replaced by a SYMBOL reference to `_kw_<x>` (body:
- *     `prec.left(1, 'literal')`).
+ *     is replaced by a SYMBOL reference to `_kw_<x>` (body: `'literal'`).
  *
  *   - **OPTIONAL(STRING)** — grammar like `seq(optional('&'), ...)`
  *     with an override `0: field('lifetime')` wraps position 0 as
@@ -102,9 +101,9 @@ export function maybeKeywordSymbol(
 }
 
 /**
- * Create the `_kw_<fieldName>` hidden rule (body wrapped in
- * `prec.left(1, ...)`) and return a SYMBOL reference to it, preserving
- * the runtime's case convention (uppercase when the input STRING is
+ * Create the `_kw_<fieldName>` hidden rule, register it for wire-managed
+ * `inline:`, and return a SYMBOL reference to it, preserving the
+ * runtime's case convention (uppercase when the input STRING is
  * uppercase, lowercase otherwise).
  */
 function synthesizeKwSymbol(
@@ -115,20 +114,14 @@ function synthesizeKwSymbol(
 	const c = content as { type: string };
 	const isUpperCase = c.type === 'STRING';
 	const hiddenName = `_kw_${fieldName}`;
-	const nativePrec = (
-		globalThis as {
-			prec?: ((v: number, c: unknown) => unknown) & {
-				left?: (v: number, c: unknown) => unknown;
-			};
-		}
-	).prec;
-	let precBody: RuntimeRule = (typeof nativePrec === 'function' ? nativePrec(-1, content) : content) as RuntimeRule;
-	if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody);
-	if (!wireRegisterSyntheticRule(hiddenName, precBody)) {
+	let body = content as RuntimeRule;
+	if (wrapSyntheticBody) body = wrapSyntheticBody(body);
+	if (!wireRegisterSyntheticRule(hiddenName, body)) {
 		throw new Error(
 			`field('${fieldName}', <STRING>): no active wire() context — call must occur inside a rule callback wrapped by wire()`
 		);
 	}
+	wireRegisterSyntheticInline(hiddenName);
 	return {
 		type: isUpperCase ? 'SYMBOL' : 'symbol',
 		name: hiddenName
@@ -234,6 +227,8 @@ export function field(name: string, content?: Input): FieldPlaceholder | FieldLi
  * STRING, we swap it for a SYMBOL reference to a synthesized `_kw_<name>`
  * hidden rule so tree-sitter's grammar normalizer preserves the FIELD wrapper
  * around it (the normalizer strips FIELD wrappers around bare STRING nodes).
+ * wire() later auto-inlines the helper back into the parse state machine so
+ * the parser still sees the original bare token at the call site.
  * Tagging `source: 'override'` lets `derive-overrides-json` recognize
  * user-authored field() calls and skip them from the runtime routing map.
  *

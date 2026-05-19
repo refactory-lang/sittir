@@ -24,13 +24,15 @@ import {
 	isRequired,
 	isMultiple,
 	isNonEmpty,
+	deriveSlotCardinality,
+	deriveChildrenCardinality,
 	allSlotsOf
 } from '../compiler/node-map.ts';
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { hasCatalogEntry } from './kind-discriminant.ts';
 
 // Re-export derived helpers so emitters can import from one place.
-export { isRequired, isMultiple, isNonEmpty };
+export { isRequired, isMultiple, isNonEmpty, deriveSlotCardinality, deriveChildrenCardinality };
 
 /**
  * Compute the set of kind names referenced by any structural node in the
@@ -406,32 +408,6 @@ export function stampExpressionFor(
 	return undefined;
 }
 
-export interface SlotCardinality {
-	readonly required: boolean;
-	readonly multiple: boolean;
-	readonly nonEmpty: boolean;
-}
-
-/**
- * Collapse one or more slots into the cardinality surface consumed by emitters.
- *
- * This is the shared derivation for the "shape" part of a slot: whether callers
- * must supply a value, whether the slot is singular or repeated, and whether a
- * repeated slot is guaranteed non-empty. Keeping this in one helper prevents TS
- * transport types, JS projection rules, and Rust transport structs from making
- * slightly different decisions from the same `values[]` metadata.
- */
-export function combineSlotCardinality(slots: readonly AssembledNonterminal[]): SlotCardinality {
-	if (slots.length === 0) {
-		return { required: false, multiple: false, nonEmpty: false };
-	}
-	return {
-		required: slots.some((slot) => isRequired(slot)),
-		multiple: slots.some((slot) => isMultiple(slot)),
-		nonEmpty: slots.some((slot) => isNonEmpty(slot))
-	};
-}
-
 // ---------------------------------------------------------------------------
 // Field / child type-expression projection (shared by types.ts + factories.ts)
 // ---------------------------------------------------------------------------
@@ -521,6 +497,36 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 			continue;
 		}
 		out.push({ kind: 'nodeKind', value: node.typeName, rawKind: t });
+	}
+	return out;
+}
+
+/**
+ * Compute the shared {@link TypeComponent} list for a children slot.
+ *
+ * Child slots intentionally project only constructible / drillable node refs.
+ * Inline terminal values in the grammar (separator commas, keywords like
+ * `"from"`, etc.) are filtered out by the wrap layer and never appear in the
+ * public children accessor surface, so the type projection must ignore them too.
+ *
+ * Hidden keyword refs are still inlined to string literals because they are
+ * node-backed slots the public surface can carry.
+ */
+export function childTypeComponents(child: AssembledNonterminal, nodeMap: NodeMap): TypeComponent[] {
+	const out: TypeComponent[] = [];
+	for (const rawKind of slotKindNames(child)) {
+		const lit = resolveHiddenKeywordLiteral(rawKind, nodeMap);
+		if (lit !== undefined) {
+			out.push({ kind: 'literal', value: lit });
+			continue;
+		}
+		const node = nodeMap.nodes.get(rawKind);
+		if (!node) {
+			const fallback = rawKind.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase());
+			out.push({ kind: 'missing', value: fallback, rawKind });
+			continue;
+		}
+		out.push({ kind: 'nodeKind', value: node.typeName, rawKind });
 	}
 	return out;
 }
@@ -957,7 +963,7 @@ export type FactoryShape = 'config' | 'spread' | 'text' | 'direct';
 export type ChildFactorySurface = 'direct' | 'spread';
 
 /**
- * Classify a branch or group node's user-facing slot count — the ONE
+ * Classify a branch/group/polymorph node's user-facing slot count — the ONE
  * source of truth for single-slot vs multi-slot detection.
  *
  * Filters out:
@@ -975,12 +981,16 @@ export type ChildFactorySurface = 'direct' | 'spread';
  * factory-map.ts, and from.ts. Those call sites should migrate to
  * this function (Task 3).
  *
- * @param node - An AssembledNode (only `branch` and `group` modelTypes
+ * @param node - An AssembledNode (only `branch`, `group`, and `polymorph` modelTypes
  *   produce meaningful results; other modelTypes always return `multiSlot`).
  * @param nodeMap - The assembled node map, needed by the filtering helpers.
  */
 export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): BranchSlotClass {
-	if (node.modelType !== 'branch' && node.modelType !== 'group') {
+	if (
+		node.modelType !== 'branch' &&
+		node.modelType !== 'group' &&
+		node.modelType !== 'polymorph'
+	) {
 		return { tag: 'multiSlot' };
 	}
 
@@ -1012,12 +1022,17 @@ export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): Bran
 }
 
 /**
- * Post-assembly pass: compute and store `slotClass` on every branch/group
+ * Post-assembly pass: compute and store `slotClass` on every branch/group/
+ * polymorph
  * node in the node map. Called from `generate.ts` after `hydrateSlotRefs`.
  */
 export function computeSlotClasses(nodeMap: NodeMap): void {
 	for (const [, node] of nodeMap.nodes) {
-		if (node.modelType === 'branch' || node.modelType === 'group') {
+		if (
+			node.modelType === 'branch' ||
+			node.modelType === 'group' ||
+			node.modelType === 'polymorph'
+		) {
 			node.slotClass = classifyBranchSlots(node, nodeMap);
 		}
 	}
@@ -1056,6 +1071,32 @@ function hasUserFacingFactoryChildren(children: readonly AssembledNonterminal[],
 }
 
 /**
+ * Returns true when any child slot is optional but carries user-facing named
+ * content types (i.e. not terminal literals, not parameterless compounds, not
+ * hidden keyword/token kinds). Such children are invisible to `isAutoStampSlot`
+ * (which skips all optional slots) but must still appear in the factory config
+ * surface — so a node with these children cannot be classified as `'direct'`.
+ *
+ * Example: `struct_pattern` has an optional repeating `field_pattern` children
+ * slot. `isAutoStampSlot` skips it (optional), but the user needs to be able
+ * to supply those children through the factory config.
+ */
+function hasOptionalUserContentChildren(children: readonly AssembledNonterminal[], nodeMap: NodeMap): boolean {
+	return children.some((child) => {
+		if (isRequired(child)) return false; // only optional slots are missed by isAutoStampSlot
+		return child.values.some((v) => {
+			if (isTerminalValue(v)) return false;
+			if (!isNodeRef(v)) return false;
+			const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+			const ref = nodeMap.nodes.get(kindName);
+			if (ref?.isParameterless) return false;
+			if (kindName.startsWith('_') && (ref instanceof AssembledKeyword || ref instanceof AssembledToken)) return false;
+			return true; // user-facing named content
+		});
+	});
+}
+
+/**
  * Resolve the raw field names visible on a kind's factory surface.
  *
  * @remarks
@@ -1067,23 +1108,12 @@ function hasUserFacingFactoryChildren(children: readonly AssembledNonterminal[],
 export function resolveFactoryFieldNames(node: AssembledNode, nodeMap: NodeMap): readonly string[] | undefined {
 	switch (node.modelType) {
 		case 'branch':
-		case 'group': {
+		case 'group':
+		case 'polymorph': {
 			const fields = configurableFactoryFields(node.fields, nodeMap);
 			if (fields.length === 0) return undefined;
 			if (hasUserFacingFactoryChildren(node.children, nodeMap)) return undefined;
 			return fields.map((field) => field.name);
-		}
-		case 'polymorph': {
-			if (node.forms.some((form) => hasUserFacingFactoryChildren(form.children, nodeMap))) {
-				return undefined;
-			}
-			const unique = new Set<string>();
-			for (const form of node.forms) {
-				for (const field of configurableFactoryFields(form.fields, nodeMap)) {
-					unique.add(field.name);
-				}
-			}
-			return unique.size === 0 ? undefined : [...unique];
 		}
 		default:
 			return undefined;
@@ -1132,7 +1162,14 @@ export function classifyFactoryShape(
 		case 'branch': {
 			const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 			if (slotClass.tag === 'singleSlot') {
-				if (!node.kind.startsWith('_') && slotClass.arity === 'singular') return 'direct';
+				// Guard: if optional user-content children exist the factory needs a
+				// config bag to expose them — 'direct' (single-arg) is insufficient.
+				if (
+					!node.kind.startsWith('_') &&
+					slotClass.arity === 'singular' &&
+					!hasOptionalUserContentChildren(node.children, nodeMap)
+				)
+					return 'direct';
 				if (slotClass.slot.source === 'inferred') return 'spread';
 				return 'config';
 			}
@@ -1238,16 +1275,16 @@ export function classifyFromEmission(kind: string, node: AssembledNode, context:
 	return node.rawFactoryName && node.fromFunctionName ? 'emit' : 'skip-no-from-surface';
 }
 
-export type WrapEmission = 'emit' | Exclude<ParserSymbolEmission, 'emit'> | 'skip-no-factory-name';
+export type WrapEmission = 'emit' | Exclude<ParserSymbolEmission, 'emit'>;
 
 export function classifyWrapEmission(
 	kind: string,
-	node: AssembledNode,
+	_node: AssembledNode,
 	context: ParserSymbolDispatchContext
 ): WrapEmission {
 	const parserSymbolEmission = classifyParserSymbolEmission(kind, context);
 	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;
-	return node.rawFactoryName ? 'emit' : 'skip-no-factory-name';
+	return 'emit';
 }
 
 export type TemplateEmission = 'emit' | 'skip-non-user-facing' | 'skip-polymorph-form-group';

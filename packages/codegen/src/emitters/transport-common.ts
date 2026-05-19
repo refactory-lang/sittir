@@ -70,11 +70,66 @@ export function classifySlot(
  */
 export function buildSupertypeTransportSet(nodeMap: NodeMap): Map<string, ReadonlySet<string>> {
 	const result = new Map<string, ReadonlySet<string>>();
+	const expandSupertypeKinds = (kind: string, seen: Set<string> = new Set()): Set<string> => {
+		if (seen.has(kind)) return new Set();
+		seen.add(kind);
+		const members = new Set<string>([kind]);
+		const node = nodeMap.nodes.get(kind);
+		if (!node || node.modelType !== 'supertype') return members;
+		for (const subtype of (node as AssembledSupertype).subtypes) {
+			members.add(subtype);
+			for (const nested of expandSupertypeKinds(subtype, seen)) members.add(nested);
+		}
+		return members;
+	};
 	for (const [, node] of nodeMap.nodes) {
 		if (node.modelType !== 'supertype') continue;
-		result.set(node.typeName, new Set((node as AssembledSupertype).subtypes));
+		result.set(node.typeName, expandSupertypeKinds(node.kind));
 	}
 	return result;
+}
+
+function expandWrapRuntimeKinds(kind: string, nodeMap: NodeMap | undefined, seen: Set<string>): string[] {
+	if (seen.has(kind)) return [];
+	seen.add(kind);
+	if (!nodeMap) return [kind];
+	const node = nodeMap.nodes.get(kind);
+	if (!node) return [kind];
+	if (node.modelType === 'supertype') {
+		const members = new Set<string>([kind]);
+		for (const subtype of (node as AssembledSupertype).subtypes) {
+			members.add(subtype);
+			for (const member of expandWrapRuntimeKinds(subtype, nodeMap, seen)) members.add(member);
+		}
+		return [...members];
+	}
+	// MIDWAY-STATE (kind-named-slots refactor, post-Task E1.3): `node.children` always returns []
+	// after the AssembledBranch.children getter retired. This branch is therefore unreachable
+	// until subsequent tasks (E2.1 walker / E5.1 cleanup) migrate the consumers. Leaving the
+	// code structure intact so the dead-code pattern is visible to the cleanup pass.
+	if (node.modelType === 'branch' && kind.startsWith('_') && node.fields.length === 0 && node.children.length > 0) {
+		const members = new Set<string>([kind, kind.slice(1)]);
+		for (const child of node.children) {
+			for (const nested of deriveChildrenKinds(child, nodeMap, new Set(seen))) members.add(nested);
+		}
+		return [...members];
+	}
+	return [kind];
+}
+
+export function acceptedTransportKinds(kind: string, nodeMap?: NodeMap): string[] {
+	if (!nodeMap) return [kind];
+	const node = nodeMap.nodes.get(kind);
+	if (!node) return [kind];
+	if (node.modelType === 'supertype') return [kind];
+	// MIDWAY-STATE (kind-named-slots refactor, post-Task E1.3): `node.children` always returns []
+	// after the AssembledBranch.children getter retired. This branch is therefore unreachable
+	// until subsequent tasks (E2.1 walker / E5.1 cleanup) migrate the consumers. Leaving the
+	// code structure intact so the dead-code pattern is visible to the cleanup pass.
+	if (node.modelType === 'branch' && kind.startsWith('_') && node.fields.length === 0 && node.children.length > 0) {
+		return [kind, kind.slice(1)];
+	}
+	return [kind];
 }
 
 /**
@@ -90,11 +145,16 @@ export function buildSupertypeTransportSet(nodeMap: NodeMap): Map<string, Readon
  * @param child - any AssembledNonterminal (field or children slot)
  * @returns deduplicated list of resolved kind names
  */
-export function deriveChildrenKinds(child: AssembledNonterminal): string[] {
+export function deriveChildrenKinds(
+	child: AssembledNonterminal,
+	nodeMap?: NodeMap,
+	seen: Set<string> = new Set()
+): string[] {
 	const kinds = new Set<string>();
 	for (const v of child.values) {
 		if (!isNodeRef(v)) continue;
-		kinds.add(isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind);
+		const kind = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind;
+		for (const expanded of expandWrapRuntimeKinds(kind, nodeMap, seen)) kinds.add(expanded);
 	}
 	return [...kinds];
 }

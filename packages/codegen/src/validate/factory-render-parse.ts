@@ -10,11 +10,10 @@
  * 5. Re-parse and verify the kind exists
  */
 
-import { readNode } from '@sittir/common';
 import { createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
-import type { FactoryShape } from '../emitters/factory-map.ts';
+import type { FactoryShape, FactorySlotMeta } from '../emitters/factory-map.ts';
 import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
@@ -30,6 +29,7 @@ import {
 	wrapForReparse,
 	loadReadTreeNode,
 	walkWrappedTree,
+	getChildFactoryArgs,
 	nodeToConfig,
 	emitValidatorMetrics,
 	type TSNode,
@@ -138,11 +138,11 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 	const dehoistedKeys = Object.keys(rec).filter((k) => k.startsWith('_'));
 
 	/** Recursively strip a single field value. */
-	const stripFieldValue = (value: unknown): NodeMemberValue | readonly (AnyNodeData | string | number)[] => {
+	const stripMemberValue = (value: unknown): NodeMemberValue | readonly NodeMemberValue[] => {
 		if (Array.isArray(value)) {
 			return value.map((v) =>
 				typeof v === 'object' && v !== null ? stripToFactory(v as AnyNodeData) : v
-			) as readonly (AnyNodeData | string | number)[];
+			) as readonly NodeMemberValue[];
 		}
 		if (typeof value === 'object' && value !== null) {
 			return stripToFactory(value as AnyNodeData);
@@ -153,13 +153,21 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 	// New shape: iterate `_<name>` keys directly.
 	for (const rawKey of dehoistedKeys) {
 		const value = rec[rawKey];
-		(result as unknown as Record<string, unknown>)[rawKey] = stripFieldValue(value);
+		(result as unknown as Record<string, unknown>)[rawKey] = stripMemberValue(value);
 	}
 	if (data.$children) {
+		const childEntries = Array.isArray(data.$children) ? data.$children : [data.$children];
 		// Factory nodes only have named children — filter anonymous
-		result.$children = (data.$children as AnyNodeData[])
-			.filter((c) => c.$named !== false)
-			.map((c) => (typeof c === 'object' && c !== null ? stripToFactory(c as AnyNodeData) : c));
+		const namedChildren = childEntries.filter(
+			(c): c is NodeMemberValue => typeof c !== 'object' || c === null || (c as AnyNodeData).$named !== false
+		);
+		if (namedChildren.length > 0) {
+			result.$children = (
+				Array.isArray(data.$children)
+					? stripMemberValue(namedChildren)
+					: stripMemberValue(namedChildren[0])
+			) as AnyNodeData['$children'];
+		}
 	}
 
 	return result;
@@ -193,6 +201,7 @@ async function loadFactoryMap(grammar: string): Promise<{
 	factoryShapes: Record<string, FactoryShape>;
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
+	factorySlots: Record<string, Record<string, FactorySlotMeta>>;
 	polymorphVariants: PolymorphVariantMap;
 }> {
 	const p = FACTORY_MAP_PATHS[grammar];
@@ -201,6 +210,7 @@ async function loadFactoryMap(grammar: string): Promise<{
 			factoryShapes: {},
 			fieldAliasMap: {},
 			factoryFields: {},
+			factorySlots: {},
 			polymorphVariants: {}
 		};
 	const { readFileSync } = await import('node:fs');
@@ -212,6 +222,7 @@ async function loadFactoryMap(grammar: string): Promise<{
 		factoryShapes: data.factoryShapes ?? {},
 		fieldAliasMap: data.fieldAliasMap ?? {},
 		factoryFields: data.factoryFields ?? {},
+		factorySlots: data.factorySlots ?? {},
 		polymorphVariants: data.polymorphVariants ?? {}
 	};
 }
@@ -268,6 +279,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	factoryShapes: Record<string, FactoryShape>;
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
+	factorySlots: Record<string, Record<string, FactorySlotMeta>>;
 	polymorphVariants: PolymorphVariantMap;
 	kindNames: ReadonlyMap<number, string> | undefined;
 	kindNameFromId: ((id: number) => string | undefined) | undefined;
@@ -279,6 +291,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	let factoryShapes: Record<string, FactoryShape> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
+	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let polymorphVariants: PolymorphVariantMap = {};
 	let kindNameFromId: ((id: number) => string | undefined) | undefined = undefined;
 	let kindNames: ReadonlyMap<number, string> | undefined = undefined;
@@ -289,6 +302,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factoryShapes,
 			fieldAliasMap,
 			factoryFields,
+			factorySlots,
 			polymorphVariants,
 			kindNames,
 			kindNameFromId,
@@ -305,6 +319,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		factoryShapes = mapData.factoryShapes;
 		fieldAliasMap = mapData.fieldAliasMap;
 		factoryFields = mapData.factoryFields;
+		factorySlots = mapData.factorySlots;
 		polymorphVariants = mapData.polymorphVariants;
 		// Load KIND_NAMES (static Map) and kindIdFromName from the grammar's
 		// types module.
@@ -337,6 +352,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factoryShapes,
 			fieldAliasMap,
 			factoryFields,
+			factorySlots,
 			polymorphVariants,
 			kindNames,
 			kindNameFromId,
@@ -351,6 +367,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 			factoryShapes,
 			fieldAliasMap,
 			factoryFields,
+			factorySlots,
 			polymorphVariants,
 			kindNames,
 			kindNameFromId,
@@ -429,18 +446,67 @@ function recordFactoryModuleLoadFailure(
  * @returns The first matching `TSNode`, or `null` if none is found.
  */
 function resolveNodeForKind(kind: string, rootNode: TSNode, nodeIdToEffectiveType: Map<string, string>): TSNode | null {
+	const direct = findFirst(rootNode, kind);
+	if (direct) return direct;
 	let node1: TSNode | null = null;
+	let bestWidth = Number.POSITIVE_INFINITY;
 	for (const [spanKey, et] of nodeIdToEffectiveType) {
 		if (et === kind) {
 			const colon = spanKey.indexOf(':');
 			const startIdx = parseInt(spanKey.slice(0, colon), 10);
 			const endIdx = parseInt(spanKey.slice(colon + 1), 10);
-			node1 = findNodeBySpan(rootNode, startIdx, endIdx);
-			if (node1) break;
+			const candidate = findNodeBySpan(rootNode, startIdx, endIdx);
+			if (!candidate) continue;
+			const width = endIdx - startIdx;
+			if (width < bestWidth) {
+				node1 = candidate;
+				bestWidth = width;
+			}
 		}
 	}
-	if (!node1) node1 = findFirst(rootNode, kind);
 	return node1;
+}
+
+function renderKindNameOf(node: AnyNodeData, kindNameFromId?: (id: number) => string | undefined): string | undefined {
+	if (typeof node.$type === 'string') return node.$type;
+	if (typeof node.$type === 'number') return kindNameFromId?.(node.$type) ?? String(node.$type);
+	return undefined;
+}
+
+function matchesRenderedKind(
+	node: AnyNodeData,
+	renderedKind: string,
+	kindNameFromId?: (id: number) => string | undefined
+): boolean {
+	const kind = renderKindNameOf(node, kindNameFromId);
+	if (!kind) return false;
+	if (kind === renderedKind) return true;
+	const strippedKind = kind.startsWith('_') ? kind.slice(1) : kind;
+	const strippedRendered = renderedKind.startsWith('_') ? renderedKind.slice(1) : renderedKind;
+	return strippedKind === strippedRendered;
+}
+
+function alignReadDataToRenderedKind(
+	rawReadData: AnyNodeData,
+	renderedKind: string,
+	kindNameFromId?: (id: number) => string | undefined
+): AnyNodeData {
+	if (matchesRenderedKind(rawReadData, renderedKind, kindNameFromId)) return rawReadData;
+	const childEntries = rawReadData.$children === undefined
+		? []
+		: Array.isArray(rawReadData.$children)
+			? rawReadData.$children
+			: [rawReadData.$children];
+	const matchingChildren =
+		childEntries.filter(
+			(child): child is AnyNodeData =>
+				child != null &&
+				typeof child === 'object' &&
+				(child as { $named?: boolean }).$named !== false &&
+				matchesRenderedKind(child as AnyNodeData, renderedKind, kindNameFromId)
+		);
+	if (matchingChildren.length === 1) return matchingChildren[0]!;
+	return { ...rawReadData, $type: renderedKind };
 }
 
 /**
@@ -464,6 +530,7 @@ function resolveNodeForKind(kind: string, rootNode: TSNode, nodeIdToEffectiveTyp
  * @param factoryShapes - Codegen-produced calling-convention map per kind.
  * @param fieldAliasMap - Camel→snake alias map used by `nodeToConfig`.
  * @param factoryFields - Declared field list per kind used by `nodeToConfig`.
+ * @param factorySlots - Declared slot metadata per kind used by `nodeToConfig`.
  * @param treeHandle - Tree handle forwarded to `nodeToConfig` in recursive mode.
  * @param entryName - Corpus entry name, used when recording errors.
  * @param inputSource - Original source text, used when recording errors.
@@ -485,6 +552,7 @@ function buildFactoryNodeData(
 	factoryShapes: Record<string, FactoryShape>,
 	fieldAliasMap: Record<string, Record<string, string>>,
 	factoryFields: Record<string, readonly string[]>,
+	factorySlots: Record<string, Record<string, FactorySlotMeta>>,
 	polymorphVariants: PolymorphVariantMap,
 	treeHandle: any,
 	entryName: string,
@@ -520,6 +588,7 @@ function buildFactoryNodeData(
 						factoryShapes,
 						fieldAliasMap,
 						factoryFields,
+						factorySlots,
 						polymorphVariants,
 						cstNodeKindHint,
 						firstNamedChildKindHint,
@@ -531,6 +600,7 @@ function buildFactoryNodeData(
 						factoryShapes,
 						fieldAliasMap,
 						factoryFields,
+						factorySlots,
 						polymorphVariants,
 						cstNodeKindHint,
 						firstNamedChildKindHint,
@@ -543,9 +613,10 @@ function buildFactoryNodeData(
 				const fieldNames = factoryFields[renderedKind];
 				const rawName = fieldNames?.[0];
 				const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
+				const childArgs = getChildFactoryArgs(renderedKind, config, factorySlots);
 				const value = camelName
 					? (config as Record<string, unknown>)[camelName]
-					: ((config.children ?? []) as unknown[])[0];
+					: childArgs[0];
 				return (factory as (v: unknown) => AnyNodeData)(value);
 			}
 			return factory(config) as AnyNodeData;
@@ -558,8 +629,35 @@ function buildFactoryNodeData(
 			return (factory as (text: string) => AnyNodeData)(text);
 		} else {
 			// shape === 'spread' — child-spread factory.
-			const namedChildren = (readData.$children ?? []).filter((c: any) => c?.$named !== false);
-			return (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
+			const recursive = process?.env?.SITTIR_VALIDATE_RECURSIVE === '1';
+			const config = recursive
+				? nodeToConfig(readData, {
+						tree: treeHandle,
+						factoryMap,
+						factoryShapes,
+						fieldAliasMap,
+						factoryFields,
+						factorySlots,
+						polymorphVariants,
+						cstNodeKindHint,
+						firstNamedChildKindHint,
+						namedChildKindHints,
+						kindNameFromId
+					})
+				: nodeToConfig(readData, {
+						factoryMap,
+						factoryShapes,
+						fieldAliasMap,
+						factoryFields,
+						factorySlots,
+						polymorphVariants,
+						cstNodeKindHint,
+						firstNamedChildKindHint,
+						namedChildKindHints,
+						kindNameFromId
+					});
+			const childArgs = getChildFactoryArgs(renderedKind, config, factorySlots);
+			return (factory as (...args: unknown[]) => AnyNodeData)(...childArgs);
 		}
 	} catch (e) {
 		errors.push({
@@ -693,6 +791,7 @@ export async function validateFactoryRenderParse(
 		factoryShapes,
 		fieldAliasMap,
 		factoryFields,
+		factorySlots,
 		polymorphVariants,
 		kindNames,
 		kindNameFromId,
@@ -748,7 +847,8 @@ export async function validateFactoryRenderParse(
 		if (tree1.rootNode.hasError) continue;
 
 		const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
-		const kinds = new Set(collectKinds(tree1.rootNode));
+		const rawKinds = new Set(collectKinds(tree1.rootNode));
+		const kinds = new Set(rawKinds);
 		const nodeIdToEffectiveType = new Map<string, string>();
 		if (readTreeNodeFn) {
 			const wrappedRoot = readTreeNodeFn(handle);
@@ -807,11 +907,18 @@ export async function validateFactoryRenderParse(
 			// the actual string tree-sitter reported for this node.
 			const targetKind = node1.type;
 			const effective = nodeIdToEffectiveType.get(`${node1.startIndex}:${node1.endIndex}`);
-			// Apply alias rewriting only when effective kind differs from the canonical kind.
-			const readData =
-				effective && effective !== canonicalKind ? { ...rawReadData, $type: rawReadData.$type } : rawReadData;
 			// renderedKind: canonical form used for factory lookup and error messages.
-			const renderedKind = effective ?? canonicalKind;
+			// Only wrapped-only/internal kinds should borrow the effective kind. For
+			// direct CST kinds like `expression_statement` or `module`, overriding to a
+			// same-span promoted child kind makes the validator run the wrong factory
+			// against wrapper-shaped data.
+			const renderedKind = rawKinds.has(kind) ? canonicalKind : (effective ?? canonicalKind);
+			// Keep nodeToConfig's parent-kind / slot / polymorph lookups aligned with
+			// the kind we're actually validating. If readData retains the outer wrapper
+			// kind here (for example `expression_statement` while renderedKind is
+			// `assignment`), nodeToConfig derives the wrong $variant and config surface
+			// before the factory is called.
+			const readData = alignReadDataToRenderedKind(rawReadData, renderedKind, kindNameFromId);
 			const cstNamedChildKinds = namedChildKinds(node1);
 
 			const factoryData = buildFactoryNodeData(
@@ -824,6 +931,7 @@ export async function validateFactoryRenderParse(
 				factoryShapes,
 				fieldAliasMap,
 				factoryFields,
+				factorySlots,
 				polymorphVariants,
 				handle,
 				entry.name,

@@ -319,22 +319,73 @@ function joinIdNames(
 	const result = new Map<string, GeneratedIdEntry>();
 	for (const entry of ids.values()) {
 		const key = fallbackName(entry.cName);
+		const parser = createParserMetadata(entry, key, names);
 		const existing = result.get(key);
-		if (existing && existing.parser && !shouldReplaceSymbol(existing.parser.cSymbol, entry.cName)) {
+		if (!existing || !existing.parser) {
+			result.set(key, { id: entry.id, parser });
 			continue;
 		}
-		const parser: KindParserMetadata = {
-			cSymbol: entry.cName,
-			parserName: key,
-			symbolName: names.get(entry.cName),
-			anon: entry.cName.startsWith('anon_sym_'),
-			aux: entry.cName.startsWith('aux_sym_'),
-			alias: entry.cName.startsWith('alias_sym_'),
-			hidden: key.startsWith('_')
-		};
+		if (existing.parser.cSymbol === entry.cName) {
+			result.set(key, { id: entry.id, parser });
+			continue;
+		}
+		if (existing.parser.anon !== parser.anon) {
+			if (existing.parser.anon) {
+				const anonKey = disambiguateAnonKey(key, result, existing.id ?? entry.id);
+				result.set(anonKey, {
+					id: existing.id,
+					parser: {
+						...existing.parser,
+						parserName: anonKey,
+						hidden: anonKey.startsWith('_')
+					}
+				});
+				result.set(key, { id: entry.id, parser });
+			} else {
+				const anonKey = disambiguateAnonKey(key, result, entry.id);
+				result.set(anonKey, {
+					id: entry.id,
+					parser: {
+						...parser,
+						parserName: anonKey,
+						hidden: anonKey.startsWith('_')
+					}
+				});
+			}
+			continue;
+		}
+		if (!shouldReplaceSymbol(existing.parser.cSymbol, entry.cName)) {
+			continue;
+		}
 		result.set(key, { id: entry.id, parser });
 	}
 	return result;
+}
+
+function createParserMetadata(
+	entry: CEnumEntry,
+	parserName: string,
+	names: ReadonlyMap<string, string>
+): KindParserMetadata {
+	return {
+		cSymbol: entry.cName,
+		parserName,
+		symbolName: names.get(entry.cName),
+		anon: entry.cName.startsWith('anon_sym_'),
+		aux: entry.cName.startsWith('aux_sym_'),
+		alias: entry.cName.startsWith('alias_sym_'),
+		hidden: parserName.startsWith('_')
+	};
+}
+
+function disambiguateAnonKey(
+	baseKey: string,
+	existing: ReadonlyMap<string, GeneratedIdEntry>,
+	id: number
+): string {
+	const preferred = `anon_${baseKey}`;
+	if (!existing.has(preferred)) return preferred;
+	return `${preferred}_${id}`;
 }
 
 function shouldReplaceSymbol(existingCName: string | undefined, nextCName: string): boolean {

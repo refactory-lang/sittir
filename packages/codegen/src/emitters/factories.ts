@@ -30,8 +30,8 @@ import {
 	resolveHoistedForm,
 	type HoistedForm,
 	fieldTypeComponents,
+	childTypeComponents,
 	isValidIdent,
-	keywordPresenceKind,
 	resolveFieldStorageInfo,
 	resolveHiddenKeywordLiteral,
 	classifyFactoryShape,
@@ -124,6 +124,47 @@ function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
 	// unimported in the emitted factories.ts.
 	for (const n of nodeMap.nodes.values()) {
 		if (n.modelType === 'polymorph') return true;
+	}
+	return false;
+}
+
+function collectStorageCoercionImports(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string[] {
+	const imports = new Set<string>();
+	for (const node of nodeMap.nodes.values()) {
+		for (const slot of allSlotsOf(node)) {
+			const storageInfo = resolveFieldStorageInfo(slot, nodeMap, kindEntries);
+			switch (storageInfo.kind) {
+				case 'boolean':
+					imports.add('coerceBooleanKeywordStorage');
+					break;
+				case 'bitflag':
+					imports.add('coerceBitflagStorage');
+					break;
+				case 'kindEnum':
+					if (kindEntries) imports.add('coerceKindEnumStorage');
+					break;
+				case 'verbatim':
+					break;
+			}
+		}
+	}
+	return [...imports].sort();
+}
+
+function collectUsesKindIdFromName(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): boolean {
+	if (!kindEntries) return false;
+	for (const node of nodeMap.nodes.values()) {
+		for (const slot of allSlotsOf(node)) {
+			const storageInfo = resolveFieldStorageInfo(slot, nodeMap, kindEntries);
+			if (storageInfo.kind !== 'kindEnum') continue;
+			if (kindEnumTextMapExpr(slot, nodeMap, kindEntries).includes('kindIdFromName(')) return true;
+		}
 	}
 	return false;
 }
@@ -484,7 +525,8 @@ export namespace factory {
 					typeName: node.typeName,
 					treeTypeName: node.treeTypeName,
 					rawFactoryName: node.rawFactoryName,
-					children: node.children
+					children: node.children,
+					fields: node.fields
 				},
 				nodeMap,
 				kindEntries
@@ -588,19 +630,18 @@ type FieldCarryingNode = Extract<AssembledNode, { modelType: 'branch' | 'group' 
 export function childElementType(node: { children: readonly AssembledNonterminal[] }, nodeMap: NodeMap): string {
 	const parts = new Set<string>();
 	for (const c of node.children) {
-		for (const t of slotKindNames(c)) {
-			// Hidden-keyword kinds (`_not_escape_sequence` → `'\\'`) inline
-			// their literal as a string type member — same rule types.ts
-			// applies to `fieldTypeComponents`. Avoids dangling references
-			// to `NotEscapeSequence` / `KwMove` etc.
-			const lit = resolveHiddenKeywordLiteral(t, nodeMap);
-			if (lit !== undefined) {
-				parts.add(JSON.stringify(lit));
+		for (const component of childTypeComponents(c, nodeMap)) {
+			if (component.kind === 'literal') {
+				parts.add(JSON.stringify(component.value));
 				continue;
 			}
-			let ref = nodeMap.nodes.get(t);
+			if (component.kind === 'missing') {
+				parts.add(JSON.stringify(component.rawKind));
+				continue;
+			}
+			let ref = nodeMap.nodes.get(component.rawKind);
 			if (!ref) {
-				parts.add(JSON.stringify(t));
+				parts.add(JSON.stringify(component.rawKind));
 				continue;
 			}
 			// Hidden kinds with `multi` or `token` modelType don't get
@@ -611,12 +652,12 @@ export function childElementType(node: { children: readonly AssembledNonterminal
 			// counterpart (strip leading `_`) which has a standalone
 			// exported interface. The runtime shapes are structurally
 			// compatible (same fields/children).
-			if (t.startsWith('_') && (ref.modelType === 'multi' || ref.modelType === 'token')) {
-				const visible = nodeMap.nodes.get(t.slice(1));
+			if (component.rawKind.startsWith('_') && (ref.modelType === 'multi' || ref.modelType === 'token')) {
+				const visible = nodeMap.nodes.get(component.rawKind.slice(1));
 				if (visible) ref = visible;
 			}
 			const name = ref.typeName;
-			parts.add(/^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(t));
+			parts.add(/^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(component.rawKind));
 		}
 	}
 	if (parts.size === 0) return 'never';
@@ -797,7 +838,7 @@ function emitFieldCarryingFactory(
 	const hasChildren = children.length > 0;
 	const opt = resolveConfigOptional(fields, children, nodeMap);
 	const typeKind = node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
-	const configType = resolveConfigType(node, isPolymorphForm);
+	const configType = resolveConfigType(node, isPolymorphForm, nodeMap.refineForms?.has(typeKind) ?? false);
 
 	// Gap 5: Single-field-no-children factories take the value directly
 	// instead of a config object. Uses the pre-computed slotClass
@@ -821,53 +862,26 @@ function emitFieldCarryingFactory(
 		return emitSingleFieldFactory(node, fields, sc.slot, nodeMap, kindEntries);
 	}
 
-	// `childrenUserConfigurable` is false when every required child
-	// auto-stamps AND there are no optional children. In that case
-	// the Config (post-ConfigOf) has no `children` slot — ConfigOf
-	// filters auto-stamp entries out — so the factory must neither
-	// read `config.children` nor expose a child setter. Canonical
-	// case: `visibility_modifier__form_0` (single required child
-	// auto-stamps from `_crate`; Config is empty).
-	const requiredChildren = hasChildren ? children.filter((c) => isRequired(c)) : [];
-	const optionalChildren = hasChildren ? children.filter((c) => !isRequired(c)) : [];
-	const allRequiredAutoStamp =
-		hasChildren && requiredChildren.length > 0 && requiredChildren.every((c) => isAutoStampSlot(c, nodeMap));
-	const childrenUserConfigurable = hasChildren && !(allRequiredAutoStamp && optionalChildren.length === 0);
+	// Post-unification: `children` is always empty — the former dedicated
+	// child slot is replaced by per-slot fields with kind-based names.
 
 	// When opt is '?' (all fields optional), emit a local `_config` default so
-	// property access uses `_config.x` (no optional chaining) instead of
-	// `config?.x`. Only emit the default when the body actually reads from
-	// config — avoids dead code when all fields auto-stamp.
-	const hasConfigReads = fields.some((f) => autoStampExpression(f, nodeMap) === undefined) || childrenUserConfigurable;
-	const configAccess = opt === '?' && hasConfigReads ? '_config' : 'config';
+	// property access can use `config.x` (no optional chaining). Only emit
+	// the default when the body actually reads from config — avoids dead code
+	// when all fields auto-stamp.
+	const hasConfigReads = fields.some((f) => autoStampExpression(f, nodeMap) === undefined);
+	const configAccess = 'config';
 
 	const lines: string[] = [];
-	lines.push(`export function ${fn}(config${opt}: ${configType}) {`);
-	if (opt === '?' && hasConfigReads) {
-		lines.push('  const _config = config ?? {};');
-	}
+	const signature =
+		opt === '?' && hasConfigReads
+			? `export function ${fn}(config: Partial<${configType}> = {}) {`
+			: `export function ${fn}(config${opt}: ${configType}) {`;
+	lines.push(signature);
 
-	// Build children local variable.
-	if (hasChildren) {
-		// Stamp expressions use child-context (NodeData wrapper) so
-		// the resulting `$children` array matches the parent's
-		// interface shape (`readonly [Crate]` = NodeData tuples, not
-		// raw strings).
-		if (allRequiredAutoStamp) {
-			const stampedItems = requiredChildren.map((c) => stampExpressionFor(c, nodeMap, 'child') ?? 'undefined');
-			if (!childrenUserConfigurable) {
-				lines.push(`  const children = [${stampedItems.join(', ')}] as const;`);
-			} else {
-				lines.push(
-					`  const children = _configChildren<T.${node.typeName}['$children']>(${configAccess}, [${stampedItems.join(', ')}] as unknown as T.${node.typeName}['$children']);`
-				);
-			}
-		} else {
-			lines.push(
-				`  const children = _configChildren<T.${node.typeName}['$children']>(${configAccess}, [] as unknown as T.${node.typeName}['$children']);`
-			);
-		}
-	}
+	// Post-unification (slot-model spec 2026-05-17): `children` is always empty —
+	// kind-named slots flow through `fields`. The former `$children` storage path
+	// is dead code; per-slot storage emits below via `_<f.name>`.
 
 	const variantName = node.modelType == 'group' ? resolvePolymorphFormVariantName(node) : undefined;
 
@@ -901,15 +915,11 @@ function emitFieldCarryingFactory(
 	for (const f of fields) {
 		lines.push(`    _${f.name},`);
 	}
-	if (hasChildren) lines.push('    $children: children,');
 
 	// Pure getters — method shorthand, body returns the local const.
 	for (const f of fields) {
 		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return _${f.name}; },`);
-	}
-	if (hasChildren) {
-		lines.push('    children() { return children; },');
 	}
 
 	// $with: setters call the factory directly with a patched config —
@@ -935,14 +945,8 @@ function emitFieldCarryingFactory(
 			);
 		}
 	}
-	if (childrenUserConfigurable) {
-		const childElem = childElementType({ children }, nodeMap);
-		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
-		const restType = childrenSetterRestType(children, childElem, childRest);
-		lines.push(
-			`      children: (...items: ${restType}) => ${fn}({ ...${configAccess}, children: items } as unknown as Parameters<typeof ${fn}>[0]),`
-		);
-	}
+	// Post-unification: the legacy `children` setter is gone — per-slot setters
+	// above cover every slot through the unified `fields` loop.
 	lines.push('    },');
 	lines.push('  }, methodsEngine);');
 	lines.push('}');
@@ -1101,7 +1105,6 @@ function emitRefineFormFactory(
 	for (const n of form.narrowedFields) narrowed.set(n.fieldName, n.literal);
 	const fields = node.fields;
 	const children = node.children;
-	const hasChildren = children.length > 0;
 	const opt = resolveRefineFormConfigOptional(fields, children, nodeMap, narrowed);
 	const formTypeName = refineFormTypeName(info.typeName, form.name);
 	const formShortName = formTypeName.slice(info.typeName.length);
@@ -1110,11 +1113,8 @@ function emitRefineFormFactory(
 	// emitRefineFormSubNamespaces — the flat `T.<ParentForm>` identifier
 	// is not emitted as a top-level namespace.
 	lines.push(`export function ${formFn}(config${opt}: T.${info.typeName}.${formShortName}.Config) {`);
-	if (hasChildren) {
-		lines.push(
-			`  const children = _configChildren<T.${formTypeName}['$children']>(config${opt}, [] as unknown as T.${formTypeName}['$children']);`
-		);
-	}
+	// Post-unification: kind-named slots flow through `fields`; no separate
+	// `$children` storage path remains.
 	// Shape A: storage hoist + property shorthand + pure getters + $with.
 	for (const f of fields) {
 		const narrowedLit = narrowed.get(f.name);
@@ -1138,13 +1138,9 @@ function emitRefineFormFactory(
 	for (const f of fields) {
 		lines.push(`    _${f.name},`);
 	}
-	if (hasChildren) lines.push('    $children: children,');
 	for (const f of fields) {
 		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return _${f.name}; },`);
-	}
-	if (hasChildren) {
-		lines.push('    children() { return children; },');
 	}
 	lines.push('    $with: {');
 	for (const f of fields) {
@@ -1166,14 +1162,8 @@ function emitRefineFormFactory(
 			);
 		}
 	}
-	if (hasChildren) {
-		const childElem = childElementType({ children: node.children }, nodeMap);
-		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
-		const restType = childrenSetterRestType(node.children, childElem, childRest);
-		lines.push(
-			`      children: (...items: ${restType}) => ${formFn}({ ...config, children: items } as unknown as Parameters<typeof ${formFn}>[0]),`
-		);
-	}
+	// Post-unification: legacy children setter is gone — per-slot setters above
+	// cover every slot.
 	lines.push('    },');
 	lines.push('  }, methodsEngine);');
 	lines.push('}');
@@ -1243,26 +1233,27 @@ function resolveConfigOptional(
  *   `T.${typeName}.Config` namespace alias, which resolves to the same
  *   `ConfigOf<T.${typeName}>` shape under the hood.
  */
-function resolveConfigType(node: FieldCarryingNode, isPolymorphForm: boolean): string {
+function resolveConfigType(node: FieldCarryingNode, isPolymorphForm: boolean, hasRefineForms: boolean): string {
 	// Polymorph FORM factories omit `$variant` from their input Config —
 	// the form itself stamps `$variant` on the output, so accepting it
 	// as input would be redundant. Parent (dispatcher) factories use
 	// `T.${parent}.Config` which resolves to `ConfigOf<union>` and
 	// REQUIRES `$variant` (discriminated-union narrowing).
 	//
-	// Refined kinds also alias their parent `T.<TypeName>.Config` to the
+	// Refined base kinds alias their parent `T.<TypeName>.Config` to the
 	// first-declared form's narrowed Config (per emitRefineFormSubNamespaces),
-	// dropping the narrowed-out fields. The parent factory still references
-	// those fields directly, so route through `ConfigOf<T.<TypeName>>` here
-	// to get the full Config — same shape as the generic indirection
-	// for polymorph dispatchers, just minus the `$variant` Omit.
+	// dropping the narrowed-out fields. The base factory still references
+	// every field directly, so it must bypass that narrowed alias and use the
+	// full generic projection instead.
 	// Hygiene rule 5 — prefer concrete per-kind namespace alias over the
 	// `ConfigOf<T>` generic indirection. `T.${typeName}.Config` is emitted
 	// by the types.ts namespace-sugar pass and resolves to the same
 	// `ConfigFor<kind>` shape, so this is a pure typing-surface improvement
 	// with no runtime change. Polymorph forms keep `ConfigOf<T.X>` because
 	// synthetic UForm names don't carry a `.Config` namespace member.
-	return isPolymorphForm ? `Omit<ConfigOf<T.${node.typeName}>, '$variant'>` : `T.${node.typeName}.Config`;
+	if (isPolymorphForm) return `Omit<ConfigOf<T.${node.typeName}>, '$variant'>`;
+	if (hasRefineForms) return `ConfigOf<T.${node.typeName}>`;
+	return `T.${node.typeName}.Config`;
 }
 
 /**
@@ -1298,6 +1289,7 @@ interface ContainerNode {
 	readonly treeTypeName: string;
 	readonly rawFactoryName?: string;
 	readonly children: readonly AssembledNonterminal[];
+	readonly fields: readonly AssembledNonterminal[];
 }
 
 function emitContainerFactory(
@@ -1307,22 +1299,34 @@ function emitContainerFactory(
 ): string {
 	const fn = node.rawFactoryName!;
 	const lines: string[] = [];
-	const anyMultiple = resolveContainerMultiple(node);
-	const anyNonEmpty = node.children.some((c) => isNonEmpty(c));
+	// Post-unification (slot-model spec 2026-05-17): the unnamed-child slot now
+	// lives in `node.fields` with a kind-derived `storageName` (e.g. `type`).
+	// Storage uses `_<storageName>` per slot rather than a flat `$children` key.
+	// Surface argument naming (`child` / `...children`) is preserved for
+	// caller-side ergonomics; the slot drives where the data is stored.
+	const slot = node.fields[0];
+	const anyMultiple = slot ? isMultiple(slot) : resolveContainerMultiple(node);
+	const anyNonEmpty = slot ? isNonEmpty(slot) : node.children.some((c) => isNonEmpty(c));
 	const elementType = resolveContainerElementType(node, nodeMap);
+	// Storage key + property name for the single unnamed slot. Falls back to the
+	// legacy `$children` / `children` shape only if no slot exists (defensive —
+	// shouldn't happen for branches that classifyChildFactorySurface accepts).
+	const storageKey = slot ? `_${slot.storageName}` : '$children';
+	const propName = slot ? slot.propertyName : 'children';
 	if (anyMultiple) {
 		lines.push(`export function ${fn}(...children: ${elementType}[]) {`);
 		if (anyNonEmpty) {
 			lines.push(`  _assertNonEmpty(children, '${node.kind}.children');`);
 		}
+		lines.push(`  const ${storageKey} = children;`);
 	} else {
-		const firstChild = node.children[0];
-		const required = firstChild ? isRequired(firstChild) : false;
+		const required = slot ? isRequired(slot) : (node.children[0] ? isRequired(node.children[0]) : false);
 		const optMark = required ? '' : '?';
 		lines.push(`export function ${fn}(child${optMark}: ${elementType}) {`);
-		// Required child: type guarantees non-null, wrap directly.
-		// Optional child: null/undefined is valid → wrap only if present.
-		lines.push(required ? `  const children = [child];` : `  const children = child != null ? [child] : [];`);
+		// Required: store the value directly. Optional: store undefined when absent.
+		// For singular slots the storage holds the bare value (not an array) so
+		// the per-slot getter returns the element type the interface declares.
+		lines.push(required ? `  const ${storageKey} = child;` : `  const ${storageKey} = child;`);
 	}
 	// Inline literal wrapped by withMethods<T>. No defineProperty,
 	// no spread, no Record cast.
@@ -1330,10 +1334,11 @@ function emitContainerFactory(
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
-	lines.push('    $children: children,');
-	lines.push('    children() { return children; },');
+	lines.push(`    ${storageKey},`);
+	lines.push(`    ${propName}() { return ${storageKey}; },`);
 	// Container $with: unnamed slot updater. Multiple → `$children`; single → `$child`.
-	// Both call the factory directly (no config object).
+	// Both call the factory directly (no config object). These meta-keys are
+	// part of the runtime $with convention and intentionally NOT kind-named.
 	if (anyMultiple) {
 		lines.push(`    $with: { $children: (...vs: ${elementType}[]) => ${fn}(...vs) },`);
 	} else {
@@ -1370,6 +1375,12 @@ function resolveContainerMultiple(node: ContainerNode): boolean {
  *   hover/autocomplete with no indirection.
  */
 function resolveContainerElementType(node: ContainerNode, nodeMap: NodeMap): string {
+	// Post-unification: when the unnamed-child slot is in `node.fields`, derive
+	// the element type from it. Fall back to `node.children` for any legacy
+	// caller that still threads the old shape.
+	if (node.fields.length > 0) {
+		return childElementType({ children: node.fields }, nodeMap);
+	}
 	return childElementType(node, nodeMap);
 }
 
@@ -1536,15 +1547,12 @@ function emitHoistedPolymorphFormFactory(
 	//     inner kind is a hidden field-carrying group without
 	//     retrofitting factory emission onto every hidden group.
 	//     Example: python's `_assignment_eq`.
-	// The former `AssembledContainer` shape is
-	// now an `AssembledBranch`. Distinguish via the structural
-	// `isContainerShape` getter (no `field()` on the rule). The
-	// `hoist.innerFields.length === 0` clause keeps the prior behavior
-	// for hoisted forms whose inner has empty derived fields too.
 	const innerIsContainer =
-		hoist.innerNode.modelType === 'branch' && hoist.innerNode.isContainerShape && hoist.innerFields.length === 0;
+		hoist.innerNode.modelType === 'branch' &&
+		classifyChildFactorySurface(hoist.innerNode, nodeMap) !== null &&
+		hoist.innerFields.length === 0;
 	if (innerIsContainer && hoist.innerFactoryName !== undefined) {
-		// innerNode is AssembledBranch (checked via isContainerShape above)
+		// innerNode is a positional-child branch factory
 		const innerNode = hoist.innerNode as { slots: Readonly<Record<string, AssembledNonterminal>> };
 		const innerChildren = Object.values(innerNode.slots);
 		const anyMultiple = innerChildren.some((c) => isMultiple(c));
@@ -1977,17 +1985,18 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 
 		lines.push(`import type * as T from './types.js';`);
 		if (kindEntries) {
-			lines.push(`import { TSKindId, kindIdFromName } from './types.js';`);
+			const kindIdImports = ['TSKindId'];
+			if (collectUsesKindIdFromName(nodeMap, kindEntries)) kindIdImports.push('kindIdFromName');
+			lines.push(`import { ${kindIdImports.join(', ')} } from './types.js';`);
 		}
 		const usesNonEmptyArray = collectUsesNonEmptyArray(nodeMap);
 		const usesConfigOf = collectUsesHoistedPolymorphForm(nodeMap);
-		const utilImports = ['AnyNodeData', 'FluentNode'];
+		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
+		const utilImports = ['FluentNode'];
 		if (usesConfigOf) utilImports.push('ConfigOf');
 		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
 		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
-		lines.push(
-			"import { withMethods, methodsEngine, coerceBitflagStorage, coerceBooleanKeywordStorage, coerceKindEnumStorage } from './utils.js';"
-		);
+		lines.push(`import { ${['withMethods', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
 		lines.push(...emitConfigChildrenHelper());
@@ -2029,6 +2038,16 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		factory.group(this.#output, node, this.#nodeMap, this.#kindEntries);
 	}
 
+	emitRefineForms(kind: string, node: AssembledNode): void {
+		const refineInfo = this.#refineByKind.get(kind);
+		if (!refineInfo) return;
+		for (const form of refineInfo.forms) {
+			const formSource = emitRefineFormFactory(node, form, refineInfo, this.#nodeMap, this.#kindEntries);
+			if (formSource === undefined) continue;
+			this.#output.push(formSource);
+		}
+	}
+
 	dispatchNode(kind: string, node: AssembledNode): void {
 		const emission = classifyFactoryEmission(kind, node, {
 			nodeMap: this.#nodeMap,
@@ -2065,14 +2084,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 				break;
 		}
 		if (this.#output.length === prevLen) return;
-
-		const refineInfo = this.#refineByKind.get(kind);
-		if (!refineInfo) return;
-		for (const form of refineInfo.forms) {
-			const formSource = emitRefineFormFactory(node, form, refineInfo, this.#nodeMap, this.#kindEntries);
-			if (formSource === undefined) continue;
-			this.#output.push(formSource);
-		}
+		this.emitRefineForms(kind, node);
 	}
 
 	finalize(): string {

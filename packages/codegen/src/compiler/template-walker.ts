@@ -32,6 +32,8 @@
 import type { Rule, ChoiceRule } from './rule.ts';
 import { isLinkSymbol, literalTextOf } from './rule.ts';
 import { isSyntheticFieldWrapper, unwrapStructuralPassthroughs } from './node-map.ts';
+import { fieldContentIsMultiSibling } from './field-shape.ts';
+import { isPrecWrapper, isSymbolType } from '../dsl/runtime-shapes.ts';
 
 /**
  * Extract anonymous-string literals flanking the main content of a field
@@ -93,77 +95,6 @@ function wrappedRepeatSeparator(content: Rule): string | null {
 	}
 }
 
-/**
- * True when a field's content would have tree-sitter emit MULTIPLE
- * children under the same field name at parse time. Tree-sitter's
- * field inheritance rule: a `FIELD(name, seq(A, B, C))` causes A, B,
- * AND C to all be emitted as children of the parent carrying
- * `field=name`.
- *
- * @remarks
- * Only fires for seqs (or choice branches containing seqs) with 2+
- * "structural" members — members that surface as children at runtime
- * (symbol, supertype, named alias, string literal, nested field, seq
- * of same). Pure wrappers (optional / variant / clause / group / token
- * / terminal) are unwrapped. Anonymous tokens (plain string literals
- * inside a seq) count toward the structural-member tally because
- * they also inherit the field name from tree-sitter's perspective —
- * the ambient_declaration `module.exports:` shape has `module`, `.`,
- * `property_identifier`, `:`, `object_type` all under
- * `field=declaration`.
- *
- * When the field carries a multi-sibling seq, the walker must emit
- * `$$$NAME` (multi-slot) instead of `$NAME` so the renderer joins
- * the array instead of picking item[0] and silently dropping the
- * rest.
- */
-function fieldContentIsMultiSibling(content: Rule): boolean {
-	// Unwrap structural passthroughs that don't themselves contribute
-	// sibling positions.
-	const core = unwrapStructuralPassthroughs(content);
-	if (core.type === 'choice') {
-		return core.members.some((m) => fieldContentIsMultiSibling(m));
-	}
-	if (core.type !== 'seq') return false;
-	// Count NAMED structural members — anything tree-sitter would emit
-	// as a content child. String literals and pattern terminals are
-	// flanking punctuation (`label + ':'`), not independent sibling
-	// values — they belong inside the field as `extractFlankingLiterals`
-	// handles separately. Only count members that produce a
-	// distinct child reference at runtime.
-	let count = 0;
-	for (const m of core.members) {
-		let unwrapped: Rule = m;
-		while (
-			unwrapped.type === 'optional' ||
-			unwrapped.type === 'variant' ||
-			unwrapped.type === 'clause' ||
-			unwrapped.type === 'group' ||
-			unwrapped.type === 'token' ||
-			unwrapped.type === 'terminal'
-		) {
-			unwrapped = (unwrapped as { content: Rule }).content;
-		}
-		switch (unwrapped.type) {
-			case 'symbol':
-				if (isLinkSymbol(unwrapped)) break;
-				count++;
-				if (count >= 2) return true;
-				break;
-			case 'supertype':
-			case 'alias':
-			case 'field':
-			case 'repeat':
-			case 'repeat1':
-				count++;
-				if (count >= 2) return true;
-				break;
-			default:
-				break;
-		}
-	}
-	return false;
-}
 // ---------------------------------------------------------------------------
 // Template walker — shared by AssembledBranch/Container/Group.renderTemplate
 // ---------------------------------------------------------------------------
@@ -375,10 +306,12 @@ function walkRuleForTemplate(
 ): string[] {
 	const clauses = _clauses;
 	const optionalFields = _optionalFields;
-	const emitChildren = (): string =>
-		optionalFields?.has('children')
-			? emitJinjaConditional('children', '$$$CHILDREN')
-			: '$$$CHILDREN';
+	const emitChildren = (slotName: string = 'children'): string => {
+		const placeholder = `$$$${slotName.toUpperCase()}`;
+		return optionalFields?.has(slotName)
+			? emitJinjaConditional(slotName, placeholder)
+			: placeholder;
+	};
 	switch (rule.type) {
 		case 'seq': {
 			// Sibling-repeated-field detection. When `inferFields` has
@@ -689,6 +622,54 @@ function walkRuleForTemplate(
 				branchResults.push({ parts, index: i });
 			}
 			if (branchResults.length === 0) return [];
+			// Union-slot detection (tactical fix 2026-05-18). When all
+			// branches are pure symbol references (no literals, no nested
+			// seqs), this choice represents a union-of-kinds slot — what
+			// the slot model produces as a single slot with N concrete-
+			// kind values. Examples:
+			//   - choice($._type, $.type_binding, $.lifetime, $._literal,
+			//     $.block) in `type_arguments` — five kinds, one storage
+			//     slot. Without this check the walker fanned out to five
+			//     placeholders and rendered each list item five times.
+			// The slot model and per-slot enum already handle the union
+			// — one placeholder is correct. Walk primary only.
+			// Long-term: remove this special-case once the walker consults
+			// slot-model identity directly per symbol ref. See
+			// `project_kind_named_slots_session.md` follow-ups.
+			const isPureSymbolBranch = (m: Rule): boolean => {
+				let inner: Rule | undefined = m;
+				while (inner) {
+					const t = inner.type;
+					if (isPrecWrapper(inner as { type: string })) {
+						inner = (inner as unknown as { content: Rule }).content;
+						continue;
+					}
+					if (t === 'optional' || t === 'OPTIONAL') {
+						inner = (inner as unknown as { content: Rule }).content;
+						continue;
+					}
+					if (t === 'alias' || t === 'ALIAS') {
+						inner = (inner as unknown as { content: Rule }).content;
+						continue;
+					}
+					break;
+				}
+				return inner != null && isSymbolType(inner.type);
+			};
+			if (branchResults.length > 1 && rule.members.every(isPureSymbolBranch)) {
+				const primaryIdx = branchResults[0]!.index;
+				return walkRuleForTemplate(
+					rule.members[primaryIdx]!,
+					seen,
+					inRepeat,
+					clauses,
+					rules,
+					repeatedFields,
+					joinByField,
+					wordMatcher,
+					optionalFields
+				);
+			}
 			// Compute each branch's "literal signature" — parts with
 			// $-placeholders removed, concatenated and whitespace-
 			// normalised. Branches with identical signatures can be
@@ -1047,6 +1028,16 @@ function walkRuleForTemplate(
 			// slots in the caller's template. Guards against recursion
 			// via the rule-name seen-set key.
 			const symName = (rule as { name: string }).name;
+			// Group-lifted symbols own their own template — never inline-expand.
+			// They should render as a children-slot reference like any other
+			// real kind. See spec:
+			//   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+			if ((rule as { source?: string }).source === 'group-lift') {
+				const slotName = (rule as { name: string }).name.replace(/^_+/, '') || 'children';
+				if (seen.has(slotName)) return [];
+				seen.add(slotName);
+				return [emitChildren(slotName)];
+			}
 			if (symName.startsWith('_') && rules) {
 				const target = rules[symName];
 				if (target && !seen.has(`@${symName}`)) {
@@ -1066,10 +1057,11 @@ function walkRuleForTemplate(
 				}
 			}
 			// Visible symbols (and hidden ones we can't expand) render
-			// as unconsumed named children.
-			if (seen.has('children')) return [];
-			seen.add('children');
-			return [emitChildren()];
+			// as their own kind-named slot.
+			const slotName = symName.replace(/^_+/, '');
+			if (seen.has(slotName)) return [];
+			seen.add(slotName);
+			return [emitChildren(slotName)];
 		}
 
 		case 'string':
@@ -1151,10 +1143,12 @@ function walkRuleForTemplate(
 				optionalFields
 			);
 
-		case 'supertype':
-			if (seen.has('children')) return [];
-			seen.add('children');
-			return [emitChildren()];
+		case 'supertype': {
+			const slotName = (rule as { name: string }).name.replace(/^_+/, '') || 'children';
+			if (seen.has(slotName)) return [];
+			seen.add(slotName);
+			return [emitChildren(slotName)];
+		}
 
 		case 'alias':
 			// Named aliases (`alias($._hidden, $.visible)`) create a
@@ -1165,9 +1159,10 @@ function walkRuleForTemplate(
 			// `$$$CHILDREN`. Unnamed aliases (`alias($.x, 'display')`)
 			// just relabel existing content — walk into it.
 			if (rule.named) {
-				if (seen.has('children')) return [];
-				seen.add('children');
-				return [emitChildren()];
+				const slotName = (rule as { value: string }).value.replace(/^_+/, '') || 'children';
+				if (seen.has(slotName)) return [];
+				seen.add(slotName);
+				return [emitChildren(slotName)];
 			}
 			return walkRuleForTemplate(
 				rule.content,

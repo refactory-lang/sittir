@@ -5,7 +5,6 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-
 export interface EmitClientUtilsConfig {
 nodeMap: NodeMap;
 generatedIdTables?: GeneratedIdTables;
@@ -123,6 +122,11 @@ return [
 
 function emitTransportHelpers(): string[] {
 return [
+'/**',
+' * @deprecated Native transport projection is a no-op. Wrap already projects',
+' * read nodes into transport shape, and factories already store transport-shaped',
+' * data at construction time.',
+' */',
 'export function toNativeRenderTransport(node: unknown): unknown {',
 '  return node;',
 '}',

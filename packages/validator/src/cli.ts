@@ -26,7 +26,7 @@ import {
 	type Grammar,
 	type Backend,
 } from './run.ts';
-import { readHistory } from './history.ts';
+import { appendHistory, readHistory, type ValidationRun } from './history.ts';
 import type { ReadRenderParseFailure } from '@sittir/codegen/validate/read-render-parse';
 
 const ALL_GRAMMARS: Grammar[] = ['rust', 'typescript', 'python'];
@@ -80,26 +80,121 @@ function makeRecursiveOption(): Option {
 	return new Option('-r, --recursive', 'Use recursive deep-read RT instead of shallow RT').default(false);
 }
 
-/** Run all four validators for one grammar/backend and return a formatted counts string. */
-async function grammarCounts(
+interface GrammarCounts {
+	readonly grammar: Grammar;
+	readonly backend: Backend;
+	readonly from: Awaited<ReturnType<typeof runFrom>>;
+	readonly coverage: ReturnType<typeof runCoverage>;
+	readonly readRenderParse: Awaited<ReturnType<typeof runRt>>;
+	readonly readRenderParseShallow: Awaited<ReturnType<typeof runRt>>;
+	readonly factoryRenderParse: Awaited<ReturnType<typeof runFactory>>;
+}
+
+async function collectGrammarCounts(
 	grammar: Grammar,
 	backend: Backend,
-	options: { recursive?: boolean } = {},
-): Promise<string> {
+): Promise<GrammarCounts> {
 	const tp = defaultTemplatesPath(grammar);
-	const [from, rt, cov, fac] = await Promise.all([
+	const [from, coverage, factoryRenderParse] = await Promise.all([
 		runFrom(grammar, backend),
-		runRt(grammar, tp, backend, { recursive: options.recursive }),
-		Promise.resolve(runCoverage(grammar, tp)),
+		runCoverage(grammar, tp),
 		runFactory(grammar, tp, backend),
 	]);
-	return [
+	// Native RT validation reuses a cached grammar engine per process, so run the
+	// recursive and shallow passes sequentially to avoid cross-run interference.
+	const readRenderParse = await runRt(grammar, tp, backend, { recursive: true });
+	const readRenderParseShallow = await runRt(grammar, tp, backend, { recursive: false });
+	return {
+		grammar,
+		backend,
+		from,
+		coverage,
+		readRenderParse,
+		readRenderParseShallow,
+		factoryRenderParse,
+	};
+}
+
+function formatGrammarCounts(counts: GrammarCounts): string {
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse } = counts;
+	const lines = [
 		`${grammar}/${formatBackendLabel(backend)}:`,
 		`  fromPass=${from.pass}    fromTotal=${from.total}`,
-		`  covPass=${cov.pass}    covTotal=${cov.total}`,
-		`  rtPass=${rt.pass}    rtTotal=${rt.total}    rtAstMatchPass=${rt.astMatchPass}`,
-		`  factoryPass=${fac.pass}    factoryTotal=${fac.total}    factoryAstMatchPass=${fac.astMatchPass}`,
-	].join('\n');
+		`  covPass=${coverage.pass}    covTotal=${coverage.total}`,
+		`  read-render-parsePass=${readRenderParse.pass}    read-render-parseTotal=${readRenderParse.total}    read-render-parseAstMatchPass=${readRenderParse.astMatchPass}`,
+		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}`,
+		`  factory-render-parsePass=${factoryRenderParse.pass}    factory-render-parseTotal=${factoryRenderParse.total}    factory-render-parseAstMatchPass=${factoryRenderParse.astMatchPass}`,
+	];
+	const rtFails = formatFirstFailures(
+		'read-render-parse',
+		readRenderParse.errors.map((e) => ({ label: e.name, message: e.message })),
+	);
+	if (rtFails) lines.push(rtFails);
+	const rtAstFails = formatFirstFailures(
+		'read-render-parse-ast-mismatch',
+		readRenderParse.astMismatches.map((m) => ({
+			label: m.entry ? `${m.entry} (${m.kind})` : m.kind,
+			message: m.message,
+		})),
+	);
+	if (rtAstFails) lines.push(rtAstFails);
+	const rtShallowFails = formatFirstFailures(
+		'read-render-parse-shallow',
+		readRenderParseShallow.errors.map((e) => ({ label: e.name, message: e.message })),
+	);
+	if (rtShallowFails) lines.push(rtShallowFails);
+	const factoryFails = formatFirstFailures(
+		'factory-render-parse',
+		factoryRenderParse.errors.map((e) => ({ label: e.entry ? `${e.entry} (${e.kind})` : e.kind, message: e.message })),
+	);
+	if (factoryFails) lines.push(factoryFails);
+	const fromFails = formatFirstFailures(
+		'from',
+		from.errors.map((e) => ({ label: e.kind, message: e.message })),
+	);
+	if (fromFails) lines.push(fromFails);
+	return lines.join('\n');
+}
+
+function formatFirstFailures(
+	stage: string,
+	failures: ReadonlyArray<{ label: string; message: string }>,
+	max = process.env.SITTIR_VALIDATOR_MAX_FAILURES
+		? Number(process.env.SITTIR_VALIDATOR_MAX_FAILURES)
+		: 5,
+): string | null {
+	if (failures.length === 0) return null;
+	const shown = failures.slice(0, max);
+	const header = failures.length > max
+		? `  ${stage} first failures (${max} of ${failures.length}):`
+		: `  ${stage} failures (${failures.length}):`;
+	const items = shown.map(({ label, message }) => {
+		const oneLine = message.replace(/\s+/g, ' ').slice(0, 100);
+		return `    ${JSON.stringify(label)} — ${oneLine}`;
+	});
+	return [header, ...items].join('\n');
+}
+
+function toValidationRun(counts: GrammarCounts): ValidationRun {
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse } = counts;
+	return {
+		ts: new Date().toISOString(),
+		grammar,
+		backend,
+		fromPass: from.pass,
+		fromTotal: from.total,
+		covPass: coverage.pass,
+		covTotal: coverage.total,
+		readRenderParsePass: readRenderParse.pass,
+		readRenderParseTotal: readRenderParse.total,
+		readRenderParseAstMatchPass: readRenderParse.astMatchPass,
+		readRenderParseShallowPass: readRenderParseShallow.pass,
+		readRenderParseShallowTotal: readRenderParseShallow.total,
+		readRenderParseShallowAstMatchPass: readRenderParseShallow.astMatchPass,
+		factoryRenderParsePass: factoryRenderParse.pass,
+		factoryRenderParseTotal: factoryRenderParse.total,
+		factoryRenderParseAstMatchPass: factoryRenderParse.astMatchPass,
+	};
 }
 
 /** Print top-8 error buckets from factory-render-parse for one grammar. */
@@ -131,13 +226,15 @@ async function grammarProbeFactory(grammar: Grammar, backend: Backend): Promise<
 export async function runCountsCli(
 	args: string[],
 	backendMode: CliBackend = 'native',
-	options: { recursive?: boolean } = {},
+	_options: { recursive?: boolean } = {},
 ): Promise<void> {
 	const grammars = resolveGrammars(args);
 	for (const backend of resolveBackends(backendMode)) {
 		for (const grammar of grammars) {
 			try {
-				console.log(await grammarCounts(grammar, backend, options));
+				const counts = await collectGrammarCounts(grammar, backend);
+				appendHistory(toValidationRun(counts));
+				console.log(formatGrammarCounts(counts));
 			} catch (e) {
 				console.log(`${grammar}/${formatBackendLabel(backend)}: ERROR ${(e as Error).message}`);
 			}
@@ -173,8 +270,9 @@ export function runHistoryCli(args: string[]): void {
 			`${r.ts}  ${r.grammar}/${r.backend}` +
 				`  from=${r.fromPass}/${r.fromTotal}` +
 				`  cov=${r.covPass}/${r.covTotal}` +
-				`  rt=${r.rtPass}/${r.rtTotal}` +
-				`  fac=${r.factoryPass}/${r.factoryTotal}`,
+				`  read-render-parse=${r.readRenderParsePass}/${r.readRenderParseTotal}` +
+				`  read-render-parse-shallow=${r.readRenderParseShallowPass}/${r.readRenderParseShallowTotal}` +
+				`  factory-render-parse=${r.factoryRenderParsePass}/${r.factoryRenderParseTotal}`,
 		);
 	}
 }
@@ -242,10 +340,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 		.command('counts')
 		.description('Per-grammar raw pass/total counts for all four validators')
 		.addOption(makeBackendOption())
-		.addOption(makeRecursiveOption())
 		.argument('[grammars...]', 'Grammars to validate (rust, typescript, python); defaults to all')
-		.action(async (grammars: string[], options: { backend: CliBackend; recursive?: boolean }) =>
-			runCountsCli(grammars, options.backend, { recursive: options.recursive }));
+		.action(async (grammars: string[], options: { backend: CliBackend }) =>
+			runCountsCli(grammars, options.backend));
 
 	program
 		.command('probe-factory')

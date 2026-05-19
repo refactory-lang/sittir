@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   41  (34 applied, 7 held)
+// Rule promotions:   40  (33 applied, 7 held)
 // Repeated shapes:   0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -117,9 +117,6 @@ export const suggestedRules = {
   expression: $ => choice($.comparison_operator, $.not_operator, $.boolean_operator, $.lambda, $.primary_expression, $.conditional_expression, $.named_expression, $.as_pattern),
 
   // [applied] promoted supertype
-  keyword_identifier: $ => choice($.identifier),
-
-  // [applied] promoted supertype
   parameter: $ => choice($.identifier, $.typed_parameter, $.default_parameter, $.typed_default_parameter, $.list_splat_pattern, $.tuple_pattern, $.keyword_separator, $.positional_separator, $.dictionary_splat_pattern),
 
   // [applied] promoted supertype
@@ -127,6 +124,84 @@ export const suggestedRules = {
 
   // [applied] promoted supertype
   primary_expression: $ => choice($.await, $.binary_operator, $.identifier, $.keyword_identifier, $.string, $.concatenated_string, $.integer, $.float, $.true, $.false, $.none, $.unary_operator, $.attribute, $.subscript, $.call, $.list, $.list_comprehension, $.dictionary, $.dictionary_comprehension, $.set, $.set_comprehension, $.tuple, $.parenthesized_expression, $.generator_expression, $.ellipsis, $.list_splat_pattern),
+
+};
+
+// ---------------------------------------------------------------
+// suggestedGroups — drop entries into your overrides.ts
+// `groups:` block. Each entry lifts a nested sub-rule into
+// a hidden synthesized kind materialized as AssembledGroup.
+// All entries are held — none are auto-applied.
+//
+// CAVEAT: paths here are from the POST-LINK rule map. The synthesis
+// pass runs on POST-EVALUATE rules (before polymorph alias rewrites).
+// If a kind has been polymorph-aliased, the original-kind path may
+// differ from what is shown here. Pick the kind that exists at
+// synthesis time (often the polymorph-variant kind such as
+// `_visibility_modifier_pub`) and adjust the path accordingly.
+// validateGroupsConfig E2 will catch unresolvable paths with an
+// actionable error.
+// ---------------------------------------------------------------
+export const suggestedGroups = {
+  // [held] 1 candidate(s)
+  _suite: {
+    '1': 'block',
+  },
+
+  // [held] 1 candidate(s)
+  argument_list: {
+    '1': 'expression',
+  },
+
+  // [held] 1 candidate(s)
+  comparison_operator: {
+    '1/0': 'operators',
+  },
+
+  // [held] 1 candidate(s)
+  except_clause: {
+    '2/0/0': 'value',
+  },
+
+  // [held] 1 candidate(s)
+  exec_statement: {
+    '2/0': 'expression',
+  },
+
+  // [held] 1 candidate(s)
+  function_definition: {
+    '5/0': 'return_type',
+  },
+
+  // [held] 1 candidate(s)
+  future_import_statement: {
+    '3/1': 'import_list',
+  },
+
+  // [held] 1 candidate(s)
+  import_from_statement: {
+    '3/0/2': 'import_list',
+  },
+
+  // [held] 1 candidate(s)
+  print_statement: {
+    '1/0': 'chevron',
+  },
+
+  // [held] 1 candidate(s)
+  raise_statement: {
+    '2/0': 'cause',
+  },
+
+  // [held] 1 candidate(s)
+  slice: {
+    '3/0': 'expression',
+  },
+
+  // [held] 1 candidate(s)
+  yield: {
+    '1/0': 'expression',
+  },
 
 };
 
@@ -151,7 +226,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_simple_statement", classification: "supertype", applied: true },
   { kind: "_statement", classification: "supertype", applied: true },
   { kind: "expression", classification: "supertype", applied: true },
-  { kind: "keyword_identifier", classification: "supertype", applied: true },
   { kind: "parameter", classification: "supertype", applied: true },
   { kind: "pattern", classification: "supertype", applied: true },
   { kind: "primary_expression", classification: "supertype", applied: true },

@@ -9,9 +9,8 @@
  * No tree-sitter re-parsing needed — pure structural comparison.
  */
 
-import { readNode } from '@sittir/common';
 import type { AnyNodeData } from '@sittir/types';
-import type { FactoryShape } from '../emitters/factory-map.ts';
+import type { FactoryShape, FactorySlotMeta } from '../emitters/factory-map.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
@@ -24,6 +23,7 @@ import {
 	adaptNode,
 	collectKinds,
 	emitValidatorMetrics,
+	getChildFactoryArgs,
 	nodeToConfig,
 	type TSTree
 } from './common.ts';
@@ -80,7 +80,8 @@ function findUndefined(node: AnyNodeData, path = ''): string[] {
 	}
 
 	if (node.$children) {
-		(node.$children as AnyNodeData[]).forEach((c, i) => {
+		const children = Array.isArray(node.$children) ? node.$children : [node.$children];
+		children.forEach((c, i) => {
 			if (typeof c === 'object' && c !== null) {
 				results.push(...findUndefined(c, `${path}.children[${i}]`));
 			}
@@ -105,7 +106,11 @@ function findUndefined(node: AnyNodeData, path = ''): string[] {
  * access can't distinguish `{a: undefined}` from `{}`, so the structural
  * comparison shouldn't either.
  */
-function structuralDiff(a: AnyNodeData, b: AnyNodeData): string[] {
+function structuralDiff(
+	a: AnyNodeData,
+	b: AnyNodeData,
+	kindNameFromId?: ((id: number) => string | undefined) | undefined,
+): string[] {
 	const diffs: string[] = [];
 	if (a.$type !== b.$type) diffs.push(`$type: ${a.$type} vs ${b.$type}`);
 
@@ -124,9 +129,33 @@ function structuralDiff(a: AnyNodeData, b: AnyNodeData): string[] {
 	if (missingInA.length) diffs.push(`from() missing declared fields: ${missingInA.join(', ')}`);
 
 	// Compare only named children — anonymous tokens (delimiters, separators)
-	// are reconstructed from templates, not carried in factory output
-	const aNamed = (a.$children ?? []).filter((c: any) => c?.$named !== false);
-	const bNamed = (b.$children ?? []).filter((c: any) => c?.$named !== false);
+	// are reconstructed from templates, not carried in factory output.
+	// After commit 15c4c195 (child hoisting), anonymous leaf children scalarize
+	// to numeric kind IDs on the wire. Numbers have no `$named` property, so
+	// `c?.$named !== false` evaluates true for them — exclude explicitly.
+	// Polymorph wrapper children (whose name starts with "{parent}_") are
+	// produced differently by read vs factory — filter them from both sides to
+	// avoid false divergence on the wrapper/unwrapper split.
+	// $type is a numeric kind ID after child hoisting, so resolve parent name
+	// through kindNameFromId before building the prefix. Hidden-rule types are
+	// stored with a leading `_` (e.g. `_mod_item_external`); strip it before
+	// the prefix comparison so the filter matches both underscored and plain names.
+	const resolveTypeName = (t: string | number | undefined): string | undefined =>
+		typeof t === 'string' ? t : t != null ? kindNameFromId?.(t) : undefined;
+	const parentName = resolveTypeName(a.$type);
+	const polymorphPrefix = parentName ? parentName + '_' : null;
+	const resolveChildName = (t: string | number | undefined): string | undefined => {
+		const name = resolveTypeName(t);
+		return name?.startsWith('_') ? name.slice(1) : name;
+	};
+	const isRealNamedChild = (c: any) =>
+		typeof c !== 'number' &&
+		c?.$named !== false &&
+		!(polymorphPrefix && resolveChildName(c?.$type)?.startsWith(polymorphPrefix));
+	const aChildren = a.$children === undefined ? [] : Array.isArray(a.$children) ? a.$children : [a.$children];
+	const bChildren = b.$children === undefined ? [] : Array.isArray(b.$children) ? b.$children : [b.$children];
+	const aNamed = aChildren.filter(isRealNamedChild);
+	const bNamed = bChildren.filter(isRealNamedChild);
 	if (aNamed.length !== bNamed.length) diffs.push(`named children: ${aNamed.length} vs ${bNamed.length}`);
 
 	return diffs;
@@ -185,6 +214,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
 	let factoryShapes: Record<string, FactoryShape> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
+	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let polymorphVariants: Record<string, unknown> = {};
 	let readTreeNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
@@ -198,7 +228,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata (shapes, field-alias, factoryFields,
-		// polymorphVariants) lives in factory-map.json5.
+		// factorySlots, polymorphVariants) lives in factory-map.json5.
 		try {
 			const mapPath = `../../../${grammar}/factory-map.json5`;
 			const { readFileSync } = await import('node:fs');
@@ -207,6 +237,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 			const mapData = JSON.parse(jsonOnly);
 			factoryShapes = mapData.factoryShapes ?? {};
 			factoryFields = mapData.factoryFields ?? {};
+			factorySlots = mapData.factorySlots ?? {};
 			fieldAliasMap = mapData.fieldAliasMap ?? {};
 			polymorphVariants = mapData.polymorphVariants ?? {};
 		} catch {
@@ -244,32 +275,41 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 			const node1 = findFirst(tree1.rootNode, kind);
 			if (!node1) continue;
 
-			const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
-			// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
-			// Resolve via the native data tree; if the kind is an alias target
-			// the native engine emits under a different rule name, skip rather
-			// than fall back to a mismatched WASM ID.
-			const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
-			if (nativeCoords === null && handle.read) continue;
-			// Use readTreeNode (wrapped via per-kind dispatch) when available,
-			// so `.from()` sees a fluent NodeData — the supported input shape
-			// per spec 008 US3. Fall back to raw readNode if the wrap module
-			// isn't loaded (bootstrap scenarios).
-			// ADR-0017: for WASM/JS path, temporarily swap rootNode to target
-			// then call with no navigation coords (reads rootNode).
 			let readData: AnyNodeData;
-			if (nativeCoords && handle.read) {
-				readData = readTreeNode
-					? (readTreeNode(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyNodeData)
-					: readNodeAt(handle, adaptNode(node1), nativeCoords);
-			} else {
-				const prev = handle.rootNode;
-				(handle as { rootNode: typeof prev }).rootNode = adaptNode(node1);
-				try {
-					readData = readTreeNode ? (readTreeNode(handle) as AnyNodeData) : readNodeAt(handle, adaptNode(node1), null);
-				} finally {
-					(handle as { rootNode: typeof prev }).rootNode = prev;
+			try {
+				const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
+				// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
+				// Resolve via the native data tree; if the kind is an alias target
+				// the native engine emits under a different rule name, skip rather
+				// than fall back to a mismatched WASM ID.
+				const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
+				if (nativeCoords === null && handle.read) continue;
+				// Use readTreeNode (wrapped via per-kind dispatch) when available,
+				// so `.from()` sees a fluent NodeData — the supported input shape
+				// per spec 008 US3. Fall back to raw readNode if the wrap module
+				// isn't loaded (bootstrap scenarios).
+				// ADR-0017: for WASM/JS path, temporarily swap rootNode to target
+				// then call with no navigation coords (reads rootNode).
+				if (nativeCoords && handle.read) {
+					readData = readTreeNode
+						? (readTreeNode(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyNodeData)
+						: readNodeAt(handle, adaptNode(node1), nativeCoords);
+				} else {
+					const prev = handle.rootNode;
+					(handle as { rootNode: typeof prev }).rootNode = adaptNode(node1);
+					try {
+						readData = readTreeNode ? (readTreeNode(handle) as AnyNodeData) : readNodeAt(handle, adaptNode(node1), null);
+					} finally {
+						(handle as { rootNode: typeof prev }).rootNode = prev;
+					}
 				}
+			} catch (e) {
+				errors.push({
+					kind,
+					severity: 'error',
+					message: `read/wrap throws: ${(e as Error).message.slice(0, 120)}`
+				});
+				continue;
 			}
 
 			try {
@@ -292,6 +332,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
 							factoryShapes,
 							factoryFields,
+							factorySlots,
 							fieldAliasMap,
 							polymorphVariants: polymorphVariants as any,
 							kindNameFromId
@@ -302,9 +343,10 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 							const fieldNames = factoryFields[kind];
 							const rawName = fieldNames?.[0];
 							const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
+							const childArgs = getChildFactoryArgs(kind, config, factorySlots);
 							const value = camelName
 								? (config as Record<string, unknown>)[camelName]
-								: ((readData.$children ?? []).filter((c: any) => c?.$named !== false) as unknown[])[0];
+								: childArgs[0];
 							factoryResult = (factory as (v: unknown) => AnyNodeData)(value);
 						} else {
 							factoryResult = factory(config) as AnyNodeData;
@@ -317,8 +359,17 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 							readData.$text ?? (readData.$span ? entry.source.slice(readData.$span.start, readData.$span.end) : '');
 						factoryResult = (factory as (text: string) => AnyNodeData)(textForFactory);
 					} else {
-						const namedChildren = (readData.$children ?? []).filter((c: any) => c?.$named !== false);
-						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
+						const config = nodeToConfig(readData, {
+							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
+							factoryShapes,
+							factoryFields,
+							factorySlots,
+							fieldAliasMap,
+							polymorphVariants: polymorphVariants as any,
+							kindNameFromId
+						});
+						const childArgs = getChildFactoryArgs(kind, config, factorySlots);
+						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...childArgs);
 					}
 				} catch {
 					skip++;
@@ -338,7 +389,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'typesc
 				}
 
 				// Structural comparison
-				const diffs = structuralDiff(fromResult, factoryResult);
+				const diffs = structuralDiff(fromResult, factoryResult, kindNameFromId);
 				if (diffs.length > 0) {
 					divergentCount++;
 					errors.push({

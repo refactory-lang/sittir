@@ -28,7 +28,6 @@
 
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { readNode } from '@sittir/common';
 import type { AnyNodeData } from '@sittir/types';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
@@ -276,7 +275,8 @@ function checkNodeData(
 		}
 	}
 
-	const dataChildrenCount = (data.$children ?? []).filter((c: any) => c?.$named !== false).length;
+	const dataChildren = data.$children === undefined ? [] : Array.isArray(data.$children) ? data.$children : [data.$children];
+	const dataChildrenCount = dataChildren.filter((c: any) => c?.$named !== false).length;
 
 	const expectedNamedUnfielded = countUnfieldedNamedChildren(node);
 	const promotedChildCount = countPromotedOverrideChildren(data, liveFieldNames, overrideFields);

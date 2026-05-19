@@ -23,7 +23,6 @@ import type {
     PrimaryType,
     PropertyIdentifier,
     PropertyName,
-    Semicolon,
     ShorthandPropertyIdentifier,
     ShorthandPropertyIdentifierPattern,
     Statement,
@@ -38,6 +37,7 @@ import type {
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
+    AmbientDeclarationDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._AmbientDeclarationDeclaration };
     ArrowFunction_CallSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ArrowFunctionUCallSignature };
     ArrowFunctionParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ArrowFunctionParameter };
     ClassBodyMember<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassBodyMember };
@@ -60,8 +60,6 @@ export interface IsGuards {
     ParenthesizedExpressionSequence<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ParenthesizedExpressionSequence };
     PublicFieldDefinitionAccessorOpt<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt };
     PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-    StringDouble<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._StringDouble };
-    StringSingle<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._StringSingle };
     abstractClassDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractClassDeclaration };
     abstractMethodSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractMethodSignature };
     addingTypeAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AddingTypeAnnotation };
@@ -229,7 +227,6 @@ export interface IsGuards {
     moduleExportName(v: { readonly $type: string | number }): v is ModuleExportName;
     propertyIdentifier(v: { readonly $type: string | number }): v is PropertyIdentifier;
     propertyName(v: { readonly $type: string | number }): v is PropertyName;
-    semicolon(v: { readonly $type: string | number }): v is Semicolon;
     shorthandPropertyIdentifier(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifier;
     shorthandPropertyIdentifierPattern(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifierPattern;
     statementIdentifier(v: { readonly $type: string | number }): v is StatementIdentifier;
@@ -245,6 +242,7 @@ export interface IsGuards {
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
+    AmbientDeclarationDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._AmbientDeclarationDeclaration };
     ArrowFunction_CallSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ArrowFunctionUCallSignature };
     ArrowFunctionParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ArrowFunctionParameter };
     ClassBodyMember(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBodyMember };
@@ -267,8 +265,6 @@ export interface AssertGuards {
     ParenthesizedExpressionSequence(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ParenthesizedExpressionSequence };
     PublicFieldDefinitionAccessorOpt(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionAccessorOpt };
     PublicFieldDefinitionDeclareFirst(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-    StringDouble(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._StringDouble };
-    StringSingle(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._StringSingle };
     abstractClassDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractClassDeclaration };
     abstractMethodSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractMethodSignature };
     addingTypeAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AddingTypeAnnotation };
@@ -436,7 +432,6 @@ export interface AssertGuards {
     moduleExportName(v: { readonly $type: string | number }): asserts v is ModuleExportName;
     propertyIdentifier(v: { readonly $type: string | number }): asserts v is PropertyIdentifier;
     propertyName(v: { readonly $type: string | number }): asserts v is PropertyName;
-    semicolon(v: { readonly $type: string | number }): asserts v is Semicolon;
     shorthandPropertyIdentifier(v: { readonly $type: string | number }): asserts v is ShorthandPropertyIdentifier;
     shorthandPropertyIdentifierPattern(v: { readonly $type: string | number }): asserts v is ShorthandPropertyIdentifierPattern;
     statementIdentifier(v: { readonly $type: string | number }): asserts v is StatementIdentifier;
@@ -459,10 +454,10 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 }
 
 const _supertype_destructuringPattern_ids = new Set<number>([214, 218]);
-const _supertype_exportStatementDefault_ids = new Set<number>([353, 354]);
+const _supertype_exportStatementDefault_ids = new Set<number>([355, 356]);
 const _supertype_expressions_ids = new Set<number>([246]);
 const _supertype_formalParameter_ids = new Set<number>([296, 297]);
-const _supertype_identifier_ids = new Set<number>([112, 1]);
+const _supertype_identifier_ids = new Set<number>([114, 1]);
 const _supertype_importIdentifier_ids = new Set<number>([1]);
 const _supertype_jsxAttributeName_ids = new Set<number>([1]);
 const _supertype_jsxChild_ids = new Set<number>([163]);
@@ -470,17 +465,16 @@ const _supertype_jsxElementName_ids = new Set<number>([1, 219]);
 const _supertype_jsxIdentifier_ids = new Set<number>([1]);
 const _supertype_moduleExportName_ids = new Set<number>([1, 247]);
 const _supertype_propertyIdentifier_ids = new Set<number>([1]);
-const _supertype_propertyName_ids = new Set<number>([1, 104, 247, 103, 265]);
-const _supertype_semicolon_ids = new Set<number>([159]);
+const _supertype_propertyName_ids = new Set<number>([1, 106, 247, 105, 265]);
 const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1]);
 const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1]);
 const _supertype_statementIdentifier_ids = new Set<number>([1]);
 const _supertype_tupleTypeMember_ids = new Set<number>([308, 309, 310, 311]);
 const _supertype_declaration_ids = new Set<number>([224, 226, 221, 184, 183, 271, 282, 283, 284, 293, 290, 288, 286, 281]);
 const _supertype_expression_ids = new Set<number>([274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212]);
-const _supertype_pattern_ids = new Set<number>([234, 235, 112, 1, 214, 218, 268, 260]);
-const _supertype_primaryExpression_ids = new Set<number>([235, 234, 209, 112, 1, 107, 108, 103, 247, 248, 250, 109, 110, 111, 213, 217, 223, 227, 225, 220, 251, 231, 268]);
-const _supertype_primaryType_ids = new Set<number>([334, 335, 430, 287, 319, 337, 346, 347, 333, 326, 327, 107, 330, 328, 318, 316, 350, 349]);
+const _supertype_pattern_ids = new Set<number>([234, 235, 114, 1, 214, 218, 268, 260]);
+const _supertype_primaryExpression_ids = new Set<number>([235, 234, 209, 114, 1, 109, 110, 105, 247, 248, 250, 111, 112, 113, 213, 217, 223, 227, 225, 220, 251, 231, 268]);
+const _supertype_primaryType_ids = new Set<number>([334, 335, 426, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
 const _supertype_statement_ids = new Set<number>([167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203]);
 const _supertype_type_ids = new Set<number>([351, 348, 313, 317, 303, 304]);
 
@@ -541,20 +535,18 @@ const _kindIdByKind = new Map<string, number>([
     ["require", TSKindId.Require],
     ["extends", TSKindId.Extends],
     ["implements", TSKindId.Implements],
-    ["global", TSKindId.Global],
     ["interface", TSKindId.Interface],
     ["enum", TSKindId.Enum],
     ["infer", TSKindId.Infer],
     ["is", TSKindId.Is],
     ["keyof", TSKindId.Keyof],
+    ["global", TSKindId.Global],
     ["accessor", TSKindId.Accessor],
     ["using", TSKindId.Using],
-    ["_automatic_semicolon", TSKindId.AutomaticSemicolon],
     ["_template_chars", TSKindId.TemplateChars],
     ["_ternary_qmark", TSKindId.TernaryQmark],
     ["html_comment", TSKindId.HtmlComment],
     ["jsx_text", TSKindId.JsxText],
-    ["_function_signature_automatic_semicolon", TSKindId.FunctionSignatureAutomaticSemicolon],
     ["__error_recovery", TSKindId.ErrorRecovery],
     ["program", TSKindId.Program],
     ["export_statement", TSKindId.ExportStatement],
@@ -725,6 +717,8 @@ const _kindIdByKind = new Map<string, number>([
     ["union_type", TSKindId.UnionType],
     ["intersection_type", TSKindId.IntersectionType],
     ["function_type", TSKindId.FunctionType],
+    ["_ambient_declaration_global", TSKindId.AmbientDeclarationGlobal],
+    ["_ambient_declaration_module", TSKindId.AmbientDeclarationModule],
     ["_export_statement_default_from_arm", TSKindId.ExportStatementDefaultFromArm],
     ["_export_statement_default_decl_arm", TSKindId.ExportStatementDefaultDeclArm],
     ["_export_statement_default_decl_arm_default_kw", TSKindId.ExportStatementDefaultDeclArmDefaultKw],
@@ -739,6 +733,7 @@ const _kindIdByKind = new Map<string, number>([
     ["_import_specifier_as", TSKindId.ImportSpecifierAs],
     ["_index_signature_colon", TSKindId.IndexSignatureColon],
     ["_index_signature_mapped_type_clause", TSKindId._IndexSignatureMappedTypeClause],
+    ["_ambient_declaration_declaration", TSKindId._AmbientDeclarationDeclaration],
     ["_export_statement_default_from_arm_star_from", TSKindId.ExportStatementDefaultFromArmStarFrom],
     ["_export_statement_default_from_arm_ns_from", TSKindId.ExportStatementDefaultFromArmNsFrom],
     ["_export_statement_default_from_arm_clause_from", TSKindId.ExportStatementDefaultFromArmClauseFrom],
@@ -749,10 +744,6 @@ const _kindIdByKind = new Map<string, number>([
     ["_for_header_lhs", TSKindId.ForHeaderLhs],
     ["_for_header_var_kind", TSKindId.ForHeaderVarKind],
     ["_for_header_let_const_kind", TSKindId.ForHeaderLetConstKind],
-    ["_kw_static_marker", TSKindId.KwStaticMarker],
-    ["_kw_abstract_marker", TSKindId.KwAbstractMarker],
-    ["_kw_const_marker", TSKindId.KwConstMarker],
-    ["_kw_using_marker", TSKindId.KwUsingMarker],
     ["_parenthesized_expression_typed", TSKindId.ParenthesizedExpressionTyped],
     ["_parenthesized_expression_sequence", TSKindId._ParenthesizedExpressionSequence],
     ["_export_statement_type_export", TSKindId._ExportStatementTypeExport],
@@ -761,8 +752,6 @@ const _kindIdByKind = new Map<string, number>([
     ["_call_expression_call", TSKindId.CallExpressionCall],
     ["_call_expression_template_call", TSKindId.CallExpressionTemplateCall],
     ["_call_expression_member", TSKindId.CallExpressionMember],
-    ["_string_double", TSKindId._StringDouble],
-    ["_string_single", TSKindId._StringSingle],
     ["_update_expression_postfix", TSKindId.UpdateExpressionPostfix],
     ["_update_expression_prefix", TSKindId.UpdateExpressionPrefix],
     ["_public_field_definition_abstract_first", TSKindId.PublicFieldDefinitionAbstractFirst],
@@ -775,6 +764,7 @@ const _kindIdByKind = new Map<string, number>([
 ]);
 
 export const is = {
+    AmbientDeclarationDeclaration: _g(TSKindId._AmbientDeclarationDeclaration),
     ArrowFunction_CallSignature: _g(TSKindId._ArrowFunctionUCallSignature),
     ArrowFunctionParameter: _g(TSKindId._ArrowFunctionParameter),
     ClassBodyMember: _g(TSKindId.ClassBodyMember),
@@ -797,8 +787,6 @@ export const is = {
     ParenthesizedExpressionSequence: _g(TSKindId._ParenthesizedExpressionSequence),
     PublicFieldDefinitionAccessorOpt: _g(TSKindId.PublicFieldDefinitionAccessorOpt),
     PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
-    StringDouble: _g(TSKindId._StringDouble),
-    StringSingle: _g(TSKindId._StringSingle),
     abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
     abstractMethodSignature: _g(TSKindId.AbstractMethodSignature),
     addingTypeAnnotation: _g(TSKindId.AddingTypeAnnotation),
@@ -969,7 +957,6 @@ export const is = {
     moduleExportName: _sg(_supertype_moduleExportName_ids),
     propertyIdentifier: _sg(_supertype_propertyIdentifier_ids),
     propertyName: _sg(_supertype_propertyName_ids),
-    semicolon: _sg(_supertype_semicolon_ids),
     shorthandPropertyIdentifier: _sg(_supertype_shorthandPropertyIdentifier_ids),
     shorthandPropertyIdentifierPattern: _sg(_supertype_shorthandPropertyIdentifierPattern_ids),
     statementIdentifier: _sg(_supertype_statementIdentifier_ids),
@@ -1006,6 +993,7 @@ function _makeAssertKind(guard: _AnyGuard) {
 }
 
 export const assert = {
+    AmbientDeclarationDeclaration: _makeAssert('AmbientDeclarationDeclaration', is.AmbientDeclarationDeclaration as _AnyGuard),
     ArrowFunction_CallSignature: _makeAssert('ArrowFunction_CallSignature', is.ArrowFunction_CallSignature as _AnyGuard),
     ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
     ClassBodyMember: _makeAssert('ClassBodyMember', is.ClassBodyMember as _AnyGuard),
@@ -1028,8 +1016,6 @@ export const assert = {
     ParenthesizedExpressionSequence: _makeAssert('ParenthesizedExpressionSequence', is.ParenthesizedExpressionSequence as _AnyGuard),
     PublicFieldDefinitionAccessorOpt: _makeAssert('PublicFieldDefinitionAccessorOpt', is.PublicFieldDefinitionAccessorOpt as _AnyGuard),
     PublicFieldDefinitionDeclareFirst: _makeAssert('PublicFieldDefinitionDeclareFirst', is.PublicFieldDefinitionDeclareFirst as _AnyGuard),
-    StringDouble: _makeAssert('StringDouble', is.StringDouble as _AnyGuard),
-    StringSingle: _makeAssert('StringSingle', is.StringSingle as _AnyGuard),
     abstractClassDeclaration: _makeAssert('abstractClassDeclaration', is.abstractClassDeclaration as _AnyGuard),
     abstractMethodSignature: _makeAssert('abstractMethodSignature', is.abstractMethodSignature as _AnyGuard),
     addingTypeAnnotation: _makeAssert('addingTypeAnnotation', is.addingTypeAnnotation as _AnyGuard),
@@ -1197,7 +1183,6 @@ export const assert = {
     moduleExportName: _makeAssert('moduleExportName', is.moduleExportName as _AnyGuard),
     propertyIdentifier: _makeAssert('propertyIdentifier', is.propertyIdentifier as _AnyGuard),
     propertyName: _makeAssert('propertyName', is.propertyName as _AnyGuard),
-    semicolon: _makeAssert('semicolon', is.semicolon as _AnyGuard),
     shorthandPropertyIdentifier: _makeAssert('shorthandPropertyIdentifier', is.shorthandPropertyIdentifier as _AnyGuard),
     shorthandPropertyIdentifierPattern: _makeAssert('shorthandPropertyIdentifierPattern', is.shorthandPropertyIdentifierPattern as _AnyGuard),
     statementIdentifier: _makeAssert('statementIdentifier', is.statementIdentifier as _AnyGuard),

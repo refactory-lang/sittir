@@ -3,8 +3,9 @@
 //! Produces the exact one-level-deep read shape defined by ADR-0018:
 //! de-hoisted `_<slot>` storage at the boundary, child stubs carrying
 //! parent handle + child index, and no recursive `$fields` payload.
-//! **NO enrichment** happens here beyond the JS-parity anonymous-keyword
-//! promotion used by `@sittir/core/readNode`.
+//! **NO enrichment or anonymous-token promotion** happens here. Named
+//! slots come only from tree-sitter / enrich-authored
+//! `field_name_for_child()` output.
 //!
 //! # Shape produced
 //!
@@ -14,11 +15,11 @@
 //! - `$source`     — always `"ts"` for this code path.
 //! - `$named`      — `node.is_named()`.
 //! - `_<slot>`     — top-level named-slot storage populated via
-//!   `field_name_for_child()` and anonymous-keyword promotion. Multiple
-//!   children on the same field name collapse into `FieldValue::Multiple`;
-//!   single → `FieldValue::Single`.
-//! - `$children`   — child stubs with NO field name (and not promoted to
-//!   a keyword slot). Leaves skip this.
+//!   `field_name_for_child()`. Multiple children on the same field name
+//!   collapse into `FieldValue::Multiple`; single → `FieldValue::Single`.
+//! - `$children`   — child entries with NO field name. Materialized leaf
+//!   children are scalarized on the wire only for anonymous/token leaves;
+//!   named leaves and branch children remain objects.
 //! - `$text`       — full source text for leaves only.
 //! - `$span`       — `{start, end}` from `node.byte_range()`.
 //! - `$nodeHandle` — current node handle on the returned node; parent
@@ -86,9 +87,8 @@ fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u
 
     // On leaves, drop the (possibly empty) `$children` entirely — the
     // shape gate in T025 enforces that leaves don't carry `$children`
-    // even when empty, and tree-sitter leaves may still have
-    // anonymous-token children (e.g. a `string_literal` with `"`
-    // tokens) that we explicitly don't surface at MVP.
+    // even when empty, and purely-anonymous token structure is still
+    // represented by `$text` for the native read surface.
     let children = if is_leaf { None } else { children };
 
     NodeData {
@@ -113,9 +113,8 @@ fn read_ts_node(node: tree_sitter::Node<'_>, source: &str, node_handle: Option<u
 ///
 /// Field-slot arity: multiple children on the same field name are
 /// collapsed into `FieldValue::Multiple`; a lone child becomes
-/// `FieldValue::Single`. Anonymous no-field tokens are promoted to
-/// keyword slots keyed by their text when possible, matching the JS
-/// `readNode` surface.
+/// `FieldValue::Single`. No-field children stay in `$children`; this
+/// native path does not invent `_<text>` fields for anonymous tokens.
 fn read_children(
     node: tree_sitter::Node<'_>,
     source: &str,
@@ -130,11 +129,32 @@ fn read_children(
             None => continue,
         };
         let field_name = node.field_name_for_child(i);
-        let data = read_child_stub(child, source, node_handle, i as u16);
         match field_name {
-            Some(name) => assign_named_slot(&mut fields_acc, name, data),
-            None if promote_anonymous_keyword(&mut fields_acc, &data) => {}
-            None => children_acc.push(data),
+            Some(name) => {
+                let data = if child.child_count() == 0 {
+                    read_materialized_leaf(child, source)
+                } else {
+                    read_child_stub(child, source, node_handle, i as u16)
+                };
+                assign_named_slot(&mut fields_acc, name, data);
+            }
+            None => {
+                let data = if child.child_count() == 0 {
+                    read_materialized_leaf(child, source)
+                } else {
+                    read_child_stub(child, source, node_handle, i as u16)
+                };
+                if child.is_named() {
+                    // Named child without a field tag — route by kind to a `_<kind>` slot.
+                    // This produces a kind-named storage entry in the serialized NodeData,
+                    // uniform with field-tagged slots (spec 2026-05-17 kind-named slots).
+                    assign_named_slot(&mut fields_acc, child.kind(), data);
+                } else {
+                    // Anonymous literal token — stays in the legacy children bucket
+                    // (numeric kind IDs only after the slot model unification).
+                    children_acc.push(data);
+                }
+            }
         }
     }
 
@@ -184,6 +204,25 @@ fn read_child_stub(
     }
 }
 
+fn read_materialized_leaf(child: tree_sitter::Node<'_>, source: &str) -> NodeData {
+    let byte_range = child.byte_range();
+    NodeData {
+        type_: KindId(child.kind_id()),
+        source: Source::Ts,
+        named: child.is_named(),
+        fields: None,
+        children: None,
+        text: source.get(byte_range.clone()).map(|s| s.to_string()),
+        span: Some(Span {
+            start: byte_range.start as u32,
+            end: byte_range.end as u32,
+        }),
+        node_handle: None,
+        child_index: None,
+        trivia_data: None,
+    }
+}
+
 fn assign_named_slot(
     fields_acc: &mut HashMap<String, Vec<NodeData>>,
     field_name: &str,
@@ -195,21 +234,4 @@ fn assign_named_slot(
         return;
     }
     entry.push(data);
-}
-
-fn promote_anonymous_keyword(
-    fields_acc: &mut HashMap<String, Vec<NodeData>>,
-    data: &NodeData,
-) -> bool {
-    if data.named {
-        return false;
-    }
-    let Some(text) = data.text.as_ref() else {
-        return false;
-    };
-    if text.is_empty() || fields_acc.contains_key(text) {
-        return false;
-    }
-    fields_acc.insert(text.clone(), vec![data.clone()]);
-    true
 }

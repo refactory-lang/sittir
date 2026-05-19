@@ -46,6 +46,7 @@ function assertNativeSpan(value: unknown, path: string): void {
 
 function assertNativeFieldValue(value: unknown, path: string): asserts value is NodeMemberValue {
 	if (typeof value === 'string') return;
+	if (typeof value === 'boolean') return;
 	if (typeof value === 'number') {
 		assertFiniteNumber(value, path);
 		return;
@@ -61,11 +62,21 @@ function assertNativeFieldValue(value: unknown, path: string): asserts value is 
 
 function assertNativeChildren(value: unknown, path: string): void {
 	if (!Array.isArray(value)) {
-		throw new TypeError(`${path} must be an array, got ${describe(value)}`);
+		assertNativeChildValue(value, path);
+		return;
 	}
 	for (const [index, child] of value.entries()) {
-		assertNativeNodeDataInternal(child, `${path}[${index}]`);
+		assertNativeChildValue(child, `${path}[${index}]`);
 	}
+}
+
+function assertNativeChildValue(value: unknown, path: string): asserts value is NodeMemberValue {
+	if (typeof value === 'string') return;
+	if (typeof value === 'number') {
+		assertFiniteNumber(value, path);
+		return;
+	}
+	assertNativeNodeDataInternal(value, path);
 }
 
 /**

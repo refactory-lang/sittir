@@ -507,6 +507,14 @@ export function repeat1(content: Input): Rule {
 	return { type: 'repeat1', content: resolved };
 }
 
+/**
+ * Symbol reference constructor — baseline DSL shadow used by metadata
+ * helpers that need a real runtime symbol without fabricating the object.
+ */
+export function symbol(name: string): SymbolRule {
+	return { type: 'symbol', name, hidden: name.startsWith('_') };
+}
+
 // ---------------------------------------------------------------------------
 // $ proxy — reference tracking
 // ---------------------------------------------------------------------------
@@ -753,6 +761,23 @@ export function blank(): Rule {
 	return { type: 'choice', members: [] };
 }
 
+/**
+ * `string(value)` — mirror of tree-sitter's baseline DSL `string()` helper.
+ *
+ * Tree-sitter's grammar.js API accepts plain JS strings wherever string
+ * rules are needed (e.g. `seq('(', $._expr, ')')`) AND also provides an
+ * explicit `string(value)` form. Sittir's `normalize()` already handles
+ * both: bare strings normalize to `{ type: 'string', value }`.
+ *
+ * This explicit form is injected as a DSL global so that `renderAs`
+ * bodies can use `string('x')` syntax (as specified) without relying on
+ * bare string literals, and so that any author rule body that calls
+ * `string(...)` explicitly continues to work.
+ */
+export function string(value: string): StringRule {
+	return { type: 'string', value };
+}
+
 // ---------------------------------------------------------------------------
 // evaluate() — execute grammar.js and produce RawGrammar
 // ---------------------------------------------------------------------------
@@ -806,8 +831,9 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const conflicts: string[][] = [];
 	let word: string | null = null;
 
+	let patternReplacementKinds: ReadonlySet<string> = new Set();
 	const { roles: collectedRoles } = withRoleScope(() => {
-		evaluateRulesAndInjectSynthetics(opts, baseRules, refs, rules, provenanceByKind, baseGrammar !== null);
+		patternReplacementKinds = evaluateRulesAndInjectSynthetics(opts, baseRules, refs, rules, provenanceByKind, baseGrammar !== null);
 		evaluateMetadataCallbacksInScope(
 			opts,
 			baseGrammar,
@@ -825,6 +851,14 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 
 	const polymorphVariants = drainPolymorphMetadata(opts);
 	const refineForms = drainRefineMetadata(opts);
+	const groups = drainGroupsMetadata(opts);
+	const polymorphsConfig = drainPolymorphsConfigMetadata(opts);
+	// renderAs must be drained BEFORE buildRuleCatalog so the synthesized
+	// rule bodies appear in the catalog. It also strips any base-grammar
+	// body for the same key (keeping the sittir-side def authoritative).
+	// The DSL globals (string, etc.) are still injected at this point —
+	// evaluate()'s try block is still active.
+	const renderAs = drainRenderAsMetadata(opts, rules, refs, provenanceByKind);
 
 	// Rules map mirrors tree-sitter's view: no synthesized top-level
 	// entry for alias TARGETS. The source (`_X`) is the canonical
@@ -858,7 +892,11 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 			// declares no roles.
 			externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
 			polymorphVariants: polymorphVariants.length > 0 ? polymorphVariants : undefined,
-			refineForms
+			refineForms,
+			groups,
+			polymorphsConfig,
+			renderAs,
+			patternReplacementKinds: patternReplacementKinds.size > 0 ? patternReplacementKinds : undefined
 		} satisfies RawGrammar
 	};
 }
@@ -1659,6 +1697,91 @@ function drainRefineMetadata(opts: GrammarOptions): Map<string, RefineForm[]> | 
 }
 
 /**
+ * Read the groups config from the wire context. Returns `undefined` when
+ * no `groups:` block was supplied (keeps `RawGrammar.groups` absent for
+ * downstream consumers that check presence).
+ */
+function drainGroupsMetadata(opts: GrammarOptions): Record<string, Record<string, string> | undefined> | undefined {
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	if (!wireCtx || !wireCtx.groups) return undefined;
+	const raw = wireCtx.groups as Record<string, unknown>;
+	// Filter out body-pattern entries (function values) — those are
+	// consumed by applyPatternReplacement and produce alias() rewrites,
+	// not lift-based synthesis. Only path-map entries reach link's
+	// applyGroupOverrides.
+	const g: Record<string, Record<string, string> | undefined> = {};
+	for (const [k, v] of Object.entries(raw)) {
+		if (v === undefined || typeof v === 'function') continue;
+		g[k] = v as Record<string, string>;
+	}
+	if (Object.keys(g).length === 0) return undefined;
+	return g;
+}
+
+/**
+ * Read the raw polymorphs path→variant-name config from the wire context.
+ * Returns `undefined` when no `polymorphs:` block was supplied.
+ */
+function drainPolymorphsConfigMetadata(opts: GrammarOptions): Record<string, Record<string, string> | undefined> | undefined {
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	if (!wireCtx || !wireCtx.polymorphsConfig) return undefined;
+	const p = wireCtx.polymorphsConfig as Record<string, Record<string, string> | undefined>;
+	if (Object.keys(p).length === 0) return undefined;
+	return { ...p };
+}
+
+/**
+ * Evaluate the `renderAs:` fn from the wire context and inject the
+ * resulting rule bodies into the rules map as 'evaluate-synthesized' entries.
+ *
+ * @remarks
+ * Called AFTER `evaluateRulesAndInjectSynthetics` so the DSL globals are
+ * still injected and a real `$` proxy is available. The fn is evaluated
+ * with a fresh proxy so any `$.name` refs inside the fn body resolve
+ * correctly (current support: `string(...)` literals and `blank()` —
+ * neither needs the proxy, but we keep the proxy for forward
+ * compatibility).
+ *
+ * The keys returned by the fn are ALSO removed from `rules` (stripping the
+ * tree-sitter-side body when the base grammar had one). This is safe: the
+ * external scanner produces these symbols; the grammar rule body is
+ * redundant for tree-sitter and harmful for sittir (sittir would pick up
+ * the base IMMEDIATE_TOKEN body and use it instead of the sittir-side
+ * render body).
+ *
+ * @returns A Record<string, Rule> for `RawGrammar.renderAs`, or
+ * `undefined` when no `renderAs:` was declared.
+ */
+function drainRenderAsMetadata(
+	opts: GrammarOptions,
+	rules: Record<string, Rule>,
+	refs: SymbolRef[],
+	provenanceByKind: Map<string, RuleProvenance>
+): Record<string, Rule> | undefined {
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	if (!wireCtx || !wireCtx.renderAs) return undefined;
+
+	const $ = createProxy('_renderAs_', refs);
+	const rawEntries = wireCtx.renderAs($ as unknown as Record<string, unknown>);
+	if (!rawEntries || Object.keys(rawEntries).length === 0) return undefined;
+
+	const result: Record<string, Rule> = {};
+	for (const [name, rawBody] of Object.entries(rawEntries)) {
+		const rule = normalize(rawBody as Input);
+		result[name] = rule;
+		// Inject into the rules map as a sittir-side synthesized rule so
+		// downstream pipeline phases (link, template-walker, etc.) treat
+		// it like any regular rule.
+		rules[name] = rule;
+		provenanceByKind.set(name, 'evaluate-synthesized');
+		// Strip any pre-existing tree-sitter-side body for this symbol.
+		// The assignment above already overwrites it; this comment documents
+		// the intentional overwrite: renderAs wins over base-grammar body.
+	}
+	return result;
+}
+
+/**
  * Merge enrich-generated override callbacks from the base grammar's
  * `__enrichOverrides__` side-channel into `opts.rules`.
  *
@@ -1737,13 +1860,16 @@ function evaluateRulesAndInjectSynthetics(
 	rules: Record<string, Rule>,
 	provenanceByKind: Map<string, RuleProvenance>,
 	isExtension: boolean
-): void {
+): ReadonlySet<string> {
 	evaluateRuleFunctions(opts, baseRules, refs, rules, provenanceByKind, isExtension);
 	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 	if (wireCtx) {
 		injectSyntheticRules(wireCtx.deposits, rules, provenanceByKind);
+		const patternKinds = applyPatternReplacement(wireCtx.authoredRuleNames, baseRules, rules, provenanceByKind, wireCtx);
 		prunePlaceholderOrphans(wireCtx, rules);
+		return patternKinds;
 	}
+	return new Set();
 }
 
 /**
@@ -1787,6 +1913,262 @@ function prunePlaceholderOrphans(ctx: WireContext, rules: Record<string, Rule>):
  */
 function isBlankRule(rule: Rule): boolean {
 	return rule.type === 'choice' && rule.members.length === 0;
+}
+
+// ---------------------------------------------------------------------------
+// Wire-phase pattern find-and-replace
+// ---------------------------------------------------------------------------
+
+/**
+ * A pattern candidate: an author-declared `_`-prefixed rule whose body is
+ * complex enough to serve as a structural replacement target.
+ *
+ * When `aliasAs` is set, replacement sites emit
+ * `alias($._<name>, $.<aliasAs>)` so tree-sitter exposes a visible CST
+ * node at each match. This is the body-pattern-groups path. Without
+ * `aliasAs`, replacement emits a bare hidden `symbol(<name>)` reference
+ * (the legacy `_`-prefix path).
+ */
+interface PatternCandidate {
+	readonly name: string;
+	readonly body: Rule;
+	readonly aliasAs?: string;
+}
+
+/**
+ * Detect author-declared pattern rules and replace every matching sub-tree
+ * in the grammar with `symbol(<pattern-name>)`.
+ *
+ * A rule is a pattern candidate when ALL of:
+ *   1. Its name is in `authoredRuleNames` (explicitly declared in WireConfig.rules).
+ *   2. Its name starts with `_` (hidden — signals "synthesized/internal pattern").
+ *   3. Its name is NOT in `baseRules` (it's a NEW rule, not an override of a
+ *      base-grammar rule). Overrides are intentional replacements, not patterns.
+ *   4. Its body is complex: SEQ with ≥2 members, CHOICE with ≥2 members, or
+ *      REPEAT/REPEAT1 wrapping non-trivial content (not a bare string/pattern).
+ *      Single STRING / SYMBOL / PATTERN bodies are excluded to prevent false
+ *      positives like `_wildcard_pattern: ($) => '_'` matching every `'_'`
+ *      literal in the grammar.
+ *
+ * Replacement walks every rule in the merged grammar (skipping the pattern
+ * candidates themselves to prevent self-substitution) and replaces matching
+ * sub-trees with `symbol(<pattern-name>)`. The new symbol reference is plain
+ * sittir-lowercase like every other symbol produced by `createProxy`.
+ *
+ * @remarks
+ * This runs after `injectSyntheticRules` so the full merged rule set is
+ * available, and before `prunePlaceholderOrphans` so that any pattern-rule
+ * body that would have been pruned is instead preserved because it has real
+ * content.
+ */
+function applyPatternReplacement(
+	authoredRuleNames: ReadonlySet<string>,
+	baseRules: Record<string, Rule>,
+	rules: Record<string, Rule>,
+	provenanceByKind: Map<string, RuleProvenance>,
+	wireCtx?: WireContext
+): ReadonlySet<string> {
+	// Step 1: identify pattern candidates.
+	// Path A — legacy `_`-prefix candidates declared in `rules:`.
+	const candidates: PatternCandidate[] = [];
+	for (const name of authoredRuleNames) {
+		if (!name.startsWith('_')) continue;
+		if (name in baseRules) continue; // override, not a new pattern
+		const body = rules[name];
+		if (!body) continue;
+		if (!isComplexBody(body)) continue;
+		candidates.push({ name, body });
+	}
+	// Path B — body-pattern entries in `groups:` whose value is a RuleFn.
+	// The author declares the VISIBLE kind name (no `_`); codegen synthesizes
+	// the hidden `_<key>` body and rewrites match sites as
+	// `alias($._<key>, $.<key>)` so tree-sitter exposes the visible kind as
+	// a CST node. The hidden body was already injected into `rules` by
+	// wire's `applyWirePatternReplacement` (so the body-pattern fn ran).
+	if (wireCtx?.groups) {
+		for (const [key, value] of Object.entries(wireCtx.groups)) {
+			if (typeof value !== 'function') continue;
+			const hiddenName = `_${key}`;
+			const body = rules[hiddenName];
+			if (!body) continue;
+			if (!isComplexBody(body)) continue;
+			candidates.push({ name: hiddenName, body, aliasAs: key });
+		}
+	}
+	if (candidates.length === 0) return new Set();
+
+	// Step 2: walk all rules and replace matching sub-trees.
+	// Skip the candidate rules themselves to avoid self-substitution.
+	const candidateNames = new Set(candidates.map((c) => c.name));
+	for (const [name, body] of Object.entries(rules)) {
+		if (candidateNames.has(name)) continue;
+		const rewritten = replacePatterns(body, candidates);
+		if (rewritten !== body) {
+			rules[name] = rewritten;
+			// Preserve existing provenance — rewriting doesn't change authorship.
+		}
+	}
+	// Ensure pattern candidates themselves have provenance recorded.
+	for (const c of candidates) {
+		if (!provenanceByKind.has(c.name)) {
+			provenanceByKind.set(c.name, 'override-authored-or-replaced');
+		}
+	}
+	return candidateNames;
+}
+
+/**
+ * Returns true when `rule` is complex enough to be a meaningful structural
+ * pattern. Excludes trivial single-terminal bodies that would match too
+ * broadly (every bare string, every symbol reference, every pattern).
+ */
+function isComplexBody(rule: Rule): boolean {
+	switch (rule.type) {
+		case 'seq':
+			return (rule as SeqRule).members.length >= 2;
+		case 'choice':
+			return (rule as ChoiceRule).members.length >= 2;
+		case 'repeat':
+		case 'repeat1': {
+			// A REPEAT is complex only when its content is itself non-trivial
+			// (not a bare string or symbol).
+			const content = (rule as RepeatRule).content;
+			return content.type !== 'string' && content.type !== 'symbol' && content.type !== 'pattern';
+		}
+		default:
+			return false;
+	}
+}
+
+/**
+ * Recursively walk `rule`, replacing any sub-tree that structurally matches
+ * a pattern candidate with `symbol(<candidate.name>)`. Returns the same
+ * object reference when no replacement occurs (allows cheap change-detection
+ * by reference equality in the caller).
+ */
+function replacePatterns(rule: Rule, candidates: PatternCandidate[]): Rule {
+	// Check if this node itself matches any candidate.
+	for (const c of candidates) {
+		if (patternRulesEqual(rule, c.body)) {
+			const symRef: SymbolRule = { type: 'symbol', name: c.name, hidden: true };
+			// Body-pattern groups path: wrap the hidden symbol in an
+			// alias() so tree-sitter emits the visible kind as a CST node.
+			if (c.aliasAs !== undefined) {
+				return { type: 'alias', content: symRef, named: true, value: c.aliasAs } satisfies AliasRule;
+			}
+			return symRef;
+		}
+	}
+	// Otherwise recurse into children.
+	switch (rule.type) {
+		case 'seq': {
+			const r = rule as SeqRule;
+			const members = replaceInArray(r.members, candidates);
+			return members === r.members ? rule : ({ ...r, members } as Rule);
+		}
+		case 'choice': {
+			const r = rule as ChoiceRule;
+			const members = replaceInArray(r.members, candidates);
+			return members === r.members ? rule : ({ ...r, members } as Rule);
+		}
+		case 'optional': {
+			const r = rule as OptionalRule;
+			const content = replacePatterns(r.content, candidates);
+			return content === r.content ? rule : ({ ...r, content } as Rule);
+		}
+		case 'repeat': {
+			const r = rule as RepeatRule;
+			const content = replacePatterns(r.content, candidates);
+			return content === r.content ? rule : ({ ...r, content } as Rule);
+		}
+		case 'repeat1': {
+			const r = rule as Repeat1Rule;
+			const content = replacePatterns(r.content, candidates);
+			return content === r.content ? rule : ({ ...r, content } as Rule);
+		}
+		case 'field': {
+			const r = rule as FieldRule;
+			const content = replacePatterns(r.content, candidates);
+			return content === r.content ? rule : ({ ...r, content } as Rule);
+		}
+		default:
+			return rule;
+	}
+}
+
+/**
+ * Map `replacePatterns` over an array, returning the original array when no
+ * element changed (cheap reference-equality check for the parent node).
+ */
+function replaceInArray(members: Rule[], candidates: PatternCandidate[]): Rule[] {
+	let changed = false;
+	const out: Rule[] = members.map((m) => {
+		const r = replacePatterns(m, candidates);
+		if (r !== m) changed = true;
+		return r;
+	});
+	return changed ? out : members;
+}
+
+/**
+ * Structural equality for pattern matching. Compares two Rule trees
+ * recursively. Intentionally ignores the `id` field (assigned later by
+ * `buildRuleCatalog`) and provenance/source annotations — only shape matters.
+ *
+ * Key design choices:
+ * - PREC/PREC_LEFT/PREC_RIGHT wrappers: these are stripped by evaluate's
+ *   `normalize()` in the sittir runtime, so by the time we see the evaluated
+ *   rule body they won't be present. No special handling needed.
+ * - ALIAS: not handled — aliases are specific and a pattern wouldn't
+ *   meaningfully match an alias target.
+ * - ENUM: compared member-by-member on `.value` (identical to rulesEqual).
+ * - FIELD: name AND content must match. A field wrapper carrying the same
+ *   content but a different name is a different structural pattern.
+ */
+function patternRulesEqual(a: Rule, b: Rule): boolean {
+	if (a.type !== b.type) return false;
+	switch (a.type) {
+		case 'string':
+			return a.value === (b as StringRule).value;
+		case 'pattern':
+			return a.value === (b as PatternRule).value;
+		case 'symbol':
+			return a.name === (b as SymbolRule).name;
+		case 'enum': {
+			const bm = (b as EnumRule).members;
+			return a.members.length === bm.length && a.members.every((m, i) => m.value === bm[i]!.value);
+		}
+		case 'seq': {
+			const bSeq = b as SeqRule;
+			return (
+				a.members.length === bSeq.members.length &&
+				a.members.every((m, i) => patternRulesEqual(m, bSeq.members[i]!))
+			);
+		}
+		case 'choice': {
+			const bCh = b as ChoiceRule;
+			return (
+				a.members.length === bCh.members.length &&
+				a.members.every((m, i) => patternRulesEqual(m, bCh.members[i]!))
+			);
+		}
+		case 'optional':
+			return patternRulesEqual(a.content, (b as OptionalRule).content);
+		case 'repeat': {
+			const bRep = b as RepeatRule;
+			return a.separator === bRep.separator && patternRulesEqual(a.content, bRep.content);
+		}
+		case 'repeat1': {
+			const bRep = b as Repeat1Rule;
+			return a.separator === bRep.separator && patternRulesEqual(a.content, bRep.content);
+		}
+		case 'field': {
+			const bFld = b as FieldRule;
+			return a.name === bFld.name && patternRulesEqual(a.content, bFld.content);
+		}
+		default:
+			return false;
+	}
 }
 
 /**
@@ -2094,6 +2476,8 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
 		optional,
 		repeat,
 		repeat1,
+		symbol,
+		string,
 		field,
 		token,
 		prec,

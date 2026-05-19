@@ -48,6 +48,7 @@ import { collectFieldNames } from './rule.ts';
 import { isHiddenKind } from './evaluate.ts';
 import type { PolymorphVariant } from './types.ts';
 import { validateRefineForms } from './link-refine.ts';
+import { applyGroupOverrides, stampStaticRenderAs } from './group-synthesis.ts';
 
 // ---------------------------------------------------------------------------
 // link() — main entry point
@@ -88,6 +89,50 @@ export function link(
 
 	// Map hidden rules to alias targets before resolveRule collapses them.
 	const aliasedHiddenKinds = collectAliasedHiddenKinds(raw.rules);
+
+	// Stamp static renderAs entries first — replaces field/symbol refs
+	// to externals declared via `renderAs` with their literal text inline.
+	// After this, downstream phases see bare string literals at those
+	// positions and treat them as inline mandatory literals in seq
+	// context — same as how `seq('mod', $.name)` renders `mod {{ name }}`
+	// with `mod` stamped inline. Runs BEFORE applyGroupOverrides so any
+	// group lifts operate on already-stamped rule bodies.
+	const renderAs = raw.renderAs ?? {};
+	if (Object.keys(renderAs).length > 0) {
+		const stamped = stampStaticRenderAs(rules, renderAs);
+		for (const key of Object.keys(rules)) {
+			if (!(key in stamped)) delete rules[key];
+		}
+		Object.assign(rules, stamped);
+	}
+
+	// Group lift pass — run BEFORE classifyAndLogHiddenRules so path
+	// resolution addresses the raw resolved seq/choice bodies before
+	// classifyHiddenSeqRule wraps them in GroupRule nodes. Also runs
+	// BEFORE polymorph alias so lifts happen against the original rule
+	// body. See:
+	//   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+	const groupsConfig = raw.groups ?? {};
+	if (Object.keys(groupsConfig).length > 0) {
+		const lifted = applyGroupOverrides({
+			rules,
+			groups: groupsConfig,
+			polymorphs: raw.polymorphsConfig ?? {}
+		});
+		for (const key of Object.keys(rules)) {
+			if (!(key in lifted.rules)) delete rules[key];
+		}
+		Object.assign(rules, lifted.rules);
+		// Force-classify synthesized kinds as GroupRule so downstream
+		// optimize.inlineSingleUseHidden skips them (it preserves 'group'
+		// type rules) and assemble sees them as AssembledGroup candidates.
+		for (const synthKind of lifted.synthesizedKinds) {
+			const body = rules[synthKind];
+			if (body && body.type !== 'group') {
+				rules[synthKind] = { type: 'group', name: synthKind, content: body } satisfies GroupRule;
+			}
+		}
+	}
 
 	classifyAndLogHiddenRules(rules, raw.inline, supertypes, references, derivations, applyPromotedRules);
 	promoteAndLogTerminalRules(rules, derivations, applyPromotedRules);
@@ -137,7 +182,8 @@ export function link(
 		aliasedHiddenKinds,
 		topLevelAliasBodies,
 		polymorphVariants: raw.polymorphVariants,
-		refineForms: raw.refineForms
+		refineForms: raw.refineForms,
+		patternReplacementKinds: raw.patternReplacementKinds
 	};
 }
 
@@ -1662,20 +1708,23 @@ function resolveRule(
 	switch (rule.type) {
 		case 'seq':
 			return {
-				type: 'seq',
+				...rule,
 				members: rule.members.map((m) => resolveRule(m, currentName, allRules, supertypes, externalRoles))
 			};
 
 		case 'choice':
 			return {
-				type: 'choice',
+				...rule,
 				members: rule.members.map((m) => resolveRule(m, currentName, allRules, supertypes, externalRoles))
 			};
 
 		case 'optional': {
 			const content = resolveRule(rule.content, currentName, allRules, supertypes, externalRoles);
 			// Clause detection: optional(seq(STRING, FIELD, ...))
-			return detectClause(content, currentName);
+			// Preserve original rule.id through detectClause's fresh object construction
+			// so NodeMap.nodeByRuleId can register optional-rooted kinds.
+			const detected = detectClause(content, currentName);
+			return rule.id !== undefined ? { ...detected, id: rule.id } : detected;
 		}
 
 		case 'repeat':

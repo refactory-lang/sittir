@@ -6,11 +6,61 @@ import type { TreeHandle } from '@sittir/common';
 // Import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
-import { TSKindId } from './types.js';
+import { TSKindId, KIND_NAMES } from './types.js';
 import type * as T from './types.js';
 import { withMethods, methodsEngine, coerceBooleanKeywordStorage } from './utils.js';
 import * as _factories from './factories.js';
 
+const WRAP_WARNING_MODE = typeof process !== "undefined" && process.env?.SITTIR_WRAP_WARNING_MODE === "1";
+function describeWrapNodeType(nodeType: string | number): string {
+  if (typeof nodeType === "number") return KIND_NAMES.get(nodeType) ?? String(nodeType);
+  return nodeType;
+}
+function handleWrapViolation<T>(message: string, fallback: T): T {
+  if (WRAP_WARNING_MODE) {
+    console.warn(`[wrapNode warning] ${message}`);
+    return fallback;
+  }
+  throw new TypeError(message);
+}
+function describeWrapSlotItem(value: unknown): string {
+  if (value == null) return String(value);
+  if (typeof value !== "object") return `${typeof value}(${JSON.stringify(value)})`;
+  const node = value as Partial<_NodeData>;
+  if (typeof node.$type === "string" || typeof node.$type === "number") {
+    const text = typeof node.$text === "string" ? `, $text=${JSON.stringify(node.$text)}` : "";
+    return `node($type=${JSON.stringify(node.$type)}${text})`;
+  }
+  return `object(keys=${Object.keys(value as Record<string, unknown>).slice(0, 5).join(",")})`;
+}
+function describeWrapSlotValue(value: unknown): string {
+  if (Array.isArray(value)) {
+    const preview = value.slice(0, 3).map((item) => describeWrapSlotItem(item)).join(", ");
+    const suffix = value.length > 3 ? ", …" : "";
+    return `array(len=${value.length}, items=[${preview}${suffix}])`;
+  }
+  if (value == null) return String(value);
+  return describeWrapSlotItem(value);
+}
+function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: true, nodeType: string | number): T;
+function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: false, nodeType: string | number): T | undefined;
+function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: boolean, nodeType: string | number): T | undefined {
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      if (required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined);
+      return undefined;
+    }
+    if (value.length !== 1) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T);
+    return value[0] as T;
+  }
+  if (value == null && required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined);
+  return value as T | undefined;
+}
+function normalizeRepeatedWrapSlot<T>(value: T | readonly T[] | undefined, nonEmpty: boolean, slotName: string): readonly T[] {
+  const items: readonly T[] = Array.isArray(value) ? (value as readonly T[]) : value == null ? ([] as readonly T[]) : ([value] as readonly T[]);
+  if (nonEmpty && items.length === 0) return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items);
+  return items;
+}
 // Drill-in helpers — call back through `readTreeNode` so the same
 // per-handle dispatch + wrap pipeline runs at every level. Layering:
 //   readTreeNode (public entry)
@@ -38,8 +88,25 @@ function drillInAll<T>(entries: readonly T[] | undefined, tree: TreeHandle): T[]
 function drillAs<T>(entry: unknown, tree: TreeHandle, fromType: string, toType: string): T {
   if (!entry) return undefined as unknown as T;
   const e = entry as _NodeData;
-  if (e.$nodeHandle == null || e.$childIndex == null) return entry as unknown as T;
+  if (e.$nodeHandle == null || e.$childIndex == null) {
+    if (typeof e === "object" && e !== null && e.$type != null) {
+      const currentType = typeof e.$type === "number"
+        ? KIND_NAMES.get(e.$type as never) ?? String(e.$type)
+        : (e.$type as unknown as string);
+      const hiddenCurrentType = currentType.startsWith("_") ? currentType.slice(1) : undefined;
+      const next = currentType === fromType || hiddenCurrentType === fromType
+        ? ({ ...e, $type: toType as unknown as number } as _NodeData)
+        : e;
+      return next as unknown as T;
+    }
+    return entry as unknown as T;
+  }
   return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType }) as unknown as T;
+}
+function drillAsAll<T>(entries: unknown, tree: TreeHandle, fromType: string, toType: string): T[] {
+  if (!entries) return [];
+  const arr = Array.isArray(entries) ? entries : [entries];
+  return arr.map(e => drillAs<T>(e, tree, fromType, toType));
 }
 function projectKindEnumStorage<T>(value: T): T {
   if (!value) return value;
@@ -47,10 +114,87 @@ function projectKindEnumStorage<T>(value: T): T {
   const entry = value as unknown as _NodeData;
   return typeof entry.$type === "number" ? (entry.$type as T) : value;
 }
+const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
+  "_destructuring_pattern": new Set(["object_pattern","array_pattern"]),
+  "_export_statement_default": new Set(["_export_statement_default_from_arm","export_statement_default_from_arm","_export_statement_default_decl_arm","export_statement_default_decl_arm"]),
+  "_expressions": new Set(["expression","as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","subscript_expression","member_expression","parenthesized_expression","_identifier","identifier","undefined","_reserved_identifier","reserved_identifier","this","super","number","string","template_string","regex","true","false","null","object","array","function_expression","arrow_function","generator_function","class","meta_property","call_expression","non_null_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression","sequence_expression"]),
+  "_formal_parameter": new Set(["required_parameter","optional_parameter"]),
+  "_identifier": new Set(["undefined","identifier"]),
+  "_import_identifier": new Set(["identifier"]),
+  "_jsx_attribute": new Set(["jsx_attribute","jsx_expression"]),
+  "_jsx_attribute_name": new Set(["_jsx_identifier","jsx_identifier","identifier","jsx_namespace_name"]),
+  "_jsx_attribute_value": new Set(["_jsx_string","jsx_string","jsx_expression","_jsx_element","jsx_element","jsx_self_closing_element"]),
+  "_jsx_child": new Set(["jsx_text","html_character_reference","_jsx_element","jsx_element","jsx_self_closing_element","jsx_expression"]),
+  "_jsx_element": new Set(["jsx_element","jsx_self_closing_element"]),
+  "_jsx_element_name": new Set(["_jsx_identifier","jsx_identifier","identifier","nested_identifier","jsx_namespace_name"]),
+  "_jsx_identifier": new Set(["jsx_identifier","identifier"]),
+  "_module_export_name": new Set(["identifier","string"]),
+  "_property_identifier": new Set(["identifier","_reserved_identifier","reserved_identifier"]),
+  "_property_name": new Set(["_property_identifier","property_identifier","identifier","_reserved_identifier","reserved_identifier","private_property_identifier","string","number","computed_property_name"]),
+  "_shorthand_property_identifier": new Set(["identifier","_reserved_identifier","reserved_identifier"]),
+  "_shorthand_property_identifier_pattern": new Set(["identifier","_reserved_identifier","reserved_identifier"]),
+  "_statement_identifier": new Set(["identifier","_reserved_identifier","reserved_identifier"]),
+  "_tuple_type_member": new Set(["tuple_parameter","optional_tuple_parameter","optional_type","rest_type","type","primary_type","parenthesized_type","predefined_type","_type_identifier","type_identifier","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","this","existential_type","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation","type_query_call_expression_in_type_annotation"]),
+  "declaration": new Set(["function_declaration","generator_function_declaration","class_declaration","lexical_declaration","variable_declaration","function_signature","abstract_class_declaration","module","internal_module","type_alias_declaration","enum_declaration","interface_declaration","import_alias","ambient_declaration"]),
+  "expression": new Set(["as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","subscript_expression","member_expression","parenthesized_expression","_identifier","identifier","undefined","_reserved_identifier","reserved_identifier","this","super","number","string","template_string","regex","true","false","null","object","array","function_expression","arrow_function","generator_function","class","meta_property","call_expression","non_null_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression"]),
+  "pattern": new Set(["member_expression","subscript_expression","undefined","identifier","object_pattern","array_pattern","non_null_expression","rest_pattern"]),
+  "primary_expression": new Set(["subscript_expression","member_expression","parenthesized_expression","_identifier","identifier","undefined","_reserved_identifier","reserved_identifier","this","super","number","string","template_string","regex","true","false","null","object","array","function_expression","arrow_function","generator_function","class","meta_property","call_expression","non_null_expression"]),
+  "primary_type": new Set(["parenthesized_type","predefined_type","_type_identifier","type_identifier","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","this","existential_type","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type"]),
+  "statement": new Set(["export_statement","import_statement","debugger_statement","expression_statement","declaration","function_declaration","generator_function_declaration","class_declaration","lexical_declaration","variable_declaration","function_signature","abstract_class_declaration","module","internal_module","type_alias_declaration","enum_declaration","interface_declaration","import_alias","ambient_declaration","statement_block","if_statement","switch_statement","for_statement","for_in_statement","while_statement","do_statement","try_statement","with_statement","break_statement","continue_statement","return_statement","throw_statement","empty_statement","labeled_statement"]),
+  "type": new Set(["primary_type","parenthesized_type","predefined_type","_type_identifier","type_identifier","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","this","existential_type","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation","type_query_call_expression_in_type_annotation"]),
+};
+
+function _wrapKindNameOf(entry: unknown): string | undefined {
+  if (!entry || typeof entry !== "object") return undefined;
+  const raw = (entry as { $type?: unknown }).$type;
+  if (raw === undefined) return undefined;
+  if (typeof raw === "number") return KIND_NAMES.get(raw as never) ?? String(raw);
+  return typeof raw === "string" ? raw : undefined;
+}
+
+function _matchesAllowedWrapKind(kind: string, allowedKinds: readonly string[]): boolean {
+  if (allowedKinds.includes(kind)) return true;
+  const canonical = _aliasTargetToSource[kind];
+  if (canonical && allowedKinds.includes(canonical)) return true;
+  const stripped = kind.startsWith("_") ? kind.slice(1) : undefined;
+  if (stripped && allowedKinds.includes(stripped)) return true;
+  for (const allowed of allowedKinds) {
+    const members = SUPERTYPE_MEMBERS[allowed] ?? SUPERTYPE_MEMBERS[allowed.startsWith("_") ? allowed.slice(1) : allowed];
+    if (members?.has(kind)) return true;
+    if (canonical !== undefined && members?.has(canonical)) return true;
+    if (stripped !== undefined && members?.has(stripped)) return true;
+    const allowedStripped = allowed.startsWith("_") ? allowed.slice(1) : allowed;
+    if (allowedStripped === kind || (canonical !== undefined && allowedStripped === canonical) || (stripped !== undefined && allowedStripped === stripped)) return true;
+  }
+  return false;
+}
+
+function _filterWrapChildrenByKind<T>(value: T | readonly T[] | undefined, allowedKinds: readonly string[]): T | readonly T[] | undefined {
+  if (value == null) return undefined;
+  if (!Array.isArray(value)) {
+    const kind = _wrapKindNameOf(value);
+    if (kind === undefined) return value;
+    return _matchesAllowedWrapKind(kind, allowedKinds) ? value : undefined;
+  }
+  const entries = value;
+  return entries.filter((entry) => {
+    const kind = _wrapKindNameOf(entry);
+    if (kind === undefined) return false;
+    return _matchesAllowedWrapKind(kind, allowedKinds);
+  });
+}
 type _WrapVariantDescriptor =
   | { source: "override"; childKind: Record<string, string> }
   | { source: "promoted"; slots: Record<string, readonly string[]> };
 const _variantTable: Record<string, _WrapVariantDescriptor> = {
+  "ambient_declaration": {
+    "source": "override",
+    "childKind": {
+      "ambient_declaration_declaration": "declaration",
+      "ambient_declaration_global": "global",
+      "ambient_declaration_module": "module"
+    }
+  },
   "arrow_function": {
     "source": "override",
     "childKind": {
@@ -111,13 +255,6 @@ const _variantTable: Record<string, _WrapVariantDescriptor> = {
       "parenthesized_expression_sequence": "sequence"
     }
   },
-  "string": {
-    "source": "override",
-    "childKind": {
-      "string_double": "double",
-      "string_single": "single"
-    }
-  },
   "update_expression": {
     "source": "override",
     "childKind": {
@@ -135,11 +272,20 @@ function _kindNameOf(entry: unknown): string | undefined {
   return typeof raw === "string" ? raw : undefined;
 }
 
+function _wrapChildEntries(value: unknown): unknown[] {
+  if (value == null) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+function _hasWrapChildren(value: unknown): boolean {
+  return _wrapChildEntries(value).length > 0;
+}
+
 function _resolveVariant(kind: string, data: _NodeData): string | undefined {
   const desc = _variantTable[kind];
   if (!desc) return undefined;
   if (desc.source === "override") {
-    const firstChild = data.$children?.find(
+    const firstChild = _wrapChildEntries(data.$children).find(
       (child) => child != null && typeof child === "object" && (child as { $named?: boolean }).$named !== false
     );
     const candidate = _kindNameOf(firstChild);
@@ -162,7 +308,7 @@ function _resolveVariant(kind: string, data: _NodeData): string | undefined {
   }
   for (const [variant, requiredSlots] of Object.entries(desc.slots) as [string, readonly string[]][]) {
     const matches = requiredSlots.every((slot) => {
-      if (slot === "$children") return Array.isArray(data.$children) && data.$children.length > 0;
+      if (slot === "$children") return _hasWrapChildren(data.$children);
       return (data as unknown as Record<string, unknown>)[slot] !== undefined;
     });
     if (matches) return variant;
@@ -170,13 +316,59 @@ function _resolveVariant(kind: string, data: _NodeData): string | undefined {
   return undefined;
 }
 
+export function wrap_AmbientDeclarationDeclaration(data: T._AmbientDeclarationDeclaration, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId._AmbientDeclarationDeclaration as const,
+    _declaration: normalizeSingularWrapSlot((data._function_declaration ?? data._generator_function_declaration ?? data._class_declaration ?? data._lexical_declaration ?? data._variable_declaration ?? data._function_signature ?? data._abstract_class_declaration ?? data._module ?? data._internal_module ?? data._type_alias_declaration ?? data._enum_declaration ?? data._interface_declaration ?? data._import_alias ?? data._ambient_declaration ?? data._declaration), "declaration", true, data.$type),
+
+    declaration() { return drillIn<T.Declaration>(this._declaration, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrap_AmbientDeclarationDeclaration({ ...data, $children: vs }, tree) },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapAmbientDeclarationGlobal(data: T.AmbientDeclarationGlobal, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.AmbientDeclarationGlobal as const,
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
+
+    body() { return drillIn<T.StatementBlock>(this._body, tree); },
+    $with: {
+      body: (v: NonNullable<T.AmbientDeclarationGlobal['_body']>) => wrapAmbientDeclarationGlobal({ ...data, _body: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapAmbientDeclarationModule(data: T.AmbientDeclarationModule, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.AmbientDeclarationModule as const,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
+
+    name() { return drillAs<T.Identifier>(this._name, tree, "property_identifier", "identifier"); },
+    type() { return drillIn<T.Type>(this._type, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
+    $with: {
+      name: (v: NonNullable<T.AmbientDeclarationModule['_name']>) => wrapAmbientDeclarationModule({ ...data, _name: v }, tree),
+      type: (v: NonNullable<T.AmbientDeclarationModule['_type']>) => wrapAmbientDeclarationModule({ ...data, _type: v }, tree),
+      semicolon: (v: NonNullable<T.AmbientDeclarationModule['_semicolon']>) => wrapAmbientDeclarationModule({ ...data, _semicolon: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrap_ArrowFunctionUCallSignature(data: T._ArrowFunctionUCallSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ArrowFunctionUCallSignature as const,
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _return_type: data._return_type,
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
 
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     parameters() { return drillIn<T.FormalParameters>(this._parameters, tree); },
@@ -194,7 +386,7 @@ export function wrap_ArrowFunctionParameter(data: T._ArrowFunctionParameter, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId._ArrowFunctionParameter as const,
-    _parameter: data._parameter,
+    _parameter: normalizeSingularWrapSlot(data._parameter, "parameter", true, data.$type),
 
     parameter() { return drillAs<T.ReservedIdentifier>(this._parameter, tree, "identifier", "_reserved_identifier"); },
     $with: {
@@ -204,13 +396,116 @@ export function wrap_ArrowFunctionParameter(data: T._ArrowFunctionParameter, tre
   return _node;
 }
 
+export function wrapCallExpressionCall(data: T.CallExpressionCall, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.CallExpressionCall as const,
+    _function: normalizeSingularWrapSlot(data._function, "function", true, data.$type),
+    _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", false, data.$type),
+    _arguments: normalizeSingularWrapSlot(data._arguments, "arguments", true, data.$type),
+
+    function() { return drillIn<T.Expression | T.Import>(this._function, tree); },
+    typeArguments() { return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree); },
+    arguments() { return drillIn<T.Arguments>(this._arguments, tree); },
+    $with: {
+      function: (v: NonNullable<T.CallExpressionCall['_function']>) => wrapCallExpressionCall({ ...data, _function: v }, tree),
+      typeArguments: (v: NonNullable<T.CallExpressionCall['_type_arguments']>) => wrapCallExpressionCall({ ...data, _type_arguments: v }, tree),
+      arguments: (v: NonNullable<T.CallExpressionCall['_arguments']>) => wrapCallExpressionCall({ ...data, _arguments: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapCallExpressionMember(data: T.CallExpressionMember, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.CallExpressionMember as const,
+    _function: normalizeSingularWrapSlot(data._function, "function", true, data.$type),
+    _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", false, data.$type),
+    _arguments: normalizeSingularWrapSlot(data._arguments, "arguments", true, data.$type),
+
+    function() { return drillIn<T.PrimaryExpression>(this._function, tree); },
+    typeArguments() { return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree); },
+    arguments() { return drillIn<T.Arguments>(this._arguments, tree); },
+    $with: {
+      function: (v: NonNullable<T.CallExpressionMember['_function']>) => wrapCallExpressionMember({ ...data, _function: v }, tree),
+      typeArguments: (v: NonNullable<T.CallExpressionMember['_type_arguments']>) => wrapCallExpressionMember({ ...data, _type_arguments: v }, tree),
+      arguments: (v: NonNullable<T.CallExpressionMember['_arguments']>) => wrapCallExpressionMember({ ...data, _arguments: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapCallExpressionTemplateCall(data: T.CallExpressionTemplateCall, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.CallExpressionTemplateCall as const,
+    _function: normalizeSingularWrapSlot(data._function, "function", true, data.$type),
+    _arguments: normalizeSingularWrapSlot(data._arguments, "arguments", true, data.$type),
+
+    function() { return drillIn<T.PrimaryExpression | T.NewExpression>(this._function, tree); },
+    arguments() { return drillIn<T.TemplateString>(this._arguments, tree); },
+    $with: {
+      function: (v: NonNullable<T.CallExpressionTemplateCall['_function']>) => wrapCallExpressionTemplateCall({ ...data, _function: v }, tree),
+      arguments: (v: NonNullable<T.CallExpressionTemplateCall['_arguments']>) => wrapCallExpressionTemplateCall({ ...data, _arguments: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrap_CallSignature(data: T._CallSignature, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId._CallSignature as const,
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
+
+    typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
+    parameters() { return drillIn<T.FormalParameters>(this._parameters, tree); },
+    returnType() { return drillIn<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this._return_type, tree); },
+    $with: {
+      typeParameters: (v: NonNullable<T._CallSignature['_type_parameters']>) => wrap_CallSignature({ ...data, _type_parameters: v }, tree),
+      parameters: (v: NonNullable<T._CallSignature['_parameters']>) => wrap_CallSignature({ ...data, _parameters: v }, tree),
+      returnType: (v: NonNullable<T._CallSignature['_return_type']>) => wrap_CallSignature({ ...data, _return_type: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrapClassBodyMember(data: T.ClassBodyMember, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassBodyMember as const,
-    $children: data.$children,
+    _abstract_method_signature: normalizeSingularWrapSlot((data._abstract_method_signature ?? data._index_signature ?? data._method_signature ?? data._public_field_definition), "abstract_method_signature", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    $with: { $child: (v: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) => wrapClassBodyMember({ ...data, $children: [v] }, tree) },
+    abstractMethodSignature() { return drillIn<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>(this._abstract_method_signature, tree); },
+    semicolon() { return drillIn<T.Semicolon | "," | undefined>(this._semicolon, tree); },
+    $with: {
+      abstractMethodSignature: (v: NonNullable<T.ClassBodyMember['_abstract_method_signature']>) => wrapClassBodyMember({ ...data, _abstract_method_signature: v }, tree),
+      semicolon: (v: NonNullable<T.ClassBodyMember['_semicolon']>) => wrapClassBodyMember({ ...data, _semicolon: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapClassBodyMethod(data: T.ClassBodyMethod, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ClassBodyMethod as const,
+    _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator"),
+    _method_definition: normalizeSingularWrapSlot(data._method_definition, "method_definition", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
+
+    decorators() { return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree); },
+    methodDefinition() { return drillIn<T.MethodDefinition>(this._method_definition, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
+    $with: {
+      decorators: (...v: NonNullable<T.ClassBodyMethod['_decorator']>[number][]) => wrapClassBodyMethod({ ...data, _decorator: v }, tree),
+      methodDefinition: (v: NonNullable<T.ClassBodyMethod['_method_definition']>) => wrapClassBodyMethod({ ...data, _method_definition: v }, tree),
+      semicolon: (v: NonNullable<T.ClassBodyMethod['_semicolon']>) => wrapClassBodyMethod({ ...data, _semicolon: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -219,9 +514,10 @@ export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassBodyMethodSig as const,
-    $children: data.$children,
+    _method_signature: normalizeSingularWrapSlot(data._method_signature, "method_signature", true, data.$type),
 
-    $with: { $child: (v: (T.MethodSignature | T.FunctionSignatureAutomaticSemicolon)) => wrapClassBodyMethodSig({ ...data, $children: [v] }, tree) },
+    methodSignature() { return drillIn<T.MethodSignature>(this._method_signature, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapClassBodyMethodSig({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -230,9 +526,15 @@ export function wrap_ClassHeritageExtendsClause(data: T._ClassHeritageExtendsCla
   const _node = withMethods({
     ...data,
     $type: TSKindId._ClassHeritageExtendsClause as const,
-    $children: data.$children,
+    _extends_clause: normalizeSingularWrapSlot(data._extends_clause, "extends_clause", true, data.$type),
+    _implements_clause: normalizeSingularWrapSlot(data._implements_clause, "implements_clause", false, data.$type),
 
-    $with: { $child: (v: (T.ExtendsClause | T.ImplementsClause)) => wrap_ClassHeritageExtendsClause({ ...data, $children: [v] }, tree) },
+    extendsClause() { return drillIn<T.ExtendsClause>(this._extends_clause, tree); },
+    implementsClause() { return drillIn<T.ImplementsClause | undefined>(this._implements_clause, tree); },
+    $with: {
+      extendsClause: (v: NonNullable<T._ClassHeritageExtendsClause['_extends_clause']>) => wrap_ClassHeritageExtendsClause({ ...data, _extends_clause: v }, tree),
+      implementsClause: (v: NonNullable<T._ClassHeritageExtendsClause['_implements_clause']>) => wrap_ClassHeritageExtendsClause({ ...data, _implements_clause: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -241,9 +543,72 @@ export function wrap_ClassHeritageImplementsClause(data: T._ClassHeritageImpleme
   const _node = withMethods({
     ...data,
     $type: TSKindId._ClassHeritageImplementsClause as const,
-    $children: data.$children,
+    _implements_clause: normalizeSingularWrapSlot(data._implements_clause, "implements_clause", true, data.$type),
 
-    $with: { $child: (v: T.ImplementsClause) => wrap_ClassHeritageImplementsClause({ ...data, $children: [v] }, tree) },
+    implementsClause() { return drillIn<T.ImplementsClause>(this._implements_clause, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrap_ClassHeritageImplementsClause({ ...data, $children: vs }, tree) },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapDestructuringPattern(data: T.DestructuringPattern, tree: TreeHandle) {
+  return drillIn<T.DestructuringPattern>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["object_pattern","array_pattern"]), "children", true, data.$type), tree);
+}
+
+export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {
+  return drillIn<T.ExportStatementDefault>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["_export_statement_default_from_arm","export_statement_default_from_arm","_export_statement_default_decl_arm","export_statement_default_decl_arm"]), "children", true, data.$type), tree);
+}
+
+export function wrapExportStatementDefaultDeclArm(data: T.ExportStatementDefaultDeclArm, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ExportStatementDefaultDeclArm as const,
+    _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator"),
+    _declaration: normalizeSingularWrapSlot(data._declaration, "declaration", false, data.$type),
+    _export_statement_default_decl_arm_default_kw: normalizeSingularWrapSlot(data._export_statement_default_decl_arm_default_kw, "export_statement_default_decl_arm_default_kw", false, data.$type),
+
+    decorators() { return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree); },
+    declaration() { return drillIn<T.Declaration | undefined>(this._declaration, tree); },
+    exportStatementDefaultDeclArmDefaultKw() { return drillIn<T.ExportStatementDefaultDeclArmDefaultKw | undefined>(this._export_statement_default_decl_arm_default_kw, tree); },
+    $with: {
+      decorators: (...v: NonNullable<T.ExportStatementDefaultDeclArm['_decorator']>[number][]) => wrapExportStatementDefaultDeclArm({ ...data, _decorator: v }, tree),
+      declaration: (v: NonNullable<T.ExportStatementDefaultDeclArm['_declaration']>) => wrapExportStatementDefaultDeclArm({ ...data, _declaration: v }, tree),
+      exportStatementDefaultDeclArmDefaultKw: (v: NonNullable<T.ExportStatementDefaultDeclArm['_export_statement_default_decl_arm_default_kw']>) => wrapExportStatementDefaultDeclArm({ ...data, _export_statement_default_decl_arm_default_kw: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapExportStatementDefaultDeclArmDefaultKw(data: T.ExportStatementDefaultDeclArmDefaultKw, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ExportStatementDefaultDeclArmDefaultKw as const,
+    _declaration: normalizeSingularWrapSlot(data._declaration, "declaration", false, data.$type),
+    _export_statement_default_decl_arm_default_kw_value: normalizeSingularWrapSlot(data._export_statement_default_decl_arm_default_kw_value, "export_statement_default_decl_arm_default_kw_value", false, data.$type),
+
+    declaration() { return drillIn<T.Declaration | undefined>(this._declaration, tree); },
+    exportStatementDefaultDeclArmDefaultKwValue() { return drillIn<T.ExportStatementDefaultDeclArmDefaultKwValue | undefined>(this._export_statement_default_decl_arm_default_kw_value, tree); },
+    $with: {
+      declaration: (v: NonNullable<T.ExportStatementDefaultDeclArmDefaultKw['_declaration']>) => wrapExportStatementDefaultDeclArmDefaultKw({ ...data, _declaration: v }, tree),
+      exportStatementDefaultDeclArmDefaultKwValue: (v: NonNullable<T.ExportStatementDefaultDeclArmDefaultKw['_export_statement_default_decl_arm_default_kw_value']>) => wrapExportStatementDefaultDeclArmDefaultKw({ ...data, _export_statement_default_decl_arm_default_kw_value: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapExportStatementDefaultDeclArmDefaultKwValue(data: T.ExportStatementDefaultDeclArmDefaultKwValue, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ExportStatementDefaultDeclArmDefaultKwValue as const,
+    _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
+
+    value() { return drillIn<T.Expression>(this._value, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
+    $with: {
+      value: (v: NonNullable<T.ExportStatementDefaultDeclArmDefaultKwValue['_value']>) => wrapExportStatementDefaultDeclArmDefaultKwValue({ ...data, _value: v }, tree),
+      semicolon: (v: NonNullable<T.ExportStatementDefaultDeclArmDefaultKwValue['_semicolon']>) => wrapExportStatementDefaultDeclArmDefaultKwValue({ ...data, _semicolon: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -252,9 +617,15 @@ export function wrapExportStatementDefaultFromArm(data: T.ExportStatementDefault
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatementDefaultFromArm as const,
-    $children: data.$children,
+    _export_statement_default_from_arm_star_from: normalizeSingularWrapSlot((data._export_statement_default_from_arm_star_from ?? data._export_statement_default_from_arm_ns_from ?? data._export_statement_default_from_arm_clause_from ?? data._export_clause), "export_statement_default_from_arm_star_from", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    $with: { $child: (v: (T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause | T.Semicolon)) => wrapExportStatementDefaultFromArm({ ...data, $children: [v] }, tree) },
+    exportStatementDefaultFromArmStarFrom() { return drillAs<T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause>(this._export_statement_default_from_arm_star_from, tree, "export_statement_default_from_arm_star_from", "_export_statement_default_from_arm_star_from"); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
+    $with: {
+      exportStatementDefaultFromArmStarFrom: (v: NonNullable<T.ExportStatementDefaultFromArm['_export_statement_default_from_arm_star_from']>) => wrapExportStatementDefaultFromArm({ ...data, _export_statement_default_from_arm_star_from: v }, tree),
+      semicolon: (v: NonNullable<T.ExportStatementDefaultFromArm['_semicolon']>) => wrapExportStatementDefaultFromArm({ ...data, _semicolon: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -263,13 +634,14 @@ export function wrapExportStatementDefaultFromArmClauseFrom(data: T.ExportStatem
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatementDefaultFromArmClauseFrom as const,
-    _source: data._source,
-    $children: data.$children,
+    _export_clause: normalizeSingularWrapSlot(data._export_clause, "export_clause", true, data.$type),
+    _source: normalizeSingularWrapSlot(data._source, "source", true, data.$type),
 
+    exportClause() { return drillIn<T.ExportClause>(this._export_clause, tree); },
     source() { return drillIn<T.String>(this._source, tree); },
     $with: {
+      exportClause: (v: NonNullable<T.ExportStatementDefaultFromArmClauseFrom['_export_clause']>) => wrapExportStatementDefaultFromArmClauseFrom({ ...data, _export_clause: v }, tree),
       source: (v: NonNullable<T.ExportStatementDefaultFromArmClauseFrom['_source']>) => wrapExportStatementDefaultFromArmClauseFrom({ ...data, _source: v }, tree),
-      children: (...items: readonly [T.ExportClause]) => wrapExportStatementDefaultFromArmClauseFrom({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -279,13 +651,14 @@ export function wrapExportStatementDefaultFromArmNsFrom(data: T.ExportStatementD
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatementDefaultFromArmNsFrom as const,
-    _source: data._source,
-    $children: data.$children,
+    _namespace_export: normalizeSingularWrapSlot(data._namespace_export, "namespace_export", true, data.$type),
+    _source: normalizeSingularWrapSlot(data._source, "source", true, data.$type),
 
+    namespaceExport() { return drillIn<T.NamespaceExport>(this._namespace_export, tree); },
     source() { return drillIn<T.String>(this._source, tree); },
     $with: {
+      namespaceExport: (v: NonNullable<T.ExportStatementDefaultFromArmNsFrom['_namespace_export']>) => wrapExportStatementDefaultFromArmNsFrom({ ...data, _namespace_export: v }, tree),
       source: (v: NonNullable<T.ExportStatementDefaultFromArmNsFrom['_source']>) => wrapExportStatementDefaultFromArmNsFrom({ ...data, _source: v }, tree),
-      children: (...items: readonly [T.NamespaceExport]) => wrapExportStatementDefaultFromArmNsFrom({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -295,7 +668,7 @@ export function wrapExportStatementDefaultFromArmStarFrom(data: T.ExportStatemen
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatementDefaultFromArmStarFrom as const,
-    _source: data._source,
+    _source: normalizeSingularWrapSlot(data._source, "source", true, data.$type),
 
     source() { return drillIn<T.String>(this._source, tree); },
     $with: {
@@ -309,9 +682,15 @@ export function wrap_ExportStatementEqualsExport(data: T._ExportStatementEqualsE
   const _node = withMethods({
     ...data,
     $type: TSKindId._ExportStatementEqualsExport as const,
-    $children: data.$children,
+    _expression: normalizeSingularWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._expression), "expression", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    $with: { $child: (v: (T.Expression | T.Semicolon)) => wrap_ExportStatementEqualsExport({ ...data, $children: [v] }, tree) },
+    expression() { return drillIn<T.Expression>(this._expression, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
+    $with: {
+      expression: (v: NonNullable<T._ExportStatementEqualsExport['_expression']>) => wrap_ExportStatementEqualsExport({ ...data, _expression: v }, tree),
+      semicolon: (v: NonNullable<T._ExportStatementEqualsExport['_semicolon']>) => wrap_ExportStatementEqualsExport({ ...data, _semicolon: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -320,9 +699,15 @@ export function wrap_ExportStatementNamespaceExport(data: T._ExportStatementName
   const _node = withMethods({
     ...data,
     $type: TSKindId._ExportStatementNamespaceExport as const,
-    $children: data.$children,
+    _identifier: normalizeSingularWrapSlot(data._identifier, "identifier", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    $with: { $child: (v: (T.Identifier | T.Semicolon)) => wrap_ExportStatementNamespaceExport({ ...data, $children: [v] }, tree) },
+    identifier() { return drillIn<T.Identifier>(this._identifier, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
+    $with: {
+      identifier: (v: NonNullable<T._ExportStatementNamespaceExport['_identifier']>) => wrap_ExportStatementNamespaceExport({ ...data, _identifier: v }, tree),
+      semicolon: (v: NonNullable<T._ExportStatementNamespaceExport['_semicolon']>) => wrap_ExportStatementNamespaceExport({ ...data, _semicolon: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -331,13 +716,71 @@ export function wrap_ExportStatementTypeExport(data: T._ExportStatementTypeExpor
   const _node = withMethods({
     ...data,
     $type: TSKindId._ExportStatementTypeExport as const,
-    _source: data._source,
-    $children: data.$children,
+    _export_clause: normalizeSingularWrapSlot(data._export_clause, "export_clause", true, data.$type),
+    _source: normalizeSingularWrapSlot(data._source, "source", false, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
+    exportClause() { return drillIn<T.ExportClause>(this._export_clause, tree); },
     source() { return drillIn<T.String | undefined>(this._source, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
+      exportClause: (v: NonNullable<T._ExportStatementTypeExport['_export_clause']>) => wrap_ExportStatementTypeExport({ ...data, _export_clause: v }, tree),
       source: (v: NonNullable<T._ExportStatementTypeExport['_source']>) => wrap_ExportStatementTypeExport({ ...data, _source: v }, tree),
-      children: (...items: readonly [((T.ExportClause | T.Semicolon))]) => wrap_ExportStatementTypeExport({ ...data, $children: items }, tree),
+      semicolon: (v: NonNullable<T._ExportStatementTypeExport['_semicolon']>) => wrap_ExportStatementTypeExport({ ...data, _semicolon: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapExtendsClauseSingle(data: T.ExtendsClauseSingle, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ExtendsClauseSingle as const,
+    _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
+    _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", false, data.$type),
+
+    value() { return drillIn<T.Expression>(this._value, tree); },
+    typeArguments() { return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree); },
+    $with: {
+      value: (v: NonNullable<T.ExtendsClauseSingle['_value']>) => wrapExtendsClauseSingle({ ...data, _value: v }, tree),
+      typeArguments: (v: NonNullable<T.ExtendsClauseSingle['_type_arguments']>) => wrapExtendsClauseSingle({ ...data, _type_arguments: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapForHeader(data: T.ForHeader, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ForHeader as const,
+    _for_header_lhs: normalizeSingularWrapSlot((data._for_header_lhs ?? data._for_header_var_kind ?? data._for_header_let_const_kind), "for_header_lhs", true, data.$type),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type)),
+    _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type),
+
+    forHeaderLhs() { return drillAs<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(this._for_header_lhs, tree, "for_header_lhs", "_for_header_lhs"); },
+    operator() { return this._operator; },
+    right() { return drillIn<T.Expressions>(this._right, tree); },
+    $with: {
+      forHeaderLhs: (v: NonNullable<T.ForHeader['_for_header_lhs']>) => wrapForHeader({ ...data, _for_header_lhs: v }, tree),
+      operator: (v: NonNullable<T.ForHeader['_operator']>) => wrapForHeader({ ...data, _operator: v }, tree),
+      right: (v: NonNullable<T.ForHeader['_right']>) => wrapForHeader({ ...data, _right: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapForHeaderLetConstKind(data: T.ForHeaderLetConstKind, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ForHeaderLetConstKind as const,
+    _kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._kind, "kind", true, data.$type)),
+    _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
+
+    kind() { return this._kind; },
+    left() { return drillIn<T.Identifier | T.DestructuringPattern>(this._left, tree); },
+    $with: {
+      kind: (v: NonNullable<T.ForHeaderLetConstKind['_kind']>) => wrapForHeaderLetConstKind({ ...data, _kind: v }, tree),
+      left: (v: NonNullable<T.ForHeaderLetConstKind['_left']>) => wrapForHeaderLetConstKind({ ...data, _left: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -347,7 +790,7 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForHeaderLhs as const,
-    _left: data._left,
+    _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
 
     left() { return drillIn<T.LhsExpression | T.ParenthesizedExpression>(this._left, tree); },
     $with: {
@@ -357,13 +800,57 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle) {
   return _node;
 }
 
+export function wrapForHeaderVarKind(data: T.ForHeaderVarKind, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ForHeaderVarKind as const,
+    _kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._kind, "kind", true, data.$type)),
+    _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
+    _initializer: normalizeSingularWrapSlot(data._initializer, "initializer", false, data.$type),
+
+    kind() { return this._kind; },
+    left() { return drillIn<T.Identifier | T.DestructuringPattern>(this._left, tree); },
+    initializer() { return drillIn<T.Initializer | undefined>(this._initializer, tree); },
+    $with: {
+      kind: (v: NonNullable<T.ForHeaderVarKind['_kind']>) => wrapForHeaderVarKind({ ...data, _kind: v }, tree),
+      left: (v: NonNullable<T.ForHeaderVarKind['_left']>) => wrapForHeaderVarKind({ ...data, _left: v }, tree),
+      initializer: (v: NonNullable<T.ForHeaderVarKind['_initializer']>) => wrapForHeaderVarKind({ ...data, _initializer: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapFormalParameter(data: T.FormalParameter, tree: TreeHandle) {
+  return drillIn<T.FormalParameter>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["required_parameter","optional_parameter"]), "children", true, data.$type), tree);
+}
+
+export function wrapFromClause(data: T.FromClause, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.FromClause as const,
+    _source: normalizeSingularWrapSlot(data._source, "source", true, data.$type),
+
+    source() { return drillIn<T.String>(this._source, tree); },
+    $with: {
+      source: (v: NonNullable<T.FromClause['_source']>) => wrapFromClause({ ...data, _source: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrap_ImportClauseDefaultImport(data: T._ImportClauseDefaultImport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ImportClauseDefaultImport as const,
-    $children: data.$children,
+    _import_identifier: normalizeSingularWrapSlot((data._identifier ?? data._import_identifier), "import_identifier", true, data.$type),
+    _namespace_import: normalizeSingularWrapSlot((data._namespace_import ?? data._named_imports), "namespace_import", false, data.$type),
 
-    $with: { $child: (v: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) => wrap_ImportClauseDefaultImport({ ...data, $children: [v] }, tree) },
+    importIdentifier() { return drillIn<T.ImportIdentifier>(this._import_identifier, tree); },
+    namespaceImport() { return drillIn<T.NamespaceImport | T.NamedImports | undefined>(this._namespace_import, tree); },
+    $with: {
+      importIdentifier: (v: NonNullable<T._ImportClauseDefaultImport['_import_identifier']>) => wrap_ImportClauseDefaultImport({ ...data, _import_identifier: v }, tree),
+      namespaceImport: (v: NonNullable<T._ImportClauseDefaultImport['_namespace_import']>) => wrap_ImportClauseDefaultImport({ ...data, _namespace_import: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -372,9 +859,10 @@ export function wrap_ImportClauseNamedImports(data: T._ImportClauseNamedImports,
   const _node = withMethods({
     ...data,
     $type: TSKindId._ImportClauseNamedImports as const,
-    $children: data.$children,
+    _named_imports: normalizeSingularWrapSlot(data._named_imports, "named_imports", true, data.$type),
 
-    $with: { $child: (v: T.NamedImports) => wrap_ImportClauseNamedImports({ ...data, $children: [v] }, tree) },
+    namedImports() { return drillIn<T.NamedImports>(this._named_imports, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrap_ImportClauseNamedImports({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -383,9 +871,31 @@ export function wrap_ImportClauseNamespaceImport(data: T._ImportClauseNamespaceI
   const _node = withMethods({
     ...data,
     $type: TSKindId._ImportClauseNamespaceImport as const,
-    $children: data.$children,
+    _namespace_import: normalizeSingularWrapSlot(data._namespace_import, "namespace_import", true, data.$type),
 
-    $with: { $child: (v: T.NamespaceImport) => wrap_ImportClauseNamespaceImport({ ...data, $children: [v] }, tree) },
+    namespaceImport() { return drillIn<T.NamespaceImport>(this._namespace_import, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrap_ImportClauseNamespaceImport({ ...data, $children: vs }, tree) },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapImportIdentifier(data: T.ImportIdentifier, tree: TreeHandle) {
+  return drillIn<T.ImportIdentifier>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier"]), "children", true, data.$type), tree);
+}
+
+export function wrapImportSpecifierAs(data: T.ImportSpecifierAs, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ImportSpecifierAs as const,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _alias: normalizeSingularWrapSlot(data._alias, "alias", true, data.$type),
+
+    name() { return drillIn<T.ModuleExportName | T.Identifier>(this._name, tree); },
+    alias() { return drillIn<T.ImportIdentifier>(this._alias, tree); },
+    $with: {
+      name: (v: NonNullable<T.ImportSpecifierAs['_name']>) => wrapImportSpecifierAs({ ...data, _name: v }, tree),
+      alias: (v: NonNullable<T.ImportSpecifierAs['_alias']>) => wrapImportSpecifierAs({ ...data, _alias: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -394,7 +904,7 @@ export function wrap_ImportSpecifierName(data: T._ImportSpecifierName, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId._ImportSpecifierName as const,
-    _name: data._name,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
 
     name() { return drillIn<T.ImportIdentifier>(this._name, tree); },
     $with: {
@@ -404,13 +914,109 @@ export function wrap_ImportSpecifierName(data: T._ImportSpecifierName, tree: Tre
   return _node;
 }
 
+export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.IndexSignatureColon as const,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _index_type: normalizeSingularWrapSlot(data._index_type, "index_type", true, data.$type),
+
+    name() { return drillAs<T.ReservedIdentifier>(this._name, tree, "identifier", "_reserved_identifier"); },
+    indexType() { return drillIn<T.Type>(this._index_type, tree); },
+    $with: {
+      name: (v: NonNullable<T.IndexSignatureColon['_name']>) => wrapIndexSignatureColon({ ...data, _name: v }, tree),
+      indexType: (v: NonNullable<T.IndexSignatureColon['_index_type']>) => wrapIndexSignatureColon({ ...data, _index_type: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrap_IndexSignatureMappedTypeClause(data: T._IndexSignatureMappedTypeClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._IndexSignatureMappedTypeClause as const,
-    $children: data.$children,
+    _mapped_type_clause: normalizeSingularWrapSlot(data._mapped_type_clause, "mapped_type_clause", true, data.$type),
 
-    $with: { $child: (v: T.MappedTypeClause) => wrap_IndexSignatureMappedTypeClause({ ...data, $children: [v] }, tree) },
+    mappedTypeClause() { return drillIn<T.MappedTypeClause>(this._mapped_type_clause, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrap_IndexSignatureMappedTypeClause({ ...data, $children: vs }, tree) },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapInitializer(data: T.Initializer, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.Initializer as const,
+    _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
+
+    value() { return drillIn<T.Expression>(this._value, tree); },
+    $with: {
+      value: (v: NonNullable<T.Initializer['_value']>) => wrapInitializer({ ...data, _value: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrap_Module(data: T._Module, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId._Module as const,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", false, data.$type),
+
+    name() { return drillIn<T.String | T.Identifier | T.NestedIdentifier>(this._name, tree); },
+    body() { return drillIn<T.StatementBlock | undefined>(this._body, tree); },
+    $with: {
+      name: (v: NonNullable<T._Module['_name']>) => wrap_Module({ ...data, _name: v }, tree),
+      body: (v: NonNullable<T._Module['_body']>) => wrap_Module({ ...data, _body: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapModuleExportName(data: T.ModuleExportName, tree: TreeHandle) {
+  return drillIn<T.ModuleExportName>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","string"]), "children", true, data.$type), tree);
+}
+
+export function wrap_Number(data: T._Number, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId._Number as const,
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type)),
+    _argument: normalizeSingularWrapSlot(data._argument, "argument", true, data.$type),
+
+    operator() { return this._operator; },
+    argument() { return drillIn<T.Number>(this._argument, tree); },
+    $with: {
+      operator: (v: NonNullable<T._Number['_operator']>) => wrap_Number({ ...data, _operator: v }, tree),
+      argument: (v: NonNullable<T._Number['_argument']>) => wrap_Number({ ...data, _argument: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapParameterName(data: T.ParameterName, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ParameterName as const,
+    _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator"),
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type)),
+    _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type)),
+    _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type)),
+    _pattern: normalizeSingularWrapSlot(data._pattern, "pattern", true, data.$type),
+
+    decorators() { return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree); },
+    accessibilityModifier() { return this._accessibility_modifier; },
+    overrideModifier() { return this._override_modifier; },
+    readonlyMarker() { return this._readonly_marker; },
+    pattern() { return drillIn<T.Pattern | T.This>(this._pattern, tree); },
+    $with: {
+      decorators: (...v: NonNullable<T.ParameterName['_decorator']>[number][]) => wrapParameterName({ ...data, _decorator: v }, tree),
+      accessibilityModifier: (v: NonNullable<T.ParameterName['_accessibility_modifier']>) => wrapParameterName({ ...data, _accessibility_modifier: v }, tree),
+      overrideModifier: (v: NonNullable<T.ParameterName['_override_modifier']>) => wrapParameterName({ ...data, _override_modifier: v }, tree),
+      readonlyMarker: (v: NonNullable<T.ParameterName['_readonly_marker']>) => wrapParameterName({ ...data, _readonly_marker: v }, tree),
+      pattern: (v: NonNullable<T.ParameterName['_pattern']>) => wrapParameterName({ ...data, _pattern: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -419,9 +1025,69 @@ export function wrap_ParenthesizedExpressionSequence(data: T._ParenthesizedExpre
   const _node = withMethods({
     ...data,
     $type: TSKindId._ParenthesizedExpressionSequence as const,
-    $children: data.$children,
+    _sequence_expression: normalizeSingularWrapSlot(data._sequence_expression, "sequence_expression", true, data.$type),
 
-    $with: { $child: (v: T.SequenceExpression) => wrap_ParenthesizedExpressionSequence({ ...data, $children: [v] }, tree) },
+    sequenceExpression() { return drillIn<T.SequenceExpression>(this._sequence_expression, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrap_ParenthesizedExpressionSequence({ ...data, $children: vs }, tree) },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapParenthesizedExpressionTyped(data: T.ParenthesizedExpressionTyped, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ParenthesizedExpressionTyped as const,
+    _expression: normalizeSingularWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._expression), "expression", true, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type),
+
+    expression() { return drillIn<T.Expression>(this._expression, tree); },
+    type() { return drillIn<T.TypeAnnotation | undefined>(this._type, tree); },
+    $with: {
+      expression: (v: NonNullable<T.ParenthesizedExpressionTyped['_expression']>) => wrapParenthesizedExpressionTyped({ ...data, _expression: v }, tree),
+      type: (v: NonNullable<T.ParenthesizedExpressionTyped['_type']>) => wrapParenthesizedExpressionTyped({ ...data, _type: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapPropertyIdentifier(data: T.PropertyIdentifier, tree: TreeHandle) {
+  return drillIn<T.PropertyIdentifier>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","_reserved_identifier","reserved_identifier"]), "children", true, data.$type), tree);
+}
+
+export function wrapPropertyName(data: T.PropertyName, tree: TreeHandle) {
+  return drillIn<T.PropertyName>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["_property_identifier","property_identifier","identifier","private_property_identifier","string","number","computed_property_name"]), "children", true, data.$type), tree);
+}
+
+export function wrapPublicFieldDefinitionAbstractFirst(data: T.PublicFieldDefinitionAbstractFirst, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.PublicFieldDefinitionAbstractFirst as const,
+    _abstract_marker: projectKindEnumStorage(normalizeSingularWrapSlot(data._abstract_marker, "abstract_marker", true, data.$type)),
+    _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type)),
+
+    abstractMarker() { return this._abstract_marker; },
+    readonlyMarker() { return this._readonly_marker; },
+    $with: {
+      abstractMarker: (v: NonNullable<T.PublicFieldDefinitionAbstractFirst['_abstract_marker']>) => wrapPublicFieldDefinitionAbstractFirst({ ...data, _abstract_marker: v }, tree),
+      readonlyMarker: (v: NonNullable<T.PublicFieldDefinitionAbstractFirst['_readonly_marker']>) => wrapPublicFieldDefinitionAbstractFirst({ ...data, _readonly_marker: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapPublicFieldDefinitionAccessFirst(data: T.PublicFieldDefinitionAccessFirst, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.PublicFieldDefinitionAccessFirst as const,
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", true, data.$type)),
+    _declare_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._declare_marker, "declare_marker", false, data.$type)),
+
+    accessibilityModifier() { return this._accessibility_modifier; },
+    declareMarker() { return this._declare_marker; },
+    $with: {
+      accessibilityModifier: (v: NonNullable<T.PublicFieldDefinitionAccessFirst['_accessibility_modifier']>) => wrapPublicFieldDefinitionAccessFirst({ ...data, _accessibility_modifier: v }, tree),
+      declareMarker: (v: NonNullable<T.PublicFieldDefinitionAccessFirst['_declare_marker']>) => wrapPublicFieldDefinitionAccessFirst({ ...data, _declare_marker: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -430,9 +1096,9 @@ export function wrapPublicFieldDefinitionAccessorOpt(data: T.PublicFieldDefiniti
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinitionAccessorOpt as const,
-    _accessor_marker: data._accessor_marker,
+    _accessor_marker: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessor_marker, "accessor_marker", true, data.$type)),
 
-    accessorMarker() { return drillIn<"accessor">(this._accessor_marker, tree); },
+    accessorMarker() { return this._accessor_marker; },
     $with: {
       accessorMarker: (v: NonNullable<T.PublicFieldDefinitionAccessorOpt['_accessor_marker']>) => wrapPublicFieldDefinitionAccessorOpt({ ...data, _accessor_marker: v }, tree),
     },
@@ -444,31 +1110,199 @@ export function wrapPublicFieldDefinitionDeclareFirst(data: T.PublicFieldDefinit
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinitionDeclareFirst as const,
-    $children: data.$children,
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type)),
 
-    $with: { $child: (v: T.AccessibilityModifier) => wrapPublicFieldDefinitionDeclareFirst({ ...data, $children: [v] }, tree) },
+    accessibilityModifier() { return this._accessibility_modifier; },
+    $with: { $children: (...vs: readonly [never]) => wrapPublicFieldDefinitionDeclareFirst({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
 
-export function wrap_StringDouble(data: T._StringDouble, tree: TreeHandle) {
+export function wrapPublicFieldDefinitionReadonlyFirst(data: T.PublicFieldDefinitionReadonlyFirst, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $type: TSKindId._StringDouble as const,
-    $children: data.$children,
+    $type: TSKindId.PublicFieldDefinitionReadonlyFirst as const,
+    _readonly_marker: projectKindEnumStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", true, data.$type)),
+    _abstract_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._abstract_marker, "abstract_marker", false, data.$type)),
 
-    $with: { $children: (...vs: ((T.UnescapedDoubleStringFragment | T.EscapeSequence))[]) => wrap_StringDouble({ ...data, $children: vs }, tree) },
+    readonlyMarker() { return this._readonly_marker; },
+    abstractMarker() { return this._abstract_marker; },
+    $with: {
+      readonlyMarker: (v: NonNullable<T.PublicFieldDefinitionReadonlyFirst['_readonly_marker']>) => wrapPublicFieldDefinitionReadonlyFirst({ ...data, _readonly_marker: v }, tree),
+      abstractMarker: (v: NonNullable<T.PublicFieldDefinitionReadonlyFirst['_abstract_marker']>) => wrapPublicFieldDefinitionReadonlyFirst({ ...data, _abstract_marker: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
 
-export function wrap_StringSingle(data: T._StringSingle, tree: TreeHandle) {
+export function wrapPublicFieldDefinitionStaticMods(data: T.PublicFieldDefinitionStaticMods, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $type: TSKindId._StringSingle as const,
-    $children: data.$children,
+    $type: TSKindId.PublicFieldDefinitionStaticMods as const,
+    _static_marker: projectKindEnumStorage(normalizeSingularWrapSlot(data._static_marker, "static_marker", true, data.$type)),
+    _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type)),
+    _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type)),
 
-    $with: { $children: (...vs: ((T.UnescapedSingleStringFragment | T.EscapeSequence))[]) => wrap_StringSingle({ ...data, $children: vs }, tree) },
+    staticMarker() { return this._static_marker; },
+    overrideModifier() { return this._override_modifier; },
+    readonlyMarker() { return this._readonly_marker; },
+    $with: {
+      staticMarker: (v: NonNullable<T.PublicFieldDefinitionStaticMods['_static_marker']>) => wrapPublicFieldDefinitionStaticMods({ ...data, _static_marker: v }, tree),
+      overrideModifier: (v: NonNullable<T.PublicFieldDefinitionStaticMods['_override_modifier']>) => wrapPublicFieldDefinitionStaticMods({ ...data, _override_modifier: v }, tree),
+      readonlyMarker: (v: NonNullable<T.PublicFieldDefinitionStaticMods['_readonly_marker']>) => wrapPublicFieldDefinitionStaticMods({ ...data, _readonly_marker: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapShorthandPropertyIdentifier(data: T.ShorthandPropertyIdentifier, tree: TreeHandle) {
+  return drillIn<T.ShorthandPropertyIdentifier>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","_reserved_identifier","reserved_identifier"]), "children", true, data.$type), tree);
+}
+
+export function wrapShorthandPropertyIdentifierPattern(data: T.ShorthandPropertyIdentifierPattern, tree: TreeHandle) {
+  return drillIn<T.ShorthandPropertyIdentifierPattern>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","_reserved_identifier","reserved_identifier"]), "children", true, data.$type), tree);
+}
+
+export function wrapStatementIdentifier(data: T.StatementIdentifier, tree: TreeHandle) {
+  return drillIn<T.StatementIdentifier>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","_reserved_identifier","reserved_identifier"]), "children", true, data.$type), tree);
+}
+
+export function wrapTupleTypeMember(data: T.TupleTypeMember, tree: TreeHandle) {
+  return drillIn<T.TupleTypeMember>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["tuple_parameter","optional_tuple_parameter","optional_type","rest_type","type"]), "children", true, data.$type), tree);
+}
+
+export function wrapTypeQueryCallExpression(data: T.TypeQueryCallExpression, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.TypeQueryCallExpression as const,
+    _function: normalizeSingularWrapSlot(data._function, "function", true, data.$type),
+    _arguments: normalizeSingularWrapSlot(data._arguments, "arguments", true, data.$type),
+
+    function() { return drillAs<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(this._function, tree, "member_expression", "_type_query_member_expression"); },
+    arguments() { return drillIn<T.Arguments>(this._arguments, tree); },
+    $with: {
+      function: (v: NonNullable<T.TypeQueryCallExpression['_function']>) => wrapTypeQueryCallExpression({ ...data, _function: v }, tree),
+      arguments: (v: NonNullable<T.TypeQueryCallExpression['_arguments']>) => wrapTypeQueryCallExpression({ ...data, _arguments: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapTypeQueryCallExpressionInTypeAnnotation(data: T.TypeQueryCallExpressionInTypeAnnotation, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.TypeQueryCallExpressionInTypeAnnotation as const,
+    _function: normalizeSingularWrapSlot(data._function, "function", true, data.$type),
+    _arguments: normalizeSingularWrapSlot(data._arguments, "arguments", true, data.$type),
+
+    function() { return drillAs<T.Import | T.TypeQueryMemberExpressionInTypeAnnotation>(this._function, tree, "member_expression", "_type_query_member_expression_in_type_annotation"); },
+    arguments() { return drillIn<T.Arguments>(this._arguments, tree); },
+    $with: {
+      function: (v: NonNullable<T.TypeQueryCallExpressionInTypeAnnotation['_function']>) => wrapTypeQueryCallExpressionInTypeAnnotation({ ...data, _function: v }, tree),
+      arguments: (v: NonNullable<T.TypeQueryCallExpressionInTypeAnnotation['_arguments']>) => wrapTypeQueryCallExpressionInTypeAnnotation({ ...data, _arguments: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapTypeQueryInstantiationExpression(data: T.TypeQueryInstantiationExpression, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.TypeQueryInstantiationExpression as const,
+    _function: normalizeSingularWrapSlot(data._function, "function", true, data.$type),
+    _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", true, data.$type),
+
+    function() { return drillAs<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(this._function, tree, "member_expression", "_type_query_member_expression"); },
+    typeArguments() { return drillIn<T.TypeArguments>(this._type_arguments, tree); },
+    $with: {
+      function: (v: NonNullable<T.TypeQueryInstantiationExpression['_function']>) => wrapTypeQueryInstantiationExpression({ ...data, _function: v }, tree),
+      typeArguments: (v: NonNullable<T.TypeQueryInstantiationExpression['_type_arguments']>) => wrapTypeQueryInstantiationExpression({ ...data, _type_arguments: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapTypeQueryMemberExpression(data: T.TypeQueryMemberExpression, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.TypeQueryMemberExpression as const,
+    _object: normalizeSingularWrapSlot(data._object, "object", true, data.$type),
+    _property: normalizeSingularWrapSlot(data._property, "property", true, data.$type),
+
+    object() { return drillAs<T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression>(this._object, tree, "subscript_expression", "_type_query_subscript_expression"); },
+    property() { return drillAs<T.PrivatePropertyIdentifier | T.Identifier>(this._property, tree, "property_identifier", "identifier"); },
+    $with: {
+      object: (v: NonNullable<T.TypeQueryMemberExpression['_object']>) => wrapTypeQueryMemberExpression({ ...data, _object: v }, tree),
+      property: (v: NonNullable<T.TypeQueryMemberExpression['_property']>) => wrapTypeQueryMemberExpression({ ...data, _property: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapTypeQueryMemberExpressionInTypeAnnotation(data: T.TypeQueryMemberExpressionInTypeAnnotation, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.TypeQueryMemberExpressionInTypeAnnotation as const,
+    _object: normalizeSingularWrapSlot(data._object, "object", true, data.$type),
+    _property: normalizeSingularWrapSlot(data._property, "property", true, data.$type),
+
+    object() { return drillAs<T.Import | T.TypeQueryMemberExpressionInTypeAnnotation | T.TypeQueryCallExpressionInTypeAnnotation>(this._object, tree, "member_expression", "_type_query_member_expression_in_type_annotation"); },
+    property() { return drillAs<T.PrivatePropertyIdentifier | T.Identifier>(this._property, tree, "property_identifier", "identifier"); },
+    $with: {
+      object: (v: NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation['_object']>) => wrapTypeQueryMemberExpressionInTypeAnnotation({ ...data, _object: v }, tree),
+      property: (v: NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation['_property']>) => wrapTypeQueryMemberExpressionInTypeAnnotation({ ...data, _property: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapTypeQuerySubscriptExpression(data: T.TypeQuerySubscriptExpression, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.TypeQuerySubscriptExpression as const,
+    _object: normalizeSingularWrapSlot(data._object, "object", true, data.$type),
+    _index: normalizeSingularWrapSlot(data._index, "index", true, data.$type),
+
+    object() { return drillAs<T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression>(this._object, tree, "subscript_expression", "_type_query_subscript_expression"); },
+    index() { return drillIn<T.PredefinedType | T.String | T.Number>(this._index, tree); },
+    $with: {
+      object: (v: NonNullable<T.TypeQuerySubscriptExpression['_object']>) => wrapTypeQuerySubscriptExpression({ ...data, _object: v }, tree),
+      index: (v: NonNullable<T.TypeQuerySubscriptExpression['_index']>) => wrapTypeQuerySubscriptExpression({ ...data, _index: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapUpdateExpressionPostfix(data: T.UpdateExpressionPostfix, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.UpdateExpressionPostfix as const,
+    _argument: normalizeSingularWrapSlot(data._argument, "argument", true, data.$type),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type)),
+
+    argument() { return drillIn<T.Expression>(this._argument, tree); },
+    operator() { return this._operator; },
+    $with: {
+      argument: (v: NonNullable<T.UpdateExpressionPostfix['_argument']>) => wrapUpdateExpressionPostfix({ ...data, _argument: v }, tree),
+      operator: (v: NonNullable<T.UpdateExpressionPostfix['_operator']>) => wrapUpdateExpressionPostfix({ ...data, _operator: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapUpdateExpressionPrefix(data: T.UpdateExpressionPrefix, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.UpdateExpressionPrefix as const,
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type)),
+    _argument: normalizeSingularWrapSlot(data._argument, "argument", true, data.$type),
+
+    operator() { return this._operator; },
+    argument() { return drillIn<T.Expression>(this._argument, tree); },
+    $with: {
+      operator: (v: NonNullable<T.UpdateExpressionPrefix['_operator']>) => wrapUpdateExpressionPrefix({ ...data, _operator: v }, tree),
+      argument: (v: NonNullable<T.UpdateExpressionPrefix['_argument']>) => wrapUpdateExpressionPrefix({ ...data, _argument: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -477,13 +1311,13 @@ export function wrapAbstractClassDeclaration(data: T.AbstractClassDeclaration, t
   const _node = withMethods({
     ...data,
     $type: TSKindId.AbstractClassDeclaration as const,
-    _decorator: data._decorator,
-    _name: data._name,
-    _type_parameters: data._type_parameters,
-    _class_heritage: data._class_heritage,
-    _body: data._body,
+    _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator"),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _class_heritage: normalizeSingularWrapSlot(data._class_heritage, "class_heritage", false, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
-    decorators() { return drillInAll<T.Decorator>(this._decorator, tree); },
+    decorators() { return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree); },
     name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     classHeritage() { return drillIn<T.ClassHeritage | undefined>(this._class_heritage, tree); },
@@ -503,14 +1337,14 @@ export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.AbstractMethodSignature as const,
-    _accessibility_modifier: projectKindEnumStorage(data._accessibility_modifier),
-    _override_modifier: coerceBooleanKeywordStorage(data._override_modifier),
-    _accessor_kind: projectKindEnumStorage(data._accessor_kind),
-    _name: data._name,
-    _optional_marker: coerceBooleanKeywordStorage(data._optional_marker),
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _return_type: data._return_type,
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type)),
+    _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type)),
+    _accessor_kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessor_kind, "accessor_kind", false, data.$type)),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _optional_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._optional_marker, "optional_marker", false, data.$type)),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
 
     accessibilityModifier() { return this._accessibility_modifier; },
     overrideModifier() { return this._override_modifier; },
@@ -538,7 +1372,7 @@ export function wrapAddingTypeAnnotation(data: T.AddingTypeAnnotation, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.AddingTypeAnnotation as const,
-    _type: data._type,
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
@@ -548,15 +1382,32 @@ export function wrapAddingTypeAnnotation(data: T.AddingTypeAnnotation, tree: Tre
   return _node;
 }
 
+export function wrapAmbientDeclarationDeclaration(data: T.AmbientDeclarationDeclaration, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    _declaration: normalizeSingularWrapSlot((data._function_declaration ?? data._generator_function_declaration ?? data._class_declaration ?? data._lexical_declaration ?? data._variable_declaration ?? data._function_signature ?? data._abstract_class_declaration ?? data._module ?? data._internal_module ?? data._type_alias_declaration ?? data._enum_declaration ?? data._interface_declaration ?? data._import_alias ?? data._ambient_declaration ?? data._declaration), "declaration", true, data.$type),
+
+    declaration() { return drillIn<T.Declaration>(this._declaration, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapAmbientDeclarationDeclaration({ ...data, $children: vs }, tree) },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrapAmbientDeclaration(data: T.AmbientDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AmbientDeclaration as const,
-    _declaration: data._declaration,
+    _ambient_declaration_declaration: normalizeSingularWrapSlot((data as any)._ambient_declaration_declaration, "ambient_declaration_declaration", false, (data as any).$type),
+    _ambient_declaration_global: normalizeSingularWrapSlot((data as any)._ambient_declaration_global, "ambient_declaration_global", false, (data as any).$type),
+    _ambient_declaration_module: normalizeSingularWrapSlot((data as any)._ambient_declaration_module, "ambient_declaration_module", false, (data as any).$type),
 
-    declaration() { return drillAs<T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon>(this._declaration, tree, "property_identifier", "identifier"); },
+    ambientDeclarationDeclaration() { return drillIn<T._AmbientDeclarationDeclaration | undefined>(this._ambient_declaration_declaration, tree); },
+    ambientDeclarationGlobal() { return drillIn<T.AmbientDeclarationGlobal | undefined>(this._ambient_declaration_global, tree); },
+    ambientDeclarationModule() { return drillIn<T.AmbientDeclarationModule | undefined>(this._ambient_declaration_module, tree); },
     $with: {
-      declaration: (v: NonNullable<T.AmbientDeclaration['_declaration']>) => wrapAmbientDeclaration({ ...data, _declaration: v }, tree),
+      ambientDeclarationDeclaration: (v: T._AmbientDeclarationDeclaration) => wrapAmbientDeclaration({ ...(data as any), _ambient_declaration_declaration: v }, tree),
+      ambientDeclarationGlobal: (v: T.AmbientDeclarationGlobal) => wrapAmbientDeclaration({ ...(data as any), _ambient_declaration_global: v }, tree),
+      ambientDeclarationModule: (v: T.AmbientDeclarationModule) => wrapAmbientDeclaration({ ...(data as any), _ambient_declaration_module: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -566,9 +1417,10 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Arguments as const,
-    $children: data.$children,
+    _expression: normalizeRepeatedWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._spread_element ?? data._expression), false, "expression"),
 
-    $with: { $children: (...vs: ((T.Expression | T.SpreadElement))[]) => wrapArguments({ ...data, $children: vs }, tree) },
+    expressions() { return drillInAll<T.Expression | T.SpreadElement>(this._expression as readonly (T.Expression | T.SpreadElement)[] | undefined, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapArguments({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -577,9 +1429,10 @@ export function wrapArray(data: T.Array, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Array as const,
-    $children: data.$children,
+    _expression: normalizeRepeatedWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._spread_element ?? data._expression), false, "expression"),
 
-    $with: { $children: (...vs: ((T.Expression | T.SpreadElement))[]) => wrapArray({ ...data, $children: vs }, tree) },
+    expressions() { return drillInAll<T.Expression | T.SpreadElement>(this._expression as readonly (T.Expression | T.SpreadElement)[] | undefined, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapArray({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -588,9 +1441,10 @@ export function wrapArrayPattern(data: T.ArrayPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ArrayPattern as const,
-    $children: data.$children,
+    _pattern: normalizeRepeatedWrapSlot((data._member_expression ?? data._subscript_expression ?? data._undefined ?? data._identifier ?? data._object_pattern ?? data._array_pattern ?? data._non_null_expression ?? data._rest_pattern ?? data._assignment_pattern ?? data._pattern), false, "pattern"),
 
-    $with: { $children: (...vs: ((T.Pattern | T.AssignmentPattern))[]) => wrapArrayPattern({ ...data, $children: vs }, tree) },
+    patterns() { return drillInAll<T.Pattern | T.AssignmentPattern>(this._pattern as readonly (T.Pattern | T.AssignmentPattern)[] | undefined, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapArrayPattern({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -599,7 +1453,7 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ArrayType as const,
-    _primary_type: data._primary_type,
+    _primary_type: normalizeSingularWrapSlot(data._primary_type, "primary_type", true, data.$type),
 
     primaryType() { return drillIn<T.PrimaryType>(this._primary_type, tree); },
     $with: {
@@ -612,7 +1466,7 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle) {
 export function wrapArrowFunctionParameter(data: T.ArrowFunctionParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    _parameter: data._parameter,
+    _parameter: normalizeSingularWrapSlot(data._parameter, "parameter", true, data.$type),
 
     parameter() { return drillAs<T.ReservedIdentifier>(this._parameter, tree, "identifier", "_reserved_identifier"); },
     $with: {
@@ -625,9 +1479,9 @@ export function wrapArrowFunctionParameter(data: T.ArrowFunctionParameter, tree:
 export function wrapArrowFunctionUCallSignature(data: T.ArrowFunctionUCallSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _return_type: data._return_type,
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
 
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     parameters() { return drillIn<T.FormalParameters>(this._parameters, tree); },
@@ -645,16 +1499,20 @@ export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ArrowFunction as const,
-    _async_marker: coerceBooleanKeywordStorage(data._async_marker),
-    _body: (data as any)._body,
-    $children: (data as any).$children,
+    _async_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot((data as any)._async_marker, "async_marker", false, (data as any).$type)),
+    _arrow_function_parameter: normalizeSingularWrapSlot((data as any)._arrow_function_parameter, "arrow_function_parameter", false, (data as any).$type),
+    _body: normalizeSingularWrapSlot((data as any)._body, "body", true, (data as any).$type),
+    _arrow_function__call_signature: normalizeSingularWrapSlot((data as any)._arrow_function__call_signature, "arrow_function__call_signature", false, (data as any).$type),
 
     asyncMarker() { return this._async_marker; },
+    arrowFunctionParameter() { return drillIn<T._ArrowFunctionParameter | undefined>(this._arrow_function_parameter, tree); },
     body() { return drillIn<T.Expression | T.StatementBlock>(this._body, tree); },
+    arrowFunction_CallSignature() { return drillIn<T._ArrowFunctionUCallSignature | undefined>(this._arrow_function__call_signature, tree); },
     $with: {
       asyncMarker: (v: boolean) => wrapArrowFunction({ ...(data as any), _async_marker: v }, tree),
+      arrowFunctionParameter: (v: T._ArrowFunctionParameter) => wrapArrowFunction({ ...(data as any), _arrow_function_parameter: v }, tree),
       body: (v: T.Expression | T.StatementBlock) => wrapArrowFunction({ ...(data as any), _body: v }, tree),
-      children: (...items: readonly [((T._ArrowFunctionParameter | T._ArrowFunctionUCallSignature))]) => wrapArrowFunction({ ...(data as any), $children: items }, tree),
+      arrowFunction_CallSignature: (v: T._ArrowFunctionUCallSignature) => wrapArrowFunction({ ...(data as any), _arrow_function__call_signature: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -664,11 +1522,11 @@ export function wrapAsExpression(data: T.AsExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AsExpression as const,
-    _expression: data._expression,
-    _type_annotation: data._type_annotation,
+    _expression: normalizeSingularWrapSlot(data._expression, "expression", true, data.$type),
+    _type_annotation: normalizeSingularWrapSlot(data._type_annotation, "type_annotation", true, data.$type),
 
     expression() { return drillIn<T.Expression>(this._expression, tree); },
-    typeAnnotation() { return drillIn<"const" | T.Type>(this._type_annotation, tree); },
+    typeAnnotation() { return drillIn<T.Const | T.Type>(this._type_annotation, tree); },
     $with: {
       expression: (v: NonNullable<T.AsExpression['_expression']>) => wrapAsExpression({ ...data, _expression: v }, tree),
       typeAnnotation: (v: NonNullable<T.AsExpression['_type_annotation']>) => wrapAsExpression({ ...data, _type_annotation: v }, tree),
@@ -681,9 +1539,10 @@ export function wrapAsserts(data: T.Asserts, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Asserts as const,
-    $children: data.$children,
+    _type_predicate: normalizeSingularWrapSlot((data._type_predicate ?? data._identifier ?? data._this), "type_predicate", true, data.$type),
 
-    $with: { $child: (v: (T.TypePredicate | T.Identifier | T.This)) => wrapAsserts({ ...data, $children: [v] }, tree) },
+    typePredicate() { return drillIn<T.TypePredicate | T.Identifier | T.This>(this._type_predicate, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapAsserts({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -692,7 +1551,7 @@ export function wrapAssertsAnnotation(data: T.AssertsAnnotation, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.AssertsAnnotation as const,
-    _asserts: data._asserts,
+    _asserts: normalizeSingularWrapSlot(data._asserts, "asserts", true, data.$type),
 
     asserts() { return drillIn<":" | T.Asserts>(this._asserts, tree); },
     $with: {
@@ -706,9 +1565,9 @@ export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.AssignmentExpression as const,
-    _using_marker: coerceBooleanKeywordStorage(data._using_marker),
-    _left: data._left,
-    _right: data._right,
+    _using_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._using_marker, "using_marker", false, data.$type)),
+    _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
+    _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type),
 
     usingMarker() { return this._using_marker; },
     left() { return drillIn<T.ParenthesizedExpression | T.LhsExpression>(this._left, tree); },
@@ -726,8 +1585,8 @@ export function wrapAssignmentPattern(data: T.AssignmentPattern, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.AssignmentPattern as const,
-    _left: data._left,
-    _right: data._right,
+    _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
+    _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type),
 
     left() { return drillIn<T.Pattern>(this._left, tree); },
     right() { return drillIn<T.Expression>(this._right, tree); },
@@ -743,9 +1602,9 @@ export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExp
   const _node = withMethods({
     ...data,
     $type: TSKindId.AugmentedAssignmentExpression as const,
-    _left: data._left,
-    _operator: projectKindEnumStorage(data._operator),
-    _right: data._right,
+    _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type)),
+    _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type),
 
     left() { return drillAs<T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression>(this._left, tree, "identifier", "_reserved_identifier"); },
     operator() { return this._operator; },
@@ -763,7 +1622,7 @@ export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AwaitExpression as const,
-    _expression: data._expression,
+    _expression: normalizeSingularWrapSlot(data._expression, "expression", true, data.$type),
 
     expression() { return drillIn<T.Expression>(this._expression, tree); },
     $with: {
@@ -777,12 +1636,12 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.BinaryExpression as const,
-    _left: data._left,
-    _operator: data._operator,
-    _right: data._right,
+    _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type)),
+    _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type),
 
     left() { return drillIn<T.Expression | T.PrivatePropertyIdentifier>(this._left, tree); },
-    operator() { return drillIn<"&&" | "||" | ">>" | ">>>" | "<<" | "&" | "^" | "|" | "+" | "-" | "*" | "/" | "%" | "**" | "<" | "<=" | "==" | "===" | "!=" | "!==" | ">=" | ">" | "??" | "instanceof" | "in">(this._operator, tree); },
+    operator() { return this._operator; },
     right() { return drillIn<T.Expression>(this._right, tree); },
     $with: {
       left: (v: NonNullable<T.BinaryExpression['_left']>) => wrapBinaryExpression({ ...data, _left: v }, tree),
@@ -797,11 +1656,11 @@ export function wrapBreakStatement(data: T.BreakStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.BreakStatement as const,
-    _label: data._label,
-    _semicolon: data._semicolon,
+    _label: normalizeSingularWrapSlot(data._label, "label", false, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     label() { return drillAs<T.Identifier | undefined>(this._label, tree, "statement_identifier", "identifier"); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       label: (v: NonNullable<T.BreakStatement['_label']>) => wrapBreakStatement({ ...data, _label: v }, tree),
       semicolon: (v: NonNullable<T.BreakStatement['_semicolon']>) => wrapBreakStatement({ ...data, _semicolon: v }, tree),
@@ -814,10 +1673,17 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.CallExpression as const,
-    $children: (data as any).$children,
+    _call_expression_call: normalizeSingularWrapSlot((data as any)._call_expression_call, "call_expression_call", false, (data as any).$type),
+    _call_expression_template_call: normalizeSingularWrapSlot((data as any)._call_expression_template_call, "call_expression_template_call", false, (data as any).$type),
+    _call_expression_member: normalizeSingularWrapSlot((data as any)._call_expression_member, "call_expression_member", false, (data as any).$type),
 
+    callExpressionCall() { return drillIn<T.CallExpressionCall | undefined>(this._call_expression_call, tree); },
+    callExpressionTemplateCall() { return drillIn<T.CallExpressionTemplateCall | undefined>(this._call_expression_template_call, tree); },
+    callExpressionMember() { return drillIn<T.CallExpressionMember | undefined>(this._call_expression_member, tree); },
     $with: {
-      children: (...items: readonly [((T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember))]) => wrapCallExpression({ ...(data as any), $children: items }, tree),
+      callExpressionCall: (v: T.CallExpressionCall) => wrapCallExpression({ ...(data as any), _call_expression_call: v }, tree),
+      callExpressionTemplateCall: (v: T.CallExpressionTemplateCall) => wrapCallExpression({ ...(data as any), _call_expression_template_call: v }, tree),
+      callExpressionMember: (v: T.CallExpressionMember) => wrapCallExpression({ ...(data as any), _call_expression_member: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -827,9 +1693,9 @@ export function wrapCallSignature(data: T.CallSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.CallSignature as const,
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _return_type: data._return_type,
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
 
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     parameters() { return drillIn<T.FormalParameters>(this._parameters, tree); },
@@ -847,9 +1713,9 @@ export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.CatchClause as const,
-    _parameter: data._parameter,
-    _type: data._type,
-    _body: data._body,
+    _parameter: normalizeSingularWrapSlot(data._parameter, "parameter", false, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     parameter() { return drillIn<T.Identifier | T.DestructuringPattern | undefined>(this._parameter, tree); },
     type() { return drillIn<T.TypeAnnotation | undefined>(this._type, tree); },
@@ -867,13 +1733,13 @@ export function wrapClass(data: T.Class, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Class as const,
-    _decorator: data._decorator,
-    _name: data._name,
-    _type_parameters: data._type_parameters,
-    _class_heritage: data._class_heritage,
-    _body: data._body,
+    _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator"),
+    _name: normalizeSingularWrapSlot(data._name, "name", false, data.$type),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _class_heritage: normalizeSingularWrapSlot(data._class_heritage, "class_heritage", false, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
-    decorators() { return drillInAll<T.Decorator>(this._decorator, tree); },
+    decorators() { return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree); },
     name() { return drillIn<T.TypeIdentifier | undefined>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     classHeritage() { return drillIn<T.ClassHeritage | undefined>(this._class_heritage, tree); },
@@ -893,9 +1759,10 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassBody as const,
-    $children: data.$children,
+    _class_body_method: normalizeRepeatedWrapSlot((data._class_body_method ?? data._class_body_method_sig ?? data._class_static_block ?? data._class_body_member), false, "class_body_method"),
 
-    $with: { $children: (...vs: ((T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember))[]) => wrapClassBody({ ...data, $children: vs }, tree) },
+    classBodyMethods() { return drillAsAll<T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ";">(this._class_body_method, tree, "class_body_method", "_class_body_method"); },
+    $with: { $children: (...vs: readonly [never]) => wrapClassBody({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -904,19 +1771,19 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassDeclaration as const,
-    _decorator: data._decorator,
-    _name: data._name,
-    _type_parameters: data._type_parameters,
-    _class_heritage: data._class_heritage,
-    _body: data._body,
-    _automatic_semicolon: data._automatic_semicolon,
+    _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator"),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _class_heritage: normalizeSingularWrapSlot(data._class_heritage, "class_heritage", false, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
+    _automatic_semicolon: normalizeSingularWrapSlot(data._automatic_semicolon, "automatic_semicolon", false, data.$type),
 
-    decorators() { return drillInAll<T.Decorator>(this._decorator, tree); },
+    decorators() { return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree); },
     name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     classHeritage() { return drillIn<T.ClassHeritage | undefined>(this._class_heritage, tree); },
     body() { return drillIn<T.ClassBody>(this._body, tree); },
-    automaticSemicolon() { return drillIn<T.AutomaticSemicolon | undefined>(this._automatic_semicolon, tree); },
+    automaticSemicolon() { return drillIn<string | undefined>(this._automatic_semicolon, tree); },
     $with: {
       decorators: (...v: NonNullable<T.ClassDeclaration['_decorator']>[number][]) => wrapClassDeclaration({ ...data, _decorator: v }, tree),
       name: (v: NonNullable<T.ClassDeclaration['_name']>) => wrapClassDeclaration({ ...data, _name: v }, tree),
@@ -932,9 +1799,15 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 export function wrapClassHeritageExtendsClause(data: T.ClassHeritageExtendsClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $children: data.$children,
+    _extends_clause: normalizeSingularWrapSlot(data._extends_clause, "extends_clause", true, data.$type),
+    _implements_clause: normalizeSingularWrapSlot(data._implements_clause, "implements_clause", false, data.$type),
 
-    $with: { $child: (v: (T.ExtendsClause | T.ImplementsClause)) => wrapClassHeritageExtendsClause({ ...data, $children: [v] }, tree) },
+    extendsClause() { return drillIn<T.ExtendsClause>(this._extends_clause, tree); },
+    implementsClause() { return drillIn<T.ImplementsClause | undefined>(this._implements_clause, tree); },
+    $with: {
+      extendsClause: (v: NonNullable<T.ClassHeritageExtendsClause['_extends_clause']>) => wrapClassHeritageExtendsClause({ ...data, _extends_clause: v }, tree),
+      implementsClause: (v: NonNullable<T.ClassHeritageExtendsClause['_implements_clause']>) => wrapClassHeritageExtendsClause({ ...data, _implements_clause: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -942,9 +1815,10 @@ export function wrapClassHeritageExtendsClause(data: T.ClassHeritageExtendsClaus
 export function wrapClassHeritageImplementsClause(data: T.ClassHeritageImplementsClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $children: data.$children,
+    _implements_clause: normalizeSingularWrapSlot(data._implements_clause, "implements_clause", true, data.$type),
 
-    $with: { $child: (v: T.ImplementsClause) => wrapClassHeritageImplementsClause({ ...data, $children: [v] }, tree) },
+    implementsClause() { return drillIn<T.ImplementsClause>(this._implements_clause, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapClassHeritageImplementsClause({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -953,10 +1827,14 @@ export function wrapClassHeritage(data: T.ClassHeritage, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassHeritage as const,
-    $children: (data as any).$children,
+    _class_heritage_extends_clause: normalizeSingularWrapSlot((data as any)._class_heritage_extends_clause, "class_heritage_extends_clause", false, (data as any).$type),
+    _class_heritage_implements_clause: normalizeSingularWrapSlot((data as any)._class_heritage_implements_clause, "class_heritage_implements_clause", false, (data as any).$type),
 
+    classHeritageExtendsClause() { return drillIn<T._ClassHeritageExtendsClause | undefined>(this._class_heritage_extends_clause, tree); },
+    classHeritageImplementsClause() { return drillIn<T._ClassHeritageImplementsClause | undefined>(this._class_heritage_implements_clause, tree); },
     $with: {
-      children: (...items: readonly [((T._ClassHeritageExtendsClause | T._ClassHeritageImplementsClause))]) => wrapClassHeritage({ ...(data as any), $children: items }, tree),
+      classHeritageExtendsClause: (v: T._ClassHeritageExtendsClause) => wrapClassHeritage({ ...(data as any), _class_heritage_extends_clause: v }, tree),
+      classHeritageImplementsClause: (v: T._ClassHeritageImplementsClause) => wrapClassHeritage({ ...(data as any), _class_heritage_implements_clause: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -966,13 +1844,11 @@ export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassStaticBlock as const,
-    _body: data._body,
-    $children: data.$children,
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     body() { return drillIn<T.StatementBlock>(this._body, tree); },
     $with: {
       body: (v: NonNullable<T.ClassStaticBlock['_body']>) => wrapClassStaticBlock({ ...data, _body: v }, tree),
-      children: (...items: readonly [T.AutomaticSemicolon]) => wrapClassStaticBlock({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -982,7 +1858,7 @@ export function wrapComputedPropertyName(data: T.ComputedPropertyName, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.ComputedPropertyName as const,
-    _expression: data._expression,
+    _expression: normalizeSingularWrapSlot(data._expression, "expression", true, data.$type),
 
     expression() { return drillIn<T.Expression>(this._expression, tree); },
     $with: {
@@ -996,10 +1872,10 @@ export function wrapConditionalType(data: T.ConditionalType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ConditionalType as const,
-    _left: data._left,
-    _right: data._right,
-    _consequence: data._consequence,
-    _alternative: data._alternative,
+    _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
+    _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type),
+    _consequence: normalizeSingularWrapSlot(data._consequence, "consequence", true, data.$type),
+    _alternative: normalizeSingularWrapSlot(data._alternative, "alternative", true, data.$type),
 
     left() { return drillIn<T.Type>(this._left, tree); },
     right() { return drillIn<T.Type>(this._right, tree); },
@@ -1019,7 +1895,7 @@ export function wrapConstraint(data: T.Constraint, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Constraint as const,
-    _type: data._type,
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
@@ -1033,10 +1909,10 @@ export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.ConstructSignature as const,
-    _abstract_marker: coerceBooleanKeywordStorage(data._abstract_marker),
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _type: data._type,
+    _abstract_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._abstract_marker, "abstract_marker", false, data.$type)),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type),
 
     abstractMarker() { return this._abstract_marker; },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
@@ -1056,10 +1932,10 @@ export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ConstructorType as const,
-    _abstract_marker: coerceBooleanKeywordStorage(data._abstract_marker),
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _type: data._type,
+    _abstract_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._abstract_marker, "abstract_marker", false, data.$type)),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     abstractMarker() { return this._abstract_marker; },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
@@ -1079,11 +1955,11 @@ export function wrapContinueStatement(data: T.ContinueStatement, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.ContinueStatement as const,
-    _label: data._label,
-    _semicolon: data._semicolon,
+    _label: normalizeSingularWrapSlot(data._label, "label", false, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     label() { return drillAs<T.Identifier | undefined>(this._label, tree, "statement_identifier", "identifier"); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       label: (v: NonNullable<T.ContinueStatement['_label']>) => wrapContinueStatement({ ...data, _label: v }, tree),
       semicolon: (v: NonNullable<T.ContinueStatement['_semicolon']>) => wrapContinueStatement({ ...data, _semicolon: v }, tree),
@@ -1096,9 +1972,9 @@ export function wrapDebuggerStatement(data: T.DebuggerStatement, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.DebuggerStatement as const,
-    _semicolon: data._semicolon,
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       semicolon: (v: NonNullable<T.DebuggerStatement['_semicolon']>) => wrapDebuggerStatement({ ...data, _semicolon: v }, tree),
     },
@@ -1106,13 +1982,18 @@ export function wrapDebuggerStatement(data: T.DebuggerStatement, tree: TreeHandl
   return _node;
 }
 
+export function wrapDeclaration(data: T.Declaration, tree: TreeHandle) {
+  return drillIn<T.Declaration>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["function_declaration","generator_function_declaration","class_declaration","lexical_declaration","variable_declaration","function_signature","abstract_class_declaration","module","internal_module","type_alias_declaration","enum_declaration","interface_declaration","import_alias","ambient_declaration"]), "children", true, data.$type), tree);
+}
+
 export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Decorator as const,
-    $children: data.$children,
+    _identifier: normalizeSingularWrapSlot((data._identifier ?? data._member_expression ?? data._call_expression ?? data._parenthesized_expression), "identifier", true, data.$type),
 
-    $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) => wrapDecorator({ ...data, $children: [v] }, tree) },
+    identifier() { return drillAs<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression>(this._identifier, tree, "member_expression", "decorator_member_expression"); },
+    $with: { $children: (...vs: readonly [never]) => wrapDecorator({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1121,9 +2002,9 @@ export function wrapDecoratorCallExpression(data: T.DecoratorCallExpression, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.DecoratorCallExpression as const,
-    _function: data._function,
-    _type_arguments: data._type_arguments,
-    _arguments: data._arguments,
+    _function: normalizeSingularWrapSlot(data._function, "function", true, data.$type),
+    _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", false, data.$type),
+    _arguments: normalizeSingularWrapSlot(data._arguments, "arguments", true, data.$type),
 
     function() { return drillAs<T.Identifier | T.DecoratorMemberExpression>(this._function, tree, "member_expression", "decorator_member_expression"); },
     typeArguments() { return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree); },
@@ -1141,8 +2022,8 @@ export function wrapDecoratorMemberExpression(data: T.DecoratorMemberExpression,
   const _node = withMethods({
     ...data,
     $type: TSKindId.DecoratorMemberExpression as const,
-    _object: data._object,
-    _property: data._property,
+    _object: normalizeSingularWrapSlot(data._object, "object", true, data.$type),
+    _property: normalizeSingularWrapSlot(data._property, "property", true, data.$type),
 
     object() { return drillAs<T.Identifier | T.DecoratorMemberExpression>(this._object, tree, "member_expression", "decorator_member_expression"); },
     property() { return drillAs<T.Identifier>(this._property, tree, "property_identifier", "identifier"); },
@@ -1158,9 +2039,10 @@ export function wrapDecoratorParenthesizedExpression(data: T.DecoratorParenthesi
   const _node = withMethods({
     ...data,
     $type: TSKindId.DecoratorParenthesizedExpression as const,
-    $children: data.$children,
+    _identifier: normalizeSingularWrapSlot((data._identifier ?? data._member_expression ?? data._call_expression), "identifier", true, data.$type),
 
-    $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) => wrapDecoratorParenthesizedExpression({ ...data, $children: [v] }, tree) },
+    identifier() { return drillAs<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(this._identifier, tree, "member_expression", "decorator_member_expression"); },
+    $with: { $children: (...vs: readonly [never]) => wrapDecoratorParenthesizedExpression({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1169,7 +2051,7 @@ export function wrapDefaultType(data: T.DefaultType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DefaultType as const,
-    _type: data._type,
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
@@ -1183,9 +2065,9 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DoStatement as const,
-    _body: data._body,
-    _condition: data._condition,
-    _semicolon: data._semicolon,
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
+    _condition: normalizeSingularWrapSlot(data._condition, "condition", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     body() { return drillIn<T.Statement>(this._body, tree); },
     condition() { return drillIn<T.ParenthesizedExpression>(this._condition, tree); },
@@ -1203,7 +2085,7 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ElseClause as const,
-    _statement: data._statement,
+    _statement: normalizeSingularWrapSlot(data._statement, "statement", true, data.$type),
 
     statement() { return drillIn<T.Statement>(this._statement, tree); },
     $with: {
@@ -1217,8 +2099,8 @@ export function wrapEnumAssignment(data: T.EnumAssignment, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.EnumAssignment as const,
-    _name: data._name,
-    _value: data._value,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
 
     name() { return drillIn<T.PropertyName>(this._name, tree); },
     value() { return drillIn<T.Expression>(this._value, tree); },
@@ -1234,10 +2116,14 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.EnumBody as const,
-    $children: data.$children,
+    _name: normalizeRepeatedWrapSlot(data._name, false, "name"),
+    _enum_assignment: normalizeRepeatedWrapSlot(data._enum_assignment, false, "enum_assignment"),
 
+    names() { return drillInAll<T.PropertyName>(this._name as readonly T.PropertyName[] | undefined, tree); },
+    enumAssignments() { return drillInAll<T.EnumAssignment>(this._enum_assignment as readonly T.EnumAssignment[] | undefined, tree); },
     $with: {
-      children: (...items: ((T.PropertyName | T.EnumAssignment))[]) => wrapEnumBody({ ...data, $children: items }, tree),
+      names: (...v: NonNullable<T.EnumBody['_name']>[number][]) => wrapEnumBody({ ...data, _name: v }, tree),
+      enumAssignments: (...v: NonNullable<T.EnumBody['_enum_assignment']>[number][]) => wrapEnumBody({ ...data, _enum_assignment: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1247,9 +2133,9 @@ export function wrapEnumDeclaration(data: T.EnumDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.EnumDeclaration as const,
-    _const_marker: coerceBooleanKeywordStorage(data._const_marker),
-    _name: data._name,
-    _body: data._body,
+    _const_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._const_marker, "const_marker", false, data.$type)),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     constMarker() { return this._const_marker; },
     name() { return drillIn<T.Identifier>(this._name, tree); },
@@ -1267,9 +2153,10 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportClause as const,
-    $children: data.$children,
+    _export_specifier: normalizeRepeatedWrapSlot(data._export_specifier, false, "export_specifier"),
 
-    $with: { $children: (...vs: T.ExportSpecifier[]) => wrapExportClause({ ...data, $children: vs }, tree) },
+    exportSpecifiers() { return drillInAll<T.ExportSpecifier>(this._export_specifier as readonly T.ExportSpecifier[] | undefined, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapExportClause({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1278,9 +2165,9 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportSpecifier as const,
-    _export_kind: projectKindEnumStorage(data._export_kind),
-    _name: data._name,
-    _alias: data._alias,
+    _export_kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._export_kind, "export_kind", false, data.$type)),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _alias: normalizeSingularWrapSlot(data._alias, "alias", false, data.$type),
 
     exportKind() { return this._export_kind; },
     name() { return drillIn<T.ModuleExportName>(this._name, tree); },
@@ -1297,13 +2184,17 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle) {
 export function wrapExportStatementTypeExport(data: T.ExportStatementTypeExport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    _source: data._source,
-    $children: data.$children,
+    _export_clause: normalizeSingularWrapSlot(data._export_clause, "export_clause", true, data.$type),
+    _source: normalizeSingularWrapSlot(data._source, "source", false, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
+    exportClause() { return drillIn<T.ExportClause>(this._export_clause, tree); },
     source() { return drillIn<T.String | undefined>(this._source, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
+      exportClause: (v: NonNullable<T.ExportStatementTypeExport['_export_clause']>) => wrapExportStatementTypeExport({ ...data, _export_clause: v }, tree),
       source: (v: NonNullable<T.ExportStatementTypeExport['_source']>) => wrapExportStatementTypeExport({ ...data, _source: v }, tree),
-      children: (...items: readonly [((T.ExportClause | T.Semicolon))]) => wrapExportStatementTypeExport({ ...data, $children: items }, tree),
+      semicolon: (v: NonNullable<T.ExportStatementTypeExport['_semicolon']>) => wrapExportStatementTypeExport({ ...data, _semicolon: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1312,9 +2203,15 @@ export function wrapExportStatementTypeExport(data: T.ExportStatementTypeExport,
 export function wrapExportStatementEqualsExport(data: T.ExportStatementEqualsExport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $children: data.$children,
+    _expression: normalizeSingularWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._expression), "expression", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    $with: { $child: (v: (T.Expression | T.Semicolon)) => wrapExportStatementEqualsExport({ ...data, $children: [v] }, tree) },
+    expression() { return drillIn<T.Expression>(this._expression, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
+    $with: {
+      expression: (v: NonNullable<T.ExportStatementEqualsExport['_expression']>) => wrapExportStatementEqualsExport({ ...data, _expression: v }, tree),
+      semicolon: (v: NonNullable<T.ExportStatementEqualsExport['_semicolon']>) => wrapExportStatementEqualsExport({ ...data, _semicolon: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -1322,9 +2219,15 @@ export function wrapExportStatementEqualsExport(data: T.ExportStatementEqualsExp
 export function wrapExportStatementNamespaceExport(data: T.ExportStatementNamespaceExport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $children: data.$children,
+    _identifier: normalizeSingularWrapSlot(data._identifier, "identifier", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    $with: { $child: (v: (T.Identifier | T.Semicolon)) => wrapExportStatementNamespaceExport({ ...data, $children: [v] }, tree) },
+    identifier() { return drillIn<T.Identifier>(this._identifier, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
+    $with: {
+      identifier: (v: NonNullable<T.ExportStatementNamespaceExport['_identifier']>) => wrapExportStatementNamespaceExport({ ...data, _identifier: v }, tree),
+      semicolon: (v: NonNullable<T.ExportStatementNamespaceExport['_semicolon']>) => wrapExportStatementNamespaceExport({ ...data, _semicolon: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -1333,26 +2236,41 @@ export function wrapExportStatement(data: T.ExportStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatement as const,
-    $children: (data as any).$children,
+    _export_statement_default: normalizeSingularWrapSlot(((data as any)._export_statement_default_from_arm ?? (data as any)._export_statement_default_decl_arm ?? (data as any)._export_statement_default), "export_statement_default", false, (data as any).$type),
+    _export_statement_type_export: normalizeSingularWrapSlot((data as any)._export_statement_type_export, "export_statement_type_export", false, (data as any).$type),
+    _export_statement_equals_export: normalizeSingularWrapSlot((data as any)._export_statement_equals_export, "export_statement_equals_export", false, (data as any).$type),
+    _export_statement_namespace_export: normalizeSingularWrapSlot((data as any)._export_statement_namespace_export, "export_statement_namespace_export", false, (data as any).$type),
 
+    exportStatementDefault() { return drillIn<T.ExportStatementDefault | undefined>(this._export_statement_default, tree); },
+    exportStatementTypeExport() { return drillIn<T._ExportStatementTypeExport | undefined>(this._export_statement_type_export, tree); },
+    exportStatementEqualsExport() { return drillIn<T._ExportStatementEqualsExport | undefined>(this._export_statement_equals_export, tree); },
+    exportStatementNamespaceExport() { return drillIn<T._ExportStatementNamespaceExport | undefined>(this._export_statement_namespace_export, tree); },
     $with: {
-      children: (...items: readonly [((T.ExportStatementDefault | T._ExportStatementTypeExport | T._ExportStatementEqualsExport | T._ExportStatementNamespaceExport))]) => wrapExportStatement({ ...(data as any), $children: items }, tree),
+      exportStatementDefault: (v: T.ExportStatementDefault) => wrapExportStatement({ ...(data as any), _export_statement_default: v }, tree),
+      exportStatementTypeExport: (v: T._ExportStatementTypeExport) => wrapExportStatement({ ...(data as any), _export_statement_type_export: v }, tree),
+      exportStatementEqualsExport: (v: T._ExportStatementEqualsExport) => wrapExportStatement({ ...(data as any), _export_statement_equals_export: v }, tree),
+      exportStatementNamespaceExport: (v: T._ExportStatementNamespaceExport) => wrapExportStatement({ ...(data as any), _export_statement_namespace_export: v }, tree),
     },
   }, methodsEngine);
   return _node;
+}
+
+export function wrapExpression(data: T.Expression, tree: TreeHandle) {
+  return drillIn<T.Expression>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression"]), "children", true, data.$type), tree);
 }
 
 export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExpressionStatement as const,
-    _semicolon: data._semicolon,
-    $children: data.$children,
+    _expressions: normalizeSingularWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._sequence_expression ?? data._expressions), "expressions", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    expressions() { return drillIn<T.Expressions>(this._expressions, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
+      expressions: (v: NonNullable<T.ExpressionStatement['_expressions']>) => wrapExpressionStatement({ ...data, _expressions: v }, tree),
       semicolon: (v: NonNullable<T.ExpressionStatement['_semicolon']>) => wrapExpressionStatement({ ...data, _semicolon: v }, tree),
-      children: (...items: readonly [T.Expressions]) => wrapExpressionStatement({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1362,10 +2280,10 @@ export function wrapExtendsClause(data: T.ExtendsClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExtendsClause as const,
-    _value: data._value,
-    _type_arguments: data._type_arguments,
+    _value: normalizeRepeatedWrapSlot(data._value, true, "value"),
+    _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", false, data.$type),
 
-    values() { return drillInAll<T.Expression>(this._value, tree); },
+    values() { return drillInAll<T.Expression>(this._value as readonly T.Expression[] | undefined, tree); },
     typeArguments() { return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree); },
     $with: {
       values: (...v: NonEmptyArray<NonNullable<T.ExtendsClause['_value']>[number]>) => wrapExtendsClause({ ...data, _value: v }, tree),
@@ -1379,9 +2297,9 @@ export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExtendsTypeClause as const,
-    _type: data._type,
+    _type: normalizeRepeatedWrapSlot(data._type, true, "type"),
 
-    types() { return drillInAll<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(this._type, tree); },
+    types() { return drillInAll<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(this._type as readonly (T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType)[] | undefined, tree); },
     $with: {
       types: (...v: NonEmptyArray<NonNullable<T.ExtendsTypeClause['_type']>[number]>) => wrapExtendsTypeClause({ ...data, _type: v }, tree),
     },
@@ -1393,7 +2311,7 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FinallyClause as const,
-    _body: data._body,
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     body() { return drillIn<T.StatementBlock>(this._body, tree); },
     $with: {
@@ -1407,7 +2325,7 @@ export function wrapFlowMaybeType(data: T.FlowMaybeType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FlowMaybeType as const,
-    _primary_type: data._primary_type,
+    _primary_type: normalizeSingularWrapSlot(data._primary_type, "primary_type", true, data.$type),
 
     primaryType() { return drillIn<T.PrimaryType>(this._primary_type, tree); },
     $with: {
@@ -1421,22 +2339,23 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForInStatement as const,
-    _await_marker: coerceBooleanKeywordStorage(data._await_marker),
-    _operator: projectKindEnumStorage(data._operator),
-    _right: data._right,
-    _body: data._body,
-    $children: data.$children,
+    _await_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._await_marker, "await_marker", false, data.$type)),
+    _for_header_lhs: normalizeSingularWrapSlot((data._for_header_lhs ?? data._for_header_var_kind ?? data._for_header_let_const_kind), "for_header_lhs", true, data.$type),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type)),
+    _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     awaitMarker() { return this._await_marker; },
+    forHeaderLhs() { return drillAs<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(this._for_header_lhs, tree, "for_header_lhs", "_for_header_lhs"); },
     operator() { return this._operator; },
     right() { return drillIn<T.Expressions>(this._right, tree); },
     body() { return drillIn<T.Statement>(this._body, tree); },
     $with: {
       awaitMarker: (v: NonNullable<T.ForInStatement['_await_marker']>) => wrapForInStatement({ ...data, _await_marker: v }, tree),
+      forHeaderLhs: (v: NonNullable<T.ForInStatement['_for_header_lhs']>) => wrapForInStatement({ ...data, _for_header_lhs: v }, tree),
       operator: (v: NonNullable<T.ForInStatement['_operator']>) => wrapForInStatement({ ...data, _operator: v }, tree),
       right: (v: NonNullable<T.ForInStatement['_right']>) => wrapForInStatement({ ...data, _right: v }, tree),
       body: (v: NonNullable<T.ForInStatement['_body']>) => wrapForInStatement({ ...data, _body: v }, tree),
-      children: (...items: readonly [((T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind))]) => wrapForInStatement({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1446,10 +2365,10 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForStatement as const,
-    _initializer: data._initializer,
-    _condition: data._condition,
-    _increment: data._increment,
-    _body: data._body,
+    _initializer: normalizeSingularWrapSlot(data._initializer, "initializer", true, data.$type),
+    _condition: normalizeSingularWrapSlot(data._condition, "condition", true, data.$type),
+    _increment: normalizeSingularWrapSlot(data._increment, "increment", false, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     initializer() { return drillIn<T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | ";">(this._initializer, tree); },
     condition() { return drillIn<T.Expressions | T.EmptyStatement>(this._condition, tree); },
@@ -1469,9 +2388,10 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.FormalParameters as const,
-    $children: data.$children,
+    _formal_parameter: normalizeRepeatedWrapSlot((data._required_parameter ?? data._optional_parameter ?? data._formal_parameter), false, "formal_parameter"),
 
-    $with: { $children: (...vs: T.FormalParameter[]) => wrapFormalParameters({ ...data, $children: vs }, tree) },
+    formalParameters() { return drillInAll<T.FormalParameter>(this._formal_parameter as readonly T.FormalParameter[] | undefined, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapFormalParameters({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1480,13 +2400,12 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.FunctionDeclaration as const,
-    _async_marker: coerceBooleanKeywordStorage(data._async_marker),
-    _name: data._name,
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _return_type: data._return_type,
-    _body: data._body,
-    $children: data.$children,
+    _async_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._async_marker, "async_marker", false, data.$type)),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     asyncMarker() { return this._async_marker; },
     name() { return drillIn<T.Identifier>(this._name, tree); },
@@ -1501,7 +2420,6 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
       parameters: (v: NonNullable<T.FunctionDeclaration['_parameters']>) => wrapFunctionDeclaration({ ...data, _parameters: v }, tree),
       returnType: (v: NonNullable<T.FunctionDeclaration['_return_type']>) => wrapFunctionDeclaration({ ...data, _return_type: v }, tree),
       body: (v: NonNullable<T.FunctionDeclaration['_body']>) => wrapFunctionDeclaration({ ...data, _body: v }, tree),
-      children: (...items: readonly [T.AutomaticSemicolon]) => wrapFunctionDeclaration({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1511,12 +2429,12 @@ export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.FunctionExpression as const,
-    _async_marker: coerceBooleanKeywordStorage(data._async_marker),
-    _name: data._name,
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _return_type: data._return_type,
-    _body: data._body,
+    _async_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._async_marker, "async_marker", false, data.$type)),
+    _name: normalizeSingularWrapSlot(data._name, "name", false, data.$type),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     asyncMarker() { return this._async_marker; },
     name() { return drillIn<T.Identifier | undefined>(this._name, tree); },
@@ -1540,19 +2458,19 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.FunctionSignature as const,
-    _async_marker: coerceBooleanKeywordStorage(data._async_marker),
-    _name: data._name,
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _return_type: data._return_type,
-    _semicolon: data._semicolon,
+    _async_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._async_marker, "async_marker", false, data.$type)),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     asyncMarker() { return this._async_marker; },
     name() { return drillIn<T.Identifier>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     parameters() { return drillIn<T.FormalParameters>(this._parameters, tree); },
     returnType() { return drillIn<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined>(this._return_type, tree); },
-    semicolon() { return drillIn<T.Semicolon | T.FunctionSignatureAutomaticSemicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       asyncMarker: (v: NonNullable<T.FunctionSignature['_async_marker']>) => wrapFunctionSignature({ ...data, _async_marker: v }, tree),
       name: (v: NonNullable<T.FunctionSignature['_name']>) => wrapFunctionSignature({ ...data, _name: v }, tree),
@@ -1569,9 +2487,9 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FunctionType as const,
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _return_type: data._return_type,
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", true, data.$type),
 
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     parameters() { return drillIn<T.FormalParameters>(this._parameters, tree); },
@@ -1589,12 +2507,12 @@ export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.GeneratorFunction as const,
-    _async_marker: coerceBooleanKeywordStorage(data._async_marker),
-    _name: data._name,
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _return_type: data._return_type,
-    _body: data._body,
+    _async_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._async_marker, "async_marker", false, data.$type)),
+    _name: normalizeSingularWrapSlot(data._name, "name", false, data.$type),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     asyncMarker() { return this._async_marker; },
     name() { return drillIn<T.Identifier | undefined>(this._name, tree); },
@@ -1618,13 +2536,12 @@ export function wrapGeneratorFunctionDeclaration(data: T.GeneratorFunctionDeclar
   const _node = withMethods({
     ...data,
     $type: TSKindId.GeneratorFunctionDeclaration as const,
-    _async_marker: coerceBooleanKeywordStorage(data._async_marker),
-    _name: data._name,
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _return_type: data._return_type,
-    _body: data._body,
-    $children: data.$children,
+    _async_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._async_marker, "async_marker", false, data.$type)),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     asyncMarker() { return this._async_marker; },
     name() { return drillIn<T.Identifier>(this._name, tree); },
@@ -1639,7 +2556,6 @@ export function wrapGeneratorFunctionDeclaration(data: T.GeneratorFunctionDeclar
       parameters: (v: NonNullable<T.GeneratorFunctionDeclaration['_parameters']>) => wrapGeneratorFunctionDeclaration({ ...data, _parameters: v }, tree),
       returnType: (v: NonNullable<T.GeneratorFunctionDeclaration['_return_type']>) => wrapGeneratorFunctionDeclaration({ ...data, _return_type: v }, tree),
       body: (v: NonNullable<T.GeneratorFunctionDeclaration['_body']>) => wrapGeneratorFunctionDeclaration({ ...data, _body: v }, tree),
-      children: (...items: readonly [T.AutomaticSemicolon]) => wrapGeneratorFunctionDeclaration({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1649,8 +2565,8 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.GenericType as const,
-    _name: data._name,
-    _type_arguments: data._type_arguments,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", true, data.$type),
 
     name() { return drillIn<T.TypeIdentifier | T.NestedTypeIdentifier>(this._name, tree); },
     typeArguments() { return drillIn<T.TypeArguments>(this._type_arguments, tree); },
@@ -1666,9 +2582,9 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.IfStatement as const,
-    _condition: data._condition,
-    _consequence: data._consequence,
-    _alternative: data._alternative,
+    _condition: normalizeSingularWrapSlot(data._condition, "condition", true, data.$type),
+    _consequence: normalizeSingularWrapSlot(data._consequence, "consequence", true, data.$type),
+    _alternative: normalizeSingularWrapSlot(data._alternative, "alternative", false, data.$type),
 
     condition() { return drillIn<T.ParenthesizedExpression>(this._condition, tree); },
     consequence() { return drillIn<T.Statement>(this._consequence, tree); },
@@ -1686,9 +2602,10 @@ export function wrapImplementsClause(data: T.ImplementsClause, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImplementsClause as const,
-    $children: data.$children,
+    _type: normalizeRepeatedWrapSlot((data._parenthesized_type ?? data._predefined_type ?? data._type_identifier ?? data._nested_type_identifier ?? data._generic_type ?? data._object_type ?? data._array_type ?? data._tuple_type ?? data._flow_maybe_type ?? data._type_query ?? data._index_type_query ?? data._this ?? data._existential_type ?? data._literal_type ?? data._lookup_type ?? data._conditional_type ?? data._template_literal_type ?? data._intersection_type ?? data._union_type ?? data._function_type ?? data._readonly_type ?? data._constructor_type ?? data._infer_type ?? data._type_query_member_expression_in_type_annotation ?? data._type_query_call_expression_in_type_annotation ?? data._type), true, "type"),
 
-    $with: { $children: (...vs: NonEmptyArray<T.Type>) => wrapImplementsClause({ ...data, $children: vs }, tree) },
+    types() { return drillInAll<T.Type>(this._type as readonly T.Type[] | undefined, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapImplementsClause({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1697,13 +2614,13 @@ export function wrapImportAlias(data: T.ImportAlias, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportAlias as const,
-    _name: data._name,
-    _value: data._value,
-    _semicolon: data._semicolon,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     name() { return drillIn<T.Identifier>(this._name, tree); },
     value() { return drillIn<T.Identifier | T.NestedIdentifier>(this._value, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       name: (v: NonNullable<T.ImportAlias['_name']>) => wrapImportAlias({ ...data, _name: v }, tree),
       value: (v: NonNullable<T.ImportAlias['_value']>) => wrapImportAlias({ ...data, _value: v }, tree),
@@ -1717,7 +2634,7 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportAttribute as const,
-    _object: data._object,
+    _object: normalizeSingularWrapSlot(data._object, "object", true, data.$type),
 
     object() { return drillIn<T.ImportAttributeObject | T.Object>(this._object, tree); },
     $with: {
@@ -1730,9 +2647,10 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle) {
 export function wrapImportClauseNamespaceImport(data: T.ImportClauseNamespaceImport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $children: data.$children,
+    _namespace_import: normalizeSingularWrapSlot(data._namespace_import, "namespace_import", true, data.$type),
 
-    $with: { $child: (v: T.NamespaceImport) => wrapImportClauseNamespaceImport({ ...data, $children: [v] }, tree) },
+    namespaceImport() { return drillIn<T.NamespaceImport>(this._namespace_import, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapImportClauseNamespaceImport({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1740,9 +2658,10 @@ export function wrapImportClauseNamespaceImport(data: T.ImportClauseNamespaceImp
 export function wrapImportClauseNamedImports(data: T.ImportClauseNamedImports, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $children: data.$children,
+    _named_imports: normalizeSingularWrapSlot(data._named_imports, "named_imports", true, data.$type),
 
-    $with: { $child: (v: T.NamedImports) => wrapImportClauseNamedImports({ ...data, $children: [v] }, tree) },
+    namedImports() { return drillIn<T.NamedImports>(this._named_imports, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapImportClauseNamedImports({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1750,9 +2669,15 @@ export function wrapImportClauseNamedImports(data: T.ImportClauseNamedImports, t
 export function wrapImportClauseDefaultImport(data: T.ImportClauseDefaultImport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $children: data.$children,
+    _import_identifier: normalizeSingularWrapSlot((data._identifier ?? data._import_identifier), "import_identifier", true, data.$type),
+    _namespace_import: normalizeSingularWrapSlot((data._namespace_import ?? data._named_imports), "namespace_import", false, data.$type),
 
-    $with: { $child: (v: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) => wrapImportClauseDefaultImport({ ...data, $children: [v] }, tree) },
+    importIdentifier() { return drillIn<T.ImportIdentifier>(this._import_identifier, tree); },
+    namespaceImport() { return drillIn<T.NamespaceImport | T.NamedImports | undefined>(this._namespace_import, tree); },
+    $with: {
+      importIdentifier: (v: NonNullable<T.ImportClauseDefaultImport['_import_identifier']>) => wrapImportClauseDefaultImport({ ...data, _import_identifier: v }, tree),
+      namespaceImport: (v: NonNullable<T.ImportClauseDefaultImport['_namespace_import']>) => wrapImportClauseDefaultImport({ ...data, _namespace_import: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -1761,10 +2686,17 @@ export function wrapImportClause(data: T.ImportClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportClause as const,
-    $children: (data as any).$children,
+    _import_clause_namespace_import: normalizeSingularWrapSlot((data as any)._import_clause_namespace_import, "import_clause_namespace_import", false, (data as any).$type),
+    _import_clause_named_imports: normalizeSingularWrapSlot((data as any)._import_clause_named_imports, "import_clause_named_imports", false, (data as any).$type),
+    _import_clause_default_import: normalizeSingularWrapSlot((data as any)._import_clause_default_import, "import_clause_default_import", false, (data as any).$type),
 
+    importClauseNamespaceImport() { return drillIn<T._ImportClauseNamespaceImport | undefined>(this._import_clause_namespace_import, tree); },
+    importClauseNamedImports() { return drillIn<T._ImportClauseNamedImports | undefined>(this._import_clause_named_imports, tree); },
+    importClauseDefaultImport() { return drillIn<T._ImportClauseDefaultImport | undefined>(this._import_clause_default_import, tree); },
     $with: {
-      children: (...items: readonly [((T._ImportClauseNamespaceImport | T._ImportClauseNamedImports | T._ImportClauseDefaultImport))]) => wrapImportClause({ ...(data as any), $children: items }, tree),
+      importClauseNamespaceImport: (v: T._ImportClauseNamespaceImport) => wrapImportClause({ ...(data as any), _import_clause_namespace_import: v }, tree),
+      importClauseNamedImports: (v: T._ImportClauseNamedImports) => wrapImportClause({ ...(data as any), _import_clause_named_imports: v }, tree),
+      importClauseDefaultImport: (v: T._ImportClauseDefaultImport) => wrapImportClause({ ...(data as any), _import_clause_default_import: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1774,8 +2706,8 @@ export function wrapImportRequireClause(data: T.ImportRequireClause, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportRequireClause as const,
-    _identifier: data._identifier,
-    _source: data._source,
+    _identifier: normalizeSingularWrapSlot(data._identifier, "identifier", true, data.$type),
+    _source: normalizeSingularWrapSlot(data._source, "source", true, data.$type),
 
     identifier() { return drillIn<T.Identifier>(this._identifier, tree); },
     source() { return drillIn<T.String>(this._source, tree); },
@@ -1790,7 +2722,7 @@ export function wrapImportRequireClause(data: T.ImportRequireClause, tree: TreeH
 export function wrapImportSpecifierName(data: T.ImportSpecifierName, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    _name: data._name,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
 
     name() { return drillIn<T.ImportIdentifier>(this._name, tree); },
     $with: {
@@ -1804,13 +2736,17 @@ export function wrapImportSpecifier(data: T.ImportSpecifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportSpecifier as const,
-    _import_kind: projectKindEnumStorage(data._import_kind),
-    $children: (data as any).$children,
+    _import_kind: projectKindEnumStorage(normalizeSingularWrapSlot((data as any)._import_kind, "import_kind", false, (data as any).$type)),
+    _import_specifier_name: normalizeSingularWrapSlot((data as any)._import_specifier_name, "import_specifier_name", false, (data as any).$type),
+    _import_specifier_as: normalizeSingularWrapSlot((data as any)._import_specifier_as, "import_specifier_as", false, (data as any).$type),
 
     importKind() { return this._import_kind; },
+    importSpecifierName() { return drillIn<T._ImportSpecifierName | undefined>(this._import_specifier_name, tree); },
+    importSpecifierAs() { return drillIn<T.ImportSpecifierAs | undefined>(this._import_specifier_as, tree); },
     $with: {
       importKind: (v: number) => wrapImportSpecifier({ ...(data as any), _import_kind: v }, tree),
-      children: (...items: readonly [((T._ImportSpecifierName | T.ImportSpecifierAs))]) => wrapImportSpecifier({ ...(data as any), $children: items }, tree),
+      importSpecifierName: (v: T._ImportSpecifierName) => wrapImportSpecifier({ ...(data as any), _import_specifier_name: v }, tree),
+      importSpecifierAs: (v: T.ImportSpecifierAs) => wrapImportSpecifier({ ...(data as any), _import_specifier_as: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1820,18 +2756,18 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportStatement as const,
-    _import_clause: data._import_clause,
-    _from_clause: data._from_clause,
-    _import_attribute: data._import_attribute,
-    _semicolon: data._semicolon,
+    _import_clause: projectKindEnumStorage(normalizeSingularWrapSlot(data._import_clause, "import_clause", false, data.$type)),
+    _from_clause: normalizeRepeatedWrapSlot(data._from_clause, true, "from_clause"),
+    _import_attribute: normalizeSingularWrapSlot(data._import_attribute, "import_attribute", false, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    importClause() { return drillIn<"type" | "typeof" | undefined>(this._import_clause, tree); },
-    fromClause() { return drillIn<T.ImportClause | "from" | T.String | T.ImportRequireClause>(this._from_clause, tree); },
+    importClause() { return this._import_clause; },
+    fromClauses() { return drillInAll<T.ImportClause | "from" | T.String | T.ImportRequireClause>(this._from_clause as readonly (T.ImportClause | "from" | T.String | T.ImportRequireClause)[] | undefined, tree); },
     importAttribute() { return drillIn<T.ImportAttribute | undefined>(this._import_attribute, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       importClause: (v: NonNullable<T.ImportStatement['_import_clause']>) => wrapImportStatement({ ...data, _import_clause: v }, tree),
-      fromClause: (v: NonNullable<T.ImportStatement['_from_clause']>) => wrapImportStatement({ ...data, _from_clause: v }, tree),
+      fromClauses: (...v: NonEmptyArray<NonNullable<T.ImportStatement['_from_clause']>[number]>) => wrapImportStatement({ ...data, _from_clause: v }, tree),
       importAttribute: (v: NonNullable<T.ImportStatement['_import_attribute']>) => wrapImportStatement({ ...data, _import_attribute: v }, tree),
       semicolon: (v: NonNullable<T.ImportStatement['_semicolon']>) => wrapImportStatement({ ...data, _semicolon: v }, tree),
     },
@@ -1842,9 +2778,10 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
 export function wrapIndexSignatureMappedTypeClause(data: T.IndexSignatureMappedTypeClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $children: data.$children,
+    _mapped_type_clause: normalizeSingularWrapSlot(data._mapped_type_clause, "mapped_type_clause", true, data.$type),
 
-    $with: { $child: (v: T.MappedTypeClause) => wrapIndexSignatureMappedTypeClause({ ...data, $children: [v] }, tree) },
+    mappedTypeClause() { return drillIn<T.MappedTypeClause>(this._mapped_type_clause, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapIndexSignatureMappedTypeClause({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1853,16 +2790,20 @@ export function wrapIndexSignature(data: T.IndexSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.IndexSignature as const,
-    _sign: (data as any)._sign,
-    _type: (data as any)._type,
-    $children: (data as any).$children,
+    _sign: projectKindEnumStorage(normalizeSingularWrapSlot((data as any)._sign, "sign", false, (data as any).$type)),
+    _index_signature_colon: normalizeSingularWrapSlot((data as any)._index_signature_colon, "index_signature_colon", false, (data as any).$type),
+    _type: normalizeSingularWrapSlot((data as any)._type, "type", true, (data as any).$type),
+    _index_signature_mapped_type_clause: normalizeSingularWrapSlot((data as any)._index_signature_mapped_type_clause, "index_signature_mapped_type_clause", false, (data as any).$type),
 
-    sign() { return drillIn<"-" | "+" | undefined>(this._sign, tree); },
+    sign() { return this._sign; },
+    indexSignatureColon() { return drillIn<T.IndexSignatureColon | undefined>(this._index_signature_colon, tree); },
     type() { return drillIn<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(this._type, tree); },
+    indexSignatureMappedTypeClause() { return drillIn<T._IndexSignatureMappedTypeClause | undefined>(this._index_signature_mapped_type_clause, tree); },
     $with: {
-      sign: (v: "-" | "+") => wrapIndexSignature({ ...(data as any), _sign: v }, tree),
+      sign: (v: number) => wrapIndexSignature({ ...(data as any), _sign: v }, tree),
+      indexSignatureColon: (v: T.IndexSignatureColon) => wrapIndexSignature({ ...(data as any), _index_signature_colon: v }, tree),
       type: (v: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) => wrapIndexSignature({ ...(data as any), _type: v }, tree),
-      children: (...items: readonly [((T.IndexSignatureColon | T._IndexSignatureMappedTypeClause))]) => wrapIndexSignature({ ...(data as any), $children: items }, tree),
+      indexSignatureMappedTypeClause: (v: T._IndexSignatureMappedTypeClause) => wrapIndexSignature({ ...(data as any), _index_signature_mapped_type_clause: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1872,7 +2813,7 @@ export function wrapIndexTypeQuery(data: T.IndexTypeQuery, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.IndexTypeQuery as const,
-    _primary_type: data._primary_type,
+    _primary_type: normalizeSingularWrapSlot(data._primary_type, "primary_type", true, data.$type),
 
     primaryType() { return drillIn<T.PrimaryType>(this._primary_type, tree); },
     $with: {
@@ -1886,8 +2827,8 @@ export function wrapInferType(data: T.InferType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.InferType as const,
-    _type_identifier: data._type_identifier,
-    _type: data._type,
+    _type_identifier: normalizeSingularWrapSlot(data._type_identifier, "type_identifier", true, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type),
 
     typeIdentifier() { return drillIn<T.TypeIdentifier>(this._type_identifier, tree); },
     type() { return drillIn<T.Type | undefined>(this._type, tree); },
@@ -1903,8 +2844,8 @@ export function wrapInstantiationExpression(data: T.InstantiationExpression, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.InstantiationExpression as const,
-    _expression: data._expression,
-    _type_arguments: data._type_arguments,
+    _expression: normalizeSingularWrapSlot(data._expression, "expression", true, data.$type),
+    _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", true, data.$type),
 
     expression() { return drillIn<T.Expression>(this._expression, tree); },
     typeArguments() { return drillIn<T.TypeArguments>(this._type_arguments, tree); },
@@ -1920,10 +2861,10 @@ export function wrapInterfaceDeclaration(data: T.InterfaceDeclaration, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.InterfaceDeclaration as const,
-    _name: data._name,
-    _type_parameters: data._type_parameters,
-    _extends_type_clause: data._extends_type_clause,
-    _body: data._body,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _extends_type_clause: normalizeSingularWrapSlot(data._extends_type_clause, "extends_type_clause", false, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
@@ -1943,8 +2884,8 @@ export function wrapInternalModule(data: T.InternalModule, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.InternalModule as const,
-    _name: data._name,
-    _body: data._body,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", false, data.$type),
 
     name() { return drillIn<T.String | T.Identifier | T.NestedIdentifier>(this._name, tree); },
     body() { return drillIn<T.StatementBlock | undefined>(this._body, tree); },
@@ -1960,8 +2901,8 @@ export function wrapIntersectionType(data: T.IntersectionType, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.IntersectionType as const,
-    _left: data._left,
-    _right: data._right,
+    _left: normalizeSingularWrapSlot(data._left, "left", false, data.$type),
+    _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type),
 
     left() { return drillIn<T.Type | undefined>(this._left, tree); },
     right() { return drillIn<T.Type>(this._right, tree); },
@@ -1977,8 +2918,8 @@ export function wrapLabeledStatement(data: T.LabeledStatement, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.LabeledStatement as const,
-    _label: data._label,
-    _body: data._body,
+    _label: normalizeSingularWrapSlot(data._label, "label", true, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     label() { return drillAs<T.StatementIdentifier>(this._label, tree, "statement_identifier", "_statement_identifier"); },
     body() { return drillIn<T.Statement>(this._body, tree); },
@@ -1994,13 +2935,13 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.LexicalDeclaration as const,
-    _kind: projectKindEnumStorage(data._kind),
-    _declarators: data._declarators,
-    _semicolon: data._semicolon,
+    _kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._kind, "kind", true, data.$type)),
+    _declarators: normalizeRepeatedWrapSlot(data._declarators, true, "declarators"),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     kind() { return this._kind; },
-    declarators() { return drillInAll<T.VariableDeclarator>(this._declarators, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    declarators() { return drillInAll<T.VariableDeclarator>(this._declarators as readonly T.VariableDeclarator[] | undefined, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       kind: (v: NonNullable<T.LexicalDeclaration['_kind']>) => wrapLexicalDeclaration({ ...data, _kind: v }, tree),
       declarators: (...v: NonEmptyArray<NonNullable<T.LexicalDeclaration['_declarators']>[number]>) => wrapLexicalDeclaration({ ...data, _declarators: v }, tree),
@@ -2014,9 +2955,10 @@ export function wrapLiteralType(data: T.LiteralType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.LiteralType as const,
-    $children: data.$children,
+    _number: normalizeSingularWrapSlot((data._number ?? data._string ?? data._true ?? data._false ?? data._null ?? data._undefined), "number", true, data.$type),
 
-    $with: { $child: (v: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) => wrapLiteralType({ ...data, $children: [v] }, tree) },
+    number() { return drillAs<T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined>(this._number, tree, "unary_expression", "_number"); },
+    $with: { $children: (...vs: readonly [never]) => wrapLiteralType({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2025,8 +2967,8 @@ export function wrapLookupType(data: T.LookupType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.LookupType as const,
-    _primary_type: data._primary_type,
-    _index_type: data._index_type,
+    _primary_type: normalizeSingularWrapSlot(data._primary_type, "primary_type", true, data.$type),
+    _index_type: normalizeSingularWrapSlot(data._index_type, "index_type", true, data.$type),
 
     primaryType() { return drillIn<T.PrimaryType>(this._primary_type, tree); },
     indexType() { return drillIn<T.Type>(this._index_type, tree); },
@@ -2042,9 +2984,9 @@ export function wrapMappedTypeClause(data: T.MappedTypeClause, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.MappedTypeClause as const,
-    _name: data._name,
-    _type: data._type,
-    _alias: data._alias,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
+    _alias: normalizeSingularWrapSlot(data._alias, "alias", false, data.$type),
 
     name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
     type() { return drillIn<T.Type>(this._type, tree); },
@@ -2062,16 +3004,17 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.MemberExpression as const,
-    _object: data._object,
-    _property: data._property,
-    $children: data.$children,
+    _object: normalizeSingularWrapSlot(data._object, "object", true, data.$type),
+    _optional_chain: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._optional_chain, "optional_chain", false, data.$type)),
+    _property: normalizeSingularWrapSlot(data._property, "property", true, data.$type),
 
     object() { return drillIn<T.Expression | T.PrimaryExpression | T.Import>(this._object, tree); },
+    optionalChain() { return this._optional_chain; },
     property() { return drillAs<T.PrivatePropertyIdentifier | T.Identifier>(this._property, tree, "property_identifier", "identifier"); },
     $with: {
       object: (v: NonNullable<T.MemberExpression['_object']>) => wrapMemberExpression({ ...data, _object: v }, tree),
+      optionalChain: (v: NonNullable<T.MemberExpression['_optional_chain']>) => wrapMemberExpression({ ...data, _optional_chain: v }, tree),
       property: (v: NonNullable<T.MemberExpression['_property']>) => wrapMemberExpression({ ...data, _property: v }, tree),
-      children: (...items: readonly ["?."]) => wrapMemberExpression({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2081,18 +3024,18 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.MethodDefinition as const,
-    _accessibility_modifier: projectKindEnumStorage(data._accessibility_modifier),
-    _static_marker: coerceBooleanKeywordStorage(data._static_marker),
-    _override_modifier: coerceBooleanKeywordStorage(data._override_modifier),
-    _readonly_marker: coerceBooleanKeywordStorage(data._readonly_marker),
-    _async_marker: coerceBooleanKeywordStorage(data._async_marker),
-    _accessor_kind: projectKindEnumStorage(data._accessor_kind),
-    _name: data._name,
-    _optional_marker: coerceBooleanKeywordStorage(data._optional_marker),
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _return_type: data._return_type,
-    _body: data._body,
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type)),
+    _static_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._static_marker, "static_marker", false, data.$type)),
+    _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type)),
+    _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type)),
+    _async_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._async_marker, "async_marker", false, data.$type)),
+    _accessor_kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessor_kind, "accessor_kind", false, data.$type)),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _optional_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._optional_marker, "optional_marker", false, data.$type)),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     accessibilityModifier() { return this._accessibility_modifier; },
     staticMarker() { return this._static_marker; },
@@ -2128,17 +3071,17 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.MethodSignature as const,
-    _accessibility_modifier: projectKindEnumStorage(data._accessibility_modifier),
-    _static_marker: coerceBooleanKeywordStorage(data._static_marker),
-    _override_modifier: coerceBooleanKeywordStorage(data._override_modifier),
-    _readonly_marker: coerceBooleanKeywordStorage(data._readonly_marker),
-    _async_marker: coerceBooleanKeywordStorage(data._async_marker),
-    _accessor_kind: projectKindEnumStorage(data._accessor_kind),
-    _name: data._name,
-    _optional_marker: coerceBooleanKeywordStorage(data._optional_marker),
-    _type_parameters: data._type_parameters,
-    _parameters: data._parameters,
-    _return_type: data._return_type,
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type)),
+    _static_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._static_marker, "static_marker", false, data.$type)),
+    _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type)),
+    _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type)),
+    _async_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._async_marker, "async_marker", false, data.$type)),
+    _accessor_kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessor_kind, "accessor_kind", false, data.$type)),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _optional_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._optional_marker, "optional_marker", false, data.$type)),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
 
     accessibilityModifier() { return this._accessibility_modifier; },
     staticMarker() { return this._static_marker; },
@@ -2172,8 +3115,8 @@ export function wrapModule(data: T.Module, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Module as const,
-    _name: data._name,
-    _body: data._body,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", false, data.$type),
 
     name() { return drillIn<T.String | T.Identifier | T.NestedIdentifier>(this._name, tree); },
     body() { return drillIn<T.StatementBlock | undefined>(this._body, tree); },
@@ -2189,9 +3132,10 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.NamedImports as const,
-    $children: data.$children,
+    _import_specifier: normalizeRepeatedWrapSlot(data._import_specifier, false, "import_specifier"),
 
-    $with: { $children: (...vs: T.ImportSpecifier[]) => wrapNamedImports({ ...data, $children: vs }, tree) },
+    importSpecifiers() { return drillInAll<T.ImportSpecifier>(this._import_specifier as readonly T.ImportSpecifier[] | undefined, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapNamedImports({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2200,9 +3144,10 @@ export function wrapNamespaceExport(data: T.NamespaceExport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.NamespaceExport as const,
-    $children: data.$children,
+    _module_export_name: normalizeSingularWrapSlot((data._identifier ?? data._string ?? data._module_export_name), "module_export_name", true, data.$type),
 
-    $with: { $child: (v: T.ModuleExportName) => wrapNamespaceExport({ ...data, $children: [v] }, tree) },
+    moduleExportName() { return drillIn<T.ModuleExportName>(this._module_export_name, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapNamespaceExport({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2211,7 +3156,7 @@ export function wrapNamespaceImport(data: T.NamespaceImport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.NamespaceImport as const,
-    _identifier: data._identifier,
+    _identifier: normalizeSingularWrapSlot(data._identifier, "identifier", true, data.$type),
 
     identifier() { return drillIn<T.Identifier>(this._identifier, tree); },
     $with: {
@@ -2225,8 +3170,8 @@ export function wrapNestedIdentifier(data: T.NestedIdentifier, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.NestedIdentifier as const,
-    _object: data._object,
-    _property: data._property,
+    _object: normalizeSingularWrapSlot(data._object, "object", true, data.$type),
+    _property: normalizeSingularWrapSlot(data._property, "property", true, data.$type),
 
     object() { return drillAs<T.Identifier | T.NestedIdentifier>(this._object, tree, "member_expression", "nested_identifier"); },
     property() { return drillAs<T.Identifier>(this._property, tree, "property_identifier", "identifier"); },
@@ -2242,8 +3187,8 @@ export function wrapNestedTypeIdentifier(data: T.NestedTypeIdentifier, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.NestedTypeIdentifier as const,
-    _module: data._module,
-    _name: data._name,
+    _module: normalizeSingularWrapSlot(data._module, "module", true, data.$type),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
 
     module() { return drillIn<T.Identifier | T.NestedIdentifier>(this._module, tree); },
     name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
@@ -2259,9 +3204,9 @@ export function wrapNewExpression(data: T.NewExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.NewExpression as const,
-    _constructor: data._constructor,
-    _type_arguments: data._type_arguments,
-    _arguments: data._arguments,
+    _constructor: normalizeSingularWrapSlot(data._constructor, "constructor", true, data.$type),
+    _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", false, data.$type),
+    _arguments: normalizeSingularWrapSlot(data._arguments, "arguments", false, data.$type),
 
     constructor() { return drillIn<T.PrimaryExpression>(this._constructor, tree); },
     typeArguments() { return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree); },
@@ -2279,7 +3224,7 @@ export function wrapNonNullExpression(data: T.NonNullExpression, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.NonNullExpression as const,
-    _expression: data._expression,
+    _expression: normalizeSingularWrapSlot(data._expression, "expression", true, data.$type),
 
     expression() { return drillIn<T.Expression>(this._expression, tree); },
     $with: {
@@ -2293,9 +3238,10 @@ export function wrapObject(data: T.Object, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Object as const,
-    $children: data.$children,
+    _pair: normalizeRepeatedWrapSlot((data._pair ?? data._spread_element ?? data._method_definition ?? data._identifier ?? data._reserved_identifier), false, "pair"),
 
-    $with: { $children: (...vs: ((T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier))[]) => wrapObject({ ...data, $children: vs }, tree) },
+    pair() { return drillAsAll<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(this._pair, tree, "shorthand_property_identifier", "_shorthand_property_identifier"); },
+    $with: { $children: (...vs: readonly [never]) => wrapObject({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2304,8 +3250,8 @@ export function wrapObjectAssignmentPattern(data: T.ObjectAssignmentPattern, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.ObjectAssignmentPattern as const,
-    _left: data._left,
-    _right: data._right,
+    _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
+    _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type),
 
     left() { return drillAs<T.ShorthandPropertyIdentifierPattern | T.DestructuringPattern>(this._left, tree, "shorthand_property_identifier_pattern", "_shorthand_property_identifier_pattern"); },
     right() { return drillIn<T.Expression>(this._right, tree); },
@@ -2321,9 +3267,10 @@ export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ObjectPattern as const,
-    $children: data.$children,
+    _pair_pattern: normalizeRepeatedWrapSlot((data._pair_pattern ?? data._rest_pattern ?? data._object_assignment_pattern ?? data._identifier ?? data._reserved_identifier), false, "pair_pattern"),
 
-    $with: { $children: (...vs: ((T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern))[]) => wrapObjectPattern({ ...data, $children: vs }, tree) },
+    pairPattern() { return drillAsAll<T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern>(this._pair_pattern, tree, "shorthand_property_identifier_pattern", "_shorthand_property_identifier_pattern"); },
+    $with: { $children: (...vs: readonly [never]) => wrapObjectPattern({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2332,16 +3279,16 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ObjectType as const,
-    _opening: projectKindEnumStorage(data._opening),
-    _members: data._members,
-    _closing: projectKindEnumStorage(data._closing),
+    _opening: projectKindEnumStorage(normalizeSingularWrapSlot(data._opening, "opening", true, data.$type)),
+    _members: normalizeRepeatedWrapSlot(data._members, false, "members"),
+    _closing: projectKindEnumStorage(normalizeSingularWrapSlot(data._closing, "closing", true, data.$type)),
 
     opening() { return this._opening; },
-    members() { return drillInAll<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>(this._members, tree); },
+    members() { return drillInAll<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>(this._members as readonly ("," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon)[] | undefined, tree); },
     closing() { return this._closing; },
     $with: {
       opening: (v: NonNullable<T.ObjectType['_opening']>) => wrapObjectType({ ...data, _opening: v }, tree),
-      members: (...v: NonEmptyArray<NonNullable<T.ObjectType['_members']>[number]>) => wrapObjectType({ ...data, _members: v }, tree),
+      members: (...v: NonNullable<T.ObjectType['_members']>[number][]) => wrapObjectType({ ...data, _members: v }, tree),
       closing: (v: NonNullable<T.ObjectType['_closing']>) => wrapObjectType({ ...data, _closing: v }, tree),
     },
   }, methodsEngine);
@@ -2352,7 +3299,7 @@ export function wrapOmittingTypeAnnotation(data: T.OmittingTypeAnnotation, tree:
   const _node = withMethods({
     ...data,
     $type: TSKindId.OmittingTypeAnnotation as const,
-    _type: data._type,
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
@@ -2366,7 +3313,7 @@ export function wrapOptingTypeAnnotation(data: T.OptingTypeAnnotation, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.OptingTypeAnnotation as const,
-    _type: data._type,
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
@@ -2380,25 +3327,29 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.OptionalParameter as const,
-    _decorator: data._decorator,
-    _readonly_marker: coerceBooleanKeywordStorage(data._readonly_marker),
-    _pattern: data._pattern,
-    _type: data._type,
-    _value: data._value,
-    $children: data.$children,
+    _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator"),
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type)),
+    _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type)),
+    _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type)),
+    _pattern: normalizeSingularWrapSlot(data._pattern, "pattern", true, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type),
+    _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type),
 
-    decorators() { return drillInAll<T.Decorator>(this._decorator, tree); },
+    decorators() { return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree); },
+    accessibilityModifier() { return this._accessibility_modifier; },
+    overrideModifier() { return this._override_modifier; },
     readonlyMarker() { return this._readonly_marker; },
     pattern() { return drillIn<T.Pattern | T.This>(this._pattern, tree); },
     type() { return drillIn<T.TypeAnnotation | undefined>(this._type, tree); },
     value() { return drillIn<T.Expression | undefined>(this._value, tree); },
     $with: {
       decorators: (...v: NonNullable<T.OptionalParameter['_decorator']>[number][]) => wrapOptionalParameter({ ...data, _decorator: v }, tree),
+      accessibilityModifier: (v: NonNullable<T.OptionalParameter['_accessibility_modifier']>) => wrapOptionalParameter({ ...data, _accessibility_modifier: v }, tree),
+      overrideModifier: (v: NonNullable<T.OptionalParameter['_override_modifier']>) => wrapOptionalParameter({ ...data, _override_modifier: v }, tree),
       readonlyMarker: (v: NonNullable<T.OptionalParameter['_readonly_marker']>) => wrapOptionalParameter({ ...data, _readonly_marker: v }, tree),
       pattern: (v: NonNullable<T.OptionalParameter['_pattern']>) => wrapOptionalParameter({ ...data, _pattern: v }, tree),
       type: (v: NonNullable<T.OptionalParameter['_type']>) => wrapOptionalParameter({ ...data, _type: v }, tree),
       value: (v: NonNullable<T.OptionalParameter['_value']>) => wrapOptionalParameter({ ...data, _value: v }, tree),
-      children: (...items: readonly [((T.AccessibilityModifier | T.OverrideModifier))]) => wrapOptionalParameter({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2408,8 +3359,8 @@ export function wrapOptionalTupleParameter(data: T.OptionalTupleParameter, tree:
   const _node = withMethods({
     ...data,
     $type: TSKindId.OptionalTupleParameter as const,
-    _name: data._name,
-    _type: data._type,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     name() { return drillIn<T.Identifier>(this._name, tree); },
     type() { return drillIn<T.TypeAnnotation>(this._type, tree); },
@@ -2425,7 +3376,7 @@ export function wrapOptionalType(data: T.OptionalType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.OptionalType as const,
-    _type: data._type,
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
@@ -2439,8 +3390,8 @@ export function wrapPair(data: T.Pair, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Pair as const,
-    _key: data._key,
-    _value: data._value,
+    _key: normalizeSingularWrapSlot(data._key, "key", true, data.$type),
+    _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
 
     key() { return drillIn<T.PropertyName>(this._key, tree); },
     value() { return drillIn<T.Expression>(this._value, tree); },
@@ -2456,8 +3407,8 @@ export function wrapPairPattern(data: T.PairPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.PairPattern as const,
-    _key: data._key,
-    _value: data._value,
+    _key: normalizeSingularWrapSlot(data._key, "key", true, data.$type),
+    _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
 
     key() { return drillIn<T.PropertyName>(this._key, tree); },
     value() { return drillIn<T.Pattern | T.AssignmentPattern>(this._value, tree); },
@@ -2472,9 +3423,10 @@ export function wrapPairPattern(data: T.PairPattern, tree: TreeHandle) {
 export function wrapParenthesizedExpressionSequence(data: T.ParenthesizedExpressionSequence, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $children: data.$children,
+    _sequence_expression: normalizeSingularWrapSlot(data._sequence_expression, "sequence_expression", true, data.$type),
 
-    $with: { $child: (v: T.SequenceExpression) => wrapParenthesizedExpressionSequence({ ...data, $children: [v] }, tree) },
+    sequenceExpression() { return drillIn<T.SequenceExpression>(this._sequence_expression, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapParenthesizedExpressionSequence({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2483,10 +3435,14 @@ export function wrapParenthesizedExpression(data: T.ParenthesizedExpression, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.ParenthesizedExpression as const,
-    $children: (data as any).$children,
+    _parenthesized_expression_typed: normalizeSingularWrapSlot((data as any)._parenthesized_expression_typed, "parenthesized_expression_typed", false, (data as any).$type),
+    _parenthesized_expression_sequence: normalizeSingularWrapSlot((data as any)._parenthesized_expression_sequence, "parenthesized_expression_sequence", false, (data as any).$type),
 
+    parenthesizedExpressionTyped() { return drillIn<T.ParenthesizedExpressionTyped | undefined>(this._parenthesized_expression_typed, tree); },
+    parenthesizedExpressionSequence() { return drillIn<T._ParenthesizedExpressionSequence | undefined>(this._parenthesized_expression_sequence, tree); },
     $with: {
-      children: (...items: readonly [((T.ParenthesizedExpressionTyped | T._ParenthesizedExpressionSequence))]) => wrapParenthesizedExpression({ ...(data as any), $children: items }, tree),
+      parenthesizedExpressionTyped: (v: T.ParenthesizedExpressionTyped) => wrapParenthesizedExpression({ ...(data as any), _parenthesized_expression_typed: v }, tree),
+      parenthesizedExpressionSequence: (v: T._ParenthesizedExpressionSequence) => wrapParenthesizedExpression({ ...(data as any), _parenthesized_expression_sequence: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2496,7 +3452,7 @@ export function wrapParenthesizedType(data: T.ParenthesizedType, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.ParenthesizedType as const,
-    _type: data._type,
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
@@ -2506,15 +3462,27 @@ export function wrapParenthesizedType(data: T.ParenthesizedType, tree: TreeHandl
   return _node;
 }
 
+export function wrapPattern(data: T.Pattern, tree: TreeHandle) {
+  return drillIn<T.Pattern>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["member_expression","subscript_expression","undefined","identifier","object_pattern","array_pattern","non_null_expression","rest_pattern"]), "children", true, data.$type), tree);
+}
+
+export function wrapPrimaryExpression(data: T.PrimaryExpression, tree: TreeHandle) {
+  return drillIn<T.PrimaryExpression>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["subscript_expression","member_expression","parenthesized_expression","_identifier","identifier","undefined","_reserved_identifier","reserved_identifier","this","super","number","string","template_string","regex","true","false","null","object","array","function_expression","arrow_function","generator_function","class","meta_property","call_expression","non_null_expression"]), "children", true, data.$type), tree);
+}
+
+export function wrapPrimaryType(data: T.PrimaryType, tree: TreeHandle) {
+  return drillIn<T.PrimaryType>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["parenthesized_type","predefined_type","_type_identifier","type_identifier","nested_type_identifier","generic_type","object_type","array_type","tuple_type","flow_maybe_type","type_query","index_type_query","this","existential_type","literal_type","lookup_type","conditional_type","template_literal_type","intersection_type","union_type"]), "children", true, data.$type), tree);
+}
+
 export function wrapProgram(data: T.Program, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Program as const,
-    _hash_bang_line: data._hash_bang_line,
-    _statements: data._statements,
+    _hash_bang_line: normalizeSingularWrapSlot(data._hash_bang_line, "hash_bang_line", false, data.$type),
+    _statements: normalizeRepeatedWrapSlot(data._statements, false, "statements"),
 
     hashBangLine() { return drillIn<T.HashBangLine | undefined>(this._hash_bang_line, tree); },
-    statements() { return drillInAll<T.Statement>(this._statements, tree); },
+    statements() { return drillInAll<T.Statement>(this._statements as readonly T.Statement[] | undefined, tree); },
     $with: {
       hashBangLine: (v: NonNullable<T.Program['_hash_bang_line']>) => wrapProgram({ ...data, _hash_bang_line: v }, tree),
       statements: (...v: NonNullable<T.Program['_statements']>[number][]) => wrapProgram({ ...data, _statements: v }, tree),
@@ -2527,13 +3495,13 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.PropertySignature as const,
-    _accessibility_modifier: projectKindEnumStorage(data._accessibility_modifier),
-    _static_marker: coerceBooleanKeywordStorage(data._static_marker),
-    _override_modifier: coerceBooleanKeywordStorage(data._override_modifier),
-    _readonly_marker: coerceBooleanKeywordStorage(data._readonly_marker),
-    _name: data._name,
-    _optional_marker: coerceBooleanKeywordStorage(data._optional_marker),
-    _type: data._type,
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type)),
+    _static_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._static_marker, "static_marker", false, data.$type)),
+    _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type)),
+    _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type)),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _optional_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._optional_marker, "optional_marker", false, data.$type)),
+    _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type),
 
     accessibilityModifier() { return this._accessibility_modifier; },
     staticMarker() { return this._static_marker; },
@@ -2559,25 +3527,29 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinition as const,
-    _decorator: data._decorator,
-    _name: data._name,
-    _optionality_marker: projectKindEnumStorage(data._optionality_marker),
-    _type: data._type,
-    _value: data._value,
-    $children: data.$children,
+    _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator"),
+    _public_field_definition_declare_first: normalizeSingularWrapSlot((data._public_field_definition_declare_first ?? data._public_field_definition_access_first), "public_field_definition_declare_first", false, data.$type),
+    _public_field_definition_static_mods: normalizeSingularWrapSlot((data._public_field_definition_static_mods ?? data._public_field_definition_abstract_first ?? data._public_field_definition_readonly_first ?? data._public_field_definition_accessor_opt), "public_field_definition_static_mods", false, data.$type),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _optionality_marker: projectKindEnumStorage(normalizeSingularWrapSlot(data._optionality_marker, "optionality_marker", false, data.$type)),
+    _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type),
+    _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type),
 
-    decorators() { return drillInAll<T.Decorator>(this._decorator, tree); },
+    decorators() { return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree); },
+    publicFieldDefinitionDeclareFirst() { return drillAs<T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | undefined>(this._public_field_definition_declare_first, tree, "public_field_definition_declare_first", "_public_field_definition_declare_first"); },
+    publicFieldDefinitionStaticMods() { return drillAs<T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt | undefined>(this._public_field_definition_static_mods, tree, "public_field_definition_static_mods", "_public_field_definition_static_mods"); },
     name() { return drillIn<T.PropertyName>(this._name, tree); },
     optionalityMarker() { return this._optionality_marker; },
     type() { return drillIn<T.TypeAnnotation | undefined>(this._type, tree); },
     value() { return drillIn<T.Expression | undefined>(this._value, tree); },
     $with: {
       decorators: (...v: NonNullable<T.PublicFieldDefinition['_decorator']>[number][]) => wrapPublicFieldDefinition({ ...data, _decorator: v }, tree),
+      publicFieldDefinitionDeclareFirst: (v: NonNullable<T.PublicFieldDefinition['_public_field_definition_declare_first']>) => wrapPublicFieldDefinition({ ...data, _public_field_definition_declare_first: v }, tree),
+      publicFieldDefinitionStaticMods: (v: NonNullable<T.PublicFieldDefinition['_public_field_definition_static_mods']>) => wrapPublicFieldDefinition({ ...data, _public_field_definition_static_mods: v }, tree),
       name: (v: NonNullable<T.PublicFieldDefinition['_name']>) => wrapPublicFieldDefinition({ ...data, _name: v }, tree),
       optionalityMarker: (v: NonNullable<T.PublicFieldDefinition['_optionality_marker']>) => wrapPublicFieldDefinition({ ...data, _optionality_marker: v }, tree),
       type: (v: NonNullable<T.PublicFieldDefinition['_type']>) => wrapPublicFieldDefinition({ ...data, _type: v }, tree),
       value: (v: NonNullable<T.PublicFieldDefinition['_value']>) => wrapPublicFieldDefinition({ ...data, _value: v }, tree),
-      children: (...items: readonly [((T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt))]) => wrapPublicFieldDefinition({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2587,7 +3559,7 @@ export function wrapReadonlyType(data: T.ReadonlyType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ReadonlyType as const,
-    _type: data._type,
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
@@ -2601,8 +3573,8 @@ export function wrapRegex(data: T.Regex, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Regex as const,
-    _pattern: data._pattern,
-    _flags: data._flags,
+    _pattern: normalizeSingularWrapSlot(data._pattern, "pattern", true, data.$type),
+    _flags: normalizeSingularWrapSlot(data._flags, "flags", false, data.$type),
 
     pattern() { return drillIn<T.RegexPattern>(this._pattern, tree); },
     flags() { return drillIn<T.RegexFlags | undefined>(this._flags, tree); },
@@ -2618,25 +3590,29 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.RequiredParameter as const,
-    _decorator: data._decorator,
-    _readonly_marker: coerceBooleanKeywordStorage(data._readonly_marker),
-    _pattern: data._pattern,
-    _type: data._type,
-    _value: data._value,
-    $children: data.$children,
+    _decorator: normalizeRepeatedWrapSlot(data._decorator, false, "decorator"),
+    _accessibility_modifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._accessibility_modifier, "accessibility_modifier", false, data.$type)),
+    _override_modifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._override_modifier, "override_modifier", false, data.$type)),
+    _readonly_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._readonly_marker, "readonly_marker", false, data.$type)),
+    _pattern: normalizeSingularWrapSlot(data._pattern, "pattern", true, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type),
+    _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type),
 
-    decorators() { return drillInAll<T.Decorator>(this._decorator, tree); },
+    decorators() { return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree); },
+    accessibilityModifier() { return this._accessibility_modifier; },
+    overrideModifier() { return this._override_modifier; },
     readonlyMarker() { return this._readonly_marker; },
     pattern() { return drillIn<T.Pattern | T.This>(this._pattern, tree); },
     type() { return drillIn<T.TypeAnnotation | undefined>(this._type, tree); },
     value() { return drillIn<T.Expression | undefined>(this._value, tree); },
     $with: {
       decorators: (...v: NonNullable<T.RequiredParameter['_decorator']>[number][]) => wrapRequiredParameter({ ...data, _decorator: v }, tree),
+      accessibilityModifier: (v: NonNullable<T.RequiredParameter['_accessibility_modifier']>) => wrapRequiredParameter({ ...data, _accessibility_modifier: v }, tree),
+      overrideModifier: (v: NonNullable<T.RequiredParameter['_override_modifier']>) => wrapRequiredParameter({ ...data, _override_modifier: v }, tree),
       readonlyMarker: (v: NonNullable<T.RequiredParameter['_readonly_marker']>) => wrapRequiredParameter({ ...data, _readonly_marker: v }, tree),
       pattern: (v: NonNullable<T.RequiredParameter['_pattern']>) => wrapRequiredParameter({ ...data, _pattern: v }, tree),
       type: (v: NonNullable<T.RequiredParameter['_type']>) => wrapRequiredParameter({ ...data, _type: v }, tree),
       value: (v: NonNullable<T.RequiredParameter['_value']>) => wrapRequiredParameter({ ...data, _value: v }, tree),
-      children: (...items: readonly [((T.AccessibilityModifier | T.OverrideModifier))]) => wrapRequiredParameter({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2646,9 +3622,10 @@ export function wrapRestPattern(data: T.RestPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.RestPattern as const,
-    $children: data.$children,
+    _lhs_expression: normalizeSingularWrapSlot(data._lhs_expression, "lhs_expression", true, data.$type),
 
-    $with: { $child: (v: T.LhsExpression) => wrapRestPattern({ ...data, $children: [v] }, tree) },
+    lhsExpression() { return drillIn<T.LhsExpression>(this._lhs_expression, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapRestPattern({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2657,7 +3634,7 @@ export function wrapRestType(data: T.RestType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.RestType as const,
-    _type: data._type,
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
@@ -2671,13 +3648,14 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ReturnStatement as const,
-    _semicolon: data._semicolon,
-    $children: data.$children,
+    _expressions: normalizeSingularWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._sequence_expression ?? data._expressions), "expressions", false, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    expressions() { return drillIn<T.Expressions | undefined>(this._expressions, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
+      expressions: (v: NonNullable<T.ReturnStatement['_expressions']>) => wrapReturnStatement({ ...data, _expressions: v }, tree),
       semicolon: (v: NonNullable<T.ReturnStatement['_semicolon']>) => wrapReturnStatement({ ...data, _semicolon: v }, tree),
-      children: (...items: readonly [T.Expressions]) => wrapReturnStatement({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2687,8 +3665,8 @@ export function wrapSatisfiesExpression(data: T.SatisfiesExpression, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.SatisfiesExpression as const,
-    _expression: data._expression,
-    _type_annotation: data._type_annotation,
+    _expression: normalizeSingularWrapSlot(data._expression, "expression", true, data.$type),
+    _type_annotation: normalizeSingularWrapSlot(data._type_annotation, "type_annotation", true, data.$type),
 
     expression() { return drillIn<T.Expression>(this._expression, tree); },
     typeAnnotation() { return drillIn<T.Type>(this._type_annotation, tree); },
@@ -2704,9 +3682,10 @@ export function wrapSequenceExpression(data: T.SequenceExpression, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.SequenceExpression as const,
-    $children: data.$children,
+    _expression: normalizeRepeatedWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._expression), true, "expression"),
 
-    $with: { $children: (...vs: NonEmptyArray<T.Expression>) => wrapSequenceExpression({ ...data, $children: vs }, tree) },
+    expressions() { return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapSequenceExpression({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2715,7 +3694,7 @@ export function wrapSpreadElement(data: T.SpreadElement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SpreadElement as const,
-    _expression: data._expression,
+    _expression: normalizeSingularWrapSlot(data._expression, "expression", true, data.$type),
 
     expression() { return drillIn<T.Expression>(this._expression, tree); },
     $with: {
@@ -2725,15 +3704,19 @@ export function wrapSpreadElement(data: T.SpreadElement, tree: TreeHandle) {
   return _node;
 }
 
+export function wrapStatement(data: T.Statement, tree: TreeHandle) {
+  return drillIn<T.Statement>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["export_statement","import_statement","debugger_statement","expression_statement","declaration","statement_block","if_statement","switch_statement","for_statement","for_in_statement","while_statement","do_statement","try_statement","with_statement","break_statement","continue_statement","return_statement","throw_statement","empty_statement","labeled_statement"]), "children", true, data.$type), tree);
+}
+
 export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.StatementBlock as const,
-    _statements: data._statements,
-    _automatic_semicolon: data._automatic_semicolon,
+    _statements: normalizeRepeatedWrapSlot(data._statements, false, "statements"),
+    _automatic_semicolon: normalizeSingularWrapSlot(data._automatic_semicolon, "automatic_semicolon", false, data.$type),
 
-    statements() { return drillInAll<T.Statement>(this._statements, tree); },
-    automaticSemicolon() { return drillIn<T.AutomaticSemicolon | undefined>(this._automatic_semicolon, tree); },
+    statements() { return drillInAll<T.Statement>(this._statements as readonly T.Statement[] | undefined, tree); },
+    automaticSemicolon() { return drillIn<string | undefined>(this._automatic_semicolon, tree); },
     $with: {
       statements: (...v: NonNullable<T.StatementBlock['_statements']>[number][]) => wrapStatementBlock({ ...data, _statements: v }, tree),
       automaticSemicolon: (v: NonNullable<T.StatementBlock['_automatic_semicolon']>) => wrapStatementBlock({ ...data, _automatic_semicolon: v }, tree),
@@ -2742,34 +3725,21 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle) {
   return _node;
 }
 
-export function wrapStringDouble(data: T.StringDouble, tree: TreeHandle) {
-  const _node = withMethods({
-    ...data,
-    $children: data.$children,
-
-    $with: { $children: (...vs: ((T.UnescapedDoubleStringFragment | T.EscapeSequence))[]) => wrapStringDouble({ ...data, $children: vs }, tree) },
-  }, methodsEngine);
-  return _node;
-}
-
-export function wrapStringSingle(data: T.StringSingle, tree: TreeHandle) {
-  const _node = withMethods({
-    ...data,
-    $children: data.$children,
-
-    $with: { $children: (...vs: ((T.UnescapedSingleStringFragment | T.EscapeSequence))[]) => wrapStringSingle({ ...data, $children: vs }, tree) },
-  }, methodsEngine);
-  return _node;
-}
-
 export function wrapString(data: T.String, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.String as const,
-    $children: (data as any).$children,
+    _opening: projectKindEnumStorage(normalizeSingularWrapSlot(data._opening, "opening", true, data.$type)),
+    _contents: normalizeRepeatedWrapSlot(data._contents, false, "contents"),
+    _closing: projectKindEnumStorage(normalizeSingularWrapSlot(data._closing, "closing", true, data.$type)),
 
+    opening() { return this._opening; },
+    contents() { return drillAsAll<T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment>(this._contents, tree, "string_fragment", "unescaped_single_string_fragment"); },
+    closing() { return this._closing; },
     $with: {
-      children: (...items: readonly [((T._StringDouble | T._StringSingle))]) => wrapString({ ...(data as any), $children: items }, tree),
+      opening: (v: NonNullable<T.String['_opening']>) => wrapString({ ...data, _opening: v }, tree),
+      contents: (...v: NonNullable<T.String['_contents']>[number][]) => wrapString({ ...data, _contents: v }, tree),
+      closing: (v: NonNullable<T.String['_closing']>) => wrapString({ ...data, _closing: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2779,9 +3749,9 @@ export function wrapSubscriptExpression(data: T.SubscriptExpression, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.SubscriptExpression as const,
-    _object: data._object,
-    _optional_chain: coerceBooleanKeywordStorage(data._optional_chain),
-    _index: data._index,
+    _object: normalizeSingularWrapSlot(data._object, "object", true, data.$type),
+    _optional_chain: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._optional_chain, "optional_chain", false, data.$type)),
+    _index: normalizeSingularWrapSlot(data._index, "index", true, data.$type),
 
     object() { return drillIn<T.Expression | T.PrimaryExpression>(this._object, tree); },
     optionalChain() { return this._optional_chain; },
@@ -2799,9 +3769,10 @@ export function wrapSwitchBody(data: T.SwitchBody, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SwitchBody as const,
-    $children: data.$children,
+    _switch_case: normalizeRepeatedWrapSlot((data._switch_case ?? data._switch_default), false, "switch_case"),
 
-    $with: { $children: (...vs: ((T.SwitchCase | T.SwitchDefault))[]) => wrapSwitchBody({ ...data, $children: vs }, tree) },
+    switchCases() { return drillInAll<T.SwitchCase | T.SwitchDefault>(this._switch_case as readonly (T.SwitchCase | T.SwitchDefault)[] | undefined, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapSwitchBody({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2810,11 +3781,11 @@ export function wrapSwitchCase(data: T.SwitchCase, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SwitchCase as const,
-    _value: data._value,
-    _body: data._body,
+    _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
+    _body: normalizeRepeatedWrapSlot(data._body, false, "body"),
 
     value() { return drillIn<T.Expressions>(this._value, tree); },
-    bodies() { return drillInAll<T.Statement>(this._body, tree); },
+    bodies() { return drillInAll<T.Statement>(this._body as readonly T.Statement[] | undefined, tree); },
     $with: {
       value: (v: NonNullable<T.SwitchCase['_value']>) => wrapSwitchCase({ ...data, _value: v }, tree),
       bodies: (...v: NonNullable<T.SwitchCase['_body']>[number][]) => wrapSwitchCase({ ...data, _body: v }, tree),
@@ -2827,9 +3798,9 @@ export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SwitchDefault as const,
-    _body: data._body,
+    _body: normalizeRepeatedWrapSlot(data._body, false, "body"),
 
-    bodies() { return drillInAll<T.Statement>(this._body, tree); },
+    bodies() { return drillInAll<T.Statement>(this._body as readonly T.Statement[] | undefined, tree); },
     $with: {
       bodies: (...v: NonNullable<T.SwitchDefault['_body']>[number][]) => wrapSwitchDefault({ ...data, _body: v }, tree),
     },
@@ -2841,8 +3812,8 @@ export function wrapSwitchStatement(data: T.SwitchStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SwitchStatement as const,
-    _value: data._value,
-    _body: data._body,
+    _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     value() { return drillIn<T.ParenthesizedExpression>(this._value, tree); },
     body() { return drillIn<T.SwitchBody>(this._body, tree); },
@@ -2858,9 +3829,10 @@ export function wrapTemplateLiteralType(data: T.TemplateLiteralType, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.TemplateLiteralType as const,
-    $children: data.$children,
+    _template_chars: normalizeRepeatedWrapSlot((data._template_chars ?? data._template_type), false, "template_chars"),
 
-    $with: { $children: (...vs: ((T.TemplateChars | T.TemplateType))[]) => wrapTemplateLiteralType({ ...data, $children: vs }, tree) },
+    templateChars() { return drillAsAll<T.TemplateChars | T.TemplateType>(this._template_chars, tree, "string_fragment", "_template_chars"); },
+    $with: { $children: (...vs: readonly [never]) => wrapTemplateLiteralType({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2869,9 +3841,10 @@ export function wrapTemplateString(data: T.TemplateString, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TemplateString as const,
-    $children: data.$children,
+    _template_chars: normalizeRepeatedWrapSlot((data._template_chars ?? data._escape_sequence ?? data._template_substitution), false, "template_chars"),
 
-    $with: { $children: (...vs: ((T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution))[]) => wrapTemplateString({ ...data, $children: vs }, tree) },
+    templateChars() { return drillAsAll<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>(this._template_chars, tree, "string_fragment", "_template_chars"); },
+    $with: { $children: (...vs: readonly [never]) => wrapTemplateString({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2880,9 +3853,10 @@ export function wrapTemplateSubstitution(data: T.TemplateSubstitution, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.TemplateSubstitution as const,
-    $children: data.$children,
+    _expressions: normalizeSingularWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._sequence_expression ?? data._expressions), "expressions", true, data.$type),
 
-    $with: { $child: (v: T.Expressions) => wrapTemplateSubstitution({ ...data, $children: [v] }, tree) },
+    expressions() { return drillIn<T.Expressions>(this._expressions, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapTemplateSubstitution({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2891,9 +3865,10 @@ export function wrapTemplateType(data: T.TemplateType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TemplateType as const,
-    $children: data.$children,
+    _primary_type: normalizeSingularWrapSlot((data._parenthesized_type ?? data._predefined_type ?? data._type_identifier ?? data._nested_type_identifier ?? data._generic_type ?? data._object_type ?? data._array_type ?? data._tuple_type ?? data._flow_maybe_type ?? data._type_query ?? data._index_type_query ?? data._this ?? data._existential_type ?? data._literal_type ?? data._lookup_type ?? data._conditional_type ?? data._template_literal_type ?? data._intersection_type ?? data._union_type ?? data._infer_type ?? data._primary_type), "primary_type", true, data.$type),
 
-    $with: { $child: (v: (T.PrimaryType | T.InferType)) => wrapTemplateType({ ...data, $children: [v] }, tree) },
+    primaryType() { return drillIn<T.PrimaryType | T.InferType>(this._primary_type, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapTemplateType({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -2902,9 +3877,9 @@ export function wrapTernaryExpression(data: T.TernaryExpression, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.TernaryExpression as const,
-    _condition: data._condition,
-    _consequence: data._consequence,
-    _alternative: data._alternative,
+    _condition: normalizeSingularWrapSlot(data._condition, "condition", true, data.$type),
+    _consequence: normalizeSingularWrapSlot(data._consequence, "consequence", true, data.$type),
+    _alternative: normalizeSingularWrapSlot(data._alternative, "alternative", true, data.$type),
 
     condition() { return drillIn<T.Expression>(this._condition, tree); },
     consequence() { return drillIn<T.Expression>(this._consequence, tree); },
@@ -2922,13 +3897,14 @@ export function wrapThrowStatement(data: T.ThrowStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ThrowStatement as const,
-    _semicolon: data._semicolon,
-    $children: data.$children,
+    _expressions: normalizeSingularWrapSlot((data._as_expression ?? data._satisfies_expression ?? data._instantiation_expression ?? data._internal_module ?? data._type_assertion ?? data._subscript_expression ?? data._member_expression ?? data._parenthesized_expression ?? data._undefined ?? data._identifier ?? data._reserved_identifier ?? data._this ?? data._super ?? data._number ?? data._string ?? data._template_string ?? data._regex ?? data._true ?? data._false ?? data._null ?? data._object ?? data._array ?? data._function_expression ?? data._arrow_function ?? data._generator_function ?? data._class ?? data._meta_property ?? data._call_expression ?? data._non_null_expression ?? data._assignment_expression ?? data._augmented_assignment_expression ?? data._await_expression ?? data._unary_expression ?? data._binary_expression ?? data._ternary_expression ?? data._update_expression ?? data._new_expression ?? data._yield_expression ?? data._sequence_expression ?? data._expressions), "expressions", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    expressions() { return drillIn<T.Expressions>(this._expressions, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
+      expressions: (v: NonNullable<T.ThrowStatement['_expressions']>) => wrapThrowStatement({ ...data, _expressions: v }, tree),
       semicolon: (v: NonNullable<T.ThrowStatement['_semicolon']>) => wrapThrowStatement({ ...data, _semicolon: v }, tree),
-      children: (...items: readonly [T.Expressions]) => wrapThrowStatement({ ...data, $children: items }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2938,9 +3914,9 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TryStatement as const,
-    _body: data._body,
-    _handler: data._handler,
-    _finalizer: data._finalizer,
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
+    _handler: normalizeSingularWrapSlot(data._handler, "handler", false, data.$type),
+    _finalizer: normalizeSingularWrapSlot(data._finalizer, "finalizer", false, data.$type),
 
     body() { return drillIn<T.StatementBlock>(this._body, tree); },
     handler() { return drillIn<T.CatchClause | undefined>(this._handler, tree); },
@@ -2958,8 +3934,8 @@ export function wrapTupleParameter(data: T.TupleParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TupleParameter as const,
-    _name: data._name,
-    _type: data._type,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     name() { return drillIn<T.Identifier | T.RestPattern>(this._name, tree); },
     type() { return drillIn<T.TypeAnnotation>(this._type, tree); },
@@ -2975,26 +3951,31 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TupleType as const,
-    $children: data.$children,
+    _tuple_type_member: normalizeRepeatedWrapSlot((data._tuple_parameter ?? data._optional_tuple_parameter ?? data._optional_type ?? data._rest_type ?? data._parenthesized_type ?? data._predefined_type ?? data._type_identifier ?? data._nested_type_identifier ?? data._generic_type ?? data._object_type ?? data._array_type ?? data._tuple_type ?? data._flow_maybe_type ?? data._type_query ?? data._index_type_query ?? data._this ?? data._existential_type ?? data._literal_type ?? data._lookup_type ?? data._conditional_type ?? data._template_literal_type ?? data._intersection_type ?? data._union_type ?? data._function_type ?? data._readonly_type ?? data._constructor_type ?? data._infer_type ?? data._type_query_member_expression_in_type_annotation ?? data._type_query_call_expression_in_type_annotation ?? data._tuple_type_member), false, "tuple_type_member"),
 
-    $with: { $children: (...vs: T.TupleTypeMember[]) => wrapTupleType({ ...data, $children: vs }, tree) },
+    tupleTypeMembers() { return drillInAll<T.TupleTypeMember>(this._tuple_type_member as readonly T.TupleTypeMember[] | undefined, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapTupleType({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
+}
+
+export function wrapType(data: T.Type, tree: TreeHandle) {
+  return drillIn<T.Type>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation","type_query_call_expression_in_type_annotation"]), "children", true, data.$type), tree);
 }
 
 export function wrapTypeAliasDeclaration(data: T.TypeAliasDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeAliasDeclaration as const,
-    _name: data._name,
-    _type_parameters: data._type_parameters,
-    _value: data._value,
-    _semicolon: data._semicolon,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
+    _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     value() { return drillIn<T.Type>(this._value, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       name: (v: NonNullable<T.TypeAliasDeclaration['_name']>) => wrapTypeAliasDeclaration({ ...data, _name: v }, tree),
       typeParameters: (v: NonNullable<T.TypeAliasDeclaration['_type_parameters']>) => wrapTypeAliasDeclaration({ ...data, _type_parameters: v }, tree),
@@ -3009,7 +3990,7 @@ export function wrapTypeAnnotation(data: T.TypeAnnotation, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeAnnotation as const,
-    _type: data._type,
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
@@ -3023,9 +4004,10 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeArguments as const,
-    $children: data.$children,
+    _type: normalizeRepeatedWrapSlot((data._parenthesized_type ?? data._predefined_type ?? data._type_identifier ?? data._nested_type_identifier ?? data._generic_type ?? data._object_type ?? data._array_type ?? data._tuple_type ?? data._flow_maybe_type ?? data._type_query ?? data._index_type_query ?? data._this ?? data._existential_type ?? data._literal_type ?? data._lookup_type ?? data._conditional_type ?? data._template_literal_type ?? data._intersection_type ?? data._union_type ?? data._function_type ?? data._readonly_type ?? data._constructor_type ?? data._infer_type ?? data._type_query_member_expression_in_type_annotation ?? data._type_query_call_expression_in_type_annotation ?? data._type), true, "type"),
 
-    $with: { $children: (...vs: NonEmptyArray<T.Type>) => wrapTypeArguments({ ...data, $children: vs }, tree) },
+    types() { return drillInAll<T.Type>(this._type as readonly T.Type[] | undefined, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapTypeArguments({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3034,8 +4016,8 @@ export function wrapTypeAssertion(data: T.TypeAssertion, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeAssertion as const,
-    _type_arguments: data._type_arguments,
-    _expression: data._expression,
+    _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", true, data.$type),
+    _expression: normalizeSingularWrapSlot(data._expression, "expression", true, data.$type),
 
     typeArguments() { return drillIn<T.TypeArguments>(this._type_arguments, tree); },
     expression() { return drillIn<T.Expression>(this._expression, tree); },
@@ -3051,10 +4033,10 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeParameter as const,
-    _const_marker: coerceBooleanKeywordStorage(data._const_marker),
-    _name: data._name,
-    _constraint: data._constraint,
-    _value: data._value,
+    _const_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._const_marker, "const_marker", false, data.$type)),
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _constraint: normalizeSingularWrapSlot(data._constraint, "constraint", false, data.$type),
+    _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type),
 
     constMarker() { return this._const_marker; },
     name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
@@ -3074,9 +4056,10 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeParameters as const,
-    $children: data.$children,
+    _type_parameter: normalizeRepeatedWrapSlot(data._type_parameter, true, "type_parameter"),
 
-    $with: { $children: (...vs: NonEmptyArray<T.TypeParameter>) => wrapTypeParameters({ ...data, $children: vs }, tree) },
+    typeParameters() { return drillInAll<T.TypeParameter>(this._type_parameter as readonly T.TypeParameter[] | undefined, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapTypeParameters({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3085,8 +4068,8 @@ export function wrapTypePredicate(data: T.TypePredicate, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypePredicate as const,
-    _name: data._name,
-    _type: data._type,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     name() { return drillAs<T.PredefinedType | T.This>(this._name, tree, "identifier", "predefined_type"); },
     type() { return drillIn<T.Type>(this._type, tree); },
@@ -3102,7 +4085,7 @@ export function wrapTypePredicateAnnotation(data: T.TypePredicateAnnotation, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypePredicateAnnotation as const,
-    _type_predicate: data._type_predicate,
+    _type_predicate: normalizeSingularWrapSlot(data._type_predicate, "type_predicate", true, data.$type),
 
     typePredicate() { return drillIn<":" | T.TypePredicate>(this._type_predicate, tree); },
     $with: {
@@ -3116,9 +4099,10 @@ export function wrapTypeQuery(data: T.TypeQuery, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeQuery as const,
-    $children: data.$children,
+    _type_query_subscript_expression: normalizeSingularWrapSlot((data._type_query_subscript_expression ?? data._type_query_member_expression ?? data._type_query_call_expression ?? data._type_query_instantiation_expression ?? data._identifier ?? data._this), "type_query_subscript_expression", true, data.$type),
 
-    $with: { $child: (v: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) => wrapTypeQuery({ ...data, $children: [v] }, tree) },
+    typeQuerySubscriptExpression() { return drillAs<T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This>(this._type_query_subscript_expression, tree, "subscript_expression", "_type_query_subscript_expression"); },
+    $with: { $children: (...vs: readonly [never]) => wrapTypeQuery({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3127,8 +4111,8 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.UnaryExpression as const,
-    _operator: projectKindEnumStorage(data._operator),
-    _argument: data._argument,
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type)),
+    _argument: normalizeSingularWrapSlot(data._argument, "argument", true, data.$type),
 
     operator() { return this._operator; },
     argument() { return drillIn<T.Expression>(this._argument, tree); },
@@ -3144,8 +4128,8 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.UnionType as const,
-    _left: data._left,
-    _right: data._right,
+    _left: normalizeSingularWrapSlot(data._left, "left", false, data.$type),
+    _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type),
 
     left() { return drillIn<T.Type | undefined>(this._left, tree); },
     right() { return drillIn<T.Type>(this._right, tree); },
@@ -3161,10 +4145,14 @@ export function wrapUpdateExpression(data: T.UpdateExpression, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.UpdateExpression as const,
-    $children: (data as any).$children,
+    _update_expression_postfix: normalizeSingularWrapSlot((data as any)._update_expression_postfix, "update_expression_postfix", false, (data as any).$type),
+    _update_expression_prefix: normalizeSingularWrapSlot((data as any)._update_expression_prefix, "update_expression_prefix", false, (data as any).$type),
 
+    updateExpressionPostfix() { return drillIn<T.UpdateExpressionPostfix | undefined>(this._update_expression_postfix, tree); },
+    updateExpressionPrefix() { return drillIn<T.UpdateExpressionPrefix | undefined>(this._update_expression_prefix, tree); },
     $with: {
-      children: (...items: readonly [((T.UpdateExpressionPostfix | T.UpdateExpressionPrefix))]) => wrapUpdateExpression({ ...(data as any), $children: items }, tree),
+      updateExpressionPostfix: (v: T.UpdateExpressionPostfix) => wrapUpdateExpression({ ...(data as any), _update_expression_postfix: v }, tree),
+      updateExpressionPrefix: (v: T.UpdateExpressionPrefix) => wrapUpdateExpression({ ...(data as any), _update_expression_prefix: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -3174,11 +4162,11 @@ export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.VariableDeclaration as const,
-    _declarators: data._declarators,
-    _semicolon: data._semicolon,
+    _declarators: normalizeRepeatedWrapSlot(data._declarators, true, "declarators"),
+    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    declarators() { return drillInAll<T.VariableDeclarator>(this._declarators, tree); },
-    semicolon() { return drillIn<T.Semicolon>(this._semicolon, tree); },
+    declarators() { return drillInAll<T.VariableDeclarator>(this._declarators as readonly T.VariableDeclarator[] | undefined, tree); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       declarators: (...v: NonEmptyArray<NonNullable<T.VariableDeclaration['_declarators']>[number]>) => wrapVariableDeclaration({ ...data, _declarators: v }, tree),
       semicolon: (v: NonNullable<T.VariableDeclaration['_semicolon']>) => wrapVariableDeclaration({ ...data, _semicolon: v }, tree),
@@ -3191,9 +4179,9 @@ export function wrapVariableDeclarator(data: T.VariableDeclarator, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.VariableDeclarator as const,
-    _name: data._name,
-    _type: data._type,
-    _value: data._value,
+    _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type),
+    _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type),
 
     name() { return drillIn<T.Identifier | T.DestructuringPattern>(this._name, tree); },
     type() { return drillIn<T.TypeAnnotation | undefined>(this._type, tree); },
@@ -3211,8 +4199,8 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.WhileStatement as const,
-    _condition: data._condition,
-    _body: data._body,
+    _condition: normalizeSingularWrapSlot(data._condition, "condition", true, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     condition() { return drillIn<T.ParenthesizedExpression>(this._condition, tree); },
     body() { return drillIn<T.Statement>(this._body, tree); },
@@ -3228,8 +4216,8 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.WithStatement as const,
-    _object: data._object,
-    _body: data._body,
+    _object: normalizeSingularWrapSlot(data._object, "object", true, data.$type),
+    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     object() { return drillIn<T.ParenthesizedExpression>(this._object, tree); },
     body() { return drillIn<T.Statement>(this._body, tree); },
@@ -3245,7 +4233,7 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.YieldExpression as const,
-    _expression: data._expression,
+    _expression: normalizeSingularWrapSlot(data._expression, "expression", false, data.$type),
 
     expression() { return drillIn<T.Expression | undefined>(this._expression, tree); },
     $with: {
@@ -3256,237 +4244,282 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
 }
 
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
-  '_arrow_function__call_signature': (d, t) => wrap_ArrowFunctionUCallSignature(d as T._ArrowFunctionUCallSignature, t),
-  '_arrow_function_parameter': (d, t) => wrap_ArrowFunctionParameter(d as T._ArrowFunctionParameter, t),
-  '_class_body_member': (d, t) => wrapClassBodyMember(d as T.ClassBodyMember, t),
-  '_class_body_method_sig': (d, t) => wrapClassBodyMethodSig(d as T.ClassBodyMethodSig, t),
-  '_class_heritage_extends_clause': (d, t) => wrap_ClassHeritageExtendsClause(d as T._ClassHeritageExtendsClause, t),
-  '_class_heritage_implements_clause': (d, t) => wrap_ClassHeritageImplementsClause(d as T._ClassHeritageImplementsClause, t),
-  '_export_statement_default_from_arm': (d, t) => wrapExportStatementDefaultFromArm(d as T.ExportStatementDefaultFromArm, t),
-  '_export_statement_default_from_arm_clause_from': (d, t) => wrapExportStatementDefaultFromArmClauseFrom(d as T.ExportStatementDefaultFromArmClauseFrom, t),
-  '_export_statement_default_from_arm_ns_from': (d, t) => wrapExportStatementDefaultFromArmNsFrom(d as T.ExportStatementDefaultFromArmNsFrom, t),
-  '_export_statement_default_from_arm_star_from': (d, t) => wrapExportStatementDefaultFromArmStarFrom(d as T.ExportStatementDefaultFromArmStarFrom, t),
-  '_export_statement_equals_export': (d, t) => wrap_ExportStatementEqualsExport(d as T._ExportStatementEqualsExport, t),
-  '_export_statement_namespace_export': (d, t) => wrap_ExportStatementNamespaceExport(d as T._ExportStatementNamespaceExport, t),
-  '_export_statement_type_export': (d, t) => wrap_ExportStatementTypeExport(d as T._ExportStatementTypeExport, t),
-  '_for_header_lhs': (d, t) => wrapForHeaderLhs(d as T.ForHeaderLhs, t),
-  '_import_clause_default_import': (d, t) => wrap_ImportClauseDefaultImport(d as T._ImportClauseDefaultImport, t),
-  '_import_clause_named_imports': (d, t) => wrap_ImportClauseNamedImports(d as T._ImportClauseNamedImports, t),
-  '_import_clause_namespace_import': (d, t) => wrap_ImportClauseNamespaceImport(d as T._ImportClauseNamespaceImport, t),
-  '_import_specifier_name': (d, t) => wrap_ImportSpecifierName(d as T._ImportSpecifierName, t),
-  '_index_signature_mapped_type_clause': (d, t) => wrap_IndexSignatureMappedTypeClause(d as T._IndexSignatureMappedTypeClause, t),
-  '_kw_abstract_marker': (d) => ({ ...d, $type: TSKindId.KwAbstractMarker as const }),
-  '_kw_const_marker': (d) => ({ ...d, $type: TSKindId.KwConstMarker as const }),
-  '_kw_static_marker': (d) => ({ ...d, $type: TSKindId.KwStaticMarker as const }),
-  '_kw_using_marker': (d) => ({ ...d, $type: TSKindId.KwUsingMarker as const }),
-  '_parenthesized_expression_sequence': (d, t) => wrap_ParenthesizedExpressionSequence(d as T._ParenthesizedExpressionSequence, t),
-  '_public_field_definition_accessor_opt': (d, t) => wrapPublicFieldDefinitionAccessorOpt(d as T.PublicFieldDefinitionAccessorOpt, t),
-  '_public_field_definition_declare_first': (d, t) => wrapPublicFieldDefinitionDeclareFirst(d as T.PublicFieldDefinitionDeclareFirst, t),
-  '_string_double': (d, t) => wrap_StringDouble(d as T._StringDouble, t),
-  '_string_single': (d, t) => wrap_StringSingle(d as T._StringSingle, t),
+  '_ambient_declaration_declaration': (d, t) => wrap_AmbientDeclarationDeclaration(d as unknown as T._AmbientDeclarationDeclaration, t),
+  '_ambient_declaration_global': (d, t) => wrapAmbientDeclarationGlobal(d as unknown as T.AmbientDeclarationGlobal, t),
+  '_ambient_declaration_module': (d, t) => wrapAmbientDeclarationModule(d as unknown as T.AmbientDeclarationModule, t),
+  '_arrow_function__call_signature': (d, t) => wrap_ArrowFunctionUCallSignature(d as unknown as T._ArrowFunctionUCallSignature, t),
+  '_arrow_function_parameter': (d, t) => wrap_ArrowFunctionParameter(d as unknown as T._ArrowFunctionParameter, t),
+  '_call_expression_call': (d, t) => wrapCallExpressionCall(d as unknown as T.CallExpressionCall, t),
+  '_call_expression_member': (d, t) => wrapCallExpressionMember(d as unknown as T.CallExpressionMember, t),
+  '_call_expression_template_call': (d, t) => wrapCallExpressionTemplateCall(d as unknown as T.CallExpressionTemplateCall, t),
+  '_call_signature': (d, t) => wrap_CallSignature(d as unknown as T._CallSignature, t),
+  '_class_body_member': (d, t) => wrapClassBodyMember(d as unknown as T.ClassBodyMember, t),
+  '_class_body_method': (d, t) => wrapClassBodyMethod(d as unknown as T.ClassBodyMethod, t),
+  '_class_body_method_sig': (d, t) => wrapClassBodyMethodSig(d as unknown as T.ClassBodyMethodSig, t),
+  '_class_heritage_extends_clause': (d, t) => wrap_ClassHeritageExtendsClause(d as unknown as T._ClassHeritageExtendsClause, t),
+  '_class_heritage_implements_clause': (d, t) => wrap_ClassHeritageImplementsClause(d as unknown as T._ClassHeritageImplementsClause, t),
+  '_destructuring_pattern': (d, t) => wrapDestructuringPattern(d as unknown as T.DestructuringPattern, t),
+  '_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),
+  '_export_statement_default_decl_arm': (d, t) => wrapExportStatementDefaultDeclArm(d as unknown as T.ExportStatementDefaultDeclArm, t),
+  '_export_statement_default_decl_arm_default_kw': (d, t) => wrapExportStatementDefaultDeclArmDefaultKw(d as unknown as T.ExportStatementDefaultDeclArmDefaultKw, t),
+  '_export_statement_default_decl_arm_default_kw_value': (d, t) => wrapExportStatementDefaultDeclArmDefaultKwValue(d as unknown as T.ExportStatementDefaultDeclArmDefaultKwValue, t),
+  '_export_statement_default_from_arm': (d, t) => wrapExportStatementDefaultFromArm(d as unknown as T.ExportStatementDefaultFromArm, t),
+  '_export_statement_default_from_arm_clause_from': (d, t) => wrapExportStatementDefaultFromArmClauseFrom(d as unknown as T.ExportStatementDefaultFromArmClauseFrom, t),
+  '_export_statement_default_from_arm_ns_from': (d, t) => wrapExportStatementDefaultFromArmNsFrom(d as unknown as T.ExportStatementDefaultFromArmNsFrom, t),
+  '_export_statement_default_from_arm_star_from': (d, t) => wrapExportStatementDefaultFromArmStarFrom(d as unknown as T.ExportStatementDefaultFromArmStarFrom, t),
+  '_export_statement_equals_export': (d, t) => wrap_ExportStatementEqualsExport(d as unknown as T._ExportStatementEqualsExport, t),
+  '_export_statement_namespace_export': (d, t) => wrap_ExportStatementNamespaceExport(d as unknown as T._ExportStatementNamespaceExport, t),
+  '_export_statement_type_export': (d, t) => wrap_ExportStatementTypeExport(d as unknown as T._ExportStatementTypeExport, t),
+  '_extends_clause_single': (d, t) => wrapExtendsClauseSingle(d as unknown as T.ExtendsClauseSingle, t),
+  '_for_header': (d, t) => wrapForHeader(d as unknown as T.ForHeader, t),
+  '_for_header_let_const_kind': (d, t) => wrapForHeaderLetConstKind(d as unknown as T.ForHeaderLetConstKind, t),
+  '_for_header_lhs': (d, t) => wrapForHeaderLhs(d as unknown as T.ForHeaderLhs, t),
+  '_for_header_var_kind': (d, t) => wrapForHeaderVarKind(d as unknown as T.ForHeaderVarKind, t),
+  '_formal_parameter': (d, t) => wrapFormalParameter(d as unknown as T.FormalParameter, t),
+  '_from_clause': (d, t) => wrapFromClause(d as unknown as T.FromClause, t),
+  '_import_clause_default_import': (d, t) => wrap_ImportClauseDefaultImport(d as unknown as T._ImportClauseDefaultImport, t),
+  '_import_clause_named_imports': (d, t) => wrap_ImportClauseNamedImports(d as unknown as T._ImportClauseNamedImports, t),
+  '_import_clause_namespace_import': (d, t) => wrap_ImportClauseNamespaceImport(d as unknown as T._ImportClauseNamespaceImport, t),
+  '_import_identifier': (d, t) => wrapImportIdentifier(d as unknown as T.ImportIdentifier, t),
+  '_import_specifier_as': (d, t) => wrapImportSpecifierAs(d as unknown as T.ImportSpecifierAs, t),
+  '_import_specifier_name': (d, t) => wrap_ImportSpecifierName(d as unknown as T._ImportSpecifierName, t),
+  '_index_signature_colon': (d, t) => wrapIndexSignatureColon(d as unknown as T.IndexSignatureColon, t),
+  '_index_signature_mapped_type_clause': (d, t) => wrap_IndexSignatureMappedTypeClause(d as unknown as T._IndexSignatureMappedTypeClause, t),
+  '_initializer': (d, t) => wrapInitializer(d as unknown as T.Initializer, t),
+  '_module': (d, t) => wrap_Module(d as unknown as T._Module, t),
+  '_module_export_name': (d, t) => wrapModuleExportName(d as unknown as T.ModuleExportName, t),
+  '_number': (d, t) => wrap_Number(d as unknown as T._Number, t),
+  '_parameter_name': (d, t) => wrapParameterName(d as unknown as T.ParameterName, t),
+  '_parenthesized_expression_sequence': (d, t) => wrap_ParenthesizedExpressionSequence(d as unknown as T._ParenthesizedExpressionSequence, t),
+  '_parenthesized_expression_typed': (d, t) => wrapParenthesizedExpressionTyped(d as unknown as T.ParenthesizedExpressionTyped, t),
+  '_property_identifier': (d, t) => wrapPropertyIdentifier(d as unknown as T.PropertyIdentifier, t),
+  '_property_name': (d, t) => wrapPropertyName(d as unknown as T.PropertyName, t),
+  '_public_field_definition_abstract_first': (d, t) => wrapPublicFieldDefinitionAbstractFirst(d as unknown as T.PublicFieldDefinitionAbstractFirst, t),
+  '_public_field_definition_access_first': (d, t) => wrapPublicFieldDefinitionAccessFirst(d as unknown as T.PublicFieldDefinitionAccessFirst, t),
+  '_public_field_definition_accessor_opt': (d, t) => wrapPublicFieldDefinitionAccessorOpt(d as unknown as T.PublicFieldDefinitionAccessorOpt, t),
+  '_public_field_definition_declare_first': (d, t) => wrapPublicFieldDefinitionDeclareFirst(d as unknown as T.PublicFieldDefinitionDeclareFirst, t),
+  '_public_field_definition_readonly_first': (d, t) => wrapPublicFieldDefinitionReadonlyFirst(d as unknown as T.PublicFieldDefinitionReadonlyFirst, t),
+  '_public_field_definition_static_mods': (d, t) => wrapPublicFieldDefinitionStaticMods(d as unknown as T.PublicFieldDefinitionStaticMods, t),
+  '_shorthand_property_identifier': (d, t) => wrapShorthandPropertyIdentifier(d as unknown as T.ShorthandPropertyIdentifier, t),
+  '_shorthand_property_identifier_pattern': (d, t) => wrapShorthandPropertyIdentifierPattern(d as unknown as T.ShorthandPropertyIdentifierPattern, t),
+  '_statement_identifier': (d, t) => wrapStatementIdentifier(d as unknown as T.StatementIdentifier, t),
+  '_tuple_type_member': (d, t) => wrapTupleTypeMember(d as unknown as T.TupleTypeMember, t),
   '_type_identifier': (d) => ({ ...d, $type: TSKindId.TypeIdentifier as const }),
-  'abstract_class_declaration': (d, t) => wrapAbstractClassDeclaration(d as T.AbstractClassDeclaration, t),
-  'abstract_method_signature': (d, t) => wrapAbstractMethodSignature(d as T.AbstractMethodSignature, t),
+  '_type_query_call_expression': (d, t) => wrapTypeQueryCallExpression(d as unknown as T.TypeQueryCallExpression, t),
+  '_type_query_call_expression_in_type_annotation': (d, t) => wrapTypeQueryCallExpressionInTypeAnnotation(d as unknown as T.TypeQueryCallExpressionInTypeAnnotation, t),
+  '_type_query_instantiation_expression': (d, t) => wrapTypeQueryInstantiationExpression(d as unknown as T.TypeQueryInstantiationExpression, t),
+  '_type_query_member_expression': (d, t) => wrapTypeQueryMemberExpression(d as unknown as T.TypeQueryMemberExpression, t),
+  '_type_query_member_expression_in_type_annotation': (d, t) => wrapTypeQueryMemberExpressionInTypeAnnotation(d as unknown as T.TypeQueryMemberExpressionInTypeAnnotation, t),
+  '_type_query_subscript_expression': (d, t) => wrapTypeQuerySubscriptExpression(d as unknown as T.TypeQuerySubscriptExpression, t),
+  '_update_expression_postfix': (d, t) => wrapUpdateExpressionPostfix(d as unknown as T.UpdateExpressionPostfix, t),
+  '_update_expression_prefix': (d, t) => wrapUpdateExpressionPrefix(d as unknown as T.UpdateExpressionPrefix, t),
+  'abstract_class_declaration': (d, t) => wrapAbstractClassDeclaration(d as unknown as T.AbstractClassDeclaration, t),
+  'abstract_method_signature': (d, t) => wrapAbstractMethodSignature(d as unknown as T.AbstractMethodSignature, t),
   'accessibility_modifier': (d) => ({ ...d, $type: TSKindId.AccessibilityModifier as const }),
-  'adding_type_annotation': (d, t) => wrapAddingTypeAnnotation(d as T.AddingTypeAnnotation, t),
-  'ambient_declaration': (d, t) => wrapAmbientDeclaration(d as T.AmbientDeclaration, t),
-  'arguments': (d, t) => wrapArguments(d as T.Arguments, t),
-  'array': (d, t) => wrapArray(d as T.Array, t),
-  'array_pattern': (d, t) => wrapArrayPattern(d as T.ArrayPattern, t),
-  'array_type': (d, t) => wrapArrayType(d as T.ArrayType, t),
-  'arrow_function_parameter': (d, t) => wrapArrowFunctionParameter(d as T.ArrowFunctionParameter, t),
-  'arrow_function__call_signature': (d, t) => wrapArrowFunctionUCallSignature(d as T.ArrowFunctionUCallSignature, t),
-  'arrow_function': (d, t) => wrapArrowFunction(d as T.ArrowFunction, t),
-  'as_expression': (d, t) => wrapAsExpression(d as T.AsExpression, t),
-  'asserts': (d, t) => wrapAsserts(d as T.Asserts, t),
-  'asserts_annotation': (d, t) => wrapAssertsAnnotation(d as T.AssertsAnnotation, t),
-  'assignment_expression': (d, t) => wrapAssignmentExpression(d as T.AssignmentExpression, t),
-  'assignment_pattern': (d, t) => wrapAssignmentPattern(d as T.AssignmentPattern, t),
-  'augmented_assignment_expression': (d, t) => wrapAugmentedAssignmentExpression(d as T.AugmentedAssignmentExpression, t),
-  'await_expression': (d, t) => wrapAwaitExpression(d as T.AwaitExpression, t),
-  'binary_expression': (d, t) => wrapBinaryExpression(d as T.BinaryExpression, t),
-  'break_statement': (d, t) => wrapBreakStatement(d as T.BreakStatement, t),
-  'call_expression': (d, t) => wrapCallExpression(d as T.CallExpression, t),
-  'call_signature': (d, t) => wrapCallSignature(d as T.CallSignature, t),
-  'catch_clause': (d, t) => wrapCatchClause(d as T.CatchClause, t),
-  'class': (d, t) => wrapClass(d as T.Class, t),
-  'class_body': (d, t) => wrapClassBody(d as T.ClassBody, t),
-  'class_declaration': (d, t) => wrapClassDeclaration(d as T.ClassDeclaration, t),
-  'class_heritage_extends_clause': (d, t) => wrapClassHeritageExtendsClause(d as T.ClassHeritageExtendsClause, t),
-  'class_heritage_implements_clause': (d, t) => wrapClassHeritageImplementsClause(d as T.ClassHeritageImplementsClause, t),
-  'class_heritage': (d, t) => wrapClassHeritage(d as T.ClassHeritage, t),
-  'class_static_block': (d, t) => wrapClassStaticBlock(d as T.ClassStaticBlock, t),
+  'adding_type_annotation': (d, t) => wrapAddingTypeAnnotation(d as unknown as T.AddingTypeAnnotation, t),
+  'ambient_declaration_declaration': (d, t) => wrapAmbientDeclarationDeclaration(d as unknown as T.AmbientDeclarationDeclaration, t),
+  'ambient_declaration': (d, t) => wrapAmbientDeclaration(d as unknown as T.AmbientDeclaration, t),
+  'arguments': (d, t) => wrapArguments(d as unknown as T.Arguments, t),
+  'array': (d, t) => wrapArray(d as unknown as T.Array, t),
+  'array_pattern': (d, t) => wrapArrayPattern(d as unknown as T.ArrayPattern, t),
+  'array_type': (d, t) => wrapArrayType(d as unknown as T.ArrayType, t),
+  'arrow_function_parameter': (d, t) => wrapArrowFunctionParameter(d as unknown as T.ArrowFunctionParameter, t),
+  'arrow_function__call_signature': (d, t) => wrapArrowFunctionUCallSignature(d as unknown as T.ArrowFunctionUCallSignature, t),
+  'arrow_function': (d, t) => wrapArrowFunction(d as unknown as T.ArrowFunction, t),
+  'as_expression': (d, t) => wrapAsExpression(d as unknown as T.AsExpression, t),
+  'asserts': (d, t) => wrapAsserts(d as unknown as T.Asserts, t),
+  'asserts_annotation': (d, t) => wrapAssertsAnnotation(d as unknown as T.AssertsAnnotation, t),
+  'assignment_expression': (d, t) => wrapAssignmentExpression(d as unknown as T.AssignmentExpression, t),
+  'assignment_pattern': (d, t) => wrapAssignmentPattern(d as unknown as T.AssignmentPattern, t),
+  'augmented_assignment_expression': (d, t) => wrapAugmentedAssignmentExpression(d as unknown as T.AugmentedAssignmentExpression, t),
+  'await_expression': (d, t) => wrapAwaitExpression(d as unknown as T.AwaitExpression, t),
+  'binary_expression': (d, t) => wrapBinaryExpression(d as unknown as T.BinaryExpression, t),
+  'break_statement': (d, t) => wrapBreakStatement(d as unknown as T.BreakStatement, t),
+  'call_expression': (d, t) => wrapCallExpression(d as unknown as T.CallExpression, t),
+  'call_signature': (d, t) => wrapCallSignature(d as unknown as T.CallSignature, t),
+  'catch_clause': (d, t) => wrapCatchClause(d as unknown as T.CatchClause, t),
+  'class': (d, t) => wrapClass(d as unknown as T.Class, t),
+  'class_body': (d, t) => wrapClassBody(d as unknown as T.ClassBody, t),
+  'class_declaration': (d, t) => wrapClassDeclaration(d as unknown as T.ClassDeclaration, t),
+  'class_heritage_extends_clause': (d, t) => wrapClassHeritageExtendsClause(d as unknown as T.ClassHeritageExtendsClause, t),
+  'class_heritage_implements_clause': (d, t) => wrapClassHeritageImplementsClause(d as unknown as T.ClassHeritageImplementsClause, t),
+  'class_heritage': (d, t) => wrapClassHeritage(d as unknown as T.ClassHeritage, t),
+  'class_static_block': (d, t) => wrapClassStaticBlock(d as unknown as T.ClassStaticBlock, t),
   'comment': (d) => ({ ...d, $type: TSKindId.Comment as const }),
-  'computed_property_name': (d, t) => wrapComputedPropertyName(d as T.ComputedPropertyName, t),
-  'conditional_type': (d, t) => wrapConditionalType(d as T.ConditionalType, t),
-  'constraint': (d, t) => wrapConstraint(d as T.Constraint, t),
-  'construct_signature': (d, t) => wrapConstructSignature(d as T.ConstructSignature, t),
-  'constructor_type': (d, t) => wrapConstructorType(d as T.ConstructorType, t),
-  'continue_statement': (d, t) => wrapContinueStatement(d as T.ContinueStatement, t),
-  'debugger_statement': (d, t) => wrapDebuggerStatement(d as T.DebuggerStatement, t),
-  'decorator': (d, t) => wrapDecorator(d as T.Decorator, t),
-  'decorator_call_expression': (d, t) => wrapDecoratorCallExpression(d as T.DecoratorCallExpression, t),
-  'decorator_member_expression': (d, t) => wrapDecoratorMemberExpression(d as T.DecoratorMemberExpression, t),
-  'decorator_parenthesized_expression': (d, t) => wrapDecoratorParenthesizedExpression(d as T.DecoratorParenthesizedExpression, t),
-  'default_type': (d, t) => wrapDefaultType(d as T.DefaultType, t),
-  'do_statement': (d, t) => wrapDoStatement(d as T.DoStatement, t),
-  'else_clause': (d, t) => wrapElseClause(d as T.ElseClause, t),
-  'enum_assignment': (d, t) => wrapEnumAssignment(d as T.EnumAssignment, t),
-  'enum_body': (d, t) => wrapEnumBody(d as T.EnumBody, t),
-  'enum_declaration': (d, t) => wrapEnumDeclaration(d as T.EnumDeclaration, t),
+  'computed_property_name': (d, t) => wrapComputedPropertyName(d as unknown as T.ComputedPropertyName, t),
+  'conditional_type': (d, t) => wrapConditionalType(d as unknown as T.ConditionalType, t),
+  'constraint': (d, t) => wrapConstraint(d as unknown as T.Constraint, t),
+  'construct_signature': (d, t) => wrapConstructSignature(d as unknown as T.ConstructSignature, t),
+  'constructor_type': (d, t) => wrapConstructorType(d as unknown as T.ConstructorType, t),
+  'continue_statement': (d, t) => wrapContinueStatement(d as unknown as T.ContinueStatement, t),
+  'debugger_statement': (d, t) => wrapDebuggerStatement(d as unknown as T.DebuggerStatement, t),
+  'declaration': (d, t) => wrapDeclaration(d as unknown as T.Declaration, t),
+  'decorator': (d, t) => wrapDecorator(d as unknown as T.Decorator, t),
+  'decorator_call_expression': (d, t) => wrapDecoratorCallExpression(d as unknown as T.DecoratorCallExpression, t),
+  'decorator_member_expression': (d, t) => wrapDecoratorMemberExpression(d as unknown as T.DecoratorMemberExpression, t),
+  'decorator_parenthesized_expression': (d, t) => wrapDecoratorParenthesizedExpression(d as unknown as T.DecoratorParenthesizedExpression, t),
+  'default_type': (d, t) => wrapDefaultType(d as unknown as T.DefaultType, t),
+  'do_statement': (d, t) => wrapDoStatement(d as unknown as T.DoStatement, t),
+  'else_clause': (d, t) => wrapElseClause(d as unknown as T.ElseClause, t),
+  'enum_assignment': (d, t) => wrapEnumAssignment(d as unknown as T.EnumAssignment, t),
+  'enum_body': (d, t) => wrapEnumBody(d as unknown as T.EnumBody, t),
+  'enum_declaration': (d, t) => wrapEnumDeclaration(d as unknown as T.EnumDeclaration, t),
   'escape_sequence': (d) => ({ ...d, $type: TSKindId.EscapeSequence as const }),
-  'export_clause': (d, t) => wrapExportClause(d as T.ExportClause, t),
-  'export_specifier': (d, t) => wrapExportSpecifier(d as T.ExportSpecifier, t),
-  'export_statement_type_export': (d, t) => wrapExportStatementTypeExport(d as T.ExportStatementTypeExport, t),
-  'export_statement_equals_export': (d, t) => wrapExportStatementEqualsExport(d as T.ExportStatementEqualsExport, t),
-  'export_statement_namespace_export': (d, t) => wrapExportStatementNamespaceExport(d as T.ExportStatementNamespaceExport, t),
-  'export_statement': (d, t) => wrapExportStatement(d as T.ExportStatement, t),
-  'expression_statement': (d, t) => wrapExpressionStatement(d as T.ExpressionStatement, t),
-  'extends_clause': (d, t) => wrapExtendsClause(d as T.ExtendsClause, t),
-  'extends_type_clause': (d, t) => wrapExtendsTypeClause(d as T.ExtendsTypeClause, t),
+  'export_clause': (d, t) => wrapExportClause(d as unknown as T.ExportClause, t),
+  'export_specifier': (d, t) => wrapExportSpecifier(d as unknown as T.ExportSpecifier, t),
+  'export_statement_type_export': (d, t) => wrapExportStatementTypeExport(d as unknown as T.ExportStatementTypeExport, t),
+  'export_statement_equals_export': (d, t) => wrapExportStatementEqualsExport(d as unknown as T.ExportStatementEqualsExport, t),
+  'export_statement_namespace_export': (d, t) => wrapExportStatementNamespaceExport(d as unknown as T.ExportStatementNamespaceExport, t),
+  'export_statement': (d, t) => wrapExportStatement(d as unknown as T.ExportStatement, t),
+  'expression': (d, t) => wrapExpression(d as unknown as T.Expression, t),
+  'expression_statement': (d, t) => wrapExpressionStatement(d as unknown as T.ExpressionStatement, t),
+  'extends_clause': (d, t) => wrapExtendsClause(d as unknown as T.ExtendsClause, t),
+  'extends_type_clause': (d, t) => wrapExtendsTypeClause(d as unknown as T.ExtendsTypeClause, t),
   'false': (d) => ({ ...d, $type: TSKindId.False as const }),
-  'finally_clause': (d, t) => wrapFinallyClause(d as T.FinallyClause, t),
-  'flow_maybe_type': (d, t) => wrapFlowMaybeType(d as T.FlowMaybeType, t),
-  'for_in_statement': (d, t) => wrapForInStatement(d as T.ForInStatement, t),
-  'for_statement': (d, t) => wrapForStatement(d as T.ForStatement, t),
-  'formal_parameters': (d, t) => wrapFormalParameters(d as T.FormalParameters, t),
-  'function_declaration': (d, t) => wrapFunctionDeclaration(d as T.FunctionDeclaration, t),
-  'function_expression': (d, t) => wrapFunctionExpression(d as T.FunctionExpression, t),
-  'function_signature': (d, t) => wrapFunctionSignature(d as T.FunctionSignature, t),
-  'function_type': (d, t) => wrapFunctionType(d as T.FunctionType, t),
-  'generator_function': (d, t) => wrapGeneratorFunction(d as T.GeneratorFunction, t),
-  'generator_function_declaration': (d, t) => wrapGeneratorFunctionDeclaration(d as T.GeneratorFunctionDeclaration, t),
-  'generic_type': (d, t) => wrapGenericType(d as T.GenericType, t),
+  'finally_clause': (d, t) => wrapFinallyClause(d as unknown as T.FinallyClause, t),
+  'flow_maybe_type': (d, t) => wrapFlowMaybeType(d as unknown as T.FlowMaybeType, t),
+  'for_in_statement': (d, t) => wrapForInStatement(d as unknown as T.ForInStatement, t),
+  'for_statement': (d, t) => wrapForStatement(d as unknown as T.ForStatement, t),
+  'formal_parameters': (d, t) => wrapFormalParameters(d as unknown as T.FormalParameters, t),
+  'function_declaration': (d, t) => wrapFunctionDeclaration(d as unknown as T.FunctionDeclaration, t),
+  'function_expression': (d, t) => wrapFunctionExpression(d as unknown as T.FunctionExpression, t),
+  'function_signature': (d, t) => wrapFunctionSignature(d as unknown as T.FunctionSignature, t),
+  'function_type': (d, t) => wrapFunctionType(d as unknown as T.FunctionType, t),
+  'generator_function': (d, t) => wrapGeneratorFunction(d as unknown as T.GeneratorFunction, t),
+  'generator_function_declaration': (d, t) => wrapGeneratorFunctionDeclaration(d as unknown as T.GeneratorFunctionDeclaration, t),
+  'generic_type': (d, t) => wrapGenericType(d as unknown as T.GenericType, t),
   'hash_bang_line': (d) => ({ ...d, $type: TSKindId.HashBangLine as const }),
   'identifier': (d) => ({ ...d, $type: TSKindId.Identifier as const }),
-  'if_statement': (d, t) => wrapIfStatement(d as T.IfStatement, t),
-  'implements_clause': (d, t) => wrapImplementsClause(d as T.ImplementsClause, t),
+  'if_statement': (d, t) => wrapIfStatement(d as unknown as T.IfStatement, t),
+  'implements_clause': (d, t) => wrapImplementsClause(d as unknown as T.ImplementsClause, t),
   'import': (d) => ({ ...d, $type: TSKindId.Import as const }),
-  'import_alias': (d, t) => wrapImportAlias(d as T.ImportAlias, t),
-  'import_attribute': (d, t) => wrapImportAttribute(d as T.ImportAttribute, t),
-  'import_clause_namespace_import': (d, t) => wrapImportClauseNamespaceImport(d as T.ImportClauseNamespaceImport, t),
-  'import_clause_named_imports': (d, t) => wrapImportClauseNamedImports(d as T.ImportClauseNamedImports, t),
-  'import_clause_default_import': (d, t) => wrapImportClauseDefaultImport(d as T.ImportClauseDefaultImport, t),
-  'import_clause': (d, t) => wrapImportClause(d as T.ImportClause, t),
-  'import_require_clause': (d, t) => wrapImportRequireClause(d as T.ImportRequireClause, t),
-  'import_specifier_name': (d, t) => wrapImportSpecifierName(d as T.ImportSpecifierName, t),
-  'import_specifier': (d, t) => wrapImportSpecifier(d as T.ImportSpecifier, t),
-  'import_statement': (d, t) => wrapImportStatement(d as T.ImportStatement, t),
-  'index_signature_mapped_type_clause': (d, t) => wrapIndexSignatureMappedTypeClause(d as T.IndexSignatureMappedTypeClause, t),
-  'index_signature': (d, t) => wrapIndexSignature(d as T.IndexSignature, t),
-  'index_type_query': (d, t) => wrapIndexTypeQuery(d as T.IndexTypeQuery, t),
-  'infer_type': (d, t) => wrapInferType(d as T.InferType, t),
-  'instantiation_expression': (d, t) => wrapInstantiationExpression(d as T.InstantiationExpression, t),
-  'interface_declaration': (d, t) => wrapInterfaceDeclaration(d as T.InterfaceDeclaration, t),
-  'internal_module': (d, t) => wrapInternalModule(d as T.InternalModule, t),
-  'intersection_type': (d, t) => wrapIntersectionType(d as T.IntersectionType, t),
-  'labeled_statement': (d, t) => wrapLabeledStatement(d as T.LabeledStatement, t),
-  'lexical_declaration': (d, t) => wrapLexicalDeclaration(d as T.LexicalDeclaration, t),
-  'literal_type': (d, t) => wrapLiteralType(d as T.LiteralType, t),
-  'lookup_type': (d, t) => wrapLookupType(d as T.LookupType, t),
-  'mapped_type_clause': (d, t) => wrapMappedTypeClause(d as T.MappedTypeClause, t),
-  'member_expression': (d, t) => wrapMemberExpression(d as T.MemberExpression, t),
+  'import_alias': (d, t) => wrapImportAlias(d as unknown as T.ImportAlias, t),
+  'import_attribute': (d, t) => wrapImportAttribute(d as unknown as T.ImportAttribute, t),
+  'import_clause_namespace_import': (d, t) => wrapImportClauseNamespaceImport(d as unknown as T.ImportClauseNamespaceImport, t),
+  'import_clause_named_imports': (d, t) => wrapImportClauseNamedImports(d as unknown as T.ImportClauseNamedImports, t),
+  'import_clause_default_import': (d, t) => wrapImportClauseDefaultImport(d as unknown as T.ImportClauseDefaultImport, t),
+  'import_clause': (d, t) => wrapImportClause(d as unknown as T.ImportClause, t),
+  'import_require_clause': (d, t) => wrapImportRequireClause(d as unknown as T.ImportRequireClause, t),
+  'import_specifier_name': (d, t) => wrapImportSpecifierName(d as unknown as T.ImportSpecifierName, t),
+  'import_specifier': (d, t) => wrapImportSpecifier(d as unknown as T.ImportSpecifier, t),
+  'import_statement': (d, t) => wrapImportStatement(d as unknown as T.ImportStatement, t),
+  'index_signature_mapped_type_clause': (d, t) => wrapIndexSignatureMappedTypeClause(d as unknown as T.IndexSignatureMappedTypeClause, t),
+  'index_signature': (d, t) => wrapIndexSignature(d as unknown as T.IndexSignature, t),
+  'index_type_query': (d, t) => wrapIndexTypeQuery(d as unknown as T.IndexTypeQuery, t),
+  'infer_type': (d, t) => wrapInferType(d as unknown as T.InferType, t),
+  'instantiation_expression': (d, t) => wrapInstantiationExpression(d as unknown as T.InstantiationExpression, t),
+  'interface_declaration': (d, t) => wrapInterfaceDeclaration(d as unknown as T.InterfaceDeclaration, t),
+  'internal_module': (d, t) => wrapInternalModule(d as unknown as T.InternalModule, t),
+  'intersection_type': (d, t) => wrapIntersectionType(d as unknown as T.IntersectionType, t),
+  'labeled_statement': (d, t) => wrapLabeledStatement(d as unknown as T.LabeledStatement, t),
+  'lexical_declaration': (d, t) => wrapLexicalDeclaration(d as unknown as T.LexicalDeclaration, t),
+  'literal_type': (d, t) => wrapLiteralType(d as unknown as T.LiteralType, t),
+  'lookup_type': (d, t) => wrapLookupType(d as unknown as T.LookupType, t),
+  'mapped_type_clause': (d, t) => wrapMappedTypeClause(d as unknown as T.MappedTypeClause, t),
+  'member_expression': (d, t) => wrapMemberExpression(d as unknown as T.MemberExpression, t),
   'meta_property': (d) => ({ ...d, $type: TSKindId.MetaProperty as const }),
-  'method_definition': (d, t) => wrapMethodDefinition(d as T.MethodDefinition, t),
-  'method_signature': (d, t) => wrapMethodSignature(d as T.MethodSignature, t),
-  'module': (d, t) => wrapModule(d as T.Module, t),
-  'named_imports': (d, t) => wrapNamedImports(d as T.NamedImports, t),
-  'namespace_export': (d, t) => wrapNamespaceExport(d as T.NamespaceExport, t),
-  'namespace_import': (d, t) => wrapNamespaceImport(d as T.NamespaceImport, t),
-  'nested_identifier': (d, t) => wrapNestedIdentifier(d as T.NestedIdentifier, t),
-  'nested_type_identifier': (d, t) => wrapNestedTypeIdentifier(d as T.NestedTypeIdentifier, t),
-  'new_expression': (d, t) => wrapNewExpression(d as T.NewExpression, t),
-  'non_null_expression': (d, t) => wrapNonNullExpression(d as T.NonNullExpression, t),
+  'method_definition': (d, t) => wrapMethodDefinition(d as unknown as T.MethodDefinition, t),
+  'method_signature': (d, t) => wrapMethodSignature(d as unknown as T.MethodSignature, t),
+  'module': (d, t) => wrapModule(d as unknown as T.Module, t),
+  'named_imports': (d, t) => wrapNamedImports(d as unknown as T.NamedImports, t),
+  'namespace_export': (d, t) => wrapNamespaceExport(d as unknown as T.NamespaceExport, t),
+  'namespace_import': (d, t) => wrapNamespaceImport(d as unknown as T.NamespaceImport, t),
+  'nested_identifier': (d, t) => wrapNestedIdentifier(d as unknown as T.NestedIdentifier, t),
+  'nested_type_identifier': (d, t) => wrapNestedTypeIdentifier(d as unknown as T.NestedTypeIdentifier, t),
+  'new_expression': (d, t) => wrapNewExpression(d as unknown as T.NewExpression, t),
+  'non_null_expression': (d, t) => wrapNonNullExpression(d as unknown as T.NonNullExpression, t),
   'null': (d) => ({ ...d, $type: TSKindId.Null as const }),
   'number': (d) => ({ ...d, $type: TSKindId.Number as const }),
-  'object': (d, t) => wrapObject(d as T.Object, t),
-  'object_assignment_pattern': (d, t) => wrapObjectAssignmentPattern(d as T.ObjectAssignmentPattern, t),
-  'object_pattern': (d, t) => wrapObjectPattern(d as T.ObjectPattern, t),
-  'object_type': (d, t) => wrapObjectType(d as T.ObjectType, t),
-  'omitting_type_annotation': (d, t) => wrapOmittingTypeAnnotation(d as T.OmittingTypeAnnotation, t),
-  'opting_type_annotation': (d, t) => wrapOptingTypeAnnotation(d as T.OptingTypeAnnotation, t),
-  'optional_parameter': (d, t) => wrapOptionalParameter(d as T.OptionalParameter, t),
-  'optional_tuple_parameter': (d, t) => wrapOptionalTupleParameter(d as T.OptionalTupleParameter, t),
-  'optional_type': (d, t) => wrapOptionalType(d as T.OptionalType, t),
+  'object': (d, t) => wrapObject(d as unknown as T.Object, t),
+  'object_assignment_pattern': (d, t) => wrapObjectAssignmentPattern(d as unknown as T.ObjectAssignmentPattern, t),
+  'object_pattern': (d, t) => wrapObjectPattern(d as unknown as T.ObjectPattern, t),
+  'object_type': (d, t) => wrapObjectType(d as unknown as T.ObjectType, t),
+  'omitting_type_annotation': (d, t) => wrapOmittingTypeAnnotation(d as unknown as T.OmittingTypeAnnotation, t),
+  'opting_type_annotation': (d, t) => wrapOptingTypeAnnotation(d as unknown as T.OptingTypeAnnotation, t),
+  'optional_parameter': (d, t) => wrapOptionalParameter(d as unknown as T.OptionalParameter, t),
+  'optional_tuple_parameter': (d, t) => wrapOptionalTupleParameter(d as unknown as T.OptionalTupleParameter, t),
+  'optional_type': (d, t) => wrapOptionalType(d as unknown as T.OptionalType, t),
   'override_modifier': (d) => ({ ...d, $type: TSKindId.OverrideModifier as const }),
-  'pair': (d, t) => wrapPair(d as T.Pair, t),
-  'pair_pattern': (d, t) => wrapPairPattern(d as T.PairPattern, t),
-  'parenthesized_expression_sequence': (d, t) => wrapParenthesizedExpressionSequence(d as T.ParenthesizedExpressionSequence, t),
-  'parenthesized_expression': (d, t) => wrapParenthesizedExpression(d as T.ParenthesizedExpression, t),
-  'parenthesized_type': (d, t) => wrapParenthesizedType(d as T.ParenthesizedType, t),
+  'pair': (d, t) => wrapPair(d as unknown as T.Pair, t),
+  'pair_pattern': (d, t) => wrapPairPattern(d as unknown as T.PairPattern, t),
+  'parenthesized_expression_sequence': (d, t) => wrapParenthesizedExpressionSequence(d as unknown as T.ParenthesizedExpressionSequence, t),
+  'parenthesized_expression': (d, t) => wrapParenthesizedExpression(d as unknown as T.ParenthesizedExpression, t),
+  'parenthesized_type': (d, t) => wrapParenthesizedType(d as unknown as T.ParenthesizedType, t),
+  'pattern': (d, t) => wrapPattern(d as unknown as T.Pattern, t),
   'predefined_type': (d) => ({ ...d, $type: TSKindId.PredefinedType as const }),
+  'primary_expression': (d, t) => wrapPrimaryExpression(d as unknown as T.PrimaryExpression, t),
+  'primary_type': (d, t) => wrapPrimaryType(d as unknown as T.PrimaryType, t),
   'private_property_identifier': (d) => ({ ...d, $type: TSKindId.PrivatePropertyIdentifier as const }),
-  'program': (d, t) => wrapProgram(d as T.Program, t),
-  'property_signature': (d, t) => wrapPropertySignature(d as T.PropertySignature, t),
-  'public_field_definition': (d, t) => wrapPublicFieldDefinition(d as T.PublicFieldDefinition, t),
-  'readonly_type': (d, t) => wrapReadonlyType(d as T.ReadonlyType, t),
-  'regex': (d, t) => wrapRegex(d as T.Regex, t),
+  'program': (d, t) => wrapProgram(d as unknown as T.Program, t),
+  'property_signature': (d, t) => wrapPropertySignature(d as unknown as T.PropertySignature, t),
+  'public_field_definition': (d, t) => wrapPublicFieldDefinition(d as unknown as T.PublicFieldDefinition, t),
+  'readonly_type': (d, t) => wrapReadonlyType(d as unknown as T.ReadonlyType, t),
+  'regex': (d, t) => wrapRegex(d as unknown as T.Regex, t),
   'regex_flags': (d) => ({ ...d, $type: TSKindId.RegexFlags as const }),
   'regex_pattern': (d) => ({ ...d, $type: TSKindId.RegexPattern as const }),
-  'required_parameter': (d, t) => wrapRequiredParameter(d as T.RequiredParameter, t),
-  'rest_pattern': (d, t) => wrapRestPattern(d as T.RestPattern, t),
-  'rest_type': (d, t) => wrapRestType(d as T.RestType, t),
-  'return_statement': (d, t) => wrapReturnStatement(d as T.ReturnStatement, t),
-  'satisfies_expression': (d, t) => wrapSatisfiesExpression(d as T.SatisfiesExpression, t),
-  'sequence_expression': (d, t) => wrapSequenceExpression(d as T.SequenceExpression, t),
-  'spread_element': (d, t) => wrapSpreadElement(d as T.SpreadElement, t),
-  'statement_block': (d, t) => wrapStatementBlock(d as T.StatementBlock, t),
-  'string_double': (d, t) => wrapStringDouble(d as T.StringDouble, t),
-  'string_single': (d, t) => wrapStringSingle(d as T.StringSingle, t),
-  'string': (d, t) => wrapString(d as T.String, t),
-  'subscript_expression': (d, t) => wrapSubscriptExpression(d as T.SubscriptExpression, t),
+  'required_parameter': (d, t) => wrapRequiredParameter(d as unknown as T.RequiredParameter, t),
+  'rest_pattern': (d, t) => wrapRestPattern(d as unknown as T.RestPattern, t),
+  'rest_type': (d, t) => wrapRestType(d as unknown as T.RestType, t),
+  'return_statement': (d, t) => wrapReturnStatement(d as unknown as T.ReturnStatement, t),
+  'satisfies_expression': (d, t) => wrapSatisfiesExpression(d as unknown as T.SatisfiesExpression, t),
+  'sequence_expression': (d, t) => wrapSequenceExpression(d as unknown as T.SequenceExpression, t),
+  'spread_element': (d, t) => wrapSpreadElement(d as unknown as T.SpreadElement, t),
+  'statement': (d, t) => wrapStatement(d as unknown as T.Statement, t),
+  'statement_block': (d, t) => wrapStatementBlock(d as unknown as T.StatementBlock, t),
+  'string': (d, t) => wrapString(d as unknown as T.String, t),
+  'subscript_expression': (d, t) => wrapSubscriptExpression(d as unknown as T.SubscriptExpression, t),
   'super': (d) => ({ ...d, $type: TSKindId.Super as const }),
-  'switch_body': (d, t) => wrapSwitchBody(d as T.SwitchBody, t),
-  'switch_case': (d, t) => wrapSwitchCase(d as T.SwitchCase, t),
-  'switch_default': (d, t) => wrapSwitchDefault(d as T.SwitchDefault, t),
-  'switch_statement': (d, t) => wrapSwitchStatement(d as T.SwitchStatement, t),
-  'template_literal_type': (d, t) => wrapTemplateLiteralType(d as T.TemplateLiteralType, t),
-  'template_string': (d, t) => wrapTemplateString(d as T.TemplateString, t),
-  'template_substitution': (d, t) => wrapTemplateSubstitution(d as T.TemplateSubstitution, t),
-  'template_type': (d, t) => wrapTemplateType(d as T.TemplateType, t),
-  'ternary_expression': (d, t) => wrapTernaryExpression(d as T.TernaryExpression, t),
+  'switch_body': (d, t) => wrapSwitchBody(d as unknown as T.SwitchBody, t),
+  'switch_case': (d, t) => wrapSwitchCase(d as unknown as T.SwitchCase, t),
+  'switch_default': (d, t) => wrapSwitchDefault(d as unknown as T.SwitchDefault, t),
+  'switch_statement': (d, t) => wrapSwitchStatement(d as unknown as T.SwitchStatement, t),
+  'template_literal_type': (d, t) => wrapTemplateLiteralType(d as unknown as T.TemplateLiteralType, t),
+  'template_string': (d, t) => wrapTemplateString(d as unknown as T.TemplateString, t),
+  'template_substitution': (d, t) => wrapTemplateSubstitution(d as unknown as T.TemplateSubstitution, t),
+  'template_type': (d, t) => wrapTemplateType(d as unknown as T.TemplateType, t),
+  'ternary_expression': (d, t) => wrapTernaryExpression(d as unknown as T.TernaryExpression, t),
   'this': (d) => ({ ...d, $type: TSKindId.This as const }),
-  'throw_statement': (d, t) => wrapThrowStatement(d as T.ThrowStatement, t),
+  'throw_statement': (d, t) => wrapThrowStatement(d as unknown as T.ThrowStatement, t),
   'true': (d) => ({ ...d, $type: TSKindId.True as const }),
-  'try_statement': (d, t) => wrapTryStatement(d as T.TryStatement, t),
-  'tuple_parameter': (d, t) => wrapTupleParameter(d as T.TupleParameter, t),
-  'tuple_type': (d, t) => wrapTupleType(d as T.TupleType, t),
-  'type_alias_declaration': (d, t) => wrapTypeAliasDeclaration(d as T.TypeAliasDeclaration, t),
-  'type_annotation': (d, t) => wrapTypeAnnotation(d as T.TypeAnnotation, t),
-  'type_arguments': (d, t) => wrapTypeArguments(d as T.TypeArguments, t),
-  'type_assertion': (d, t) => wrapTypeAssertion(d as T.TypeAssertion, t),
-  'type_parameter': (d, t) => wrapTypeParameter(d as T.TypeParameter, t),
-  'type_parameters': (d, t) => wrapTypeParameters(d as T.TypeParameters, t),
-  'type_predicate': (d, t) => wrapTypePredicate(d as T.TypePredicate, t),
-  'type_predicate_annotation': (d, t) => wrapTypePredicateAnnotation(d as T.TypePredicateAnnotation, t),
-  'type_query': (d, t) => wrapTypeQuery(d as T.TypeQuery, t),
-  'unary_expression': (d, t) => wrapUnaryExpression(d as T.UnaryExpression, t),
+  'try_statement': (d, t) => wrapTryStatement(d as unknown as T.TryStatement, t),
+  'tuple_parameter': (d, t) => wrapTupleParameter(d as unknown as T.TupleParameter, t),
+  'tuple_type': (d, t) => wrapTupleType(d as unknown as T.TupleType, t),
+  'type': (d, t) => wrapType(d as unknown as T.Type, t),
+  'type_alias_declaration': (d, t) => wrapTypeAliasDeclaration(d as unknown as T.TypeAliasDeclaration, t),
+  'type_annotation': (d, t) => wrapTypeAnnotation(d as unknown as T.TypeAnnotation, t),
+  'type_arguments': (d, t) => wrapTypeArguments(d as unknown as T.TypeArguments, t),
+  'type_assertion': (d, t) => wrapTypeAssertion(d as unknown as T.TypeAssertion, t),
+  'type_parameter': (d, t) => wrapTypeParameter(d as unknown as T.TypeParameter, t),
+  'type_parameters': (d, t) => wrapTypeParameters(d as unknown as T.TypeParameters, t),
+  'type_predicate': (d, t) => wrapTypePredicate(d as unknown as T.TypePredicate, t),
+  'type_predicate_annotation': (d, t) => wrapTypePredicateAnnotation(d as unknown as T.TypePredicateAnnotation, t),
+  'type_query': (d, t) => wrapTypeQuery(d as unknown as T.TypeQuery, t),
+  'unary_expression': (d, t) => wrapUnaryExpression(d as unknown as T.UnaryExpression, t),
   'undefined': (d) => ({ ...d, $type: TSKindId.Undefined as const }),
   'unescaped_double_string_fragment': (d) => ({ ...d, $type: TSKindId.UnescapedDoubleStringFragment as const }),
   'unescaped_single_string_fragment': (d) => ({ ...d, $type: TSKindId.UnescapedSingleStringFragment as const }),
-  'union_type': (d, t) => wrapUnionType(d as T.UnionType, t),
-  'update_expression': (d, t) => wrapUpdateExpression(d as T.UpdateExpression, t),
-  'variable_declaration': (d, t) => wrapVariableDeclaration(d as T.VariableDeclaration, t),
-  'variable_declarator': (d, t) => wrapVariableDeclarator(d as T.VariableDeclarator, t),
-  'while_statement': (d, t) => wrapWhileStatement(d as T.WhileStatement, t),
-  'with_statement': (d, t) => wrapWithStatement(d as T.WithStatement, t),
-  'yield_expression': (d, t) => wrapYieldExpression(d as T.YieldExpression, t),
-  '_automatic_semicolon': (d) => ({ ...d, $type: TSKindId.AutomaticSemicolon as const }),
+  'union_type': (d, t) => wrapUnionType(d as unknown as T.UnionType, t),
+  'update_expression': (d, t) => wrapUpdateExpression(d as unknown as T.UpdateExpression, t),
+  'variable_declaration': (d, t) => wrapVariableDeclaration(d as unknown as T.VariableDeclaration, t),
+  'variable_declarator': (d, t) => wrapVariableDeclarator(d as unknown as T.VariableDeclarator, t),
+  'while_statement': (d, t) => wrapWhileStatement(d as unknown as T.WhileStatement, t),
+  'with_statement': (d, t) => wrapWithStatement(d as unknown as T.WithStatement, t),
+  'yield_expression': (d, t) => wrapYieldExpression(d as unknown as T.YieldExpression, t),
   '_template_chars': (d) => ({ ...d, $type: TSKindId.TemplateChars as const }),
   '_ternary_qmark': (d) => ({ ...d, $type: TSKindId.TernaryQmark as const }),
   'html_comment': (d) => ({ ...d, $type: TSKindId.HtmlComment as const }),
   '||': (d) => d,
   'jsx_text': (d) => ({ ...d, $type: TSKindId.JsxText as const }),
-  '_function_signature_automatic_semicolon': (d) => ({ ...d, $type: TSKindId.FunctionSignatureAutomaticSemicolon as const }),
   '__error_recovery': (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const }),
 };
 
 const _aliasTargetToSource: Record<string, string> = {
   'abstract_marker': '_abstract_marker',
   'accessor_kind': '_accessor_kind',
+  'ambient_declaration_global': '_ambient_declaration_global',
+  'ambient_declaration_module': '_ambient_declaration_module',
   'async_marker': '_async_marker',
   'augmented_assignment_expression_operator': '_augmented_assignment_expression_operator',
-  'automatic_semicolon': '_automatic_semicolon',
   'call_expression_call': '_call_expression_call',
   'call_expression_member': '_call_expression_member',
   'call_expression_template_call': '_call_expression_template_call',
@@ -3510,7 +4543,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'for_header_operator': '__for_header_operator',
   'for_header_var_kind': '_for_header_var_kind',
   'formal_parameter': '_formal_parameter',
-  'function_signature_automatic_semicolon': '_function_signature_automatic_semicolon',
   'import_attribute_object': '_import_attribute_object',
   'import_identifier': '_import_identifier',
   'import_specifier_as': '_import_specifier_as',
@@ -3543,6 +4575,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'shorthand_property_identifier_pattern': '_shorthand_property_identifier_pattern',
   'statement_identifier': '_statement_identifier',
   'static_marker': '_static_marker',
+  'string_opening': '_string_opening',
   'template_chars': '_template_chars',
   'tuple_type_member': '_tuple_type_member',
   'type_identifier': '_type_identifier',
@@ -3557,7 +4590,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'update_expression_prefix': '_update_expression_prefix',
 };
 
-import { KIND_NAMES } from './types.js';
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
   // The native path now returns numeric $type
@@ -3628,7 +4660,8 @@ export function readTreeNode(
     const currentType = typeof data.$type === "number"
       ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)
       : (data.$type as unknown as string);
-    if (currentType === asType.from) {
+    const hiddenCurrentType = currentType.startsWith("_") ? currentType.slice(1) : undefined;
+    if (currentType === asType.from || hiddenCurrentType === asType.from) {
       data = { ...data, $type: asType.to as unknown as number };
     }
   }

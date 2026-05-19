@@ -13,4 +13,15 @@ describe('native boundary', () => {
 			})
 		).not.toThrow();
 	});
+
+	it('accepts boolean keyword-presence field storage', () => {
+		expect(() =>
+			assertRenderableNodeData({
+				$type: 1,
+				$source: 0,
+				$named: true,
+				_optional_marker: true
+			})
+		).not.toThrow();
+	});
 });

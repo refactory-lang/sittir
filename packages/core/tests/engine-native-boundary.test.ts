@@ -1,15 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createNativeEngine, type GrammarEngineConfig } from '../../common/src/engine.ts';
-import type { AnyNodeData } from '@sittir/types';
 
 describe('createNativeEngine native boundary', () => {
-	it('rejects non-data render inputs before transport projection', () => {
+	it('passes render inputs straight through to the native engine', () => {
 		const render = vi.fn((_node: unknown) => 'ok');
-		const toNativeRenderTransport = vi.fn((node: AnyNodeData) => node);
 		const config = {
 			templatesPath: '.',
 			kindNames: new Map<number, string>(),
-			toNativeRenderTransport,
 			getActiveBackend: () => ({
 				name: 'native' as const,
 				hashMatch: true as const,
@@ -56,8 +53,10 @@ describe('createNativeEngine native boundary', () => {
 		};
 
 		expect(engine).not.toBeNull();
-		expect(() => engine!.render(invalid)).toThrow(/only plain data objects can cross the native render boundary/);
-		expect(toNativeRenderTransport).not.toHaveBeenCalled();
-		expect(render).not.toHaveBeenCalled();
+		const handle = engine!.render(invalid);
+
+		expect(handle.toString()).toBe('ok');
+		expect(render).toHaveBeenCalledTimes(1);
+		expect(render).toHaveBeenCalledWith(invalid);
 	});
 });

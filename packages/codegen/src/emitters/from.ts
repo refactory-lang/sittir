@@ -34,6 +34,7 @@ import {
 	resolveHiddenKeywordLiteral,
 	resolveSingleFieldFactorySlot,
 	resolveFieldStorageInfo,
+	resolveEffectiveLiteral,
 	collectPolymorphLiteralDispatchCases,
 	stampExpressionFor,
 	isHiddenInfraSlot,
@@ -46,6 +47,8 @@ import { fieldElementType } from './factories.ts';
 import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/node-map.ts';
 import type { CodegenEmitter } from './emitter.ts';
+
+const SAFE_IDENT_KEY = /^[A-Za-z_$][\w$]*$/;
 
 export interface EmitFromConfig {
 	grammar: string;
@@ -178,24 +181,17 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
  *   - an array of any of above   (multi-field slot)
  *   - undefined / null           (absent optional field)
  *
- * `_FromFieldInput` is the minimum closed union that captures every one of
- * those shapes without leaking `unknown`. The `{ kind, ... }` arm is
- * modeled as an index signature whose values recursively match the same
- * union so `{kind, ...rest}` destructuring preserves types.
+ * `_FromFieldInput` is intentionally `unknown`. Generated field resolver
+ * helpers immediately narrow with runtime guards (`typeof`, `Array.isArray`,
+ * `isNodeData`, `'kind' in value`), and keeping the alias closed causes
+ * recursive assignability failures once strict Config surfaces expose large
+ * concrete node unions.
  *
  * @param lines - Output lines array to push into.
  */
 function emitFromFieldInputType(lines: string[]): void {
-	lines.push('/** Closed union of every shape a loose-from() field value can hold. */');
-	lines.push('type _FromFieldInput =');
-	lines.push('  | AnyNodeData');
-	lines.push('  | string');
-	lines.push('  | number');
-	lines.push('  | boolean');
-	lines.push('  | null');
-	lines.push('  | undefined');
-	lines.push('  | { readonly [key: string]: _FromFieldInput }');
-	lines.push('  | readonly _FromFieldInput[];');
+	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
+	lines.push('type _FromFieldInput = unknown;');
 	lines.push('');
 }
 
@@ -380,7 +376,8 @@ export namespace from {
 					typeName: node.typeName,
 					rawFactoryName: node.rawFactoryName,
 					fromFunctionName: node.fromFunctionName,
-					children: node.children
+					children: node.children,
+					fields: node.fields
 				},
 				kindEntries,
 				nodeMap
@@ -418,7 +415,6 @@ interface BranchLikeNode {
 	readonly fromFunctionName?: string;
 	readonly fields: readonly AssembledNonterminal[];
 	readonly children: readonly AssembledNonterminal[];
-	readonly isContainerShape?: boolean;
 	readonly slotClass?: BranchSlotClass;
 }
 
@@ -445,6 +441,11 @@ function _emitVariantFrom(
 	const parentFields = 'fields' in node ? (node as { fields: readonly AssembledNonterminal[] }).fields : [];
 	const configParts: string[] = [];
 	for (const f of parentFields) {
+		const stampedExpr = stampedConfigFieldExpr(f, nodeMap, intern);
+		if (stampedExpr !== null) {
+			configParts.push(`    ${f.configKey}: ${stampedExpr},`);
+			continue;
+		}
 		if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 		const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', false);
 		configParts.push(`    ${f.configKey}: ${call},`);
@@ -460,6 +461,11 @@ function _emitVariantFrom(
 		for (const vf of vFields) {
 			if (seenProps.has(vf.configKey)) continue;
 			seenProps.add(vf.configKey);
+			const stampedExpr = stampedConfigFieldExpr(vf, nodeMap, intern);
+			if (stampedExpr !== null) {
+				configParts.push(`    ${vf.configKey}: ${stampedExpr},`);
+				continue;
+			}
 			if (isAutoStampField(vf, nodeMap)) continue; // factory stamps these; no Config slot
 			const call = resolveFieldFromTypedInput(vf, nodeMap, typeName, intern, 'input', true);
 			configParts.push(`    ${vf.configKey}: ${call},`);
@@ -485,6 +491,18 @@ function buildBranchSignatureParts(
 	const inputType = `T.${node.typeName}.Loose`;
 	const inputOptional = opt === '?';
 	return { inputType, inputOptional };
+}
+
+function stampedConfigFieldExpr(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap,
+	intern: KindInterner
+): string | null {
+	const literal = resolveEffectiveLiteral(field, nodeMap);
+	if (literal === undefined) return null;
+	const storageInfo = resolveFieldStorageInfo(field, nodeMap);
+	if (storageInfo.kind !== 'kindEnum') return null;
+	return resolveFieldCall(JSON.stringify(literal), field, isMultiple(field), nodeMap, intern);
 }
 
 function factoryReturnTypeExpr(factory: string): string {
@@ -630,14 +648,21 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	if (!targetNode) return null;
 	if (!targetNode.rawFactoryName) return null;
 
-	// Container-shaped branches: rest-param signature can be called with
-	// zero args ONLY when no child is nonEmpty (requires ≥1 element).
-	if (targetNode instanceof AssembledBranch && targetNode.isContainerShape) {
-		const anyMultiple = targetNode.children.some((c) => isMultiple(c));
-		const anyNonEmpty = targetNode.children.some((c) => isNonEmpty(c));
-		if (anyMultiple && !anyNonEmpty) return targetNode.rawFactoryName;
-		// Singular child — callable only when the child is not required.
-		const firstChild = targetNode.children[0];
+	const branchTarget = targetNode instanceof AssembledBranch ? targetNode : null;
+	const childSurface = branchTarget?.modelType === 'branch'
+		? classifyChildFactorySurface(branchTarget, nodeMap)
+		: null;
+	// Positional-child factories: `spread` is callable with zero args only
+	// when no child is nonEmpty; `direct` is callable when the sole child is
+	// optional.
+	if (childSurface !== null) {
+		if (branchTarget === null) return null;
+		const anyMultiple = branchTarget.children.some((c) => isMultiple(c));
+		const anyNonEmpty = branchTarget.children.some((c) => isNonEmpty(c));
+		const firstChild = branchTarget.children[0];
+		if (childSurface === 'spread' && anyMultiple && !anyNonEmpty) {
+			return targetNode.rawFactoryName;
+		}
 		if (!firstChild || !isRequired(firstChild)) return targetNode.rawFactoryName;
 		return null;
 	}
@@ -706,6 +731,7 @@ function emitBranchFrom(
 		const needsNonEmptyHoist = (f: AssembledNonterminal): boolean =>
 			isNonEmpty(f) && isMultiple(f) && keywordPresenceKind(f, nodeMap) === null;
 		for (const f of fields) {
+			if (stampedConfigFieldExpr(f, nodeMap, intern) !== null) continue;
 			if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 			if (needsNonEmptyHoist(f)) {
 				const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional);
@@ -729,6 +755,11 @@ function emitBranchFrom(
 		} else {
 			lines.push(`  return ${factory}({`);
 			for (const f of fields) {
+				const stampedExpr = stampedConfigFieldExpr(f, nodeMap, intern);
+				if (stampedExpr !== null) {
+					lines.push(`    ${f.configKey}: ${stampedExpr},`);
+					continue;
+				}
 				if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 				if (needsNonEmptyHoist(f)) {
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
@@ -768,6 +799,9 @@ interface ContainerFromNode {
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
 	readonly children: readonly { readonly values: readonly NodeOrTerminal[] }[];
+	// Post-unification: the unnamed-child slot is exposed via `fields[0]`. Its
+	// `storageName` drives the `_<name>` data key we read here.
+	readonly fields?: readonly AssembledNonterminal[];
 }
 
 /**
@@ -801,9 +835,9 @@ function containerTypeCheck(kind: string, kindEntries: readonly KindEnumEntry[] 
  * the factory's signature at the call sites it forwards to.
  *
  * `data.$children` is undefined for empty collections that readNode represents
- * without a children array (e.g. python `format_specifier` for `:2` — the
- * colon gets promoted to a field, no children). Spreading `undefined` throws;
- * guard with `?? []` so the rebuilt factory call matches the empty form.
+ * without a children slot, and singular-child containers may carry one scalar
+ * child rather than an array. Normalize to an array before spreading so the
+ * rebuilt factory call matches both shapes.
  *
  * @param fn - The `fromX` function name to emit.
  * @param factory - The `F.<factoryName>` reference string.
@@ -821,19 +855,18 @@ function emitRepeatedContainerFrom(
 	elementType: string,
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	storageKey: string
 ): string {
 	// The accepted-input union allows callers to hand back an existing
 	// <kind> NodeData OR a flat list of element children. The single-arg
-	// self-NodeData path unwraps `$children`; otherwise every item must
-	// already be an element. The `as readonly ${elementType}[]` assertion
-	// funnels the post-guard input into the factory's accepted shape — at
-	// this point any `${tName}` element has been ruled out by structural
-	// selection (the only way to land here with the union is a single
-	// self-NodeData first arg, handled above). The unwrap branch's
-	// `data.$children` is typed as `readonly NodeMemberValue[]` (the loose
-	// generic shape on `AnyNodeData`); the same boundary cast funnels it
-	// into the factory's narrow children-element type.
+	// self-NodeData path unwraps the post-unification per-slot storage key
+	// (`data._<slot.storageName>`); otherwise every item must already be an
+	// element. The `as readonly ${elementType}[]` assertion funnels the
+	// post-guard input into the factory's accepted shape — at this point any
+	// `${tName}` element has been ruled out by structural selection. The
+	// unwrap branch's storage value is typed as singular-or-array on the loose
+	// `AnyNodeData` shape; normalize to an array before the boundary cast.
 	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
 	// TSGrammar-only kinds (string $type) can't satisfy isNodeData() (which
 	// requires numeric $type). Skip the node-data pass-through guard entirely
@@ -843,24 +876,30 @@ function emitRepeatedContainerFrom(
 		return [
 			`export function ${fn}(...input: readonly (${elementType} | ${tName})[]): ${factoryReturnTypeExpr(factory)} {`,
 			// as unknown as Parameters<>: elementType may include separator literals (e.g. ",")
-			// from $children that factory doesn't accept directly. Route through unknown.
+			// the factory doesn't accept directly. Route through unknown.
 			`  return ${factory}(...(input as unknown as Parameters<typeof ${factory}>));`,
 			'}'
 		].join('\n');
 	}
+	const storageAccess = SAFE_IDENT_KEY.test(storageKey)
+		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
+		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
 		`export function ${fn}(...input: readonly (${elementType} | ${tName})[]): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
 		`    const data = input[0];`,
-		// as unknown as Parameters<>: data.$children is NodeMemberValue[] (includes
-		// string|number + separator literals); factory accepts only semantic nodes.
-		`    return ${factory}(...((data.$children ?? []) as unknown as Parameters<typeof ${factory}>));`,
+		// as unknown as Parameters<>: normalized children still include string|number
+		// separator literals; factory accepts only semantic nodes.
+		`    const stored = ${storageAccess};`,
+		`    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];`,
+		`    return ${factory}(...(children as unknown as Parameters<typeof ${factory}>));`,
 		`  }`,
 		// as unknown as Parameters<>: input may include separator literals.
 		`  return ${factory}(...(input as unknown as Parameters<typeof ${factory}>));`,
 		'}'
 	].join('\n');
 }
+
 
 /**
  * Emits the singular-child variant of a container from() function.
@@ -893,7 +932,8 @@ function emitSingularContainerFrom(
 	elementType: string,
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	storageKey: string
 ): string {
 	// The factory's child parameter inferred type may be required or optional
 	// depending on grammar shape. Cast at the boundary funnels both shapes
@@ -912,11 +952,14 @@ function emitSingularContainerFrom(
 			'}'
 		].join('\n');
 	}
+	const storageAccess = SAFE_IDENT_KEY.test(storageKey)
+		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
+		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
 		`export function ${fn}(input?: ${elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
 		`  if (isNodeData(input) && input.$type === ${typeCheck}) {`,
 		`    const data = input;`,
-		`    const child = data.$children ? data.$children[0] : undefined;`,
+		`    const child = ${storageAccess};`,
 		`    return ${factory}(child as Parameters<typeof ${factory}>[0]);`,
 		`  }`,
 		// Post-guard `input` is necessarily an `${elementType}` (the self-
@@ -935,12 +978,47 @@ function emitContainerFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const tName = `T.${node.typeName}`;
-	const elementType = `NonNullable<T.${node.typeName}.Config['children']>[number]`;
-	const childrenMultiple = node.children.some((c) => isMultiple(c));
+	// Post-unification: the unnamed slot lives in `node.fields[0]` with a
+	// kind-derived `storageName`. The interface declares `_<storageName>` per
+	// slot (no `$children`), so the element type is the slot's element type and
+	// the data read is `data._<storageName>`.
+	const slot = node.fields?.[0];
+	const elementType = slot
+		? containerSlotElementType(slot, nodeMap)
+		: `NonNullable<T.${node.typeName}['$children']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$children']>`;
+	const childrenMultiple = slot ? isMultiple(slot) : node.children.some((c) => isMultiple(c));
+	const storageKey = slot ? `_${slot.storageName}` : '$children';
 	if (childrenMultiple) {
-		return emitRepeatedContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap);
+		return emitRepeatedContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
 	}
-	return emitSingularContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap);
+	return emitSingularContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
+}
+
+/**
+ * Compute the TypeScript element-type union for a single unnamed-child slot.
+ * Mirrors `childElementType` but operates on the post-unification slot in
+ * `node.fields[0]` rather than the legacy `node.children` list.
+ */
+function containerSlotElementType(slot: AssembledNonterminal, nodeMap: NodeMap): string {
+	const parts = new Set<string>();
+	for (const v of slot.values) {
+		if (isTerminalValue(v)) {
+			parts.add(JSON.stringify(v.value));
+			continue;
+		}
+		if (!isNodeRef(v)) continue;
+		const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+		const ref = nodeMap.nodes.get(name);
+		if (!ref) {
+			parts.add(JSON.stringify(name));
+			continue;
+		}
+		const typeName = ref.typeName;
+		parts.add(/^[A-Za-z_$][\w$]*$/.test(typeName) ? `T.${typeName}` : JSON.stringify(name));
+	}
+	if (parts.size === 0) return 'never';
+	const union = [...parts].join(' | ');
+	return parts.size > 1 ? `(${union})` : union;
 }
 
 // ---------------------------------------------------------------------------
@@ -1158,6 +1236,11 @@ function emitPolymorphFormFrom(form: AssembledGroup, nodeMap: NodeMap, intern: K
 		fLines.push(`  return ${formFactory}({`);
 		// Form-level fields (always Config keys at the form's surface).
 		for (const f of form.fields) {
+			const stampedExpr = stampedConfigFieldExpr(f, nodeMap, intern);
+			if (stampedExpr !== null) {
+				fLines.push(`    ${f.configKey}: ${stampedExpr},`);
+				continue;
+			}
 			if (isAutoStampField(f, nodeMap)) continue;
 			fLines.push(
 				`    ${f.configKey}: ${resolveFieldFromTypedInput(f, nodeMap, form.typeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`
@@ -1168,6 +1251,11 @@ function emitPolymorphFormFrom(form: AssembledGroup, nodeMap: NodeMap, intern: K
 		// shape so node-ref / leaf / many semantics still apply.
 		if (hoist) {
 			for (const f of hoist.innerFields) {
+				const stampedExpr = stampedConfigFieldExpr(f, nodeMap, intern);
+				if (stampedExpr !== null) {
+					fLines.push(`    ${f.configKey}: ${stampedExpr},`);
+					continue;
+				}
 				if (isAutoStampField(f, nodeMap)) continue;
 				fLines.push(
 					`    ${f.configKey}: ${resolveFieldFromTypedInput(f, nodeMap, hoist.innerTypeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`
@@ -1354,9 +1442,11 @@ function resolveChildrenFromTypedInput(
 	const pseudo = { values: mergedValues } as {
 		values: readonly NodeOrTerminal[];
 	};
-	// Direct bag access — same pattern as field reads.
-	const optChain = inputOptional ? '?' : '';
-	const access = allowDirectInputFallback ? `_childrenInput(${sourceVar})` : `${sourceVar}${optChain}.children`;
+	// Children bag access mirrors field reads, but must guard for inputs whose
+	// Loose surface omits `children` entirely (for example scalar single-child
+	// surfaces that accept the child directly).
+	const guardedChildrenAccess = `(${sourceVar} !== null && typeof ${sourceVar} === 'object' && !Array.isArray(${sourceVar}) && !isNodeData(${sourceVar}) && "children" in ${sourceVar} ? ${sourceVar}.children : undefined)`;
+	const access = allowDirectInputFallback ? `_childrenInput(${sourceVar})` : guardedChildrenAccess;
 	// Children slots never adopt the boolean-keyword /
 	// bitflag surface — the Config key is `children`, not the keyword
 	// name. Skip the short-circuit here.

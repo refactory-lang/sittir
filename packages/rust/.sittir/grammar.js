@@ -444,6 +444,12 @@ function wireRegisterSyntheticRule(name, content) {
   currentContext.deposits.set(name, content);
   return true;
 }
+function wireRegisterSyntheticInline(name) {
+  if (!currentContext) return false;
+  if (currentContext.authoredRuleNames.has(name)) return false;
+  currentContext.syntheticInline.add(name);
+  return true;
+}
 function wireRegisterPolymorphVariant(parent, child) {
   if (!currentContext) return false;
   const exists = currentContext.polymorphVariants.some((v) => v.parent === parent && v.child === child);
@@ -465,13 +471,18 @@ function wireRegisterConflict(names) {
 function wireGetCurrentRuleKind() {
   return currentContext?.currentRuleKind ?? null;
 }
-function wire(config2) {
+function wire(config2, base2) {
   const context = {
     deposits: /* @__PURE__ */ new Map(),
+    syntheticInline: /* @__PURE__ */ new Set(),
     polymorphVariants: [],
     conflictGroups: [],
     refineForms: /* @__PURE__ */ new Map(),
-    currentRuleKind: null
+    groups: config2.groups,
+    polymorphsConfig: config2.polymorphs,
+    renderAs: config2.renderAs,
+    currentRuleKind: null,
+    authoredRuleNames: new Set(Object.keys(config2.rules))
   };
   const polymorphs = config2.polymorphs ?? {};
   const transforms = config2.transforms ?? {};
@@ -480,12 +491,22 @@ function wire(config2) {
   composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
   injectTransformHiddenRulePlaceholders(outRules, transforms, context);
+  if (base2 && config2.groups && hasBodyPatternGroups(config2.groups)) {
+    const baseRules = base2.grammar?.rules ?? base2.rules ?? {};
+    for (const baseName of Object.keys(baseRules)) {
+      if (baseName in outRules) continue;
+      outRules[baseName] = passthroughBaseRuleFn;
+    }
+  }
   wrapAllRuleFns(outRules, context);
+  applyWirePatternReplacement(outRules, context.authoredRuleNames, config2.groups, context);
   const conflicts = wrapConflictsCallback(config2.conflicts, context);
+  const inline = wrapInlineCallback(config2.inline, context);
   const wired = {
     ...config2,
     rules: outRules,
-    ...conflicts === void 0 ? {} : { conflicts }
+    ...conflicts === void 0 ? {} : { conflicts },
+    ...inline === void 0 ? {} : { inline }
   };
   Object.defineProperty(wired, "__wireContext__", {
     value: context,
@@ -609,6 +630,9 @@ function wrapOneRuleFn(name, fn, context) {
 function wrapConflictsCallback(userConflicts, context) {
   return buildWiredConflictsFn(userConflicts, context);
 }
+function wrapInlineCallback(userInline, context) {
+  return buildWiredInlineFn(userInline, context);
+}
 function buildWiredConflictsFn(userConflicts, context) {
   return function wiredConflicts($, previous) {
     const base2 = userConflicts ? userConflicts.call(this, $, previous) : previous ?? [];
@@ -617,8 +641,191 @@ function buildWiredConflictsFn(userConflicts, context) {
     return [...base2, ...symbolized];
   };
 }
+function buildWiredInlineFn(userInline, context) {
+  return function wiredInline($, previous) {
+    const base2 = userInline ? userInline.call(this, $, previous) : previous ?? [];
+    if (context.syntheticInline.size === 0) return base2;
+    const existingNames = collectInlineNames(base2);
+    const appended = [];
+    for (const name of context.syntheticInline) {
+      if (existingNames.has(name)) continue;
+      appended.push(nativeInlineRef($, name));
+    }
+    return appended.length === 0 ? base2 : [...base2, ...appended];
+  };
+}
+function collectInlineNames(entries) {
+  const names = /* @__PURE__ */ new Set();
+  for (const entry of entries) {
+    if (!entry || typeof entry !== "object") continue;
+    const symbol = entry;
+    if ((symbol.type === "symbol" || symbol.type === "SYMBOL") && typeof symbol.name === "string") {
+      names.add(symbol.name);
+    }
+  }
+  return names;
+}
+function nativeInlineRef($, name) {
+  const nativeSymbol = globalThis.symbol;
+  if (typeof nativeSymbol === "function") return nativeSymbol(name);
+  return $[name];
+}
 function symbolizeRef(_$, name) {
   return { type: "SYMBOL", name };
+}
+function hasBodyPatternGroups(groups) {
+  for (const value of Object.values(groups)) {
+    if (typeof value === "function") return true;
+  }
+  return false;
+}
+function passthroughBaseRuleFn(_$, previous) {
+  return previous;
+}
+function makeSimpleDollarProxy() {
+  return new Proxy({}, {
+    get(_target, name) {
+      return { type: "SYMBOL", name };
+    }
+  });
+}
+function isComplexBodyRt(rule) {
+  const r = rule;
+  const t = r.type;
+  if (typeEq(t, "seq") || typeEq(t, "choice")) {
+    return Array.isArray(r.members) && r.members.length >= 2;
+  }
+  if (typeEq(t, "repeat") || typeEq(t, "repeat1")) {
+    const c = r.content;
+    if (!c || typeof c.type !== "string") return false;
+    return !typeEq(c.type, "string") && !typeEq(c.type, "symbol") && !typeEq(c.type, "pattern");
+  }
+  return false;
+}
+function patternBodyEqual(a, b) {
+  if (!a || typeof a !== "object") return a === b;
+  if (!b || typeof b !== "object") return false;
+  const ra = a;
+  const rb = b;
+  if (!typeEq(ra.type, rb.type.toLowerCase())) return false;
+  const t = ra.type.toLowerCase();
+  if (t === "string" || t === "pattern") return ra.value === rb.value;
+  if (t === "symbol") return ra.name === rb.name;
+  if (t === "blank") return true;
+  if (t === "seq" || t === "choice") {
+    const ma = ra.members;
+    const mb = rb.members;
+    if (!Array.isArray(ma) || !Array.isArray(mb)) return false;
+    if (ma.length !== mb.length) return false;
+    return ma.every((m, i) => patternBodyEqual(m, mb[i]));
+  }
+  if (t === "optional" || t === "repeat" || t === "repeat1") {
+    return patternBodyEqual(ra.content, rb.content);
+  }
+  if (t === "field") {
+    return ra.name === rb.name && patternBodyEqual(ra.content, rb.content);
+  }
+  return false;
+}
+function replaceInBodyRt(rule, candidates) {
+  if (!rule || typeof rule !== "object") return rule;
+  const r = rule;
+  for (const c of candidates) {
+    if (patternBodyEqual(rule, c.body)) {
+      if (c.aliasAs !== void 0) {
+        return c.uppercase ? {
+          type: "ALIAS",
+          content: { type: "SYMBOL", name: c.name },
+          named: true,
+          value: c.aliasAs
+        } : {
+          type: "alias",
+          content: { type: "symbol", name: c.name, hidden: true },
+          named: true,
+          value: c.aliasAs
+        };
+      }
+      return c.uppercase ? { type: "SYMBOL", name: c.name } : { type: "symbol", name: c.name, hidden: true };
+    }
+  }
+  const t = r.type.toLowerCase();
+  if (t === "seq" || t === "choice") {
+    const members = r.members;
+    if (!Array.isArray(members)) return rule;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const replaced = replaceInBodyRt(m, candidates);
+      if (replaced !== m) changed = true;
+      return replaced;
+    });
+    return changed ? { ...r, members: newMembers } : rule;
+  }
+  if (t === "optional" || t === "repeat" || t === "repeat1" || t === "field" || t === "prec" || t === "prec_left" || t === "prec_right" || t === "prec_dynamic" || t === "token") {
+    const newContent = replaceInBodyRt(r.content, candidates);
+    return newContent !== r.content ? { ...r, content: newContent } : rule;
+  }
+  return rule;
+}
+function buildPatternReplacingFn(fn, candidates) {
+  return function patternReplacingRuleFn($, previous) {
+    const result = fn.call(this, $, previous);
+    return replaceInBodyRt(result, candidates);
+  };
+}
+function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) {
+  const candidates = [];
+  const $ = makeSimpleDollarProxy();
+  for (const name of authoredRuleNames) {
+    if (!name.startsWith("_")) continue;
+    const fn = rules[name];
+    if (!fn) continue;
+    let body;
+    try {
+      const result = fn.call(void 0, $, void 0);
+      if (!result || typeof result !== "object" || typeof result.type !== "string") continue;
+      body = result;
+    } catch {
+      continue;
+    }
+    if (!isComplexBodyRt(body)) continue;
+    const uppercase = body.type === body.type.toUpperCase();
+    candidates.push({ name, body, uppercase });
+  }
+  if (groups) {
+    for (const [key, value] of Object.entries(groups)) {
+      if (typeof value !== "function") continue;
+      if (key.startsWith("_")) {
+        throw new Error(
+          `groups['${key}']: body-pattern keys must be visible kind names (no leading underscore); codegen will create '_${key}' internally`
+        );
+      }
+      const hiddenName = `_${key}`;
+      let body;
+      try {
+        const result = value.call(void 0, $, void 0);
+        if (!result || typeof result !== "object" || typeof result.type !== "string") {
+          throw new Error(`groups['${key}']: body fn did not return a rule object`);
+        }
+        body = result;
+      } catch (e) {
+        throw new Error(`groups['${key}']: failed to evaluate body fn: ${e.message}`);
+      }
+      if (!isComplexBodyRt(body)) {
+        throw new Error(
+          `groups['${key}']: body is not a complex structural pattern (need SEQ \u22652, CHOICE \u22652, or REPEAT with non-trivial content)`
+        );
+      }
+      const uppercase = body.type === body.type.toUpperCase();
+      candidates.push({ name: hiddenName, body, uppercase, aliasAs: key });
+      rules[hiddenName] = context ? wrapOneRuleFn(hiddenName, value, context) : value;
+    }
+  }
+  if (candidates.length === 0) return;
+  const candidateNames = new Set(candidates.map((c) => c.name));
+  for (const [name, fn] of Object.entries(rules)) {
+    if (candidateNames.has(name)) continue;
+    rules[name] = buildPatternReplacingFn(fn, candidates);
+  }
 }
 
 // packages/codegen/src/dsl/primitives/field.ts
@@ -647,14 +854,14 @@ function synthesizeKwSymbol(fieldName, content, wrapSyntheticBody) {
   const c = content;
   const isUpperCase = c.type === "STRING";
   const hiddenName = `_kw_${fieldName}`;
-  const nativePrec = globalThis.prec;
-  let precBody = typeof nativePrec === "function" ? nativePrec(-1, content) : content;
-  if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody);
-  if (!wireRegisterSyntheticRule(hiddenName, precBody)) {
+  let body = content;
+  if (wrapSyntheticBody) body = wrapSyntheticBody(body);
+  if (!wireRegisterSyntheticRule(hiddenName, body)) {
     throw new Error(
       `field('${fieldName}', <STRING>): no active wire() context \u2014 call must occur inside a rule callback wrapped by wire()`
     );
   }
+  wireRegisterSyntheticInline(hiddenName);
   return {
     type: isUpperCase ? "SYMBOL" : "symbol",
     name: hiddenName
@@ -784,17 +991,17 @@ function tryHoistSiblingVariants(rule, variantEntries) {
     );
   const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
-  const choice = seqMembers[resolvedPos];
-  if (!choice || !isChoiceType(choice.type))
-    return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
-  const choiceMembers = membersOf2(choice);
+  const choice2 = seqMembers[resolvedPos];
+  if (!choice2 || !isChoiceType(choice2.type))
+    return bail(`position ${resolvedPos} is '${choice2?.type}', not choice/CHOICE`);
+  const choiceMembers = membersOf2(choice2);
   const anyEmpty = parsed.some(
     (p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx])
   );
   if (!anyEmpty) return null;
   const parentKind = wireGetCurrentRuleKind();
   if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
-  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack);
+  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack);
 }
 function peelPrecWrappersFromRule(rule) {
   const dbg = typeof process !== "undefined" ? process?.env?.SITTIR_DEBUG : void 0;
@@ -822,7 +1029,7 @@ function parseVariantPathsForHoist(variantEntries, bail) {
   }
   return parsed;
 }
-function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack) {
+function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack) {
   const refs = [];
   const isUpperCase = core.type === core.type.toUpperCase();
   for (const p of parsed) {
@@ -849,7 +1056,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     });
   }
   registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
-  const newChoice = reconstructContainer(choice, refs);
+  const newChoice = reconstructContainer(choice2, refs);
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
 function registerHoistedVariantConflicts(variantNames) {
@@ -935,13 +1142,12 @@ function resolvePatch(patch, originalMember, precStack) {
 function resolveFieldPlaceholder(patch, originalMember, precStack) {
   let content = originalMember;
   if (isFieldLike(content) && (content.source === "enriched" || content.source === "inferred")) {
-    if (!process.env.SITTIR_QUIET) {
+    const overrideName = patch.name;
+    const enrichName = content.name ?? "(unknown)";
+    if (overrideName === enrichName && !process.env.SITTIR_QUIET) {
       const parentKind = wireGetCurrentRuleKind() ?? "(unknown)";
-      const overrideName = patch.name;
-      const enrichName = content.name ?? "(unknown)";
-      const tag = overrideName === enrichName ? `duplicate name ('${overrideName}')` : `override renames '${enrichName}' \u2192 '${overrideName}'`;
       process.stderr.write(
-        `transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD \u2014 ${tag}. Drop the override entry if the names match; enrich will cover it automatically.
+        `transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD \u2014 duplicate name ('${overrideName}'). Drop the override entry; enrich will cover it automatically.
 `
       );
     }
@@ -984,13 +1190,13 @@ function registerAliasedVariant(hiddenName, aliasValue, originalMember, bodyWrap
     value: aliasValue
   };
   if (factored) {
-    const optional = globalThis.optional;
-    if (typeof optional !== "function") {
+    const optional2 = globalThis.optional;
+    if (typeof optional2 !== "function") {
       throw new Error(
         "transform: no global optional() found \u2014 variant()/alias() on empty-matching content needs runtime optional()"
       );
     }
-    return optional(aliasNode);
+    return optional2(aliasNode);
   }
   return aliasNode;
 }
@@ -1089,26 +1295,36 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames) {
 }
 function extractSupertypeNames(base2, hasWrapper) {
   const root = hasWrapper ? base2.grammar : base2;
-  const fn = root?.supertypes;
-  if (typeof fn !== "function") return /* @__PURE__ */ new Set();
-  const dollar = new Proxy(
-    {},
-    {
-      get(_t, prop) {
-        if (typeof prop === "string") return { type: "SYMBOL", name: prop };
-        return void 0;
+  const supertypes = root?.supertypes;
+  if (typeof supertypes === "function") {
+    const dollar = new Proxy(
+      {},
+      {
+        get(_t, prop) {
+          if (typeof prop === "string") return { type: "SYMBOL", name: prop };
+          return void 0;
+        }
       }
+    );
+    let result;
+    try {
+      result = supertypes(dollar);
+    } catch {
+      return /* @__PURE__ */ new Set();
     }
-  );
-  let result;
-  try {
-    result = fn(dollar);
-  } catch {
-    return /* @__PURE__ */ new Set();
+    return harvestSupertypeNames(result);
   }
-  if (!Array.isArray(result)) return /* @__PURE__ */ new Set();
+  if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
+  return /* @__PURE__ */ new Set();
+}
+function harvestSupertypeNames(result) {
   const names = /* @__PURE__ */ new Set();
+  if (!Array.isArray(result)) return names;
   for (const r of result) {
+    if (typeof r === "string") {
+      names.add(r);
+      continue;
+    }
     const n = r?.name;
     if (typeof n === "string") names.add(n);
   }
@@ -1208,6 +1424,9 @@ function reportSkip(pass, ruleName, reason) {
   process.stderr.write(`enrich: skipped ${pass} on ${ruleName} (${reason})
 `);
 }
+function isBareShapeTarget(member, target) {
+  return target.symbolRule === member;
+}
 function detectSymbolTarget(member) {
   if (isSymbolType(member.type) && typeof member.name === "string") {
     const name = member.name;
@@ -1298,25 +1517,39 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
     return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames);
   }
   const members = cursor.members;
-  const kindCounts = /* @__PURE__ */ new Map();
-  const targetByIdx = members.map(detectSymbolTarget);
+  const directKindCounts = /* @__PURE__ */ new Map();
+  const targetByIdx = members.map((m) => {
+    const t = detectSymbolTarget(m);
+    if (!t) return null;
+    if (t.name.startsWith("_") && !isBareShapeTarget(m, t)) return null;
+    return t;
+  });
   for (const t of targetByIdx) {
-    if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+    if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
   }
+  const nestedRepeatCounts = /* @__PURE__ */ new Map();
   for (const m of members) {
-    countSymbolsInRepeat(m, kindCounts);
+    countSymbolsInRepeat(m, nestedRepeatCounts);
   }
   const existing = collectFieldNamesRuntime(cursor);
+  const sequenceCounters = /* @__PURE__ */ new Map();
   let changed = false;
   const newMembers = members.map((m, i) => {
     const t = targetByIdx[i];
     if (!t) return m;
-    let fieldName = t.name;
+    let baseFieldName = t.name;
     if (t.name.startsWith("_")) {
       if (!supertypeNames.has(t.name)) return m;
-      fieldName = t.name.slice(1);
+      baseFieldName = t.name.slice(1);
     }
-    if ((kindCounts.get(t.name) ?? 0) > 1) return m;
+    if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return m;
+    const directCount = directKindCounts.get(t.name) ?? 0;
+    let fieldName = baseFieldName;
+    if (directCount > 1) {
+      const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
+      sequenceCounters.set(t.name, seqIdx);
+      fieldName = `${baseFieldName}${seqIdx}`;
+    }
     if (existing.has(fieldName)) {
       reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists`);
       return m;
@@ -1326,7 +1559,11 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
     const fieldNode = makeField(cursor, fieldName, t.symbolRule);
     return t.wrap(fieldNode);
   });
-  const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, existing, kindCounts);
+  const combinedKindCounts = new Map(directKindCounts);
+  for (const [k, v] of nestedRepeatCounts) {
+    combinedKindCounts.set(k, (combinedKindCounts.get(k) ?? 0) + v);
+  }
+  const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, existing, combinedKindCounts);
   if (finalMembers === newMembers && !changed) return rule;
   let result = { ...cursor, members: finalMembers };
   for (let i = precStack.length - 1; i >= 0; i--) {
@@ -1361,29 +1598,41 @@ function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing, ou
   }
   if (!isSeqType(inner.type)) return null;
   const innerMembers = inner.members;
-  const innerTargets = innerMembers.map(detectSymbolTarget);
-  const innerKindCounts = /* @__PURE__ */ new Map();
+  const innerTargets = innerMembers.map((m) => {
+    const t = detectSymbolTarget(m);
+    if (!t) return null;
+    if (t.name.startsWith("_") && !isBareShapeTarget(m, t)) return null;
+    return t;
+  });
+  const directKindCounts = /* @__PURE__ */ new Map();
   for (const t of innerTargets) {
-    if (t) innerKindCounts.set(t.name, (innerKindCounts.get(t.name) ?? 0) + 1);
+    if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
   }
   const nestedRepeatCounts = /* @__PURE__ */ new Map();
   for (const im of innerMembers) {
     countSymbolsInRepeat(im, nestedRepeatCounts);
   }
   const innerExisting = collectFieldNamesRuntime(inner);
+  const sequenceCounters = /* @__PURE__ */ new Map();
   let innerChanged = false;
   const newInnerMembers = innerMembers.map((im, i) => {
     const t = innerTargets[i];
     if (!t) return im;
-    let fieldName = t.name;
+    let baseFieldName = t.name;
     if (t.name.startsWith("_")) {
       if (!supertypeNames.has(t.name)) return im;
-      fieldName = t.name.slice(1);
+      baseFieldName = t.name.slice(1);
     }
-    if ((innerKindCounts.get(t.name) ?? 0) > 1) return im;
-    if (innerExisting.has(fieldName)) return im;
     if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return im;
     if ((outerKindCounts.get(t.name) ?? 0) > 0) return im;
+    const directCount = directKindCounts.get(t.name) ?? 0;
+    let fieldName = baseFieldName;
+    if (directCount > 1) {
+      const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
+      sequenceCounters.set(t.name, seqIdx);
+      fieldName = `${baseFieldName}${seqIdx}`;
+    }
+    if (innerExisting.has(fieldName)) return im;
     if (existing.has(fieldName)) {
       reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists (outer seq)`);
       return im;
@@ -1414,25 +1663,39 @@ function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertype
   }
   if (!isSeqType(inner.type)) return rule;
   const members = inner.members;
-  const kindCounts = /* @__PURE__ */ new Map();
-  const targetByIdx = members.map(detectSymbolTarget);
+  const directKindCounts = /* @__PURE__ */ new Map();
+  const targetByIdx = members.map((m) => {
+    const t = detectSymbolTarget(m);
+    if (!t) return null;
+    if (t.name.startsWith("_") && !isBareShapeTarget(m, t)) return null;
+    return t;
+  });
   for (const t of targetByIdx) {
-    if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+    if (t) directKindCounts.set(t.name, (directKindCounts.get(t.name) ?? 0) + 1);
   }
+  const nestedRepeatCounts = /* @__PURE__ */ new Map();
   for (const m of members) {
-    countSymbolsInRepeat(m, kindCounts);
+    countSymbolsInRepeat(m, nestedRepeatCounts);
   }
   const existing = collectFieldNamesRuntime(inner);
+  const sequenceCounters = /* @__PURE__ */ new Map();
   let changed = false;
   const newMembers = members.map((m, i) => {
     const t = targetByIdx[i];
     if (!t) return m;
-    let fieldName = t.name;
+    let baseFieldName = t.name;
     if (t.name.startsWith("_")) {
       if (!supertypeNames.has(t.name)) return m;
-      fieldName = t.name.slice(1);
+      baseFieldName = t.name.slice(1);
     }
-    if ((kindCounts.get(t.name) ?? 0) > 1) return m;
+    if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return m;
+    const directCount = directKindCounts.get(t.name) ?? 0;
+    let fieldName = baseFieldName;
+    if (directCount > 1) {
+      const seqIdx = (sequenceCounters.get(t.name) ?? 0) + 1;
+      sequenceCounters.set(t.name, seqIdx);
+      fieldName = `${baseFieldName}${seqIdx}`;
+    }
     if (existing.has(fieldName)) {
       reportSkip("symbol-to-field", ruleName, `field '${fieldName}' already exists`);
       return m;
@@ -1555,21 +1818,12 @@ var config = {
     [$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
     // visibility_modifier variant extraction: `pub` vs `pub(x)`
     // share the `pub` prefix; parser needs lookahead.
-    [$._visibility_modifier_pub]
+    [$._visibility_modifier_pub],
+    // `_attributed_type_parameter` (body-pattern in groups:) and `_type`
+    // both can begin with `metavariable` — declare the conflict so
+    // tree-sitter uses lookahead instead of failing parser generation.
+    [$._attributed_type_parameter, $._type]
   ],
-  // Inline the synthesized hidden `_kw_async_marker` rule's body at
-  // every reference site. Without inlining, `closure_expression`'s
-  // `optional(_kw_async_marker)` (a SYMBOL ref to a `prec(-1, 'async')`
-  // body) parses differently from `async_block`'s bare `'async'` token
-  // — same lexeme, different LR state — and corpus inputs containing a
-  // closure with an inner async_block (e.g. `async move || async move
-  // {}`) regress to ERROR. Inlining folds the hidden rule's body into
-  // closure_expression's state machine so the bare `'async'` token
-  // surfaces directly in the LR table — restoring parity with the
-  // pre-promotion shape — while the FIELD wrapper survives inlining
-  // so the parse tree still surfaces the named `async_marker` field.
-  // Wave-1 follow-up (016 task #27).
-  inline: ($, previous) => [...previous ?? [], $._kw_async_marker],
   polymorphs: {
     array_expression: { "2/0": "semi", "2/1": "list" },
     closure_expression: { "4/0": "block", "4/1": "expr" },
@@ -1624,6 +1878,50 @@ var config = {
       "0": "crate",
       "1": "pub"
     }
+  },
+  groups: {
+    // visibility_modifier — lift the inner optional(seq('(', choice, ')'))
+    // into a synthesized hidden kind (_visibility_modifier_pub_parens) so
+    // the polymorph variant's render template naturally references the
+    // group via the children slot. Closes bug #3 (`pub()` → `pub`).
+    // See: docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+    _visibility_modifier_pub: {
+      "1": "parens"
+    },
+    // --- body-pattern groups: tree-sitter visible-kind synthesis ---
+    // Each function-valued entry below declares a STRUCTURAL PATTERN.
+    // Codegen creates `_<key>` as the hidden rule body and rewrites every
+    // matching sub-tree as `alias($._<key>, $.<key>)` so tree-sitter emits
+    // the visible kind as a CST node. Without alias, tree-sitter inlines
+    // the hidden `_*` rule and the kind never appears at runtime — the
+    // transport-side slot remains permanently empty.
+    // Pattern: attribute_item(s) attached to a struct field.
+    // Used inline at every comma-separated position in
+    // field_declaration_list. Without this lift, the parent's $children
+    // flattens to alternating attribute_item / field_declaration entries
+    // joined by commas (e.g. `#[attr],y: i32` instead of `#[attr] y: i32`).
+    attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
+    // Pattern: attribute_item(s) attached to an enum variant.
+    // enum_variant_list uses SEQ(REPEAT(attribute_item), enum_variant)
+    // inline at every comma-separated position.
+    attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
+    // Pattern: optional attribute_item attached to a function parameter.
+    // parameters uses SEQ(CHOICE(attribute_item, BLANK), CHOICE(...)).
+    // The sittir IR normalizes CHOICE(x, BLANK) to optional(x).
+    // Members: parameter | self_parameter | variadic_parameter |
+    // '_' wildcard | _type (anonymous type).
+    attributed_parameter: ($) => seq(
+      optional($.attribute_item),
+      choice($.parameter, $.self_parameter, $.variadic_parameter, "_", $._type)
+    ),
+    // Pattern: attribute_item(s) attached to a type parameter.
+    // type_parameters uses SEQ(REPEAT(attribute_item), CHOICE(metavariable,
+    // type_parameter, lifetime_parameter, const_parameter)) inline at every
+    // comma-separated position.
+    attributed_type_parameter: ($) => seq(
+      repeat($.attribute_item),
+      choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)
+    )
   },
   transforms: {
     // abstract_type: 1 field(s)
@@ -1967,16 +2265,10 @@ var config = {
       7: field("trailing_where_clause")
       // where_clause [struct=2]
     },
-    // type_parameters: seq('<', repeat1(seq(repeat(attribute_item),
-    // choice(metavariable, type_parameter, lifetime_parameter,
-    // const_parameter))), '>').
-    // storageName collision: repeat(attribute_item) at inner-seq pos 0
-    // and the choice at inner-seq pos 1 both infer storageName='children'.
-    // Promote attribute_item to named field; the type-param choice stays
-    // as $children.
-    type_parameters: {
-      "1/0": field("attributes")
-    },
+    // type_parameters: handled by `attributed_type_parameter` body-
+    // pattern in `groups:`. The parser conflict with `_type` (both
+    // begin with metavariable) is declared in `conflicts:` above.
+    // No override-side field-promotion needed.
     // unary_expression — label both the operator token (pos 0) and
     // the operand expression (pos 1). overrides.json promotes both
     // to fields at readNode time; the walker needs matching IR
@@ -1990,8 +2282,8 @@ var config = {
     },
     // use_wildcard: 1 field(s)
     use_wildcard: {
-      0: field("path")
-      // crate | identifier | metavariable | scoped_identifier | self | super [struct=0]
+      "0/0/0": field("path")
+      // optional($._path) inside the optional `path ::` prefix; excludes the `::` token
     },
     // variadic_parameter: 1 field(s)
     variadic_parameter: {},
@@ -2110,7 +2402,48 @@ var config = {
     // the named alias on `_pattern` above promotes it to a proper
     // `wildcard_pattern` kind at parse time.
     _wildcard_pattern: ($) => "_"
-  }
+  },
+  // renderAs — sittir-side rule bodies for external scanner symbols.
+  // These bodies are used by sittir's slot/render/factory pipeline ONLY;
+  // they are stripped before the grammar reaches tree-sitter (the C
+  // external scanner still produces these symbols during parsing).
+  //
+  // Doc comment markers — sittir-side declarations of the marker character.
+  // Tree-sitter's external scanner still produces these tokens; renderAs
+  // entries let sittir's render/factory/from pipelines know the literal
+  // text without depending on tree-sitter to expose it.
+  //
+  // Line markers (_outer_line / _inner_line) DO have IMMEDIATE_TOKEN bodies
+  // in grammar.json — those are stripped by wire so tree-sitter never sees
+  // duplicate rule bodies. Block markers (_outer_block / _inner_block) are
+  // pure externals with no grammar body.
+  //
+  // Rust doc-comment syntax:
+  //   ///outer line doc      — outer line marker is '/' (lexer consumes '//' first)
+  //   //!inner line doc      — inner line marker is '!'
+  //   /**outer block doc*/   — outer block marker is '*'
+  //   /*!inner block doc*/   — inner block marker is '!'
+  //
+  // Raw string literal delimiters — static (1-hash form only).
+  // Round-trip will fail for `r##"..."##` etc. Factory-side benefit: no
+  // delimiter-count parameter needed.
+  renderAs: (_$) => ({
+    // Doc comment markers
+    _outer_line_doc_comment_marker: string("/"),
+    // /// outer line doc
+    _inner_line_doc_comment_marker: string("!"),
+    // //! inner line doc
+    _outer_block_doc_comment_marker: string("*"),
+    // /** outer block doc */ (was '!' in MVP — typo)
+    _inner_block_doc_comment_marker: string("!"),
+    // /*! inner block doc */
+    // Raw string literal delimiters — static (1-hash form only).
+    // Round-trip will fail for `r##"..."##` etc. Factory-side
+    // benefit: no delimiter-count parameter needed.
+    _raw_string_literal_start: string('r#"'),
+    _raw_string_literal_end: string('"#')
+  })
 };
-var overrides_default = grammar(enrich(import_grammar.default), wire(config));
+var enrichedBase = enrich(import_grammar.default);
+var overrides_default = grammar(enrichedBase, wire(config, enrichedBase));
 if (module.exports && module.exports.default) module.exports = module.exports.default;

@@ -54,10 +54,7 @@ function kindDiscriminantOrLiteral(
 }
 import type {
 	AssembledNode,
-	AssembledNonterminal,
-	AssembledPattern,
-	AssembledKeyword,
-	AssembledToken
+	AssembledNonterminal
 } from '../compiler/node-map.ts';
 import {
 	AssembledBranch,
@@ -68,6 +65,7 @@ import {
 	isNodeRef,
 	isTerminalValue,
 	isUnresolvedRef,
+	deriveSlotCardinality,
 	structuralFieldsOf,
 	structuralChildrenOf
 } from '../compiler/node-map.ts';
@@ -82,6 +80,7 @@ import {
 	resolveHiddenKeywordLiteral,
 	referencedKinds,
 	fieldTypeComponents,
+	childTypeComponents,
 	isValidIdent,
 	resolveFieldStorageInfo,
 	collectPolymorphLiteralDispatchCases
@@ -1105,28 +1104,7 @@ function emitInterface(
 		}
 	}
 
-	if (children && children.length > 0) {
-		const perChildParts = children.map((c) => childContentParts(c, nodeMap));
-		const allPartsFlat = perChildParts.flat();
-		const aliased = lookupUnion?.(allPartsFlat);
-		const childTypes = perChildParts.map((parts) => parts.join(' | ')).filter(Boolean);
-		if (childTypes.length > 0) {
-			const union = aliased ?? childTypes.join(' | ');
-			const anyMultiple = children.some((c) => isMultiple(c));
-			const anyNonEmpty = children.some((c) => isNonEmpty(c));
-			if (anyMultiple) {
-				// Same `repeat1` treatment for children slots — a
-				// non-empty children list gets a NonEmptyArray head.
-				if (anyNonEmpty) {
-					lines.push(`  readonly $children: NonEmptyArray<${union}>;`);
-				} else {
-					lines.push(`  readonly $children: readonly (${union})[];`);
-				}
-			} else {
-				lines.push(`  readonly $children: readonly [${union}];`);
-			}
-		}
-	}
+	if (children && children.length > 0) emitChildrenSlotDeclaration(lines, children, nodeMap, lookupUnion);
 
 	lines.push('}');
 	lines.push('');
@@ -1191,35 +1169,60 @@ function _fieldTypeParts(field: AssembledNonterminal, nodeMap?: NodeMap): string
 }
 
 function childContentParts(child: AssembledNonterminal, nodeMap: NodeMap): string[] {
-	// Inline pure-literal values as string-literal types, mirroring
-	// `fieldTypeComponents`. A child slot that carries terminal values
-	// alongside node refs (e.g. `children` on a union) would surface the
-	// literal text as a string-literal union member.
 	const parts: string[] = [];
-	for (const v of child.values) {
-		if (isTerminalValue(v)) {
-			parts.push(JSON.stringify(v.value));
+	for (const component of childTypeComponents(child, nodeMap)) {
+		if (component.kind === 'literal') {
+			parts.push(JSON.stringify(component.value));
 			continue;
 		}
-		if (!isNodeRef(v)) continue;
-		const t = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-		// Hidden-keyword kinds (`_not_escape_sequence` → `'\\'`) inline
-		// their literal text — same rule as `fieldTypeComponents`. Avoids
-		// the dangling `NotEscapeSequence` reference that would otherwise
-		// require an extra stub alias.
-		const lit = resolveHiddenKeywordLiteral(t, nodeMap);
-		if (lit !== undefined) {
-			parts.push(JSON.stringify(lit));
+		if (component.kind === 'missing') {
+			missingKindTypes.set(component.rawKind, component.value);
+			parts.push(component.value);
 			continue;
 		}
-		const n = nodeMap.nodes.get(t);
-		if (!n) {
-			throw new Error(`types: child references kind '${t}' which is not in NodeMap.`);
-		}
-		const name = n.typeName;
-		parts.push(/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t));
+		parts.push(isValidIdent(component.value) ? component.value : JSON.stringify(component.rawKind));
 	}
 	return parts;
+}
+
+function emitChildrenSlotDeclaration(
+	lines: string[],
+	children: readonly AssembledNonterminal[],
+	nodeMap: NodeMap,
+	lookupUnion?: LookupUnion
+): void {
+	const perChildParts = children.map((c) => childContentParts(c, nodeMap));
+	const allPartsFlat = perChildParts.flat();
+	const aliased = lookupUnion?.(allPartsFlat);
+	const childTypes = perChildParts.map((parts) => parts.join(' | ')).filter(Boolean);
+	if (childTypes.length === 0) return;
+	const union = aliased ?? childTypes.join(' | ');
+	if (children.length === 1) {
+		const cardinality = deriveSlotCardinality(children[0]!);
+		if (cardinality.multiple) {
+			if (cardinality.nonEmpty) {
+				lines.push(`  readonly $children: NonEmptyArray<${union}>;`);
+			} else {
+				lines.push(`  readonly $children: readonly (${union})[];`);
+			}
+		} else if (cardinality.required) {
+			lines.push(`  readonly $children: ${union};`);
+		} else {
+			lines.push(`  readonly $children?: ${union};`);
+		}
+		return;
+	}
+	const anyMultiple = children.some((c) => isMultiple(c));
+	const anyNonEmpty = children.some((c) => isNonEmpty(c));
+	if (anyMultiple) {
+		if (anyNonEmpty) {
+			lines.push(`  readonly $children: NonEmptyArray<${union}>;`);
+		} else {
+			lines.push(`  readonly $children: readonly (${union})[];`);
+		}
+	} else {
+		lines.push(`  readonly $children: readonly [${union}];`);
+	}
 }
 
 // `childrenOf` → `nodeChildren(node)` (getter on AssembledNodeBase +
@@ -1344,31 +1347,7 @@ function emitFormChildrenSlot(
 	};
 	const emittableChildren = form.children.filter((c) => slotKindNames(c).some(isEmittableRef));
 	if (emittableChildren.length === 0) return;
-	const parts = emittableChildren.map((c) =>
-		slotKindNames(c)
-			.filter(isEmittableRef)
-			.map((t) => {
-				const n = nodeMap.nodes.get(t)!;
-				const name = n.typeName;
-				return /^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t);
-			})
-	);
-	const flatParts = parts.flat();
-	const aliased = lookupUnion?.(flatParts);
-	const union =
-		aliased ??
-		parts
-			.map((p) => p.join(' | '))
-			.filter(Boolean)
-			.join(' | ');
-	if (union) {
-		const anyMultiple = emittableChildren.some((c) => isMultiple(c));
-		if (anyMultiple) {
-			lines.push(`  readonly $children: readonly (${union})[];`);
-		} else {
-			lines.push(`  readonly $children: readonly [${union}];`);
-		}
-	}
+	emitChildrenSlotDeclaration(lines, emittableChildren, nodeMap, lookupUnion);
 }
 
 /**

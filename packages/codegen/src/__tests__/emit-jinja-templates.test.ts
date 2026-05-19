@@ -33,6 +33,34 @@ function makeMinimalNodeMap(): NodeMap {
 	} as unknown as NodeMap;
 }
 
+function makeOptionalSingleChildRepeatedFieldNodeMap(): NodeMap {
+	const rule: SeqRule = {
+		type: 'seq',
+		members: [
+			{ type: 'string', value: 'print' },
+			{ type: 'optional', content: { type: 'symbol', name: 'chevron' } },
+			{
+				type: 'field',
+				name: 'argument',
+				content: { type: 'repeat1', content: { type: 'symbol', name: 'identifier' } }
+			}
+		]
+	};
+	const nodes = new Map<string, any>([
+		['print_statement', new AssembledBranch('print_statement', rule, rule)],
+		['chevron', new AssembledPattern('chevron', { type: 'pattern', value: '>>' })],
+		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })]
+	]);
+	return {
+		grammar: 'test',
+		grammarSha: 'test-sha',
+		rules: {},
+		nodes,
+		externals: new Set(),
+		word: undefined
+	} as unknown as NodeMap;
+}
+
 describe('emitJinjaTemplates — T021 pure function', () => {
 	it('returns a Map of kind → .jinja body, skipping no-file nodes', () => {
 		const nm = makeMinimalNodeMap();
@@ -56,6 +84,17 @@ describe('emitJinjaTemplates — T021 pure function', () => {
 		const result = emitJinjaTemplates({ grammar: 'test', nodeMap: nm });
 		const body = result.bodies.get('function_item')!;
 		expect(body).toContain('{{ name }}');
+	});
+
+	it('renders singular unnamed children as scalar placeholders while keeping repeated named fields joined', () => {
+		const nm = makeOptionalSingleChildRepeatedFieldNodeMap();
+		const result = emitJinjaTemplates({ grammar: 'test', nodeMap: nm });
+		const body = result.bodies.get('print_statement')!;
+		expect(body).toMatch(
+			/\{% if children \| isPresent %\}\s*\{\{ children \}\}\{% endif %\}/
+		);
+		expect(body).not.toMatch(/children\s*\|\s*join/);
+		expect(body).toMatch(/argument\s*\|\s*join/);
 	});
 
 	it('emits canonical kind filenames, not native-crate-relative paths', () => {

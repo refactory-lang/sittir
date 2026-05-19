@@ -7,7 +7,6 @@ export type {
 	NativeBackendStatusLike,
 	NativeEngineLike,
 	NativeModuleLike,
-	NativeRenderTransportProjector,
 	ParseAndReadResult,
 	RenderHandle,
 	SittirEngineLike,

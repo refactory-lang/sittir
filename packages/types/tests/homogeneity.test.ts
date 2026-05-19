@@ -7,7 +7,7 @@
  */
 
 import { describe, it } from 'vitest';
-import type { ConfigOf, FromInputOf } from '../src/index.ts';
+import type { ChildOf, ConfigOf, FromInputOf } from '../src/index.ts';
 
 type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
@@ -184,6 +184,37 @@ describe('ConfigOf — $variant tag carried on polymorph forms without $children
 		// @ts-expect-error — $variant must be the exact declared literal ('bar').
 		const _wrong: _Config = { x: 'x', $variant: 'other' };
 		void _wrong;
+	});
+});
+
+describe('single-child polymorph scalar slots', () => {
+	interface InnerScalar {
+		readonly $type: 'inner_scalar';
+		readonly $fields: { readonly value: number };
+	}
+
+	interface OuterScalarForm {
+		readonly $type: 'outer_scalar';
+		readonly $variant: 'wrapped';
+		readonly $children: InnerScalar;
+	}
+
+	it('hoists scalar single-child polymorph configs', () => {
+		type _Config = ConfigOf<OuterScalarForm>;
+		type _Expected = { readonly value: number; readonly $variant: 'wrapped' };
+		expectTrue<Equals<_Config, _Expected>>();
+
+		const _ok: _Config = { value: 1, $variant: 'wrapped' };
+		void _ok;
+
+		// @ts-expect-error scalar-child hoist should not fall back to a `children` bag.
+		const _wrong: _Config = { children: { value: 1 }, $variant: 'wrapped' };
+		void _wrong;
+	});
+
+	it('unwraps scalar single-child slots through ChildOf', () => {
+		type _Child = ChildOf<OuterScalarForm>;
+		expectTrue<Equals<_Child, InnerScalar>>();
 	});
 });
 

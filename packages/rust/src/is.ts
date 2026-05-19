@@ -26,6 +26,10 @@ import type {
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
+    AttributedEnumVariant<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedEnumVariant };
+    AttributedFieldDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedFieldDeclaration };
+    AttributedParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedParameter };
+    AttributedTypeParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedTypeParameter };
     ClosureExpressionExpr<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ClosureExpressionExpr };
     DelimTokenTreeBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._DelimTokenTreeBrace };
     DelimTokenTreeBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._DelimTokenTreeBracket };
@@ -213,6 +217,10 @@ export interface IsGuards {
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
+    AttributedEnumVariant(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedEnumVariant };
+    AttributedFieldDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedFieldDeclaration };
+    AttributedParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedParameter };
+    AttributedTypeParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedTypeParameter };
     ClosureExpressionExpr(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ClosureExpressionExpr };
     DelimTokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._DelimTokenTreeBrace };
     DelimTokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._DelimTokenTreeBracket };
@@ -420,7 +428,7 @@ const _supertype_pattern_ids = new Set<number>([311, 312, 129, 313, 126, 151, 31
 const _supertype_statement_ids = new Set<number>([160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
 const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 142, 311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
 const _supertype_tokens_ids = new Set<number>([168, 169, 142, 311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
-const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 417, 239, 236, 228, 198]);
+const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 411, 239, 236, 228, 198]);
 const _supertype_useClause_ids = new Set<number>([139, 1, 142, 140, 141, 243, 208, 207, 206, 209]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -476,8 +484,6 @@ const _kindIdByKind = new Map<string, number>([
     ["string_content", TSKindId.StringContent],
     ["raw_string_literal_content", TSKindId.RawStringLiteralContent],
     ["float_literal", TSKindId.FloatLiteral],
-    ["_outer_block_doc_comment_marker", TSKindId.OuterBlockDocCommentMarker],
-    ["_inner_block_doc_comment_marker", TSKindId.InnerBlockDocCommentMarker],
     ["_line_doc_content", TSKindId.LineDocContent],
     ["_error_sentinel", TSKindId.ErrorSentinel],
     ["source_file", TSKindId.SourceFile],
@@ -651,11 +657,6 @@ const _kindIdByKind = new Map<string, number>([
     ["_visibility_modifier_crate", TSKindId._VisibilityModifierCrate],
     ["_visibility_modifier_pub", TSKindId.VisibilityModifierPub],
     ["_visibility_modifier_in_path", TSKindId.VisibilityModifierInPath],
-    ["_kw_move_marker", TSKindId.KwMoveMarker],
-    ["_kw_static_marker", TSKindId.KwStaticMarker],
-    ["_kw_pub", TSKindId.KwPub],
-    ["_kw_in", TSKindId.KwIn],
-    ["_kw_unsafe_marker", TSKindId.KwUnsafeMarker],
     ["_pointer_type_const", TSKindId.PointerTypeConst],
     ["_pointer_type_mut", TSKindId._PointerTypeMut],
     ["_reference_expression_raw_const", TSKindId.ReferenceExpressionRawConst],
@@ -676,11 +677,19 @@ const _kindIdByKind = new Map<string, number>([
     ["_delim_token_tree_paren", TSKindId._DelimTokenTreeParen],
     ["_delim_token_tree_bracket", TSKindId._DelimTokenTreeBracket],
     ["_delim_token_tree_brace", TSKindId._DelimTokenTreeBrace],
+    ["_attributed_field_declaration", TSKindId.AttributedFieldDeclaration],
+    ["_attributed_enum_variant", TSKindId.AttributedEnumVariant],
+    ["_attributed_parameter", TSKindId.AttributedParameter],
+    ["_attributed_type_parameter", TSKindId.AttributedTypeParameter],
     ["_field_identifier", TSKindId.FieldIdentifier],
     ["_type_identifier", TSKindId.TypeIdentifier],
 ]);
 
 export const is = {
+    AttributedEnumVariant: _g(TSKindId.AttributedEnumVariant),
+    AttributedFieldDeclaration: _g(TSKindId.AttributedFieldDeclaration),
+    AttributedParameter: _g(TSKindId.AttributedParameter),
+    AttributedTypeParameter: _g(TSKindId.AttributedTypeParameter),
     ClosureExpressionExpr: _g(TSKindId._ClosureExpressionExpr),
     DelimTokenTreeBrace: _g(TSKindId._DelimTokenTreeBrace),
     DelimTokenTreeBracket: _g(TSKindId._DelimTokenTreeBracket),
@@ -892,6 +901,10 @@ function _makeAssertKind(guard: _AnyGuard) {
 }
 
 export const assert = {
+    AttributedEnumVariant: _makeAssert('AttributedEnumVariant', is.AttributedEnumVariant as _AnyGuard),
+    AttributedFieldDeclaration: _makeAssert('AttributedFieldDeclaration', is.AttributedFieldDeclaration as _AnyGuard),
+    AttributedParameter: _makeAssert('AttributedParameter', is.AttributedParameter as _AnyGuard),
+    AttributedTypeParameter: _makeAssert('AttributedTypeParameter', is.AttributedTypeParameter as _AnyGuard),
     ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
     DelimTokenTreeBrace: _makeAssert('DelimTokenTreeBrace', is.DelimTokenTreeBrace as _AnyGuard),
     DelimTokenTreeBracket: _makeAssert('DelimTokenTreeBracket', is.DelimTokenTreeBracket as _AnyGuard),

@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   88  (80 applied, 8 held)
+// Rule promotions:   87  (81 applied, 6 held)
 // Repeated shapes:   7  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -29,20 +29,6 @@ export const suggestedTransforms = {
   _class_body_member: {
       "1/0": variant("form0"),
       "1/1": variant("form1"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  _class_body_method_sig: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-  },
-
-  // [held] polymorph — 1 choice position(s), 3 arm(s) total
-  // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: declaration
-  ambient_declaration: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-      "1/2": variant("form2"),
   },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
@@ -139,9 +125,6 @@ export const suggestedRules = {
   _property_name: $ => choice($._property_identifier, $.identifier, $.private_property_identifier, $.string, $.number, $.computed_property_name),
 
   // [applied] promoted supertype
-  _semicolon: $ => choice($._automatic_semicolon, $.;),
-
-  // [applied] promoted supertype
   _shorthand_property_identifier: $ => choice($.identifier, $._reserved_identifier),
 
   // [applied] promoted supertype
@@ -190,6 +173,131 @@ export const suggestedRules = {
 };
 
 // ---------------------------------------------------------------
+// suggestedGroups — drop entries into your overrides.ts
+// `groups:` block. Each entry lifts a nested sub-rule into
+// a hidden synthesized kind materialized as AssembledGroup.
+// All entries are held — none are auto-applied.
+//
+// CAVEAT: paths here are from the POST-LINK rule map. The synthesis
+// pass runs on POST-EVALUATE rules (before polymorph alias rewrites).
+// If a kind has been polymorph-aliased, the original-kind path may
+// differ from what is shown here. Pick the kind that exists at
+// synthesis time (often the polymorph-variant kind such as
+// `_visibility_modifier_pub`) and adjust the path accordingly.
+// validateGroupsConfig E2 will catch unresolvable paths with an
+// actionable error.
+// ---------------------------------------------------------------
+export const suggestedGroups = {
+  // [held] 1 candidate(s)
+  _import_clause_default_import: {
+    '1': 'namespace_import',
+  },
+
+  // [held] 1 candidate(s)
+  _jsx_start_opening_element: {
+    '0/1': 'name',
+  },
+
+  // [held] 2 candidate(s)
+  _jsx_string: {
+    '0': 'string_fragment',
+    '1': 'string_fragment',
+  },
+
+  // [held] 25 candidate(s)
+  binary_expression: {
+    '0/0': 'left',
+    '0/1': 'left',
+    '0/2': 'left',
+    '0/3': 'left',
+    '0/4': 'left',
+    '0/5': 'left',
+    '0/6': 'left',
+    '0/7': 'left',
+    '0/8': 'left',
+    '0/9': 'left',
+    '0/10': 'left',
+    '0/11': 'left',
+    '0/12': 'left',
+    '0/13': 'left',
+    '0/14': 'left',
+    '0/15': 'left',
+    '0/16': 'left',
+    '0/17': 'left',
+    '0/18': 'left',
+    '0/19': 'left',
+    '0/20': 'left',
+    '0/21': 'left',
+    '0/22': 'left',
+    '0/23': 'left',
+    '0/24': 'left',
+  },
+
+  // [held] 1 candidate(s)
+  catch_clause: {
+    '1/0': 'parameter',
+  },
+
+  // [held] 1 candidate(s)
+  export_specifier: {
+    '1': 'name',
+  },
+
+  // [held] 2 candidate(s)
+  for_statement: {
+    '2/1': 'initializer',
+    '3/0/0': 'expressions',
+  },
+
+  // [held] 1 candidate(s)
+  import_statement: {
+    '2/0/0': 'import_clause',
+  },
+
+  // [held] 1 candidate(s)
+  infer_type: {
+    '2/0/0': 'type',
+  },
+
+  // [held] 1 candidate(s)
+  jsx_attribute: {
+    '1': 'jsx_attribute_value',
+  },
+
+  // [held] 1 candidate(s)
+  mapped_type_clause: {
+    '3/0': 'alias',
+  },
+
+  // [held] 1 candidate(s)
+  object: {
+    '1': 'pair',
+  },
+
+  // [held] 1 candidate(s)
+  object_pattern: {
+    '1': 'pair_pattern',
+  },
+
+  // [held] 1 candidate(s)
+  object_type: {
+    '1/0': 'export_statement',
+  },
+
+  // [held] 2 candidate(s)
+  variable_declarator: {
+    '0': 'name',
+    '1': 'name',
+  },
+
+  // [held] 1 candidate(s)
+  yield_expression: {
+    '1/0/0': 'expression',
+  },
+
+};
+
+// ---------------------------------------------------------------
 // Raw derivation data — typed arrays for tooling
 // ---------------------------------------------------------------
 export interface PromotedRule {
@@ -214,7 +322,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "_module_export_name", classification: "supertype", applied: true },
   { kind: "_property_identifier", classification: "supertype", applied: true },
   { kind: "_property_name", classification: "supertype", applied: true },
-  { kind: "_semicolon", classification: "supertype", applied: true },
   { kind: "_shorthand_property_identifier", classification: "supertype", applied: true },
   { kind: "_shorthand_property_identifier_pattern", classification: "supertype", applied: true },
   { kind: "_statement_identifier", classification: "supertype", applied: true },
@@ -227,6 +334,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "statement", classification: "supertype", applied: true },
   { kind: "type", classification: "supertype", applied: true },
   { kind: "_reserved_identifier", classification: "terminal", applied: true },
+  { kind: "_semicolon", classification: "terminal", applied: true },
   { kind: "comment", classification: "terminal", applied: true },
   { kind: "escape_sequence", classification: "terminal", applied: true },
   { kind: "identifier", classification: "terminal", applied: true },
@@ -236,11 +344,13 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "private_property_identifier", classification: "terminal", applied: true },
   { kind: "regex_pattern", classification: "terminal", applied: true },
   { kind: "_class_body_member", classification: "polymorph", applied: false },
-  { kind: "_class_body_method_sig", classification: "polymorph", applied: false },
   { kind: "_export_statement_default_from_arm_clause_from", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm_ns_from", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm_star_from", classification: "polymorph", applied: true },
-  { kind: "ambient_declaration", classification: "polymorph", applied: false },
+  { kind: "ambient_declaration", classification: "polymorph", applied: true },
+  { kind: "ambient_declaration_declaration", classification: "polymorph", applied: true },
+  { kind: "ambient_declaration_global", classification: "polymorph", applied: true },
+  { kind: "ambient_declaration_module", classification: "polymorph", applied: true },
   { kind: "arrow_function", classification: "polymorph", applied: true },
   { kind: "arrow_function__call_signature", classification: "polymorph", applied: true },
   { kind: "arrow_function_parameter", classification: "polymorph", applied: true },
@@ -279,9 +389,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "public_field_definition_declare_first", classification: "polymorph", applied: true },
   { kind: "public_field_definition_readonly_first", classification: "polymorph", applied: true },
   { kind: "public_field_definition_static_mods", classification: "polymorph", applied: true },
-  { kind: "string", classification: "polymorph", applied: true },
-  { kind: "string_double", classification: "polymorph", applied: true },
-  { kind: "string_single", classification: "polymorph", applied: true },
   { kind: "update_expression", classification: "polymorph", applied: true },
   { kind: "update_expression_postfix", classification: "polymorph", applied: true },
   { kind: "update_expression_prefix", classification: "polymorph", applied: true },

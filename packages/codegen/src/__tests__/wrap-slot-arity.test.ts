@@ -1,0 +1,264 @@
+import { describe, expect, it } from 'vitest';
+import {
+	AssembledBranch,
+	AssembledEnum,
+	AssembledPattern,
+	AssembledSupertype,
+	type AssembledNode
+} from '../compiler/node-map.ts';
+import type { ChoiceRule, EnumRule, SeqRule } from '../compiler/rule.ts';
+import { emitWrap } from '../emitters/wrap.ts';
+import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
+
+function makeRequiredSingleChildNodeMap() {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'identifier' }]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('single_parent', new AssembledBranch('single_parent', parentRule, parentRule));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	return makeNodeMapWith(nodes);
+}
+
+function makeRequiredSingleFieldNodeMap() {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'field', name: 'value', content: { type: 'symbol', name: 'identifier' } }]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('single_field_parent', new AssembledBranch('single_field_parent', parentRule, parentRule));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	return makeNodeMapWith(nodes);
+}
+
+function makeRepeatFieldNodeMap() {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'field',
+				name: 'items',
+				content: {
+					type: 'repeat1',
+					content: { type: 'symbol', name: 'identifier' }
+				}
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('repeat_field_parent', new AssembledBranch('repeat_field_parent', parentRule, parentRule));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	return makeNodeMapWith(nodes);
+}
+
+function makeHiddenSupertypeChildrenNodeMap() {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'repeat1',
+				content: { type: 'symbol', name: '_type' }
+			}
+		]
+	};
+	const typeRule: ChoiceRule = {
+		type: 'choice',
+		members: [{ type: 'symbol', name: '_primitive_type' }]
+	};
+	const primitiveTypeRule: EnumRule = {
+		type: 'enum',
+		members: [
+			{ type: 'string', value: 'u8' },
+			{ type: 'string', value: 'bool' }
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('tuple_type', new AssembledBranch('tuple_type', parentRule, parentRule));
+	nodes.set('_type', new AssembledSupertype('_type', typeRule, ['_primitive_type']));
+	nodes.set(
+		'_primitive_type',
+		new AssembledEnum('_primitive_type', primitiveTypeRule, {
+			kindEntries: [
+				{ id: 1, kind: 'u8', symbolName: 'anon_sym_u8', anon: false },
+				{ id: 2, kind: 'bool', symbolName: 'anon_sym_bool', anon: false }
+			]
+		})
+	);
+	nodes.set('u8', new AssembledPattern('u8', { type: 'pattern', value: 'u8' }));
+	nodes.set('bool', new AssembledPattern('bool', { type: 'pattern', value: 'bool' }));
+	return makeNodeMapWith(nodes);
+}
+
+function makeVisibleSupertypeChildrenNodeMap() {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: 'expression' }]
+	};
+	const expressionRule: ChoiceRule = {
+		type: 'choice',
+		members: [{ type: 'symbol', name: 'identifier' }]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('typed_value', new AssembledBranch('typed_value', parentRule, parentRule));
+	nodes.set('expression', new AssembledSupertype('expression', expressionRule, ['identifier']));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	return makeNodeMapWith(nodes);
+}
+
+function makeOptionalThenRequiredChildNodeMap() {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'optional',
+				content: { type: 'symbol', name: 'identifier' }
+			},
+			{ type: 'symbol', name: 'number_literal' }
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set(
+		'optional_then_required_parent',
+		new AssembledBranch('optional_then_required_parent', parentRule, parentRule)
+	);
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('number_literal', new AssembledPattern('number_literal', { type: 'pattern', value: '[0-9]+' }));
+	return makeNodeMapWith(nodes);
+}
+
+function makeMultiSiblingFieldNodeMap() {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [
+			{
+				type: 'field',
+				name: 'declaration',
+				content: {
+					type: 'choice',
+					members: [
+						{ type: 'symbol', name: 'identifier' },
+						{
+							type: 'seq',
+							members: [
+								{ type: 'string', value: 'module' },
+								{ type: 'symbol', name: 'property_identifier' },
+								{ type: 'string', value: ':' },
+								{ type: 'symbol', name: 'object_type' }
+							]
+						}
+					]
+				}
+			}
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('ambient_like_parent', new AssembledBranch('ambient_like_parent', parentRule, parentRule));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('property_identifier', new AssembledPattern('property_identifier', { type: 'pattern', value: '[a-z]+' }));
+	nodes.set('object_type', new AssembledPattern('object_type', { type: 'pattern', value: '\\{\\}' }));
+	return makeNodeMapWith(nodes);
+}
+
+function makeHiddenWrapperChildNodeMap() {
+	const parentRule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'symbol', name: '_suite' }]
+	};
+	const suiteRule: ChoiceRule = {
+		type: 'choice',
+		members: [
+			{ type: 'symbol', name: 'block' },
+			{ type: 'symbol', name: '_newline' }
+		]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('except_like_parent', new AssembledBranch('except_like_parent', parentRule, parentRule));
+	nodes.set('_suite', new AssembledBranch('_suite', suiteRule, suiteRule));
+	nodes.set('block', new AssembledPattern('block', { type: 'pattern', value: 'block' }));
+	nodes.set('_newline', new AssembledPattern('_newline', { type: 'pattern', value: '\\n' }));
+	return makeNodeMapWith(nodes);
+}
+
+describe('wrap emitter slot arity', () => {
+	it('normalizes named singular and repeated slots from grammar-derived cardinality', () => {
+		const singularSource = emitWrap({ grammar: 'synth', nodeMap: makeRequiredSingleFieldNodeMap() });
+		const repeatedSource = emitWrap({ grammar: 'synth', nodeMap: makeRepeatFieldNodeMap() });
+
+		expect(singularSource).toContain('_value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),');
+		expect(repeatedSource).toContain('_items: normalizeRepeatedWrapSlot(data._items, true, "items"),');
+	});
+
+	it('normalizes singular unnamed children through the singular slot path', () => {
+		const source = emitWrap({ grammar: 'synth', nodeMap: makeRequiredSingleChildNodeMap() });
+
+		expect(source).toContain('$children: normalizeSingularWrapSlot(');
+		expect(source).toContain('children() { return drillIn<');
+		expect(source).not.toContain('children() { return drillInAll<');
+		expect(source).toContain(
+			'$with: { $child: (v: T.Identifier) => wrapSingleParent({ ...data, $children: v }, tree) },'
+		);
+	});
+
+	it('keeps multi-slot unnamed children list-shaped while deriving requiredness from child surfaces', () => {
+		const source = emitWrap({ grammar: 'synth', nodeMap: makeOptionalThenRequiredChildNodeMap() });
+
+		expect(source).toContain(
+			'$children: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","number_literal"]), false, "children"),'
+		);
+		expect(source).toContain('children() { return drillInAll<');
+		expect(source).not.toContain('children() { return drillIn<');
+	});
+
+	it('keeps multi-sibling fields repeated at the wrap surface', () => {
+		const source = emitWrap({ grammar: 'synth', nodeMap: makeMultiSiblingFieldNodeMap() });
+
+		expect(source).toContain('_declaration: normalizeRepeatedWrapSlot(data._declaration, true, "declaration"),');
+	});
+
+	it('expands hidden wrapper child kinds to concrete runtime kinds for wrap filtering', () => {
+		const source = emitWrap({ grammar: 'synth', nodeMap: makeHiddenWrapperChildNodeMap() });
+
+		expect(source).toContain('"block"');
+		expect(source).toContain('"_suite"');
+		expect(source).toContain('"suite"');
+	});
+
+	it('emits singular-mismatch guards for wrapped children', () => {
+		const source = emitWrap({ grammar: 'synth', nodeMap: makeRequiredSingleChildNodeMap() });
+
+		expect(source).toContain('const WRAP_WARNING_MODE = typeof process !== "undefined" && process.env?.SITTIR_WRAP_WARNING_MODE === "1";');
+		expect(source).toContain('function describeWrapNodeType(nodeType: string | number): string {');
+		expect(source).toContain('function handleWrapViolation<T>(message: string, fallback: T): T {');
+		expect(source).toContain('function describeWrapSlotItem(value: unknown): string {');
+		expect(source).toContain('function describeWrapSlotValue(value: unknown): string {');
+		expect(source).toContain(
+			'const text = typeof node.$text === "string" ? `, $text=${JSON.stringify(node.$text)}` : "";'
+		);
+		expect(source).toContain('function normalizeSingularWrapSlot<T>(');
+		expect(source).toContain(
+			'return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T);'
+		);
+		expect(source).not.toContain('return wrapNode(e, tree) as unknown as T;');
+	});
+
+	it('expands hidden supertype members transitively for wrap child filtering', () => {
+		const source = emitWrap({ grammar: 'synth', nodeMap: makeHiddenSupertypeChildrenNodeMap() });
+
+		expect(source).toContain('"_type": new Set(["_primitive_type","primitive_type","u8","bool"])');
+	});
+
+	it('matches visible supertypes against concrete child kinds during wrap filtering', () => {
+		const source = emitWrap({ grammar: 'synth', nodeMap: makeVisibleSupertypeChildrenNodeMap() });
+
+		expect(source).toContain('"expression": new Set(["identifier"])');
+		expect(source).toContain(
+			'const members = SUPERTYPE_MEMBERS[allowed] ?? SUPERTYPE_MEMBERS[allowed.startsWith("_") ? allowed.slice(1) : allowed];'
+		);
+		expect(source).toContain('if (members?.has(kind)) return true;');
+		expect(source).toContain('if (stripped !== undefined && members?.has(stripped)) return true;');
+		expect(source).toContain(
+			'$children: normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["expression","identifier"]), "children", true, data.$type),'
+		);
+	});
+});

@@ -143,11 +143,9 @@ describe('deriveChildrenKinds', () => {
 
 /** Cache for the rust emitRenderModule output. */
 let _rustTemplatesRs: string | undefined;
+let _typescriptTransportRs: string | undefined;
 
-async function getRustTemplatesRs(): Promise<string> {
-	if (_rustTemplatesRs !== undefined) return _rustTemplatesRs;
-
-	const grammar = 'rust';
+async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise<string> {
 	const grammarJsPath = resolveGrammarJsPath(grammar);
 	const overridesPath = resolveOverridesPath(grammar);
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
@@ -165,9 +163,19 @@ async function getRustTemplatesRs(): Promise<string> {
 	}
 
 	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables);
-	// Transport structs and render fns now live in transport.rs (spec 024 split).
-	_rustTemplatesRs = emit.transportRs.contents;
+	return emit.transportRs.contents;
+}
+
+async function getRustTemplatesRs(): Promise<string> {
+	if (_rustTemplatesRs !== undefined) return _rustTemplatesRs;
+	_rustTemplatesRs = await getTransportRsForGrammar('rust');
 	return _rustTemplatesRs;
+}
+
+async function getTypescriptTransportRs(): Promise<string> {
+	if (_typescriptTransportRs !== undefined) return _typescriptTransportRs;
+	_typescriptTransportRs = await getTransportRsForGrammar('typescript');
+	return _typescriptTransportRs;
 }
 
 /**
@@ -266,10 +274,18 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		expect(fnBody).not.toContain('render_block');
 	});
 
-it('leaf transport napi impls accept release strings or structured objects', async () => {
-		const src = await getRustTemplatesRs();
+it('leaf transport napi impls accept strings, structured objects, and boolean-presence leaves', async () => {
+		const src = await getTypescriptTransportRs();
 		expect(src).toContain('let text = if let Ok(text) = String::from_napi_value(env, napi_val) {');
 		expect(src).toContain('obj.get("$text")?.unwrap_or_default()');
+		expect(src).toContain('if let Ok(present) = bool::from_napi_value(env, napi_val) {');
+		expect(src).toContain('received false; omit the field instead of sending false');
+	});
+
+	it('leaf token transport napi impls recover literal text from numeric kind ids', async () => {
+		const src = await getTypescriptTransportRs();
+		expect(src).toContain('} else if u16::from_napi_value(env, napi_val).is_ok() {');
+		expect(src).toContain('obj.get("$text")?.unwrap_or_else(|| "+".to_string())');
 	});
 });
 

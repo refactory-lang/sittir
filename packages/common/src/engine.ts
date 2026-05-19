@@ -1,7 +1,6 @@
 import { writeFileSync } from 'node:fs';
 import type { AnyNodeData, Edit, FormatRecord } from '@sittir/types';
 import type { TreeHandle } from './readNode.ts';
-import { assertRenderableNodeData } from './native-boundary.ts';
 
 export interface EngineOptions {
 	readonly format?: FormatRecord;
@@ -67,15 +66,12 @@ export type BackendStatusLike<TModule extends NativeModuleLike = NativeModuleLik
 	| NativeBackendStatusLike<TModule>
 	| JsBackendStatusLike;
 
-export type NativeRenderTransportProjector<TTransport = unknown> = (node: AnyNodeData) => TTransport;
-
 export interface GrammarEngineConfig<
 	TTransport = unknown,
 	TModule extends NativeModuleLike<TTransport> = NativeModuleLike<TTransport>
 > {
 	templatesPath: string;
 	kindNames: ReadonlyMap<number, string>;
-	toNativeRenderTransport: NativeRenderTransportProjector<TTransport>;
 	getActiveBackend: () => BackendStatusLike<TModule>;
 }
 
@@ -116,8 +112,6 @@ export function createNativeEngine<
 			node: Parameters<SittirEngineLike['render']>[0],
 			opts?: Parameters<SittirEngineLike['render']>[1]
 		): RenderHandle {
-			assertRenderableNodeData(node);
-			const transport = config.toNativeRenderTransport(node);
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
 					'ignoreFormat option not yet supported by native engine. ' +
@@ -125,10 +119,10 @@ export function createNativeEngine<
 				);
 			}
 			return createRenderHandle(
-				() => engine.render(transport),
+				() => engine.render(node as TTransport),
 				(path) => {
 					if (engine.renderToFile) {
-						engine.renderToFile(transport, path);
+						engine.renderToFile(node as TTransport, path);
 						return true;
 					}
 					return false;

@@ -39,7 +39,10 @@ import { compileWordMatcher } from './common.ts';
  * promotion are surfaced via suggested.ts; the user authors variant() in
  * overrides.ts to make them explicit.
  */
-function applyNormalizationPasses(rawRules: Record<string, Rule>): Record<string, Rule> {
+function applyNormalizationPasses(
+	rawRules: Record<string, Rule>,
+	preserveKinds?: ReadonlySet<string>
+): Record<string, Rule> {
 	let rules: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(rawRules)) {
 		rules[name] = collapseWrappers(rule);
@@ -53,7 +56,7 @@ function applyNormalizationPasses(rawRules: Record<string, Rule>): Record<string
 	for (const name of Object.keys(rules)) {
 		rules[name] = dedupeSeqMembers(rules[name]!);
 	}
-	rules = inlineSingleUseHidden(rules);
+	rules = inlineSingleUseHidden(rules, preserveKinds);
 	for (const name of Object.keys(rules)) {
 		rules[name] = collapseWrappers(rules[name]!);
 	}
@@ -80,7 +83,7 @@ function computeSimplifiedRules(rules: Record<string, Rule>, word: string | null
 }
 
 export function optimize(linked: LinkedGrammar): OptimizedGrammar {
-	const rules = applyNormalizationPasses(linked.rules);
+	const rules = applyNormalizationPasses(linked.rules, linked.patternReplacementKinds);
 	const simplifiedRules = computeSimplifiedRules(rules, linked.word);
 	return {
 		name: linked.name,
@@ -93,7 +96,8 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
 		aliasedHiddenKinds: linked.aliasedHiddenKinds,
 		topLevelAliasBodies: linked.topLevelAliasBodies,
 		polymorphVariants: linked.polymorphVariants,
-		refineForms: linked.refineForms
+		refineForms: linked.refineForms,
+		patternReplacementKinds: linked.patternReplacementKinds
 	};
 }
 
@@ -346,10 +350,10 @@ export function dedupeSeqMembers(rule: Rule): Rule {
  * produce the same downstream shape whether the helper exists as
  * its own entry or as an expansion in its parent.
  */
-function inlineSingleUseHidden(rules: Record<string, Rule>): Record<string, Rule> {
+function inlineSingleUseHidden(rules: Record<string, Rule>, preserveKinds?: ReadonlySet<string>): Record<string, Rule> {
 	// Work on a shallow copy — we mutate entries and delete keys.
 	const work: Record<string, Rule> = { ...rules };
-	iterateInliningToFixedPoint(work);
+	iterateInliningToFixedPoint(work, preserveKinds);
 	return work;
 }
 
@@ -363,7 +367,7 @@ function inlineSingleUseHidden(rules: Record<string, Rule>): Record<string, Rule
  * opportunities where a parent being inlined exposes a new single-use child.
  * The loop breaks early when a full pass produces no changes.
  */
-function iterateInliningToFixedPoint(work: Record<string, Rule>): void {
+function iterateInliningToFixedPoint(work: Record<string, Rule>, preserveKinds?: ReadonlySet<string>): void {
 	for (let pass = 0; pass < 4; pass++) {
 		const refCounts = countReferences(work);
 		let changed = false;
@@ -371,6 +375,9 @@ function iterateInliningToFixedPoint(work: Record<string, Rule>): void {
 			// Only hidden helpers are candidates.
 			if (!name.startsWith('_')) continue;
 			if (isStructurallyMeaningfulHiddenRule(rule)) continue;
+			// Pattern-replacement kinds are preserved as distinct rules so
+			// downstream phases can treat them as atomic grouping units.
+			if (preserveKinds?.has(name)) continue;
 			const uses = refCounts.get(name) ?? 0;
 			if (uses !== 1) continue;
 			if (spliceHiddenRuleIntoSingleParent(work, name, rule)) {

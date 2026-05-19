@@ -5,12 +5,96 @@ compiler pipeline. Each entry covers pattern (when it fires), action
 (what it does), and output (what changes). Phases run in order:
 Enrich -> Evaluate -> Link -> Optimize -> Simplify -> Assemble.
 
+> **Updated 2026-05-19 to reflect the planned rule-attribute / template-emitter
+> refactor.** Sections marked **(PR0 / PR1 / PR2 / PR3 — planned)** describe the
+> target state after the 4-PR refactor lands. See
+> [`docs/superpowers/specs/2026-05-18-rule-attributes-and-template-emitter-design.md`](./superpowers/specs/2026-05-18-rule-attributes-and-template-emitter-design.md)
+> for the source-of-truth design. Items marked **(legacy — to be removed in PRn)**
+> describe pre-refactor behavior that remains in effect on `master` until the
+> referenced PR lands. Trust the spec when it differs from the
+> [implementation plan](./superpowers/plans/2026-05-19-rule-attributes-and-template-emitter.md).
+
+---
+
+## Rule IR (`compiler/rule.ts`) — planned attribute set
+
+> **(PR0 — planned)** Every `Rule` extends a shared `RuleBase` with modifier
+> attributes that previously lived only as wrapper rule types. Wrapper types
+> stay in place through PR0–PR2 and delete in PR3; the attributes are additive
+> until then. Vocabulary mirrors `NodeOrTerminal` exactly so values that flow
+> from a rule to its slot use identical field names (see memory entry
+> `feedback_rule_slot_vocabulary_alignment`).
+
+```ts
+interface RuleBase {
+  readonly id?: RuleId;
+
+  readonly fieldName?: string;
+  readonly multiplicity?: Multiplicity;   // 'optional' | 'single' | 'array' | 'nonEmptyArray'
+  readonly nonterminal?: boolean;         // explicit slottiness; promotes terminals to slots
+
+  readonly separator?:
+    | string
+    | readonly Rule[]
+    | {
+        readonly rules: readonly Rule[];
+        readonly trailing?: boolean;     // separator MAY appear after last element
+        readonly leading?: boolean;      // separator MAY appear before first element
+      };
+}
+```
+
+- `Multiplicity` moves from `compiler/node-map.ts` to `compiler/rule.ts` (or
+  shared `compiler/multiplicity.ts`) so `rule.ts` can reference it without
+  inverting the existing `rule.ts` → `node-map.ts` layering.
+- **Wrapper rule types (`OptionalRule`, `FieldRule`, `RepeatRule`, `Repeat1Rule`)
+  ultimately delete in PR3.** Information they carried (presence, cardinality,
+  field binding, slottiness) lives on the inner rule as attributes. Type guards
+  collapse to attribute reads: `isOptional(r)` → `r.multiplicity === 'optional'`,
+  `isField(r)` → `r.fieldName !== undefined`, etc.
+- **`ClauseRule` deletes in PR2.** Its role (remembering flanking literals bound
+  to an optional's field) is subsumed by the universal seq-of-leaves canonical
+  shape — flanking literals naturally live as adjacent members of the
+  containing seq; no dedicated rule attribute is required.
+
+### Universal canonical shape (post-PR2)
+
+After simplification, every `AssembledBranch` and `AssembledGroup` body is a
+`SeqRule` whose members are **leaves**:
+
+- a pure-literal rule (`StringRule` with no slot attributes), or
+- a slot-ref leaf (`SymbolRule` / `StringRule` / `EnumRule` with at least one
+  of `{fieldName, multiplicity, nonterminal}` set).
+
+No nested structural rules (`optional`, `repeat`, `repeat1`, `seq`, `choice`)
+appear inside a branch/group body. Wrapper content that was a single leaf is
+push-down-flattened into attributes on the leaf; wrapper content that was
+structural triggers group synthesis. The simplify phase is the post-condition
+verifier (see Phase 3.5).
+
 ---
 
 ## Phase 0: Enrich (`dsl/enrich.ts`)
 
 Pre-evaluation mechanical grammar enrichment. Runs before `grammar()`
 so tree-sitter's native pipeline sees the enriched rules.
+
+> **(PR0 — planned)** Enrich grows four additional passes that populate the
+> new `RuleBase` modifier attributes and (for non-leaf wrapper contents)
+> synthesize hidden helper rules using the same injection pattern as the
+> existing `_kw_<name>` helpers. The passes are idempotent and produce no
+> observable change to existing consumers — wrappers stay in place; synthesized
+> groups become first-class `AssembledGroup` kinds handled by the existing
+> hidden-rule classification path in Link.
+>
+> **Open architectural question (resolved at PR0 implementation time):** where
+> auto-synthesis of multi-slot optional/repeat content lives. Option A —
+> TS-side-only via enrich (requires wrap/from to virtually project the parser's
+> flat CST onto the synthesized group). Option B — dual-side (wire patches the
+> parser; enrich/Link mirror codegen-side); mirrors the existing authored
+> `groups:` synthesis architecture. Option C — wire-only, with codegen
+> inheriting via post-evaluation. The choice affects scope of PR0 but not the
+> overall four-PR sequence. See spec §"Open architectural question".
 
 ### enrich(base)
 **Pattern:** Called with a `GrammarResult` before `grammar()`.
@@ -71,6 +155,26 @@ so tree-sitter's native pipeline sees the enriched rules.
 **Pattern:** A keyword literal needs a hidden rule for field wrapping.
 **Action:** Registers `_kw_<keyword>` in `kwRules` (idempotent). Returns a SYMBOL ref to it.
 **Output:** `SymbolRule` referencing the hidden `_kw_*` rule.
+
+### enrichFieldWrappers(rule) **(PR0 — planned)**
+**Pattern:** Every `FieldRule`.
+**Action:** Propagates `fieldName` and `nonterminal: true` onto the wrapped content (matches today's `rule-catalog.ts:234` `forcedBy === 'field'` force-promotion semantics). Wrapper stays in place until PR3.
+**Output:** Field rule whose inner content now carries the field-binding + slottiness attributes directly.
+
+### enrichMultiplicityWrappers(rule) **(PR0 — planned)**
+**Pattern:** Every `OptionalRule` / `RepeatRule` / `Repeat1Rule`.
+**Action:** Propagates the corresponding `multiplicity` (`'optional'` / `'array'` / `'nonEmptyArray'`) plus `nonterminal: true` onto the wrapped content. Wrappers force nonterminal-ness because they're presence-tracked or list-shaped. Wrapper stays in place until PR3.
+**Output:** Wrapper rule whose inner content now carries the multiplicity attribute directly.
+
+### decomposeOptional(rule, synth) **(PR0 — planned)**
+**Pattern:** `OptionalRule` whose content is a `seq` or `choice` with at least one slot-bearing member (i.e. structural content, not a single leaf).
+**Action:** Synthesizes a hidden helper rule (`_opt_group_<hash>`) containing the original seq/choice verbatim; replaces the optional's content with a symbol-ref to the synthesized group. Single-leaf contents are handled by `enrichMultiplicityWrappers` instead (no synthesis needed). Co-optional semantics ("both or neither" for multi-field optionals) are preserved by construction because the entire content becomes one slot.
+**Output:** Optional whose content is now a symbol-ref to a synthesized hidden group; new `_opt_group_<hash>` entry added to the rules map.
+
+### decomposeRepeat(rule, synth) **(PR0 — planned)**
+**Pattern:** `RepeatRule` / `Repeat1Rule` whose content is a `seq` / `choice` with slot-bearing members.
+**Action:** Two sub-cases. (1) Single slot-bearing member with separator-like string literals: lift the separator onto the repeat's `separator` attribute as `Rule[]`; point content at the inner leaf. (2) Multi-slot content: synthesize a hidden helper rule (`_rep_group_<hash>`) containing the original content; replace the repeat's content with a symbol-ref to the synthesized group; separator (if present) stays on the repeat.
+**Output:** Repeat whose content is either a leaf with attributes or a symbol-ref to a synthesized hidden group; new `_rep_group_<hash>` entry added to the rules map (case 2 only).
 
 ---
 
@@ -154,8 +258,21 @@ Executes grammar.js DSL and produces a `RawGrammar`. Mirrors tree-sitter's
 ## Phase 2: Link (`compiler/link.ts`)
 
 Resolves what nodes ARE. After Link: no `alias`, no `token` wrapper.
-All field nodes enriched with provenance. Clauses detected. Shape
-identical before and after (no restructuring).
+All field nodes enriched with provenance. Shape identical before and after
+(no restructuring).
+
+> **(PR2 — planned)** Clause detection (`detectClause`) and the `ClauseRule`
+> case are removed. The 27 `'clause'` case sites across the codebase collapse
+> into the `'optional'` cases that already handle the same shape; flanking
+> literals live as adjacent members of the containing seq under the universal
+> canonical shape.
+>
+> **(PR0 — planned)** `applyGroupOverrides` continues to process
+> user-authored `groups:` config unchanged. Auto-synthesized helper rules
+> emitted by `decomposeOptional` / `decomposeRepeat` already live in the
+> enriched rules map by the time Link runs; they're classified by the existing
+> hidden-rule classification path (`classifyHiddenRule` → `GroupRule`) with no
+> special handling.
 
 ### link(raw, include?)
 **Pattern:** Called with a `RawGrammar` from Evaluate.
@@ -202,10 +319,15 @@ identical before and after (no restructuring).
 **Action:** Maps via `TOKEN_NAMES` lookup, word-char passthrough, or char-by-char fallback.
 **Output:** Readable identifier name (e.g. `'+'` -> `'plus'`).
 
-### detectClause(content, currentName)
+### detectClause(content, currentName) **(legacy — to be removed in PR2)**
 **Pattern:** Content of an `optional` that is `seq(string, field, ...)`.
 **Action:** Wraps as `ClauseRule` named after the first field.
 **Output:** `ClauseRule` or plain `optional`.
+
+**Removal note:** PR2 deletes this function together with `ClauseRule` and the
+27 `'clause'` case sites. The same shape is recognized via the universal seq-of-leaves
+canonical shape — flanking string literals live as adjacent members of the
+optional's containing seq; no dedicated rule type is needed.
 
 ### inferFieldNames(references)
 **Pattern:** Symbol reference graph from evaluate.
@@ -288,6 +410,23 @@ collapses single-member wrappers, normalizes idempotent nestings.
 Template emission reads the raw rule; simplify feeds field/child
 derivation.
 
+> **(PR0 / PR2 — planned)** Simplify gains responsibility for normalizing every
+> branch/group body toward the **universal seq-of-leaves canonical shape**:
+>
+> - Push leaf-content modifier wrappers into attributes on the leaf (idempotent
+>   with enrich; absorbs any wrapper that escaped enrich-time attribute lifting).
+> - Trigger group synthesis for any structural-content modifier wrapper
+>   (any `optional` / `repeat` / `repeat1` whose content is a multi-member
+>   `seq` or `choice` with slot content) that wasn't already decomposed in
+>   enrich.
+> - Flatten degenerate single-member seqs.
+> - **Verify post-condition**: every branch and group body is a `SeqRule` of
+>   leaves. Any nested structural rule (`optional`, `repeat`, `repeat1`, `seq`,
+>   `choice`) inside a branch/group body is a bug — fail loud.
+>
+> Whether auto-synthesis itself runs in wire, enrich, or both (Options A/B/C in
+> the spec), simplify is the canonical-shape verifier regardless.
+
 ### simplifyRules(rules, wordMatcher?)
 **Pattern:** Full rule map from Optimize.
 **Action:** Runs `normalizeToFixpoint` on each rule (inlineGroupRefs + simplifyRule fixpoint).
@@ -345,6 +484,29 @@ derivation.
 First time nodes appear. All metadata derived from the rule tree.
 Produces the `NodeMap` consumed by emitters.
 
+> **(PR0 — planned)** `NodeMap` gains two back-pointer maps populated at
+> assembly time:
+>
+> ```ts
+> interface NodeMap {
+>   // ... existing fields ...
+>   readonly nodeByRuleId: ReadonlyMap<RuleId, AssembledNode>;
+>   readonly slotByRuleId: ReadonlyMap<RuleId, AssembledNonterminal>;
+> }
+> ```
+>
+> When an `AssembledNode` is constructed from a kind's root rule, the root
+> rule's `id` registers in `nodeByRuleId`. When an `AssembledNonterminal` is
+> constructed from a slot's source rule (via `deriveSlots`), the source rule's
+> `id` registers in `slotByRuleId`.
+>
+> These are the runtime lookup mechanism for the PR1 template emitter (and any
+> future consumer that walks a rule tree and needs to ask "what
+> `AssembledNonterminal` does this rule position correspond to") without
+> falling back to owner traversal or re-derivation. See memory entry
+> `feedback_ruleid_backpointer`. Enrichment passes must preserve `Rule.id`
+> through any rule rewrite or the maps go stale.
+
 ### assemble(optimized)
 **Pattern:** Called with an `OptimizedGrammar`.
 **Action:** Classifies each rule into a model type, constructs `AssembledNode` instances, collects anonymous tokens/keywords, resolves colliding names, assigns ir keys, marks parameterless/user-facing kinds.
@@ -398,17 +560,22 @@ Classes and derivation helpers for the assembled node hierarchy.
 
 ### AssembledBranch
 **Pattern:** Rule classified as `'branch'`.
-**Action:** Lazy-computes `fields`, `children`, `slots` from the simplified rule. Builds `renderTemplate` from the raw (inlined+hoisted) rule.
-**Output:** Node with field/child/slot metadata and render template.
+**Action:** Lazy-computes `fields`, `children`, `slots` from the simplified rule. **(legacy — to be removed in PR2)** Builds `renderTemplate` from the raw (inlined+hoisted) rule.
+**Output:** Node with field/child/slot metadata. **(legacy — to be removed in PR2)** plus render template body.
+
+> **(PR2 — planned)** The `renderTemplate` method on every `AssembledXxx`
+> class is deleted. Template string generation moves to `emitters/templates.ts`
+> per the universal emitter pattern (see "Phase 5: Emit"). `AssembledXxx`
+> classes expose data only; emitters own all string generation locally.
 
 ### AssembledPolymorph
 **Pattern:** Rule classified as `'polymorph'`.
-**Action:** Stores pre-built `AssembledGroup` forms. Each form has its own fields/children/slots.
+**Action:** Stores pre-built `AssembledGroup` forms. Each form has its own fields/children/slots. **(legacy — to be removed in PR2)** Plus a `renderTemplate` method that dispatches on `$variant`.
 **Output:** Node with `forms` array and variant-child kind list.
 
 ### AssembledPattern / AssembledKeyword / AssembledToken / AssembledEnum / AssembledSupertype / AssembledGroup / AssembledMulti
 **Pattern:** Rules classified as their respective model types.
-**Action:** Each stores its rule and precomputes model-type-specific metadata.
+**Action:** Each stores its rule and precomputes model-type-specific metadata. **(legacy — to be removed in PR2)** Branch/Group/Polymorph/Multi also expose `renderTemplate`.
 **Output:** Specialized node instances.
 
 ### deriveSlots(rule)
@@ -440,3 +607,94 @@ Classes and derivation helpers for the assembled node hierarchy.
 **Pattern:** A field's content rule.
 **Action:** Detects autogen outer-field wrappers (multi-member seq containing inner fields).
 **Output:** `boolean`.
+
+---
+
+## Phase 5: Emit (`emitters/*.ts`)
+
+Emitters consume the `NodeMap` and produce generated artifacts (factories,
+wrap, from, types, render templates, transport, node-model, suggested
+overrides, etc.). The **canonical emitter pattern** is established by
+`emitters/factories.ts`: iterate `nodeMap.nodes`, dispatch on
+`node.modelType`, own all string generation locally. Compiler-side
+`AssembledXxx` classes expose data only — no `.renderXxx()` methods that
+return output strings. See memory entry `feedback_emitter_pattern_consistency`.
+
+### emitters/templates.ts **(PR1 — planned; PR2 deletes the legacy walker)**
+
+**Pattern:** Invoked once per regen with the assembled `NodeMap`.
+**Action:** Iterates `nodeMap.nodes`; dispatches on `node.modelType`
+(`'branch' | 'polymorph' | 'group' | 'multi'` emit a body; `'supertype' |
+'pattern' | 'keyword' | 'token' | 'enum'` are skipped). Each per-modelType
+emit function calls a shared `emitRule(rule, ctx)` that switches on
+`Rule.type` and reads the PR0 modifier attributes (`fieldName`,
+`multiplicity`, `separator`, `nonterminal`) directly from the leaf rule. Slot
+property names are resolved via `ctx.nodeMap.slotByRuleId.get(rule.id)` →
+`AssembledNonterminal.propertyName` (no re-derivation from `rule.name` plus
+owner traversal).
+**Output:** `EmittedTemplates` — a per-kind map of Jinja template bodies.
+
+The `EmitCtx` carries cross-cutting read-only context: hidden-symbol
+resolution (`rules` map), word-matcher regex, externals list, and the
+NodeMap (for `slotByRuleId` lookups). No metadata accumulators are needed
+because every rule already carries its modifier attributes.
+
+**PR1 in-process diff gate:** during PR1's lifetime the emitter runs both
+the legacy walker (via `node.renderTemplate()`) and the new per-modelType
+emit functions; output divergence on any kind fails regen with the kind +
+diff. PR2 deletes the gate together with the legacy paths.
+
+### Legacy template path **(legacy — to be removed in PR2)**
+
+The pre-refactor template path is **not** an emitter in the canonical sense
+and deletes wholesale in PR2:
+
+- `compiler/template-walker.ts` (~1758 lines) — Rule-tree walker that
+  re-derives structural information (cardinality, optionality, separator,
+  clause-vs-plain) at emit time that assembly already learned. Emits an
+  intermediate format (`$NAME`, `$$$NAME`, `$NAME_CLAUSE`, plus a `clauses`
+  dict and `joinByField` metadata).
+- `compiler/node-map.ts` translation pipeline — second pass over the
+  walker's intermediate format:
+  - `inlineJinjaClauses` (~120 lines) — inlines clause snippets.
+  - `translateToJinja` (~200 lines) — produces the final Jinja text.
+  - `escapeJinjaBraceCollisions` (~40 lines) — escapes brace collisions.
+  - `JinjaTranslateMeta` interface and the 3 assembly call sites that
+    thread it.
+  - Spacing absorbers — adjacency fix-ups that won't be needed because the
+    new emitter outputs literals exactly as captured on rules.
+- `AssembledBranch.renderTemplate` (~50 lines), `AssembledPolymorph.renderTemplate`
+  (~80), `AssembledGroup.renderTemplate` (~50), `AssembledMulti.renderTemplate`
+  (~20) — the compiler-side string generators that violate the canonical
+  emitter pattern.
+- `ClauseRule` interface, `isClause` guard, `detectClause` (see Link). The
+  27 `'clause'` case sites collapse into the existing `'optional'` cases.
+
+PR2's regression gate requires byte-identical output vs the legacy path
+(via the PR1 in-process diff gate that has already burned in). Edge case
+absorption (walker hotspot fixes without tests, choice-branch literal drop,
+scanner-delimited adjacency) lands as explicit test cases in
+`__tests__/templates-emitter.test.ts` during PR2.
+
+### Other emitters (unchanged pattern)
+
+`emitters/factories.ts`, `emitters/wrap.ts`, `emitters/from.ts`,
+`emitters/types.ts`, `emitters/render-module.ts`, `emitters/transport-common.ts`
+already iterate `nodeMap.nodes`, dispatch on `node.modelType`, and own all
+string generation locally. They consume the `AssembledNode` view and don't
+walk raw rules.
+
+**(PR3 — planned)** The two emitters that DO consume `Rule.type` migrate
+when wrapper rule types delete:
+
+- `emitters/node-model.ts` — serializes rules to `node-model.json5`.
+  Serialized shape changes (no `optional`/`field`/`repeat`/`repeat1`
+  wrappers); schema version bumps; a migration step in
+  `packages/codegen/src/cli.ts` reads the old format and writes the new on
+  first regen.
+- `emitters/suggested.ts` — re-prints rule trees as TypeScript override
+  syntax. Adds a re-wrap pass that reconstructs canonical wrapped form from
+  attribute form when emitting (`field('name', optional(repeat($.X)))` etc.).
+
+`compiler/grammar.ts` (tree-sitter grammar.js emit) follows the same
+re-wrap pattern as `suggested.ts`.

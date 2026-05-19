@@ -38,6 +38,7 @@ declare const token: {
 	(r: unknown): unknown;
 	immediate: (r: unknown) => unknown;
 };
+declare const string: (value: string) => unknown;
 
 const config: WireConfig<RustGrammar> = {
 	name: 'rust',
@@ -54,21 +55,12 @@ const config: WireConfig<RustGrammar> = {
 		[$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
 		// visibility_modifier variant extraction: `pub` vs `pub(x)`
 		// share the `pub` prefix; parser needs lookahead.
-		[$._visibility_modifier_pub]
+		[$._visibility_modifier_pub],
+		// `_attributed_type_parameter` (body-pattern in groups:) and `_type`
+		// both can begin with `metavariable` — declare the conflict so
+		// tree-sitter uses lookahead instead of failing parser generation.
+		[$._attributed_type_parameter, $._type]
 	],
-	// Inline the synthesized hidden `_kw_async_marker` rule's body at
-	// every reference site. Without inlining, `closure_expression`'s
-	// `optional(_kw_async_marker)` (a SYMBOL ref to a `prec(-1, 'async')`
-	// body) parses differently from `async_block`'s bare `'async'` token
-	// — same lexeme, different LR state — and corpus inputs containing a
-	// closure with an inner async_block (e.g. `async move || async move
-	// {}`) regress to ERROR. Inlining folds the hidden rule's body into
-	// closure_expression's state machine so the bare `'async'` token
-	// surfaces directly in the LR table — restoring parity with the
-	// pre-promotion shape — while the FIELD wrapper survives inlining
-	// so the parse tree still surfaces the named `async_marker` field.
-	// Wave-1 follow-up (016 task #27).
-	inline: ($, previous) => [...(previous ?? []), $._kw_async_marker],
 	polymorphs: {
 		array_expression: { '2/0': 'semi', '2/1': 'list' },
 		closure_expression: { '4/0': 'block', '4/1': 'expr' },
@@ -123,6 +115,57 @@ const config: WireConfig<RustGrammar> = {
 			'0': 'crate',
 			'1': 'pub'
 		}
+	},
+	groups: {
+		// visibility_modifier — lift the inner optional(seq('(', choice, ')'))
+		// into a synthesized hidden kind (_visibility_modifier_pub_parens) so
+		// the polymorph variant's render template naturally references the
+		// group via the children slot. Closes bug #3 (`pub()` → `pub`).
+		// See: docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
+		_visibility_modifier_pub: {
+			'1': 'parens'
+		},
+
+		// --- body-pattern groups: tree-sitter visible-kind synthesis ---
+		// Each function-valued entry below declares a STRUCTURAL PATTERN.
+		// Codegen creates `_<key>` as the hidden rule body and rewrites every
+		// matching sub-tree as `alias($._<key>, $.<key>)` so tree-sitter emits
+		// the visible kind as a CST node. Without alias, tree-sitter inlines
+		// the hidden `_*` rule and the kind never appears at runtime — the
+		// transport-side slot remains permanently empty.
+
+		// Pattern: attribute_item(s) attached to a struct field.
+		// Used inline at every comma-separated position in
+		// field_declaration_list. Without this lift, the parent's $children
+		// flattens to alternating attribute_item / field_declaration entries
+		// joined by commas (e.g. `#[attr],y: i32` instead of `#[attr] y: i32`).
+		attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
+
+		// Pattern: attribute_item(s) attached to an enum variant.
+		// enum_variant_list uses SEQ(REPEAT(attribute_item), enum_variant)
+		// inline at every comma-separated position.
+		attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
+
+		// Pattern: optional attribute_item attached to a function parameter.
+		// parameters uses SEQ(CHOICE(attribute_item, BLANK), CHOICE(...)).
+		// The sittir IR normalizes CHOICE(x, BLANK) to optional(x).
+		// Members: parameter | self_parameter | variadic_parameter |
+		// '_' wildcard | _type (anonymous type).
+		attributed_parameter: ($) =>
+			seq(
+				optional($.attribute_item),
+				choice($.parameter, $.self_parameter, $.variadic_parameter, '_', $._type)
+			),
+
+		// Pattern: attribute_item(s) attached to a type parameter.
+		// type_parameters uses SEQ(REPEAT(attribute_item), CHOICE(metavariable,
+		// type_parameter, lifetime_parameter, const_parameter)) inline at every
+		// comma-separated position.
+		attributed_type_parameter: ($) =>
+			seq(
+				repeat($.attribute_item),
+				choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)
+			)
 	},
 	transforms: {
 		// abstract_type: 1 field(s)
@@ -484,16 +527,10 @@ const config: WireConfig<RustGrammar> = {
 			7: field('trailing_where_clause') // where_clause [struct=2]
 		},
 
-		// type_parameters: seq('<', repeat1(seq(repeat(attribute_item),
-		// choice(metavariable, type_parameter, lifetime_parameter,
-		// const_parameter))), '>').
-		// storageName collision: repeat(attribute_item) at inner-seq pos 0
-		// and the choice at inner-seq pos 1 both infer storageName='children'.
-		// Promote attribute_item to named field; the type-param choice stays
-		// as $children.
-		type_parameters: {
-			'1/0': field('attributes')
-		},
+		// type_parameters: handled by `attributed_type_parameter` body-
+		// pattern in `groups:`. The parser conflict with `_type` (both
+		// begin with metavariable) is declared in `conflicts:` above.
+		// No override-side field-promotion needed.
 
 		// unary_expression — label both the operator token (pos 0) and
 		// the operand expression (pos 1). overrides.json promotes both
@@ -507,7 +544,7 @@ const config: WireConfig<RustGrammar> = {
 
 		// use_wildcard: 1 field(s)
 		use_wildcard: {
-			0: field('path') // crate | identifier | metavariable | scoped_identifier | self | super [struct=0]
+			'0/0/0': field('path') // optional($._path) inside the optional `path ::` prefix; excludes the `::` token
 		},
 
 		// variadic_parameter: 1 field(s)
@@ -638,10 +675,54 @@ const config: WireConfig<RustGrammar> = {
 		// the named alias on `_pattern` above promotes it to a proper
 		// `wildcard_pattern` kind at parse time.
 		_wildcard_pattern: ($) => '_'
-	}
+	},
+
+	// renderAs — sittir-side rule bodies for external scanner symbols.
+	// These bodies are used by sittir's slot/render/factory pipeline ONLY;
+	// they are stripped before the grammar reaches tree-sitter (the C
+	// external scanner still produces these symbols during parsing).
+	//
+	// Doc comment markers — sittir-side declarations of the marker character.
+	// Tree-sitter's external scanner still produces these tokens; renderAs
+	// entries let sittir's render/factory/from pipelines know the literal
+	// text without depending on tree-sitter to expose it.
+	//
+	// Line markers (_outer_line / _inner_line) DO have IMMEDIATE_TOKEN bodies
+	// in grammar.json — those are stripped by wire so tree-sitter never sees
+	// duplicate rule bodies. Block markers (_outer_block / _inner_block) are
+	// pure externals with no grammar body.
+	//
+	// Rust doc-comment syntax:
+	//   ///outer line doc      — outer line marker is '/' (lexer consumes '//' first)
+	//   //!inner line doc      — inner line marker is '!'
+	//   /**outer block doc*/   — outer block marker is '*'
+	//   /*!inner block doc*/   — inner block marker is '!'
+	//
+	// Raw string literal delimiters — static (1-hash form only).
+	// Round-trip will fail for `r##"..."##` etc. Factory-side benefit: no
+	// delimiter-count parameter needed.
+	renderAs: (_$) => ({
+		// Doc comment markers
+		_outer_line_doc_comment_marker: string('/'),   // /// outer line doc
+		_inner_line_doc_comment_marker: string('!'),   // //! inner line doc
+		_outer_block_doc_comment_marker: string('*'),  // /** outer block doc */ (was '!' in MVP — typo)
+		_inner_block_doc_comment_marker: string('!'),  // /*! inner block doc */
+		// Raw string literal delimiters — static (1-hash form only).
+		// Round-trip will fail for `r##"..."##` etc. Factory-side
+		// benefit: no delimiter-count parameter needed.
+		_raw_string_literal_start: string('r#"'),
+		_raw_string_literal_end: string('"#')
+	})
 };
 
 // The typed `config` above is validated against WireConfig<RustGrammar>.
 // `grammar()` is tree-sitter's injected global (declared at top of file);
 // `base` comes from the untyped `grammar.js` import.
-export default grammar(enrich(base), wire<RustGrammar>(config));
+//
+// Pass `enrich(base)` to wire so body-pattern groups (function-valued
+// entries in `groups:`) can walk base rules and inject pattern-replacing
+// passthroughs. Without the base arg, unoverridden base rules bypass
+// pattern replacement and tree-sitter never emits the alias()-wrapped
+// visible kinds. Evaluating `enrich(base)` twice is intentional and cheap.
+const enrichedBase = enrich(base);
+export default grammar(enrichedBase, wire<RustGrammar>(config, enrichedBase));

@@ -633,13 +633,13 @@ function resolvePatch(
  * wrappers around anonymous string literals during grammar normalization
  * (fields must label structural content, not bare tokens).
  * `maybeKeywordSymbol` synthesizes a hidden `_kw_<name>` rule that
- * produces the string and returns a SYMBOL reference — FIELD around
- * SYMBOL survives the normalizer. The hidden rule's body is wrapped in
- * high precedence so soft keywords (python `match`/`case` that are also
- * valid identifiers) win the keyword interpretation at the position
- * enrich promoted. Shared helper used by both this one-arg field()
- * placeholder and dsl/field.ts's two-arg form; receives the prec stack
- * so synthetic rules inherit the outer precedence context.
+ * produces the original token and returns a SYMBOL reference — FIELD
+ * around SYMBOL survives the normalizer. wire() then auto-inlines the
+ * helper back into the grammar's LR state machine so parse behavior
+ * stays aligned with the pre-promotion bare token. Shared helper used
+ * by both this one-arg field() placeholder and dsl/field.ts's two-arg
+ * form; receives the prec stack so synthetic rules inherit any OUTER
+ * precedence wrapper the original position lived under.
  *
  * @param patch - The one-arg FieldPlaceholder with the desired field name.
  * @param originalMember - The rule currently at the target position.
@@ -662,17 +662,17 @@ function resolveFieldPlaceholder(
 		// Both 'enriched' (dsl/enrich.ts) and 'inferred' (compiler/link.ts)
 		// mark fields we synthesized — neither should leak into the override
 		// result as a nested wrapper.
-		if (!process.env.SITTIR_QUIET) {
+		const overrideName = patch.name;
+		const enrichName = (content as { name?: string }).name ?? '(unknown)';
+		// Only warn for the redundant-duplicate case (override matches enrich's
+		// auto-name). The rename case (override picks a different name like
+		// 'object'/'index' instead of enrich's 'expression1'/'expression2') is
+		// the intended override-trumps-enrich behavior — silent by design.
+		if (overrideName === enrichName && !process.env.SITTIR_QUIET) {
 			const parentKind = wireGetCurrentRuleKind() ?? '(unknown)';
-			const overrideName = patch.name;
-			const enrichName = (content as { name?: string }).name ?? '(unknown)';
-			const tag =
-				overrideName === enrichName
-					? `duplicate name ('${overrideName}')`
-					: `override renames '${enrichName}' → '${overrideName}'`;
 			process.stderr.write(
-				`transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD — ${tag}. ` +
-					`Drop the override entry if the names match; enrich will cover it automatically.\n`
+				`transform: override field('${overrideName}') on '${parentKind}' wraps an enrich-labeled FIELD — ` +
+					`duplicate name ('${overrideName}'). Drop the override entry; enrich will cover it automatically.\n`
 			);
 		}
 		content = content.content;

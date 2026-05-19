@@ -475,6 +475,38 @@ describe('Rule — deriveFields', () => {
 		const fields = deriveFields(rule);
 		expect(isMultiple(fields[0]!)).toBe(true);
 	});
+
+	it('preserves named fields across mixed field-or-child choices', () => {
+		const rule: Rule = {
+			type: 'seq',
+			members: [
+				{ type: 'string', value: 'default' },
+				{
+					type: 'choice',
+					members: [
+						{
+							type: 'field',
+							name: 'declaration',
+							content: { type: 'symbol', name: 'declaration' }
+						},
+						{ type: 'symbol', name: '_export_statement_default_decl_arm_default_kw_value' }
+					]
+				}
+			]
+		};
+
+		const slots = deriveSlots(rule);
+		const declaration = slots.find((slot) => slot.name === 'declaration');
+		const childSlot = slots.find((slot) => slot.source === 'inferred');
+
+		expect(declaration).toBeDefined();
+		expect(isRequired(declaration!)).toBe(false);
+		expect(childSlot).toBeDefined();
+		expect(isRequired(childSlot!)).toBe(false);
+		expect(childSlot!.values.map((value) => ('node' in value ? (value.node as { name?: string }).name : value.value))).toContain(
+			'_export_statement_default_decl_arm_default_kw_value'
+		);
+	});
 });
 
 describe('Assemble — naming', () => {
@@ -650,5 +682,89 @@ describe('Assemble — override polymorph visible child kinds', () => {
 		expect(paren?.modelType).not.toBe('multi');
 		expect(bare?.factoryName).toBe('withClauseBare');
 		expect(paren?.factoryName).toBe('withClauseParen');
+	});
+
+	it('downgrades merged polymorph singular slots that are absent in some forms', () => {
+		const optimized = makeOptimized({
+			rangeish: {
+				type: 'polymorph',
+				source: 'override',
+				forms: [
+					{
+						name: 'with_left',
+						content: {
+							type: 'seq',
+							members: [
+								{
+									type: 'field',
+									name: 'left',
+									content: { type: 'symbol', name: 'expr' }
+								},
+								{
+									type: 'field',
+									name: 'right',
+									content: { type: 'symbol', name: 'expr' }
+								}
+							]
+						}
+					},
+					{
+						name: 'prefix',
+						content: {
+							type: 'field',
+							name: 'right',
+							content: { type: 'symbol', name: 'expr' }
+						}
+					}
+				]
+			},
+			expr: { type: 'pattern', value: '[a-z]+' }
+		});
+		const nodeMap = assemble(optimized);
+		const poly = nodeMap.nodes.get('rangeish');
+		expect(poly?.modelType).toBe('polymorph');
+		if (!poly || poly.modelType !== 'polymorph') {
+			throw new Error('expected polymorph node');
+		}
+		expect(isRequired(poly.slots.left!)).toBe(false);
+		expect(poly.slots.left?.values.map((value) => value.multiplicity)).toEqual(['optional']);
+		expect(isRequired(poly.slots.right!)).toBe(true);
+		expect(poly.slots.right?.values.map((value) => value.multiplicity)).toEqual(['single']);
+	});
+
+	it('downgrades merged polymorph repeated slots that are absent in some forms', () => {
+		const optimized = makeOptimized({
+			listish: {
+				type: 'polymorph',
+				source: 'override',
+				forms: [
+					{
+						name: 'with_items',
+						content: {
+							type: 'field',
+							name: 'item',
+							content: {
+								type: 'repeat1',
+								content: { type: 'symbol', name: 'expr' }
+							}
+						}
+					},
+					{
+						name: 'bare',
+						content: { type: 'string', value: 'bare' }
+					}
+				]
+			},
+			expr: { type: 'pattern', value: '[a-z]+' }
+		});
+		const nodeMap = assemble(optimized);
+		const poly = nodeMap.nodes.get('listish');
+		expect(poly?.modelType).toBe('polymorph');
+		if (!poly || poly.modelType !== 'polymorph') {
+			throw new Error('expected polymorph node');
+		}
+		expect(isMultiple(poly.slots.item!)).toBe(true);
+		expect(isRequired(poly.slots.item!)).toBe(false);
+		expect(poly.slots.item?.values.map((value) => value.multiplicity)).toEqual(['array']);
 	});
 });
