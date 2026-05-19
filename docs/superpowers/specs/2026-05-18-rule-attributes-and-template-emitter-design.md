@@ -318,15 +318,21 @@ For auto-synthesis of multi-field optionals/repeats, three architectures are pos
 - **Pros**: single source of truth for detection; no codegen-side mirror logic needed.
 - **Cons**: wire layer becomes responsible for structural decisions; harder to test in isolation (wire operates on callbacks rather than Rule-objects).
 
-#### Decision deferred to PR0 implementation
+#### Decision resolved 2026-05-19: Option A (TS-side-only via enrich)
 
-This spec records all three options as the candidate architectures. The PR0 implementation team must:
+**Decision**: Auto-synthesis runs in `dsl/enrich.ts` post-evaluation. Synthesized hidden groups are TS-side artifacts; the parser is unchanged.
 
-1. Verify whether wrap/from currently support "virtual group projection" (the load-bearing assumption for Option A). If yes, Option A becomes viable and is the lightest-touch.
-2. If Option A is not viable without significant wrap/from changes, choose between B (mirroring existing groups: synthesis) and C (consolidating in wire).
-3. Document the chosen architecture inline in this spec before PR0 lands, and update the deliverables checklist accordingly.
+**Verification**:
+- `packages/codegen/src/emitters/wrap.ts:72,827,834,845,877` already accepts `synthesizedKinds: ReadonlySet<string>` for virtual-group projection.
+- `packages/codegen/src/emitters/from.ts:21,1034,1077,1083,1115,1194` imports and operates on `AssembledGroup` (the existing authored `groups:` synthesis path). The same projection plumbing serves auto-synthesized groups.
+- Tree-sitter aux-research (memory `project_tree_sitter_aux_research`) confirms surface-concern synthesis doesn't need parser-side presence; aux rules are invisible to consumers regardless.
 
-The decision affects scope but not the overall architecture of the four-PR sequence — auto-synthesis is a PR0 internal detail; PR1/PR2/PR3 are unaffected.
+**Consequence for PR0 deliverables**:
+- `decomposeOptional` / `decomposeRepeat` (Tasks 1.7/1.8) live in `dsl/enrich.ts`, calling `synthesizeGroup` from `compiler/group-synthesis.ts` (additional caller path; same primitive).
+- Synthesized groups are added to the rules map alongside the existing `_kw_<name>` injection pattern. Tree-sitter inlines them at parse time; the CST is unchanged.
+- Wrap/from process the synthesized groups via the same `synthesizedKinds` path used by authored `groups:` overrides.
+
+Options B and C remain documented above for traceability and as fallbacks if Option A surfaces an unforeseen limitation during Task 1.7/1.8 implementation.
 
 ### RuleId preservation
 
