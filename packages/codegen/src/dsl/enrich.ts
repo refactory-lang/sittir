@@ -145,6 +145,7 @@ function applyEnrichPasses(
 		// generator tables, breaking unrelated rules' reparse (rust corpus
 		// regresses by ~47/136 with this pass on).
 		r = applyOptionalKeyword(ruleName, r, kwRules);
+		r = enrichFieldWrappers(r);
 		if (r === before) return r;
 	}
 	if (!process.env.SITTIR_QUIET) {
@@ -840,6 +841,74 @@ function tryPromoteInRepeatSeq(
 		result = { ...outerPrecStack[i]!, content: result } as Rule;
 	}
 	return result;
+}
+
+// ---------------------------------------------------------------------------
+// Pass: field-wrapper attribute propagation
+// ---------------------------------------------------------------------------
+// For every FIELD/field node, copy the wrapper's `name` onto the wrapped
+// content as `fieldName`, and set `nonterminal: true` on the content.
+// Matches today's rule-catalog.ts force-promotion semantics: a
+// field-wrapped child is forced to nonterminal classification even when
+// the underlying rule is a terminal (string/pattern).
+//
+// Recursion order: post-order. Recurse into children first so nested
+// field wrappers see already-enriched subtrees, then apply the
+// propagation at this level if this node is itself a FIELD. Returns
+// the original rule unchanged when no propagation fires, preserving
+// the `r === before` convergence check in applyEnrichPasses.
+
+function enrichFieldWrappers(rule: Rule): Rule {
+	const recursed = recurseFieldWrappers(rule);
+	if (!isFieldType(recursed.type)) return recursed;
+	const name = (recursed as unknown as { name?: unknown }).name;
+	const content = (recursed as unknown as { content?: unknown }).content;
+	if (typeof name !== 'string' || !content || typeof content !== 'object') return recursed;
+	const existing = content as { fieldName?: unknown; nonterminal?: unknown };
+	if (existing.fieldName === name && existing.nonterminal === true) return recursed;
+	const newContent = { ...(content as object), fieldName: name, nonterminal: true };
+	return { ...recursed, content: newContent } as unknown as Rule;
+}
+
+/** @internal — descend into structural children of `rule` and apply
+ *  enrichFieldWrappers to each. Mirrors the shape-walk used by other
+ *  passes (seq/choice members; optional/repeat/repeat1/prec/field/alias
+ *  content). Returns the original rule reference when no descendant
+ *  changes — preserves the fixed-point identity check. */
+function recurseFieldWrappers(rule: Rule): Rule {
+	if (!rule || typeof rule !== 'object') return rule;
+	const t = (rule as { type?: string }).type;
+	if (!t) return rule;
+	if (isSeqType(t) || isChoiceType(t)) {
+		const members = (rule as unknown as { members?: Rule[] }).members;
+		if (!Array.isArray(members)) return rule;
+		let changed = false;
+		const newMembers = members.map((m) => {
+			const out = enrichFieldWrappers(m);
+			if (out !== m) changed = true;
+			return out;
+		});
+		return changed ? ({ ...rule, members: newMembers } as Rule) : rule;
+	}
+	if (
+		isOptionalType(t) ||
+		isRepeatType(t) ||
+		isFieldType(t) ||
+		isPrecWrapper(rule as { type: string }) ||
+		t === 'alias' ||
+		t === 'ALIAS' ||
+		t === 'token' ||
+		t === 'TOKEN' ||
+		t === 'immediate_token' ||
+		t === 'IMMEDIATE_TOKEN'
+	) {
+		const content = (rule as unknown as { content?: Rule }).content;
+		if (content === undefined) return rule;
+		const out = enrichFieldWrappers(content);
+		if (out === content) return rule;
+		return { ...rule, content: out } as Rule;
+	}
+	return rule;
 }
 
 // ---------------------------------------------------------------------------
