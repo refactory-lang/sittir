@@ -27,7 +27,7 @@
 import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
-import { AssembledGroup } from '../compiler/node-map.ts';
+import { AssembledGroup, isMultiple } from '../compiler/node-map.ts';
 import type {
 	AssembledBranch,
 	AssembledMulti,
@@ -55,6 +55,13 @@ export interface EmitCtx {
 	readonly wordMatcher: RegExp;
 	readonly externals: readonly string[];
 	readonly rules: Record<string, Rule>;
+	/**
+	 * Cycle guard for hidden-helper recursion in `emitSymbol`. The legacy
+	 * walker tracks visited helper names via the per-walk `seen` set keyed
+	 * by `@${name}`; the new emitter uses a flat mutable Set passed down
+	 * via this field. Each call to `emitOne()` resets it.
+	 */
+	readonly visitingHelpers: Set<string>;
 }
 
 // Nunjucks whitespace control (`{#- ... -#}`) strips whitespace
@@ -107,7 +114,8 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			nodeMap: config.nodeMap,
 			wordMatcher: this.#wordMatcher,
 			externals: [...(config.nodeMap.externals ?? [])],
-			rules: config.nodeMap.rules ?? {}
+			rules: config.nodeMap.rules ?? {},
+			visitingHelpers: new Set<string>()
 		};
 	}
 
@@ -149,6 +157,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		let newBody: string | undefined;
 		let newError: unknown;
 		try {
+			this.#ctx.visitingHelpers.clear();
 			newBody = emitOne(node, this.#ctx);
 		} catch (err) {
 			newError = err;
@@ -249,12 +258,26 @@ export function emitMultiTemplate(node: AssembledMulti, ctx: EmitCtx): string {
 }
 
 export function emitPolymorphTemplate(node: AssembledPolymorph, ctx: EmitCtx): string {
+	// Walker shape (post-`translateToJinja`):
+	//   {%- if variant == "a" -%}\n{{ form_kind_a | join(" ") }}\n{%- elif variant == "b" -%}\n...\n{%- endif -%}
+	// Each form's body is its kind name as a list-form join. The walker's
+	// node-map pipeline applies optional/wrap/translate after building
+	// this skeleton; the new emitter's simplified shape captures only the
+	// skeleton — many polymorphs still diverge due to per-form
+	// optionalFields wrapping done by `wrapOptionalFieldPlaceholders`.
 	const parts: string[] = [];
-	for (const form of node.forms) {
-		const body = emitRule(form.rule, ctx);
-		parts.push(`{%- if $variant == "${form.name}" -%}${body}{%- endif -%}`);
+	for (let i = 0; i < node.forms.length; i++) {
+		const form = node.forms[i]!;
+		const keyword = i === 0 ? 'if' : 'elif';
+		parts.push(`{%- ${keyword} variant == "${form.name}" -%}`);
+		// Body slot name is the form's kind with leading `_` stripped
+		// (e.g. `_array_expression_list` → `array_expression_list`).
+		const formSlotName = (form.kind.replace(/^_+/, '') || 'children').toLowerCase();
+		const formBody = `{{ ${formSlotName} | join(" ") }}`;
+		parts.push(formBody);
 	}
-	return parts.join('');
+	parts.push(`{%- endif -%}`);
+	return parts.join('\n');
 }
 
 // ---------------------------------------------------------------------------
@@ -420,18 +443,26 @@ const DEFAULT_JOIN_SEPARATOR = ' ';
  * Emit Jinja for a list-shaped slot: `{{ name | join("…") }}` (or one
  * of the trailing/leading/flanks variants). Reads the separator from
  * the supplied rule's attributes.
+ *
+ * The slot name is the RAW (snake_case, singular) field/symbol name
+ * lowercased — matching the legacy walker's `$NAME` → `{{ name }}`
+ * translation in `translateToJinja`. We deliberately do NOT use
+ * `slot.propertyName` (camelCase + pluralized) because the walker's
+ * template output is byte-compared against the new emitter and any
+ * naming divergence breaks the diff gate.
  */
-function emitListSlot(propertyName: string, rule: Rule): string {
+function emitListSlot(slotName: string, rule: Rule): string {
 	const filter = selectJoinFilter(rule);
 	const sep = separatorToString(rule) ?? DEFAULT_JOIN_SEPARATOR;
-	return `{{ ${propertyName} | ${filter}("${escapeJinjaString(sep)}") }}`;
+	return `{{ ${slotName} | ${filter}("${escapeJinjaString(sep)}") }}`;
 }
 
 /**
- * Emit Jinja for a scalar slot: `{{ name }}`.
+ * Emit Jinja for a scalar slot: `{{ name }}`. The slot name is the RAW
+ * (snake_case, singular) name lowercased.
  */
-function emitScalarSlot(propertyName: string): string {
-	return `{{ ${propertyName} }}`;
+function emitScalarSlot(slotName: string): string {
+	return `{{ ${slotName} }}`;
 }
 
 /**
@@ -439,10 +470,14 @@ function emitScalarSlot(propertyName: string): string {
  * visible nonterminal kind (or named alias). The kind name itself is
  * the slot key — matches the legacy walker's `emitChildren(slotName)`
  * behavior where the slot lives under the kind's bare name.
+ *
+ * Walker emits `$$$SLOT` (uppercase) which `translateToJinja` converts
+ * to `{{ slot | join(" ") }}` — a list-form join. So bare symbol
+ * references render as list, not scalar.
  */
 function emitSymbolSlot(kindName: string, _ctx: EmitCtx): string {
-	const slotName = snakeToCamel(kindName.replace(/^_+/, '') || 'children');
-	return emitScalarSlot(slotName);
+	const slotName = (kindName.replace(/^_+/, '') || 'children').toLowerCase();
+	return `{{ ${slotName} | join(" ") }}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -450,8 +485,10 @@ function emitSymbolSlot(kindName: string, _ctx: EmitCtx): string {
 // ---------------------------------------------------------------------------
 
 function emitField(rule: Extract<Rule, { type: 'field' }>, ctx: EmitCtx): string {
-	const slot = lookupSlot(rule, ctx);
-	const propertyName = slot?.propertyName ?? snakeToCamel(rule.name);
+	// Match walker behavior: emit raw lowercased field name (matches the
+	// `$NAME` → `{{ name }}` translation done by `translateToJinja`).
+	// Do NOT use slot.propertyName — that's camelCase + pluralized.
+	const slotName = rule.name.toLowerCase();
 	const multiplicity = rule.multiplicity ?? rule.content.multiplicity;
 	const isArray = multiplicity === 'array' || multiplicity === 'nonEmptyArray';
 	if (isArray) {
@@ -459,9 +496,20 @@ function emitField(rule: Extract<Rule, { type: 'field' }>, ctx: EmitCtx): string
 		// inner content's separator (set by `decomposeRepeat`-style enrich
 		// that pushes the wrapper's separator onto the inner rule).
 		const separatorCarrier: Rule = rule.separator !== undefined ? rule : rule.content;
-		return emitListSlot(propertyName, separatorCarrier);
+		return emitListSlot(slotName, separatorCarrier);
 	}
-	return emitScalarSlot(propertyName);
+	// Even when the rule is annotated singular, the legacy walker treats
+	// many field positions as list-shaped because `inRepeat` /
+	// `containsRepeat` / `wrappedRepeatSeparator` infer multiplicity from
+	// surrounding structure. The slot back-pointer captures that decision
+	// via `isMultiple()` on its `values` array — if any value is
+	// `array` / `nonEmptyArray`, render as list.
+	const slot = lookupSlot(rule, ctx);
+	if (slot && isMultiple(slot)) {
+		const separatorCarrier: Rule = rule.separator !== undefined ? rule : rule.content;
+		return emitListSlot(slotName, separatorCarrier);
+	}
+	return emitScalarSlot(slotName);
 }
 
 function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): string {
@@ -472,11 +520,16 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 		return rule.literal !== undefined ? escapeLiteral(rule.literal) : '';
 	}
 	// Slot back-pointer wins: when assembly registered a slot for this
-	// rule position, prefer its propertyName / multiplicity over any
-	// inlining we might otherwise do.
+	// rule position, prefer it over hidden-helper inlining. Use the raw
+	// kind name lowercased (matches walker's `$$$KIND` → `{{ kind }}`
+	// translation, NOT slot.propertyName which is camelCase+plural).
 	const slot = lookupSlot(rule, ctx);
 	if (slot) {
-		return emitScalarSlot(slot.propertyName);
+		const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+		if (isMultiple(slot)) {
+			return emitListSlot(slotName, rule);
+		}
+		return emitScalarSlot(slotName);
 	}
 	// Group-lifted symbols carry their own template; emit as a
 	// kind-named slot, never inline-expand.
@@ -485,10 +538,22 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	}
 	// Hidden helper rules (e.g. python's `_import_list`) are inlined by
 	// tree-sitter at parse time. Recurse into the target rule's body so
-	// the helper's content surfaces in place.
+	// the helper's content surfaces in place — but guard against
+	// left-recursive helpers like rust's `_let_chain` which references
+	// itself (`_let_chain && let_condition`). When recursion is detected
+	// we treat the symbol like an opaque slot reference instead of
+	// inlining, matching the walker's `seen.has('@'+name)` short-circuit.
 	if (rule.name.startsWith('_') && ctx.rules[rule.name]) {
-		const target = ctx.rules[rule.name]!;
-		return emitRule(target, ctx);
+		if (ctx.visitingHelpers.has(rule.name)) {
+			return emitSymbolSlot(rule.name, ctx);
+		}
+		ctx.visitingHelpers.add(rule.name);
+		try {
+			const target = ctx.rules[rule.name]!;
+			return emitRule(target, ctx);
+		} finally {
+			ctx.visitingHelpers.delete(rule.name);
+		}
 	}
 	return emitSymbolSlot(rule.name, ctx);
 }
@@ -500,10 +565,11 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
  * literal `value` keyword when no field anchors the conditional.
  */
 function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
-	// Direct: a wrapping field declares the gate name.
+	// Direct: a wrapping field declares the gate name. Walker uses the
+	// RAW lowercased name as the conditional predicate (matches
+	// `translateToJinja`'s `key = name.toLowerCase()` for placeholders).
 	if (content.type === 'field') {
-		const slot = lookupSlot(content, ctx);
-		return slot?.propertyName ?? snakeToCamel(content.name);
+		return content.name.toLowerCase();
 	}
 	// Transparent wrappers — recurse.
 	if (
@@ -525,10 +591,10 @@ function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
 		}
 		return undefined;
 	}
-	// A symbol with a slot back-pointer — gate on its property name.
+	// A symbol with a slot back-pointer — gate on its kind slot name.
 	if (content.type === 'symbol') {
-		const slot = lookupSlot(content, ctx);
-		if (slot) return slot.propertyName;
+		const sym = content as Extract<Rule, { type: 'symbol' }>;
+		return (sym.name.replace(/^_+/, '') || 'children').toLowerCase();
 	}
 	return undefined;
 }
@@ -543,7 +609,9 @@ function emitOptional(rule: Extract<Rule, { type: 'optional' }>, ctx: EmitCtx): 
 		// silently drop punctuation-only optionals.
 		return body;
 	}
-	return `{%- if ${key} | isPresent %}${body}{%- endif %}`;
+	// Walker uses `{% if ... %}` (no whitespace strip) for inline
+	// conditionals — see `emitJinjaConditional` in template-walker.ts.
+	return `{% if ${key} | isPresent %}${body}{% endif %}`;
 }
 
 function emitRepeat(rule: Extract<Rule, { type: 'repeat' | 'repeat1' }>, ctx: EmitCtx): string {
@@ -553,14 +621,12 @@ function emitRepeat(rule: Extract<Rule, { type: 'repeat' | 'repeat1' }>, ctx: Em
 	// the repeat's separator metadata propagated.
 	const inner = unwrapTransparent(content);
 	if (inner.type === 'field') {
-		const slot = lookupSlot(inner, ctx);
-		const propertyName = slot?.propertyName ?? snakeToCamel(inner.name);
-		return emitListSlot(propertyName, rule);
+		const slotName = inner.name.toLowerCase();
+		return emitListSlot(slotName, rule);
 	}
 	if (inner.type === 'symbol') {
-		const slot = lookupSlot(inner, ctx);
-		const propertyName = slot?.propertyName ?? snakeToCamel(inner.name.replace(/^_+/, ''));
-		return emitListSlot(propertyName, rule);
+		const slotName = (inner.name.replace(/^_+/, '') || 'children').toLowerCase();
+		return emitListSlot(slotName, rule);
 	}
 	// Generic fallback — emit the inner rule's body. The renderer's
 	// children slot will carry the actual list values.
@@ -583,11 +649,10 @@ function emitClause(rule: Extract<Rule, { type: 'clause' }>, ctx: EmitCtx): stri
 	const body = emitRule(rule.content, ctx);
 	if (!body) return '';
 	// The clause name is the field name to gate on per `detectClause`'s
-	// invariant. CamelCase the clause name to match property naming —
-	// slot back-pointers (when available) provide the canonical form,
-	// but the clause itself isn't a slot, so we derive from the name.
-	const slotKey = pickConditionalKey(rule.content, ctx) ?? snakeToCamel(rule.name);
-	return `{%- if ${slotKey} | isPresent %}${body}{%- endif %}`;
+	// invariant. Use the RAW lowercased name to match the walker's
+	// `emitJinjaConditional(rule.name, body)` shape.
+	const slotKey = pickConditionalKey(rule.content, ctx) ?? rule.name.toLowerCase();
+	return `{% if ${slotKey} | isPresent %}${body}{% endif %}`;
 }
 
 /**
