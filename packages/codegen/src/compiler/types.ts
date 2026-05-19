@@ -20,7 +20,7 @@
  */
 
 import type { Rule, RuleId, SymbolRef } from './rule.ts';
-import type { AssembledNode } from './node-map.ts';
+import type { AssembledNode, AssembledNonterminal } from './node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
 
 export type { SlotArity, SlotModel } from './slot-model.ts';
@@ -445,6 +445,20 @@ export interface SignaturePool {
 export interface NodeMap {
 	readonly name: string;
 	readonly nodes: Map<string, AssembledNode>;
+	/**
+	 * Rule-id → AssembledNode back-pointer. Populated at assembly when the
+	 * root rule for each kind is registered. Lets consumers walking a rule
+	 * tree look up the owning AssembledNode without owner traversal.
+	 * See feedback_ruleid_backpointer.
+	 */
+	readonly nodeByRuleId: ReadonlyMap<RuleId, AssembledNode>;
+	/**
+	 * Rule-id → AssembledNonterminal back-pointer. Populated at assembly when
+	 * each slot's source rule is registered. Lets consumers walking a rule
+	 * tree look up the slot's propertyName / storageName / paramName directly.
+	 * See feedback_ruleid_backpointer.
+	 */
+	readonly slotByRuleId: ReadonlyMap<RuleId, AssembledNonterminal>;
 	readonly signatures: SignaturePool;
 	/**
 	 * Sidecar log of every derivation Link produced. Emitters read

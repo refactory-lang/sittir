@@ -21,6 +21,7 @@ import type {
 } from './rule.ts';
 import { isLinkSymbol } from './rule.ts';
 import type { OptimizedGrammar, NodeMap, SignaturePool, PolymorphVariant } from './types.ts';
+import type { RuleId } from './rule.ts';
 import { computePolymorphFormKinds } from './types.ts';
 import {
 	collectGeneratedKindEntries,
@@ -216,9 +217,28 @@ export function assemble(
 	// (e.g. node-model.json5) BEFORE wiring up cyclic AssembledNode refs.
 	// Post-hydration the slot graph is cyclic and JSON.stringify breaks.
 
+	// Back-pointer maps — let downstream consumers (the new template
+	// emitter and friends) look up an AssembledNode / AssembledNonterminal
+	// from a rule's `id` without owner traversal. See
+	// feedback_ruleid_backpointer.
+	const nodeByRuleId = new Map<RuleId, AssembledNode>();
+	const slotByRuleId = new Map<RuleId, AssembledNonterminal>();
+	for (const [kind, rule] of Object.entries(optimized.rules)) {
+		const node = nodes.get(kind);
+		if (!node) continue;
+		if (rule.id) nodeByRuleId.set(rule.id, node);
+	}
+	for (const node of nodes.values()) {
+		for (const slot of allSlotsOf(node)) {
+			if (slot.sourceRuleId) slotByRuleId.set(slot.sourceRuleId, slot);
+		}
+	}
+
 	return {
 		name: optimized.name,
 		nodes,
+		nodeByRuleId,
+		slotByRuleId,
 		signatures: computeSignatures(nodes),
 		derivations: optimized.derivations,
 		rules: optimized.rules,
