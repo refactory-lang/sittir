@@ -17,6 +17,7 @@ import { isChoice } from './rule.ts';
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
 import { simplifyRules } from './simplify.ts';
 import { compileWordMatcher } from './common.ts';
+import { applyWrapperDeletion } from './wrapper-deletion.ts';
 
 /**
  * Run the full ordered pipeline of non-lossy normalization passes over the
@@ -84,10 +85,12 @@ function computeSimplifiedRules(rules: Record<string, Rule>, word: string | null
 
 export function optimize(linked: LinkedGrammar): OptimizedGrammar {
 	const rules = applyNormalizationPasses(linked.rules, linked.patternReplacementKinds);
-	const simplifiedRules = computeSimplifiedRules(rules, linked.word);
+	const renderRules = applyWrapperDeletion(rules);
+	const simplifiedRules = computeSimplifiedRules(rules, linked.word); // Task 2.A3 switches to renderRules
 	return {
 		name: linked.name,
 		rules,
+		renderRules,
 		simplifiedRules,
 		supertypes: linked.supertypes,
 		word: linked.word,
