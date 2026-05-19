@@ -92,11 +92,23 @@ export function stringifyRule(rule: Rule): string {
 export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	readonly #config: EmitTemplatesConfig;
 	readonly #wordMatcher: RegExp;
+	readonly #ctx: EmitCtx;
 	#bodies = new Map<string, string>();
 
 	constructor(config: EmitTemplatesConfig) {
 		this.#config = config;
 		this.#wordMatcher = compileWordMatcher(config.nodeMap.word, config.nodeMap.rules ?? {}) ?? /\w/;
+		// EmitCtx for the new modelType-dispatching emitter. Same inputs
+		// the legacy walker reads — `rules` (for hidden-helper inlining),
+		// `wordMatcher` (currently unused by emitRule but kept for parity),
+		// `externals` (token-shape detection), and `nodeMap` (slot back-
+		// pointer lookup via `slotByRuleId`).
+		this.#ctx = {
+			nodeMap: config.nodeMap,
+			wordMatcher: this.#wordMatcher,
+			externals: [...(config.nodeMap.externals ?? [])],
+			rules: config.nodeMap.rules ?? {}
+		};
 	}
 
 	emitLeaf(node: AssembledNode): void {
@@ -120,14 +132,69 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	}
 
 	#emitNode(node: AssembledNode): void {
-		const body = emitBodyForNode(
+		// Legacy walker — authoritative for PR1. Output written to disk.
+		const legacyBody = emitBodyForNode(
 			node,
 			this.#config.nodeMap.rules ?? {},
 			this.#wordMatcher,
 			this.#config.nodeMap.externals
 		);
-		if (body === null) return;
-		this.#bodies.set(node.kind, `${GENERATED_HEADER}\n${body}`);
+		// New modelType-dispatching emitter — runs in parallel. PR1's
+		// diff gate asserts byte-for-byte equivalence with the legacy
+		// walker. Task 3.2 (PR2) flips authority and deletes legacy.
+		// Wrap in try/catch so a crash in the new emitter (e.g. a Task
+		// 2.3 emitRule bug like unbounded helper-rule recursion) shows
+		// up as a logged or thrown divergence rather than crashing the
+		// authoritative legacy path.
+		let newBody: string | undefined;
+		let newError: unknown;
+		try {
+			newBody = emitOne(node, this.#ctx);
+		} catch (err) {
+			newError = err;
+		}
+
+		if (newError !== undefined) {
+			const detail = newError instanceof Error ? newError.message : String(newError);
+			const msg =
+				`TemplateEmitter new-emitter crash on kind ${node.kind} (${node.modelType}): ${detail}`;
+			if (process.env.SITTIR_DIVERGENCE_LOG === '1') {
+				// eslint-disable-next-line no-console
+				console.error(`CRASH ${node.kind} (${node.modelType}): ${detail}`);
+			} else {
+				throw new Error(msg, { cause: newError });
+			}
+		} else if (
+			legacyBody !== null &&
+			legacyBody !== undefined &&
+			newBody !== undefined &&
+			legacyBody !== newBody
+		) {
+			// PR1 Task 2.5: divergence gate. PR2 (Task 3.2) flips authority
+			// and deletes the legacy walker; until then any divergence is a
+			// bug in the new modelType-dispatching emitter that must be
+			// fixed before the flip.
+			if (process.env.SITTIR_DIVERGENCE_LOG === '1') {
+				// Survey mode — collect every divergence in one regen pass
+				// rather than throwing on the first. Off by default; the
+				// authoritative behaviour is the throw below.
+				// eslint-disable-next-line no-console
+				console.error(
+					`DIVERGENCE ${node.kind} (${node.modelType}):\n` +
+						`  legacy: ${JSON.stringify(legacyBody)}\n` +
+						`  new:    ${JSON.stringify(newBody)}`
+				);
+			} else {
+				throw new Error(
+					`TemplateEmitter divergence on kind ${node.kind} (${node.modelType}):\n` +
+						`  legacy: ${JSON.stringify(legacyBody)}\n` +
+						`  new:    ${JSON.stringify(newBody)}`
+				);
+			}
+		}
+
+		if (legacyBody === null) return;
+		this.#bodies.set(node.kind, `${GENERATED_HEADER}\n${legacyBody}`);
 	}
 }
 
