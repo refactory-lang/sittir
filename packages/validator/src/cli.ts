@@ -130,6 +130,14 @@ function formatGrammarCounts(counts: GrammarCounts): string {
 		readRenderParse.errors.map((e) => ({ label: e.name, message: e.message })),
 	);
 	if (rtFails) lines.push(rtFails);
+	const rtAstFails = formatFirstFailures(
+		'read-render-parse-ast-mismatch',
+		readRenderParse.astMismatches.map((m) => ({
+			label: m.entry ? `${m.entry} (${m.kind})` : m.kind,
+			message: m.message,
+		})),
+	);
+	if (rtAstFails) lines.push(rtAstFails);
 	const rtShallowFails = formatFirstFailures(
 		'read-render-parse-shallow',
 		readRenderParseShallow.errors.map((e) => ({ label: e.name, message: e.message })),
@@ -151,7 +159,9 @@ function formatGrammarCounts(counts: GrammarCounts): string {
 function formatFirstFailures(
 	stage: string,
 	failures: ReadonlyArray<{ label: string; message: string }>,
-	max = 5,
+	max = process.env.SITTIR_VALIDATOR_MAX_FAILURES
+		? Number(process.env.SITTIR_VALIDATOR_MAX_FAILURES)
+		: 5,
 ): string | null {
 	if (failures.length === 0) return null;
 	const shown = failures.slice(0, max);

@@ -133,6 +133,15 @@ function promoteAnonymousKeyword(
  * @param tree - The tree handle for node lookup
  * @param handle - If provided with childIndex, navigate via nodes[handle].children()[childIndex]
  * @param childIndex - Position in parent's child array (requires handle)
+ *
+ * @deprecated The JS/TS-side read path is being phased out. Production
+ * validators and probes use `--backend native` which goes through the
+ * rust napi-rs crate's read function via `tree.read(handle, childIndex)`
+ * — see the native dispatch on the first line below. This function's
+ * non-native branch (TS handles where `tree.read` is undefined) is kept
+ * only for unit tests with synthetic handles and any legacy callers we
+ * haven't migrated. Don't invest in fixing slot-lift / field-routing
+ * gaps here; fix them in the rust reader if they show up there.
  */
 export function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNodeData {
 	// Native-handle dispatch: when `tree.read` is present the handle owns a
