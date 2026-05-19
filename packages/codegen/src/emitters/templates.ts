@@ -154,21 +154,40 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 	}
 }
 
-// Stubs — Task 2.4 fills these in:
-function emitBranchTemplate(_n: AssembledBranch, _ctx: EmitCtx): string {
-	return '';
+// ---------------------------------------------------------------------------
+// Per-modelType emit functions
+//
+// Three of the four modelTypes (`branch`, `group`, `multi`) carry a single
+// `rule` whose Jinja shape is fully captured by `emitRule`. The polymorph
+// case is the outlier: each form is a synthesized `AssembledGroup` with its
+// own `rule` + `name`, and the emitted template wraps each form's body in a
+// `{%- if $variant == "X" -%}...{%- endif -%}` guard so the renderer can
+// dispatch per-form at runtime.
+//
+// Exported so the modelType-emit test suite can exercise each function in
+// isolation against minimal in-memory fixtures (no NodeMap construction
+// required).
+// ---------------------------------------------------------------------------
+
+export function emitBranchTemplate(node: AssembledBranch, ctx: EmitCtx): string {
+	return emitRule(node.rule, ctx);
 }
 
-function emitPolymorphTemplate(_n: AssembledPolymorph, _ctx: EmitCtx): string {
-	return '';
+export function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
+	return emitRule(node.rule, ctx);
 }
 
-function emitGroupTemplate(_n: AssembledGroup, _ctx: EmitCtx): string {
-	return '';
+export function emitMultiTemplate(node: AssembledMulti, ctx: EmitCtx): string {
+	return emitRule(node.rule, ctx);
 }
 
-function emitMultiTemplate(_n: AssembledMulti, _ctx: EmitCtx): string {
-	return '';
+export function emitPolymorphTemplate(node: AssembledPolymorph, ctx: EmitCtx): string {
+	const parts: string[] = [];
+	for (const form of node.forms) {
+		const body = emitRule(form.rule, ctx);
+		parts.push(`{%- if $variant == "${form.name}" -%}${body}{%- endif -%}`);
+	}
+	return parts.join('');
 }
 
 // ---------------------------------------------------------------------------
