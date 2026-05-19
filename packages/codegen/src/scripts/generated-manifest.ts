@@ -17,12 +17,23 @@
  *
  * The manifest excludes itself (would otherwise be a chicken-and-egg).
  *
+ * ## Tracked in git
+ *
+ * The manifest file is force-added to git despite `packages/*\/.sittir/`
+ * being gitignored — same pattern as `grammar.js`, `package.json`,
+ * `tree-sitter.json` inside the same directory. Tracking the manifest is
+ * what makes cross-commit drift detectable: if a commit changes a generated
+ * file without re-running codegen, the committed file hash diverges from
+ * the committed manifest entry and `verifyManifestForGrammar` flags it.
+ *
  * ## Limits
  *
- * The manifest catches honest-mistake hand-edits — someone modifies a generated
- * file and the validator refuses to run. It does NOT catch a coordinated commit
- * that updates both the file and its manifest entry; that requires a CI gate
- * that re-runs codegen and diffs the on-disk content.
+ * The manifest catches honest-mistake hand-edits AND cross-commit drift
+ * (since the manifest is itself committed). It does NOT catch a coordinated
+ * commit that updates both the file and its manifest entry but ships an
+ * INTERNALLY inconsistent codegen output (e.g., wrap.ts and templates that
+ * disagree on slot optionality). That class of bug requires a CI gate that
+ * re-runs codegen and diffs the on-disk content.
  */
 
 import { createHash } from 'node:crypto';
