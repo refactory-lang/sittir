@@ -31,8 +31,9 @@
  * produces a full `simplifiedRules` map on `OptimizedGrammar`.
  */
 
-import type { Rule, ChoiceRule, SeqRule, FieldRule, RepeatRule, Repeat1Rule } from './rule.ts';
+import type { Rule, RenderRule, ChoiceRule, SeqRule, FieldRule, RepeatRule, Repeat1Rule } from './rule.ts';
 import type { AssembledNode } from './node-map.ts';
+import { compileWordMatcher } from './common.ts';
 
 /** Does this string lex as a "word" under the grammar's `word` rule? */
 /**
@@ -181,6 +182,25 @@ export function simplifyRules(rules: Record<string, Rule>, wordMatcher?: RegExp)
 		out[name] = normalizeToFixpoint(rule, wordMatcher, rules);
 	}
 	return out;
+}
+
+/**
+ * Compute the derivation-only simplified view of every rule in the map.
+ *
+ * Relocated from optimize.ts as part of PR1 — all simplification logic lives
+ * in simplify.ts. Input type widened to RenderRule: applyWrapperDeletion in
+ * optimize.ts produces a wrapper-less map, and simplify operates on that.
+ *
+ * @param renderRules - Wrapper-less rule map (output of applyWrapperDeletion).
+ * @param word - The grammar's word rule name (or null), for keyword-shape detection.
+ * @returns A new map containing the simplified form of each rule.
+ */
+export function computeSimplifiedRules(
+	renderRules: Record<string, RenderRule>,
+	word: string | null
+): ReturnType<typeof simplifyRules> {
+	const wordMatcher = compileWordMatcher(word, renderRules as Record<string, Rule>);
+	return simplifyRules(renderRules as Record<string, Rule>, wordMatcher);
 }
 
 /**
