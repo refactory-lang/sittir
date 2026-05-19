@@ -798,3 +798,79 @@ Each PR3 drift entry in the snapshot diff must reference one of these (d/e/f) an
 - `multi_separator_templates` — walker assumes one-separator-per-field (PR3)
 - `template_list_suffix_divergence` — bare vs `_list` suffix DRY anti-pattern (PR3)
 - `preserve_token_wrappers` — link.ts drops token.immediate flag (tracked separately; not absorbed but ensure PR0/PR1/PR2/PR3 don't regress)
+
+---
+
+## Appendix: AST-mismatch bug classes diagnosed 2026-05-19
+
+Diagnostic research session on the typescript native deep-AST gap produced a clean categorization of the 47 read-render-parse AST mismatches at branch state `2ef214e8`. Each class maps to either an infrastructure gap this refactor closes (or should close) or to a follow-on outside this refactor's scope.
+
+> **Note**: This appendix is diagnostic context, not commitments. It surveys gaps and maps them to the refactor's potential reach. Items marked "requires scope expansion" are NOT in the refactor's deliverables until explicitly added to the per-PR checklists in the spec body above. The Summary table below uses "may close" language to reflect this — closing any of these classes requires the corresponding scope-expansion decision to be made affirmatively.
+
+### Class A — type_parameters `<>` (15 entries)
+
+Affected: Ambient export function declarations, Classes with method signatures (×2), Classes with generic parameters, Arrow functions/generators with call signatures, Constructor types, Interface declarations, Generic types, Flow type parameter constraint syntax, Mapped types, Assertion functions, Conditional types, Mapped type 'as' clauses, Extends, Abstract.
+
+**Root cause**: sittir's slot model promotes a repeated bare `SYMBOL` (e.g. `type_parameter` inside the `type_parameters` rule) into a named slot (`_type_parameter`) marked `source: "inferred"`. The grammar.json has NO `FIELD` wrapper, so tree-sitter emits children without a field tag. Under `--backend native` (the production path), the rust napi-rs reader doesn't synthesize the inferred slot — children land somewhere the wrap can't find them. `wrapTypeParameters` reads `data._type_parameter === undefined`, the template `<{{ type_parameter | join(",") }}>` renders to `<>`.
+
+**Refactor coverage**: **partial**. PR0's rule-attribute enrichment will explicitly attach `multiplicity` and `nonterminal` attributes to the inferred slot's underlying rule, but the read step is downstream of this spec. **Class A's actionable fix lives in the rust reader emitter (`packages/codegen/src/emitters/render-module.ts`)**, which must consult the rule's `multiplicity` attribute (post-PR0) and emit slot-synthesis code for inferred slots. Track as follow-on issue post-PR3.
+
+### Class B — expression_statement `;` (9 entries)
+
+Same root cause as Class A — `expressions` is an inferred slot over the expression supertype, but the grammar child is unfielded. Closed by the same rust-reader work.
+
+### Class C — object_type missing separators (6 entries)
+
+Affected: Object types, Object types with call signatures, Index signatures, Object types with ASI, Type alias declarations, Flow exact object types.
+
+**Root cause**: the walker's separator-detection at `template-walker.ts:elementWithSep` recognizes `seq(field('X'), SEP)` / `repeat(seq(field('X'), SEP))` patterns, but `object_type.members` has the more complex shape `optional(seq(member_choice, repeat(seq(choice(",", _semicolon), member_choice))))` where the separator is itself a CHOICE over two terminals. The walker falls back to `join("")`, the render filter strips the `,`/`;` tokens from the multi-slot value list (per `render.ts:1366` convention), and the template emits members back-to-back without separators.
+
+**Refactor coverage**: **possible PR1 fit**, requires a **scope expansion decision**. The new emitter would consume PR0's `separator` attribute (which lands on the rule per spec §3 "Attributes"). To close Class C, PR0's enrichment must recognize multi-option choice separators — extend `extractStructuredSeparator` to handle `choice(SEP1, SEP2, ...)` and either emit the first option as the canonical separator or thread both through to the renderer.
+
+> **DECISION ITEM**: edge case `multi_separator_templates` is currently absorbed as PR3 edge case (d). Promote to PR0/PR1 scope to close Class C in this refactor? Default: no (stays PR3). Re-evaluate at PR0 implementation kickoff.
+
+### Class D — ambient_declaration `declare ` (2 entries)
+
+Affected: Flow module.exports declarations, Global namespace declarations.
+
+**Root cause**: variant-dispatched render-module emits all variant arms' fields as required. When `variant == "module"` fires, deserialization rejects the node because `_ambient_declaration_declaration` (the `"declaration"`-arm field) is missing. The TS path also has the Class A reader gap so the field never populates.
+
+**Refactor coverage**: requires **scope expansion** — PR1 is currently scoped to `emitters/templates.ts` (.jinja emission) NOT `emitters/render-module.ts` (rust render dispatch). Closing Class D would mean either expanding PR1 to also rewrite render-module's variant-arm emission to `Option<…>` / `#[serde(default)]`, OR adding a dedicated render-module-touchup PR.
+
+> **DECISION ITEM**: expand PR1 to include render-module variant-arms-as-Option? Default: no — render-module rewrite is its own concern. Track as successor work alongside Class A/B/E's reader-side gap.
+
+### Class E — type_query `typeof ` (3 entries)
+
+Same root cause as Class A. Slot is an alias-union (e.g. `subscript_expression` aliased from `_type_query_subscript_expression`), the CST tag uses the alias-target name, and the inferred slot has no readNode-side lift. Note: the alias-target → alias-source mapping in `wrap.ts:collectConcreteStorageKeys` (commit ca869f16) needs to extend to `$children`-routed siblings once the rust reader's slot-synthesis lands.
+
+### Class F — singletons (~6 entries), split by scope
+
+#### F.1 — In scope (likely closes as side-effect of new emitter)
+
+- `instantiation_expression` template hardcodes a space between expression and type_arguments (TS syntax is `f<T>` no space). The new PR1 emitter preserves adjacency from rule structure rather than inserting walker-era spaces, so this likely fixes.
+- `assignment_expression` rendering trailing `!` from non_null_expression LHS without space (`foo!=bar` instead of `foo! = bar`). Same root cause — walker spacing absorbers; PR1 deletion of the absorbers likely fixes.
+
+#### F.2 — Out of scope (separate authoring / template work)
+
+- `required_parameter` template assumes function-context shape; doesn't handle tuple-context (labeled tuple element `[a: A]`). Fix is a `variant()` split in `packages/typescript/overrides.ts` — that's authored-overrides work, not pipeline refactor.
+- `rest_pattern` template references only `member_expression` / `non_null_expression` — missing identifier/type_identifier cases. Template-content fix in `packages/typescript/templates/`; PR2 sweep won't catch this (the sweep is structural, not authored-template completeness).
+
+### Summary of remaining gap classes vs this refactor
+
+| Class | Entries | Refactor coverage | Where it could close |
+|---|---|---|---|
+| A | 15 | Out of scope (rust reader) | Successor spec post-PR3; needs render-module emitter slot-synthesis |
+| B | 9 | Out of scope (rust reader) | Same as A |
+| C | 6 | May close — requires scope expansion (DECISION ITEM under Class C) | PR0 separator extraction extended to choice-of-terminals + new PR1 emitter consumes it |
+| D | 2 | May close — requires scope expansion (DECISION ITEM under Class D) | PR1 expanded to include render-module variant-arms-as-Option |
+| E | 3 | Out of scope (rust reader) | Same as A; alias-target routing in `wrap.ts:collectConcreteStorageKeys` already handles wrapper layer |
+| F.1 | ~2 | Likely closes as side-effect of PR1 | New emitter preserves rule-structure adjacency; walker spacing absorbers deleted |
+| F.2 | ~2 | Out of scope (authoring / template content) | Separate `overrides.ts` + template-content work |
+
+**Implication if all scope-expansion decisions go YES**: this refactor closes Classes C + D + F.1 (~10 entries directly addressable). Classes A + B + E (27 entries) require a separate rust-reader inferred-slot-synthesis effort that consumes PR0's attribute outputs — track as a successor spec post-PR3. Classes F.2 (~2 entries) are authoring fixes not in scope of any pipeline refactor.
+
+**Implication if scope-expansion decisions default NO**: this refactor closes only Class F.1 (~2 entries directly addressable as side-effects). The other 45 entries are tracked as successor work — distinct concerns from the IR/template-pipeline refactor.
+
+### Reference: deprecated path
+
+The TS-side `readNode` at `packages/common/src/readNode.ts` (the JS tree-walk fallback for non-native handles) was marked `@deprecated` in commit `2ef214e8`. Slot-lift / field-routing gaps surfaced in research that point at this path should be ignored — production runs `--backend native` exclusively. See memory `feedback_ts_readnode_deprecated`.
