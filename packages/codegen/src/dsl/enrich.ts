@@ -911,13 +911,27 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 		t === 'token' ||
 		t === 'TOKEN' ||
 		t === 'immediate_token' ||
-		t === 'IMMEDIATE_TOKEN'
+		t === 'IMMEDIATE_TOKEN' ||
+		t === 'group' ||
+		t === 'variant' ||
+		t === 'clause'
 	) {
 		const content = (rule as unknown as { content?: Rule }).content;
 		if (content === undefined) return rule;
 		const out = visit(content);
 		if (out === content) return rule;
 		return { ...rule, content: out } as Rule;
+	}
+	if (t === 'polymorph') {
+		const forms = (rule as unknown as { forms?: Array<{ content: Rule }> }).forms;
+		if (!Array.isArray(forms)) return rule;
+		let changed = false;
+		const newForms = forms.map((f) => {
+			const out = visit(f.content);
+			if (out !== f.content) changed = true;
+			return changed ? { ...f, content: out } : f;
+		});
+		return changed ? ({ ...rule, forms: newForms } as Rule) : rule;
 	}
 	return rule;
 }
