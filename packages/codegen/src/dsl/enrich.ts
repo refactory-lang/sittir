@@ -155,12 +155,12 @@ function applyEnrichPasses(
 		// ordering-invariance test in enrich-multiplicity-wrappers.test.ts).
 		r = enrichFieldWrappers(r);
 		r = enrichMultiplicityWrappers(r);
-		// Auto-decomposition (decomposeOptional / decomposeRepeat + the
-		// synthesized hidden-group rules they emit) lives in
-		// dsl/wire/auto-decompose.ts. It runs at wire() time AFTER
-		// authored `groups:` synthesis so authored declared rules survive
-		// untouched — running it inside enrich() (before Link's
-		// applyGroupOverrides) caused authored rules to be clobbered.
+		// Auto-group-synthesis (hidden-group rules for `optional(seq(...))`
+		// / `repeat(seq(...))` shapes) lives in dsl/wire/auto-groups.ts.
+		// It runs at wire() time AFTER authored `groups:` synthesis so
+		// authored declared rules survive untouched — running it inside
+		// enrich() (before Link's applyGroupOverrides) caused authored
+		// rules to be clobbered.
 		if (r === before) return r;
 	}
 	if (!process.env.SITTIR_QUIET) {

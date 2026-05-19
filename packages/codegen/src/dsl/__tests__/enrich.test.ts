@@ -404,8 +404,8 @@ describe('enrich()', () => {
 				}
 			});
 			const out = runEnrich(input);
-			// enrich no longer auto-decomposes — that pass lives in
-			// dsl/wire/auto-decompose.ts now. enrich just runs its own
+			// enrich no longer auto-decomposes — group synthesis lives in
+			// dsl/wire/auto-groups.ts now. enrich just runs its own
 			// passes (optional-keyword promotion, multiplicity stamping,
 			// field wrappers) and leaves the structural shape alone, so
 			// the repeat's seq content is preserved and the inner
