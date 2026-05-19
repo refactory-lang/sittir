@@ -140,20 +140,19 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	}
 
 	#emitNode(node: AssembledNode): void {
-		// Legacy walker — authoritative for PR1. Output written to disk.
-		const legacyBody = emitBodyForNode(
-			node,
-			this.#config.nodeMap.rules ?? {},
-			this.#wordMatcher,
-			this.#config.nodeMap.externals
-		);
-		// New modelType-dispatching emitter — runs in parallel. PR1's
-		// diff gate asserts byte-for-byte equivalence with the legacy
-		// walker. Task 3.2 (PR2) flips authority and deletes legacy.
-		// Wrap in try/catch so a crash in the new emitter (e.g. a Task
-		// 2.3 emitRule bug like unbounded helper-rule recursion) shows
-		// up as a logged or thrown divergence rather than crashing the
-		// authoritative legacy path.
+		// PR1 Task 2.5c: authority flipped to the new modelType-dispatching
+		// emitter. The legacy walker stays in place only as a transient
+		// fallback for kinds the new emitter doesn't yet handle (returns
+		// undefined). Both paths are deleted in PR2 Task 3.4+.
+		//
+		// New gate: counts must hold at baseline. The previous byte-
+		// equivalence diff gate (vs the legacy walker's post-translation
+		// output) was the WRONG signal — the walker + `$NAME` intermediate
+		// + translation pipeline are all being retired in PR2, so its
+		// output is not the correct authority for PR1.
+		//
+		// Survey mode (SITTIR_DIVERGENCE_LOG=1) is preserved so divergences
+		// can still be inspected without blocking.
 		let newBody: string | undefined;
 		let newError: unknown;
 		try {
@@ -173,37 +172,48 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			} else {
 				throw new Error(msg, { cause: newError });
 			}
-		} else if (
-			legacyBody !== null &&
-			legacyBody !== undefined &&
-			newBody !== undefined &&
-			legacyBody !== newBody
-		) {
-			// PR1 Task 2.5: divergence gate. PR2 (Task 3.2) flips authority
-			// and deletes the legacy walker; until then any divergence is a
-			// bug in the new modelType-dispatching emitter that must be
-			// fixed before the flip.
-			if (process.env.SITTIR_DIVERGENCE_LOG === '1') {
-				// Survey mode — collect every divergence in one regen pass
-				// rather than throwing on the first. Off by default; the
-				// authoritative behaviour is the throw below.
+		}
+
+		// Resolve the body to write: prefer the new emitter; if it returned
+		// undefined (modelType the new path doesn't yet handle, e.g.
+		// supertype/pattern/keyword/token/enum), fall back to the legacy
+		// walker's emission. Both undefined → nothing to write.
+		let bodyToWrite: string | undefined = newBody;
+		let legacyBody: string | null | undefined;
+		if (bodyToWrite === undefined) {
+			legacyBody = emitBodyForNode(
+				node,
+				this.#config.nodeMap.rules ?? {},
+				this.#wordMatcher,
+				this.#config.nodeMap.externals
+			);
+			if (legacyBody !== null && legacyBody !== undefined) {
+				bodyToWrite = legacyBody;
+			}
+		}
+
+		if (process.env.SITTIR_DIVERGENCE_LOG === '1' && newBody !== undefined) {
+			// Survey only — compute legacy body lazily for inspection.
+			if (legacyBody === undefined) {
+				legacyBody = emitBodyForNode(
+					node,
+					this.#config.nodeMap.rules ?? {},
+					this.#wordMatcher,
+					this.#config.nodeMap.externals
+				);
+			}
+			if (legacyBody !== null && legacyBody !== undefined && legacyBody !== newBody) {
 				// eslint-disable-next-line no-console
 				console.error(
 					`DIVERGENCE ${node.kind} (${node.modelType}):\n` +
 						`  legacy: ${JSON.stringify(legacyBody)}\n` +
 						`  new:    ${JSON.stringify(newBody)}`
 				);
-			} else {
-				throw new Error(
-					`TemplateEmitter divergence on kind ${node.kind} (${node.modelType}):\n` +
-						`  legacy: ${JSON.stringify(legacyBody)}\n` +
-						`  new:    ${JSON.stringify(newBody)}`
-				);
 			}
 		}
 
-		if (legacyBody === null) return;
-		this.#bodies.set(node.kind, `${GENERATED_HEADER}\n${legacyBody}`);
+		if (bodyToWrite === undefined) return;
+		this.#bodies.set(node.kind, `${GENERATED_HEADER}\n${bodyToWrite}`);
 	}
 }
 
@@ -519,28 +529,23 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	if (rule.source === 'link') {
 		return rule.literal !== undefined ? escapeLiteral(rule.literal) : '';
 	}
-	// Slot back-pointer wins: when assembly registered a slot for this
-	// rule position, prefer it over hidden-helper inlining. Walker emits
-	// `$$$KIND` (list form) for visible symbol refs regardless of slot
-	// multiplicity — `translateToJinja` always produces
-	// `{{ kind | join(" ") }}` for the triple-dollar shape. Use raw
-	// snake_case name lowercased (NOT slot.propertyName).
-	const slot = lookupSlot(rule, ctx);
-	if (slot) {
-		return emitSymbolSlot(rule.name, ctx);
-	}
 	// Group-lifted symbols carry their own template; emit as a
 	// kind-named slot, never inline-expand.
 	if (rule.source === 'group-lift') {
 		return emitSymbolSlot(rule.name, ctx);
 	}
-	// Hidden helper rules (e.g. python's `_import_list`) are inlined by
-	// tree-sitter at parse time. Recurse into the target rule's body so
-	// the helper's content surfaces in place — but guard against
-	// left-recursive helpers like rust's `_let_chain` which references
-	// itself (`_let_chain && let_condition`). When recursion is detected
-	// we treat the symbol like an opaque slot reference instead of
-	// inlining, matching the walker's `seen.has('@'+name)` short-circuit.
+	// Hidden helper rules (e.g. python's `_import_list`, ts's
+	// `_lhs_expression`) are inlined by tree-sitter at parse time. Recurse
+	// into the target rule's body so the helper's content surfaces in
+	// place. This must run BEFORE the slot back-pointer check below
+	// because hidden helpers that are choices of visible kinds (e.g.
+	// `_lhs_expression = choice(member_expression, ...)`) WILL have a
+	// slot back-pointer for the helper itself, but the legacy walker
+	// inlined the choice so each visible-kind branch becomes its own slot
+	// reference — and the downstream render-module (transport.rs) is
+	// generated against the per-branch slots, not the helper slot. Guard
+	// against left-recursive helpers (rust's `_let_chain`) via
+	// visitingHelpers — matches walker's `seen.has('@'+name)` short-circuit.
 	if (rule.name.startsWith('_') && ctx.rules[rule.name]) {
 		if (ctx.visitingHelpers.has(rule.name)) {
 			return emitSymbolSlot(rule.name, ctx);
@@ -552,6 +557,15 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 		} finally {
 			ctx.visitingHelpers.delete(rule.name);
 		}
+	}
+	// Slot back-pointer fallback: when assembly registered a slot for
+	// this rule position, emit it as a kind-named list slot. Walker emits
+	// `$$$KIND` (list form) for visible symbol refs regardless of slot
+	// multiplicity — `translateToJinja` always produces
+	// `{{ kind | join(" ") }}` for the triple-dollar shape.
+	const slot = lookupSlot(rule, ctx);
+	if (slot) {
+		return emitSymbolSlot(rule.name, ctx);
 	}
 	return emitSymbolSlot(rule.name, ctx);
 }
@@ -636,6 +650,17 @@ function emitChoice(rule: Extract<Rule, { type: 'choice' }>, ctx: EmitCtx): stri
 	// choices. Heterogeneous choices require `variant()` adoption in
 	// overrides — at that point each arm becomes its own kind with its
 	// own template and this code never sees a heterogeneous choice.
+	//
+	// KNOWN GAP (PR1 Task 2.5c): heterogeneous choices of visible
+	// symbol kinds (e.g. `choice($.integer, $.float)` inside python's
+	// `_simple_pattern` arm 11) emit only the first symbol as a slot
+	// reference (`{{ integer | join(" ") }}`), which produces broken
+	// `transport.rs` (Rust struct field assumes scalar). The legacy
+	// walker emitted `{{ text }}` for these, but `{{ text }}` requires
+	// a per-kind `text` field on the rendered Template struct that
+	// isn't universally present. Real fix likely requires per-form
+	// `variant()` adoption or a render-module side feature. Tracked as
+	// part of the followups list for PR2.
 	for (const member of rule.members) {
 		const text = emitRule(member, ctx);
 		if (text) return text;

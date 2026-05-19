@@ -1455,7 +1455,22 @@ function renderInlinedMatchArm(s: EmittedStruct): string[] {
 	}
 	if (s.hasVariant) lines.push(`${indent}let variant = resolve_variant(node);`);
 	if (s.hasText) lines.push(`${indent}let text = resolve_text(node)?;`);
-	if (wantsChildren && s.childrenMultiple)
+	// Emit `children_renderables` whenever it's referenced downstream:
+	// - `s.childrenMultiple` covers the legacy `children` keyword + the
+	//   common case where the aggregate children slot is plural.
+	// - Otherwise, scan unnamed slot fields: if any uses the list view
+	//   (or multiple-field view), the templated-out body will reference
+	//   `children_renderables.as_slice()` and we need to define it.
+	//   New (post-Task 2.5c) emitter shape can yield list-view templates
+	//   even when the underlying children slot is scalar (e.g. python
+	//   `_simple_pattern_negative` with `-{{ integer | join(" ") }}`).
+	const needsChildrenRenderables =
+		wantsChildren &&
+		(s.childrenMultiple ||
+			s.fields.some(
+				(f) => f.isUnnamed && (f.view === 'list' || (f.view === 'field' && f.multiple))
+			));
+	if (needsChildrenRenderables)
 		lines.push(`${indent}let children_renderables = children.renderable_items();`);
 	for (const [index, f] of namedFields.entries()) {
 		if (f.view === 'scalar') continue;
@@ -2185,7 +2200,17 @@ function buildTypedTemplateBody(
 		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
 			if (emittedBufferIdents.has(rIdent)) continue;
 			emittedBufferIdents.add(rIdent);
-			lines.push(...emitListSlotBuffer(rIdent, f.required));
+			if (f.multiple) {
+				lines.push(...emitListSlotBuffer(rIdent, f.required));
+			} else {
+				// List-view template against scalar storage (post-Task 2.5c
+				// emitter shape for kinds like python `_simple_pattern_negative`).
+				// Wrap the scalar transport in a 1-element Vec so the
+				// downstream `*_buf.as_slice()` path keeps working.
+				lines.push(
+					`    let ${rIdent}_buf: Vec<${R}Renderable<'_>> = vec![${R}Renderable::Transport(&node.${rIdent})];`
+				);
+			}
 		}
 	}
 

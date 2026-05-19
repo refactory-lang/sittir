@@ -267,6 +267,7 @@ pub struct ForHeaderLhsTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_for_header_var_kind.jinja", escape = "none")]
 pub struct ForHeaderVarKindTemplate<'a> {
+    pub initializer: OptionalNonterminalView<'a>,
     pub kind: SingleNonterminalView<'a>,
     pub left: SingleNonterminalView<'a>,
     pub value: OptionalNonterminalView<'a>,
@@ -486,6 +487,9 @@ pub struct AmbientDeclarationDeclarationTemplate<'a> {
 #[template(path = "ambient_declaration.jinja", escape = "none")]
 pub struct AmbientDeclarationTemplate<'a> {
     pub variant: &'a str,
+    pub ambient_declaration__form_declaration: ListNonterminalView<'a>,
+    pub ambient_declaration__form_global: ListNonterminalView<'a>,
+    pub ambient_declaration__form_module: ListNonterminalView<'a>,
     pub ambient_declaration_declaration: SingleNonterminalView<'a>,
     pub ambient_declaration_global: SingleNonterminalView<'a>,
     pub ambient_declaration_module: SingleNonterminalView<'a>,
@@ -534,8 +538,9 @@ pub struct ArrowFunctionParameterTemplate<'a> {
 pub struct ArrowFunctionTemplate<'a> {
     pub variant: &'a str,
     pub arrow_function__call_signature: SingleNonterminalView<'a>,
+    pub arrow_function__form__call_signature: ListNonterminalView<'a>,
+    pub arrow_function__form_parameter: ListNonterminalView<'a>,
     pub arrow_function_parameter: SingleNonterminalView<'a>,
-    pub async_marker: OptionalNonterminalView<'a>,
     pub body: SingleNonterminalView<'a>,
 }
 
@@ -606,6 +611,9 @@ pub struct BreakStatementTemplate<'a> {
 #[template(path = "call_expression.jinja", escape = "none")]
 pub struct CallExpressionTemplate<'a> {
     pub variant: &'a str,
+    pub call_expression__form_call: ListNonterminalView<'a>,
+    pub call_expression__form_member: ListNonterminalView<'a>,
+    pub call_expression__form_template_call: ListNonterminalView<'a>,
     pub call_expression_call: SingleNonterminalView<'a>,
     pub call_expression_member: SingleNonterminalView<'a>,
     pub call_expression_template_call: SingleNonterminalView<'a>,
@@ -664,6 +672,8 @@ pub struct ClassHeritageImplementsClauseTemplate<'a> {
 #[template(path = "class_heritage.jinja", escape = "none")]
 pub struct ClassHeritageTemplate<'a> {
     pub variant: &'a str,
+    pub class_heritage__form_extends_clause: ListNonterminalView<'a>,
+    pub class_heritage__form_implements_clause: ListNonterminalView<'a>,
     pub class_heritage_extends_clause: SingleNonterminalView<'a>,
     pub class_heritage_implements_clause: SingleNonterminalView<'a>,
 }
@@ -844,6 +854,10 @@ pub struct ExportStatementTypeExportTemplate<'a> {
 #[template(path = "export_statement.jinja", escape = "none")]
 pub struct ExportStatementTemplate<'a> {
     pub variant: &'a str,
+    pub export_statement__form_default: ListNonterminalView<'a>,
+    pub export_statement__form_equals_export: ListNonterminalView<'a>,
+    pub export_statement__form_namespace_export: ListNonterminalView<'a>,
+    pub export_statement__form_type_export: ListNonterminalView<'a>,
     pub export_statement_default: SingleNonterminalView<'a>,
     pub export_statement_equals_export: SingleNonterminalView<'a>,
     pub export_statement_namespace_export: SingleNonterminalView<'a>,
@@ -1038,6 +1052,9 @@ pub struct ImportClauseNamespaceImportTemplate<'a> {
 #[template(path = "import_clause.jinja", escape = "none")]
 pub struct ImportClauseTemplate<'a> {
     pub variant: &'a str,
+    pub import_clause__form_default_import: ListNonterminalView<'a>,
+    pub import_clause__form_named_imports: ListNonterminalView<'a>,
+    pub import_clause__form_namespace_import: ListNonterminalView<'a>,
     pub import_clause_default_import: SingleNonterminalView<'a>,
     pub import_clause_named_imports: SingleNonterminalView<'a>,
     pub import_clause_namespace_import: SingleNonterminalView<'a>,
@@ -1061,6 +1078,8 @@ pub struct ImportSpecifierNameTemplate<'a> {
 pub struct ImportSpecifierTemplate<'a> {
     pub variant: &'a str,
     pub import_kind: OptionalNonterminalView<'a>,
+    pub import_specifier__form_as: ListNonterminalView<'a>,
+    pub import_specifier__form_name: ListNonterminalView<'a>,
     pub import_specifier_as: SingleNonterminalView<'a>,
     pub import_specifier_name: SingleNonterminalView<'a>,
 }
@@ -1085,6 +1104,8 @@ pub struct IndexSignatureMappedTypeClauseTemplate<'a> {
 #[template(path = "index_signature.jinja", escape = "none")]
 pub struct IndexSignatureTemplate<'a> {
     pub variant: &'a str,
+    pub index_signature__form_colon: ListNonterminalView<'a>,
+    pub index_signature__form_mapped_type_clause: ListNonterminalView<'a>,
     pub index_signature_colon: SingleNonterminalView<'a>,
     pub index_signature_mapped_type_clause: SingleNonterminalView<'a>,
     pub sign: OptionalNonterminalView<'a>,
@@ -1400,6 +1421,8 @@ pub struct ParenthesizedExpressionSequenceTemplate<'a> {
 #[template(path = "parenthesized_expression.jinja", escape = "none")]
 pub struct ParenthesizedExpressionTemplate<'a> {
     pub variant: &'a str,
+    pub parenthesized_expression__form_sequence: ListNonterminalView<'a>,
+    pub parenthesized_expression__form_typed: ListNonterminalView<'a>,
     pub parenthesized_expression_sequence: SingleNonterminalView<'a>,
     pub parenthesized_expression_typed: SingleNonterminalView<'a>,
 }
@@ -1696,6 +1719,8 @@ pub struct UnionTypeTemplate<'a> {
 #[template(path = "update_expression.jinja", escape = "none")]
 pub struct UpdateExpressionTemplate<'a> {
     pub variant: &'a str,
+    pub update_expression__form_postfix: ListNonterminalView<'a>,
+    pub update_expression__form_prefix: ListNonterminalView<'a>,
     pub update_expression_postfix: SingleNonterminalView<'a>,
     pub update_expression_prefix: SingleNonterminalView<'a>,
 }

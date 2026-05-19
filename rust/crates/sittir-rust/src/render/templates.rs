@@ -427,6 +427,8 @@ pub struct ArgumentsTemplate<'a> {
 #[template(path = "array_expression.jinja", escape = "none")]
 pub struct ArrayExpressionTemplate<'a> {
     pub variant: &'a str,
+    pub array_expression__form_list: ListNonterminalView<'a>,
+    pub array_expression__form_semi: ListNonterminalView<'a>,
     pub array_expression_list: SingleNonterminalView<'a>,
     pub array_expression_semi: SingleNonterminalView<'a>,
 }
@@ -522,6 +524,7 @@ pub struct BoundedTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "bracketed_type.jinja", escape = "none")]
 pub struct BracketedTypeTemplate<'a> {
+    pub qualified_type: ListNonterminalView<'a>,
     pub type_: SingleNonterminalView<'a>,
 }
 
@@ -556,17 +559,17 @@ pub struct ClosureExpressionExprTemplate<'a> {
 #[template(path = "closure_expression.jinja", escape = "none")]
 pub struct ClosureExpressionTemplate<'a> {
     pub variant: &'a str,
-    pub async_marker: OptionalNonterminalView<'a>,
+    pub closure_expression__form_block: ListNonterminalView<'a>,
+    pub closure_expression__form_expr: ListNonterminalView<'a>,
     pub closure_expression_block: SingleNonterminalView<'a>,
     pub closure_expression_expr: SingleNonterminalView<'a>,
-    pub move_marker: OptionalNonterminalView<'a>,
     pub parameters: SingleNonterminalView<'a>,
-    pub static_marker: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "closure_parameters.jinja", escape = "none")]
 pub struct ClosureParametersTemplate<'a> {
+    pub parameter: ListNonterminalView<'a>,
     pub pattern: ListNonterminalView<'a>,
 }
 
@@ -641,6 +644,9 @@ pub struct DelimTokenTreeParenTemplate<'a> {
 #[template(path = "delim_token_tree.jinja", escape = "none")]
 pub struct DelimTokenTreeTemplate<'a> {
     pub variant: &'a str,
+    pub delim_token_tree__form_brace: ListNonterminalView<'a>,
+    pub delim_token_tree__form_bracket: ListNonterminalView<'a>,
+    pub delim_token_tree__form_paren: ListNonterminalView<'a>,
     pub delim_token_tree_brace: SingleNonterminalView<'a>,
     pub delim_token_tree_bracket: SingleNonterminalView<'a>,
     pub delim_token_tree_paren: SingleNonterminalView<'a>,
@@ -699,6 +705,8 @@ pub struct ExpressionStatementWithSemiTemplate<'a> {
 #[template(path = "expression_statement.jinja", escape = "none")]
 pub struct ExpressionStatementTemplate<'a> {
     pub variant: &'a str,
+    pub expression_statement__form_block_ending: ListNonterminalView<'a>,
+    pub expression_statement__form_with_semi: ListNonterminalView<'a>,
     pub expression_statement_block_ending: SingleNonterminalView<'a>,
     pub expression_statement_with_semi: SingleNonterminalView<'a>,
 }
@@ -763,10 +771,10 @@ pub struct FieldPatternShorthandTemplate<'a> {
 #[template(path = "field_pattern.jinja", escape = "none")]
 pub struct FieldPatternTemplate<'a> {
     pub variant: &'a str,
+    pub field_pattern__form_named: ListNonterminalView<'a>,
+    pub field_pattern__form_shorthand: ListNonterminalView<'a>,
     pub field_pattern_named: SingleNonterminalView<'a>,
     pub field_pattern_shorthand: SingleNonterminalView<'a>,
-    pub mutable_specifier: OptionalNonterminalView<'a>,
-    pub ref_marker: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -795,6 +803,8 @@ pub struct ForeignModItemBodyTemplate<'a> {
 pub struct ForeignModItemTemplate<'a> {
     pub variant: &'a str,
     pub extern_modifier: SingleNonterminalView<'a>,
+    pub foreign_mod_item__form_body: ListNonterminalView<'a>,
+    pub foreign_mod_item__form_semi: ListNonterminalView<'a>,
     pub foreign_mod_item_body: SingleNonterminalView<'a>,
     pub visibility_modifier: OptionalNonterminalView<'a>,
 }
@@ -901,12 +911,12 @@ pub struct ImplItemBodyTemplate<'a> {
 #[template(path = "impl_item.jinja", escape = "none")]
 pub struct ImplItemTemplate<'a> {
     pub variant: &'a str,
+    pub impl_item__form_body: ListNonterminalView<'a>,
+    pub impl_item__form_semi: ListNonterminalView<'a>,
     pub impl_item_body: SingleNonterminalView<'a>,
-    pub negative: OptionalNonterminalView<'a>,
     pub trait_: OptionalNonterminalView<'a>,
     pub type_: SingleNonterminalView<'a>,
     pub type_parameters: OptionalNonterminalView<'a>,
-    pub unsafe_marker: OptionalNonterminalView<'a>,
     pub where_clause: OptionalNonterminalView<'a>,
 }
 
@@ -971,6 +981,9 @@ pub struct LifetimeTemplate<'a> {
 #[template(path = "line_comment.jinja", escape = "none")]
 pub struct LineCommentTemplate<'a> {
     pub variant: &'a str,
+    pub line_comment__form_content: ListNonterminalView<'a>,
+    pub line_comment__form_doc: ListNonterminalView<'a>,
+    pub line_comment__form_regular_dslash: ListNonterminalView<'a>,
     pub line_comment_content: SingleNonterminalView<'a>,
     pub line_comment_doc: SingleNonterminalView<'a>,
     pub line_comment_regular_dslash: SingleNonterminalView<'a>,
@@ -1005,6 +1018,9 @@ pub struct MacroDefinitionParenTemplate<'a> {
 #[template(path = "macro_definition.jinja", escape = "none")]
 pub struct MacroDefinitionTemplate<'a> {
     pub variant: &'a str,
+    pub macro_definition__form_brace: ListNonterminalView<'a>,
+    pub macro_definition__form_bracket: ListNonterminalView<'a>,
+    pub macro_definition__form_paren: ListNonterminalView<'a>,
     pub macro_definition_brace: SingleNonterminalView<'a>,
     pub macro_definition_bracket: SingleNonterminalView<'a>,
     pub macro_definition_paren: SingleNonterminalView<'a>,
@@ -1036,6 +1052,8 @@ pub struct MatchArmBlockEndingTemplate<'a> {
 pub struct MatchArmTemplate<'a> {
     pub variant: &'a str,
     pub attributes: ListNonterminalView<'a>,
+    pub match_arm__form_block_ending: ListNonterminalView<'a>,
+    pub match_arm__form_with_comma: ListNonterminalView<'a>,
     pub match_arm_block_ending: SingleNonterminalView<'a>,
     pub match_arm_with_comma: SingleNonterminalView<'a>,
     pub pattern: SingleNonterminalView<'a>,
@@ -1071,6 +1089,8 @@ pub struct ModItemInlineTemplate<'a> {
 #[template(path = "mod_item.jinja", escape = "none")]
 pub struct ModItemTemplate<'a> {
     pub variant: &'a str,
+    pub mod_item__form_external: ListNonterminalView<'a>,
+    pub mod_item__form_inline: ListNonterminalView<'a>,
     pub mod_item_inline: SingleNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
     pub visibility_modifier: OptionalNonterminalView<'a>,
@@ -1094,6 +1114,8 @@ pub struct NegativeLiteralTemplate<'a> {
 #[template(path = "or_pattern.jinja", escape = "none")]
 pub struct OrPatternTemplate<'a> {
     pub variant: &'a str,
+    pub or_pattern__form_binary: ListNonterminalView<'a>,
+    pub or_pattern__form_prefix: ListNonterminalView<'a>,
     pub or_pattern_binary: SingleNonterminalView<'a>,
     pub or_pattern_prefix: SingleNonterminalView<'a>,
 }
@@ -1102,6 +1124,7 @@ pub struct OrPatternTemplate<'a> {
 #[template(path = "ordered_field_declaration_list.jinja", escape = "none")]
 pub struct OrderedFieldDeclarationListTemplate<'a> {
     pub attribute_item: ListNonterminalView<'a>,
+    pub attributes: ListNonterminalView<'a>,
     pub type_: ListNonterminalView<'a>,
     pub visibility_modifier: OptionalNonterminalView<'a>,
 }
@@ -1136,7 +1159,8 @@ pub struct PointerTypeMutTemplate<'a> {
 #[template(path = "pointer_type.jinja", escape = "none")]
 pub struct PointerTypeTemplate<'a> {
     pub variant: &'a str,
-    pub mutable_specifier: ListNonterminalView<'a>,
+    pub pointer_type__form_const: ListNonterminalView<'a>,
+    pub pointer_type__form_mut: ListNonterminalView<'a>,
     pub type_: SingleNonterminalView<'a>,
 }
 
@@ -1157,7 +1181,10 @@ pub struct RangeExpressionBareTemplate<'a> {
 #[template(path = "range_expression.jinja", escape = "none")]
 pub struct RangeExpressionTemplate<'a> {
     pub variant: &'a str,
-    pub operator: SingleNonterminalView<'a>,
+    pub range_expression__form_bare: ListNonterminalView<'a>,
+    pub range_expression__form_binary: ListNonterminalView<'a>,
+    pub range_expression__form_postfix: ListNonterminalView<'a>,
+    pub range_expression__form_prefix: ListNonterminalView<'a>,
     pub range_expression_binary: SingleNonterminalView<'a>,
     pub range_expression_postfix: SingleNonterminalView<'a>,
     pub range_expression_prefix: SingleNonterminalView<'a>,
@@ -1168,6 +1195,9 @@ pub struct RangeExpressionTemplate<'a> {
 pub struct RangePatternTemplate<'a> {
     pub variant: &'a str,
     pub left: SingleNonterminalView<'a>,
+    pub range_pattern__form_left_bare: ListNonterminalView<'a>,
+    pub range_pattern__form_left_with_right: ListNonterminalView<'a>,
+    pub range_pattern__form_prefix: ListNonterminalView<'a>,
     pub range_pattern_left_with_right: SingleNonterminalView<'a>,
     pub range_pattern_prefix: SingleNonterminalView<'a>,
 }
@@ -1305,6 +1335,9 @@ pub struct StructExpressionTemplate<'a> {
 pub struct StructItemTemplate<'a> {
     pub variant: &'a str,
     pub name: SingleNonterminalView<'a>,
+    pub struct_item__form_brace: ListNonterminalView<'a>,
+    pub struct_item__form_tuple: ListNonterminalView<'a>,
+    pub struct_item__form_unit: ListNonterminalView<'a>,
     pub struct_item_brace: SingleNonterminalView<'a>,
     pub struct_item_tuple: SingleNonterminalView<'a>,
     pub type_parameters: OptionalNonterminalView<'a>,
@@ -1377,6 +1410,9 @@ pub struct TokenTreePatternParenTemplate<'a> {
 #[template(path = "token_tree_pattern.jinja", escape = "none")]
 pub struct TokenTreePatternTemplate<'a> {
     pub variant: &'a str,
+    pub token_tree_pattern__form_brace: ListNonterminalView<'a>,
+    pub token_tree_pattern__form_bracket: ListNonterminalView<'a>,
+    pub token_tree_pattern__form_paren: ListNonterminalView<'a>,
     pub token_tree_pattern_brace: SingleNonterminalView<'a>,
     pub token_tree_pattern_bracket: SingleNonterminalView<'a>,
     pub token_tree_pattern_paren: SingleNonterminalView<'a>,
@@ -1386,6 +1422,9 @@ pub struct TokenTreePatternTemplate<'a> {
 #[template(path = "token_tree.jinja", escape = "none")]
 pub struct TokenTreeTemplate<'a> {
     pub variant: &'a str,
+    pub token_tree__form_brace: ListNonterminalView<'a>,
+    pub token_tree__form_bracket: ListNonterminalView<'a>,
+    pub token_tree__form_paren: ListNonterminalView<'a>,
     pub token_tree_brace: SingleNonterminalView<'a>,
     pub token_tree_bracket: SingleNonterminalView<'a>,
     pub token_tree_paren: SingleNonterminalView<'a>,
@@ -1394,6 +1433,7 @@ pub struct TokenTreeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "trait_bounds.jinja", escape = "none")]
 pub struct TraitBoundsTemplate<'a> {
+    pub lifetime: ListNonterminalView<'a>,
     pub type_: ListNonterminalView<'a>,
 }
 
@@ -1431,6 +1471,7 @@ pub struct TupleExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "tuple_pattern.jinja", escape = "none")]
 pub struct TuplePatternTemplate<'a> {
+    pub closure_expression: ListNonterminalView<'a>,
     pub pattern: ListNonterminalView<'a>,
 }
 
@@ -1452,6 +1493,7 @@ pub struct TupleTypeTemplate<'a> {
 pub struct TypeArgumentsTemplate<'a> {
     pub trait_bounds: OptionalNonterminalView<'a>,
     pub type_: ListNonterminalView<'a>,
+    pub type_binding: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1566,10 +1608,10 @@ pub struct VisibilityModifierCrateTemplate<'a> {
 #[template(path = "visibility_modifier.jinja", escape = "none")]
 pub struct VisibilityModifierTemplate<'a> {
     pub variant: &'a str,
-    pub crate_: ListNonterminalView<'a>,
-    pub pub_: SingleNonterminalView<'a>,
+    pub visibility_modifier__form_crate: ListNonterminalView<'a>,
+    pub visibility_modifier__form_in_path: ListNonterminalView<'a>,
+    pub visibility_modifier__form_pub: ListNonterminalView<'a>,
     pub visibility_modifier_in_path: SingleNonterminalView<'a>,
-    pub visibility_modifier_pub_parens: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
