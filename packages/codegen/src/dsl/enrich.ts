@@ -157,6 +157,7 @@ function applyEnrichPasses(
 		r = enrichFieldWrappers(r);
 		r = enrichMultiplicityWrappers(r);
 		r = decomposeOptional(r, kwRules);
+		r = decomposeRepeat(r, kwRules);
 		if (r === before) return r;
 	}
 	if (!process.env.SITTIR_QUIET) {
@@ -1235,12 +1236,16 @@ function hasSlotBearingMember(rule: unknown): boolean {
  *  content body's structure (via canonical JSON), so identical bodies
  *  produce identical synthesized names across runs and across rule sites.
  *  sha1 truncated to 12 hex chars — collisions are vanishingly unlikely
- *  in any realistic grammar and the `_opt_grp_` prefix prevents
- *  collisions with user-authored rule names. */
-function computeOptGroupName(content: Rule): string {
+ *  in any realistic grammar and the reserved prefix (`_opt_grp_`,
+ *  `_rep_grp_`) prevents collisions with user-authored rule names. */
+function computeGroupName(content: Rule, prefix: string): string {
 	const json = canonicalStringify(content);
 	const hash = createHash('sha1').update(json).digest('hex').slice(0, 12);
-	return `_opt_grp_${hash}`;
+	return `${prefix}${hash}`;
+}
+
+function computeOptGroupName(content: Rule): string {
+	return computeGroupName(content, '_opt_grp_');
 }
 
 /** @internal — canonical JSON stringify with sorted object keys. Ensures
@@ -1264,4 +1269,85 @@ function canonicalStringify(value: unknown): string {
 		parts.push(JSON.stringify(k) + ':' + canonicalStringify(v));
 	}
 	return '{' + parts.join(',') + '}';
+}
+
+// ---------------------------------------------------------------------------
+// Pass: decomposeRepeat — separator-lift + auto-group-synthesis for repeat / repeat1
+// ---------------------------------------------------------------------------
+// Mirrors `decomposeOptional` but for `repeat(content)` and `repeat1(content)`,
+// with one key difference: when the content is a seq with exactly one
+// slot-bearing member plus literal separators (e.g. `repeat(seq($.X, ','))`),
+// the literal members are lifted onto the repeat's `separator` attribute
+// (as `Rule[]`) and the content is rewritten to the bare slot-bearing
+// member. This is the canonical "comma-separated list" shape; lifting
+// the separator out preserves it as structured metadata for downstream
+// rendering instead of hiding it inside a synthesized group.
+//
+// Four cases:
+//   1. Leaf content (symbol / string / enum): no synthesis. Multiplicity
+//      ('array' / 'nonEmptyArray') is already stamped by
+//      `enrichMultiplicityWrappers`.
+//   2. seq with exactly one slot-bearing member + string-literal siblings:
+//      separator-lift. Replace content with the slot-bearing member;
+//      stamp `separator` (Rule[]) on the repeat.
+//   3. seq/choice with two-or-more slot-bearing members: synthesize a
+//      hidden group (`_rep_grp_<hex>`) and replace content with a
+//      SymbolRule, same as decomposeOptional's group path. If a separator
+//      is also present it stays on the repeat — group-lift and
+//      separator-lift compose.
+//   4. Pure-literal seq (no slots at all): no synthesis.
+
+function decomposeRepeat(rule: Rule, kwRules: Record<string, Rule>): Rule {
+	const recursed = recurseChildren(rule, (r) => decomposeRepeat(r, kwRules));
+	if (!isRepeatType(recursed.type)) return recursed;
+	const content = (recursed as unknown as { content?: Rule }).content;
+	if (!content || typeof content !== 'object') return recursed;
+	const t = (content as { type?: string }).type;
+	// Only seq content can split into "slot + separator literals" or
+	// "multi-slot group". Choice content with multiple slots still goes
+	// down the group-synthesis path; choice with one slot is a no-op
+	// (multiplicity already on leaf via enrich).
+	if (!isSeqType(t) && !isChoiceType(t)) return recursed;
+
+	const members = ((content as { members?: Rule[] }).members ?? []) as Rule[];
+	const slotBearing: Rule[] = [];
+	const stringMembers: Rule[] = [];
+	for (const m of members) {
+		const mt = (m as { type?: string }).type;
+		if (
+			isFieldType(mt) ||
+			isSymbolType(mt) ||
+			isOptionalType(mt) ||
+			isRepeatType(mt) ||
+			((isSeqType(mt) || isChoiceType(mt)) && hasSlotBearingMember(m))
+		) {
+			slotBearing.push(m);
+		} else if (isStringType(mt)) {
+			stringMembers.push(m);
+		}
+	}
+
+	if (slotBearing.length === 0) return recursed; // pure-literal — no slot
+	if (slotBearing.length === 1 && isSeqType(t)) {
+		// Single-slot seq: separator-lift (only meaningful for seq, not choice).
+		if (stringMembers.length === 0) return recursed; // bare single-slot seq — nothing to lift
+		const slot = slotBearing[0]!;
+		return {
+			...(recursed as object),
+			content: slot,
+			separator: stringMembers as readonly Rule[]
+		} as unknown as Rule;
+	}
+
+	// Multi-slot (seq OR choice): synthesize a hidden group.
+	const synName = computeGroupName(content, '_rep_grp_');
+	if (!(synName in kwRules)) {
+		kwRules[synName] = content;
+	}
+	const symbolRef = {
+		type: detectCase(recursed) === 'upper' ? 'SYMBOL' : 'symbol',
+		name: synName,
+		source: 'group-lift'
+	} as unknown as Rule;
+	return { ...recursed, content: symbolRef } as Rule;
 }
