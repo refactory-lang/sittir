@@ -404,22 +404,19 @@ describe('enrich()', () => {
 				}
 			});
 			const out = runEnrich(input);
-			// decomposeRepeat synthesizes a hidden group rule for the seq
-			// content (two slot-bearing members: the optional and the bare
-			// symbol). The optional-keyword promotion then runs inside the
-			// synthesized seq, so we look for the promoted FIELD there.
+			// enrich no longer auto-decomposes — that pass lives in
+			// dsl/wire/auto-decompose.ts now. enrich just runs its own
+			// passes (optional-keyword promotion, multiplicity stamping,
+			// field wrappers) and leaves the structural shape alone, so
+			// the repeat's seq content is preserved and the inner
+			// optional-keyword promotion still wraps the 'pub' string as
+			// FIELD(SYMBOL(_kw_pub)).
 			const rule = out.grammar.rules.block as {
 				type: 'repeat';
-				content: { type: 'symbol'; name: string };
+				content: { type: 'seq'; members: Rule[] };
 			};
-			expect(rule.content.type).toBe('symbol');
-			const synName = rule.content.name;
-			expect(/^_block_repeat\d+$/.test(synName)).toBe(true);
-			const syn = out.grammar.rules[synName] as {
-				type: 'seq';
-				members: Rule[];
-			};
-			expect(syn.members[0]).toMatchObject({
+			expect(rule.content.type).toBe('seq');
+			expect(rule.content.members[0]).toMatchObject({
 				type: 'optional',
 				content: { type: 'field', name: 'pub_marker' }
 			});

@@ -102,16 +102,10 @@ export function enrich(base: GrammarResult): GrammarResult {
 	// via `registerKwRule` below; the final rule map merges it with the
 	// enriched user rules.
 	const kwRules: Record<string, Rule> = {};
-	// Cross-parent dedupe map for synthesized hidden groups. Keyed by
-	// `canonicalStringify(content)`. When the same canonical content is
-	// synthesized again from a different parent, we reuse the first
-	// owner's name (matches tree-sitter's `existing_repeats` pattern in
-	// rule_transformations.rs).
-	const synthDedupe: Record<string, string> = {};
 	const enrichedRules: Record<string, Rule> = {};
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
-		enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames, synthDedupe) : rule!;
+		enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames) : rule!;
 	}
 	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
 	// (they start with `_kw_`, a reserved prefix).
@@ -129,8 +123,7 @@ function applyEnrichPasses(
 	ruleName: string,
 	rule: Rule,
 	kwRules: Record<string, Rule>,
-	supertypeNames: ReadonlySet<string>,
-	synthDedupe: Record<string, string>
+	supertypeNames: ReadonlySet<string>
 ): Rule {
 	// Fixed-point loop. The current pass set has well-defined
 	// non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
@@ -143,13 +136,6 @@ function applyEnrichPasses(
 	// that accidentally produces ever-changing output.
 	const MAX_ITERATIONS = 8;
 	let r = rule;
-	// Per-parent positional counters for synthesized hidden groups.
-	// `opt` and `rep` are independent (matches tree-sitter's aux-rule
-	// numbering, which treats each multiplicity flavor as its own
-	// sequence). Counters PERSIST across fixed-point iterations: on
-	// re-runs, the dedupe map (`synthDedupe`) re-hits any already-
-	// synthesized content without incrementing, so iteration is safe.
-	const synthState = { opt: 0, rep: 0 };
 	for (let i = 0; i < MAX_ITERATIONS; i++) {
 		const before = r;
 		r = applySymbolToField(ruleName, r, supertypeNames);
@@ -169,8 +155,12 @@ function applyEnrichPasses(
 		// ordering-invariance test in enrich-multiplicity-wrappers.test.ts).
 		r = enrichFieldWrappers(r);
 		r = enrichMultiplicityWrappers(r);
-		r = decomposeOptional(r, kwRules, ruleName, synthState, synthDedupe);
-		r = decomposeRepeat(r, kwRules, ruleName, synthState, synthDedupe);
+		// Auto-decomposition (decomposeOptional / decomposeRepeat + the
+		// synthesized hidden-group rules they emit) lives in
+		// dsl/wire/auto-decompose.ts. It runs at wire() time AFTER
+		// authored `groups:` synthesis so authored declared rules survive
+		// untouched — running it inside enrich() (before Link's
+		// applyGroupOverrides) caused authored rules to be clobbered.
 		if (r === before) return r;
 	}
 	if (!process.env.SITTIR_QUIET) {
@@ -1165,250 +1155,3 @@ function rebuildOptional(optionalRule: Rule, newInner: Rule): Rule {
 	return { ...optionalRule, members: newMembers } as Rule;
 }
 
-// ---------------------------------------------------------------------------
-// Pass: decomposeOptional — auto-group-synthesis for non-leaf optional content
-// ---------------------------------------------------------------------------
-// Per Option A (spec "Universal canonical shape"): when `optional(content)`
-// wraps a seq/choice with slot-bearing members, the content is lifted into
-// a synthesized hidden group rule (`_<parent>_optional<N>`) and the
-// optional's content is rewritten to a SymbolRule referencing the
-// synthesized name.
-//
-// Synthesized rules ride the existing per-enrich `kwRules` accumulator
-// (same path as `_kw_<name>` keyword helpers), so they end up merged into
-// the final grammar rules map at the end of `enrich()`. The TS surface
-// (wrap.ts, from.ts) already handles synthesized hidden kinds — Option A
-// is implemented entirely TS-side without changing the tree-sitter parse
-// shape.
-//
-// Three cases:
-//   1. Leaf content (symbol / string / enum without slot attributes):
-//      no synthesis — multiplicity already stamped by
-//      `enrichMultiplicityWrappers`.
-//   2. seq/choice with at least one slot-bearing member (field, symbol,
-//      optional, repeat, repeat1, or nested seq/choice with slots):
-//      synthesize a hidden group; replace the optional content with a
-//      SymbolRule.
-//   3. Pure-literal seq/choice (no fields, no symbols, no nested slots):
-//      no synthesis — just an optionally-rendered text fragment.
-//
-// Naming convention follows tree-sitter's aux-rule pattern:
-// `_<parent_kind>_optional<N>` where N is a 1-indexed positional counter
-// scoped to the parent rule + multiplicity type (optional vs repeat have
-// independent counters within the same parent). The leading `_` marks
-// the rule hidden (sittir convention; tree-sitter uses a VariableType
-// marker instead).
-//
-// Cross-parent dedupe: identical canonical content always maps to the
-// same synthesized rule. The first parent that synthesizes the content
-// owns the name; subsequent parents with matching content reuse it
-// without consuming a new counter slot. Matches tree-sitter's
-// `existing_repeats` pattern in rule_transformations.rs.
-
-interface SynthCounterState {
-	opt: number;
-	rep: number;
-}
-
-function decomposeOptional(
-	rule: Rule,
-	kwRules: Record<string, Rule>,
-	parentKind: string,
-	state: SynthCounterState,
-	dedupe: Record<string, string>
-): Rule {
-	const recursed = recurseChildren(rule, (r) =>
-		decomposeOptional(r, kwRules, parentKind, state, dedupe)
-	);
-	if (!isOptionalType(recursed.type)) return recursed;
-	const content = (recursed as unknown as { content?: Rule }).content;
-	if (!content || typeof content !== 'object') return recursed;
-	const t = (content as { type?: string }).type;
-	if (!isSeqType(t) && !isChoiceType(t)) return recursed;
-	if (!hasSlotBearingMember(content)) return recursed;
-
-	const synName = synthesizeGroupName(content, parentKind, 'optional', state, dedupe);
-	if (!(synName in kwRules)) {
-		kwRules[synName] = content;
-	}
-
-	const symbolRef = {
-		type: detectCase(recursed) === 'upper' ? 'SYMBOL' : 'symbol',
-		name: synName,
-		source: 'group-lift'
-	} as unknown as Rule;
-	return { ...recursed, content: symbolRef } as Rule;
-}
-
-/** @internal — true when a seq/choice has at least one slot-bearing
- *  member: a field, a bare symbol reference, a multiplicity wrapper
- *  (optional/repeat/repeat1), or a nested seq/choice that itself bears
- *  slots. Pure-literal seqs (`seq('(', ')')`) return false. */
-function hasSlotBearingMember(rule: unknown): boolean {
-	if (!rule || typeof rule !== 'object') return false;
-	const r = rule as { type?: string; members?: unknown[] };
-	const t = r.type;
-	if (!isSeqType(t) && !isChoiceType(t)) return false;
-	const members = Array.isArray(r.members) ? r.members : [];
-	for (const m of members) {
-		if (!m || typeof m !== 'object') continue;
-		const mt = (m as { type?: string }).type;
-		if (
-			isFieldType(mt) ||
-			isSymbolType(mt) ||
-			isOptionalType(mt) ||
-			isRepeatType(mt)
-		) {
-			return true;
-		}
-		if ((isSeqType(mt) || isChoiceType(mt)) && hasSlotBearingMember(m)) {
-			return true;
-		}
-	}
-	return false;
-}
-
-/** @internal — synthesize (or reuse) a hidden-group rule name for the
- *  given content body. Naming convention: `_<parentKind>_<kind><N>` where
- *  `kind` is `optional` or `repeat` and `N` is a 1-indexed counter
- *  scoped to the (parent, kind) pair via `state`.
- *
- *  Cross-parent dedupe: `dedupe` is keyed by `canonicalStringify(content)`
- *  and shared across all parents within a single `enrich()` call. The
- *  first parent to synthesize a given content body owns the name;
- *  subsequent parents with matching content reuse it without consuming
- *  a counter slot (matches tree-sitter's `existing_repeats` pattern).
- *
- *  Determinism: identical canonical content within a single enrich call
- *  always returns the same name; across enrich calls on the same grammar,
- *  the names are stable because rule iteration order is stable
- *  (`Object.keys(rulesBag)` reflects insertion order in V8/JSC). */
-function synthesizeGroupName(
-	content: Rule,
-	parentKind: string,
-	kind: 'optional' | 'repeat',
-	state: SynthCounterState,
-	dedupe: Record<string, string>
-): string {
-	const key = canonicalStringify(content);
-	const existing = dedupe[key];
-	if (existing !== undefined) return existing;
-	const counterKey = kind === 'optional' ? 'opt' : 'rep';
-	state[counterKey] += 1;
-	const n = state[counterKey];
-	const name = `_${parentKind}_${kind}${n}`;
-	dedupe[key] = name;
-	return name;
-}
-
-/** @internal — canonical JSON stringify with sorted object keys. Ensures
- *  that two structurally-equal rule bodies stringify identically even
- *  when property insertion order differs between rule construction
- *  paths. Skips functions and undefined values (consistent with
- *  JSON.stringify). */
-function canonicalStringify(value: unknown): string {
-	if (value === null || typeof value !== 'object') {
-		return JSON.stringify(value);
-	}
-	if (Array.isArray(value)) {
-		return '[' + value.map((v) => canonicalStringify(v)).join(',') + ']';
-	}
-	const obj = value as Record<string, unknown>;
-	const keys = Object.keys(obj).sort();
-	const parts: string[] = [];
-	for (const k of keys) {
-		const v = obj[k];
-		if (typeof v === 'function' || typeof v === 'undefined') continue;
-		parts.push(JSON.stringify(k) + ':' + canonicalStringify(v));
-	}
-	return '{' + parts.join(',') + '}';
-}
-
-// ---------------------------------------------------------------------------
-// Pass: decomposeRepeat — separator-lift + auto-group-synthesis for repeat / repeat1
-// ---------------------------------------------------------------------------
-// Mirrors `decomposeOptional` but for `repeat(content)` and `repeat1(content)`,
-// with one key difference: when the content is a seq with exactly one
-// slot-bearing member plus literal separators (e.g. `repeat(seq($.X, ','))`),
-// the literal members are lifted onto the repeat's `separator` attribute
-// (as `Rule[]`) and the content is rewritten to the bare slot-bearing
-// member. This is the canonical "comma-separated list" shape; lifting
-// the separator out preserves it as structured metadata for downstream
-// rendering instead of hiding it inside a synthesized group.
-//
-// Four cases:
-//   1. Leaf content (symbol / string / enum): no synthesis. Multiplicity
-//      ('array' / 'nonEmptyArray') is already stamped by
-//      `enrichMultiplicityWrappers`.
-//   2. seq with exactly one slot-bearing member + string-literal siblings:
-//      separator-lift. Replace content with the slot-bearing member;
-//      stamp `separator` (Rule[]) on the repeat.
-//   3. seq/choice with two-or-more slot-bearing members: synthesize a
-//      hidden group (`_<parent>_repeat<N>`) and replace content with a
-//      SymbolRule, same as decomposeOptional's group path. If a separator
-//      is also present it stays on the repeat — group-lift and
-//      separator-lift compose.
-//   4. Pure-literal seq (no slots at all): no synthesis.
-
-function decomposeRepeat(
-	rule: Rule,
-	kwRules: Record<string, Rule>,
-	parentKind: string,
-	state: SynthCounterState,
-	dedupe: Record<string, string>
-): Rule {
-	const recursed = recurseChildren(rule, (r) =>
-		decomposeRepeat(r, kwRules, parentKind, state, dedupe)
-	);
-	if (!isRepeatType(recursed.type)) return recursed;
-	const content = (recursed as unknown as { content?: Rule }).content;
-	if (!content || typeof content !== 'object') return recursed;
-	const t = (content as { type?: string }).type;
-	// Only seq content can split into "slot + separator literals" or
-	// "multi-slot group". Choice content with multiple slots still goes
-	// down the group-synthesis path; choice with one slot is a no-op
-	// (multiplicity already on leaf via enrich).
-	if (!isSeqType(t) && !isChoiceType(t)) return recursed;
-
-	const members = ((content as { members?: Rule[] }).members ?? []) as Rule[];
-	const slotBearing: Rule[] = [];
-	const stringMembers: Rule[] = [];
-	for (const m of members) {
-		const mt = (m as { type?: string }).type;
-		if (
-			isFieldType(mt) ||
-			isSymbolType(mt) ||
-			isOptionalType(mt) ||
-			isRepeatType(mt) ||
-			((isSeqType(mt) || isChoiceType(mt)) && hasSlotBearingMember(m))
-		) {
-			slotBearing.push(m);
-		} else if (isStringType(mt)) {
-			stringMembers.push(m);
-		}
-	}
-
-	if (slotBearing.length === 0) return recursed; // pure-literal — no slot
-	if (slotBearing.length === 1 && isSeqType(t)) {
-		// Single-slot seq: separator-lift (only meaningful for seq, not choice).
-		if (stringMembers.length === 0) return recursed; // bare single-slot seq — nothing to lift
-		const slot = slotBearing[0]!;
-		return {
-			...(recursed as object),
-			content: slot,
-			separator: stringMembers as readonly Rule[]
-		} as unknown as Rule;
-	}
-
-	// Multi-slot (seq OR choice): synthesize a hidden group.
-	const synName = synthesizeGroupName(content, parentKind, 'repeat', state, dedupe);
-	if (!(synName in kwRules)) {
-		kwRules[synName] = content;
-	}
-	const symbolRef = {
-		type: detectCase(recursed) === 'upper' ? 'SYMBOL' : 'symbol',
-		name: synName,
-		source: 'group-lift'
-	} as unknown as Rule;
-	return { ...recursed, content: symbolRef } as Rule;
-}
