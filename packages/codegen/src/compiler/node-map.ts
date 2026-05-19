@@ -41,7 +41,8 @@ import type {
 	SupertypeRule,
 	PolymorphRule,
 	PolymorphForm,
-	TerminalRule
+	TerminalRule,
+	Multiplicity
 } from './rule.ts';
 import { isSeq, isField } from './rule.ts';
 import { renderRuleTemplate, deriveWalkSlots, findRepeatSeparator, findRepeatFlag } from './template-walker.ts';
@@ -65,8 +66,12 @@ import type { SlotOrigin } from './slot-model.ts';
  * - `single`        → `T`                    (field: `readonly x: T`)
  * - `array`         → `readonly T[]`          (field: `readonly x: readonly T[]`)
  * - `nonEmptyArray` → `NonEmptyArray<T>`      (field: `readonly x: NonEmptyArray<T>`)
+ *
+ * Defined in `./rule.ts` so RuleBase can reference it without circularity
+ * (rule.ts → node-map.ts is the layering direction). Re-exported here for
+ * existing consumers; new code may import from either location.
  */
-export type Multiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray';
+export { type Multiplicity } from './rule.ts';
 
 // ---------------------------------------------------------------------------
 // Optional-body lookthrough (module-level current pointer)

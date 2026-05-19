@@ -28,6 +28,18 @@ export interface RuleIdentity {
 	readonly id?: RuleId;
 }
 
+/**
+ * Per-rule cardinality + optionality tag. Mirrors NodeOrTerminal.multiplicity
+ * (see compiler/node-map.ts) — same values, same semantic. When a rule is
+ * pushed-down from a wrapper, this attribute records what the wrapper meant.
+ *
+ * - `'optional'`      → T | undefined            (from `optional(X)`)
+ * - `'single'`        → T                        (default — no wrapper)
+ * - `'array'`         → readonly T[]              (from `repeat(X)`)
+ * - `'nonEmptyArray'` → NonEmptyArray<T>          (from `repeat1(X)`)
+ */
+export type Multiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray';
+
 export type Rule = RuleIdentity &
 	// Structural grouping — Optimize restructures these
 	(
