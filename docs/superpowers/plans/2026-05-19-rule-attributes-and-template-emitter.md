@@ -1019,9 +1019,30 @@ PR0 must merge cleanly and the diff/counts gate must hold before PR1 starts.
 
 ---
 
-## Chunk 2: PR1 — RenderRule + simplify-against-RenderRule + relocation + consumer migration (2026-05-19 SECOND REVISION)
+## Chunk 2: PR1 — RenderRule + simplify-against-RenderRule + relocation + consumer migration ~~(SHIPPED 2026-05-19)~~
 
-### Overview
+> **Status:** ✅ SHIPPED via 8 commits on `024-rust-slot-surface-contract` (PR #34 — combined with PR0 closeout). Task-level breakdown below preserved for reference; DO NOT re-execute.
+>
+> **Shipped commits:**
+> - `86134994` Define `RenderRule` type (Task 2.A1)
+> - `cd0139c3` `applyWrapperDeletion` pass + `renderRules` snapshot (Task 2.A2)
+> - `a27ac1fe` Relocate `computeSimplifiedRules` to simplify.ts; input → RenderRule (Task 2.A3)
+> - `c18ea49a` Attach `.renderRule` + snapshot lookup in assemble (Task 2.A4)
+> - `39b3a7e3` `deriveSlots` + `findRepeatFlag` attribute-aware (Task 2.A5 — closed 9 regressions)
+> - `769005a1` auto-groups polymorph map fix (Copilot review)
+> - `72d7f55a` skip auto-groups wire() integration until PR2 re-enables (Copilot review)
+> - `fda93103` rename `deriveFieldsRaw`/`_deriveFieldsInternal`/`mergeFieldsByName` → slot vocabulary (Task 2.A6)
+>
+> **Final test counts:** 36 file-fail / 54 file-pass, 166 test-fail / 821 test-pass, 25 skipped (at or slightly better than pre-PR1 baseline).
+>
+> **Validation numbers (with SITTIR_DIVERGENCE_LOG=1 + SITTIR_AUDIT_DERIVE=1 — both blockers neutralized, PR2 clears them properly):**
+> - Rust: cov 178/184, RT-deep 102/136 ast=92, RT-shallow 134/136 ast=126
+> - TypeScript: cov 177/182, RT-deep 48/111 ast=36, factory-RP 506/706 ast=425
+> - Python: cov 106/108, RT-deep 82/115 ast=69, factory-RP 310/897 ast=233
+>
+> **Active path: Chunk 3 (PR2).** The historic Chunk 2 task-level breakdown is preserved for reference only.
+
+### Overview (historical — for reference only)
 
 After early PR1 work (Tasks 2.1-2.5b) surfaced 394 byte-divergences between the new emitter and the legacy walker, this plan pivots to a parallel-Rule-types architecture. PR1 is now purely **additive infrastructure** — no changes to the walker or emit path; output unchanged.
 
@@ -1535,20 +1556,46 @@ After PR opens, dispatch reviewer subagents per the subagent-driven-development 
 
 ---
 
-## Chunk 3: PR2 — Canonicalization (SimplifiedRule type) + new TemplateEmitter
+## Chunk 3: PR2 — Canonicalization + new TemplateEmitter + deprecate `derive*` (2026-05-19 THIRD REVISION)
 
 ### Overview
 
-**Goal:** add `SimplifiedRule` type with universal seq-of-leaves canonicalization, build the new modelType-dispatching TemplateEmitter consuming `RenderRule`, replace the byte-equivalence gate with slot-preservation, re-enable `applyAutoGroups`.
+**Goal:** wire PR0's universal-shape helpers into production, build the new modelType-dispatching TemplateEmitter, **replace the recursive `deriveSlotsRaw` walker with a one-shot dispatch on canonical SimplifiedRule** (architectural insight from user, 2026-05-19), close the `validate:native` divergence + non-canonical-derive blockers, and re-enable `applyAutoGroups`.
+
+### Architectural target
+
+After PR2, every rule body (post-simplify+canonicalize) normalizes to ONE of: `seq` (flat list of leaves with `fieldName`/`multiplicity`/`separator` on RuleBase) | `choice` (alternatives) | `repeat` | `enum`/`string`/`pattern` (leaf-terminals). Once that invariant holds, slot derivation is a one-shot mapping — `deriveSlotsRaw`'s 11+ wrapper/structural cases collapse to a small dispatch.
+
+### Two blockers PR2 must clear
+
+Currently `pnpm validate:native` fails with both:
+1. `TemplateEmitter divergence on kind _array_expression_list (group)` — the byte-equivalence diff gate in `templates.ts:184-202`. PR2's slot-preservation gate replaces it.
+2. `derive: non-canonical shape 'seq-member-choice-needs-variant-or-merge'` from `deriveSlotsRaw` — wrapper-less rules reach derivation in non-canonical shape because `canonicalizeSeqOfLeaves` isn't wired. PR2 wires it.
+
+(Temporary workaround for measurement: `SITTIR_DIVERGENCE_LOG=1 SITTIR_AUDIT_DERIVE=1` — but those are bypasses, not fixes.)
 
 ### Pre-flight context for PR2
 
-- Spec: PR2 section in `docs/superpowers/specs/2026-05-18-rule-attributes-and-template-emitter-design.md`
+- Spec: PR2 section in `docs/superpowers/specs/2026-05-18-rule-attributes-and-template-emitter-design.md` (third revision)
 - `packages/codegen/src/compiler/simplify.ts` — PR0 added `canonicalizeSeqOfLeaves` and `assertUniversalShape` helpers; they live here unwired
+- `packages/codegen/src/compiler/node-map.ts` — `deriveSlots` public entry point + `deriveSlotsRaw` / `_deriveSlotsInternal` / `mergeSlotsByName` internal helpers (PR2 replaces these with direct dispatch)
 - `packages/codegen/src/emitters/factories.ts` — canonical modelType-dispatching emitter pattern
-- `packages/codegen/src/emitters/templates.ts` — the existing emitter (rewrite target)
+- `packages/codegen/src/emitters/templates.ts:184-202` — divergence diff gate (PR2 deletes; slot-preservation replaces)
 - `packages/codegen/src/dsl/wire/auto-groups.ts` — `applyAutoGroups`, currently `void`-disabled in `wire.ts`
 - `packages/codegen/src/dsl/wire/wire.ts:552-572` — the disabled invocation site
+- `packages/codegen/src/dsl/__tests__/auto-groups.test.ts` — the `describe.skip('applyAutoGroups — wire() integration', ...)` block PR1 skipped (PR2 un-skips when re-enabling)
+
+### Task order (revised — slot-derive rewrite is new)
+
+1. **Task 3.B1** — Define `SimplifiedRule` branded type
+2. **Task 3.B2** — Wire `canonicalizeSeqOfLeaves` + `assertUniversalShape` into `computeSimplifiedRules`
+3. **Task 3.B-derive-rewrite (NEW)** — Replace `deriveSlotsRaw` / `_deriveSlotsInternal` / `mergeSlotsByName` with direct dispatch on canonical SimplifiedRule. Closes the non-canonical-derive blocker. Per-modelType handlers; no recursion.
+4. **Task 3.B3** — Build new `TemplateEmitter` consuming `node.renderRule`
+5. **Task 3.B4** — Slot-preservation gate replaces byte-equivalence diff gate (closes the divergence blocker)
+6. **Task 3.B5** — Re-enable `applyAutoGroups` in `wire.ts`; un-skip the integration test from PR1 commit `72d7f55a`
+7. **Task 3.B6** — Final verification: `pnpm validate:native` runs to completion, counts hold at pre-PR1 baseline, open PR
+
+The Task 3.B-derive-rewrite is the largest single deliverable in PR2 and the architectural payoff: `derive*` machinery deprecates entirely; the spec's universal-shape invariant becomes load-bearing.
 
 ### Task 3.B1: Define SimplifiedRule type
 

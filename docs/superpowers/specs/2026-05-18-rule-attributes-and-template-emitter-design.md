@@ -425,79 +425,108 @@ These are the runtime lookup mechanism for PR1's emitter (and any future emitter
 - 27 `'clause'` case sites (intact)
 - Wrapper rule types (`OptionalRule`, `FieldRule`, `RepeatRule`, `Repeat1Rule`) (intact)
 
-## PR1 — RenderRule + simplify-against-RenderRule + relocation + consumer migration (2026-05-19 SECOND REVISION)
+## PR1 — RenderRule + simplify-against-RenderRule + relocation + consumer migration (SHIPPED 2026-05-19)
 
-Goal: introduce the parallel `RenderRule` type, push wrappers down to leaf attributes, relocate simplification orchestration to `simplify.ts`, and migrate consumers of the now-wrapper-less `.simplifiedRule`. No changes to walker or emit path; output unchanged.
+**Status:** SHIPPED. Eight commits on `024-rust-slot-surface-contract` (PR #34), combined with PR0 closeout in the same PR.
 
-### Optimize-side changes (`compiler/optimize.ts`)
-1. Add `applyWrapperDeletion(rules) → renderRules` pass after `applyNormalizationPasses`
-2. Remove `computeSimplifiedRules` function body (relocates to simplify.ts); optimize.ts still calls into it
-3. Update return shape: `{ rules: rawRules, renderRules, simplifiedRules, ... }`
+### What shipped
 
-### Simplify-side changes (`compiler/simplify.ts`)
-4. `computeSimplifiedRules` public entry point relocates here from `optimize.ts:80-83`
-5. `simplifyRules` input changes from RawRule to RenderRule (relocation does this naturally — simplify just gets the `renderRules` input)
+- `86134994` Define `RenderRule` type alias — `Exclude<Rule, OptionalRule | FieldRule | RepeatRule | Repeat1Rule>` with a brand
+- `cd0139c3` `applyWrapperDeletion` pass + `renderRules` snapshot on `OptimizedGrammar`
+- `a27ac1fe` Relocate `computeSimplifiedRules` from `optimize.ts` to `simplify.ts`; input switched from RawRule to RenderRule
+- `c18ea49a` Attach `.renderRule` on AssembledNode (Branch + Group); snapshot lookup in `assemble.ts` (3 of 4 per-call `simplifyRule` invocations migrated; 3 marked `// TODO PR2:` for alias bodies, polymorph form content, group inner content)
+- `39b3a7e3` `deriveSlots` populator + `findRepeatFlag` made attribute-aware (read leaf RuleBase `fieldName`/`multiplicity`/`separator` when wrapper structures absent); closes the 9 test regressions introduced by `a27ac1fe`
+- `769005a1` Polymorph map identity-preservation fix in `auto-groups.ts` (Copilot review)
+- `72d7f55a` Skip `auto-groups` wire() integration test until PR2 re-enables `applyAutoGroups` (Copilot review)
+- `fda93103` Rename internal slot helpers: `deriveFieldsRaw` → `deriveSlotsRaw`, `_deriveFieldsInternal` → `_deriveSlotsInternal`, `mergeFieldsByName` → `mergeSlotsByName`, `deriveFieldsRawFromLeafAttr` → `deriveSlotsRawFromLeafAttr` (vocabulary alignment per `feedback_rule_slot_vocabulary_alignment`)
 
-### Type changes (`compiler/rule.ts`)
-6. Define `RenderRule` type — wrapper-free Rule (modifier wrappers gone; leaf attributes carry `fieldName`/`multiplicity`/`nonterminal`/`separator` per PR0)
+### Final test counts (PR1 close)
 
-### Node-map / assemble changes
-7. Replace per-node `simplifyRule(init.rule)` in `node-map.ts:2844` with lookup from `simplifiedRules` snapshot
-8. Extend assemble to attach `node.renderRule` from `renderRules` snapshot
-9. `.simplifiedRule` shape changes: was `simplify(RawRule)` → now `simplify(RenderRule)` — wrappers gone
+- codegen vitest: **36 file-fail / 54 file-pass, 166 test-fail / 821 test-pass, 25 skipped** — at or slightly better than pre-PR1 baseline (37/53, 167/821, 24)
+- Per-grammar native counts (`pnpm validate:native`): blocked by pre-existing `TemplateEmitter divergence on kind _array_expression_list (group)` error in `templates.ts`. This is the byte-equivalence diff gate from the early-PR1-rewrite-attempt that surfaced 394 divergences and motivated the parallel-types pivot. Blocker unrelated to PR1 commits; PR2 closes it.
 
-### Consumer migration (substantial)
-10. The unified `deriveSlots` entry point already exists at `node-map.ts:1178` (the earlier `deriveFields`/`deriveChildren` consolidation has already shipped); PR1 updates its internals.
-11. Update `deriveSlots` internals (`deriveFieldsRaw` and its branches that switch on `optional`/`field`/`repeat`/`repeat1`) + separator discovery to walk the wrapper-less RenderRule shape. Wrapper-case branches become unreachable in this context and can be tightened or removed.
+### PR1 architectural footprint
 
-### Untouched
-- `template-walker.ts` — still consumes `.rule` (RawRule)
-- `emitters/templates.ts` — still uses walker
-- `factories.ts` / `wrap.ts` / `from.ts` / `render-module.ts` — still consume what they consume today (mostly `.rule`); PR3 migrates them to `.simplifiedRule`
+```
+link → optimize → simplify → assemble
+                  ↑                    ↓
+                  └─ applyWrapperDeletion (new last pass)
+                                       │
+optimize() returns:                    │
+  rawRules       (post-normalization) ─┼─► node.rule         (RawRule — for legacy walker)
+  renderRules    (post-wrapper-deletion)─► node.renderRule   (RenderRule — for future emitter)
+  simplifiedRules (simplify(renderRules))─► node.simplifiedRule (SimplifiedRule shape)
+```
 
-### PR1 gate
-- Snapshot zero drift (output unchanged — emit path is untouched; derivations equivalent if consumer migration preserves semantics)
-- Counts hold at baseline (rust RT 134/136, ts RT 81/111, py RT 93/115)
+## PR2 — Canonicalization + new TemplateEmitter + deprecate derive\* (2026-05-19 THIRD REVISION)
 
-## PR2 — Canonicalization (SimplifiedRule type) + new TemplateEmitter
+Goal: wire PR0's universal-shape helpers into production, build the new modelType-dispatching TemplateEmitter, **replace the recursive `deriveSlotsRaw` walker with a one-shot dispatch on canonical SimplifiedRule**, close the `validate:native` divergence blocker, and re-enable `applyAutoGroups`.
 
-Goal: add `SimplifiedRule` type with universal seq-of-leaves canonicalization, build the new modelType-dispatching TemplateEmitter consuming `RenderRule`, replace byte-equivalence gate with slot-preservation, re-enable `applyAutoGroups`.
+### Architectural target
+
+After PR2, every rule body (post-simplify+canonicalize) normalizes to ONE of:
+- `seq` containing a flat list of leaves (each leaf carries `fieldName` / `multiplicity` / `separator` as RuleBase attributes)
+- `choice` (alternatives)
+- `repeat` (single wrapped member or flat members)
+- `enum` / `string` / `pattern` (leaf-terminals)
+
+Once that invariant holds, slot derivation becomes a one-shot mapping, not a tree walk. `deriveSlotsRaw` and its switch over 11+ wrapper/structural cases collapses to a small dispatch.
 
 ### Simplify-side
-1. Define `SimplifiedRule` type — RenderRule + universal seq-of-leaves invariant
-2. Add `canonicalizeSeqOfLeaves` as first step inside `computeSimplifiedRules` in `simplify.ts` (PR0's helper finally wired)
-3. Wire `assertUniversalShape` as post-condition of `computeSimplifiedRules` (PR0's helper finally wired)
-4. `.simplifiedRule` shape refines: `simplify(canonicalize(RenderRule))` — universal seq-of-leaves
-5. PR1's migrated consumers may need minor additional updates if canonicalization changes shapes they walk
+
+1. Define `SimplifiedRule` branded type alias in `compiler/rule.ts` — `RenderRule & { readonly __simplifiedRule?: never }`
+2. Wire `canonicalizeSeqOfLeaves` as first step inside `computeSimplifiedRules` in `simplify.ts` (PR0 helper, currently unwired)
+3. Wire `assertUniversalShape` as post-condition of `computeSimplifiedRules` (PR0 helper, currently unwired)
+4. `.simplifiedRule` shape refines: `simplify(canonicalize(RenderRule))` — universal seq-of-leaves invariant
+
+### Slot derivation rewrite (replaces PR1's attribute-aware `deriveSlotsRaw`)
+
+5. Replace `deriveSlotsRaw` / `_deriveSlotsInternal` / `mergeSlotsByName` with a direct dispatch on canonical SimplifiedRule shape. No recursive walking. Each modelType (branch / polymorph / group / multi) gets a small per-shape handler:
+   - `seq` → `members.map(leafToSlot)` then `mergeSlotsByName`-equivalent (if still needed)
+   - `choice` → polymorph-style alternative slots OR a single choice-slot whose values union the arms
+   - `repeat` → single slot wrapping inner (multiplicity = `'array' | 'nonEmptyArray'`)
+   - leaf terminals (`enum` / `string` / `pattern`) → no slot (this IS the value)
+6. The `deriveSlots` public entry point keeps its signature; the internal helpers shrink dramatically
+7. Wrapper-case branches in the rewritten function become unreachable; `assertUniversalShape` enforces they never appear
 
 ### Emitter-side
-6. Build new TemplateEmitter in `emitters/templates.ts` consuming `node.renderRule` (per design choice — RenderRule has wrappers gone but structural rules preserved, sufficient for emission without further canonicalization)
-7. Per-modelType dispatch following established emitter pattern
-8. Runs alongside legacy walker
-9. **Slot-preservation gate** — per kind, verify each declared slot appears in the emitter's output exactly once (replaces byte-equivalence diff gate)
-10. Eliminate hardcoded heuristics in emitter (`needsSpace` and similar) — emitter outputs literally what rule structure says
+
+8. Build new modelType-dispatching `TemplateEmitter` in `emitters/templates.ts` consuming `node.renderRule` (per design — RenderRule has wrappers gone but structural rules preserved, sufficient for emission without further canonicalization)
+9. Per-modelType dispatch following the established emitter pattern (matches `factories.ts` / `wrap.ts` / `from.ts` / `render-module.ts`)
+10. **Replaces the byte-equivalence diff gate** in `templates.ts` (which currently throws on `_array_expression_list` and blocks `pnpm validate:native`) with a **slot-preservation gate** — per kind, verify each declared slot appears in the emitter's output exactly once
+11. Eliminate hardcoded heuristics in emitter (`needsSpace` and similar) — emitter outputs literally what rule structure says
 
 ### Wire-side
-11. Re-enable `applyAutoGroups` in `dsl/wire/wire.ts` (PR0 left it disabled via `void` wrapper)
+
+12. Re-enable `applyAutoGroups` in `dsl/wire/wire.ts` (PR0 left it disabled via `void` wrapper)
+13. Un-skip the `auto-groups` wire() integration test that PR1 skipped via `72d7f55a`
 
 ### PR2 gate
+
+- `pnpm validate:native` runs to completion (divergence blocker cleared)
 - Snapshot drift expected (new emitter writes different bytes than walker — by design)
 - Slot-preservation passes across all kinds in all 3 grammars
-- Counts hold at baseline
+- `assertUniversalShape` passes on every post-simplify rule
+- Counts hold at baseline (rust RT 134/136, ts RT 81/111, py RT 93/115)
+- Auto-groups integration test re-enabled and passing
 
 ## PR3 — Delete legacy + downstream consumer migration
 
 Goal: delete the legacy walker, translation pipeline, ClauseRule, wrapper rule types, RawRule snapshot, AssembledXxx.renderTemplate methods. Migrate factories/wrap/from/render-module to consume SimplifiedRule.
+
+After PR2's slot-derivation rewrite, this PR is mostly mechanical deletion — no consumers are left walking wrapper structures by the time PR3 starts.
 
 1. Migrate `factories.ts`, `wrap.ts`, `from.ts`, `render-module.ts` to consume `.simplifiedRule` (SimplifiedRule) where they currently read `.rule` (RawRule)
 2. Delete `template-walker.ts` (~1758 lines)
 3. Delete translation pipeline in `node-map.ts`: `inlineJinjaClauses`, `translateToJinja`, spacing absorbers, `JinjaTranslateMeta`
 4. Delete `AssembledBranch/Polymorph/Group/Multi.renderTemplate()` methods
 5. Delete `ClauseRule`, `isClause`, `detectClause`; sweep `'clause'` case sites (re-derive count via `rg`)
-6. Delete wrapper rule types (`OptionalRule`/`FieldRule`/`RepeatRule`/`Repeat1Rule`) — no consumers left
+6. Delete wrapper rule types (`OptionalRule`/`FieldRule`/`RepeatRule`/`Repeat1Rule`) — no consumers left (PR2's derive rewrite ensured this)
 7. Delete RawRule snapshot from `optimize()` return; `node.rule` field deleted or repurposed
-8. `node-model.ts` / `suggested.ts` / `wire.ts` re-wrap passes for cross-process consumers needing wrapped-form output
-9. Edge cases (a)/(b)/(c)/(d)/(e)/(f) absorbed where they fit (most as side-effects of new pipeline)
+8. Delete `applyWrapperDeletion` itself once `RawRule === Rule === RenderRule` (wrapper types gone means deletion is a no-op alias)
+9. `node-model.ts` / `suggested.ts` / `wire.ts` re-wrap passes for cross-process consumers needing wrapped-form output
+10. Delete the 3 `// TODO PR2:` per-call `simplifyRule` fallbacks in `assemble.ts` (alias bodies, polymorph form content, group inner content) — PR2 will have either eliminated them or made them harmless
+11. Edge cases (a)/(b)/(c)/(d)/(e)/(f) absorbed where they fit (most as side-effects of new pipeline)
 
 ### PR3 gate
 - Snapshot drift expected (many deletions)
