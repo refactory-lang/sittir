@@ -300,8 +300,9 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 		let changed = false;
 		const newForms = forms.map((f) => {
 			const out = visit(f.content);
-			if (out !== f.content) changed = true;
-			return changed ? { ...f, content: out } : f;
+			if (out === f.content) return f;
+			changed = true;
+			return { ...f, content: out };
 		});
 		return changed ? ({ ...rule, forms: newForms } as Rule) : rule;
 	}
