@@ -607,7 +607,7 @@ function extractAliasedFromName(content: Rule, supertypes: Set<string>): string 
 /**
  * Would a reference to `kindName` be inlined at assemble time?
  *
- * Assemble's `inlineGroupRefs` inlines symbol refs to hidden rules
+ * Assemble's `inlineRefs` inlines symbol refs to hidden rules
  * whose body is a `group` (hidden seq-with-fields helper) or a pure
  * `repeat` / `repeat1` (multi helper). Those splice into the parent
  * rule's structure. Everything else — visible kinds, supertypes,
@@ -1375,7 +1375,7 @@ function choiceNeedsVariantWrapping(choice: ChoiceRule): boolean {
 		// symbols that inline become their inner content's tokens
 		// (which would need variant ONLY if the inner content is itself
 		// anonymous — handled when Assemble classifies the hidden rule
-		// as a group and inlineGroupRefs expands it).
+		// as a group and inlineRefs expands it).
 		if (c.type === 'symbol' || c.type === 'supertype') return false;
 		// Transparent wrappers — look inside. `field(name, content)` is
 		// included: if content is a symbol/supertype, render dispatches

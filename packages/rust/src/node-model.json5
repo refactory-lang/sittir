@@ -16054,17 +16054,41 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type_arguments_repeat1",
-          "propertyName": "typeArgumentsRepeat1s",
-          "paramName": "typeArgumentsRepeat1s",
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_type_arguments_repeat1",
+              "multiplicity": "single",
+              "name": "_type",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "type_binding",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "lifetime",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_literal",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "block",
               "unresolved": true
             }
           ],
@@ -16072,7 +16096,34 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_arguments_repeat1"
+              "_type",
+              "type_binding",
+              "lifetime",
+              "_literal",
+              "block"
+            ]
+          }
+        },
+        {
+          "name": "trait_bounds",
+          "propertyName": "traitBounds",
+          "paramName": "traitBounds",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "trait_bounds",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "trait_bounds"
             ]
           }
         }
@@ -16454,17 +16505,17 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type_parameters_repeat1",
-          "propertyName": "typeParametersRepeat1s",
-          "paramName": "typeParametersRepeat1s",
+          "name": "attributed_type_parameter",
+          "propertyName": "attributedTypeParameter",
+          "paramName": "attributedTypeParameter",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_type_parameters_repeat1",
+              "multiplicity": "single",
+              "name": "_attributed_type_parameter",
               "unresolved": true
             }
           ],
@@ -16472,7 +16523,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_parameters_repeat1"
+              "_attributed_type_parameter"
             ]
           }
         }

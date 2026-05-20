@@ -11,6 +11,7 @@
     "_attributed_enum_variant": "config",
     "_attributed_field_declaration": "config",
     "_attributed_parameter": "config",
+    "_attributed_type_parameter": "config",
     "_closure_expression_async_marker": "text",
     "_closure_expression_block": "config",
     "_closure_expression_expr": "config",
@@ -76,10 +77,8 @@
     "_token_tree_pattern_brace": "spread",
     "_token_tree_pattern_bracket": "spread",
     "_token_tree_pattern_paren": "spread",
-    "_type_arguments_repeat1": "config",
     "_type_identifier": "text",
     "_type_parameter_optional1": "config",
-    "_type_parameters_repeat1": "config",
     "_unary_expression_operator": "text",
     "_unsafe_marker": "text",
     "_visibility_modifier_crate": "config",
@@ -240,12 +239,12 @@
     "tuple_pattern": "spread",
     "tuple_struct_pattern": "config",
     "tuple_type": "spread",
-    "type_arguments": "spread",
+    "type_arguments": "config",
     "type_binding": "config",
     "type_cast_expression": "config",
     "type_item": "config",
     "type_parameter": "config",
-    "type_parameters": "spread",
+    "type_parameters": "direct",
     "unary_expression": "config",
     "union_item": "config",
     "unit_expression": "text",
@@ -396,6 +395,10 @@
     "_attributed_parameter": [
       "attribute_item",
       "parameter"
+    ],
+    "_attributed_type_parameter": [
+      "attribute_item",
+      "metavariable"
     ],
     "_closure_expression_block": [
       "return_type",
@@ -548,16 +551,8 @@
     "_token_tree_pattern_paren": [
       "token_pattern"
     ],
-    "_type_arguments_repeat1": [
-      "type",
-      "trait_bounds"
-    ],
     "_type_parameter_optional1": [
       "default_type"
-    ],
-    "_type_parameters_repeat1": [
-      "attribute_item",
-      "metavariable"
     ],
     "_visibility_modifier_in_path": [
       "path"
@@ -1130,7 +1125,8 @@
       "type"
     ],
     "type_arguments": [
-      "type_arguments_repeat1"
+      "type",
+      "trait_bounds"
     ],
     "type_binding": [
       "name",
@@ -1155,7 +1151,7 @@
       "type_parameter_optional1"
     ],
     "type_parameters": [
-      "type_parameters_repeat1"
+      "attributed_type_parameter"
     ],
     "unary_expression": [
       "operator",
@@ -1312,6 +1308,22 @@
         "nonEmpty": false
       },
       "parameter": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_attributed_type_parameter": {
+      "attribute_item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
+      "metavariable": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1855,43 +1867,11 @@
         "nonEmpty": false
       }
     },
-    "_type_arguments_repeat1": {
-      "type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "trait_bounds": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_type_parameter_optional1": {
       "default_type": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_type_parameters_repeat1": {
-      "attribute_item": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "metavariable": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -4401,12 +4381,19 @@
       }
     },
     "type_arguments": {
-      "type_arguments_repeat1": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "trait_bounds": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "type_binding": {
@@ -4516,12 +4503,12 @@
       }
     },
     "type_parameters": {
-      "type_parameters_repeat1": {
+      "attributed_type_parameter": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "unary_expression": {

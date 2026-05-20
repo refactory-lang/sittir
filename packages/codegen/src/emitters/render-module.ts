@@ -557,6 +557,10 @@ interface EmittedField {
 	isUnnamed: boolean;
 	hasLeading: boolean;
 	hasTrailing: boolean;
+	/** Per-slot separator stamped on the slot's NodeRef/TerminalValue metadata.
+	 *  Used by ListNonterminalView emission so each list-multiplicity slot
+	 *  gets its own separator (rather than a node-wide first-match). */
+	separator?: string;
 }
 
 interface EmittedStruct {
@@ -688,6 +692,12 @@ function emitStruct(kind: string, node: AssembledNode | undefined, surface: Rend
 	const multipleByName = new Map<string, boolean>();
 	const requiredByName = new Map<string, boolean>();
 	const storageByName = new Map<string, string>();
+	// Per-slot separator: read from the slot's own NodeRef/TerminalValue
+	// metadata (stamped at evaluate / wrapper-deletion time). The separator
+	// is a property of the value, not the node, so each list-multiplicity
+	// slot's emission gets its own — no node-wide fallback that would mask
+	// distinct per-slot separators behind a single first-match.
+	const separatorByName = new Map<string, string>();
 	const unnamedNames = new Set<string>();
 	if (node) {
 		for (const f of [...slotModel.named, ...slotModel.unnamed]) {
@@ -696,6 +706,12 @@ function emitStruct(kind: string, node: AssembledNode | undefined, surface: Rend
 			multipleByName.set(f.name, mul);
 			requiredByName.set(f.name, req);
 			storageByName.set(f.name, f.storageName);
+			for (const v of f.values) {
+				if (v.separator) {
+					separatorByName.set(f.name, v.separator);
+					break;
+				}
+			}
 			// Template walker emits one template var per kind referenced by an
 			// unnamed slot (e.g. a slot with kinds [escape_sequence, string_content]
 			// surfaces both names in the template). Register every kind as an
@@ -743,7 +759,8 @@ function emitStruct(kind: string, node: AssembledNode | undefined, surface: Rend
 		// transport struct and must be defaulted to "" in the typed dispatch path.
 		hasTransportField: requiredByName.has(slot.name) || multipleByName.has(slot.name),
 		storageName: storageByName.get(slot.name) ?? slot.name,
-		isUnnamed: unnamedNames.has(slot.name)
+		isUnnamed: unnamedNames.has(slot.name),
+		separator: separatorByName.get(slot.name)
 	}));
 	fields.sort((a, b) => a.name.localeCompare(b.name));
 	return {
@@ -1580,6 +1597,13 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 		// The prior code only checked `isContainerShape` branches, causing
 		// the transport render path to use "" for 138+ kinds that need ","
 		// or other separators.
+		//
+		// NOTE: per-slot separator is now read from slot.values during
+		// EmittedField construction (emitStruct's separatorByName) and used
+		// per-slot at the ListNonterminalView emission site. This node-wide
+		// `separators` map remains as a fallback for slots whose values
+		// don't carry a separator stamp yet (TODO: PR3 — migrate stamping
+		// to all kinds and drop this fallback).
 		if (node instanceof AssembledBranch) {
 			const sep = node.separator ?? findRepeatSeparator(node.simplifiedRule);
 			if (sep !== undefined) separators.set(kind, sep);
@@ -2222,10 +2246,15 @@ function buildTypedTemplateBody(
 			// - multiple=true (any view — transport field is Vec<X> or Option<Vec<X>>)
 			// Vec doesn't implement AsRef<dyn RenderableTransport>, so always use
 			// the *_buf slice. Empty list when transport-field absent.
+			// Separator is per-slot (stamped on slot.values during evaluate /
+			// wrapper-deletion); falls back to the node-wide `separator` parameter
+			// for slots whose values don't carry one yet (TODO: migrate the
+			// fallback away once slot value stamping covers all kinds).
 			const items = f.hasTransportField ? `${rIdent}_buf.as_slice()` : '&[]';
+			const fieldSepLiteral = f.separator !== undefined ? JSON.stringify(f.separator) : sepLiteral;
 			lines.push(`        ${templateIdent}: ListNonterminalView {`);
 			lines.push(`            items: ${items},`);
-			lines.push(`            separator: ${sepLiteral},`);
+			lines.push(`            separator: ${fieldSepLiteral},`);
 			lines.push(`            leading: false,`);
 			lines.push(`            trailing: false,`);
 			lines.push(`        },`);

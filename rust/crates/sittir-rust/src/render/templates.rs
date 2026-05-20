@@ -138,6 +138,13 @@ pub struct AttributedParameterTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_attributed_type_parameter.jinja", escape = "none")]
+pub struct AttributedTypeParameterTemplate<'a> {
+    pub attribute_item: ListNonterminalView<'a>,
+    pub metavariable: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_closure_expression_block.jinja", escape = "none")]
 pub struct ClosureExpressionBlockTemplate<'a> {
     pub body: SingleNonterminalView<'a>,
@@ -456,24 +463,9 @@ pub struct _TokenTreePatternParenTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_type_arguments_repeat1.jinja", escape = "none")]
-pub struct TypeArgumentsRepeat1Template<'a> {
-    pub trait_bounds: OptionalNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
-    pub type_binding: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_type_parameter_optional1.jinja", escape = "none")]
 pub struct TypeParameterOptional1Template<'a> {
     pub default_type: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_type_parameters_repeat1.jinja", escape = "none")]
-pub struct TypeParametersRepeat1Template<'a> {
-    pub attribute_item: ListNonterminalView<'a>,
-    pub metavariable: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1559,7 +1551,7 @@ pub struct TupleTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_arguments.jinja", escape = "none")]
 pub struct TypeArgumentsTemplate<'a> {
-    pub type_arguments_repeat1: ListNonterminalView<'a>,
+    pub type_arguments_repeat1: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1601,7 +1593,7 @@ pub struct TypeParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_parameters.jinja", escape = "none")]
 pub struct TypeParametersTemplate<'a> {
-    pub type_parameters_repeat1: ListNonterminalView<'a>,
+    pub type_parameters_repeat1: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

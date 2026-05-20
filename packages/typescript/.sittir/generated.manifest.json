@@ -1,7 +1,7 @@
 {
   "grammar": "typescript",
-  "generated_at": "2026-05-20T16:19:09.213Z",
-  "source_hash": "8c886ece6a21ddff9501b3a24987f7be9d1097a9dc9971a576be5210c187ff89",
+  "generated_at": "2026-05-20T19:09:21.534Z",
+  "source_hash": "12a2750591399830a4e0a1f7a4f63c6eb74db6b0a0b53081576e6c08745cdcd9",
   "files": {
     "packages/typescript/.sittir/grammar.js": "8fef6419e04d2b21412f01f46c09f8cc6587351d3e7cd9e00092567d9273583d",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
@@ -492,6 +492,6 @@
     "rust/crates/sittir-typescript/test-fixtures.json": "a8801594c8ea181c3abd6d41a0f73cc86aef8fc09de0d4c1d18e438a0315d1aa"
   },
   "host_files": {
-    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "ac5a991b26555e4974e81647eb3d61dffc869e94890f0c17b6c8f325b2e39b6a"
+    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "dea524156817fd2d3c658a52fdeddf8069b298551238e5f9d9763d9524331162"
   }
 }

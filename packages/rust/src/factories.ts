@@ -4059,16 +4059,21 @@ export function tupleType(...children: T._Type[]) {
   }, methodsEngine);
 }
 
-export function typeArguments(...children: T.TypeArgumentsRepeat1[]) {
-  _assertNonEmpty(children, 'type_arguments.children');
-  const _type_arguments_repeat1 = children;
+export function typeArguments(config: T.TypeArguments.Config) {
+  const _type = config.type;
+  const _trait_bounds = config.traitBounds;
   return withMethods({
     $type: TSKindId.TypeArguments as const,
     $source: 2 as const,
     $named: true as const,
-    _type_arguments_repeat1,
-    typeArgumentsRepeat1s() { return _type_arguments_repeat1; },
-    $with: { $children: (...vs: T.TypeArgumentsRepeat1[]) => typeArguments(...vs) },
+    _type,
+    _trait_bounds,
+    type() { return _type; },
+    traitBounds() { return _trait_bounds; },
+    $with: {
+      type: (value: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block) => typeArguments({ ...config, type: value }),
+      traitBounds: (value?: T.TraitBounds) => typeArguments({ ...config, traitBounds: value }),
+    },
   }, methodsEngine);
 }
 
@@ -4168,16 +4173,15 @@ export function typeParameter(config: T.TypeParameter.Config) {
   }, methodsEngine);
 }
 
-export function typeParameters(...children: T.TypeParametersRepeat1[]) {
-  _assertNonEmpty(children, 'type_parameters.children');
-  const _type_parameters_repeat1 = children;
+export function typeParameters(child: T.AttributedTypeParameter) {
+  const _attributed_type_parameter = child;
   return withMethods({
     $type: TSKindId.TypeParameters as const,
     $source: 2 as const,
     $named: true as const,
-    _type_parameters_repeat1,
-    typeParametersRepeat1s() { return _type_parameters_repeat1; },
-    $with: { $children: (...vs: T.TypeParametersRepeat1[]) => typeParameters(...vs) },
+    _attributed_type_parameter,
+    attributedTypeParameter() { return _attributed_type_parameter; },
+    $with: { $child: (v: T.AttributedTypeParameter) => typeParameters(v) },
   }, methodsEngine);
 }
 

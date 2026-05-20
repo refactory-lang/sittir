@@ -144,8 +144,21 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	const linked = link(raw, cfg.include, generatedIdTables);
 	tracePhaseRules('link', linked.rules);
 
-	// Phase 3: Optimize
-	const optimized = optimize(linked);
+	// Authoritative inline list from the compiled grammar.json (if present).
+	// `raw.inline` only contains what the overrides callback explicitly
+	// returns — base-grammar string items in `previous` are silently dropped
+	// by evaluate's normalize() pass (which only handles symbol-ref objects).
+	// Reading grammar.json directly gives us the full merged inline list that
+	// tree-sitter itself used when compiling the parser.
+	// Loaded BEFORE optimize so inlineRefs in computeSimplifiedRules can inline
+	// auto-synthesized helpers (e.g., _type_arguments_repeat1) that tree-sitter
+	// expands at parse time.
+	const inlineKindsArray = loadGrammarJsonInlineList(cfg.grammar);
+	const inlineKinds = new Set(inlineKindsArray ?? []);
+
+	// Phase 3: Optimize — pass inlineKinds so computeSimplifiedRules's inlineRefs
+	// widens beyond group/multi to inline ANY hidden kind in grammar.inline.
+	const optimized = optimize(linked, inlineKinds);
 	tracePhaseRules('optimize', optimized.rules);
 	tracePhaseRules('simplify', optimized.simplifiedRules);
 
@@ -158,14 +171,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// The full GrammarRoles are passed to the ir emitter for `ir.from.*`.
 	const grammarRoles = extractGrammarRoles(cfg.grammar);
 	const triviaKinds = grammarRoles.get('trivia');
-
-	// Authoritative inline list from the compiled grammar.json (if present).
-	// `raw.inline` only contains what the overrides callback explicitly
-	// returns — base-grammar string items in `previous` are silently dropped
-	// by evaluate's normalize() pass (which only handles symbol-ref objects).
-	// Reading grammar.json directly gives us the full merged inline list that
-	// tree-sitter itself used when compiling the parser.
-	const inlineKinds = loadGrammarJsonInlineList(cfg.grammar);
 
 	// Kinds that were synthesized by evaluate's inline-alias-source pass
 	// (synthesizeInlineAliasSources). These have no parser symbol because
@@ -212,7 +217,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		grammar: cfg.grammar,
 		nodeMap,
 		generatedIdTables,
-		inlineKinds,
+		inlineKinds: [...inlineKinds],
 		synthesizedKinds: evaluateSynthesizedKinds,
 		strict: cfg.strict,
 		triviaKinds,

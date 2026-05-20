@@ -4109,8 +4109,10 @@ export interface TupleType {
 
 export interface TypeArguments {
   readonly $type: TSKindId.TypeArguments;
-  readonly _type_arguments_repeat1: NonEmptyArray<TypeArgumentsRepeat1>;
-  typeArgumentsRepeat1s(): NonEmptyArray<TypeArgumentsRepeat1>;
+  readonly _type: _Type | TypeBinding | Lifetime | Literal | Block;
+  readonly _trait_bounds?: TraitBounds;
+  type(): _Type | TypeBinding | Lifetime | Literal | Block;
+  traitBounds(): TraitBounds | undefined;
 }
 
 export interface TypeBinding {
@@ -4159,8 +4161,8 @@ export interface TypeParameter {
 
 export interface TypeParameters {
   readonly $type: TSKindId.TypeParameters;
-  readonly _type_parameters_repeat1: NonEmptyArray<TypeParametersRepeat1>;
-  typeParametersRepeat1s(): NonEmptyArray<TypeParametersRepeat1>;
+  readonly _attributed_type_parameter: AttributedTypeParameter;
+  attributedTypeParameter(): AttributedTypeParameter;
 }
 
 export interface UnaryExpression {

@@ -202,10 +202,14 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
  *      derivation walked an uncanonical tree and silently dropped
  *      duplicate-named field occurrences across choice branches.
  */
-export function simplifyRules(rules: Record<string, Rule>, wordMatcher?: RegExp): Record<string, Rule> {
+export function simplifyRules(
+	rules: Record<string, Rule>,
+	wordMatcher?: RegExp,
+	inlineKinds: ReadonlySet<string> = new Set()
+): Record<string, Rule> {
 	const out: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
-		out[name] = normalizeToFixpoint(rule, wordMatcher, rules);
+		out[name] = normalizeToFixpoint(rule, wordMatcher, rules, inlineKinds);
 	}
 	return out;
 }
@@ -223,10 +227,11 @@ export function simplifyRules(rules: Record<string, Rule>, wordMatcher?: RegExp)
  */
 export function computeSimplifiedRules(
 	renderRules: Record<string, RenderRule>,
-	word: string | null
+	word: string | null,
+	inlineKinds: ReadonlySet<string> = new Set()
 ): Record<string, SimplifiedRule> {
 	const wordMatcher = compileWordMatcher(word, renderRules as Record<string, Rule>);
-	const simplified = simplifyRules(renderRules as Record<string, Rule>, wordMatcher);
+	const simplified = simplifyRules(renderRules as Record<string, Rule>, wordMatcher, inlineKinds);
 	const canonicalized: Record<string, SimplifiedRule> = {};
 	for (const [kind, rule] of Object.entries(simplified)) {
 		// simplifyRules can re-introduce wrapper nodes (optional / field /
@@ -251,12 +256,12 @@ export function computeSimplifiedRules(
 }
 
 /**
- * Run `inlineGroupRefs` + `simplifyRule` + `canonicalize` to fixpoint.
+ * Run `inlineRefs` + `simplifyRule` + `canonicalize` to fixpoint.
  * Each individual transformation is non-increasing on rule nesting
  * and designed to be idempotent on its own, but the three passes can
  * enable each other:
  *
- *   - `inlineGroupRefs` substitutes a hidden group/multi's body for
+ *   - `inlineRefs` substitutes a hidden group/multi's body for
  *     its symbol reference. When the body is a seq and the ref sat
  *     inside another seq, the substitution creates a nested-seq
  *     shape `simplifyRule` can flatten.
@@ -273,11 +278,16 @@ export function computeSimplifiedRules(
  * of those metrics. Safety cap at 16 iterations — a real grammar
  * converges in 2-3.
  */
-function normalizeToFixpoint(rule: Rule, wordMatcher: RegExp | undefined, rules: Readonly<Record<string, Rule>>): Rule {
+function normalizeToFixpoint(
+	rule: Rule,
+	wordMatcher: RegExp | undefined,
+	rules: Readonly<Record<string, Rule>>,
+	inlineKinds: ReadonlySet<string> = new Set()
+): Rule {
 	const MAX_ITERS = 16;
 	let current = rule;
 	for (let i = 0; i < MAX_ITERS; i++) {
-		const next = simplifyRule(inlineGroupRefs(current, rules), wordMatcher);
+		const next = simplifyRule(inlineRefs(current, rules, inlineKinds), wordMatcher);
 		if (rulesStructurallyEqual(current, next)) return next;
 		current = next;
 	}
@@ -741,31 +751,78 @@ export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
 // ---------------------------------------------------------------------------
 
 /**
- * Inline hidden GROUP and MULTI symbol references by substituting
- * their content. Matches tree-sitter's parse-time inlining of hidden
- * seq-with-fields helpers. Cycle-safe via visited set.
+ * Inline hidden symbol references by substituting their content. Two inlining
+ * paths are applied in priority order:
+ *
+ *  1. GROUP / MULTI path (existing): hidden group rules (seq-with-fields) and
+ *     hidden multi helpers (repeat / repeat1 wrappers) are always inlined so
+ *     the referrer's field walker sees the fields / multi-slot directly.
+ *
+ *  2. grammar.inline path (new): hidden symbol refs whose target appears in the
+ *     grammar's `inline:` array are inlined unconditionally — these are
+ *     helpers tree-sitter itself expands at parse time (e.g., auto-synthesized
+ *     `_type_arguments_repeat1` from applyAutoGroups). Sittir's derivation
+ *     view must match what tree-sitter produces: if the parser inlines a helper,
+ *     the simplified rule must too. References with `source === 'group-lift'` are
+ *     still inlined when `inlineKinds` contains the target — the group-lift guard
+ *     only applies to the group/multi path (where the assemble-side AssembledGroup
+ *     should materialise as its own node rather than being collapsed away).
+ *
+ * Cycle-safe via visited set.
  */
-export function inlineGroupRefs(
+export function inlineRefs(
 	rule: Rule,
 	rules: Readonly<Record<string, Rule>>,
+	inlineKinds: ReadonlySet<string> = new Set(),
 	visited: ReadonlySet<string> = new Set()
 ): Rule {
-	const recurse = (r: Rule, v: ReadonlySet<string>): Rule => inlineGroupRefs(r, rules, v);
+	const recurse = (r: Rule, v: ReadonlySet<string>): Rule => inlineRefs(r, rules, inlineKinds, v);
 	switch (rule.type) {
 		case 'symbol': {
+			// grammar.inline path for auto-synthesized group-lift helpers:
+			// B5's applyAutoGroups synthesizes hidden helpers (e.g.,
+			// `_type_arguments_repeat1`) and registers them in grammar.inline so
+			// tree-sitter inlines them at parse time. The symbol refs to these
+			// helpers have `source: 'group-lift'` and `hidden: undefined` (NOT
+			// `hidden: true`). Sittir's simplify pass must match tree-sitter's
+			// inlining: if the ref is group-lift-sourced AND the target is in
+			// grammar.inline, substitute the body inline.
+			//
+			// We do NOT inline all grammar.inline items — only group-lift refs.
+			// Legacy inline items (_path, _type_identifier, _reserved_identifier,
+			// etc.) are referenced via hidden symbol refs (hidden: true) and have
+			// always been skipped by the simplify pass; changing that would alter
+			// the slot derivation for kinds using those supertypes.
+			if ((rule as { source?: string }).source === 'group-lift' && inlineKinds.has(rule.name)) {
+				if (visited.has(rule.name)) return rule;
+				const target = rules[rule.name];
+				if (!target) return rule;
+				const next = new Set(visited);
+				next.add(rule.name);
+				// For group/multi targets: inline the CONTENT (not the wrapper)
+				// to avoid introducing a bare `group` rule into simplified output
+				// that deriveSlotsRaw cannot handle.
+				const inlineTarget = resolveGroupOrMultiInlineTarget(target);
+				return inlineRefs(inlineTarget ?? target, rules, inlineKinds, next);
+			}
+
+			// Non-inline-listed visible symbols: no inlining.
 			if (!rule.hidden) return rule;
-			// Don't inline group-lift synthesized symbol refs — those are
-			// deliberate structural boundaries: the referenced kind should
-			// materialize as its own AssembledGroup, not be inlined away.
-			if ((rule as { source?: string }).source === 'group-lift') return rule;
 			if (visited.has(rule.name)) return rule;
 			const target = rules[rule.name];
 			if (!target) return rule;
+
+			// Don't inline group-lift synthesized symbol refs via the group/multi
+			// path — those are deliberate structural boundaries: the referenced kind
+			// should materialise as its own AssembledGroup, not be inlined away.
+			if ((rule as { source?: string }).source === 'group-lift') return rule;
+
+			// GROUP / MULTI path: inline hidden group and multi helpers.
 			const inlineTarget = resolveGroupOrMultiInlineTarget(target);
 			if (!inlineTarget) return rule;
 			const next = new Set(visited);
 			next.add(rule.name);
-			return inlineGroupRefs(inlineTarget, rules, next);
+			return inlineRefs(inlineTarget, rules, inlineKinds, next);
 		}
 		case 'seq':
 			return { ...rule, members: rule.members.map((m) => recurse(m, visited)) };
@@ -840,27 +897,22 @@ export function extractRepeatShape(rule: Rule): { repeat: RepeatRule | Repeat1Ru
 // repeat / repeat1 / field / variant / group / polymorph / clause) with
 // slot content.
 //
-// After PR0 Tasks 1.4-1.8 land, this invariant should hold by
-// construction:
-//   - enrich pushes modifiers (multiplicity, fieldName, separators) onto
-//     leaf symbols / strings.
-//   - decomposeOptional / decomposeRepeat synthesize hidden groups for
-//     non-leaf wrapper content.
+// Post-PR2 the invariant is established by:
+//   - applyWrapperDeletion (optimize.ts) pushes modifier wrappers
+//     (optional / field / repeat / repeat1) down to leaf RuleBase
+//     attributes (multiplicity, fieldName, separator). Output: RenderRule.
+//   - applyAutoGroups (dsl/wire/auto-groups.ts) synthesizes hidden helpers
+//     for optional(seq(...)) / repeat(seq(...)) at wire time and registers
+//     them in grammar.inline.
+//   - inlineRefs (this file) inlines GROUP / MULTI hidden refs AND any
+//     group-lift-sourced ref whose target is in grammar.inline, matching
+//     tree-sitter's parse-time inlining.
+//   - simplifyRules + canonicalizeSeqOfLeaves run to fixpoint and a final
+//     deleteWrapper pass enforces wrapper-free output (SimplifiedRule).
 //
-// Task 1.9 adds:
-//   - canonicalizeSeqOfLeaves(rule): final structural cleanup. Flattens
-//     degenerate single-member seqs. Recurses through children. Does NOT
-//     push down attributes (enrich did that) or synthesize groups
-//     (decomposeOptional / decomposeRepeat did that).
-//   - assertUniversalShape(node): post-condition check. Throws with kind
-//     name + offending sub-rule when the invariant doesn't hold.
-//
-// NOTE: assertUniversalShape is exported but NOT yet wired into the
-// production pipeline. Enabling it at assembly's exit would be a
-// behavior-change that could break existing kinds where enrich /
-// decomposeOptional / decomposeRepeat hasn't caught every case yet.
-// Wire it ONLY in tests for now — once PR0 lands and we can verify on
-// real grammars, decide whether to enable it in production (PR1).
+// assertUniversalShape(node) remains test-only. The above sequence holds
+// the invariant on real grammars, but wiring as a production fail-fast
+// gate is deferred — flagged as a follow-up post-PR2.
 
 /**
  * Generic post-order child recursion for the `Rule` IR. Mirrors
@@ -918,9 +970,9 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
  *   - Recursively canonicalize children.
  *   - Flatten degenerate single-member seqs (`seq([X])` → `X`).
  *
- * Does NOT perform attribute push-down — enrich already did that.
- * Does NOT synthesize groups — decomposeOptional / decomposeRepeat already
- * did that.
+ * Does NOT perform attribute push-down — applyWrapperDeletion in optimize
+ * already did that. Does NOT synthesize groups — applyAutoGroups (wire
+ * phase) already did that.
  *
  * This is the final structural cleanup pass that absorbs the trivial
  * `seq([X])` → `X` shapes left behind by upstream transformations.

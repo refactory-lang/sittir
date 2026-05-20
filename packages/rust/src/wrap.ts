@@ -3515,10 +3515,15 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeArguments as const,
-    _type_arguments_repeat1: normalizeRepeatedWrapSlot(data._type_arguments_repeat1, true, "type_arguments_repeat1"),
+    _type: normalizeSingularWrapSlot((data._abstract_type ?? data._reference_type ?? data._metavariable ?? data._pointer_type ?? data._generic_type ?? data._scoped_type_identifier ?? data._tuple_type ?? data._unit_type ?? data._array_type ?? data._function_type ?? data._type_identifier ?? data._macro_invocation ?? data._never_type ?? data._dynamic_type ?? data._bounded_type ?? data._removed_trait_bound ?? data._primitive_type ?? data._type_binding ?? data._lifetime ?? data._string_literal ?? data._raw_string_literal ?? data._char_literal ?? data._boolean_literal ?? data._integer_literal ?? data._float_literal ?? data._block ?? data._type), "type", true, data.$type),
+    _trait_bounds: normalizeSingularWrapSlot(data._trait_bounds, "trait_bounds", false, data.$type),
 
-    typeArgumentsRepeat1s() { return drillInAll<T.TypeArgumentsRepeat1>(this._type_arguments_repeat1 as readonly T.TypeArgumentsRepeat1[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapTypeArguments({ ...data, $children: vs }, tree) },
+    type() { return drillIn<T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(this._type, tree); },
+    traitBounds() { return drillIn<T.TraitBounds | undefined>(this._trait_bounds, tree); },
+    $with: {
+      type: (v: NonNullable<T.TypeArguments['_type']>) => wrapTypeArguments({ ...data, _type: v }, tree),
+      traitBounds: (v: NonNullable<T.TypeArguments['_trait_bounds']>) => wrapTypeArguments({ ...data, _trait_bounds: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -3613,9 +3618,9 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeParameters as const,
-    _type_parameters_repeat1: normalizeRepeatedWrapSlot(data._type_parameters_repeat1, true, "type_parameters_repeat1"),
+    _attributed_type_parameter: normalizeSingularWrapSlot(data._attributed_type_parameter, "attributed_type_parameter", true, data.$type),
 
-    typeParametersRepeat1s() { return drillInAll<T.TypeParametersRepeat1>(this._type_parameters_repeat1 as readonly T.TypeParametersRepeat1[] | undefined, tree); },
+    attributedTypeParameter() { return drillIn<T.AttributedTypeParameter>(this._attributed_type_parameter, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapTypeParameters({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -4119,6 +4124,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'attributed_enum_variant': '_attributed_enum_variant',
   'attributed_field_declaration': '_attributed_field_declaration',
   'attributed_parameter': '_attributed_parameter',
+  'attributed_type_parameter': '_attributed_type_parameter',
   'closure_expression_async_marker': '_closure_expression_async_marker',
   'closure_expression_block': '_closure_expression_block',
   'closure_expression_static_marker': '_closure_expression_static_marker',
@@ -4176,10 +4182,8 @@ const _aliasTargetToSource: Record<string, string> = {
   'token_binding_pattern_type': '_token_binding_pattern_type',
   'token_pattern': '_token_pattern',
   'tokens': '_tokens',
-  'type_arguments_repeat1': '_type_arguments_repeat1',
   'type_identifier': '_type_identifier',
   'type_parameter_optional1': '_type_parameter_optional1',
-  'type_parameters_repeat1': '_type_parameters_repeat1',
   'unary_expression_operator': '_unary_expression_operator',
   'unsafe_marker': '_unsafe_marker',
   'use_clause': '_use_clause',

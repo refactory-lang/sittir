@@ -2182,7 +2182,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'types', required: true, multiple: true },
   ],
   'type_arguments': [
-    { name: 'typeArgumentsRepeat1s', required: true, multiple: true },
+    { name: 'type', required: true, multiple: false },
+    { name: 'traitBounds', required: false, multiple: false },
   ],
   'type_binding': [
     { name: 'name', required: true, multiple: false },
@@ -2207,7 +2208,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeParameterOptional1', required: false, multiple: false },
   ],
   'type_parameters': [
-    { name: 'typeParametersRepeat1s', required: true, multiple: true },
+    { name: 'attributedTypeParameter', required: true, multiple: false },
   ],
   'unary_expression': [
     { name: 'operator', required: true, multiple: false },

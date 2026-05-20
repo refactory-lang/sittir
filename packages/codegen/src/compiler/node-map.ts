@@ -3911,7 +3911,7 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
  *     render template for the helper itself.
  *   - Emits a TYPE ALIAS naming the element union:
  *       `export type CollectionElements = Expression | Yield | ListSplat | …`
- *   - Inlines the repeat at every referrer (`inlineGroupRefs` extends
+ *   - Inlines the repeat at every referrer (`inlineRefs` extends
  *     to cover `multi` alongside `group`), so the referrer's walker
  *     sees `repeat1(...)` directly and sets `multiple: true` on the
  *     child slot → rest-params factory.
@@ -3934,7 +3934,7 @@ export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> 
 
 	/** The repeat's inner content type — raw Rule, for downstream
 	 * consumers that need the element union (types emitter maps this
-	 * to a union of TypeNames, inlineGroupRefs hands the whole repeat
+	 * to a union of TypeNames, inlineRefs hands the whole repeat
 	 * back to referrers). */
 	get elementRule(): Rule {
 		return this.rule.content;
