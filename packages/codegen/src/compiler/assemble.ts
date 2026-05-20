@@ -235,7 +235,7 @@ export function assemble(
 		if (!node) continue;
 		if (rule.id) nodeByRuleId.set(rule.id, node);
 	}
-	// KNOWN LIMITATION: `mergeFieldsByName` (node-map.ts) folds multi-contributor
+	// KNOWN LIMITATION: `mergeSlotsByName` (node-map.ts) folds multi-contributor
 	// slots by spreading the first contributor's data. After merging, the slot's
 	// `sourceRuleId` reflects only one source rule. Other contributors' rule ids
 	// will not resolve via `slotByRuleId` — downstream lookups must fall back to
