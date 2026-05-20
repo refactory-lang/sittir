@@ -45209,6 +45209,7 @@ fn render_visibility_modifier_in_path(node: &VisibilityModifierInPathTransport, 
 fn render_visibility_modifier_pub(node: &VisibilityModifierPubTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = VisibilityModifierPubTemplate {
         pub_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.pub_.as_ref())),
+        self_: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
         visibility_modifier_pub_parens: match &node.visibility_modifier_pub_parens {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -45286,6 +45287,7 @@ fn render_array_type(node: &ArrayTypeTransport, dest: &mut dyn ::std::fmt::Write
             None => OptionalNonterminalView::Missing,
         },
         element: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.element)),
+        length: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -45579,6 +45581,7 @@ fn render_const_item(node: &ConstItemTransport, dest: &mut dyn ::std::fmt::Write
         },
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
+        value: OptionalNonterminalView::Missing,
         visibility_modifier: match &node.visibility_modifier {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -45595,6 +45598,7 @@ fn render_const_parameter(node: &ConstParameterTransport, dest: &mut dyn ::std::
         },
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
+        value: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -45761,6 +45765,7 @@ fn render_enum_variant(node: &EnumVariantTransport, dest: &mut dyn ::std::fmt::W
             None => OptionalNonterminalView::Missing,
         },
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        value: OptionalNonterminalView::Missing,
         visibility_modifier: match &node.visibility_modifier {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -45819,6 +45824,7 @@ fn render_expression_statement(node: &ExpressionStatementTransport, dest: &mut d
 
 fn render_extern_crate_declaration(node: &ExternCrateDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExternCrateDeclarationTemplate {
+        alias: OptionalNonterminalView::Missing,
         crate_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.crate_.as_ref())),
         extern_crate_declaration_optional1: match &node.extern_crate_declaration_optional1 {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -45959,6 +45965,7 @@ fn render_for_expression(node: &ForExpressionTransport, dest: &mut dyn ::std::fm
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
+        label: OptionalNonterminalView::Missing,
         pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
@@ -46023,6 +46030,7 @@ fn render_function_item(node: &FunctionItemTransport, dest: &mut dyn ::std::fmt:
         },
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
+        return_type: OptionalNonterminalView::Missing,
         type_parameters: match &node.type_parameters {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -46071,6 +46079,7 @@ fn render_function_signature_item(node: &FunctionSignatureItemTransport, dest: &
         },
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
+        return_type: OptionalNonterminalView::Missing,
         type_parameters: match &node.type_parameters {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -46265,6 +46274,7 @@ fn render_let_condition(node: &LetConditionTransport, dest: &mut dyn ::std::fmt:
 
 fn render_let_declaration(node: &LetDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LetDeclarationTemplate {
+        alternative: OptionalNonterminalView::Missing,
         let_declaration_optional1: match &node.let_declaration_optional1 {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -46282,6 +46292,8 @@ fn render_let_declaration(node: &LetDeclarationTransport, dest: &mut dyn ::std::
             None => OptionalNonterminalView::Missing,
         },
         pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
+        type_: OptionalNonterminalView::Missing,
+        value: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -46317,6 +46329,7 @@ fn render_line_comment(node: &LineCommentTransport, dest: &mut dyn ::std::fmt::W
 fn render_loop_expression(node: &LoopExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LoopExpressionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        label: OptionalNonterminalView::Missing,
         loop_expression_optional1: match &node.loop_expression_optional1 {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -46473,6 +46486,7 @@ fn render_match_expression(node: &MatchExpressionTransport, dest: &mut dyn ::std
 
 fn render_match_pattern(node: &MatchPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = MatchPatternTemplate {
+        condition: OptionalNonterminalView::Missing,
         match_pattern_optional1: match &node.match_pattern_optional1 {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -47322,7 +47336,17 @@ fn render_tuple_type(node: &TupleTypeTransport, dest: &mut dyn ::std::fmt::Write
 
 fn render_type_arguments(node: &TypeArgumentsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TypeArgumentsTemplate {
-        type_arguments_repeat1: OptionalNonterminalView::Missing,
+        trait_bounds: match &node.trait_bounds {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        type_arguments_repeat1: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        type_binding: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -47379,6 +47403,7 @@ fn render_type_parameter(node: &TypeParameterTransport, dest: &mut dyn ::std::fm
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
+        default_type: OptionalNonterminalView::Missing,
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_parameter_optional1: match &node.type_parameter_optional1 {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -47390,7 +47415,19 @@ fn render_type_parameter(node: &TypeParameterTransport, dest: &mut dyn ::std::fm
 
 fn render_type_parameters(node: &TypeParametersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TypeParametersTemplate {
-        type_parameters_repeat1: OptionalNonterminalView::Missing,
+        attribute_item: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        metavariable: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        type_parameters_repeat1: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
     };
     template.render_into(dest)
 }
@@ -47583,6 +47620,7 @@ fn render_while_expression(node: &WhileExpressionTransport, dest: &mut dyn ::std
     let template = WhileExpressionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
+        label: OptionalNonterminalView::Missing,
         while_expression_optional1: match &node.while_expression_optional1 {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
