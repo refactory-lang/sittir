@@ -467,8 +467,12 @@ function buildVisibleVariantChildGroups(
 		const sourceRule = optimized.rules[hiddenKind];
 		if (!sourceRule) continue;
 		const inlinedRule = hoistInnerFieldsForTemplate(inlineGroupRefs(sourceRule, optimized.rules));
-		const simplifiedRule = optimized.simplifiedRules[hiddenKind] ?? simplifyRule(sourceRule);
-		const renderRule: RenderRule = optimized.renderRules?.[hiddenKind] ?? deleteWrapper(sourceRule);
+		// hiddenKind exists in optimized.rules (guarded above) — renderRules and
+		// simplifiedRules always cover the same key set as rules (applyWrapperDeletion
+		// + computeSimplifiedRules iterate over the same map). The fallbacks are dead
+		// code. Assert rather than silently fall back so violations surface fast.
+		const simplifiedRule = optimized.simplifiedRules[hiddenKind]!;
+		const renderRule: RenderRule = optimized.renderRules[hiddenKind]!;
 		const modelType = classifyNode(visibleKind, inlinedRule);
 		switch (modelType) {
 			case 'branch':
