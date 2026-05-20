@@ -15,8 +15,8 @@
 import type { Rule, SeqRule, PolymorphRule } from './rule.ts';
 import { isChoice } from './rule.ts';
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
-import { simplifyRules } from './simplify.ts';
-import { compileWordMatcher } from './common.ts';
+import { computeSimplifiedRules } from './simplify.ts';
+import { applyWrapperDeletion } from './wrapper-deletion.ts';
 
 /**
  * Run the full ordered pipeline of non-lossy normalization passes over the
@@ -63,31 +63,14 @@ function applyNormalizationPasses(
 	return rules;
 }
 
-/**
- * Compute the derivation-only simplified view of every rule in the map,
- * using the grammar's own word-rule pattern for keyword-shape detection.
- *
- * @param rules - The fully normalized rule map (output of normalization passes).
- * @param word - The grammar's word rule name, or null if absent (used to compile the word matcher).
- * @returns A new map containing the simplified form of each rule.
- * @remarks
- * Downstream (`assemble` → AssembledBranch/Container/Group) reads from
- * `simplifiedRules` instead of re-running `simplifyRule` in every
- * constructor. Template emission still reads raw `rules`. Passing the
- * grammar's own word-rule pattern means keyword-shape detection uses
- * tree-sitter's lexical convention rather than `/^\w+$/`.
- */
-function computeSimplifiedRules(rules: Record<string, Rule>, word: string | null): ReturnType<typeof simplifyRules> {
-	const wordMatcher = compileWordMatcher(word, rules);
-	return simplifyRules(rules, wordMatcher);
-}
-
 export function optimize(linked: LinkedGrammar): OptimizedGrammar {
 	const rules = applyNormalizationPasses(linked.rules, linked.patternReplacementKinds);
-	const simplifiedRules = computeSimplifiedRules(rules, linked.word);
+	const renderRules = applyWrapperDeletion(rules);
+	const simplifiedRules = computeSimplifiedRules(renderRules, linked.word);
 	return {
 		name: linked.name,
 		rules,
+		renderRules,
 		simplifiedRules,
 		supertypes: linked.supertypes,
 		word: linked.word,

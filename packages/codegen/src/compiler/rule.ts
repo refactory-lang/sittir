@@ -117,6 +117,20 @@ export type Rule =
 	| AliasRule
 	| TokenRule;
 
+/**
+ * A Rule shape produced by `applyWrapperDeletion` in optimize.ts. Modifier
+ * wrappers (`optional` / `field` / `repeat` / `repeat1`) have been pushed
+ * down to leaf attributes; structural rules (`seq` / `choice` / `variant` /
+ * `group` / `polymorph`) are preserved.
+ *
+ * Structurally a `Rule` minus the wrapper variants — typed as a brand so
+ * mismatches between RawRule and RenderRule consumption surface at compile
+ * time.
+ */
+export type RenderRule = Exclude<Rule, OptionalRule | FieldRule | RepeatRule | Repeat1Rule> & {
+	readonly __renderRule?: never;
+};
+
 // ---------------------------------------------------------------------------
 // Structural grouping
 // ---------------------------------------------------------------------------

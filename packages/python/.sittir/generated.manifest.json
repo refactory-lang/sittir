@@ -1,12 +1,12 @@
 {
   "grammar": "python",
-  "generated_at": "2026-05-19T14:23:16.054Z",
-  "source_hash": "42fa6c16ba3e82fecfbea34dd3c3516939e91aab7ec491408294c7cee4684296",
+  "generated_at": "2026-05-19T18:52:51.285Z",
+  "source_hash": "32b15106d2685fb93f112329f92f88e1e11b8ef1ead97081e4366afa33aaf6cb",
   "files": {
-    "packages/python/.sittir/grammar.js": "64b9b8cd86639e2055864a811dcb747ceb79c492390aae7f720fd90ca7d4f660",
+    "packages/python/.sittir/grammar.js": "78aab5b0b6da39161db8a0cb381d4c705c4d0fe4933bfd825124a9c8848835f1",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "ebfa2a3024ffba1096f64d1b73f79d818a2812775fa5fe40d3f24a0233fe4dde",
-    "packages/python/.sittir/src/grammar.json": "28821a112125984e5e929d233fd29c8cd4c32f5e0795d8ab22abefb330bf7911",
+    "packages/python/.sittir/src/grammar.json": "488d438baf8f35ffe6717636d8f6408cf2cfe320a2a0a60f913bb9329c53b833",
     "packages/python/.sittir/src/node-types.json": "bf909b8426f7fdf176c51d30df8bab3f7eef2207aa926e73fc8e52f68d40e43b",
     "packages/python/.sittir/src/parser.c": "579dca7e0ac5d7f9699208654fb64de7435115012c624bcb11a2cae5c5ccd750",
     "packages/python/.sittir/src/scanner.c": "6db82134ac2d4c90a1a1475487a625cface02662ebda9b7478cad9c7147e9afe",

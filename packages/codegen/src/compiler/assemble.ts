@@ -7,6 +7,7 @@
 
 import type {
 	Rule,
+	RenderRule,
 	PolymorphRule,
 	SymbolRule,
 	SeqRule,
@@ -20,6 +21,7 @@ import type {
 	SupertypeRule
 } from './rule.ts';
 import { isLinkSymbol } from './rule.ts';
+import { deleteWrapper } from './wrapper-deletion.ts';
 import type { OptimizedGrammar, NodeMap, SignaturePool, PolymorphVariant } from './types.ts';
 import type { RuleId } from './rule.ts';
 import { computePolymorphFormKinds } from './types.ts';
@@ -106,9 +108,12 @@ export function assemble(
 		const modelType = classifyNode(kind, inlinedRule, { variantParents });
 		// `simplifiedRules[kind]` is already inlined + fixpoint-reduced
 		// by `simplifyRules` in optimize — pass through as-is.
+		// TODO PR2: alias-body kinds are not in simplifiedRules / renderRules — eliminate
+		// the per-call simplifyRule / deleteWrapper fallback once alias bodies are snapshotted.
 		const simplifiedRule = optimized.topLevelAliasBodies?.has(kind)
 			? simplifyRule(assemblyRule, wordMatcher)
 			: optimized.simplifiedRules[kind]!;
+		const renderRule: RenderRule = optimized.renderRules?.[kind] ?? deleteWrapper(assemblyRule);
 		const variantChildKinds = variantChildrenByParent.get(kind);
 
 		switch (modelType) {
@@ -119,6 +124,7 @@ export function assemble(
 						kind,
 						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
 						simplifiedRule,
+						renderRule,
 						{
 							variantChildKinds,
 							kindEntries
@@ -180,11 +186,12 @@ export function assemble(
 				break;
 			}
 			case 'group': {
-				const { groupRule, groupSimplified } = unwrapGroupRuleAndSimplified(
+				const { groupRule, groupSimplified, groupRenderRule } = unwrapGroupRuleAndSimplified(
 					assemblyRule,
-					simplifiedRule
+					simplifiedRule,
+					renderRule
 				);
-				nodes.set(kind, new AssembledGroup(kind, groupRule, groupSimplified, { kindEntries }));
+				nodes.set(kind, new AssembledGroup(kind, groupRule, groupSimplified, groupRenderRule, { kindEntries }));
 				break;
 			}
 			case 'multi': {
@@ -228,7 +235,7 @@ export function assemble(
 		if (!node) continue;
 		if (rule.id) nodeByRuleId.set(rule.id, node);
 	}
-	// KNOWN LIMITATION: `mergeFieldsByName` (node-map.ts) folds multi-contributor
+	// KNOWN LIMITATION: `mergeSlotsByName` (node-map.ts) folds multi-contributor
 	// slots by spreading the first contributor's data. After merging, the slot's
 	// `sourceRuleId` reflects only one source rule. Other contributors' rule ids
 	// will not resolve via `slotByRuleId` — downstream lookups must fall back to
@@ -238,6 +245,34 @@ export function assemble(
 		for (const slot of allSlotsOf(node)) {
 			if (slot.sourceRuleId) slotByRuleId.set(slot.sourceRuleId, slot);
 		}
+	}
+
+	// Back-compat: also index raw FieldRule ids from `optimized.rules` so that
+	// consumers holding a reference to the original field-wrapper rule (before
+	// applyWrapperDeletion stripped it) can still resolve the slot. The leaf's
+	// sourceRuleId may differ from the FieldRule's id after wrapper-deletion
+	// pushes modifier attrs down; walking the raw rules and name-matching
+	// against the assembled slots bridges the gap without requiring the
+	// pipeline to thread the FieldRule id through to the RenderRule leaf.
+	for (const [kind, rawRule] of Object.entries(optimized.rules)) {
+		const node = nodes.get(kind);
+		if (!node) continue;
+		const slotsByName = new Map<string, AssembledNonterminal>();
+		for (const slot of allSlotsOf(node)) slotsByName.set(slot.name, slot);
+		// Walk the raw rule tree collecting FieldRule ids by name.
+		const walkForFieldIds = (r: Rule): void => {
+			if (r.type === 'field' && r.id) {
+				const slot = slotsByName.get(r.name);
+				if (slot && !slotByRuleId.has(r.id)) slotByRuleId.set(r.id, slot);
+			}
+			if ('members' in r && Array.isArray((r as { members?: unknown }).members)) {
+				for (const m of (r as { members: Rule[] }).members) walkForFieldIds(m);
+			}
+			if ('content' in r && (r as { content?: Rule }).content) {
+				walkForFieldIds((r as { content: Rule }).content);
+			}
+		};
+		walkForFieldIds(rawRule);
 	}
 
 	return {
@@ -368,7 +403,9 @@ function buildAssembledFormGroups(
 		const formKind =
 			polySource === 'override' ? `${parentKind}__form_${disambiguated}` : `${parentKind}_${disambiguated}`;
 		const formNames = nameNode(formKind);
-		return new AssembledGroup(formKind, form.content, simplifyRule(form.content), {
+		// TODO PR2: polymorph form content is not a top-level kind and has no snapshot entry —
+		// eliminate per-call simplifyRule / deleteWrapper once form content is snapshotted.
+		return new AssembledGroup(formKind, form.content, simplifyRule(form.content), deleteWrapper(form.content), {
 			factoryName: formNames.factoryName,
 			irKey: formNames.irKey,
 			name: disambiguated,
@@ -434,6 +471,7 @@ function buildVisibleVariantChildGroups(
 		if (!sourceRule) continue;
 		const inlinedRule = hoistInnerFieldsForTemplate(inlineGroupRefs(sourceRule, optimized.rules));
 		const simplifiedRule = optimized.simplifiedRules[hiddenKind] ?? simplifyRule(sourceRule);
+		const renderRule: RenderRule = optimized.renderRules?.[hiddenKind] ?? deleteWrapper(sourceRule);
 		const modelType = classifyNode(visibleKind, inlinedRule);
 		switch (modelType) {
 			case 'branch':
@@ -442,6 +480,7 @@ function buildVisibleVariantChildGroups(
 						visibleKind,
 						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
 						simplifiedRule,
+						renderRule,
 						{ kindEntries }
 					)
 				);
@@ -495,23 +534,36 @@ function resolveSupertypeSubtypes(rule: Rule, optimized: OptimizedGrammar): stri
 }
 
 /**
- * Unwrap a `GroupRule` to obtain the inner content rule and its simplified view.
+ * Unwrap a `GroupRule` to obtain the inner content rule, its simplified view,
+ * and its wrapper-deleted RenderRule.
  *
  * @param rule - The raw rule from `optimized.rules`.
  * @param simplifiedRule - The pre-computed simplified rule for the same kind.
+ * @param renderRule - The wrapper-deleted RenderRule for the same kind (from
+ *   `optimized.renderRules[kind]` or a per-call `deleteWrapper` fallback).
  * @returns `groupRule` — the inner seq-with-fields content; `groupSimplified` —
- *   the simplified view of that inner content.
+ *   the simplified view of that inner content; `groupRenderRule` — the
+ *   wrapper-deleted view of the inner content.
  * @remarks
  *   When the rule is a `GroupRule` the pre-computed `simplifiedRule` applies to
  *   the outer group wrapper; we want the inner content's simplified view to match
  *   what we're passing as `rule`. For the wrapper case the inner content's
  *   simplified view is computed on-the-fly. Non-group rules pass through as-is
  *   (the fallback path — groups that didn't get the GroupRule wrapper).
+ *
+ *   TODO PR2: group inner content is not a top-level kind and has no snapshot entry —
+ *   eliminate per-call simplifyRule / deleteWrapper once group inner content is snapshotted.
  */
-function unwrapGroupRuleAndSimplified(rule: Rule, simplifiedRule: Rule): { groupRule: Rule; groupSimplified: Rule } {
+function unwrapGroupRuleAndSimplified(
+	rule: Rule,
+	simplifiedRule: Rule,
+	renderRule: RenderRule
+): { groupRule: Rule; groupSimplified: Rule; groupRenderRule: RenderRule } {
 	const groupRule = rule.type === 'group' ? rule.content : rule;
 	const groupSimplified = rule.type === 'group' ? simplifyRule(groupRule) : simplifiedRule;
-	return { groupRule, groupSimplified };
+	// TODO PR2: group inner content has no snapshot entry — fallback to per-call deleteWrapper.
+	const groupRenderRule = rule.type === 'group' ? deleteWrapper(groupRule) : renderRule;
+	return { groupRule, groupSimplified, groupRenderRule };
 }
 
 // ---------------------------------------------------------------------------

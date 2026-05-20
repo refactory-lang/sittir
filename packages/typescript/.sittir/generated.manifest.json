@@ -1,12 +1,12 @@
 {
   "grammar": "typescript",
-  "generated_at": "2026-05-19T14:22:58.962Z",
-  "source_hash": "baddf2db25377fd38a694a251d36f2509f9bd866e5c523ea59f09cab471f6ab9",
+  "generated_at": "2026-05-19T18:52:33.354Z",
+  "source_hash": "0110d7356b6e86781a3d7faafc51f1dcaadedfa6d15c576366549176e41ce636",
   "files": {
-    "packages/typescript/.sittir/grammar.js": "97e56d81e78d6c84465f8f6884cc7466a70255e0137ebbad1ecafacbc947473e",
+    "packages/typescript/.sittir/grammar.js": "350624eb78d7fe2790a4e48d81182ee6457eb11fbcab58a12b86a3b6e8de324e",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
     "packages/typescript/.sittir/parser.wasm": "32915983bc2000fe0e578f5273e8ed42064419af22fa1fda160608ad8159ca36",
-    "packages/typescript/.sittir/src/grammar.json": "a5d2f81f250bea2bb170dab0c7c6a7063a2c08f34f1dfc91faa7900d3142ef24",
+    "packages/typescript/.sittir/src/grammar.json": "3b671f7a3685d278dc8d7c2fc9c2cd043e7cb8c16b9bb194135ab6f2a64f9708",
     "packages/typescript/.sittir/src/node-types.json": "af36fae15c76907d61d4ea4bdfcbb2f14ea3cccdd12e5c74f070c76468859b8a",
     "packages/typescript/.sittir/src/parser.c": "3e0bd4ead037c9a481ed05e9093d840c0fd384d9a0ec7571791da52d14b9eed2",
     "packages/typescript/.sittir/src/scanner.c": "9125013b42cb888379d9be909f1d73dfb75a37626c2cdbf4122718a2b431a6d3",

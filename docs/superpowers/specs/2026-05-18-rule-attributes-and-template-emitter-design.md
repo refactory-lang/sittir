@@ -1,20 +1,70 @@
 # Rule Attribute Enrichment + Template Emitter Refactor
 
-**Date**: 2026-05-18
-**Status**: Design — awaiting user review
-**Branch**: TBD (follow-on to current `024-rust-slot-surface-contract`)
+**Date**: 2026-05-18 (revised 2026-05-19 post-PR0)
+**Status**: PR0 shipped via [PR #34](https://github.com/refactory-lang/sittir/pull/34); PR1-PR3 designed per the post-PR0 architectural revisions below
+**Branch**: `024-rust-slot-surface-contract`
 **Related specs**: [`2026-05-15-024-cleanup-rules.md`](../conventions/2026-05-15-024-cleanup-rules.md), [`2026-05-17-kind-named-slots-design.md`](./2026-05-17-kind-named-slots-design.md), [`specs/020-template-engine-converge/spec.md`](../../../specs/020-template-engine-converge/spec.md)
 
-## Summary
+## PR0 shipped — addendum (2026-05-19)
 
-Refactor the codegen template pipeline in four sequenced PRs:
+PR0 closed via PR #34 with commits e63e9706 through 53c83058. Implementation surfaced architectural realizations that the original spec didn't anticipate; PR1-PR3 sections have been rewritten in place to reflect the post-PR0 reality. The original PR0 design body below remains for historical context (see "What PR0 does NOT touch" → that closing list is now stale; consult the per-PR sections for the current scope).
 
-1. **PR0** — Additive IR enrichment: every Rule gains modifier attributes (`fieldName`, `multiplicity`, `separator`, `trailing`, `leading`, `nonterminal`) populated when wrappers (`optional` / `repeat` / `repeat1` / `field`) would force their semantics. Wrappers untouched.
-2. **PR1** — New `emitters/templates.ts` runs in parallel with legacy `template-walker.ts`. ModelType-dispatching, follows the established emitter pattern. Reads enriched attributes from PR0. In-process diff gate enforces byte-identical output.
-3. **PR2** — Delete `template-walker.ts`, the `node-map.ts` translation pipeline, `AssembledXxx.renderTemplate()` methods, `ClauseRule` (27 sweep sites). Edge case (a)(b)(c) test additions land here.
-4. **PR3** — Delete `OptionalRule` / `FieldRule` / `RepeatRule` / `Repeat1Rule` wrapper rule types entirely. Compiler-side switches shrink. `node-model.ts` / `suggested.ts` / `compiler/grammar.ts` migrate with re-wrap logic. `node-model.json5` schema bump. Edge cases (d) multi-separator + (e) list-suffix divergence + spec 020 residual land here.
+## Second revision — parallel Rule types architecture (2026-05-19)
 
-Net code change estimate: **~−2,400 to −2,600 lines** across the four PRs, with the deletion concentrated in `template-walker.ts` (~1758), the `node-map.ts` translation pipeline (~1300), and `AssembledXxx.renderTemplate()` methods (~200), against ~800 lines added in the new emitter and ~150 in IR enrichment/migration.
+After PR0 + early PR1 work (Tasks 2.1-2.5b) surfaced 394 byte-divergences between the new emitter and the legacy walker, a second brainstorm pivoted to a parallel-Rule-types architecture. The PR1/PR2/PR3 sections below have been REPLACED with this architecture; old PR1-PR3 design body archived in git history (commit b9039b6d's prior content).
+
+### Architecture: three Rule shapes, one pipeline
+
+```
+link → optimize → simplify → assemble
+                  ↑                    ↓
+                  └─ applyWrapperDeletion (new last pass)
+                                       │
+optimize() returns:                    │
+  rawRules       (post-normalization) ─┼─► node.rule         (RawRule — for legacy walker)
+  renderRules    (post-wrapper-deletion)─► node.renderRule   (RenderRule — for new emitter)
+  simplifiedRules (post-simplify on renderRules)─► node.simplifiedRule (SimplifiedRule)
+```
+
+| Type | Shape | Used by |
+|---|---|---|
+| **RawRule** | Current Rule (post-normalization); wrappers preserved | Legacy walker (until PR3) |
+| **RenderRule** | RawRule + wrapper deletion (modifier wrappers `optional`/`field`/`repeat`/`repeat1` pushed down to leaf attributes); structural rules (seq/choice/variant/group/polymorph) preserved | New TemplateEmitter |
+| **SimplifiedRule** | RenderRule + simplify (anonymous tokens stripped + canonicalized via PR0's `canonicalizeSeqOfLeaves`); universal seq-of-leaves invariant after PR2 | factories/wrap/from/render-module (after PR3) |
+
+### Pipeline integration constraints (locked)
+
+1. `applyWrapperDeletion` is a **new pass at the end of `optimize.ts`**, after `applyNormalizationPasses`. Produces `renderRules` snapshot.
+2. `computeSimplifiedRules` function body **relocates from `optimize.ts:80-83` to `simplify.ts`** (principle: all simplification in simplify.ts). `optimize.ts` still orchestrates (calls into it).
+3. `simplifyRules` **input changes from RawRule to RenderRule** — the new shape, wrappers gone.
+4. `optimize()` returns multi-snapshot result: `{ rawRules, renderRules, simplifiedRules, ... }`.
+5. `assemble()` attaches all three forms per AssembledNode: `.rule`, `.renderRule`, `.simplifiedRule`.
+6. **`.simplifiedRule` REPLACES the existing `simplifyRule(init.rule)` per-node populator** (no rename, no `.derivationRule` shim — new shape replaces old). The unified `deriveSlots` entry point (already in place at `node-map.ts:1178`, replacing the older split between `deriveFields`/`deriveChildren`) and its internals (`deriveFieldsRaw`, separator discovery) update to walk the wrapper-less shape.
+
+### Key architectural realizations from PR0 (preserved from first revision)
+
+Key architectural realizations from PR0:
+
+1. **Auto-group synthesis lives in wire, not enrich**. Wire is where authored `groups:` synthesis already runs, and where rule injection reaches tree-sitter's parse-table generation. Auto-synthesis in enrich runs AFTER tree-sitter has consumed the grammar — synthesized rules never reach the parser. Module landed at `packages/codegen/src/dsl/wire/auto-groups.ts`.
+
+2. **Synthesis vs decomposition are separate concerns.** Synthesis (creating new hidden rules + symbol-ref replacement) belongs in wire. Decomposition (separator-lift, attribute stamping on Rule objects) belongs in link/evaluate (operates on sittir's internal Rule-object copy without leaking to tree-sitter or renderer).
+
+3. **Auto-synthesized rules are indistinguishable from upstream inline hidden rules.** Both go through `inline:` array → tree-sitter inlines them at parse → sittir's `classifyHiddenSeqRule` classifies them as GroupRule → assemble produces AssembledGroup. Same machinery; no new infrastructure needed. The "every kind has a kindId" invariant holds.
+
+4. **Naming convention**: `_<parent>_optional<N>` / `_<parent>_repeat<N>` (tree-sitter aux convention).
+
+5. **`applyAutoGroups` currently disabled** in wire.ts via `void (() => { ... })` wrapper because the original PR0 enrich-time activation regressed counts. Re-enabling is part of PR1 (post template-emitter rewrite).
+
+6. **Simplify post-condition helpers** (`canonicalizeSeqOfLeaves`, `assertUniversalShape`) exist in `compiler/simplify.ts` but not wired into production. PR2 wires `assertUniversalShape` after PR1's emitter is verified.
+
+## Summary (revised)
+
+Three remaining PRs:
+
+1. **~~PR0~~** — **SHIPPED** via PR #34. IR enrichment (rule attributes, back-pointer maps), enrich passes (fieldName/multiplicity propagation), auto-groups module extracted to `dsl/wire/auto-groups.ts` (disabled), simplify post-condition helpers added (not wired).
+2. **PR1** — Template emitter rewrite + re-enable `applyAutoGroups`. New `emitters/templates.ts` follows the established modelType-dispatching pattern (consumes `node.rule` + `nodeMap.slotByRuleId` back-pointer); runs in parallel with legacy walker via in-process diff gate. Edge cases (a)/(b)/(c) absorbed as side-effects of direct emit. Re-enable applyAutoGroups as final step — expectation: wire-time synthesis flows through `syntheticInline` → grammar.json `inline` → `inlineKinds` → existing inline-handling in factories/wrap/from. No new synthesizedInline-awareness infrastructure needed.
+3. **PR2** — Decomposition pass (separator-lift, attribute canonicalization) in `compiler/decompose.ts` or extension of `compiler/link.ts`. Delete `template-walker.ts`, translation pipeline in `node-map.ts`, `AssembledXxx.renderTemplate()` methods. Delete `ClauseRule` + sweep `'clause'` case sites (re-derive count via `rg`). Wire `assertUniversalShape` into production.
+4. **PR3** — Delete `OptionalRule`/`FieldRule`/`RepeatRule`/`Repeat1Rule` wrapper rule types. Compiler-side switches shrink. `node-model.ts`/`suggested.ts`/`wire.ts` re-wrap for cross-process consumers. `node-model.json5` schema bump. Edge cases (d) multi-separator + (e) list-suffix + (f) vocabulary alignment land here.
 
 ## Motivation
 
@@ -65,7 +115,9 @@ A single gate applies to every PR. The gate is composed of three checks:
 
 The pre-snapshot baseline requirement is critical — the branch is currently 62+ commits ahead of origin with multiple in-flight workstreams (kind-named slots, groups synthesis). If `pnpm regen-all` produces a non-empty diff against checked-in artifacts before this refactor starts, that's a separate problem that must be resolved first.
 
-## PR0 — IR enrichment (purely additive)
+## PR0 — IR enrichment (~~purely additive~~ — SHIPPED via PR #34)
+
+> **Status**: shipped. Original spec body below preserved for context. The "auto-decomposition runs in enrich" framing was wrong; final landing is `applyAutoGroups` in `dsl/wire/auto-groups.ts` (disabled, re-enabled in PR1). The "(a)/(b)/(c) edge case absorption" was moved to PR1 (template emitter rewrite) since enrich doesn't touch the walker.
 
 ### Goal
 
@@ -373,351 +425,122 @@ These are the runtime lookup mechanism for PR1's emitter (and any future emitter
 - 27 `'clause'` case sites (intact)
 - Wrapper rule types (`OptionalRule`, `FieldRule`, `RepeatRule`, `Repeat1Rule`) (intact)
 
-## PR1 — Parallel template emitter
+## PR1 — RenderRule + simplify-against-RenderRule + relocation + consumer migration (SHIPPED 2026-05-19)
 
-### Goal
+**Status:** SHIPPED. Eight commits on `024-rust-slot-surface-contract` (PR #34), combined with PR0 closeout in the same PR.
 
-Add a new `emitters/templates.ts` following the standard emitter pattern. Run in parallel with the legacy walker; assert byte-identical output during regen.
+### What shipped
 
-### Top-level shape
+- `86134994` Define `RenderRule` type alias — `Exclude<Rule, OptionalRule | FieldRule | RepeatRule | Repeat1Rule>` with a brand
+- `cd0139c3` `applyWrapperDeletion` pass + `renderRules` snapshot on `OptimizedGrammar`
+- `a27ac1fe` Relocate `computeSimplifiedRules` from `optimize.ts` to `simplify.ts`; input switched from RawRule to RenderRule
+- `c18ea49a` Attach `.renderRule` on AssembledNode (Branch + Group); snapshot lookup in `assemble.ts` (3 of 4 per-call `simplifyRule` invocations migrated; 3 marked `// TODO PR2:` for alias bodies, polymorph form content, group inner content)
+- `39b3a7e3` `deriveSlots` populator + `findRepeatFlag` made attribute-aware (read leaf RuleBase `fieldName`/`multiplicity`/`separator` when wrapper structures absent); closes the 9 test regressions introduced by `a27ac1fe`
+- `769005a1` Polymorph map identity-preservation fix in `auto-groups.ts` (Copilot review)
+- `72d7f55a` Skip `auto-groups` wire() integration test until PR2 re-enables `applyAutoGroups` (Copilot review)
+- `fda93103` Rename internal slot helpers: `deriveFieldsRaw` → `deriveSlotsRaw`, `_deriveFieldsInternal` → `_deriveSlotsInternal`, `mergeFieldsByName` → `mergeSlotsByName`, `deriveFieldsRawFromLeafAttr` → `deriveSlotsRawFromLeafAttr` (vocabulary alignment per `feedback_rule_slot_vocabulary_alignment`)
 
-```ts
-// emitters/templates.ts (rewritten)
-export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
-  emit(): EmittedTemplates {
-    const bodies = new Map<string, string>();
-    for (const [kind, node] of this.#config.nodeMap.nodes) {
-      const body = this.#emitOne(node);
-      if (body === undefined) continue;
-      bodies.set(kind, GENERATED_HEADER + body);
-    }
-    return { bodies };
-  }
+### Final test counts (PR1 close)
 
-  #emitOne(node: AssembledNode): string | undefined {
-    switch (node.modelType) {
-      case 'branch':    return emitBranchTemplate(node, this.#ctx);
-      case 'polymorph': return emitPolymorphTemplate(node, this.#ctx);
-      case 'group':     return emitGroupTemplate(node, this.#ctx);
-      case 'multi':     return emitMultiTemplate(node, this.#ctx);
-      case 'supertype': case 'pattern': case 'keyword':
-      case 'token':     case 'enum':    return undefined;
-      default: {
-        const _exhaustive: never = node;
-        throw new Error(`unhandled ${(_exhaustive as AssembledNode).modelType}`);
-      }
-    }
-  }
-}
+- codegen vitest: **36 file-fail / 54 file-pass, 166 test-fail / 821 test-pass, 25 skipped** — at or slightly better than pre-PR1 baseline (37/53, 167/821, 24)
+- Per-grammar native counts (`pnpm validate:native`): blocked by pre-existing `TemplateEmitter divergence on kind _array_expression_list (group)` error in `templates.ts`. This is the byte-equivalence diff gate from the early-PR1-rewrite-attempt that surfaced 394 divergences and motivated the parallel-types pivot. Blocker unrelated to PR1 commits; PR2 closes it.
+
+### PR1 architectural footprint
+
+```
+link → optimize → simplify → assemble
+                  ↑                    ↓
+                  └─ applyWrapperDeletion (new last pass)
+                                       │
+optimize() returns:                    │
+  rawRules       (post-normalization) ─┼─► node.rule         (RawRule — for legacy walker)
+  renderRules    (post-wrapper-deletion)─► node.renderRule   (RenderRule — for future emitter)
+  simplifiedRules (simplify(renderRules))─► node.simplifiedRule (SimplifiedRule shape)
 ```
 
-`EmitCtx` carries cross-cutting read-only context: hidden-symbol resolution (`rules` map), word-matcher regex, externals list, NodeMap (for ruleId back-pointer lookups). No metadata accumulators.
+## PR2 — Canonicalization + new TemplateEmitter + deprecate derive\* (2026-05-19 THIRD REVISION)
 
-### Per-modelType emit functions
+Goal: wire PR0's universal-shape helpers into production, build the new modelType-dispatching TemplateEmitter, **replace the recursive `deriveSlotsRaw` walker with a one-shot dispatch on canonical SimplifiedRule**, close the `validate:native` divergence blocker, and re-enable `applyAutoGroups`.
 
-Each takes `node.rule` (the preserved raw rule, enriched in PR0) and walks it via `emitRule`:
+### Architectural target
 
-```ts
-function emitBranchTemplate(node: AssembledBranch, ctx: EmitCtx): string {
-  return emitRule(node.rule, ctx);
-}
+After PR2, every rule body (post-simplify+canonicalize) normalizes to ONE of:
+- `seq` containing a flat list of leaves (each leaf carries `fieldName` / `multiplicity` / `separator` as RuleBase attributes)
+- `choice` (alternatives)
+- `repeat` (single wrapped member or flat members)
+- `enum` / `string` / `pattern` (leaf-terminals)
 
-function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
-  return emitRule(node.rule, ctx);
-}
+Once that invariant holds, slot derivation becomes a one-shot mapping, not a tree walk. `deriveSlotsRaw` and its switch over 11+ wrapper/structural cases collapses to a small dispatch.
 
-function emitMultiTemplate(node: AssembledMulti, ctx: EmitCtx): string {
-  return emitRule(node.rule, ctx);
-}
+### Simplify-side
 
-function emitPolymorphTemplate(node: AssembledPolymorph, ctx: EmitCtx): string {
-  return node.forms.map(form =>
-    `{%- if $variant == "${form.name}" -%}${emitRule(form.rule, ctx)}{%- endif -%}`
-  ).join('');
-}
-```
+1. Define `SimplifiedRule` branded type alias in `compiler/rule.ts` — `RenderRule & { readonly __simplifiedRule?: never }`
+2. Wire `canonicalizeSeqOfLeaves` as first step inside `computeSimplifiedRules` in `simplify.ts` (PR0 helper, currently unwired)
+3. Wire `assertUniversalShape` as post-condition of `computeSimplifiedRules` (PR0 helper, currently unwired)
+4. `.simplifiedRule` shape refines: `simplify(canonicalize(RenderRule))` — universal seq-of-leaves invariant
 
-### `emitRule` — the Rule.type dispatch
+### Slot derivation rewrite (replaces PR1's attribute-aware `deriveSlotsRaw`)
 
-This survives the walker deletion, but it lives in the emitter file (per the emitter pattern) and reads enriched attributes from PR0 directly:
+5. Replace `deriveSlotsRaw` / `_deriveSlotsInternal` / `mergeSlotsByName` with a direct dispatch on canonical SimplifiedRule shape. No recursive walking. Each modelType (branch / polymorph / group / multi) gets a small per-shape handler:
+   - `seq` → `members.map(leafToSlot)` then `mergeSlotsByName`-equivalent (if still needed)
+   - `choice` → polymorph-style alternative slots OR a single choice-slot whose values union the arms
+   - `repeat` → single slot wrapping inner (multiplicity = `'array' | 'nonEmptyArray'`)
+   - leaf terminals (`enum` / `string` / `pattern`) → no slot (this IS the value)
+6. The `deriveSlots` public entry point keeps its signature; the internal helpers shrink dramatically
+7. Wrapper-case branches in the rewritten function become unreachable; `assertUniversalShape` enforces they never appear
 
-```ts
-function emitRule(rule: Rule, ctx: EmitCtx): string {
-  // PR0 enrichment: leaf rules with fieldName / multiplicity attributes are slots
-  if (rule.fieldName !== undefined || rule.multiplicity === 'array' || rule.multiplicity === 'nonEmptyArray') {
-    return emitSlot(rule, ctx);
-  }
-  switch (rule.type) {
-    case 'string':   return escapeLiteral(rule.value);
-    case 'seq':      return rule.members.map(m => emitRule(m, ctx)).join('');
-    case 'optional': return emitOptional(rule, ctx);   // wraps inner with {%- if x | isPresent %} ... {%- endif %}; flanking literals are seq members per universal shape
-    case 'repeat':
-    case 'repeat1':  return emitRepeat(rule, ctx);     // reads rule.separator (string | Rule[] | { rules, trailing?, leading? }) per PR0
-    case 'choice':   return emitChoice(rule, ctx);
-    case 'variant':  return emitRule(rule.content, ctx);    // transparent at emit time
-    case 'group':    return emitRule(rule.content, ctx);
-    case 'clause':   return emitClause(rule, ctx);          // PR1 transitional — detectClause still runs in Link until PR2 deletes both
-    case 'field':    return emitRule(rule.content, ctx);    // attribute already on inner via PR0
-    case 'symbol':   return emitSymbol(rule, ctx);
-    case 'token':
-    case 'alias':
-    case 'terminal': return emitRule(rule.content, ctx);
-    case 'enum':     return rule.members.map(m => escapeLiteral(m.value)).join('');
-    case 'pattern':  return '';
-    default: {
-      const _exhaustive: never = rule;
-      throw new Error(`emitRule: unhandled ${(_exhaustive as Rule).type}`);
-    }
-  }
-}
+### Emitter-side
 
-function emitSlot(rule: Rule, ctx: EmitCtx): string {
-  // Use ruleId back-pointer to fetch the AssembledNonterminal.
-  const slot = rule.id ? ctx.nodeMap.slotByRuleId.get(rule.id) : undefined;
-  const propertyName = slot?.propertyName ?? snakeToCamel(rule.fieldName ?? 'value');
-  const multi = rule.multiplicity;
+8. Build new modelType-dispatching `TemplateEmitter` in `emitters/templates.ts` consuming `node.renderRule` (per design — RenderRule has wrappers gone but structural rules preserved, sufficient for emission without further canonicalization)
+9. Per-modelType dispatch following the established emitter pattern (matches `factories.ts` / `wrap.ts` / `from.ts` / `render-module.ts`)
+10. **Replaces the byte-equivalence diff gate** in `templates.ts` (which currently throws on `_array_expression_list` and blocks `pnpm validate:native`) with a **slot-preservation gate** — per kind, verify each declared slot appears in the emitter's output exactly once
+11. Eliminate hardcoded heuristics in emitter (`needsSpace` and similar) — emitter outputs literally what rule structure says
 
-  if (multi === 'array' || multi === 'nonEmptyArray') {
-    // separator: string | readonly Rule[] | { rules, trailing?, leading? }
-    const s = rule.separator;
-    const sepRules = typeof s === 'string' ? [s]
-                  : Array.isArray(s) ? s.map(stringifyRule)
-                  : (s && 'rules' in s) ? s.rules.map(stringifyRule)
-                  : [' '];
-    const sep = sepRules.join('');
-    const placement = (s && typeof s === 'object' && 'rules' in s) ? s : undefined;
-    const filter = placement?.trailing ? 'joinWithTrailing'
-                : placement?.leading  ? 'joinWithLeading'
-                : 'join';
-    return `{{ ${propertyName} | ${filter}("${escapeJinjaString(sep)}") }}`;
-  }
-  if (multi === 'optional') {
-    return `{%- if ${propertyName} | isPresent %}{{ ${propertyName} }}{%- endif %}`;
-  }
-  return `{{ ${propertyName} }}`;
-}
-```
+### Wire-side
 
-### Parallel emit + in-process diff gate
+12. Re-enable `applyAutoGroups` in `dsl/wire/wire.ts` (PR0 left it disabled via `void` wrapper)
+13. Un-skip the `auto-groups` wire() integration test that PR1 skipped via `72d7f55a`
 
-During PR1's lifetime, the TemplateEmitter's `emit()` runs BOTH the legacy walker (via the existing `node.renderTemplate()` method) AND the new per-modelType emit functions. The outputs are diffed in-process per kind. If any divergence exists, regen fails loud with the kind + diff.
+### PR2 gate
 
-This gate is **stricter** than the post-regen snapshot diff: it catches divergences during regen rather than after, with a per-kind locator. The snapshot diff is the secondary safety net (catches anything that escapes the per-kind in-process diff).
+- `pnpm validate:native` runs to completion (divergence blocker cleared)
+- Snapshot drift expected (new emitter writes different bytes than walker — by design)
+- Slot-preservation passes across all kinds in all 3 grammars
+- `assertUniversalShape` passes on every post-simplify rule
+- Counts hold at baseline (rust RT 134/136, ts RT 81/111, py RT 93/115)
+- Auto-groups integration test re-enabled and passing
 
-```ts
-// emitters/templates.ts — during PR1
-const legacyBody = node.renderTemplate(ctx.rules, ctx.wordMatcher, ctx.externals)?.body;
-const newBody = this.#emitOne(node);
-if (legacyBody !== newBody) {
-  throw new Error(`TemplateEmitter divergence on kind ${kind}:\nlegacy=${JSON.stringify(legacyBody)}\nnew=${JSON.stringify(newBody)}`);
-}
-```
+## PR3 — Delete legacy + downstream consumer migration
 
-### PR1 deliverables
+Goal: delete the legacy walker, translation pipeline, ClauseRule, wrapper rule types, RawRule snapshot, AssembledXxx.renderTemplate methods. Migrate factories/wrap/from/render-module to consume SimplifiedRule.
 
-- [ ] New `emitters/templates.ts` with modelType dispatch + per-modelType emit functions
-- [ ] `emitRule` reads PR0 enriched attributes (`fieldName`, `multiplicity`, `separator` in its structured form, `nonterminal`)
-- [ ] `emitSlot` uses `nodeMap.slotByRuleId(rule.id)` for `propertyName` / `storageName` lookups
-- [ ] Internal helpers: `escapeLiteral`, `escapeJinjaString`, `stringifyRule`, `snakeToCamel`, plus rule-type helpers (`emitOptional`, `emitRepeat`, `emitChoice`, `emitSymbol`, `emitClause`)
-- [ ] In-process diff gate during regen
-- [ ] Legacy walker + `AssembledXxx.renderTemplate()` methods + translation pipeline UNTOUCHED
-- [ ] **Gate**: snapshot zero drift + in-process diff zero divergence + counts no regression
+After PR2's slot-derivation rewrite, this PR is mostly mechanical deletion — no consumers are left walking wrapper structures by the time PR3 starts.
 
-## PR2 — Legacy delete + ClauseRule sweep
+1. Migrate `factories.ts`, `wrap.ts`, `from.ts`, `render-module.ts` to consume `.simplifiedRule` (SimplifiedRule) where they currently read `.rule` (RawRule)
+2. Delete `template-walker.ts` (~1758 lines)
+3. Delete translation pipeline in `node-map.ts`: `inlineJinjaClauses`, `translateToJinja`, spacing absorbers, `JinjaTranslateMeta`
+4. Delete `AssembledBranch/Polymorph/Group/Multi.renderTemplate()` methods
+5. Delete `ClauseRule`, `isClause`, `detectClause`; sweep `'clause'` case sites (re-derive count via `rg`)
+6. Delete wrapper rule types (`OptionalRule`/`FieldRule`/`RepeatRule`/`Repeat1Rule`) — no consumers left (PR2's derive rewrite ensured this)
+7. Delete RawRule snapshot from `optimize()` return; `node.rule` field deleted or repurposed
+8. Delete `applyWrapperDeletion` itself once `RawRule === Rule === RenderRule` (wrapper types gone means deletion is a no-op alias)
+9. `node-model.ts` / `suggested.ts` / `wire.ts` re-wrap passes for cross-process consumers needing wrapped-form output
+10. Delete the 3 `// TODO PR2:` per-call `simplifyRule` fallbacks in `assemble.ts` (alias bodies, polymorph form content, group inner content) — PR2 will have either eliminated them or made them harmless
+11. Edge cases (a)/(b)/(c)/(d)/(e)/(f) absorbed where they fit (most as side-effects of new pipeline)
 
-### Goal
+### PR3 gate
+- Snapshot drift expected (many deletions)
+- Counts hold at baseline
 
-After PR1 burns in for a settling period (~1 day), delete the legacy template-walker + translation pipeline + `AssembledXxx.renderTemplate()` methods + `ClauseRule` and all 27 `'clause'` case sites.
+## Edge case absorption ledger (REVISED 2026-05-19)
 
-### Files deleted entirely
-
-- `packages/codegen/src/compiler/template-walker.ts` (~1758 lines)
-
-### Functions / methods deleted
-
-| Item | Location | Lines (approx) |
-|---|---|---|
-| `inlineJinjaClauses` | node-map.ts:1737 | ~120 |
-| `translateToJinja` | node-map.ts:2059 | ~200 |
-| `escapeJinjaBraceCollisions` | node-map.ts:2538 | ~40 |
-| `JinjaTranslateMeta` interface + 3 assembly sites | node-map.ts | ~120 |
-| `AssembledBranch.renderTemplate` | node-map.ts:2848 | ~50 |
-| `AssembledPolymorph.renderTemplate` | node-map.ts:3317 | ~80 |
-| `AssembledGroup.renderTemplate` | node-map.ts:3847 | ~50 |
-| `AssembledMulti.renderTemplate` (if present) | node-map.ts | ~20 |
-| `WalkResult`, `WalkSlotUse`, `deriveWalkSlots` | template-walker.ts (deleted) | — |
-| `ClauseRule` interface + `isClause` guard | rule.ts:133, 341 | ~10 |
-| `detectClause` | link.ts:2282 | ~20 |
-
-### The 27 `'clause'` case sweep
-
-Each `case 'clause':` in the codebase falls into one of three patterns; the migration is mechanical:
-
-| Pattern | Migration |
-|---|---|
-| `case 'clause': return walkInner(rule.content)` (transparent unwrap) | Folded into `case 'optional':` — clause was always optional-shaped |
-| `case 'clause': /* simplification */` | Folded into 'optional' case which now handles the same shape |
-| `case 'clause': /* type guard */` (`if (r.type === 'optional' \|\| r.type === 'clause')`) | Drop `\|\| r.type === 'clause'` — covered by 'optional' |
-
-Sites by file (approximate, from `rg -c "case 'clause'"`):
-- `optimize.ts`: 7 sites
-- `node-map.ts`: 8 sites (mostly in the translation pipeline being deleted)
-- `template-walker.ts`: 9+ sites (file deleted entirely)
-- `link.ts`: 2 sites (`detectClause` + rule-type literal)
-- `field-shape.ts`: 1 site
-- `rule.ts`: ClauseRule + isClause definitions
-
-### In-scope edge cases (a)(b)(c) landed in PR2
-
-| Edge case | Memory entry | How PR2 resolves it |
-|---|---|---|
-| (a) Walker hotspot — 3 fixes, no tests | `walker_hotspot` | Walker deleted; the 3 fixes' INTENT becomes test cases in `__tests__/templates-emitter.test.ts` against the new emit functions. Each fix's symptom + test is documented inline. |
-| (b) Choice-branch literal drop | `choice_with_literals_cluster` | Walker deleted; choice handling moves to `emitChoice` in the new emitter. The new emitter does not have the "drop literals from non-primary branches" bug because there's no branch-walking; choices are either polymorph forms (with explicit variant guards) or simple alternates. |
-| (c) Adjacency for scanner-delimited kinds | `template_walker_adjacency` | Spacing absorbers deleted; the new emitter outputs literals exactly as captured on rules. Adjacency is the natural default. The `renderTemplate` text fallback referenced in the memory entry becomes unnecessary. |
-
-### PR2 deliverables
-
-- [ ] Delete `template-walker.ts`
-- [ ] Delete translation pipeline functions in `node-map.ts`
-- [ ] Delete `AssembledXxx.renderTemplate()` methods
-- [ ] Delete `ClauseRule`, `isClause`, `detectClause`
-- [ ] Sweep 27 `'clause'` case sites
-- [ ] Add `__tests__/templates-emitter.test.ts` with explicit tests for each walker hotspot fix's intent
-- [ ] Remove the in-process diff gate from PR1 (only the new emitter runs)
-- [ ] **Gate**: snapshot zero drift + counts no regression
-
-## PR3 — Wrapper rule type deletion (push-down completion)
-
-### Goal
-
-Delete `OptionalRule`, `FieldRule`, `RepeatRule`, `Repeat1Rule` from the Rule union entirely. The information they carried already lives on the inner rule as attributes (from PR0 enrichment, which has been live since PR0 merged). This PR is the cleanup that removes the now-redundant wrapper structures.
-
-### IR changes
-
-```ts
-// compiler/rule.ts — Rule union shrinks
-export type Rule =
-  | SymbolRule
-  | StringRule
-  | EnumRule
-  | TerminalRule
-  | PatternRule
-  | AliasRule
-  | TokenRule
-  | SeqRule
-  | ChoiceRule
-  | PolymorphRule
-  | VariantRule
-  | GroupRule
-  // DELETED: OptionalRule, FieldRule, RepeatRule, Repeat1Rule
-  ;
-```
-
-Every remaining rule type extends `RuleBase` with the PR0 attribute set. Type guards (`isOptional`, `isField`, `isRepeat`, `isRepeat1`) are deleted; semantic checks become attribute reads:
-- `isOptional(r)` → `r.multiplicity === 'optional'`
-- `isField(r)` → `r.fieldName !== undefined`
-- `isRepeat(r)` → `r.multiplicity === 'array'`
-- `isRepeat1(r)` → `r.multiplicity === 'nonEmptyArray'`
-
-### Link normalization pass
-
-A new normalization pass (or extension to PR0's enrichment passes) collapses any remaining wrapper structures into pure attribute form:
-
-```ts
-// compiler/link.ts — runs after PR0 enrichment, in PR3
-function normalizeAttributesOnly(rule: Rule): Rule {
-  // Recursively walk; replace optional/field/repeat/repeat1 wrappers with their inner rules
-  // (which already carry the modifier attributes from PR0 enrichment).
-  switch (rule.type) {
-    case 'optional':
-      return normalizeAttributesOnly(rule.content); // content already has multiplicity: 'optional'
-    case 'field':
-      return normalizeAttributesOnly(rule.content); // content already has fieldName + nonterminal
-    case 'repeat':
-      return normalizeAttributesOnly(rule.content); // content already has multiplicity: 'array'
-    case 'repeat1':
-      return normalizeAttributesOnly(rule.content); // content already has multiplicity: 'nonEmptyArray'
-    // ... recurse into structural rules
-    default:
-      return rule;
-  }
-}
-```
-
-After normalization, no rule in the IR is a wrapper rule type. The Rule union types can be safely deleted.
-
-### Compiler-side migration
-
-The 317 `'clause'`/wrapper case sites identified earlier are concentrated in:
-- `link.ts`: 65 (the IR machinery itself)
-- `node-map.ts`: 48 (assembly logic; many in the translation pipeline already deleted in PR2)
-- `evaluate.ts`: 33 (DSL evaluation)
-- `simplify.ts`: 32 (canonicalization)
-- `optimize.ts`: 29 (folding)
-- `group-synthesis.ts`: 18 (groups: synthesis)
-- Others: ~47
-
-**Most of these SHRINK rather than migrate** because they exist BECAUSE of the wrapper types:
-- `case 'field': return derive(rule.content)` → delete (rule itself has `fieldName`)
-- `case 'optional': return walkInner(rule.content)` → delete (rule itself has `multiplicity: 'optional'`)
-- `if (rule.type === 'field' && rule.content.type === 'symbol')` → just `if (rule.fieldName)`
-
-Net expected outcome: compiler-side line counts SHRINK from this PR, not grow.
-
-### Emitter migration (the 2 emitters that DO consume Rule.type)
-
-The pattern audit confirmed only TWO emitters consume Rule.type (the rest consume AssembledNode):
-
-**`emitters/node-model.ts` (~5 sites)** — serializes rules to `node-model.json5`. The serialized shape changes; bump the schema version. Provide a migration step in `packages/codegen/src/cli.ts` that reads the old format and writes the new on first regen.
-
-**`emitters/suggested.ts` (many sites)** — re-prints rule trees as TypeScript override syntax. Needs a re-wrap pass:
-
-```ts
-// emitters/suggested.ts — re-wrap from attribute form to TS source
-function emitRuleExpr(rule: Rule): string {
-  let expr = baseExpr(rule);                // type-specific: $symbol, "string", choice(...), seq(...), etc.
-  if (rule.multiplicity === 'array')         expr = `repeat(${expr})`;
-  if (rule.multiplicity === 'nonEmptyArray') expr = `repeat1(${expr})`;
-  if (rule.multiplicity === 'optional')      expr = `optional(${expr})`;
-  if (rule.fieldName)                        expr = `field('${rule.fieldName}', ${expr})`;
-  return expr;
-}
-```
-
-### Tree-sitter grammar emit (`compiler/grammar.ts`)
-
-Same re-wrap pass as `suggested.ts` but produces the tree-sitter `grammar.js` source. Outputs canonical wrapped form: `field('name', optional(repeat($.X)))`.
-
-### Edge cases (d) + (e) + spec 020 residual landing in PR3
-
-| Edge case / item | Memory entry | How PR3 resolves it |
-|---|---|---|
-| (d) Multi-separator-per-field | `multi_separator_templates`, spec 020 residual | `RepeatRule.separator` widened in PR0 to `string \| Rule[]` is now the canonical form. Multi-separator support requires render-engine filter additions; design here, implementation in PR3 if filter exists or follow-on if engine work is needed. |
-| (e) List-suffix divergence (bare vs `_list`) | `template_list_suffix_divergence`, spec 020 residual | `slot.propertyName` is the single source of truth in the new emitter; the bare-vs-suffix divergence cannot occur because there's one naming axis. |
-| Vocabulary alignment (e.g. `hasTrailing` → `trailing` on AssembledNonterminal) | `feedback_rule_slot_vocabulary_alignment` | Migration completed as part of PR3's broader IR cleanup. |
-| Spec 020 original template-engine-convergence backlog | spec 020 was Implemented at "render pipeline optimization" scope, but the original template-engine items never landed | Absorbed in PR3. Spec 020 disposition: see below. |
-
-### PR3 deliverables
-
-- [ ] Delete `OptionalRule`, `FieldRule`, `RepeatRule`, `Repeat1Rule` from Rule union
-- [ ] Add `normalizeAttributesOnly` Link pass (or extend PR0 enrichment)
-- [ ] Migrate compiler-side switches (sweep: 317 sites; many delete)
-- [ ] Migrate `emitters/node-model.ts` (schema bump + migration step in cli.ts)
-- [ ] Migrate `emitters/suggested.ts` (re-wrap pass)
-- [ ] Migrate `compiler/grammar.ts` (re-wrap pass for tree-sitter)
-- [ ] Unify `hasTrailing`/`hasLeading` → `trailing`/`leading` on AssembledNonterminal
-- [ ] Multi-separator (d) and list-suffix (e) cases verified working; ast counts improve
-- [ ] **Gate**: snapshot drift allowed paired with counts improvement + spec-doc ledger entry; counts no regression in cov/RT/RT-shallow/factory/from
-
-## Edge case absorption ledger
-
-Tracked across PR2 and PR3:
+Tracked across PR1 and PR3 (PR0 shipped; PR2 is pure deletion/sweep):
 
 | # | Edge case | Memory | Landing PR | Status |
 |---|---|---|---|---|
-| a | Walker hotspot — 3 fixes without tests | `walker_hotspot` | PR2 | TBD |
-| b | Choice-branch literal drop | `choice_with_literals_cluster` | PR2 | TBD |
-| c | Template-walker adjacency | `template_walker_adjacency` | PR2 | TBD |
+| a | Walker hotspot — 3 fixes without tests | `walker_hotspot` | PR1 | TBD — side-effect of walker deletion; intent moves to new emitter tests |
+| b | Choice-branch literal drop | `choice_with_literals_cluster` | PR1 | TBD — new emitter handles choices directly; no branch-walking gap |
+| c | Template-walker adjacency | `template_walker_adjacency` | PR1 | TBD — spacing absorbers deleted; adjacency natural under direct emit |
 | d | Multi-separator-per-field | `multi_separator_templates` | PR3 | TBD |
 | e | List-suffix divergence | `template_list_suffix_divergence` | PR3 | TBD |
 | f | Vocabulary alignment (hasTrailing→trailing) | `feedback_rule_slot_vocabulary_alignment` | PR3 | TBD |

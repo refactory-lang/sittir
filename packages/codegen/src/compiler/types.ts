@@ -19,7 +19,7 @@
  * too; splitting it into `./node-map.ts` is a later step.
  */
 
-import type { Rule, RuleId, SymbolRef } from './rule.ts';
+import type { Rule, RenderRule, RuleId, SymbolRef } from './rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
 
@@ -418,6 +418,20 @@ export interface OptimizedGrammar {
 	 * delimiters to surface as template literals.
 	 */
 	readonly simplifiedRules: Record<string, Rule>;
+	/**
+	 * Wrapper-deleted view of every rule in `rules`, produced by
+	 * `applyWrapperDeletion` as the new last pass in `optimize()`.
+	 * Modifier wrappers (optional / field / repeat / repeat1) have been
+	 * pushed down to leaf attributes (fieldName / multiplicity / separator)
+	 * on RuleBase. Structural rules (seq / choice / variant / group /
+	 * polymorph) are preserved and recursed into.
+	 *
+	 * The new template emitter (PR1) reads from `renderRules` instead of
+	 * `rules` so it never has to look through a wrapper to get modifier
+	 * metadata. Task 2.A3 switches `computeSimplifiedRules` to use this
+	 * map as input.
+	 */
+	readonly renderRules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;
 	readonly word: string | null;
 	readonly externals?: readonly string[];

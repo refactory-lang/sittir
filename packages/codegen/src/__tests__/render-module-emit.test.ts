@@ -125,7 +125,7 @@ describe('deriveChildrenKinds', () => {
 		// Children are always stored as unresolved refs in the assembled IR.
 		// deriveChildrenKinds must use the ref's .name (grammar kind string)
 		// so classifySlotForEmit can look up the kind in nodeMap — the same
-		// approach AssembledField.projection.kinds uses in deriveFieldsRaw.
+		// approach AssembledField.projection.kinds uses in deriveSlotsRaw.
 		const mockChild = {
 			values: [
 				{ kind: 'node-ref', node: { kind: 'identifier' }, multiplicity: 'array' },

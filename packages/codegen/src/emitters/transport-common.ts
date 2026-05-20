@@ -140,7 +140,7 @@ export function acceptedTransportKinds(kind: string, nodeMap?: NodeMap): string[
  *
  * Unresolved refs are included using their `name` (the grammar kind string,
  * e.g. `_expression`) — mirroring how `AssembledNonterminal.projection.kinds`
- * is built in `deriveFieldsRaw`.
+ * is built in `deriveSlotsRaw`.
  *
  * @param child - any AssembledNonterminal (field or children slot)
  * @returns deduplicated list of resolved kind names

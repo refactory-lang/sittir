@@ -31,7 +31,9 @@
  * produces a full `simplifiedRules` map on `OptimizedGrammar`.
  */
 
-import type { Rule, ChoiceRule, SeqRule, FieldRule, RepeatRule, Repeat1Rule } from './rule.ts';
+import type { Rule, RenderRule, ChoiceRule, SeqRule, FieldRule, RepeatRule, Repeat1Rule } from './rule.ts';
+import type { AssembledNode } from './node-map.ts';
+import { compileWordMatcher } from './common.ts';
 
 /** Does this string lex as a "word" under the grammar's `word` rule? */
 /**
@@ -59,6 +61,31 @@ function isKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean
 	return /^\w+$/.test(value);
 }
 
+/**
+ * Copy `fieldName` / `multiplicity` / `separator` from `original` onto
+ * `result` when `original` carries those attributes and `result` does not
+ * already have them. Used by `simplifyRule` rewrite branches that create new
+ * rule objects (e.g. `case 'seq':` filtering members, `case 'choice':`
+ * merging branches) to ensure RuleBase modifier attributes stamped by
+ * `applyWrapperDeletion` are not silently dropped during simplification.
+ *
+ * Only non-undefined values are transferred; `result`'s own values always
+ * win (non-overriding).
+ */
+function withAttrsFrom(original: Rule, result: Rule): Rule {
+	const { fieldName, multiplicity, separator } = original;
+	if (fieldName === undefined && multiplicity === undefined && separator === undefined) return result;
+	const patch: Record<string, unknown> = {};
+	if (fieldName !== undefined && !Object.prototype.hasOwnProperty.call(result, 'fieldName'))
+		patch['fieldName'] = fieldName;
+	if (multiplicity !== undefined && !Object.prototype.hasOwnProperty.call(result, 'multiplicity'))
+		patch['multiplicity'] = multiplicity;
+	if (separator !== undefined && !Object.prototype.hasOwnProperty.call(result, 'separator'))
+		patch['separator'] = separator;
+	if (Object.keys(patch).length === 0) return result;
+	return { ...result, ...patch };
+}
+
 export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean = false): Rule {
 	switch (rule.type) {
 		case 'seq': {
@@ -71,9 +98,9 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
 					return true;
 				})
 				.flatMap((m) => (m.type === 'seq' ? m.members : [m]));
-			if (members.length === 0) return { type: 'seq', members: [] };
-			if (members.length === 1) return members[0]!;
-			return { type: 'seq', members };
+			if (members.length === 0) return withAttrsFrom(rule, { type: 'seq', members: [] });
+			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
+			return withAttrsFrom(rule, { type: 'seq', members });
 		}
 		case 'choice': {
 			// Variant wrappers preserved for polymorph surface detection.
@@ -82,10 +109,10 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
 			const empty = members.findIndex(isEmptyMatchMember);
 			if (empty >= 0 && members.length > 1) {
 				const nonEmpty = members.filter((_, i) => i !== empty);
-				const inner: Rule = nonEmpty.length === 1 ? nonEmpty[0]! : { type: 'choice', members: nonEmpty };
-				return simplifyRule({ type: 'optional', content: inner }, wordMatcher, inField);
+				const inner: Rule = nonEmpty.length === 1 ? nonEmpty[0]! : withAttrsFrom(rule, { type: 'choice', members: nonEmpty });
+				return simplifyRule(withAttrsFrom(rule, { type: 'optional', content: inner }), wordMatcher, inField);
 			}
-			if (members.length === 1) return members[0]!;
+			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
 			// Merge structurally-equivalent choice branches so same-
 			// named fields across branches fuse into a single field
 			// with union content. Closes `BinaryExpression.
@@ -93,7 +120,7 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
 			// walked an uncanonical tree and silently dropped
 			// duplicate-named field occurrences across choice branches.
 			const merged = mergeChoiceBranches({ type: 'choice', members });
-			if (merged.type !== 'choice') return merged;
+			if (merged.type !== 'choice') return withAttrsFrom(rule, merged);
 			// Cross-branch field hoist: if every branch contains exactly
 			// one `field(A, ...)` (directly or nested in a seq), lift A
 			// out to an enclosing seq and union the contents. Handles
@@ -102,7 +129,7 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
 			// `seq(optional(field(B, Y)), field(A, choice(X)))`) that
 			// `mergeChoiceBranches` can't touch because it requires
 			// same-length same-kind branches.
-			return hoistSharedFieldAcrossChoiceBranches(merged);
+			return withAttrsFrom(rule, hoistSharedFieldAcrossChoiceBranches(merged));
 		}
 		case 'optional': {
 			const inner = simplifyRule(rule.content, wordMatcher, inField);
@@ -180,6 +207,25 @@ export function simplifyRules(rules: Record<string, Rule>, wordMatcher?: RegExp)
 		out[name] = normalizeToFixpoint(rule, wordMatcher, rules);
 	}
 	return out;
+}
+
+/**
+ * Compute the derivation-only simplified view of every rule in the map.
+ *
+ * Relocated from optimize.ts as part of PR1 — all simplification logic lives
+ * in simplify.ts. Input type widened to RenderRule: applyWrapperDeletion in
+ * optimize.ts produces a wrapper-less map, and simplify operates on that.
+ *
+ * @param renderRules - Wrapper-less rule map (output of applyWrapperDeletion).
+ * @param word - The grammar's word rule name (or null), for keyword-shape detection.
+ * @returns A new map containing the simplified form of each rule.
+ */
+export function computeSimplifiedRules(
+	renderRules: Record<string, RenderRule>,
+	word: string | null
+): ReturnType<typeof simplifyRules> {
+	const wordMatcher = compileWordMatcher(word, renderRules as Record<string, Rule>);
+	return simplifyRules(renderRules as Record<string, Rule>, wordMatcher);
 }
 
 /**
@@ -758,5 +804,184 @@ export function extractRepeatShape(rule: Rule): { repeat: RepeatRule | Repeat1Ru
 			return extractRepeatShape((rule as { content: Rule }).content);
 		default:
 			return null;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Universal-shape canonicalization + post-condition check (Task 1.9 / PR0)
+// ---------------------------------------------------------------------------
+//
+// Per the rule-attributes refactor spec's "Universal canonical shape"
+// decision: every AssembledBranch / AssembledGroup body, after
+// simplification, should be a `SeqRule` whose members are leaves (literals
+// + slot-refs). No nested structural rules (seq / choice / optional /
+// repeat / repeat1 / field / variant / group / polymorph / clause) with
+// slot content.
+//
+// After PR0 Tasks 1.4-1.8 land, this invariant should hold by
+// construction:
+//   - enrich pushes modifiers (multiplicity, fieldName, separators) onto
+//     leaf symbols / strings.
+//   - decomposeOptional / decomposeRepeat synthesize hidden groups for
+//     non-leaf wrapper content.
+//
+// Task 1.9 adds:
+//   - canonicalizeSeqOfLeaves(rule): final structural cleanup. Flattens
+//     degenerate single-member seqs. Recurses through children. Does NOT
+//     push down attributes (enrich did that) or synthesize groups
+//     (decomposeOptional / decomposeRepeat did that).
+//   - assertUniversalShape(node): post-condition check. Throws with kind
+//     name + offending sub-rule when the invariant doesn't hold.
+//
+// NOTE: assertUniversalShape is exported but NOT yet wired into the
+// production pipeline. Enabling it at assembly's exit would be a
+// behavior-change that could break existing kinds where enrich /
+// decomposeOptional / decomposeRepeat hasn't caught every case yet.
+// Wire it ONLY in tests for now — once PR0 lands and we can verify on
+// real grammars, decide whether to enable it in production (PR1).
+
+/**
+ * Generic post-order child recursion for the `Rule` IR. Mirrors
+ * `dsl/enrich.ts:recurseChildren` but tightened to the canonical typed
+ * Rule shape (no string-typed legacy variants like 'TOKEN' / 'ALIAS' /
+ * 'IMMEDIATE_TOKEN' — those don't appear post-evaluate).
+ *
+ * Identity-preserving: returns the input rule unchanged when no child
+ * was rewritten (`visit` returned the same reference for every child).
+ */
+function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
+	switch (rule.type) {
+		case 'seq':
+		case 'choice': {
+			const members = rule.members;
+			let changed = false;
+			const next = members.map((m) => {
+				const out = visit(m);
+				if (out !== m) changed = true;
+				return out;
+			});
+			return changed ? ({ ...rule, members: next } as Rule) : rule;
+		}
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'field':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'token':
+		case 'alias':
+		case 'terminal': {
+			const content = (rule as { content: Rule }).content;
+			const out = visit(content);
+			return out === content ? rule : ({ ...rule, content: out } as Rule);
+		}
+		case 'polymorph': {
+			const forms = rule.forms;
+			let changed = false;
+			const next = forms.map((f) => {
+				const out = visit(f.content);
+				if (out !== f.content) changed = true;
+				return out === f.content ? f : { ...f, content: out };
+			});
+			return changed ? ({ ...rule, forms: next } as Rule) : rule;
+		}
+		default:
+			return rule;
+	}
+}
+
+/**
+ * Canonicalize a rule toward the universal seq-of-leaves shape:
+ *   - Recursively canonicalize children.
+ *   - Flatten degenerate single-member seqs (`seq([X])` → `X`).
+ *
+ * Does NOT perform attribute push-down — enrich already did that.
+ * Does NOT synthesize groups — decomposeOptional / decomposeRepeat already
+ * did that.
+ *
+ * This is the final structural cleanup pass that absorbs the trivial
+ * `seq([X])` → `X` shapes left behind by upstream transformations.
+ * Idempotent — running it twice produces the same result as running once.
+ */
+export function canonicalizeSeqOfLeaves(rule: Rule): Rule {
+	const recursed = recurseChildren(rule, canonicalizeSeqOfLeaves);
+	if (recursed.type === 'seq' && recursed.members.length === 1) {
+		return recursed.members[0]!;
+	}
+	return recursed;
+}
+
+/**
+ * Leaf classification: a rule that contributes a single slot value (or a
+ * literal) with no further structural content underneath. Used by
+ * `assertUniversalShape` to validate seq members.
+ *
+ * Leaves:
+ *   - symbol, alias  — slot-refs (resolved post-Link)
+ *   - string, pattern, enum — literal / terminal content
+ *   - terminal, token  — text-only terminals
+ *   - indent, dedent, newline — structural whitespace markers
+ *
+ * Non-leaves (must be lifted into hidden groups before the invariant
+ * holds): seq, choice, optional, repeat, repeat1, field, variant, group,
+ * clause, polymorph, supertype.
+ */
+function isLeaf(rule: Rule): boolean {
+	switch (rule.type) {
+		case 'symbol':
+		case 'alias':
+		case 'string':
+		case 'pattern':
+		case 'enum':
+		case 'terminal':
+		case 'token':
+		case 'indent':
+		case 'dedent':
+		case 'newline':
+			return true;
+		default:
+			return false;
+	}
+}
+
+/**
+ * Post-condition check for the universal canonical shape: every
+ * AssembledBranch / AssembledGroup body must be a `SeqRule` whose members
+ * are leaves (literals + slot-refs), or a single bare leaf. No nested
+ * structural rules with slot content.
+ *
+ * No-ops for non-branch / non-group nodes (patterns, keywords, tokens,
+ * enums, supertypes, multis, polymorphs — these have their own shape
+ * invariants).
+ *
+ * Throws with kind name + offending sub-rule type when the invariant
+ * doesn't hold.
+ *
+ * **NOT yet wired into the production pipeline** — exposed for test use
+ * only. See module-level note above.
+ */
+export function assertUniversalShape(node: AssembledNode): void {
+	if (node.modelType !== 'branch' && node.modelType !== 'group') return;
+	// Read the body from `simplifiedRule` — the public surface that branch
+	// and group expose for downstream consumers. The protected `rule`
+	// field is the raw pre-simplify shape; the invariant is about the
+	// simplified form.
+	const body = node.simplifiedRule;
+	if (!body) return;
+	if (body.type !== 'seq') {
+		if (!isLeaf(body)) {
+			throw new Error(
+				`Universal-shape violation in kind '${node.kind}': body is not a seq of leaves; found ${body.type}`
+			);
+		}
+		return;
+	}
+	for (const member of body.members) {
+		if (!isLeaf(member)) {
+			throw new Error(
+				`Universal-shape violation in kind '${node.kind}': seq member is not a leaf; found ${member.type}`
+			);
+		}
 	}
 }

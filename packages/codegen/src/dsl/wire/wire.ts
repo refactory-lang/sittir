@@ -41,6 +41,7 @@ import { transform as transformFn } from '../transform/transform.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
+import { applyAutoGroups } from './auto-groups.ts';
 
 // ---------------------------------------------------------------------------
 // RenderAsConfig — sittir-side rule bodies for external scanner symbols
@@ -533,6 +534,47 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 	// own post-evaluation pass for the sittir-pipeline path.
 	applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
 
+	// Auto-group-synthesis: SYNTHESIS-ONLY. Creates hidden helper rules
+	// for `optional(seq(...))` / `repeat(seq(...))` / `repeat1(seq(...))`
+	// shapes and rewrites the parent's content to a SYMBOL ref. Runs AFTER
+	// `applyWirePatternReplacement` so authored body-pattern `groups:`
+	// have had their chance to reshape rule bodies; auto-synth also skips
+	// any kind the author opted into via `transforms:`, `polymorphs:`, or
+	// path-mode `groups:` (see `collectAuthoredSynthesisKinds`) so the
+	// path-based machinery sees the rule body the author wrote.
+	//
+	// NOTE: this pass does NOT touch `separator` / `trailing` / `leading`
+	// metadata or otherwise reshape Rule objects beyond the
+	// optional/repeat → SYMBOL replacement. Decomposition (separator-lift,
+	// attribute stamping) is a separate concern that belongs in
+	// link/evaluate where it can operate on sittir's private rule-tree
+	// copy without affecting tree-sitter's view.
+	if (base) {
+		const authoredSynthesisKinds = collectAuthoredSynthesisKinds(
+			transforms,
+			polymorphs,
+			config.groups
+		);
+		// DISABLED for PR0 close-out: activation introduces a downstream regression —
+		// sittir's codegen pipeline (link → node-model → factories) does not yet
+		// consult `context.syntheticInline` when emitting slots for synthesized
+		// hidden kinds. Reader expects child nodes for `_<parent>_repeat<N>` that
+		// tree-sitter inlined away → "repeated slot requires at least one value"
+		// errors + rust RT 134→103 / cov 178→164 regression.
+		//
+		// Re-enabling is the LAST step of PR1, after the new template emitter +
+		// slot emission honor synthesizedInline membership. `applyAutoGroups`
+		// itself is correct (21 tests in auto-groups.test.ts); only the
+		// downstream slot-emission wiring is missing.
+		void (() => {
+			applyAutoGroups(
+				base as Parameters<typeof applyAutoGroups>[0],
+				context,
+				authoredSynthesisKinds
+			);
+		});
+	}
+
 	const conflicts = wrapConflictsCallback(config.conflicts, context);
 	const inline = wrapInlineCallback(config.inline, context);
 
@@ -553,6 +595,34 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 // ---------------------------------------------------------------------------
 // wire() helpers
 // ---------------------------------------------------------------------------
+
+/**
+ * Collect the set of rule kinds the author opted into the structured
+ * authoring pipeline (`transforms:`, `polymorphs:`, or path-mode `groups:`).
+ * `applyAutoGroups` skips these so the rule tree stays in the shape the
+ * path-based machinery (`transform()`, polymorph splits, group lifts)
+ * expects. Body-pattern `groups:` entries do NOT contribute — their keys
+ * are NEW visible kind names, not existing base rules.
+ */
+function collectAuthoredSynthesisKinds(
+	transforms: TransformsConfig,
+	polymorphs: PolymorphsConfig,
+	groups: GroupsConfig | undefined
+): ReadonlySet<string> {
+	const kinds = new Set<string>();
+	for (const k of Object.keys(transforms)) kinds.add(k);
+	for (const k of Object.keys(polymorphs)) kinds.add(k);
+	if (groups) {
+		for (const [k, v] of Object.entries(groups)) {
+			// Body-pattern entries (function values) introduce a NEW visible
+			// kind; they do NOT name an existing base rule that auto-groups
+			// might mutate. Only path-mode entries (object values) skip.
+			if (typeof v === 'function') continue;
+			kinds.add(k);
+		}
+	}
+	return kinds;
+}
 
 /**
  * For every polymorph parent, either wrap the author's rule fn (compose
