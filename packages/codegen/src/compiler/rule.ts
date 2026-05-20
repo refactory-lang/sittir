@@ -131,6 +131,22 @@ export type RenderRule = Exclude<Rule, OptionalRule | FieldRule | RepeatRule | R
 	readonly __renderRule?: never;
 };
 
+/**
+ * A Rule shape produced by `computeSimplifiedRules` after PR2 wires
+ * `canonicalizeSeqOfLeaves` and `assertUniversalShape` into the pipeline.
+ *
+ * Structurally a `RenderRule` (wrappers already pushed-down to leaf
+ * attributes), additionally satisfying the universal seq-of-leaves
+ * invariant: every branch/polymorph/group/multi body is a `seq` /
+ * `choice` / `repeat` / leaf-terminal (`enum` / `string` / `pattern`).
+ *
+ * Branded so SimplifiedRule consumers can't be silently called with a
+ * pre-canonicalize RenderRule.
+ */
+export type SimplifiedRule = RenderRule & {
+	readonly __simplifiedRule?: never;
+};
+
 // ---------------------------------------------------------------------------
 // Structural grouping
 // ---------------------------------------------------------------------------
