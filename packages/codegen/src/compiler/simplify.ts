@@ -61,6 +61,31 @@ function isKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean
 	return /^\w+$/.test(value);
 }
 
+/**
+ * Copy `fieldName` / `multiplicity` / `separator` from `original` onto
+ * `result` when `original` carries those attributes and `result` does not
+ * already have them. Used by `simplifyRule` rewrite branches that create new
+ * rule objects (e.g. `case 'seq':` filtering members, `case 'choice':`
+ * merging branches) to ensure RuleBase modifier attributes stamped by
+ * `applyWrapperDeletion` are not silently dropped during simplification.
+ *
+ * Only non-undefined values are transferred; `result`'s own values always
+ * win (non-overriding).
+ */
+function withAttrsFrom(original: Rule, result: Rule): Rule {
+	const { fieldName, multiplicity, separator } = original;
+	if (fieldName === undefined && multiplicity === undefined && separator === undefined) return result;
+	const patch: Record<string, unknown> = {};
+	if (fieldName !== undefined && !Object.prototype.hasOwnProperty.call(result, 'fieldName'))
+		patch['fieldName'] = fieldName;
+	if (multiplicity !== undefined && !Object.prototype.hasOwnProperty.call(result, 'multiplicity'))
+		patch['multiplicity'] = multiplicity;
+	if (separator !== undefined && !Object.prototype.hasOwnProperty.call(result, 'separator'))
+		patch['separator'] = separator;
+	if (Object.keys(patch).length === 0) return result;
+	return { ...result, ...patch };
+}
+
 export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean = false): Rule {
 	switch (rule.type) {
 		case 'seq': {
@@ -73,9 +98,9 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
 					return true;
 				})
 				.flatMap((m) => (m.type === 'seq' ? m.members : [m]));
-			if (members.length === 0) return { type: 'seq', members: [] };
-			if (members.length === 1) return members[0]!;
-			return { type: 'seq', members };
+			if (members.length === 0) return withAttrsFrom(rule, { type: 'seq', members: [] });
+			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
+			return withAttrsFrom(rule, { type: 'seq', members });
 		}
 		case 'choice': {
 			// Variant wrappers preserved for polymorph surface detection.
@@ -84,10 +109,10 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
 			const empty = members.findIndex(isEmptyMatchMember);
 			if (empty >= 0 && members.length > 1) {
 				const nonEmpty = members.filter((_, i) => i !== empty);
-				const inner: Rule = nonEmpty.length === 1 ? nonEmpty[0]! : { type: 'choice', members: nonEmpty };
-				return simplifyRule({ type: 'optional', content: inner }, wordMatcher, inField);
+				const inner: Rule = nonEmpty.length === 1 ? nonEmpty[0]! : withAttrsFrom(rule, { type: 'choice', members: nonEmpty });
+				return simplifyRule(withAttrsFrom(rule, { type: 'optional', content: inner }), wordMatcher, inField);
 			}
-			if (members.length === 1) return members[0]!;
+			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
 			// Merge structurally-equivalent choice branches so same-
 			// named fields across branches fuse into a single field
 			// with union content. Closes `BinaryExpression.
@@ -95,7 +120,7 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
 			// walked an uncanonical tree and silently dropped
 			// duplicate-named field occurrences across choice branches.
 			const merged = mergeChoiceBranches({ type: 'choice', members });
-			if (merged.type !== 'choice') return merged;
+			if (merged.type !== 'choice') return withAttrsFrom(rule, merged);
 			// Cross-branch field hoist: if every branch contains exactly
 			// one `field(A, ...)` (directly or nested in a seq), lift A
 			// out to an enclosing seq and union the contents. Handles
@@ -104,7 +129,7 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
 			// `seq(optional(field(B, Y)), field(A, choice(X)))`) that
 			// `mergeChoiceBranches` can't touch because it requires
 			// same-length same-kind branches.
-			return hoistSharedFieldAcrossChoiceBranches(merged);
+			return withAttrsFrom(rule, hoistSharedFieldAcrossChoiceBranches(merged));
 		}
 		case 'optional': {
 			const inner = simplifyRule(rule.content, wordMatcher, inField);

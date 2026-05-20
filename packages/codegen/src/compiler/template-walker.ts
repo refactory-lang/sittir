@@ -1421,6 +1421,15 @@ export function findRepeatSeparator(rule: Rule): string | undefined {
  * (seq / choice / optional / variant / clause / group / field).
  */
 export function findRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): boolean {
+	// RenderRule leaf-attribute path: applyWrapperDeletion stamps the
+	// separator info as an object `{ rules, trailing?, leading? }` onto the
+	// leaf when the repeat wrapper carries the flag. Check this FIRST so
+	// RenderRule input (no repeat/repeat1 wrappers) still returns correctly.
+	const sep = rule.separator;
+	if (typeof sep === 'object' && !Array.isArray(sep) && sep !== null) {
+		if ((sep as { trailing?: boolean; leading?: boolean })[flag] === true) return true;
+	}
+
 	switch (rule.type) {
 		case 'repeat':
 		case 'repeat1':

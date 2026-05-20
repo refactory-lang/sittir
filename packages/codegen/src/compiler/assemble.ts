@@ -247,6 +247,34 @@ export function assemble(
 		}
 	}
 
+	// Back-compat: also index raw FieldRule ids from `optimized.rules` so that
+	// consumers holding a reference to the original field-wrapper rule (before
+	// applyWrapperDeletion stripped it) can still resolve the slot. The leaf's
+	// sourceRuleId may differ from the FieldRule's id after wrapper-deletion
+	// pushes modifier attrs down; walking the raw rules and name-matching
+	// against the assembled slots bridges the gap without requiring the
+	// pipeline to thread the FieldRule id through to the RenderRule leaf.
+	for (const [kind, rawRule] of Object.entries(optimized.rules)) {
+		const node = nodes.get(kind);
+		if (!node) continue;
+		const slotsByName = new Map<string, AssembledNonterminal>();
+		for (const slot of allSlotsOf(node)) slotsByName.set(slot.name, slot);
+		// Walk the raw rule tree collecting FieldRule ids by name.
+		const walkForFieldIds = (r: Rule): void => {
+			if (r.type === 'field' && r.id) {
+				const slot = slotsByName.get(r.name);
+				if (slot && !slotByRuleId.has(r.id)) slotByRuleId.set(r.id, slot);
+			}
+			if ('members' in r && Array.isArray((r as { members?: unknown }).members)) {
+				for (const m of (r as { members: Rule[] }).members) walkForFieldIds(m);
+			}
+			if ('content' in r && (r as { content?: Rule }).content) {
+				walkForFieldIds((r as { content: Rule }).content);
+			}
+		};
+		walkForFieldIds(rawRule);
+	}
+
 	return {
 		name: optimized.name,
 		nodes,
