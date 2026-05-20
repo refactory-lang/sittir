@@ -551,14 +551,13 @@ function resolveSupertypeSubtypes(rule: Rule, optimized: OptimizedGrammar): stri
  *   the simplified view of that inner content; `groupRenderRule` — the
  *   wrapper-deleted view of the inner content.
  * @remarks
- *   When the rule is a `GroupRule` the pre-computed `simplifiedRule` applies to
- *   the outer group wrapper; we want the inner content's simplified view to match
- *   what we're passing as `rule`. For the wrapper case the inner content's
- *   simplified view is computed on-the-fly. Non-group rules pass through as-is
- *   (the fallback path — groups that didn't get the GroupRule wrapper).
- *
- *   TODO PR2: group inner content is not a top-level kind and has no snapshot entry —
- *   eliminate per-call simplifyRule / deleteWrapper once group inner content is snapshotted.
+ *   When the rule is a `GroupRule` the pre-computed `simplifiedRule` and
+ *   `renderRule` apply to the OUTER group wrapper (the top-level kind entry).
+ *   `applyWrapperDeletion` and `simplifyRule` both recurse through group wrappers
+ *   preserving the outer node, so `renderRule.content` and `simplifiedRule.content`
+ *   are the wrapper-deleted / simplified inner content respectively. Non-group
+ *   rules pass through as-is (the fallback path — groups that didn't get the
+ *   `GroupRule` wrapper).
  */
 function unwrapGroupRuleAndSimplified(
 	rule: Rule,
