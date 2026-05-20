@@ -562,17 +562,15 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 		// tree-sitter inlined away → "repeated slot requires at least one value"
 		// errors + rust RT 134→103 / cov 178→164 regression.
 		//
-		// Re-enabling is the LAST step of PR1, after the new template emitter +
-		// slot emission honor synthesizedInline membership. `applyAutoGroups`
-		// itself is correct (21 tests in auto-groups.test.ts); only the
-		// downstream slot-emission wiring is missing.
-		void (() => {
-			applyAutoGroups(
-				base as Parameters<typeof applyAutoGroups>[0],
-				context,
-				authoredSynthesisKinds
-			);
-		});
+		// Re-enabled PR2 Task 3.B5 — the new template emitter (fb889165)
+		// consumes node.renderRule (RenderRule shape) which carries leaf
+		// attributes, so synthesized hidden helpers integrate naturally
+		// via the standard inline-handling path.
+		applyAutoGroups(
+			base as Parameters<typeof applyAutoGroups>[0],
+			context,
+			authoredSynthesisKinds
+		);
 	}
 
 	const conflicts = wrapConflictsCallback(config.conflicts, context);

@@ -582,10 +582,8 @@ describe('applyAutoGroups — regressions and invariants', () => {
 	});
 });
 
-// PR2: re-enable when applyAutoGroups is wired into wire() (currently disabled
-// via `void (() => { applyAutoGroups(...) })()` in wire.ts). Until then this
-// integration test cannot pass.
-describe.skip('applyAutoGroups — wire() integration', () => {
+// Re-enabled PR2 Task 3.B5 — applyAutoGroups is now active in wire.ts.
+describe('applyAutoGroups — wire() integration', () => {
 	it('runs AFTER authored groups: with both authored and auto-synthesized rules surviving', () => {
 		// Grammar with TWO parent kinds:
 		//   - `xKind` — author registered a path-mode `groups:` lift, so
