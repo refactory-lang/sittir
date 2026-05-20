@@ -45,6 +45,7 @@ function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 		wordMatcher: /^\w+$/,
 		externals: [],
 		rules: {},
+		visitingHelpers: new Set<string>(),
 		...overrides
 	};
 }
@@ -165,14 +166,59 @@ describe('emitRule — transparent wrappers', () => {
 	});
 });
 
-describe('emitRule — field', () => {
-	it('emits a scalar slot via slotByRuleId back-pointer', () => {
-		const inner: SymbolRule = { type: 'symbol', name: 'identifier', id: 'r1' };
-		const rule: FieldRule = { type: 'field', name: 'name', content: inner, id: 'f1' };
+// PR2 Task 3.B3: field / optional / repeat / repeat1 are wrapper rule types
+// that must NOT appear in RenderRule input. emitRule throws defensively if
+// it encounters them. Wrapper attributes (fieldName / multiplicity /
+// separator) are now on the leaf symbol instead.
+describe('emitRule — wrapper types throw (PR2 Task 3.B3)', () => {
+	it('throws when given a field rule (wrapper removed in RenderRule)', () => {
+		const rule: FieldRule = {
+			type: 'field',
+			name: 'name',
+			content: { type: 'symbol', name: 'identifier' }
+		};
+		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'field'");
+	});
+
+	it('throws when given an optional rule (wrapper removed in RenderRule)', () => {
+		const rule: OptionalRule = {
+			type: 'optional',
+			content: { type: 'string', value: ';' }
+		};
+		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'optional'");
+	});
+
+	it('throws when given a repeat rule (wrapper removed in RenderRule)', () => {
+		const rule: RepeatRule = {
+			type: 'repeat',
+			content: { type: 'symbol', name: 'item' }
+		};
+		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'repeat'");
+	});
+
+	it('throws when given a repeat1 rule (wrapper removed in RenderRule)', () => {
+		const rule: Repeat1Rule = {
+			type: 'repeat1',
+			content: { type: 'symbol', name: 'item' }
+		};
+		expect(() => emitRule(rule, makeCtx())).toThrow("unexpected wrapper 'repeat1'");
+	});
+});
+
+// In RenderRule, field facts are leaf attributes on the inner symbol.
+// emitRule dispatches to emitSymbol which reads fieldName / multiplicity.
+describe('emitRule — symbol with fieldName attribute (RenderRule field path)', () => {
+	it('emits a scalar slot when fieldName is set and no multiplicity', () => {
+		const rule: SymbolRule = {
+			type: 'symbol',
+			name: 'identifier',
+			id: 'r1',
+			fieldName: 'name'
+		};
 		const slot = makeSlot({ name: 'name', propertyName: 'name', storageName: 'name' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['f1', slot]]),
+				slotByRuleId: new Map([['r1', slot]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -180,19 +226,18 @@ describe('emitRule — field', () => {
 		expect(emitRule(rule, ctx)).toBe('{{ name }}');
 	});
 
-	it('emits a list slot when multiplicity is array', () => {
-		const inner: SymbolRule = { type: 'symbol', name: 'expression', id: 'r2' };
-		const rule: FieldRule = {
-			type: 'field',
-			name: 'args',
-			content: inner,
-			id: 'f2',
+	it('emits a list slot when fieldName is set and multiplicity is array', () => {
+		const rule: SymbolRule = {
+			type: 'symbol',
+			name: 'expression',
+			id: 'r2',
+			fieldName: 'args',
 			multiplicity: 'array'
 		};
 		const slot = makeSlot({ name: 'args', propertyName: 'args', storageName: 'args' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['f2', slot]]),
+				slotByRuleId: new Map([['r2', slot]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -200,20 +245,19 @@ describe('emitRule — field', () => {
 		expect(emitRule(rule, ctx)).toBe('{{ args | join(" ") }}');
 	});
 
-	it('uses the rule separator when emitting a list slot', () => {
-		const inner: SymbolRule = { type: 'symbol', name: 'expression', id: 'r3' };
-		const rule: FieldRule = {
-			type: 'field',
-			name: 'args',
-			content: inner,
-			id: 'f3',
+	it('uses the separator attribute when emitting a list slot', () => {
+		const rule: SymbolRule = {
+			type: 'symbol',
+			name: 'expression',
+			id: 'r3',
+			fieldName: 'args',
 			multiplicity: 'array',
 			separator: ', '
 		};
 		const slot = makeSlot({ name: 'args', propertyName: 'args', storageName: 'args' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['f3', slot]]),
+				slotByRuleId: new Map([['r3', slot]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -221,10 +265,33 @@ describe('emitRule — field', () => {
 		expect(emitRule(rule, ctx)).toBe('{{ args | join(", ") }}');
 	});
 
-	it('falls back to the snakeCase of the fieldName when the slot is absent', () => {
-		const inner: SymbolRule = { type: 'symbol', name: 'identifier' };
-		const rule: FieldRule = { type: 'field', name: 'field_name', content: inner };
-		expect(emitRule(rule, makeCtx())).toBe('{{ fieldName }}');
+	it('emits a conditional slot when multiplicity is optional', () => {
+		const rule: SymbolRule = {
+			type: 'symbol',
+			name: 'expression',
+			id: 'r4',
+			fieldName: 'value',
+			multiplicity: 'optional'
+		};
+		const slot = makeSlot({ name: 'value', propertyName: 'value', storageName: 'value' });
+		const ctx = makeCtx({
+			nodeMap: {
+				slotByRuleId: new Map([['r4', slot]]),
+				nodeByRuleId: new Map(),
+				nodes: new Map()
+			} as unknown as EmitCtx['nodeMap']
+		});
+		expect(emitRule(rule, ctx)).toBe('{% if value | isPresent %}{{ value }}{% endif %}');
+	});
+
+	it('uses fieldName directly (no slot) when slot is absent', () => {
+		// When no slot back-pointer: fieldName drives the slot name directly.
+		const rule: SymbolRule = {
+			type: 'symbol',
+			name: 'identifier',
+			fieldName: 'field_name'
+		};
+		expect(emitRule(rule, makeCtx())).toBe('{{ field_name }}');
 	});
 });
 
@@ -274,104 +341,76 @@ describe('emitRule — symbol', () => {
 	});
 });
 
-describe('emitRule — optional', () => {
-	it('wraps the inner emit in a Jinja isPresent conditional keyed by the field name', () => {
-		const inner: FieldRule = {
-			type: 'field',
-			name: 'value',
-			content: { type: 'symbol', name: 'expression', id: 's2' },
-			id: 'f4'
-		};
-		const slot = makeSlot({ name: 'value', propertyName: 'value', storageName: 'value' });
-		const ctx = makeCtx({
-			nodeMap: {
-				slotByRuleId: new Map([['f4', slot]]),
-				nodeByRuleId: new Map(),
-				nodes: new Map()
-			} as unknown as EmitCtx['nodeMap']
-		});
-		const rule: OptionalRule = { type: 'optional', content: inner };
-		expect(emitRule(rule, ctx)).toBe('{%- if value | isPresent %}{{ value }}{%- endif %}');
-	});
+// In RenderRule, optional wrapping is a leaf attribute (multiplicity: 'optional')
+// on the inner symbol. The optional wrapper rule itself no longer appears in
+// RenderRule input (throws defensively — see "wrapper types throw" suite above).
+// The RenderRule path for conditional slots is tested in the fieldName suite
+// (multiplicity: 'optional') and the symbol suite (multiplicity: 'optional').
 
-	it('returns empty for an optional whose inner emit is empty', () => {
-		const rule: OptionalRule = {
-			type: 'optional',
-			content: { type: 'pattern', value: '\\s+' }
-		};
-		expect(emitRule(rule, makeCtx())).toBe('');
-	});
-});
+// In RenderRule, repeat wrapping is a leaf attribute (multiplicity: 'array' or
+// 'nonEmptyArray', separator) on the inner symbol. The repeat / repeat1 wrapper
+// rule types no longer appear in RenderRule input (throw defensively — see
+// "wrapper types throw" suite above).
+// The RenderRule path for list slots is tested in the fieldName suite
+// (multiplicity: 'array' + separator) and the symbol suite (array multiplicity).
 
-describe('emitRule — repeat / repeat1', () => {
-	it('emits a list slot via the inner field with default separator', () => {
-		const innerSymbol: SymbolRule = { type: 'symbol', name: 'item', id: 'r4' };
-		const innerField: FieldRule = {
-			type: 'field',
-			name: 'items',
-			content: innerSymbol,
-			id: 'f5',
+// List-slot behavior on the symbol path (via multiplicity='array' attribute):
+describe('emitRule — symbol with multiplicity array (RenderRule repeat path)', () => {
+	it('emits a list slot with default separator when multiplicity is array', () => {
+		const rule: SymbolRule = {
+			type: 'symbol',
+			name: 'item',
+			id: 'r10',
 			multiplicity: 'array'
 		};
-		const rule: RepeatRule = { type: 'repeat', content: innerField };
-		const slot = makeSlot({ name: 'items', propertyName: 'items', storageName: 'items' });
+		const slot = makeSlot({ name: 'item', propertyName: 'item', storageName: 'item' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['f5', slot]]),
+				slotByRuleId: new Map([['r10', slot]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitRule(rule, ctx)).toBe('{{ items | join(" ") }}');
+		// isMultiple(slot) is false (values=[]), multiplicity=array → list form
+		expect(emitRule(rule, ctx)).toBe('{{ item | join(" ") }}');
 	});
 
-	it('uses the repeat separator when present', () => {
-		const innerSymbol: SymbolRule = { type: 'symbol', name: 'item', id: 'r5' };
-		const innerField: FieldRule = {
-			type: 'field',
-			name: 'items',
-			content: innerSymbol,
-			id: 'f6',
+	it('honours the separator attribute when emitting a list slot', () => {
+		const rule: SymbolRule = {
+			type: 'symbol',
+			name: 'item',
+			id: 'r11',
 			multiplicity: 'array',
 			separator: ','
 		};
-		const rule: Repeat1Rule = { type: 'repeat1', content: innerField, separator: ',' };
-		const slot = makeSlot({ name: 'items', propertyName: 'items', storageName: 'items' });
+		const slot = makeSlot({ name: 'item', propertyName: 'item', storageName: 'item' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['f6', slot]]),
+				slotByRuleId: new Map([['r11', slot]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitRule(rule, ctx)).toBe('{{ items | join(",") }}');
+		expect(emitRule(rule, ctx)).toBe('{{ item | join(",") }}');
 	});
 
-	it('emits a trailing-separator filter when rule.trailing is set', () => {
-		const innerSymbol: SymbolRule = { type: 'symbol', name: 'item', id: 'r6' };
-		const innerField: FieldRule = {
-			type: 'field',
-			name: 'items',
-			content: innerSymbol,
-			id: 'f7',
+	it('uses joinWithTrailing when trailing separator flag is set via structured separator', () => {
+		const rule: SymbolRule = {
+			type: 'symbol',
+			name: 'item',
+			id: 'r12',
 			multiplicity: 'array',
-			separator: ','
+			separator: { rules: [{ type: 'string', value: ',' }], trailing: true }
 		};
-		const rule: RepeatRule = {
-			type: 'repeat',
-			content: innerField,
-			separator: ',',
-			trailing: true
-		};
-		const slot = makeSlot({ name: 'items', propertyName: 'items', storageName: 'items' });
+		const slot = makeSlot({ name: 'item', propertyName: 'item', storageName: 'item' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['f7', slot]]),
+				slotByRuleId: new Map([['r12', slot]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitRule(rule, ctx)).toBe('{{ items | joinWithTrailing(",") }}');
+		expect(emitRule(rule, ctx)).toBe('{{ item | joinWithTrailing(",") }}');
 	});
 });
 
@@ -411,16 +450,20 @@ describe('emitRule — choice', () => {
 });
 
 describe('emitRule — clause', () => {
-	it('behaves like optional, wrapping the body in a conditional keyed by the clause name', () => {
+	it('wraps the body in a conditional keyed by the inner symbol fieldName attribute', () => {
+		// PR2 Task 3.B3: RenderRule has no FieldRule wrappers. The field facts
+		// live as leaf attributes (fieldName) on the inner symbol. pickConditionalKey
+		// checks fieldName attribute first, then falls back to the legacy field
+		// wrapper check (for tests and any transitional code paths).
 		const body: SeqRule = {
 			type: 'seq',
 			members: [
 				{ type: 'string', value: ':' },
 				{
-					type: 'field',
-					name: 'return_type',
-					content: { type: 'symbol', name: 'type', id: 's3' },
-					id: 'f8'
+					type: 'symbol',
+					name: 'type',
+					id: 's3',
+					fieldName: 'return_type'
 				}
 			]
 		};
@@ -432,13 +475,13 @@ describe('emitRule — clause', () => {
 		});
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['f8', slot]]),
+				slotByRuleId: new Map([['s3', slot]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
 		expect(emitRule(rule, ctx)).toBe(
-			'{%- if returnType | isPresent %}:{{ returnType }}{%- endif %}'
+			'{% if return_type | isPresent %}:{{ return_type }}{% endif %}'
 		);
 	});
 });

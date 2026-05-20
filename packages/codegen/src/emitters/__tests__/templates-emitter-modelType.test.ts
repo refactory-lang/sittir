@@ -1,15 +1,20 @@
 /**
  * Per-modelType emit tests for the new template emitter
- * (Task 2.4 of PR1 — rule-attributes-and-template-emitter refactor).
+ * (Task 2.4 of PR1 — rule-attributes-and-template-emitter refactor;
+ *  updated Task 3.B3 of PR2 — authority flip + renderRule consumption).
  *
  * Each emit function (branch / group / multi / polymorph) is exercised
- * with a minimal in-memory fixture: an AssembledNode-shaped mock that
- * only carries the fields each function reads (`modelType`, `rule`,
- * and — for polymorph — `forms` with `.name` + `.rule`).
+ * with a minimal in-memory fixture:
  *
- * Polymorph emission aggregates per-form templates inside
- * `{%- if $variant == "X" -%}...{%- endif -%}` guards; the other three
- * modelTypes are thin pass-throughs into `emitRule(node.rule, ctx)`.
+ * - Branch and Group: mocks carry `renderRule` (RenderRule, wrapper-free)
+ *   since emitBranchTemplate / emitGroupTemplate now consume renderRule.
+ *   Fixtures use leaf-attribute symbols (fieldName / multiplicity) instead
+ *   of FieldRule / OptionalRule / RepeatRule wrappers.
+ *
+ * - Multi: mocks carry `rule` (RepeatRule | Repeat1Rule) since AssembledMulti
+ *   has no renderRule; emitMultiTemplate handles the repeat directly.
+ *
+ * - Polymorph: mocks carry `forms` with `.kind` + `.name`.
  */
 
 import { describe, expect, it } from 'vitest';
@@ -47,6 +52,7 @@ function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 		wordMatcher: /^\w+$/,
 		externals: [],
 		rules: {},
+		visitingHelpers: new Set<string>(),
 		...overrides
 	};
 }
@@ -66,15 +72,19 @@ function makeSlot(overrides: Partial<AssembledNonterminal>): AssembledNontermina
 	} as AssembledNonterminal;
 }
 
-// Minimal mock factories — the per-modelType emit functions only read
-// `node.rule` (or `node.forms`); the rest of the AssembledNode surface is
-// irrelevant for these unit tests.
-function mockBranch(rule: Rule): AssembledBranch {
-	return { modelType: 'branch', rule } as unknown as AssembledBranch;
+// Minimal mock factories.
+//
+// Branch / Group: emitBranchTemplate / emitGroupTemplate consume `renderRule`
+// (PR2 Task 3.B3). Mocks supply `renderRule` (RenderRule, wrapper-free shape).
+// Multi: AssembledMulti has no renderRule; emitMultiTemplate reads `node.rule`
+//   (RepeatRule | Repeat1Rule) and handles it directly without calling emitRule.
+// Polymorph: emitPolymorphTemplate reads `form.kind` and `form.name` per form.
+function mockBranch(renderRule: Rule): AssembledBranch {
+	return { modelType: 'branch', renderRule } as unknown as AssembledBranch;
 }
 
-function mockGroup(rule: Rule, name = 'g'): AssembledGroup {
-	return { modelType: 'group', rule, name } as unknown as AssembledGroup;
+function mockGroup(renderRule: Rule, name = 'g', kind = name): AssembledGroup {
+	return { modelType: 'group', renderRule, name, kind } as unknown as AssembledGroup;
 }
 
 function mockMulti(rule: RepeatRule | Repeat1Rule): AssembledMulti {
@@ -87,21 +97,22 @@ function mockPolymorph(forms: AssembledGroup[]): AssembledPolymorph {
 
 describe('emitBranchTemplate', () => {
 	it('emits a single literal for a string-only rule', () => {
+		// renderRule (wrapper-free): a plain string is unchanged from RawRule.
 		const rule: StringRule = { type: 'string', value: 'fn' };
 		expect(emitBranchTemplate(mockBranch(rule), makeCtx())).toBe('fn');
 	});
 
-	it('emits literal + slot for a seq with a field', () => {
-		const inner: SymbolRule = { type: 'symbol', name: 'identifier', id: 'r1' };
-		const fieldRule: FieldRule = { type: 'field', name: 'name', content: inner, id: 'f1' };
+	it('emits literal + slot for a seq with a leaf-attribute symbol (RenderRule field path)', () => {
+		// RenderRule: no FieldRule wrapper — fieldName is a leaf attribute on the symbol.
+		const sym: SymbolRule = { type: 'symbol', name: 'identifier', id: 'r1', fieldName: 'name' };
 		const rule: SeqRule = {
 			type: 'seq',
-			members: [{ type: 'string', value: 'fn ' }, fieldRule]
+			members: [{ type: 'string', value: 'fn ' }, sym]
 		};
 		const slot = makeSlot({ name: 'name', propertyName: 'name', storageName: 'name' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['f1', slot]]),
+				slotByRuleId: new Map([['r1', slot]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -110,29 +121,30 @@ describe('emitBranchTemplate', () => {
 	});
 
 	it('emits multiple slots interleaved with literals', () => {
-		const a: FieldRule = {
-			type: 'field',
-			name: 'left',
-			content: { type: 'symbol', name: 'expression', id: 'rL' },
-			id: 'fL'
+		// RenderRule: both left/right symbols carry fieldName attributes.
+		const left: SymbolRule = {
+			type: 'symbol',
+			name: 'expression',
+			id: 'rL',
+			fieldName: 'left'
 		};
-		const b: FieldRule = {
-			type: 'field',
-			name: 'right',
-			content: { type: 'symbol', name: 'expression', id: 'rR' },
-			id: 'fR'
+		const right: SymbolRule = {
+			type: 'symbol',
+			name: 'expression',
+			id: 'rR',
+			fieldName: 'right'
 		};
 		const rule: SeqRule = {
 			type: 'seq',
-			members: [a, { type: 'string', value: ' + ' }, b]
+			members: [left, { type: 'string', value: ' + ' }, right]
 		};
 		const slotL = makeSlot({ name: 'left', propertyName: 'left', storageName: 'left' });
 		const slotR = makeSlot({ name: 'right', propertyName: 'right', storageName: 'right' });
 		const ctx = makeCtx({
 			nodeMap: {
 				slotByRuleId: new Map([
-					['fL', slotL],
-					['fR', slotR]
+					['rL', slotL],
+					['rR', slotR]
 				]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
@@ -148,17 +160,17 @@ describe('emitGroupTemplate', () => {
 		expect(emitGroupTemplate(mockGroup(rule), makeCtx())).toBe('pub');
 	});
 
-	it('emits literal + slot for a seq with a field', () => {
-		const inner: SymbolRule = { type: 'symbol', name: 'identifier', id: 'rg1' };
-		const fieldRule: FieldRule = { type: 'field', name: 'name', content: inner, id: 'fg1' };
+	it('emits literal + slot for a seq with a leaf-attribute symbol (RenderRule field path)', () => {
+		// RenderRule: no FieldRule wrapper — fieldName is a leaf attribute on the symbol.
+		const sym: SymbolRule = { type: 'symbol', name: 'identifier', id: 'rg1', fieldName: 'name' };
 		const rule: SeqRule = {
 			type: 'seq',
-			members: [{ type: 'string', value: 'mod ' }, fieldRule]
+			members: [{ type: 'string', value: 'mod ' }, sym]
 		};
 		const slot = makeSlot({ name: 'name', propertyName: 'name', storageName: 'name' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['fg1', slot]]),
+				slotByRuleId: new Map([['rg1', slot]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
@@ -233,18 +245,23 @@ describe('emitPolymorphTemplate', () => {
 		);
 	});
 
-	it('emits Jinja slots inside each form body', () => {
-		const symA: SymbolRule = { type: 'symbol', name: 'expression', id: 'rpa' };
-		const fieldA: FieldRule = { type: 'field', name: 'left', content: symA, id: 'fpa' };
+	it('emits Jinja slots inside each form body (RenderRule leaf-attribute path)', () => {
+		// RenderRule: no FieldRule wrappers — fieldName is a leaf attribute on the symbol.
+		const symA: SymbolRule = {
+			type: 'symbol',
+			name: 'expression',
+			id: 'rpa',
+			fieldName: 'left'
+		};
 		const ruleA: SeqRule = {
 			type: 'seq',
-			members: [fieldA, { type: 'string', value: ' + ' }, fieldA]
+			members: [symA, { type: 'string', value: ' + ' }, symA]
 		};
 		const ruleB: StringRule = { type: 'string', value: 'B' };
 		const slotL = makeSlot({ name: 'left', propertyName: 'left', storageName: 'left' });
 		const ctx = makeCtx({
 			nodeMap: {
-				slotByRuleId: new Map([['fpa', slotL]]),
+				slotByRuleId: new Map([['rpa', slotL]]),
 				nodeByRuleId: new Map(),
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']

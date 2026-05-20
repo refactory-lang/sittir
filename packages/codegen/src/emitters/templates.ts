@@ -36,6 +36,7 @@ import type {
 	AssembledPolymorph
 } from '../compiler/node-map.ts';
 import type { Rule } from '../compiler/rule.ts';
+import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
 import { compileWordMatcher } from '../compiler/common.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission } from './shared.ts';
@@ -140,70 +141,32 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	}
 
 	#emitNode(node: AssembledNode): void {
-		// Legacy walker — authoritative for PR1. Output written to disk.
+		// PR2 Task 3.B3: new emitter is authoritative — its output is written
+		// to disk. The legacy walker still runs for the skip-emit signal: when
+		// it returns null the kind doesn't get a template file (leaf / keyword
+		// / token / non-polymorph-form group / multi). PR3 deletes the legacy
+		// walker entirely.
 		const legacyBody = emitBodyForNode(
 			node,
 			this.#config.nodeMap.rules ?? {},
 			this.#wordMatcher,
 			this.#config.nodeMap.externals
 		);
-		// New modelType-dispatching emitter — runs in parallel. PR1's
-		// diff gate asserts byte-for-byte equivalence with the legacy
-		// walker. Task 3.2 (PR2) flips authority and deletes legacy.
-		// Wrap in try/catch so a crash in the new emitter (e.g. a Task
-		// 2.3 emitRule bug like unbounded helper-rule recursion) shows
-		// up as a logged or thrown divergence rather than crashing the
-		// authoritative legacy path.
-		let newBody: string | undefined;
-		let newError: unknown;
-		try {
-			this.#ctx.visitingHelpers.clear();
-			newBody = emitOne(node, this.#ctx);
-		} catch (err) {
-			newError = err;
-		}
-
-		if (newError !== undefined) {
-			const detail = newError instanceof Error ? newError.message : String(newError);
-			const msg =
-				`TemplateEmitter new-emitter crash on kind ${node.kind} (${node.modelType}): ${detail}`;
-			if (process.env.SITTIR_DIVERGENCE_LOG === '1') {
-				// eslint-disable-next-line no-console
-				console.error(`CRASH ${node.kind} (${node.modelType}): ${detail}`);
-			} else {
-				throw new Error(msg, { cause: newError });
-			}
-		} else if (
-			legacyBody !== null &&
-			legacyBody !== undefined &&
-			newBody !== undefined &&
-			legacyBody !== newBody
-		) {
-			// PR1 Task 2.5: divergence gate. PR2 (Task 3.2) flips authority
-			// and deletes the legacy walker; until then any divergence is a
-			// bug in the new modelType-dispatching emitter that must be
-			// fixed before the flip.
-			if (process.env.SITTIR_DIVERGENCE_LOG === '1') {
-				// Survey mode — collect every divergence in one regen pass
-				// rather than throwing on the first. Off by default; the
-				// authoritative behaviour is the throw below.
-				// eslint-disable-next-line no-console
-				console.error(
-					`DIVERGENCE ${node.kind} (${node.modelType}):\n` +
-						`  legacy: ${JSON.stringify(legacyBody)}\n` +
-						`  new:    ${JSON.stringify(newBody)}`
-				);
-			} else {
-				throw new Error(
-					`TemplateEmitter divergence on kind ${node.kind} (${node.modelType}):\n` +
-						`  legacy: ${JSON.stringify(legacyBody)}\n` +
-						`  new:    ${JSON.stringify(newBody)}`
-				);
-			}
-		}
-
+		// Legacy skip-emit gate: if legacy says "no template for this kind",
+		// honour it — the new emitter's output for such kinds is irrelevant.
 		if (legacyBody === null) return;
-		this.#bodies.set(node.kind, `${GENERATED_HEADER}\n${legacyBody}`);
+
+		this.#ctx.visitingHelpers.clear();
+		const newBody = emitOne(node, this.#ctx);
+
+		if (newBody === undefined) {
+			// emitOne returned undefined for modelTypes that don't get templates
+			// (supertype / pattern / keyword / token / enum) — but legacyBody
+			// wasn't null, so emit an empty body to preserve file presence.
+			this.#bodies.set(node.kind, `${GENERATED_HEADER}\n`);
+			return;
+		}
+		this.#bodies.set(node.kind, `${GENERATED_HEADER}\n${newBody}`);
 	}
 }
 
@@ -246,38 +209,68 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 // ---------------------------------------------------------------------------
 
 export function emitBranchTemplate(node: AssembledBranch, ctx: EmitCtx): string {
-	return emitRule(node.rule, ctx);
+	// PR2 Task 3.B3: consume renderRule (RenderRule, wrapper-free) instead
+	// of rule (RawRule, wrapper-bearing). Wrapper attributes (fieldName,
+	// multiplicity, separator) are now on the leaf rules themselves.
+	return emitRule(node.renderRule, ctx);
 }
 
 export function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
-	return emitRule(node.rule, ctx);
+	// PR2 Task 3.B3: consume renderRule (RenderRule, wrapper-free).
+	return emitRule(node.renderRule, ctx);
 }
 
 export function emitMultiTemplate(node: AssembledMulti, ctx: EmitCtx): string {
-	return emitRule(node.rule, ctx);
+	// AssembledMulti has no renderRule (multi nodes are always hidden repeat
+	// helpers and emitBodyForNode returns null for them). This function is
+	// called from emitOne but its output is never written — the legacy skip-
+	// emit null-gate fires first. PR3 deletes this entirely.
+	//
+	// node.rule is RepeatRule | Repeat1Rule. We cannot call emitRule on it
+	// directly (emitRule now throws on wrapper types). Instead, emit the
+	// list-slot form for the repeat's inner content directly.
+	const repeat = node.rule;
+	const inner = repeat.content;
+	// Look through transparent wrappers to find the field or symbol name.
+	let unwrapped = inner;
+	while (
+		unwrapped.type === 'variant' ||
+		unwrapped.type === 'group' ||
+		unwrapped.type === 'token' ||
+		unwrapped.type === 'terminal' ||
+		(unwrapped.type === 'alias' && !unwrapped.named)
+	) {
+		unwrapped = (unwrapped as Extract<typeof unwrapped, { content: Rule }>).content;
+	}
+	// Field inner: use the field name.
+	if (unwrapped.type === 'field') {
+		return emitListSlot(unwrapped.name.toLowerCase(), repeat);
+	}
+	// Symbol inner: use the symbol kind name.
+	if (unwrapped.type === 'symbol') {
+		const slotName = (unwrapped.name.replace(/^_+/, '') || 'children').toLowerCase();
+		return emitListSlot(slotName, repeat);
+	}
+	// Generic fallback — recurse into the inner content (non-wrapper).
+	return emitRule(inner, ctx);
 }
 
 export function emitPolymorphTemplate(node: AssembledPolymorph, ctx: EmitCtx): string {
-	// Walker shape (post-`translateToJinja`):
-	//   {%- if variant == "a" -%}\n{{ form_kind_a | join(" ") }}\n{%- elif variant == "b" -%}\n...\n{%- endif -%}
-	// Each form's body is its kind name as a list-form join. The walker's
-	// node-map pipeline applies optional/wrap/translate after building
-	// this skeleton; the new emitter's simplified shape captures only the
-	// skeleton — many polymorphs still diverge due to per-form
-	// optionalFields wrapping done by `wrapOptionalFieldPlaceholders`.
+	// PR2 Task 3.B3: authoritative polymorph emission.
+	// Emits one `{%- if $variant == "X" -%}<body>{%- endif -%}` block per form.
+	// Each form's body comes from its `renderRule` (RenderRule, wrapper-free).
+	// Whitespace-strip markers (`{%- ... -%}`) handle surrounding whitespace at
+	// render time; blocks are concatenated without separators.
+	if (node.forms.length === 0) return '';
 	const parts: string[] = [];
-	for (let i = 0; i < node.forms.length; i++) {
-		const form = node.forms[i]!;
-		const keyword = i === 0 ? 'if' : 'elif';
-		parts.push(`{%- ${keyword} variant == "${form.name}" -%}`);
-		// Body slot name is the form's kind with leading `_` stripped
-		// (e.g. `_array_expression_list` → `array_expression_list`).
-		const formSlotName = (form.kind.replace(/^_+/, '') || 'children').toLowerCase();
-		const formBody = `{{ ${formSlotName} | join(" ") }}`;
+	for (const form of node.forms) {
+		parts.push(`{%- if $variant == "${form.name}" -%}`);
+		// Emit the form body from its renderRule (wrapper-free).
+		const formBody = emitRule(form.renderRule, ctx);
 		parts.push(formBody);
+		parts.push(`{%- endif -%}`);
 	}
-	parts.push(`{%- endif -%}`);
-	return parts.join('\n');
+	return parts.join('');
 }
 
 // ---------------------------------------------------------------------------
@@ -332,18 +325,21 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			}
 			return emitRule(rule.content, ctx);
 
+		// PR2 Task 3.B3: wrapper rule types (field / optional / repeat /
+		// repeat1) must not appear in RenderRule input — they have been
+		// pushed down to leaf attributes. Throw defensively; should never
+		// fire in production. PR3 narrows the emitRule signature to
+		// RenderRule, making these unreachable at the type level.
 		case 'field':
-			return emitField(rule, ctx);
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+			throw new Error(
+				`emitRule: unexpected wrapper '${rule.type}' — RenderRule input should have no wrappers`
+			);
 
 		case 'symbol':
 			return emitSymbol(rule, ctx);
-
-		case 'optional':
-			return emitOptional(rule, ctx);
-
-		case 'repeat':
-		case 'repeat1':
-			return emitRepeat(rule, ctx);
 
 		case 'choice':
 			return emitChoice(rule, ctx);
@@ -466,52 +462,37 @@ function emitScalarSlot(slotName: string): string {
 }
 
 /**
- * Emit a kind-named slot for a symbol reference whose target is a
- * visible nonterminal kind (or named alias). The kind name itself is
- * the slot key — matches the legacy walker's `emitChildren(slotName)`
- * behavior where the slot lives under the kind's bare name.
- *
- * Walker emits `$$$SLOT` (uppercase) which `translateToJinja` converts
- * to `{{ slot | join(" ") }}` — a list-form join. So bare symbol
- * references render as list, not scalar.
+ * Emit a kind-named scalar slot for a named alias reference. In RenderRule
+ * input, a named alias represents a single visible kind — always scalar.
+ * (The legacy walker emitted list form here via `$$$SLOT` → join; the new
+ * emitter uses multiplicity-aware dispatch in `emitSymbol` instead.)
  */
 function emitSymbolSlot(kindName: string, _ctx: EmitCtx): string {
 	const slotName = (kindName.replace(/^_+/, '') || 'children').toLowerCase();
-	return `{{ ${slotName} | join(" ") }}`;
+	return `{{ ${slotName} }}`;
 }
 
 // ---------------------------------------------------------------------------
 // Per-Rule.type helpers
 // ---------------------------------------------------------------------------
 
-function emitField(rule: Extract<Rule, { type: 'field' }>, ctx: EmitCtx): string {
-	// Match walker behavior: emit raw lowercased field name (matches the
-	// `$NAME` → `{{ name }}` translation done by `translateToJinja`).
-	// Do NOT use slot.propertyName — that's camelCase + pluralized.
-	const slotName = rule.name.toLowerCase();
-	const multiplicity = rule.multiplicity ?? rule.content.multiplicity;
-	const isArray = multiplicity === 'array' || multiplicity === 'nonEmptyArray';
-	if (isArray) {
-		// Prefer the field rule's own separator, then fall back to the
-		// inner content's separator (set by `decomposeRepeat`-style enrich
-		// that pushes the wrapper's separator onto the inner rule).
-		const separatorCarrier: Rule = rule.separator !== undefined ? rule : rule.content;
-		return emitListSlot(slotName, separatorCarrier);
-	}
-	// Even when the rule is annotated singular, the legacy walker treats
-	// many field positions as list-shaped because `inRepeat` /
-	// `containsRepeat` / `wrappedRepeatSeparator` infer multiplicity from
-	// surrounding structure. The slot back-pointer captures that decision
-	// via `isMultiple()` on its `values` array — if any value is
-	// `array` / `nonEmptyArray`, render as list.
-	const slot = lookupSlot(rule, ctx);
-	if (slot && isMultiple(slot)) {
-		const separatorCarrier: Rule = rule.separator !== undefined ? rule : rule.content;
-		return emitListSlot(slotName, separatorCarrier);
-	}
-	return emitScalarSlot(slotName);
-}
+// emitField, emitOptional, and emitRepeat were deleted in PR2 Task 3.B3.
+// Those wrapper rule types (field / optional / repeat / repeat1) must not
+// appear in RenderRule input — the wrapper attributes (fieldName /
+// multiplicity / separator) are now on the leaf rules themselves and
+// emitSymbol reads them directly. emitRule throws defensively if they appear.
 
+/**
+ * Derive the Jinja slot expression for a symbol ref, driven by the leaf
+ * attributes set by the enrich / push-down pass (fieldName, multiplicity,
+ * separator). In RenderRule input the wrapper rule types (field / optional /
+ * repeat / repeat1) are absent; their slot facts live here instead.
+ *
+ * Multiplicity mapping:
+ *  - 'array' | 'nonEmptyArray' → list form: `{{ name | join("…") }}`
+ *  - 'optional'               → conditional scalar: `{% if name | isPresent %}{{ name }}{% endif %}`
+ *  - undefined (required)     → scalar: `{{ name }}`
+ */
 function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): string {
 	// Link-synthesized symbols carry their original literal text — render
 	// it verbatim so keyword tokens lifted from `_kw_foo` helpers emit as
@@ -519,53 +500,95 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	if (rule.source === 'link') {
 		return rule.literal !== undefined ? escapeLiteral(rule.literal) : '';
 	}
-	// Slot back-pointer wins: when assembly registered a slot for this
-	// rule position, prefer it over hidden-helper inlining. Walker emits
-	// `$$$KIND` (list form) for visible symbol refs regardless of slot
-	// multiplicity — `translateToJinja` always produces
-	// `{{ kind | join(" ") }}` for the triple-dollar shape. Use raw
-	// snake_case name lowercased (NOT slot.propertyName).
+
+	// PR2 Task 3.B3: check leaf-level attributes pushed down from wrapper
+	// rules. fieldName is set when the symbol was formerly inside a FieldRule;
+	// multiplicity when inside a RepeatRule or OptionalRule.
+	if (rule.fieldName !== undefined) {
+		const slotName = rule.fieldName.toLowerCase();
+		const multiplicity = rule.multiplicity;
+		const isArray = multiplicity === 'array' || multiplicity === 'nonEmptyArray';
+		if (isArray) {
+			return emitListSlot(slotName, rule);
+		}
+		// Check slot back-pointer for list shape (walker infers multiplicity
+		// from surrounding structure; slot back-pointer captures that decision).
+		const slot = lookupSlot(rule, ctx);
+		if (slot && isMultiple(slot)) {
+			return emitListSlot(slotName, rule);
+		}
+		if (multiplicity === 'optional') {
+			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
+		}
+		return emitScalarSlot(slotName);
+	}
+
+	// Slot back-pointer: when assembly registered a slot for this rule
+	// position, emit a multiplicity-aware slot expression. In RenderRule
+	// input, a symbol with a slot and no multiplicity attribute is a single
+	// required value → scalar. Array / optional shapes carry their
+	// multiplicity attribute from the push-down pass.
 	const slot = lookupSlot(rule, ctx);
 	if (slot) {
-		return emitSymbolSlot(rule.name, ctx);
+		const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+		const multiplicity = rule.multiplicity;
+		if (multiplicity === 'array' || multiplicity === 'nonEmptyArray' || isMultiple(slot)) {
+			return emitListSlot(slotName, rule);
+		}
+		if (multiplicity === 'optional') {
+			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
+		}
+		return emitScalarSlot(slotName);
 	}
 	// Group-lifted symbols carry their own template; emit as a
-	// kind-named slot, never inline-expand.
+	// kind-named slot, never inline-expand. Scalar — group outputs a
+	// single rendered string, not a list.
 	if (rule.source === 'group-lift') {
-		return emitSymbolSlot(rule.name, ctx);
+		const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+		return emitScalarSlot(slotName);
 	}
 	// Hidden helper rules (e.g. python's `_import_list`) are inlined by
 	// tree-sitter at parse time. Recurse into the target rule's body so
 	// the helper's content surfaces in place — but guard against
 	// left-recursive helpers like rust's `_let_chain` which references
 	// itself (`_let_chain && let_condition`). When recursion is detected
-	// we treat the symbol like an opaque slot reference instead of
+	// we treat the symbol like an opaque scalar slot reference instead of
 	// inlining, matching the walker's `seen.has('@'+name)` short-circuit.
+	//
+	// ctx.rules contains RAW rules (not renderRules), so we must apply
+	// deleteWrapper before passing to emitRule which now expects RenderRule.
 	if (rule.name.startsWith('_') && ctx.rules[rule.name]) {
 		if (ctx.visitingHelpers.has(rule.name)) {
-			return emitSymbolSlot(rule.name, ctx);
+			const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+			return emitScalarSlot(slotName);
 		}
 		ctx.visitingHelpers.add(rule.name);
 		try {
-			const target = ctx.rules[rule.name]!;
+			const target = deleteWrapper(ctx.rules[rule.name]!);
 			return emitRule(target, ctx);
 		} finally {
 			ctx.visitingHelpers.delete(rule.name);
 		}
 	}
-	return emitSymbolSlot(rule.name, ctx);
+	// Fallback: bare kind-named scalar slot.
+	const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+	return emitScalarSlot(slotName);
 }
 
 /**
- * Pick a Jinja conditional predicate name for an optional/clause whose
- * body emits a slot. The predicate is the (camelCased) field name when
- * one is reachable through transparent wrappers — falling back to the
- * literal `value` keyword when no field anchors the conditional.
+ * Pick a Jinja conditional predicate name for a clause whose body emits a
+ * slot. In RenderRule (wrapper-free) input, field wrappers no longer exist —
+ * field metadata lives as `fieldName` on the leaf. Check leaf attributes
+ * first, then transparent wrappers, then symbol/seq fallbacks.
  */
 function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
-	// Direct: a wrapping field declares the gate name. Walker uses the
-	// RAW lowercased name as the conditional predicate (matches
-	// `translateToJinja`'s `key = name.toLowerCase()` for placeholders).
+	// PR2 Task 3.B3: field wrappers no longer appear in RenderRule. Check
+	// the leaf-level fieldName attribute instead (pushed down from FieldRule
+	// by the enrich / push-down pass).
+	if (content.fieldName !== undefined) {
+		return content.fieldName.toLowerCase();
+	}
+	// Legacy path for RawRule still-in-flight: direct field wrapper.
 	if (content.type === 'field') {
 		return content.name.toLowerCase();
 	}
@@ -581,7 +604,7 @@ function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
 	if (content.type === 'alias' && !content.named) {
 		return pickConditionalKey(content.content, ctx);
 	}
-	// A seq with a single nested field — use that field.
+	// A seq with a member that has a field name — use that field.
 	if (content.type === 'seq') {
 		for (const m of content.members) {
 			const key = pickConditionalKey(m, ctx);
@@ -597,39 +620,9 @@ function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
 	return undefined;
 }
 
-function emitOptional(rule: Extract<Rule, { type: 'optional' }>, ctx: EmitCtx): string {
-	const body = emitRule(rule.content, ctx);
-	if (!body) return '';
-	const key = pickConditionalKey(rule.content, ctx);
-	if (!key) {
-		// No field/slot to gate on — the legacy walker falls back to
-		// emitting the body unconditionally; mirror that so we don't
-		// silently drop punctuation-only optionals.
-		return body;
-	}
-	// Walker uses `{% if ... %}` (no whitespace strip) for inline
-	// conditionals — see `emitJinjaConditional` in template-walker.ts.
-	return `{% if ${key} | isPresent %}${body}{% endif %}`;
-}
-
-function emitRepeat(rule: Extract<Rule, { type: 'repeat' | 'repeat1' }>, ctx: EmitCtx): string {
-	const content = rule.content;
-	// When the inner rule already declares the slot (field or symbol),
-	// the slot itself encodes the list shape — emit it directly with
-	// the repeat's separator metadata propagated.
-	const inner = unwrapTransparent(content);
-	if (inner.type === 'field') {
-		const slotName = inner.name.toLowerCase();
-		return emitListSlot(slotName, rule);
-	}
-	if (inner.type === 'symbol') {
-		const slotName = (inner.name.replace(/^_+/, '') || 'children').toLowerCase();
-		return emitListSlot(slotName, rule);
-	}
-	// Generic fallback — emit the inner rule's body. The renderer's
-	// children slot will carry the actual list values.
-	return emitRule(content, ctx);
-}
+// emitOptional and emitRepeat were deleted in PR2 Task 3.B3.
+// Those wrapper types no longer appear in RenderRule; their slot facts are
+// now leaf attributes on the inner rule, consumed by emitSymbol directly.
 
 function emitChoice(rule: Extract<Rule, { type: 'choice' }>, ctx: EmitCtx): string {
 	// Legacy walker picks the first non-empty branch for homogeneous
@@ -653,24 +646,6 @@ function emitClause(rule: Extract<Rule, { type: 'clause' }>, ctx: EmitCtx): stri
 	return `{% if ${slotKey} | isPresent %}${body}{% endif %}`;
 }
 
-/**
- * Peel transparent wrappers (variant / group / token / terminal /
- * unnamed alias) off a rule. Used by `emitRepeat` to inspect the inner
- * shape without losing the wrapper-stripped path.
- */
-function unwrapTransparent(rule: Rule): Rule {
-	switch (rule.type) {
-		case 'variant':
-		case 'group':
-		case 'token':
-		case 'terminal':
-			return unwrapTransparent(rule.content);
-		case 'alias':
-			return rule.named ? rule : unwrapTransparent(rule.content);
-		default:
-			return rule;
-	}
-}
 
 /**
  * Emit one `.jinja` body per rule in the NodeMap. Returns a Map keyed
