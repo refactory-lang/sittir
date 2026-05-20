@@ -34,6 +34,7 @@
 import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, RepeatRule, Repeat1Rule } from './rule.ts';
 import type { AssembledNode } from './node-map.ts';
 import { compileWordMatcher } from './common.ts';
+import { deleteWrapper } from './wrapper-deletion.ts';
 
 /** Does this string lex as a "word" under the grammar's `word` rule? */
 /**
@@ -228,7 +229,14 @@ export function computeSimplifiedRules(
 	const simplified = simplifyRules(renderRules as Record<string, Rule>, wordMatcher);
 	const canonicalized: Record<string, SimplifiedRule> = {};
 	for (const [kind, rule] of Object.entries(simplified)) {
-		canonicalized[kind] = canonicalizeSeqOfLeaves(rule) as SimplifiedRule;
+		// simplifyRules can re-introduce wrapper nodes (optional / field /
+		// repeat / repeat1) via hoist transformations (hoistFieldOutOfSingleContentWrapper,
+		// extractFieldAcrossBranches) and choice-empty-match folding. Apply
+		// deleteWrapper as a final pass to push any surviving wrapper attributes
+		// back down to leaf attributes, satisfying the SimplifiedRule = RenderRule
+		// (wrapper-free) invariant. deleteWrapper is idempotent on wrapper-free input.
+		const wrapperFree = deleteWrapper(canonicalizeSeqOfLeaves(rule) as Rule) as SimplifiedRule;
+		canonicalized[kind] = wrapperFree;
 	}
 	// Gate universal-shape assertion behind an env var so we can ramp
 	// without breaking existing kinds that still violate the invariant.
