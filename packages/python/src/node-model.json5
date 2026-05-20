@@ -1278,8 +1278,7 @@
           }
         }
       ],
-      "children": [],
-      "separator": ","
+      "children": []
     },
     {
       "kind": "aliased_import",
@@ -1376,31 +1375,31 @@
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "expression",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "list_splat",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "dictionary_splat",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "parenthesized_list_splat",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "keyword_argument",
               "unresolved": true
             },
@@ -1486,7 +1485,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -1932,7 +1931,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -2061,7 +2060,7 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
+          "source": "link",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -2193,7 +2192,7 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
+          "source": "link",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -2487,7 +2486,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -2634,7 +2633,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -2657,7 +2656,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -2699,7 +2698,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -2712,71 +2711,71 @@
           "propertyName": "operators",
           "paramName": "operators",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "single",
               "name": "lt",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "single",
               "name": "lt_eq",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "single",
               "name": "eq_eq",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "single",
               "name": "bang_eq",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "single",
               "name": "gt_eq",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "single",
               "name": "gt",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "single",
               "name": "lt_gt",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "single",
               "name": "in",
               "unresolved": true
             },
             {
               "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "single",
               "value": "not in"
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "single",
               "name": "is",
               "unresolved": true
             },
             {
               "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "single",
               "value": "is not"
             }
           ],
@@ -2798,15 +2797,15 @@
         },
         {
           "name": "primary_expression",
-          "propertyName": "primaryExpressions",
-          "paramName": "primaryExpressions",
+          "propertyName": "primaryExpression",
+          "paramName": "primaryExpression",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "single",
               "name": "primary_expression",
               "unresolved": true
             }
@@ -2831,26 +2830,6 @@
       "hidden": false,
       "fields": [
         {
-          "name": "real",
-          "propertyName": "real",
-          "paramName": "real",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "-"
-            }
-          ],
-          "source": "override",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
-        },
-        {
           "name": "imaginary",
           "propertyName": "imaginary",
           "paramName": "imaginary",
@@ -2871,7 +2850,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -2976,7 +2955,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -2999,7 +2978,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -3022,7 +3001,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -3056,7 +3035,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -3079,7 +3058,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -3208,7 +3187,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -3224,7 +3203,7 @@
           "multiple": false,
           "nonEmpty": false,
           "values": [],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -3383,8 +3362,7 @@
           }
         }
       ],
-      "children": [],
-      "separator": ","
+      "children": []
     },
     {
       "kind": "dictionary",
@@ -3425,8 +3403,7 @@
           }
         }
       ],
-      "children": [],
-      "separator": ","
+      "children": []
     },
     {
       "kind": "dictionary_comprehension",
@@ -3508,7 +3485,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -3606,8 +3583,7 @@
           }
         }
       ],
-      "children": [],
-      "separator": "."
+      "children": []
     },
     {
       "kind": "elif",
@@ -3764,8 +3740,8 @@
       "fields": [
         {
           "name": "value",
-          "propertyName": "values",
-          "paramName": "values",
+          "propertyName": "value",
+          "paramName": "value",
           "required": false,
           "multiple": true,
           "nonEmpty": true,
@@ -3889,26 +3865,21 @@
           }
         },
         {
-          "name": "in_clause",
-          "propertyName": "inClauses",
-          "paramName": "inClauses",
-          "required": false,
+          "name": "expression",
+          "propertyName": "expressions",
+          "paramName": "expressions",
+          "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "in"
-            },
-            {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "expression",
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -3949,8 +3920,8 @@
           "propertyName": "expression",
           "paramName": "expression",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
@@ -3962,12 +3933,6 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": ","
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "expression",
-              "unresolved": true
             }
           ],
           "source": "inferred",
@@ -4202,8 +4167,7 @@
           }
         }
       ],
-      "children": [],
-      "separator": ","
+      "children": []
     },
     {
       "kind": "false",
@@ -4249,7 +4213,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4301,7 +4265,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4381,7 +4345,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4554,7 +4518,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4801,7 +4765,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4824,7 +4788,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4931,7 +4895,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5081,42 +5045,25 @@
           "name": "wildcard_import",
           "propertyName": "wildcardImport",
           "paramName": "wildcardImport",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "wildcard_import",
               "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "wildcard_import"
-            ]
-          }
-        },
-        {
-          "name": "name",
-          "propertyName": "names",
-          "paramName": "names",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "single",
               "name": "dotted_name",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "single",
               "name": "aliased_import",
               "unresolved": true
             }
@@ -5125,6 +5072,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "wildcard_import",
               "dotted_name",
               "aliased_import"
             ]
@@ -5401,7 +5349,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5424,7 +5372,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5511,17 +5459,17 @@
       "hidden": false,
       "fields": [
         {
-          "name": "parameter",
+          "name": "parameters",
           "propertyName": "parameters",
           "paramName": "parameters",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "parameter",
+              "multiplicity": "single",
+              "name": "_parameters",
               "unresolved": true
             }
           ],
@@ -5529,13 +5477,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "parameter"
+              "_parameters"
             ]
           }
         }
       ],
-      "children": [],
-      "separator": ","
+      "children": []
     },
     {
       "kind": "lambda_within_for_in_clause",
@@ -5611,35 +5558,17 @@
       "hidden": false,
       "fields": [
         {
-          "name": "expression",
-          "propertyName": "expressions",
-          "paramName": "expressions",
+          "name": "collection_elements",
+          "propertyName": "collectionElements",
+          "paramName": "collectionElements",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "yield",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "list_splat",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "parenthesized_list_splat",
+              "multiplicity": "optional",
+              "name": "_collection_elements",
               "unresolved": true
             }
           ],
@@ -5647,10 +5576,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression",
-              "yield",
-              "list_splat",
-              "parenthesized_list_splat"
+              "_collection_elements"
             ]
           }
         }
@@ -5723,17 +5649,17 @@
       "hidden": false,
       "fields": [
         {
-          "name": "pattern",
+          "name": "patterns",
           "propertyName": "patterns",
           "paramName": "patterns",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "pattern",
+              "multiplicity": "optional",
+              "name": "_patterns",
               "unresolved": true
             }
           ],
@@ -5741,7 +5667,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "pattern"
+              "_patterns"
             ]
           }
         }
@@ -5771,7 +5697,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5940,7 +5866,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5963,7 +5889,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6258,17 +6184,17 @@
       "hidden": false,
       "fields": [
         {
-          "name": "parameter",
+          "name": "parameters",
           "propertyName": "parameters",
           "paramName": "parameters",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "parameter",
+              "multiplicity": "optional",
+              "name": "_parameters",
               "unresolved": true
             }
           ],
@@ -6276,7 +6202,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "parameter"
+              "_parameters"
             ]
           }
         }
@@ -6418,8 +6344,8 @@
           "propertyName": "pattern",
           "paramName": "pattern",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
@@ -6431,12 +6357,6 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": ","
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "pattern",
-              "unresolved": true
             }
           ],
           "source": "inferred",
@@ -6544,6 +6464,29 @@
       "hidden": false,
       "fields": [
         {
+          "name": "chevron",
+          "propertyName": "chevron",
+          "paramName": "chevron",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "chevron",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "chevron"
+            ]
+          }
+        },
+        {
           "name": "argument",
           "propertyName": "arguments",
           "paramName": "arguments_",
@@ -6569,29 +6512,6 @@
             "typeName": "",
             "kinds": [
               "expression"
-            ]
-          }
-        },
-        {
-          "name": "chevron",
-          "propertyName": "chevron",
-          "paramName": "chevron",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "chevron",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "chevron"
             ]
           }
         }
@@ -6688,7 +6608,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6711,7 +6631,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6775,35 +6695,17 @@
       "hidden": false,
       "fields": [
         {
-          "name": "expression",
-          "propertyName": "expressions",
-          "paramName": "expressions",
+          "name": "collection_elements",
+          "propertyName": "collectionElements",
+          "paramName": "collectionElements",
           "required": true,
-          "multiple": true,
-          "nonEmpty": true,
+          "multiple": false,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "yield",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "list_splat",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "parenthesized_list_splat",
+              "multiplicity": "single",
+              "name": "_collection_elements",
               "unresolved": true
             }
           ],
@@ -6811,16 +6713,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression",
-              "yield",
-              "list_splat",
-              "parenthesized_list_splat"
+              "_collection_elements"
             ]
           }
         }
       ],
-      "children": [],
-      "separator": ","
+      "children": []
     },
     {
       "kind": "set_comprehension",
@@ -6922,7 +6820,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6945,7 +6843,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6968,7 +6866,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7013,7 +6911,7 @@
               "value": "_"
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7054,7 +6952,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7109,7 +7007,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7138,7 +7036,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7162,7 +7060,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7375,7 +7273,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7398,7 +7296,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7421,7 +7319,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -7441,35 +7339,17 @@
       "hidden": false,
       "fields": [
         {
-          "name": "expression",
-          "propertyName": "expressions",
-          "paramName": "expressions",
+          "name": "collection_elements",
+          "propertyName": "collectionElements",
+          "paramName": "collectionElements",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "yield",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "list_splat",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "parenthesized_list_splat",
+              "multiplicity": "optional",
+              "name": "_collection_elements",
               "unresolved": true
             }
           ],
@@ -7477,10 +7357,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression",
-              "yield",
-              "list_splat",
-              "parenthesized_list_splat"
+              "_collection_elements"
             ]
           }
         }
@@ -7496,17 +7373,17 @@
       "hidden": false,
       "fields": [
         {
-          "name": "pattern",
+          "name": "patterns",
           "propertyName": "patterns",
           "paramName": "patterns",
           "required": false,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "pattern",
+              "multiplicity": "optional",
+              "name": "_patterns",
               "unresolved": true
             }
           ],
@@ -7514,7 +7391,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "pattern"
+              "_patterns"
             ]
           }
         }
@@ -7612,7 +7489,7 @@
               "value": "type"
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": []
@@ -7708,8 +7585,7 @@
           }
         }
       ],
-      "children": [],
-      "separator": ","
+      "children": []
     },
     {
       "kind": "typed_default_parameter",
@@ -7982,7 +7858,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8005,7 +7881,7 @@
               "unresolved": true
             }
           ],
-          "source": "override",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8242,8 +8118,7 @@
           }
         }
       ],
-      "children": [],
-      "separator": ","
+      "children": []
     },
     {
       "kind": "with_clause_paren",
@@ -8277,8 +8152,7 @@
           }
         }
       ],
-      "children": [],
-      "separator": ","
+      "children": []
     },
     {
       "kind": "with_item",
@@ -8337,7 +8211,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8360,7 +8234,7 @@
               "unresolved": true
             }
           ],
-          "source": "enriched",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8406,7 +8280,7 @@
           "name": "expression",
           "propertyName": "expression",
           "paramName": "expression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
@@ -8423,7 +8297,7 @@
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_expressions",
               "unresolved": true
             }

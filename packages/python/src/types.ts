@@ -1605,22 +1605,17 @@ export interface ClassPattern {
 export interface ComparisonOperator {
   readonly $type: TSKindId.ComparisonOperator;
   readonly _left: PrimaryExpression;
-  readonly _operators: NonEmptyArray<Lt | LtEq | EqEq | BangEq | GtEq | Gt | LtGt | In | "not in" | Is | "is not">;
-  readonly _primary_expression: NonEmptyArray<PrimaryExpression>;
+  readonly _operators: Lt | LtEq | EqEq | BangEq | GtEq | Gt | LtGt | In | "not in" | Is | "is not";
+  readonly _primary_expression: PrimaryExpression;
   left(): PrimaryExpression;
-  operators(): NonEmptyArray<Lt | LtEq | EqEq | BangEq | GtEq | Gt | LtGt | In | "not in" | Is | "is not">;
-  primaryExpressions(): NonEmptyArray<PrimaryExpression>;
+  operators(): Lt | LtEq | EqEq | BangEq | GtEq | Gt | LtGt | In | "not in" | Is | "is not";
+  primaryExpression(): PrimaryExpression;
 }
 
 export interface ComplexPattern {
   readonly $type: TSKindId.ComplexPattern;
-  readonly _real?: boolean;
   readonly _imaginary: Integer | Float;
   readonly _integer: Integer | Float;
-  readonly __inputHints__?: {
-    readonly real?: BooleanKeyword<"-">;
-  };
-  real(): boolean | undefined;
   imaginary(): Integer | Float;
   integer(): Integer | Float;
 }
@@ -1736,7 +1731,7 @@ export interface ExceptClause {
   readonly _value?: NonEmptyArray<Expression>;
   readonly _alias?: Expression;
   readonly _suite: Suite;
-  values(): NonEmptyArray<Expression>;
+  value(): NonEmptyArray<Expression>;
   alias(): Expression | undefined;
   suite(): Suite;
 }
@@ -1744,15 +1739,15 @@ export interface ExceptClause {
 export interface ExecStatement {
   readonly $type: TSKindId.ExecStatement;
   readonly _code: String | Identifier;
-  readonly _in_clause?: readonly ("in" | Expression)[];
+  readonly _expression: NonEmptyArray<Expression>;
   code(): String | Identifier;
-  inClauses(): readonly ("in" | Expression)[];
+  expressions(): NonEmptyArray<Expression>;
 }
 
 export interface ExpressionList {
   readonly $type: TSKindId.ExpressionList;
-  readonly _expression: NonEmptyArray<Expression | ",">;
-  expression(): NonEmptyArray<Expression | ",">;
+  readonly _expression: Expression | ",";
+  expression(): Expression | ",";
 }
 
 export interface ExpressionStatementTuple {
@@ -1905,14 +1900,9 @@ export interface IfStatement {
 export interface ImportFromStatement {
   readonly $type: TSKindId.ImportFromStatement;
   readonly _module_name: RelativeImport | DottedName;
-  readonly _wildcard_import?: boolean;
-  readonly _name?: readonly (DottedName | AliasedImport)[];
-  readonly __inputHints__?: {
-    readonly wildcard_import?: BooleanKeyword<"*">;
-  };
+  readonly _wildcard_import: WildcardImport | DottedName | AliasedImport;
   moduleName(): RelativeImport | DottedName;
-  wildcardImport(): boolean | undefined;
-  names(): readonly (DottedName | AliasedImport)[];
+  wildcardImport(): WildcardImport | DottedName | AliasedImport;
 }
 
 export interface ImportStatement {
@@ -1963,8 +1953,8 @@ export interface Lambda {
 
 export interface LambdaParameters {
   readonly $type: TSKindId.LambdaParameters;
-  readonly _parameter: NonEmptyArray<Parameter>;
-  parameters(): NonEmptyArray<Parameter>;
+  readonly _parameters: _Parameters;
+  parameters(): _Parameters;
 }
 
 export interface LambdaWithinForInClause {
@@ -1977,8 +1967,8 @@ export interface LambdaWithinForInClause {
 
 export interface List {
   readonly $type: TSKindId.List;
-  readonly _expression?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
-  expressions(): readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+  readonly _collection_elements?: CollectionElements;
+  collectionElements(): CollectionElements | undefined;
 }
 
 export interface ListComprehension {
@@ -1991,8 +1981,8 @@ export interface ListComprehension {
 
 export interface ListPattern {
   readonly $type: TSKindId.ListPattern;
-  readonly _pattern?: readonly (Pattern)[];
-  patterns(): readonly (Pattern)[];
+  readonly _patterns?: Patterns;
+  patterns(): Patterns | undefined;
 }
 
 export interface ListSplat {
@@ -2059,8 +2049,8 @@ export interface Pair {
 
 export interface Parameters {
   readonly $type: TSKindId.Parameters;
-  readonly _parameter?: readonly (Parameter)[];
-  parameters(): readonly (Parameter)[];
+  readonly _parameters?: _Parameters;
+  parameters(): _Parameters | undefined;
 }
 
 export interface ParenthesizedExpression {
@@ -2077,16 +2067,16 @@ export interface ParenthesizedListSplat {
 
 export interface PatternList {
   readonly $type: TSKindId.PatternList;
-  readonly _pattern: NonEmptyArray<Pattern | ",">;
-  pattern(): NonEmptyArray<Pattern | ",">;
+  readonly _pattern: Pattern | ",";
+  pattern(): Pattern | ",";
 }
 
 export interface PrintStatement {
   readonly $type: TSKindId.PrintStatement;
-  readonly _argument?: readonly (Expression)[];
   readonly _chevron?: Chevron;
-  arguments(): readonly (Expression)[];
+  readonly _argument?: readonly (Expression)[];
   chevron(): Chevron | undefined;
+  arguments(): readonly (Expression)[];
 }
 
 export interface RaiseStatement {
@@ -2113,8 +2103,8 @@ export interface ReturnStatement {
 
 export interface Set {
   readonly $type: TSKindId.Set;
-  readonly _expression: NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
-  expressions(): NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
+  readonly _collection_elements: CollectionElements;
+  collectionElements(): CollectionElements;
 }
 
 export interface SetComprehension {
@@ -2185,14 +2175,14 @@ export interface TryStatement {
 
 export interface Tuple {
   readonly $type: TSKindId.Tuple;
-  readonly _expression?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
-  expressions(): readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+  readonly _collection_elements?: CollectionElements;
+  collectionElements(): CollectionElements | undefined;
 }
 
 export interface TuplePattern {
   readonly $type: TSKindId.TuplePattern;
-  readonly _pattern?: readonly (Pattern)[];
-  patterns(): readonly (Pattern)[];
+  readonly _patterns?: Patterns;
+  patterns(): Patterns | undefined;
 }
 
 export interface Type {
@@ -2321,8 +2311,8 @@ export interface WithStatement {
 
 export interface Yield {
   readonly $type: TSKindId.Yield;
-  readonly _expression?: "from" | Expression | Expressions;
-  expression(): "from" | Expression | Expressions | undefined;
+  readonly _expression: "from" | Expression | Expressions;
+  expression(): "from" | Expression | Expressions;
 }
 
 

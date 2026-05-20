@@ -52,6 +52,12 @@ export const suggestedTransforms = {
   },
 
 
+  // _type_arguments_repeat1: 1 inferred field(s)
+  _type_arguments_repeat1: {
+      // [held] 100% agreement, 5 parents
+      1: field("bounds"),  // $.trait_bounds
+  },
+
   // closure_parameters: 1 inferred field(s)
   // [held] closure_parameters field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
@@ -76,9 +82,6 @@ export const suggestedTransforms = {
 
   // tuple_struct_pattern: 1 inferred field(s)
   // [held] tuple_struct_pattern field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // type_arguments: 1 inferred field(s)
-  // [held] type_arguments field 'bounds' on $.trait_bounds — 100% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   yield_expression: {
@@ -219,11 +222,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  array_type: {
-    '2/0': 'length',
-  },
-
-  // [held] 1 candidate(s)
   attribute: {
     '1/0/0': 'value',
   },
@@ -238,41 +236,6 @@ export const suggestedGroups = {
     '1/0/0': 'outer',
   },
 
-  // [held] 1 candidate(s)
-  const_item: {
-    '5/0': 'value',
-  },
-
-  // [held] 1 candidate(s)
-  const_parameter: {
-    '4/0': 'value',
-  },
-
-  // [held] 1 candidate(s)
-  enum_variant: {
-    '3/0': 'value',
-  },
-
-  // [held] 1 candidate(s)
-  extern_crate_declaration: {
-    '4/0': 'alias',
-  },
-
-  // [held] 1 candidate(s)
-  for_expression: {
-    '0/0': 'label',
-  },
-
-  // [held] 1 candidate(s)
-  function_item: {
-    '6/0': 'return_type',
-  },
-
-  // [held] 1 candidate(s)
-  function_signature_item: {
-    '6/0': 'return_type',
-  },
-
   // [held] 3 candidate(s)
   function_type: {
     '1/0': 'function_type_trait_form',
@@ -280,26 +243,9 @@ export const suggestedGroups = {
     '2/0': 'return_type',
   },
 
-  // [held] 3 candidate(s)
-  let_declaration: {
-    '3/0': 'type',
-    '4/0': 'value',
-    '5/0': 'alternative',
-  },
-
-  // [held] 1 candidate(s)
-  loop_expression: {
-    '0/0': 'label',
-  },
-
   // [held] 1 candidate(s)
   match_block: {
     '1': 'match_arm',
-  },
-
-  // [held] 1 candidate(s)
-  match_pattern: {
-    '1/0': 'condition',
   },
 
   // [held] 1 candidate(s)
@@ -318,16 +264,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  type_arguments: {
-    '1': 'type',
-  },
-
-  // [held] 1 candidate(s)
-  type_parameter: {
-    '2/0': 'default_type',
-  },
-
-  // [held] 1 candidate(s)
   use_wildcard: {
     '0/0': 'path',
   },
@@ -335,11 +271,6 @@ export const suggestedGroups = {
   // [held] 1 candidate(s)
   variadic_parameter: {
     '1/0': 'pattern',
-  },
-
-  // [held] 1 candidate(s)
-  while_expression: {
-    '0/0': 'label',
   },
 
 };
@@ -469,7 +400,7 @@ export const inferredFields: readonly InferredField[] = [
   { kind: "slice_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "tuple_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "tuple_struct_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
-  { kind: "type_arguments", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },
+  { kind: "_type_arguments_repeat1", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },
 ];
 
 export interface RepeatedShape {

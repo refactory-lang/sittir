@@ -33,6 +33,8 @@ export const NODE_KINDS = [
   '_token_tree_pattern_brace',
   '_token_tree_pattern_bracket',
   '_token_tree_pattern_paren',
+  '_type_arguments_repeat1',
+  '_type_parameters_repeat1',
   '_visibility_modifier_crate',
   'abstract_type',
   'arguments',
@@ -1243,7 +1245,6 @@ export const enum TSFieldId {
   FieldPath = 45,
   FieldPattern = 46,
   FieldPub = 47,
-  FieldReference = 50,
   FieldReturnType = 51,
   FieldRight = 52,
   FieldSelf = 53,
@@ -1256,7 +1257,6 @@ export const enum TSFieldId {
   FieldTokenTree = 60,
   FieldTrailingExpression = 61,
   FieldTrait = 62,
-  FieldTurbofish = 63,
   FieldType = 64,
   FieldTypeArguments = 65,
   FieldTypeParameters = 66,
@@ -1314,7 +1314,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
   "path": TSFieldId.FieldPath,
   "pattern": TSFieldId.FieldPattern,
   "pub": TSFieldId.FieldPub,
-  "reference": TSFieldId.FieldReference,
   "return_type": TSFieldId.FieldReturnType,
   "right": TSFieldId.FieldRight,
   "self": TSFieldId.FieldSelf,
@@ -1327,7 +1326,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
   "token_tree": TSFieldId.FieldTokenTree,
   "trailing_expression": TSFieldId.FieldTrailingExpression,
   "trait": TSFieldId.FieldTrait,
-  "turbofish": TSFieldId.FieldTurbofish,
   "type": TSFieldId.FieldType,
   "type_arguments": TSFieldId.FieldTypeArguments,
   "type_parameters": TSFieldId.FieldTypeParameters,
@@ -1385,7 +1383,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
   [TSFieldId.FieldPath]: "path",
   [TSFieldId.FieldPattern]: "pattern",
   [TSFieldId.FieldPub]: "pub",
-  [TSFieldId.FieldReference]: "reference",
   [TSFieldId.FieldReturnType]: "return_type",
   [TSFieldId.FieldRight]: "right",
   [TSFieldId.FieldSelf]: "self",
@@ -1398,7 +1395,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
   [TSFieldId.FieldTokenTree]: "token_tree",
   [TSFieldId.FieldTrailingExpression]: "trailing_expression",
   [TSFieldId.FieldTrait]: "trait",
-  [TSFieldId.FieldTurbofish]: "turbofish",
   [TSFieldId.FieldType]: "type",
   [TSFieldId.FieldTypeArguments]: "type_arguments",
   [TSFieldId.FieldTypeParameters]: "type_parameters",
@@ -1456,7 +1452,6 @@ export const TREE_SITTER_FIELD_ID_JSON = [
   { name: "path", id: 45, enumName: "FieldPath", cName: "field_path" },
   { name: "pattern", id: 46, enumName: "FieldPattern", cName: "field_pattern" },
   { name: "pub", id: 47, enumName: "FieldPub", cName: "field_pub" },
-  { name: "reference", id: 50, enumName: "FieldReference", cName: "field_reference" },
   { name: "return_type", id: 51, enumName: "FieldReturnType", cName: "field_return_type" },
   { name: "right", id: 52, enumName: "FieldRight", cName: "field_right" },
   { name: "self", id: 53, enumName: "FieldSelf", cName: "field_self" },
@@ -1469,7 +1464,6 @@ export const TREE_SITTER_FIELD_ID_JSON = [
   { name: "token_tree", id: 60, enumName: "FieldTokenTree", cName: "field_token_tree" },
   { name: "trailing_expression", id: 61, enumName: "FieldTrailingExpression", cName: "field_trailing_expression" },
   { name: "trait", id: 62, enumName: "FieldTrait", cName: "field_trait" },
-  { name: "turbofish", id: 63, enumName: "FieldTurbofish", cName: "field_turbofish" },
   { name: "type", id: 64, enumName: "FieldType", cName: "field_type" },
   { name: "type_arguments", id: 65, enumName: "FieldTypeArguments", cName: "field_type_arguments" },
   { name: "type_parameters", id: 66, enumName: "FieldTypeParameters", cName: "field_type_parameters" },
@@ -1553,7 +1547,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   '_non_special_token': [
-    { name: 'literals', required: true, multiple: true },
+    { name: 'literal', required: true, multiple: false },
   ],
   '_pointer_type_mut': [
     { name: 'mutableSpecifier', required: true, multiple: false },
@@ -1582,6 +1576,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_token_tree_pattern_paren': [
     { name: 'tokenPatterns', required: false, multiple: true },
   ],
+  '_type_arguments_repeat1': [
+    { name: 'type', required: true, multiple: false },
+    { name: 'traitBounds', required: false, multiple: false },
+  ],
+  '_type_parameters_repeat1': [
+    { name: 'attributeItems', required: false, multiple: true },
+    { name: 'metavariable', required: true, multiple: false },
+  ],
   '_visibility_modifier_crate': [
     { name: 'crate', required: true, multiple: false },
   ],
@@ -1590,7 +1592,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'trait', required: true, multiple: false },
   ],
   'arguments': [
-    { name: 'attributes', required: false, multiple: true },
+    { name: 'attributeItems', required: false, multiple: true },
+    { name: 'expression', required: true, multiple: false },
   ],
   'array_expression': [
     { name: 'arrayExpressionSemi', required: true, multiple: false },
@@ -1598,7 +1601,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'array_type': [
     { name: 'element', required: true, multiple: false },
-    { name: 'length', required: false, multiple: false },
+    { name: 'arrayTypeOptional1', required: false, multiple: false },
   ],
   'assignment_expression': [
     { name: 'left', required: true, multiple: false },
@@ -1691,12 +1694,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
-    { name: 'value', required: false, multiple: false },
+    { name: 'constItemOptional1', required: false, multiple: false },
   ],
   'const_parameter': [
     { name: 'name', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
-    { name: 'value', required: false, multiple: false },
+    { name: 'constParameterOptional1', required: false, multiple: false },
   ],
   'continue_expression': [
     { name: 'label', required: false, multiple: false },
@@ -1735,7 +1738,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'body', required: false, multiple: false },
-    { name: 'value', required: false, multiple: false },
+    { name: 'enumVariantOptional1', required: false, multiple: false },
   ],
   'enum_variant_list': [
     { name: 'attributedEnumVariants', required: false, multiple: true },
@@ -1754,7 +1757,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'crate', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
-    { name: 'alias', required: false, multiple: false },
+    { name: 'externCrateDeclarationOptional1', required: false, multiple: false },
   ],
   'extern_modifier': [
     { name: 'stringLiteral', required: false, multiple: false },
@@ -1789,7 +1792,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
   ],
   'for_expression': [
-    { name: 'label', required: false, multiple: false },
+    { name: 'forExpressionOptional1', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
@@ -1812,7 +1815,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
-    { name: 'returnType', required: false, multiple: false },
+    { name: 'functionItemOptional1', required: false, multiple: false },
     { name: 'whereClause', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
@@ -1825,13 +1828,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
-    { name: 'returnType', required: false, multiple: false },
+    { name: 'functionSignatureItemOptional1', required: false, multiple: false },
     { name: 'whereClause', required: false, multiple: false },
   ],
   'function_type': [
     { name: 'forLifetimes', required: false, multiple: false },
+    { name: 'functionTypeTraitForm', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
-    { name: 'functionTypeTraitForm', required: true, multiple: false },
+    { name: 'functionTypeFnForm', required: false, multiple: false },
     { name: 'returnType', required: false, multiple: false },
   ],
   'gen_block': [
@@ -1852,7 +1856,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'generic_type_with_turbofish': [
     { name: 'type', required: true, multiple: false },
-    { name: 'turbofish', required: true, multiple: false },
     { name: 'typeArguments', required: true, multiple: false },
   ],
   'higher_ranked_trait_bound': [
@@ -1899,9 +1902,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'let_declaration': [
     { name: 'mutableSpecifier', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
-    { name: 'type', required: false, multiple: false },
-    { name: 'value', required: false, multiple: false },
-    { name: 'alternative', required: false, multiple: false },
+    { name: 'letDeclarationOptional1', required: false, multiple: false },
+    { name: 'letDeclarationOptional2', required: false, multiple: false },
+    { name: 'letDeclarationOptional3', required: false, multiple: false },
   ],
   'lifetime': [
     { name: 'identifier', required: true, multiple: false },
@@ -1916,7 +1919,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'lineCommentContent', required: true, multiple: false },
   ],
   'loop_expression': [
-    { name: 'label', required: false, multiple: false },
+    { name: 'loopExpressionOptional1', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'macro_definition': [
@@ -1960,7 +1963,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'match_pattern': [
     { name: 'pattern', required: true, multiple: false },
-    { name: 'condition', required: false, multiple: false },
+    { name: 'matchPatternOptional1', required: false, multiple: false },
   ],
   'mod_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -1985,7 +1988,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'ordered_field_declaration_list': [
     { name: 'attributeItems', required: false, multiple: true },
     { name: 'visibilityModifier', required: false, multiple: false },
-    { name: 'types', required: false, multiple: true },
+    { name: 'type', required: true, multiple: false },
   ],
   'parameter': [
     { name: 'mutableSpecifier', required: false, multiple: false },
@@ -2032,7 +2035,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: true, multiple: false },
   ],
   'reference_expression': [
-    { name: 'referenceExpressionRawConst', required: false, multiple: false },
+    { name: 'referenceExpressionRawConst', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
   ],
   'reference_pattern': [
@@ -2067,7 +2070,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'list', required: true, multiple: false },
   ],
   'self_parameter': [
-    { name: 'reference', required: false, multiple: false },
     { name: 'lifetime', required: false, multiple: false },
     { name: 'mutableSpecifier', required: false, multiple: false },
     { name: 'self', required: true, multiple: false },
@@ -2180,8 +2182,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'types', required: true, multiple: true },
   ],
   'type_arguments': [
-    { name: 'types', required: true, multiple: true },
-    { name: 'traitBounds', required: false, multiple: false },
+    { name: 'typeArgumentsRepeat1s', required: true, multiple: true },
   ],
   'type_binding': [
     { name: 'name', required: true, multiple: false },
@@ -2203,10 +2204,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'type_parameter': [
     { name: 'name', required: true, multiple: false },
     { name: 'bounds', required: false, multiple: false },
-    { name: 'defaultType', required: false, multiple: false },
+    { name: 'typeParameterOptional1', required: false, multiple: false },
   ],
   'type_parameters': [
-    { name: 'attributedTypeParameters', required: true, multiple: true },
+    { name: 'typeParametersRepeat1s', required: true, multiple: true },
   ],
   'unary_expression': [
     { name: 'operator', required: true, multiple: false },
@@ -2259,7 +2260,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'bounds', required: true, multiple: false },
   ],
   'while_expression': [
-    { name: 'label', required: false, multiple: false },
+    { name: 'whileExpressionOptional1', required: false, multiple: false },
     { name: 'condition', required: true, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],

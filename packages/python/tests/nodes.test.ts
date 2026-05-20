@@ -217,12 +217,12 @@ describe('comment', () => {
 
 describe('comparison_operator', () => {
   it('factory produces correct type', () => {
-    const node = ir.comparisonOperator({ left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, operators: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any], primaryExpression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any] });
+    const node = ir.comparisonOperator({ left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, operators: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, primaryExpression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ComparisonOperator);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.comparisonOperator({ left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, operators: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any], primaryExpression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any] });
+    const node = ir.comparisonOperator({ left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, operators: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, primaryExpression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -427,12 +427,12 @@ describe('except_clause', () => {
 
 describe('exec_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.execStatement({ code: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.execStatement({ code: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any] });
     expect(node.$type).toBe(TSKindId.ExecStatement);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.execStatement({ code: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.execStatement({ code: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any] });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -634,12 +634,12 @@ describe('if_statement', () => {
 
 describe('import_from_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.importFromStatement({ moduleName: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.importFromStatement({ moduleName: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, wildcardImport: { $type: TSKindId.WildcardImport, $text: '*', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ImportFromStatement);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.importFromStatement({ moduleName: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.importFromStatement({ moduleName: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, wildcardImport: { $type: TSKindId.WildcardImport, $text: '*', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });

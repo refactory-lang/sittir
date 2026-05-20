@@ -320,25 +320,25 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "dictionary": return F.dictionary(...(children as Parameters<typeof F.dictionary>));
     case "dictionary_splat_pattern": return F.dictionarySplatPattern(children[0] as Parameters<typeof F.dictionarySplatPattern>[0]);
     case "dotted_name": return F.dottedName(...(children as Parameters<typeof F.dottedName>));
-    case "expression_list": return F.expressionList(...(children as Parameters<typeof F.expressionList>));
+    case "expression_list": return F.expressionList(children[0] as Parameters<typeof F.expressionList>[0]);
     case "expression_statement_tuple": return F.expressionStatementTuple(...(children as Parameters<typeof F.expressionStatementTuple>));
     case "format_specifier": return F.formatSpecifier(...(children as Parameters<typeof F.formatSpecifier>));
     case "global_statement": return F.globalStatement(...(children as Parameters<typeof F.globalStatement>));
-    case "lambda_parameters": return F.lambdaParameters(...(children as Parameters<typeof F.lambdaParameters>));
-    case "list": return F.list(...(children as Parameters<typeof F.list>));
-    case "list_pattern": return F.listPattern(...(children as Parameters<typeof F.listPattern>));
+    case "lambda_parameters": return F.lambdaParameters(children[0] as Parameters<typeof F.lambdaParameters>[0]);
+    case "list": return F.list(children[0] as Parameters<typeof F.list>[0]);
+    case "list_pattern": return F.listPattern(children[0] as Parameters<typeof F.listPattern>[0]);
     case "list_splat_pattern": return F.listSplatPattern(children[0] as Parameters<typeof F.listSplatPattern>[0]);
     case "module": return F.module(...(children as Parameters<typeof F.module>));
     case "nonlocal_statement": return F.nonlocalStatement(...(children as Parameters<typeof F.nonlocalStatement>));
-    case "parameters": return F.parameters(...(children as Parameters<typeof F.parameters>));
+    case "parameters": return F.parameters(children[0] as Parameters<typeof F.parameters>[0]);
     case "parenthesized_expression": return F.parenthesizedExpression(children[0] as Parameters<typeof F.parenthesizedExpression>[0]);
     case "parenthesized_list_splat": return F.parenthesizedListSplat(children[0] as Parameters<typeof F.parenthesizedListSplat>[0]);
-    case "pattern_list": return F.patternList(...(children as Parameters<typeof F.patternList>));
+    case "pattern_list": return F.patternList(children[0] as Parameters<typeof F.patternList>[0]);
     case "return_statement": return F.returnStatement(children[0] as Parameters<typeof F.returnStatement>[0]);
-    case "set": return F.set(...(children as Parameters<typeof F.set>));
+    case "set": return F.set(children[0] as Parameters<typeof F.set>[0]);
     case "string_content": return F.stringContent(...(children as Parameters<typeof F.stringContent>));
-    case "tuple": return F.tuple(...(children as Parameters<typeof F.tuple>));
-    case "tuple_pattern": return F.tuplePattern(...(children as Parameters<typeof F.tuplePattern>));
+    case "tuple": return F.tuple(children[0] as Parameters<typeof F.tuple>[0]);
+    case "tuple_pattern": return F.tuplePattern(children[0] as Parameters<typeof F.tuplePattern>[0]);
     case "type": return F.type(children[0] as Parameters<typeof F.type>[0]);
     case "type_parameter": return F.typeParameter(...(children as Parameters<typeof F.typeParameter>));
     case "union_pattern": return F.unionPattern(...(children as Parameters<typeof F.unionPattern>));
@@ -644,21 +644,16 @@ export function commentFrom(input: string | T.Comment): ReturnType<typeof F.comm
 
 export function comparisonOperatorFrom(input: T.ComparisonOperator.Loose): ReturnType<typeof F.comparisonOperator> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.comparisonOperator>;
-  const _ne_operators = _resolveMany<T.Lt | T.LtEq | T.EqEq | T.BangEq | T.GtEq | T.Gt | T.LtGt | T.In | "not in" | T.Is | "is not">(input.operators, _K9, _K10);
-  _assertNonEmpty(_ne_operators, 'comparison_operator.operators');
-  const _ne_primaryExpressions = _resolveMany<T.PrimaryExpression>(input.primaryExpression, _K0, _K4);
-  _assertNonEmpty(_ne_primaryExpressions, 'comparison_operator.primaryExpressions');
   return F.comparisonOperator({
     left: _resolveOne<T.PrimaryExpression>(input.left, _K0, _K4),
-    operators: _ne_operators,
-    primaryExpression: _ne_primaryExpressions,
+    operators: _resolveOne<T.Lt | T.LtEq | T.EqEq | T.BangEq | T.GtEq | T.Gt | T.LtGt | T.In | "not in" | T.Is | "is not">(input.operators, _K9, _K10),
+    primaryExpression: _resolveOne<T.PrimaryExpression>(input.primaryExpression, _K0, _K4),
   });
 }
 
 export function complexPatternFrom(input: T.ComplexPattern.Loose): ReturnType<typeof F.complexPattern> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.complexPattern>;
   return F.complexPattern({
-    real: _resolveBooleanKeyword(input.real),
     imaginary: _resolveOne<T.Integer | T.Float>(input.imaginary, _K11, _K6),
     integer: _resolveOne<T.Integer | T.Float>(input.integer, _K11, _K6),
   });
@@ -803,10 +798,10 @@ export function escapeSequenceFrom(input: string | T.EscapeSequence): ReturnType
 
 export function exceptClauseFrom(input: T.ExceptClause.Loose): ReturnType<typeof F.exceptClause> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.exceptClause>;
-  const _ne_values = _resolveMany<T.Expression>(input.value, _K0, _K1);
-  _assertNonEmpty(_ne_values, 'except_clause.values');
+  const _ne_value = _resolveMany<T.Expression>(input.value, _K0, _K1);
+  _assertNonEmpty(_ne_value, 'except_clause.value');
   return F.exceptClause({
-    value: _ne_values,
+    value: _ne_value,
     alias: _resolveOne<T.Expression>(input.alias, _K0, _K1),
     suite: _resolveOneBranch<T.Suite>(input.suite, "_suite") ?? F.suite(),
   });
@@ -814,20 +809,21 @@ export function exceptClauseFrom(input: T.ExceptClause.Loose): ReturnType<typeof
 
 export function execStatementFrom(input: T.ExecStatement.Loose): ReturnType<typeof F.execStatement> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.execStatement>;
+  const _ne_expressions = _resolveMany<T.Expression>(input.expression, _K0, _K1);
+  _assertNonEmpty(_ne_expressions, 'exec_statement.expressions');
   return F.execStatement({
     code: _resolveOne<T.String | T.Identifier>(input.code, _K2, _K14),
-    inClause: _resolveMany<"in" | T.Expression>(input.inClause, _K0, _K1),
+    expression: _ne_expressions,
   });
 }
 
-export function expressionListFrom(...input: readonly ((T.Expression | ",") | T.ExpressionList)[]): ReturnType<typeof F.expressionList> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExpressionList) {
-    const data = input[0];
-    const stored = (data as unknown as { _expression?: unknown })._expression;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.expressionList(...(children as unknown as Parameters<typeof F.expressionList>));
+export function expressionListFrom(input?: (T.Expression | ",") | T.ExpressionList): ReturnType<typeof F.expressionList> {
+  if (isNodeData(input) && input.$type === TSKindId.ExpressionList) {
+    const data = input;
+    const child = (data as unknown as { _expression?: unknown })._expression;
+    return F.expressionList(child as Parameters<typeof F.expressionList>[0]);
   }
-  return F.expressionList(...(input as unknown as Parameters<typeof F.expressionList>));
+  return F.expressionList(input as Parameters<typeof F.expressionList>[0]);
 }
 
 export function expressionStatementTupleFrom(...input: readonly (T.Expression | T.ExpressionStatementTuple)[]): ReturnType<typeof F.expressionStatementTuple> {
@@ -988,8 +984,7 @@ export function importFromStatementFrom(input: T.ImportFromStatement.Loose): Ret
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.importFromStatement>;
   return F.importFromStatement({
     moduleName: _resolveOne<T.RelativeImport | T.DottedName>(input.moduleName, _K6, _K19),
-    wildcardImport: _resolveBooleanKeyword(input.wildcardImport),
-    name: _resolveMany<T.DottedName | T.AliasedImport>(input.name, _K6, _K17),
+    wildcardImport: _resolveOne<T.WildcardImport | T.DottedName | T.AliasedImport>(input.wildcardImport, _K6, _K17),
   });
 }
 
@@ -1045,14 +1040,13 @@ export function lambdaFrom(input: T.Lambda.Loose): ReturnType<typeof F.lambda> {
   });
 }
 
-export function lambdaParametersFrom(...input: readonly (T.Parameter | T.LambdaParameters)[]): ReturnType<typeof F.lambdaParameters> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.LambdaParameters) {
-    const data = input[0];
-    const stored = (data as unknown as { _parameter?: unknown })._parameter;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.lambdaParameters(...(children as unknown as Parameters<typeof F.lambdaParameters>));
+export function lambdaParametersFrom(input?: T._Parameters | T.LambdaParameters): ReturnType<typeof F.lambdaParameters> {
+  if (isNodeData(input) && input.$type === TSKindId.LambdaParameters) {
+    const data = input;
+    const child = (data as unknown as { _parameters?: unknown })._parameters;
+    return F.lambdaParameters(child as Parameters<typeof F.lambdaParameters>[0]);
   }
-  return F.lambdaParameters(...(input as unknown as Parameters<typeof F.lambdaParameters>));
+  return F.lambdaParameters(input as Parameters<typeof F.lambdaParameters>[0]);
 }
 
 export function lambdaWithinForInClauseFrom(input: T.LambdaWithinForInClause.Loose): ReturnType<typeof F.lambdaWithinForInClause> {
@@ -1068,14 +1062,13 @@ export function lineContinuationFrom(input: string | T.LineContinuation): Return
   return F.lineContinuation(input as Parameters<typeof F.lineContinuation>[0]);
 }
 
-export function listFrom(...input: readonly ((T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat) | T.List)[]): ReturnType<typeof F.list> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.List) {
-    const data = input[0];
-    const stored = (data as unknown as { _expression?: unknown })._expression;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.list(...(children as unknown as Parameters<typeof F.list>));
+export function listFrom(input?: T.CollectionElements | T.List): ReturnType<typeof F.list> {
+  if (isNodeData(input) && input.$type === TSKindId.List) {
+    const data = input;
+    const child = (data as unknown as { _collection_elements?: unknown })._collection_elements;
+    return F.list(child as Parameters<typeof F.list>[0]);
   }
-  return F.list(...(input as unknown as Parameters<typeof F.list>));
+  return F.list(input as Parameters<typeof F.list>[0]);
 }
 
 export function listComprehensionFrom(input: T.ListComprehension.Loose): ReturnType<typeof F.listComprehension> {
@@ -1086,14 +1079,13 @@ export function listComprehensionFrom(input: T.ListComprehension.Loose): ReturnT
   });
 }
 
-export function listPatternFrom(...input: readonly (T.Pattern | T.ListPattern)[]): ReturnType<typeof F.listPattern> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ListPattern) {
-    const data = input[0];
-    const stored = (data as unknown as { _pattern?: unknown })._pattern;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.listPattern(...(children as unknown as Parameters<typeof F.listPattern>));
+export function listPatternFrom(input?: T.Patterns | T.ListPattern): ReturnType<typeof F.listPattern> {
+  if (isNodeData(input) && input.$type === TSKindId.ListPattern) {
+    const data = input;
+    const child = (data as unknown as { _patterns?: unknown })._patterns;
+    return F.listPattern(child as Parameters<typeof F.listPattern>[0]);
   }
-  return F.listPattern(...(input as unknown as Parameters<typeof F.listPattern>));
+  return F.listPattern(input as Parameters<typeof F.listPattern>[0]);
 }
 
 export function listSplatFrom(input: T.ListSplat.Loose): ReturnType<typeof F.listSplat> {
@@ -1174,14 +1166,13 @@ export function pairFrom(input: T.Pair.Loose): ReturnType<typeof F.pair> {
   });
 }
 
-export function parametersFrom(...input: readonly (T.Parameter | T.Parameters)[]): ReturnType<typeof F.parameters> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Parameters) {
-    const data = input[0];
-    const stored = (data as unknown as { _parameter?: unknown })._parameter;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.parameters(...(children as unknown as Parameters<typeof F.parameters>));
+export function parametersFrom(input?: T._Parameters | T.Parameters): ReturnType<typeof F.parameters> {
+  if (isNodeData(input) && input.$type === TSKindId.Parameters) {
+    const data = input;
+    const child = (data as unknown as { _parameters?: unknown })._parameters;
+    return F.parameters(child as Parameters<typeof F.parameters>[0]);
   }
-  return F.parameters(...(input as unknown as Parameters<typeof F.parameters>));
+  return F.parameters(input as Parameters<typeof F.parameters>[0]);
 }
 
 export function parenthesizedExpressionFrom(input?: (T.Expression | T.Yield) | T.ParenthesizedExpression): ReturnType<typeof F.parenthesizedExpression> {
@@ -1207,21 +1198,20 @@ export function passStatementFrom(input?: T.PassStatement): ReturnType<typeof F.
   return F.passStatement();
 }
 
-export function patternListFrom(...input: readonly ((T.Pattern | ",") | T.PatternList)[]): ReturnType<typeof F.patternList> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.PatternList) {
-    const data = input[0];
-    const stored = (data as unknown as { _pattern?: unknown })._pattern;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.patternList(...(children as unknown as Parameters<typeof F.patternList>));
+export function patternListFrom(input?: (T.Pattern | ",") | T.PatternList): ReturnType<typeof F.patternList> {
+  if (isNodeData(input) && input.$type === TSKindId.PatternList) {
+    const data = input;
+    const child = (data as unknown as { _pattern?: unknown })._pattern;
+    return F.patternList(child as Parameters<typeof F.patternList>[0]);
   }
-  return F.patternList(...(input as unknown as Parameters<typeof F.patternList>));
+  return F.patternList(input as Parameters<typeof F.patternList>[0]);
 }
 
 export function printStatementFrom(input?: T.PrintStatement.Loose): ReturnType<typeof F.printStatement> {
   if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.printStatement>;
   return F.printStatement({
-    argument: _resolveMany<T.Expression>(input?.argument, _K0, _K1),
     chevron: _resolveOneBranch<T.Chevron>(input?.chevron, "chevron"),
+    argument: _resolveMany<T.Expression>(input?.argument, _K0, _K1),
   });
 }
 
@@ -1250,14 +1240,13 @@ export function returnStatementFrom(input?: T.Expressions | T.ReturnStatement): 
   return F.returnStatement(input as Parameters<typeof F.returnStatement>[0]);
 }
 
-export function setFrom(...input: readonly ((T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat) | T.Set)[]): ReturnType<typeof F.set> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Set) {
-    const data = input[0];
-    const stored = (data as unknown as { _expression?: unknown })._expression;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.set(...(children as unknown as Parameters<typeof F.set>));
+export function setFrom(input?: T.CollectionElements | T.Set): ReturnType<typeof F.set> {
+  if (isNodeData(input) && input.$type === TSKindId.Set) {
+    const data = input;
+    const child = (data as unknown as { _collection_elements?: unknown })._collection_elements;
+    return F.set(child as Parameters<typeof F.set>[0]);
   }
-  return F.set(...(input as unknown as Parameters<typeof F.set>));
+  return F.set(input as Parameters<typeof F.set>[0]);
 }
 
 export function setComprehensionFrom(input: T.SetComprehension.Loose): ReturnType<typeof F.setComprehension> {
@@ -1331,24 +1320,22 @@ export function tryStatementFrom(input: T.TryStatement.Loose): ReturnType<typeof
   });
 }
 
-export function tupleFrom(...input: readonly ((T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat) | T.Tuple)[]): ReturnType<typeof F.tuple> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Tuple) {
-    const data = input[0];
-    const stored = (data as unknown as { _expression?: unknown })._expression;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.tuple(...(children as unknown as Parameters<typeof F.tuple>));
+export function tupleFrom(input?: T.CollectionElements | T.Tuple): ReturnType<typeof F.tuple> {
+  if (isNodeData(input) && input.$type === TSKindId.Tuple) {
+    const data = input;
+    const child = (data as unknown as { _collection_elements?: unknown })._collection_elements;
+    return F.tuple(child as Parameters<typeof F.tuple>[0]);
   }
-  return F.tuple(...(input as unknown as Parameters<typeof F.tuple>));
+  return F.tuple(input as Parameters<typeof F.tuple>[0]);
 }
 
-export function tuplePatternFrom(...input: readonly (T.Pattern | T.TuplePattern)[]): ReturnType<typeof F.tuplePattern> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TuplePattern) {
-    const data = input[0];
-    const stored = (data as unknown as { _pattern?: unknown })._pattern;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.tuplePattern(...(children as unknown as Parameters<typeof F.tuplePattern>));
+export function tuplePatternFrom(input?: T.Patterns | T.TuplePattern): ReturnType<typeof F.tuplePattern> {
+  if (isNodeData(input) && input.$type === TSKindId.TuplePattern) {
+    const data = input;
+    const child = (data as unknown as { _patterns?: unknown })._patterns;
+    return F.tuplePattern(child as Parameters<typeof F.tuplePattern>[0]);
   }
-  return F.tuplePattern(...(input as unknown as Parameters<typeof F.tuplePattern>));
+  return F.tuplePattern(input as Parameters<typeof F.tuplePattern>[0]);
 }
 
 export function typeFrom(input?: (T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType) | T.Type): ReturnType<typeof F.type> {

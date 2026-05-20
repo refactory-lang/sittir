@@ -4327,11 +4327,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     if let Ok(value) = NewExpressionTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::NewExpression(value));
                     }
-                    if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::PrimaryExpression(value));
-                    }
                     if let Ok(value) = YieldExpressionTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::YieldExpression(value));
+                    }
+                    if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
+                        return Ok(Self::PrimaryExpression(value));
                     }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionTransport"))
                 },
@@ -4500,11 +4500,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     if let Ok(value) = NewExpressionTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::NewExpression(value));
                     }
-                    if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::PrimaryExpression(value));
-                    }
                     if let Ok(value) = YieldExpressionTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::YieldExpression(value));
+                    }
+                    if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
+                        return Ok(Self::PrimaryExpression(value));
                     }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionTransport"))
                 },
@@ -12838,6 +12838,144 @@ impl RenderableTransport for DecoratorParenthesizedExpressionIdentifierTransport
 }
 
 #[derive(Debug, Clone)]
+pub enum EnumBodyOpeningTransportSlot {
+    Identifier(IdentifierTransport),
+    ReservedIdentifier(ReservedIdentifierTransport),
+    PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
+    String(StringTransport),
+    Number(NumberTransport),
+    ComputedPropertyName(ComputedPropertyNameTransport),
+    EnumAssignment(EnumAssignmentTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyOpeningTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                106 => Ok(Self::PrivatePropertyIdentifier(
+                    PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::String(
+                    StringTransport::from_napi_value(env, napi_val)?
+                )),
+                105 => Ok(Self::Number(
+                    NumberTransport::from_napi_value(env, napi_val)?
+                )),
+                265 => Ok(Self::ComputedPropertyName(
+                    ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
+                )),
+                292 => Ok(Self::EnumAssignment(
+                    EnumAssignmentTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in EnumBodyOpeningTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("EnumBodyOpeningTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in EnumBodyOpeningTransportSlot")
+        )?;
+        match kind_id {
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                106 => Ok(Self::PrivatePropertyIdentifier(
+                    PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::String(
+                    StringTransport::from_napi_value(env, napi_val)?
+                )),
+                105 => Ok(Self::Number(
+                    NumberTransport::from_napi_value(env, napi_val)?
+                )),
+                265 => Ok(Self::ComputedPropertyName(
+                    ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
+                )),
+                292 => Ok(Self::EnumAssignment(
+                    EnumAssignmentTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in EnumBodyOpeningTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for EnumBodyOpeningTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("EnumBodyOpeningTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<EnumBodyOpeningTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        EnumBodyOpeningTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<EnumBodyOpeningTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        EnumBodyOpeningTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn enum_body_opening_transport_slot_to_any(t: EnumBodyOpeningTransportSlot) -> AnyTransport {
+    match t {
+        EnumBodyOpeningTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        EnumBodyOpeningTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        EnumBodyOpeningTransportSlot::PrivatePropertyIdentifier(inner) => AnyTransport::PrivatePropertyIdentifier(inner),
+        EnumBodyOpeningTransportSlot::String(inner) => AnyTransport::String(inner),
+        EnumBodyOpeningTransportSlot::Number(inner) => AnyTransport::Number(inner),
+        EnumBodyOpeningTransportSlot::ComputedPropertyName(inner) => AnyTransport::ComputedPropertyName(inner),
+        EnumBodyOpeningTransportSlot::EnumAssignment(inner) => AnyTransport::EnumAssignment(inner),
+        EnumBodyOpeningTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for EnumBodyOpeningTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            EnumBodyOpeningTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            EnumBodyOpeningTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+            EnumBodyOpeningTransportSlot::PrivatePropertyIdentifier(inner) => render_private_property_identifier(inner, dest),
+            EnumBodyOpeningTransportSlot::String(inner) => render_string(inner, dest),
+            EnumBodyOpeningTransportSlot::Number(inner) => render_number(inner, dest),
+            EnumBodyOpeningTransportSlot::ComputedPropertyName(inner) => render_computed_property_name(inner, dest),
+            EnumBodyOpeningTransportSlot::EnumAssignment(inner) => render_enum_assignment(inner, dest),
+            EnumBodyOpeningTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ForInStatementForHeaderLhsTransportSlot {
     ForHeaderLhs(ForHeaderLhsTransport),
     ForHeaderVarKind(ForHeaderVarKindTransport),
@@ -16834,19 +16972,17 @@ impl RenderableTransport for ObjectPatternPairPatternTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ObjectTypeMembersTransportSlot {
+pub enum ObjectTypeExportStatementTransportSlot {
     ExportStatement(ExportStatementTransport),
     PropertySignature(PropertySignatureTransport),
     CallSignature(CallSignatureTransport),
     ConstructSignature(ConstructSignatureTransport),
     IndexSignature(IndexSignatureTransport),
     MethodSignature(MethodSignatureTransport),
-    Semicolon(SemicolonTransport),
-    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeMembersTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeExportStatementTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -16872,17 +17008,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeMembersTransportSlot {
                     MethodSignatureTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in ObjectTypeMembersTransportSlot",
+                    "unknown kind id {other} in ObjectTypeExportStatementTransportSlot",
                 ))),
             };
         }
-        if let Ok(text) = String::from_napi_value(env, napi_val) {
-            return Ok(Self::Verbatim(VerbatimTransport { text }));
-        }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
-            .map_err(|_| ::napi::Error::from_reason("ObjectTypeMembersTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+            .map_err(|_| ::napi::Error::from_reason("ObjectTypeExportStatementTransportSlot: expected u16 kind_id, string, or object with $type"))?;
         let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-            ::napi::Error::from_reason("$type property missing in ObjectTypeMembersTransportSlot")
+            ::napi::Error::from_reason("$type property missing in ObjectTypeExportStatementTransportSlot")
         )?;
         match kind_id {
                 167 => Ok(Self::ExportStatement(
@@ -16904,69 +17037,149 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeMembersTransportSlot {
                     MethodSignatureTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in ObjectTypeMembersTransportSlot",
+                    "unknown kind id {other} in ObjectTypeExportStatementTransportSlot",
                 ))),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ObjectTypeMembersTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ObjectTypeExportStatementTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ObjectTypeMembersTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ObjectTypeExportStatementTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ObjectTypeMembersTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ObjectTypeExportStatementTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ObjectTypeMembersTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ObjectTypeExportStatementTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ObjectTypeMembersTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ObjectTypeExportStatementTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ObjectTypeMembersTransportSlot::to_napi_value(env, *val)
+        ObjectTypeExportStatementTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn object_type_members_transport_slot_to_any(t: ObjectTypeMembersTransportSlot) -> AnyTransport {
+fn object_type_export_statement_transport_slot_to_any(t: ObjectTypeExportStatementTransportSlot) -> AnyTransport {
     match t {
-        ObjectTypeMembersTransportSlot::ExportStatement(inner) => AnyTransport::ExportStatement(inner),
-        ObjectTypeMembersTransportSlot::PropertySignature(inner) => AnyTransport::PropertySignature(inner),
-        ObjectTypeMembersTransportSlot::CallSignature(inner) => AnyTransport::CallSignature(inner),
-        ObjectTypeMembersTransportSlot::ConstructSignature(inner) => AnyTransport::ConstructSignature(inner),
-        ObjectTypeMembersTransportSlot::IndexSignature(inner) => AnyTransport::IndexSignature(inner),
-        ObjectTypeMembersTransportSlot::MethodSignature(inner) => AnyTransport::MethodSignature(inner),
-        ObjectTypeMembersTransportSlot::Semicolon(inner) => AnyTransport::Semicolon(inner),
-        ObjectTypeMembersTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        ObjectTypeExportStatementTransportSlot::ExportStatement(inner) => AnyTransport::ExportStatement(inner),
+        ObjectTypeExportStatementTransportSlot::PropertySignature(inner) => AnyTransport::PropertySignature(inner),
+        ObjectTypeExportStatementTransportSlot::CallSignature(inner) => AnyTransport::CallSignature(inner),
+        ObjectTypeExportStatementTransportSlot::ConstructSignature(inner) => AnyTransport::ConstructSignature(inner),
+        ObjectTypeExportStatementTransportSlot::IndexSignature(inner) => AnyTransport::IndexSignature(inner),
+        ObjectTypeExportStatementTransportSlot::MethodSignature(inner) => AnyTransport::MethodSignature(inner),
     }
 }
 
-impl RenderableTransport for ObjectTypeMembersTransportSlot {
+impl RenderableTransport for ObjectTypeExportStatementTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ObjectTypeMembersTransportSlot::ExportStatement(inner) => render_export_statement(inner, dest),
-            ObjectTypeMembersTransportSlot::PropertySignature(inner) => render_property_signature(inner, dest),
-            ObjectTypeMembersTransportSlot::CallSignature(inner) => render_call_signature(inner, dest),
-            ObjectTypeMembersTransportSlot::ConstructSignature(inner) => render_construct_signature(inner, dest),
-            ObjectTypeMembersTransportSlot::IndexSignature(inner) => render_index_signature(inner, dest),
-            ObjectTypeMembersTransportSlot::MethodSignature(inner) => render_method_signature(inner, dest),
-            ObjectTypeMembersTransportSlot::Semicolon(inner) => render_semicolon(inner, dest),
-            ObjectTypeMembersTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            ObjectTypeExportStatementTransportSlot::ExportStatement(inner) => render_export_statement(inner, dest),
+            ObjectTypeExportStatementTransportSlot::PropertySignature(inner) => render_property_signature(inner, dest),
+            ObjectTypeExportStatementTransportSlot::CallSignature(inner) => render_call_signature(inner, dest),
+            ObjectTypeExportStatementTransportSlot::ConstructSignature(inner) => render_construct_signature(inner, dest),
+            ObjectTypeExportStatementTransportSlot::IndexSignature(inner) => render_index_signature(inner, dest),
+            ObjectTypeExportStatementTransportSlot::MethodSignature(inner) => render_method_signature(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ObjectTypeSemicolonTransportSlot {
+    Semicolon(SemicolonTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ObjectTypeSemicolonTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ObjectTypeSemicolonTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("ObjectTypeSemicolonTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in ObjectTypeSemicolonTransportSlot")
+        )?;
+        match kind_id {
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ObjectTypeSemicolonTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ObjectTypeSemicolonTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ObjectTypeSemicolonTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ObjectTypeSemicolonTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ObjectTypeSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ObjectTypeSemicolonTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ObjectTypeSemicolonTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn object_type_semicolon_transport_slot_to_any(t: ObjectTypeSemicolonTransportSlot) -> AnyTransport {
+    match t {
+        ObjectTypeSemicolonTransportSlot::Semicolon(inner) => AnyTransport::Semicolon(inner),
+        ObjectTypeSemicolonTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for ObjectTypeSemicolonTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ObjectTypeSemicolonTransportSlot::Semicolon(inner) => render_semicolon(inner, dest),
+            ObjectTypeSemicolonTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -20030,7 +20243,7 @@ pub struct _ClassHeritageExtendsClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause"))]
-    pub extends_clause: ExtendsClauseTransport,
+    pub extends_clause: Box<ExtendsClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_implements_clause"))]
     pub implements_clause: Option<ImplementsClauseTransport>,
 }
@@ -20810,7 +21023,7 @@ pub struct _ExportStatementTypeExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
-    pub source: Option<StringTransport>,
+    pub source: StringTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
     pub export_clause: ExportClauseTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
@@ -21071,12 +21284,10 @@ pub struct ForHeaderVarKindTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_kind"))]
-    pub kind: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ForHeaderVarKindLeftTransportSlot,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_initializer"))]
-    pub initializer: Option<InitializerTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    pub value: ExpressionTransport,
 }
 
 impl RenderableTransport for ForHeaderVarKindTransport {
@@ -21660,7 +21871,7 @@ pub struct JsxStartOpeningElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<JsxElementNameTransport>,
+    pub name: JsxElementNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
@@ -21714,7 +21925,7 @@ pub struct JsxStringTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_unescaped_double_jsx_string_fragment"))]
-    pub unescaped_double_jsx_string_fragment: Option<Vec<JsxStringUnescapedDoubleJsxStringFragmentTransportSlot>>,
+    pub unescaped_double_jsx_string_fragment: JsxStringUnescapedDoubleJsxStringFragmentTransportSlot,
 }
 
 impl RenderableTransport for JsxStringTransport {
@@ -24061,8 +24272,6 @@ pub struct PublicFieldDefinitionAccessFirstTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declare_marker"))]
-    pub declare_marker: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: AccessibilityModifierEnum,
 }
@@ -26447,8 +26656,6 @@ pub struct AssignmentExpressionTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_using_marker"))]
-    pub using_marker: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: Box<AssignmentExpressionLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -26932,7 +27139,7 @@ pub struct ClassTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
     pub type_parameters: Option<TypeParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_heritage"))]
-    pub class_heritage: Option<ClassHeritageTransport>,
+    pub class_heritage: Option<Box<ClassHeritageTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ClassBodyTransport,
 }
@@ -27196,7 +27403,7 @@ pub struct ClassHeritageTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_heritage_extends_clause"))]
-    pub class_heritage_extends_clause: _ClassHeritageExtendsClauseTransport,
+    pub class_heritage_extends_clause: Box<_ClassHeritageExtendsClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_heritage_implements_clause"))]
     pub class_heritage_implements_clause: _ClassHeritageImplementsClauseTransport,
 }
@@ -28281,10 +28488,8 @@ pub struct EnumBodyTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<Vec<PropertyNameTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_assignment"))]
-    pub enum_assignment: Option<Vec<EnumAssignmentTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opening"))]
+    pub opening: Option<Vec<EnumBodyOpeningTransportSlot>>,
 }
 
 impl RenderableTransport for EnumBodyTransport {
@@ -28694,7 +28899,7 @@ pub struct ExportStatementTypeExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
-    pub source: Option<StringTransport>,
+    pub source: StringTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
     pub export_clause: ExportClauseTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
@@ -28960,7 +29165,7 @@ pub struct ExtendsClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Vec<ExpressionTransport>,
+    pub value: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<TypeArgumentsTransport>,
 }
@@ -29170,7 +29375,7 @@ pub struct FieldDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
     pub property: PropertyNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: ExpressionTransport,
 }
 
 impl RenderableTransport for FieldDefinitionTransport {
@@ -29319,8 +29524,6 @@ pub struct ForInStatementTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_marker"))]
-    pub await_marker: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ForHeaderOperatorEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -31075,8 +31278,8 @@ pub struct InferTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_identifier"))]
     pub type_identifier: TypeIdentifierTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: Option<Box<TypeTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_constraint"))]
+    pub constraint: Box<TypeTransport>,
 }
 
 impl RenderableTransport for InferTypeTransport {
@@ -31694,7 +31897,7 @@ pub struct JsxOpeningElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<JsxElementNameTransport>,
+    pub name: JsxElementNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
@@ -31748,7 +31951,7 @@ pub struct JsxSelfClosingElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<JsxElementNameTransport>,
+    pub name: JsxElementNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
@@ -33125,10 +33328,12 @@ pub struct ObjectTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opening"))]
     pub opening: ObjectTypeOpeningEnum,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_members"))]
-    pub members: Option<Vec<ObjectTypeMembersTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_closing"))]
     pub closing: ObjectTypeClosingEnum,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement"))]
+    pub export_statement: Vec<ObjectTypeExportStatementTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
+    pub semicolon: Option<ObjectTypeSemicolonTransportSlot>,
 }
 
 impl RenderableTransport for ObjectTypeTransport {
@@ -33286,7 +33491,7 @@ pub struct OptionalParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<TypeAnnotationTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: Option<AccessibilityModifierEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
@@ -34152,11 +34357,11 @@ pub struct PublicFieldDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<TypeAnnotationTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_declare_first"))]
     pub public_field_definition_declare_first: Option<PublicFieldDefinitionPublicFieldDefinitionDeclareFirstTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_static_mods"))]
-    pub public_field_definition_static_mods: Option<PublicFieldDefinitionPublicFieldDefinitionStaticModsTransportSlot>,
+    pub public_field_definition_static_mods: PublicFieldDefinitionPublicFieldDefinitionStaticModsTransportSlot,
 }
 
 impl RenderableTransport for PublicFieldDefinitionTransport {
@@ -34516,7 +34721,7 @@ pub struct RequiredParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<TypeAnnotationTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<ExpressionTransport>,
+    pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: Option<AccessibilityModifierEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
@@ -34928,7 +35133,7 @@ pub struct StringTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opening"))]
     pub opening: StringOpeningEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_contents"))]
-    pub contents: Option<Vec<StringContentsTransportSlot>>,
+    pub contents: StringContentsTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_closing"))]
     pub closing: StringOpeningEnum,
 }
@@ -37340,7 +37545,7 @@ pub struct YieldExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: Option<Box<ExpressionTransport>>,
+    pub expression: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for YieldExpressionTransport {
@@ -48809,10 +49014,7 @@ fn render__export_statement_type_export(node: &_ExportStatementTypeExportTranspo
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        source: match &node.source {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        source: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.source)),
     };
     template.render_into(dest)
 }
@@ -48849,9 +49051,9 @@ fn render_for_header_lhs(node: &ForHeaderLhsTransport, dest: &mut dyn ::std::fmt
 
 fn render_for_header_var_kind(node: &ForHeaderVarKindTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ForHeaderVarKindTemplate {
-        kind: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.kind.as_ref())),
+        kind: OptionalNonterminalView::Missing,
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        value: OptionalNonterminalView::Missing,
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
@@ -48921,16 +49123,12 @@ fn render__index_signature_mapped_type_clause(node: &_IndexSignatureMappedTypeCl
 }
 
 fn render_initializer(node: &InitializerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = InitializerTemplate {
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
-    };
-    template.render_into(dest)
+    render_expression(&node.value, dest)?;
+    Ok(())
 }
 
 fn render_jsx_start_opening_element(node: &JsxStartOpeningElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.name {
-        render_jsx_element_name(child, dest)?;
-    }
+    render_jsx_element_name(&node.name, dest)?;
     if let Some(child) = &node.type_arguments {
         render_type_arguments(child, dest)?;
     }
@@ -48943,11 +49141,7 @@ fn render_jsx_start_opening_element(node: &JsxStartOpeningElementTransport, dest
 }
 
 fn render_jsx_string(node: &JsxStringTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(items) = &node.unescaped_double_jsx_string_fragment {
-        for child in items.iter() {
-        child.render_into(dest)?;
-        }
-    }
+    node.unescaped_double_jsx_string_fragment.render_into(dest)?;
     Ok(())
 }
 
@@ -49107,10 +49301,7 @@ fn render_public_field_definition_abstract_first(node: &PublicFieldDefinitionAbs
 fn render_public_field_definition_access_first(node: &PublicFieldDefinitionAccessFirstTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = PublicFieldDefinitionAccessFirstTemplate {
         accessibility_modifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.accessibility_modifier)),
-        declare_marker: match &node.declare_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
-        },
+        declare_marker: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -49358,7 +49549,7 @@ fn render_arguments(node: &ArgumentsTransport, dest: &mut dyn ::std::fmt::Write)
     let template = ArgumentsTemplate {
         expression: ListNonterminalView {
             items: expression_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -49379,7 +49570,7 @@ fn render_array(node: &ArrayTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
     let template = ArrayTemplate {
         expression: ListNonterminalView {
             items: expression_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -49400,7 +49591,7 @@ fn render_array_pattern(node: &ArrayPatternTransport, dest: &mut dyn ::std::fmt:
     let template = ArrayPatternTemplate {
         pattern: ListNonterminalView {
             items: pattern_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -49477,10 +49668,7 @@ fn render_assignment_expression(node: &AssignmentExpressionTransport, dest: &mut
     let template = AssignmentExpressionTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-        using_marker: match &node.using_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
-        },
+        using_marker: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -49879,19 +50067,31 @@ fn render_enum_assignment(node: &EnumAssignmentTransport, dest: &mut dyn ::std::
 }
 
 fn render_enum_body(node: &EnumBodyTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.name.as_deref().is_none_or(<[_]>::is_empty) && node.enum_assignment.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.opening.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let name_owned = node.name.as_deref().unwrap_or(&[]);
-    let name_buf: Vec<::sittir_core::filters::Renderable<'_>> = name_owned.iter()
+    let opening_owned = node.opening.as_deref().unwrap_or(&[]);
+    let opening_buf: Vec<::sittir_core::filters::Renderable<'_>> = opening_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = EnumBodyTemplate {
+        enum_assignment: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
         name: ListNonterminalView {
-            items: name_buf.as_slice(),
-            separator: ",",
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        opening: ListNonterminalView {
+            items: opening_buf.as_slice(),
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -49932,7 +50132,7 @@ fn render_export_clause(node: &ExportClauseTransport, dest: &mut dyn ::std::fmt:
     let template = ExportClauseTemplate {
         export_specifier: ListNonterminalView {
             items: export_specifier_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -49962,10 +50162,7 @@ fn render_export_statement_type_export(node: &ExportStatementTypeExportTransport
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        source: match &node.source {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        source: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.source)),
     };
     template.render_into(dest)
 }
@@ -50015,25 +50212,12 @@ fn render_expression_statement(node: &ExpressionStatementTransport, dest: &mut d
 }
 
 fn render_extends_clause(node: &ExtendsClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.value.is_empty() && node.type_arguments.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
-    let value_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.value.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ExtendsClauseTemplate {
         type_arguments: match &node.type_arguments {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        value: ListNonterminalView {
-            items: value_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
@@ -50050,7 +50234,7 @@ fn render_extends_type_clause(node: &ExtendsTypeClauseTransport, dest: &mut dyn 
     let template = ExtendsTypeClauseTemplate {
         type_: ListNonterminalView {
             items: type__buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -50079,10 +50263,7 @@ fn render_field_definition(node: &FieldDefinitionTransport, dest: &mut dyn ::std
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        value: match &node.value {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
@@ -50103,10 +50284,7 @@ fn render_flow_maybe_type(node: &FlowMaybeTypeTransport, dest: &mut dyn ::std::f
 
 fn render_for_in_statement(node: &ForInStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ForInStatementTemplate {
-        await_marker: match &node.await_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
-        },
+        await_marker: OptionalNonterminalView::Missing,
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         for_header_lhs: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.for_header_lhs)),
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
@@ -50141,7 +50319,7 @@ fn render_formal_parameters(node: &FormalParametersTransport, dest: &mut dyn ::s
     let template = FormalParametersTemplate {
         formal_parameter: ListNonterminalView {
             items: formal_parameter_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -50319,7 +50497,7 @@ fn render_implements_clause(node: &ImplementsClauseTransport, dest: &mut dyn ::s
     let template = ImplementsClauseTemplate {
         type_: ListNonterminalView {
             items: type__buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -50426,6 +50604,7 @@ fn render_import_statement(node: &ImportStatementTransport, dest: &mut dyn ::std
         }
     }
     let template = ImportStatementTemplate {
+        from_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.from_clause)),
         import_attribute: match &node.import_attribute {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -50479,10 +50658,7 @@ fn render_index_type_query(node: &IndexTypeQueryTransport, dest: &mut dyn ::std:
 
 fn render_infer_type(node: &InferTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = InferTypeTemplate {
-        type_: match &node.type_ {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        type_: OptionalNonterminalView::Missing,
         type_identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_identifier)),
     };
     template.render_into(dest)
@@ -50525,6 +50701,10 @@ fn render_internal_module(node: &InternalModuleTransport, dest: &mut dyn ::std::
 
 fn render_intersection_type(node: &IntersectionTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = IntersectionTypeTemplate {
+        left: match &node.left {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
         type1: OptionalNonterminalView::Missing,
     };
@@ -50602,11 +50782,6 @@ fn render_jsx_namespace_name(node: &JsxNamespaceNameTransport, dest: &mut dyn ::
 }
 
 fn render_jsx_opening_element(node: &JsxOpeningElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.name.is_none() && node.type_arguments.is_none() && node.attribute.as_deref().is_none_or(<[_]>::is_empty) {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let attribute_owned = node.attribute.as_deref().unwrap_or(&[]);
     let attribute_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -50618,20 +50793,12 @@ fn render_jsx_opening_element(node: &JsxOpeningElementTransport, dest: &mut dyn 
             leading: false,
             trailing: false,
         },
-        name: match &node.name {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
     };
     template.render_into(dest)
 }
 
 fn render_jsx_self_closing_element(node: &JsxSelfClosingElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.name.is_none() && node.type_arguments.is_none() && node.attribute.as_deref().is_none_or(<[_]>::is_empty) {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let attribute_owned = node.attribute.as_deref().unwrap_or(&[]);
     let attribute_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
@@ -50643,10 +50810,7 @@ fn render_jsx_self_closing_element(node: &JsxSelfClosingElementTransport, dest: 
             leading: false,
             trailing: false,
         },
-        name: match &node.name {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
     };
     template.render_into(dest)
 }
@@ -50666,7 +50830,7 @@ fn render_lexical_declaration(node: &LexicalDeclarationTransport, dest: &mut dyn
     let template = LexicalDeclarationTemplate {
         declarators: ListNonterminalView {
             items: declarators_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -50681,12 +50845,7 @@ fn render_lexical_declaration(node: &LexicalDeclarationTransport, dest: &mut dyn
 
 fn render_literal_type(node: &LiteralTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LiteralTypeTemplate {
-        unary_expression: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        unary_expression: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -50836,7 +50995,7 @@ fn render_named_imports(node: &NamedImportsTransport, dest: &mut dyn ::std::fmt:
     let template = NamedImportsTemplate {
         import_specifier: ListNonterminalView {
             items: import_specifier_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -50917,13 +51076,13 @@ fn render_object(node: &ObjectTransport, dest: &mut dyn ::std::fmt::Write) -> Re
     let template = ObjectTemplate {
         pair: ListNonterminalView {
             items: pair_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
         spread_element: ListNonterminalView {
             items: pair_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -50952,13 +51111,13 @@ fn render_object_pattern(node: &ObjectPatternTransport, dest: &mut dyn ::std::fm
     let template = ObjectPatternTemplate {
         pair_pattern: ListNonterminalView {
             items: pair_pattern_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
         rest_pattern: ListNonterminalView {
             items: pair_pattern_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -50967,15 +51126,12 @@ fn render_object_pattern(node: &ObjectPatternTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_object_type(node: &ObjectTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let members_owned = node.members.as_deref().unwrap_or(&[]);
-    let members_buf: Vec<::sittir_core::filters::Renderable<'_>> = members_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ObjectTypeTemplate {
         closing: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.closing)),
+        export_statement: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.export_statement)),
         members: ListNonterminalView {
-            items: members_buf.as_slice(),
-            separator: ",",
+            items: &[],
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -51027,10 +51183,7 @@ fn render_optional_parameter(node: &OptionalParameterTransport, dest: &mut dyn :
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        value: match &node.value {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
@@ -51178,18 +51331,12 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, dest: &
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        public_field_definition_static_mods: match &node.public_field_definition_static_mods {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        public_field_definition_static_mods: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.public_field_definition_static_mods)),
         type_: match &node.type_ {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        value: match &node.value {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
@@ -51249,16 +51396,14 @@ fn render_required_parameter(node: &RequiredParameterTransport, dest: &mut dyn :
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        value: match &node.value {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
 
 fn render_rest_pattern(node: &RestPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = RestPatternTemplate {
+        lhs_expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.lhs_expression)),
         member_expression: ListNonterminalView {
             items: &[],
             separator: "",
@@ -51321,7 +51466,7 @@ fn render_sequence_expression(node: &SequenceExpressionTransport, dest: &mut dyn
     let template = SequenceExpressionTemplate {
         expression: ListNonterminalView {
             items: expression_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -51362,18 +51507,9 @@ fn render_statement_block(node: &StatementBlockTransport, dest: &mut dyn ::std::
 }
 
 fn render_string(node: &StringTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let contents_owned = node.contents.as_deref().unwrap_or(&[]);
-    let contents_buf: Vec<::sittir_core::filters::Renderable<'_>> = contents_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = StringTemplate {
         closing: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.closing)),
-        contents: ListNonterminalView {
-            items: contents_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        contents: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.contents)),
         escape_sequence: ListNonterminalView {
             items: &[],
             separator: "",
@@ -51481,12 +51617,7 @@ fn render_template_literal_type(node: &TemplateLiteralTypeTransport, dest: &mut 
         }
     }
     let template = TemplateLiteralTypeTemplate {
-        string_fragment: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        string_fragment: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -51498,12 +51629,7 @@ fn render_template_string(node: &TemplateStringTransport, dest: &mut dyn ::std::
         }
     }
     let template = TemplateStringTemplate {
-        string_fragment: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        string_fragment: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -51586,7 +51712,7 @@ fn render_tuple_type(node: &TupleTypeTransport, dest: &mut dyn ::std::fmt::Write
     let template = TupleTypeTemplate {
         tuple_type_member: ListNonterminalView {
             items: tuple_type_member_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -51629,7 +51755,7 @@ fn render_type_arguments(node: &TypeArgumentsTransport, dest: &mut dyn ::std::fm
     let template = TypeArgumentsTemplate {
         type_: ListNonterminalView {
             items: type__buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -51676,7 +51802,7 @@ fn render_type_parameters(node: &TypeParametersTransport, dest: &mut dyn ::std::
     let template = TypeParametersTemplate {
         type_parameter: ListNonterminalView {
             items: type_parameter_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -51701,12 +51827,7 @@ fn render_type_predicate_annotation(node: &TypePredicateAnnotationTransport, des
 
 fn render_type_query(node: &TypeQueryTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TypeQueryTemplate {
-        subscript_expression: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
+        subscript_expression: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -51741,6 +51862,10 @@ fn render_unescaped_single_string_fragment(t: &UnescapedSingleStringFragmentTran
 
 fn render_union_type(node: &UnionTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = UnionTypeTemplate {
+        left: match &node.left {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
         type1: OptionalNonterminalView::Missing,
     };
@@ -51768,7 +51893,7 @@ fn render_variable_declaration(node: &VariableDeclarationTransport, dest: &mut d
     let template = VariableDeclarationTemplate {
         declarators: ListNonterminalView {
             items: declarators_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -51812,16 +51937,8 @@ fn render_with_statement(node: &WithStatementTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_yield_expression(node: &YieldExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.expression.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let template = YieldExpressionTemplate {
-        expression: match &node.expression {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
     template.render_into(dest)
 }
@@ -54283,7 +54400,7 @@ fn transport_to_node__class_heritage_extends_clause(transport: _ClassHeritageExt
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(AnyTransport::ExtendsClause(transport.extends_clause));
+    children_buf.push(AnyTransport::ExtendsClause(*transport.extends_clause));
     if let Some(value) = transport.implements_clause {
         children_buf.push(AnyTransport::ImplementsClause(value));
     }
@@ -54625,9 +54742,7 @@ fn transport_to_node__export_statement_namespace_export(transport: _ExportStatem
 
 fn transport_to_node__export_statement_type_export(transport: _ExportStatementTypeExportTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.source {
-        fields.insert("source".to_string(), transport_field_value(AnyTransport::String(value))?);
-    }
+    fields.insert("source".to_string(), transport_field_value(AnyTransport::String(transport.source))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     children_buf.push(AnyTransport::ExportClause(transport.export_clause));
@@ -54752,18 +54867,10 @@ fn transport_to_node_for_header_lhs(transport: ForHeaderLhsTransport) -> Result<
 
 fn transport_to_node_for_header_var_kind(transport: ForHeaderVarKindTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("kind".to_string(), transport_field_value(*transport.kind)?);
     fields.insert("left".to_string(), transport_field_value(for_header_var_kind_left_transport_slot_to_any(transport.left))?);
+    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.initializer {
-        children_buf.push(AnyTransport::Initializer(value));
-    }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(378) /* "_for_header_var_kind" */,
@@ -55012,9 +55119,7 @@ fn transport_to_node_initializer(transport: InitializerTransport) -> Result<Tran
 
 fn transport_to_node_jsx_start_opening_element(transport: JsxStartOpeningElementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.name {
-        fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(value))?);
-    }
+    fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(transport.name))?);
     if let Some(value) = transport.type_arguments {
         fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(value))?);
     }
@@ -55043,9 +55148,7 @@ fn transport_to_node_jsx_string(transport: JsxStringTransport) -> Result<Transpo
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.unescaped_double_jsx_string_fragment {
-        children_buf.extend(value.into_iter().map(|v| jsx_string_unescaped_double_jsx_string_fragment_transport_slot_to_any(v)).collect::<Vec<_>>());
-    }
+    children_buf.push(jsx_string_unescaped_double_jsx_string_fragment_transport_slot_to_any(transport.unescaped_double_jsx_string_fragment));
     let children = if children_buf.is_empty() {
         None
     } else {
@@ -55577,9 +55680,6 @@ fn transport_to_node_public_field_definition_abstract_first(transport: PublicFie
 
 fn transport_to_node_public_field_definition_access_first(transport: PublicFieldDefinitionAccessFirstTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.declare_marker {
-        fields.insert("declare_marker".to_string(), transport_field_value(*value)?);
-    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     children_buf.push(AnyTransport::AccessibilityModifier(transport.accessibility_modifier));
@@ -56435,9 +56535,6 @@ fn transport_to_node_asserts_annotation(transport: AssertsAnnotationTransport) -
 
 fn transport_to_node_assignment_expression(transport: AssignmentExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.using_marker {
-        fields.insert("using_marker".to_string(), transport_field_value(*value)?);
-    }
     fields.insert("left".to_string(), transport_field_value(assignment_expression_left_transport_slot_to_any(*transport.left))?);
     fields.insert("right".to_string(), transport_field_value(expression_transport_to_any(*transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -56667,7 +56764,7 @@ fn transport_to_node_class(transport: ClassTransport) -> Result<TransportNodeDat
         fields.insert("type_parameters".to_string(), transport_field_value(AnyTransport::TypeParameters(value))?);
     }
     if let Some(value) = transport.class_heritage {
-        fields.insert("class_heritage".to_string(), transport_field_value(AnyTransport::ClassHeritage(value))?);
+        fields.insert("class_heritage".to_string(), transport_field_value(AnyTransport::ClassHeritage(*value))?);
     }
     fields.insert("body".to_string(), transport_field_value(AnyTransport::ClassBody(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -56809,7 +56906,7 @@ fn transport_to_node_class_heritage(transport: ClassHeritageTransport) -> Result
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(AnyTransport::_ClassHeritageExtendsClause(transport.class_heritage_extends_clause));
+    children_buf.push(AnyTransport::_ClassHeritageExtendsClause(*transport.class_heritage_extends_clause));
     children_buf.push(AnyTransport::_ClassHeritageImplementsClause(transport.class_heritage_implements_clause));
     let children = if children_buf.is_empty() {
         None
@@ -57250,19 +57347,11 @@ fn transport_to_node_enum_assignment(transport: EnumAssignmentTransport) -> Resu
 
 fn transport_to_node_enum_body(transport: EnumBodyTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.name {
-        fields.insert("name".to_string(), transport_field_values(value.into_iter().map(|v| property_name_transport_to_any(v)).collect::<Vec<_>>())?);
+    if let Some(value) = transport.opening {
+        fields.insert("opening".to_string(), transport_field_values(value.into_iter().map(|v| enum_body_opening_transport_slot_to_any(v)).collect::<Vec<_>>())?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.enum_assignment {
-        children_buf.extend(value.into_iter().map(|v| AnyTransport::EnumAssignment(v)).collect::<Vec<_>>());
-    }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(291) /* "enum_body" */,
@@ -57395,9 +57484,7 @@ fn transport_to_node_export_specifier(transport: ExportSpecifierTransport) -> Re
 
 fn transport_to_node_export_statement_type_export(transport: ExportStatementTypeExportTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.source {
-        fields.insert("source".to_string(), transport_field_value(AnyTransport::String(value))?);
-    }
+    fields.insert("source".to_string(), transport_field_value(AnyTransport::String(transport.source))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     children_buf.push(AnyTransport::ExportClause(transport.export_clause));
@@ -57543,7 +57630,7 @@ fn transport_to_node_expression_statement(transport: ExpressionStatementTranspor
 
 fn transport_to_node_extends_clause(transport: ExtendsClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("value".to_string(), transport_field_values(transport.value.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
+    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(*transport.value))?);
     if let Some(value) = transport.type_arguments {
         fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(value))?);
     }
@@ -57612,9 +57699,7 @@ fn transport_to_node_field_definition(transport: FieldDefinitionTransport) -> Re
         fields.insert("static_marker".to_string(), transport_field_value(AnyTransport::StaticMarker(value))?);
     }
     fields.insert("property".to_string(), transport_field_value(property_name_transport_to_any(transport.property))?);
-    if let Some(value) = transport.value {
-        fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
-    }
+    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -57677,9 +57762,6 @@ fn transport_to_node_flow_maybe_type(transport: FlowMaybeTypeTransport) -> Resul
 
 fn transport_to_node_for_in_statement(transport: ForInStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.await_marker {
-        fields.insert("await_marker".to_string(), transport_field_value(*value)?);
-    }
     fields.insert("operator".to_string(), transport_field_value(AnyTransport::ForHeaderOperator(transport.operator))?);
     fields.insert("right".to_string(), transport_field_value(expressions_transport_to_any(transport.right))?);
     fields.insert("body".to_string(), transport_field_value(statement_transport_to_any(*transport.body))?);
@@ -58437,9 +58519,7 @@ fn transport_to_node_index_type_query(transport: IndexTypeQueryTransport) -> Res
 fn transport_to_node_infer_type(transport: InferTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("type_identifier".to_string(), transport_field_value(AnyTransport::TypeIdentifier(transport.type_identifier))?);
-    if let Some(value) = transport.type_ {
-        fields.insert("type".to_string(), transport_field_value(type_transport_to_any(*value))?);
-    }
+    fields.insert("constraint".to_string(), transport_field_value(type_transport_to_any(*transport.constraint))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -58711,9 +58791,7 @@ fn transport_to_node_jsx_namespace_name(transport: JsxNamespaceNameTransport) ->
 
 fn transport_to_node_jsx_opening_element(transport: JsxOpeningElementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.name {
-        fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(value))?);
-    }
+    fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(transport.name))?);
     if let Some(value) = transport.type_arguments {
         fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(value))?);
     }
@@ -58740,9 +58818,7 @@ fn transport_to_node_jsx_opening_element(transport: JsxOpeningElementTransport) 
 
 fn transport_to_node_jsx_self_closing_element(transport: JsxSelfClosingElementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.name {
-        fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(value))?);
-    }
+    fields.insert("name".to_string(), transport_field_value(jsx_element_name_transport_to_any(transport.name))?);
     if let Some(value) = transport.type_arguments {
         fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(value))?);
     }
@@ -59334,12 +59410,18 @@ fn transport_to_node_object_pattern(transport: ObjectPatternTransport) -> Result
 fn transport_to_node_object_type(transport: ObjectTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("opening".to_string(), transport_field_value(AnyTransport::ObjectTypeOpening(transport.opening))?);
-    if let Some(value) = transport.members {
-        fields.insert("members".to_string(), transport_field_values(value.into_iter().map(|v| object_type_members_transport_slot_to_any(v)).collect::<Vec<_>>())?);
-    }
     fields.insert("closing".to_string(), transport_field_value(AnyTransport::ObjectTypeClosing(transport.closing))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.extend(transport.export_statement.into_iter().map(|v| object_type_export_statement_transport_slot_to_any(v)).collect::<Vec<_>>());
+    if let Some(value) = transport.semicolon {
+        children_buf.push(object_type_semicolon_transport_slot_to_any(value));
+    }
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(337) /* "object_type" */,
@@ -59410,9 +59492,7 @@ fn transport_to_node_optional_parameter(transport: OptionalParameterTransport) -
     if let Some(value) = transport.type_ {
         fields.insert("type".to_string(), transport_field_value(AnyTransport::TypeAnnotation(value))?);
     }
-    if let Some(value) = transport.value {
-        fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
-    }
+    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     if let Some(value) = transport.accessibility_modifier {
@@ -59731,17 +59811,13 @@ fn transport_to_node_public_field_definition(transport: PublicFieldDefinitionTra
     if let Some(value) = transport.type_ {
         fields.insert("type".to_string(), transport_field_value(AnyTransport::TypeAnnotation(value))?);
     }
-    if let Some(value) = transport.value {
-        fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
-    }
+    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     if let Some(value) = transport.public_field_definition_declare_first {
         children_buf.push(public_field_definition_public_field_definition_declare_first_transport_slot_to_any(value));
     }
-    if let Some(value) = transport.public_field_definition_static_mods {
-        children_buf.push(public_field_definition_public_field_definition_static_mods_transport_slot_to_any(value));
-    }
+    children_buf.push(public_field_definition_public_field_definition_static_mods_transport_slot_to_any(transport.public_field_definition_static_mods));
     let children = if children_buf.is_empty() {
         None
     } else {
@@ -59854,9 +59930,7 @@ fn transport_to_node_required_parameter(transport: RequiredParameterTransport) -
     if let Some(value) = transport.type_ {
         fields.insert("type".to_string(), transport_field_value(AnyTransport::TypeAnnotation(value))?);
     }
-    if let Some(value) = transport.value {
-        fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
-    }
+    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     if let Some(value) = transport.accessibility_modifier {
@@ -60062,9 +60136,7 @@ fn transport_to_node_statement_block(transport: StatementBlockTransport) -> Resu
 fn transport_to_node_string(transport: StringTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("opening".to_string(), transport_field_value(AnyTransport::StringOpening(transport.opening))?);
-    if let Some(value) = transport.contents {
-        fields.insert("contents".to_string(), transport_field_values(value.into_iter().map(|v| string_contents_transport_slot_to_any(v)).collect::<Vec<_>>())?);
-    }
+    fields.insert("contents".to_string(), transport_field_value(string_contents_transport_slot_to_any(transport.contents))?);
     fields.insert("closing".to_string(), transport_field_value(AnyTransport::StringOpening(transport.closing))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -60971,9 +61043,7 @@ fn transport_to_node_with_statement(transport: WithStatementTransport) -> Result
 
 fn transport_to_node_yield_expression(transport: YieldExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.expression {
-        fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(*value))?);
-    }
+    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(*transport.expression))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());

@@ -881,7 +881,6 @@ export const enum TSFieldId {
   FieldIdentifier = 28,
   FieldImaginary = 29,
   FieldImportPrefix = 30,
-  FieldInClause = 31,
   FieldKey = 32,
   FieldLeft = 33,
   FieldModuleName = 34,
@@ -892,7 +891,6 @@ export const enum TSFieldId {
   FieldOperators = 39,
   FieldParameters = 40,
   FieldPrimaryExpression = 41,
-  FieldReal = 42,
   FieldReturnType = 43,
   FieldRight = 44,
   FieldSimplePattern = 45,
@@ -939,7 +937,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
   "identifier": TSFieldId.FieldIdentifier,
   "imaginary": TSFieldId.FieldImaginary,
   "import_prefix": TSFieldId.FieldImportPrefix,
-  "in_clause": TSFieldId.FieldInClause,
   "key": TSFieldId.FieldKey,
   "left": TSFieldId.FieldLeft,
   "module_name": TSFieldId.FieldModuleName,
@@ -950,7 +947,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
   "operators": TSFieldId.FieldOperators,
   "parameters": TSFieldId.FieldParameters,
   "primary_expression": TSFieldId.FieldPrimaryExpression,
-  "real": TSFieldId.FieldReal,
   "return_type": TSFieldId.FieldReturnType,
   "right": TSFieldId.FieldRight,
   "simple_pattern": TSFieldId.FieldSimplePattern,
@@ -997,7 +993,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
   [TSFieldId.FieldIdentifier]: "identifier",
   [TSFieldId.FieldImaginary]: "imaginary",
   [TSFieldId.FieldImportPrefix]: "import_prefix",
-  [TSFieldId.FieldInClause]: "in_clause",
   [TSFieldId.FieldKey]: "key",
   [TSFieldId.FieldLeft]: "left",
   [TSFieldId.FieldModuleName]: "module_name",
@@ -1008,7 +1003,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
   [TSFieldId.FieldOperators]: "operators",
   [TSFieldId.FieldParameters]: "parameters",
   [TSFieldId.FieldPrimaryExpression]: "primary_expression",
-  [TSFieldId.FieldReal]: "real",
   [TSFieldId.FieldReturnType]: "return_type",
   [TSFieldId.FieldRight]: "right",
   [TSFieldId.FieldSimplePattern]: "simple_pattern",
@@ -1055,7 +1049,6 @@ export const TREE_SITTER_FIELD_ID_JSON = [
   { name: "identifier", id: 28, enumName: "FieldIdentifier", cName: "field_identifier" },
   { name: "imaginary", id: 29, enumName: "FieldImaginary", cName: "field_imaginary" },
   { name: "import_prefix", id: 30, enumName: "FieldImportPrefix", cName: "field_import_prefix" },
-  { name: "in_clause", id: 31, enumName: "FieldInClause", cName: "field_in_clause" },
   { name: "key", id: 32, enumName: "FieldKey", cName: "field_key" },
   { name: "left", id: 33, enumName: "FieldLeft", cName: "field_left" },
   { name: "module_name", id: 34, enumName: "FieldModuleName", cName: "field_module_name" },
@@ -1066,7 +1059,6 @@ export const TREE_SITTER_FIELD_ID_JSON = [
   { name: "operators", id: 39, enumName: "FieldOperators", cName: "field_operators" },
   { name: "parameters", id: 40, enumName: "FieldParameters", cName: "field_parameters" },
   { name: "primary_expression", id: 41, enumName: "FieldPrimaryExpression", cName: "field_primary_expression" },
-  { name: "real", id: 42, enumName: "FieldReal", cName: "field_real" },
   { name: "return_type", id: 43, enumName: "FieldReturnType", cName: "field_return_type" },
   { name: "right", id: 44, enumName: "FieldRight", cName: "field_right" },
   { name: "simple_pattern", id: 45, enumName: "FieldSimplePattern", cName: "field_simple_pattern" },
@@ -1191,11 +1183,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'comparison_operator': [
     { name: 'left', required: true, multiple: false },
-    { name: 'operators', required: true, multiple: true },
-    { name: 'primaryExpressions', required: true, multiple: true },
+    { name: 'operators', required: true, multiple: false },
+    { name: 'primaryExpression', required: true, multiple: false },
   ],
   'complex_pattern': [
-    { name: 'real', required: false, multiple: false },
     { name: 'imaginary', required: true, multiple: false },
     { name: 'integer', required: true, multiple: false },
   ],
@@ -1253,16 +1244,16 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'except_clause': [
-    { name: 'values', required: false, multiple: true },
+    { name: 'value', required: false, multiple: true },
     { name: 'alias', required: false, multiple: false },
     { name: 'suite', required: true, multiple: false },
   ],
   'exec_statement': [
     { name: 'code', required: true, multiple: false },
-    { name: 'inClauses', required: false, multiple: true },
+    { name: 'expressions', required: true, multiple: true },
   ],
   'expression_list': [
-    { name: 'expression', required: true, multiple: true },
+    { name: 'expression', required: true, multiple: false },
   ],
   'expression_statement': [
     { name: 'expression', required: true, multiple: false },
@@ -1324,8 +1315,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'import_from_statement': [
     { name: 'moduleName', required: true, multiple: false },
-    { name: 'wildcardImport', required: false, multiple: false },
-    { name: 'names', required: false, multiple: true },
+    { name: 'wildcardImport', required: true, multiple: false },
   ],
   'import_statement': [
     { name: 'names', required: true, multiple: true },
@@ -1351,21 +1341,21 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'lambda_parameters': [
-    { name: 'parameters', required: true, multiple: true },
+    { name: 'parameters', required: true, multiple: false },
   ],
   'lambda_within_for_in_clause': [
     { name: 'parameters', required: false, multiple: false },
     { name: 'body', required: true, multiple: false },
   ],
   'list': [
-    { name: 'expressions', required: false, multiple: true },
+    { name: 'collectionElements', required: false, multiple: false },
   ],
   'list_comprehension': [
     { name: 'body', required: true, multiple: false },
     { name: 'comprehensionClauses', required: true, multiple: false },
   ],
   'list_pattern': [
-    { name: 'patterns', required: false, multiple: true },
+    { name: 'patterns', required: false, multiple: false },
   ],
   'list_splat': [
     { name: 'expression', required: true, multiple: false },
@@ -1399,7 +1389,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'parameters': [
-    { name: 'parameters', required: false, multiple: true },
+    { name: 'parameters', required: false, multiple: false },
   ],
   'parenthesized_expression': [
     { name: 'expression', required: true, multiple: false },
@@ -1408,11 +1398,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'parenthesizedListSplat', required: true, multiple: false },
   ],
   'pattern_list': [
-    { name: 'pattern', required: true, multiple: true },
+    { name: 'pattern', required: true, multiple: false },
   ],
   'print_statement': [
-    { name: 'arguments', required: false, multiple: true },
     { name: 'chevron', required: false, multiple: false },
+    { name: 'arguments', required: false, multiple: true },
   ],
   'raise_statement': [
     { name: 'expressions', required: false, multiple: false },
@@ -1426,7 +1416,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expressions', required: false, multiple: false },
   ],
   'set': [
-    { name: 'expressions', required: true, multiple: true },
+    { name: 'collectionElements', required: true, multiple: false },
   ],
   'set_comprehension': [
     { name: 'body', required: true, multiple: false },
@@ -1462,10 +1452,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'finallyClause', required: false, multiple: false },
   ],
   'tuple': [
-    { name: 'expressions', required: false, multiple: true },
+    { name: 'collectionElements', required: false, multiple: false },
   ],
   'tuple_pattern': [
-    { name: 'patterns', required: false, multiple: true },
+    { name: 'patterns', required: false, multiple: false },
   ],
   'type': [
     { name: 'expression', required: true, multiple: false },
@@ -1522,7 +1512,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'yield': [
-    { name: 'expression', required: false, multiple: false },
+    { name: 'expression', required: true, multiple: false },
   ],
 };
 

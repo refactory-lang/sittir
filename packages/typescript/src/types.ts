@@ -2295,10 +2295,10 @@ export interface _ExportStatementNamespaceExport {
 export interface _ExportStatementTypeExport {
   readonly $type: TSKindId._ExportStatementTypeExport;
   readonly _export_clause: ExportClause;
-  readonly _source?: String;
+  readonly _source: String;
   readonly _semicolon?: Semicolon;
   exportClause(): ExportClause;
-  source(): String | undefined;
+  source(): String;
   semicolon(): Semicolon | undefined;
 }
 
@@ -2342,15 +2342,10 @@ export interface ForHeaderLhs {
 
 export interface ForHeaderVarKind {
   readonly $type: TSKindId.ForHeaderVarKind;
-  readonly _kind: number;
   readonly _left: Identifier | DestructuringPattern;
-  readonly _initializer?: Initializer;
-  readonly __inputHints__?: {
-    readonly kind: KindEnum<"var", TSKindId.Var>;
-  };
-  kind(): number;
+  readonly _value: Expression;
   left(): Identifier | DestructuringPattern;
-  initializer(): Initializer | undefined;
+  value(): Expression;
 }
 
 export interface FromClause {
@@ -2415,18 +2410,18 @@ export interface Initializer {
 
 export interface JsxStartOpeningElement {
   readonly $type: "_jsx_start_opening_element";
-  readonly _name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
+  readonly _name: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   readonly _type_arguments?: TypeArguments;
   readonly _attribute?: readonly (_JsxAttribute)[];
-  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
+  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   typeArguments(): TypeArguments | undefined;
   attributes(): readonly (_JsxAttribute)[];
 }
 
 export interface JsxString {
   readonly $type: "_jsx_string";
-  readonly _unescaped_double_jsx_string_fragment?: readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference | UnescapedSingleJsxStringFragment)[];
-  unescapedDoubleJsxStringFragments(): readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference | UnescapedSingleJsxStringFragment)[];
+  readonly _unescaped_double_jsx_string_fragment: UnescapedDoubleJsxStringFragment | HtmlCharacterReference | UnescapedSingleJsxStringFragment;
+  unescapedDoubleJsxStringFragment(): UnescapedDoubleJsxStringFragment | HtmlCharacterReference | UnescapedSingleJsxStringFragment;
 }
 
 export interface LhsExpression {
@@ -2502,13 +2497,10 @@ export interface PublicFieldDefinitionAbstractFirst {
 export interface PublicFieldDefinitionAccessFirst {
   readonly $type: TSKindId.PublicFieldDefinitionAccessFirst;
   readonly _accessibility_modifier: number;
-  readonly _declare_marker?: boolean;
   readonly __inputHints__?: {
     readonly accessibility_modifier: KindEnum<"public" | "private" | "protected", TSKindId.Public | TSKindId.Private | TSKindId.Protected>;
-    readonly declare_marker?: BooleanKeyword<"declare">;
   };
   accessibilityModifier(): number;
-  declareMarker(): boolean | undefined;
 }
 
 export interface PublicFieldDefinitionAccessorOpt {
@@ -2791,13 +2783,8 @@ export interface AssertsAnnotation {
 
 export interface AssignmentExpression {
   readonly $type: TSKindId.AssignmentExpression;
-  readonly _using_marker?: boolean;
   readonly _left: ParenthesizedExpression | LhsExpression;
   readonly _right: Expression;
-  readonly __inputHints__?: {
-    readonly using_marker?: BooleanKeyword<"using">;
-  };
-  usingMarker(): boolean | undefined;
   left(): ParenthesizedExpression | LhsExpression;
   right(): Expression;
 }
@@ -3093,10 +3080,8 @@ export interface EnumAssignment {
 
 export interface EnumBody {
   readonly $type: TSKindId.EnumBody;
-  readonly _name?: readonly (PropertyName)[];
-  readonly _enum_assignment?: readonly (EnumAssignment)[];
-  names(): readonly (PropertyName)[];
-  enumAssignments(): readonly (EnumAssignment)[];
+  readonly _opening?: readonly (PropertyName | EnumAssignment)[];
+  openings(): readonly (PropertyName | EnumAssignment)[];
 }
 
 export interface EnumDeclaration {
@@ -3134,10 +3119,10 @@ export interface ExportSpecifier {
 export interface ExportStatementTypeExport {
   readonly $type: "export_statement_type_export";
   readonly _export_clause: ExportClause;
-  readonly _source?: String;
+  readonly _source: String;
   readonly _semicolon?: Semicolon;
   exportClause(): ExportClause;
-  source(): String | undefined;
+  source(): String;
   semicolon(): Semicolon | undefined;
 }
 
@@ -3196,9 +3181,9 @@ export interface ExpressionStatement {
 
 export interface ExtendsClause {
   readonly $type: TSKindId.ExtendsClause;
-  readonly _value: NonEmptyArray<Expression>;
+  readonly _value: Expression;
   readonly _type_arguments?: TypeArguments;
-  values(): NonEmptyArray<Expression>;
+  value(): Expression;
   typeArguments(): TypeArguments | undefined;
 }
 
@@ -3213,14 +3198,14 @@ export interface FieldDefinition {
   readonly _decorator?: readonly (Decorator)[];
   readonly _static_marker?: boolean;
   readonly _property: PropertyName;
-  readonly _value?: Expression;
+  readonly _value: Expression;
   readonly __inputHints__?: {
     readonly static_marker?: BooleanKeyword<"static">;
   };
   decorators(): readonly (Decorator)[];
   staticMarker(): boolean | undefined;
   property(): PropertyName;
-  value(): Expression | undefined;
+  value(): Expression;
 }
 
 export interface FinallyClause {
@@ -3237,16 +3222,13 @@ export interface FlowMaybeType {
 
 export interface ForInStatement {
   readonly $type: TSKindId.ForInStatement;
-  readonly _await_marker?: boolean;
   readonly _for_header_lhs: ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
   readonly _operator: number;
   readonly _right: Expressions;
   readonly _body: Statement;
   readonly __inputHints__?: {
-    readonly await_marker?: BooleanKeyword<"await">;
     readonly operator: KindEnum<"in" | "of", TSKindId.In | TSKindId.Of>;
   };
-  awaitMarker(): boolean | undefined;
   forHeaderLhs(): ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
   operator(): number;
   right(): Expressions;
@@ -3500,14 +3482,14 @@ export type ImportSpecifier = ImportSpecifierUFormName | ImportSpecifierUFormAs;
 export interface ImportStatement {
   readonly $type: TSKindId.ImportStatement;
   readonly _import_clause?: number;
-  readonly _from_clause: NonEmptyArray<ImportClause | "from" | String | ImportRequireClause>;
+  readonly _from_clause: NonEmptyArray<ImportClause | String | ImportRequireClause>;
   readonly _import_attribute?: ImportAttribute;
   readonly _semicolon?: Semicolon;
   readonly __inputHints__?: {
     readonly import_clause?: KindEnum<"type" | "typeof", TSKindId.Type | TSKindId.Typeof>;
   };
   importClause(): number | undefined;
-  fromClauses(): NonEmptyArray<ImportClause | "from" | String | ImportRequireClause>;
+  fromClauses(): NonEmptyArray<ImportClause | String | ImportRequireClause>;
   importAttribute(): ImportAttribute | undefined;
   semicolon(): Semicolon | undefined;
 }
@@ -3556,9 +3538,9 @@ export interface IndexTypeQuery {
 export interface InferType {
   readonly $type: TSKindId.InferType;
   readonly _type_identifier: TypeIdentifier;
-  readonly _type?: Type;
+  readonly _constraint: Type;
   typeIdentifier(): TypeIdentifier;
-  type(): Type | undefined;
+  constraint(): Type;
 }
 
 export interface InstantiationExpression {
@@ -3635,20 +3617,20 @@ export interface JsxNamespaceName {
 
 export interface JsxOpeningElement {
   readonly $type: "jsx_opening_element";
-  readonly _name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
+  readonly _name: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   readonly _type_arguments?: TypeArguments;
   readonly _attribute?: readonly (_JsxAttribute)[];
-  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
+  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   typeArguments(): TypeArguments | undefined;
   attributes(): readonly (_JsxAttribute)[];
 }
 
 export interface JsxSelfClosingElement {
   readonly $type: "jsx_self_closing_element";
-  readonly _name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
+  readonly _name: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   readonly _type_arguments?: TypeArguments;
   readonly _attribute?: readonly (_JsxAttribute)[];
-  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
+  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   typeArguments(): TypeArguments | undefined;
   attributes(): readonly (_JsxAttribute)[];
 }
@@ -3864,14 +3846,16 @@ export interface ObjectPattern {
 export interface ObjectType {
   readonly $type: TSKindId.ObjectType;
   readonly _opening: number;
-  readonly _members?: readonly ("," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon)[];
+  readonly _export_statement: NonEmptyArray<ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature>;
+  readonly _semicolon?: "," | Semicolon;
   readonly _closing: number;
   readonly __inputHints__?: {
     readonly opening: KindEnum<"{" | "{|", TSKindId.Lbrace | TSKindId.LbracePipe>;
     readonly closing: KindEnum<"}" | "|}", TSKindId.Rbrace | TSKindId.PipeRbrace>;
   };
   opening(): number;
-  members(): readonly ("," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon)[];
+  exportStatements(): NonEmptyArray<ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature>;
+  semicolon(): "," | Semicolon | undefined;
   closing(): number;
 }
 
@@ -3895,7 +3879,7 @@ export interface OptionalParameter {
   readonly _readonly_marker?: boolean;
   readonly _pattern: Pattern | This;
   readonly _type?: TypeAnnotation;
-  readonly _value?: Expression;
+  readonly _value: Expression;
   readonly __inputHints__?: {
     readonly accessibility_modifier?: KindEnum<"public" | "private" | "protected", TSKindId.Public | TSKindId.Private | TSKindId.Protected>;
     readonly override_modifier?: BooleanKeyword<"override">;
@@ -3907,7 +3891,7 @@ export interface OptionalParameter {
   readonlyMarker(): boolean | undefined;
   pattern(): Pattern | This;
   type(): TypeAnnotation | undefined;
-  value(): Expression | undefined;
+  value(): Expression;
 }
 
 export interface OptionalTupleParameter {
@@ -4004,21 +3988,21 @@ export interface PublicFieldDefinition {
   readonly $type: TSKindId.PublicFieldDefinition;
   readonly _decorator?: readonly (Decorator)[];
   readonly _public_field_definition_declare_first?: PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst;
-  readonly _public_field_definition_static_mods?: PublicFieldDefinitionStaticMods | PublicFieldDefinitionAbstractFirst | PublicFieldDefinitionReadonlyFirst | PublicFieldDefinitionAccessorOpt;
+  readonly _public_field_definition_static_mods: PublicFieldDefinitionStaticMods | PublicFieldDefinitionAbstractFirst | PublicFieldDefinitionReadonlyFirst | PublicFieldDefinitionAccessorOpt;
   readonly _name: PropertyName;
   readonly _optionality_marker?: number;
   readonly _type?: TypeAnnotation;
-  readonly _value?: Expression;
+  readonly _value: Expression;
   readonly __inputHints__?: {
     readonly optionality_marker?: KindEnum<"?" | "!", TSKindId.Qmark | TSKindId.Bang>;
   };
   decorators(): readonly (Decorator)[];
   publicFieldDefinitionDeclareFirst(): PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | undefined;
-  publicFieldDefinitionStaticMods(): PublicFieldDefinitionStaticMods | PublicFieldDefinitionAbstractFirst | PublicFieldDefinitionReadonlyFirst | PublicFieldDefinitionAccessorOpt | undefined;
+  publicFieldDefinitionStaticMods(): PublicFieldDefinitionStaticMods | PublicFieldDefinitionAbstractFirst | PublicFieldDefinitionReadonlyFirst | PublicFieldDefinitionAccessorOpt;
   name(): PropertyName;
   optionalityMarker(): number | undefined;
   type(): TypeAnnotation | undefined;
-  value(): Expression | undefined;
+  value(): Expression;
 }
 
 export interface ReadonlyType {
@@ -4043,7 +4027,7 @@ export interface RequiredParameter {
   readonly _readonly_marker?: boolean;
   readonly _pattern: Pattern | This;
   readonly _type?: TypeAnnotation;
-  readonly _value?: Expression;
+  readonly _value: Expression;
   readonly __inputHints__?: {
     readonly accessibility_modifier?: KindEnum<"public" | "private" | "protected", TSKindId.Public | TSKindId.Private | TSKindId.Protected>;
     readonly override_modifier?: BooleanKeyword<"override">;
@@ -4055,7 +4039,7 @@ export interface RequiredParameter {
   readonlyMarker(): boolean | undefined;
   pattern(): Pattern | This;
   type(): TypeAnnotation | undefined;
-  value(): Expression | undefined;
+  value(): Expression;
 }
 
 export interface RestPattern {
@@ -4109,14 +4093,14 @@ export interface StatementBlock {
 export interface String {
   readonly $type: TSKindId.String;
   readonly _opening: number;
-  readonly _contents?: readonly (UnescapedDoubleStringFragment | EscapeSequence | UnescapedSingleStringFragment)[];
+  readonly _contents: UnescapedDoubleStringFragment | EscapeSequence | UnescapedSingleStringFragment;
   readonly _closing: number;
   readonly __inputHints__?: {
     readonly opening: KindEnum<"\"" | "'", TSKindId.Dquote | TSKindId.Squote>;
     readonly closing: KindEnum<"\"" | "'", TSKindId.Dquote | TSKindId.Squote>;
   };
   opening(): number;
-  contents(): readonly (UnescapedDoubleStringFragment | EscapeSequence | UnescapedSingleStringFragment)[];
+  contents(): UnescapedDoubleStringFragment | EscapeSequence | UnescapedSingleStringFragment;
   closing(): number;
 }
 
@@ -4370,8 +4354,8 @@ export interface WithStatement {
 
 export interface YieldExpression {
   readonly $type: TSKindId.YieldExpression;
-  readonly _expression?: Expression;
-  expression(): Expression | undefined;
+  readonly _expression: Expression;
+  expression(): Expression;
 }
 
 

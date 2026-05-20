@@ -59,7 +59,7 @@
     "escape_sequence": "text",
     "except_clause": "config",
     "exec_statement": "config",
-    "expression_list": "spread",
+    "expression_list": "direct",
     "expression_statement_tuple": "spread",
     "expression_statement": "config",
     "false": "text",
@@ -85,12 +85,12 @@
     "keyword_identifier": "direct",
     "keyword_pattern": "config",
     "lambda": "config",
-    "lambda_parameters": "spread",
+    "lambda_parameters": "direct",
     "lambda_within_for_in_clause": "config",
     "line_continuation": "text",
-    "list": "spread",
+    "list": "direct",
     "list_comprehension": "config",
-    "list_pattern": "spread",
+    "list_pattern": "direct",
     "list_splat": "direct",
     "list_splat_pattern": "direct",
     "match_statement": "config",
@@ -101,16 +101,16 @@
     "nonlocal_statement": "spread",
     "not_operator": "direct",
     "pair": "config",
-    "parameters": "spread",
+    "parameters": "direct",
     "parenthesized_expression": "direct",
     "parenthesized_list_splat": "direct",
     "pass_statement": "text",
-    "pattern_list": "spread",
+    "pattern_list": "direct",
     "print_statement": "config",
     "raise_statement": "config",
     "relative_import": "config",
     "return_statement": "direct",
-    "set": "spread",
+    "set": "direct",
     "set_comprehension": "config",
     "slice": "config",
     "splat_pattern": "direct",
@@ -120,8 +120,8 @@
     "subscript": "config",
     "true": "text",
     "try_statement": "config",
-    "tuple": "spread",
-    "tuple_pattern": "spread",
+    "tuple": "direct",
+    "tuple_pattern": "direct",
     "type": "direct",
     "type_alias_statement": "config",
     "type_conversion": "text",
@@ -380,7 +380,7 @@
     ],
     "exec_statement": [
       "code",
-      "in_clause"
+      "expression"
     ],
     "expression_list": [
       "expression"
@@ -442,7 +442,7 @@
     ],
     "import_from_statement": [
       "module_name",
-      "name"
+      "wildcard_import"
     ],
     "import_statement": [
       "name"
@@ -468,21 +468,21 @@
       "body"
     ],
     "lambda_parameters": [
-      "parameter"
+      "parameters"
     ],
     "lambda_within_for_in_clause": [
       "parameters",
       "body"
     ],
     "list": [
-      "expression"
+      "collection_elements"
     ],
     "list_comprehension": [
       "body",
       "comprehension_clauses"
     ],
     "list_pattern": [
-      "pattern"
+      "patterns"
     ],
     "list_splat": [
       "expression"
@@ -516,7 +516,7 @@
       "value"
     ],
     "parameters": [
-      "parameter"
+      "parameters"
     ],
     "parenthesized_expression": [
       "expression"
@@ -528,8 +528,8 @@
       "pattern"
     ],
     "print_statement": [
-      "argument",
-      "chevron"
+      "chevron",
+      "argument"
     ],
     "raise_statement": [
       "expressions",
@@ -543,7 +543,7 @@
       "expressions"
     ],
     "set": [
-      "expression"
+      "collection_elements"
     ],
     "set_comprehension": [
       "body",
@@ -579,10 +579,10 @@
       "finally_clause"
     ],
     "tuple": [
-      "expression"
+      "collection_elements"
     ],
     "tuple_pattern": [
-      "pattern"
+      "patterns"
     ],
     "type": [
       "expression"
@@ -1052,25 +1052,18 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       },
       "primary_expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "complex_pattern": {
-      "real": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "imaginary": {
         "unnamed": false,
         "slotCount": 1,
@@ -1308,12 +1301,12 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "in_clause": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "expression_list": {
@@ -1321,8 +1314,8 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "expression_statement_tuple": {
@@ -1586,15 +1579,8 @@
       "wildcard_import": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
-        "nonEmpty": false
-      },
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -1688,12 +1674,12 @@
       }
     },
     "lambda_parameters": {
-      "parameter": {
+      "parameters": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "lambda_within_for_in_clause": {
@@ -1713,11 +1699,11 @@
       }
     },
     "list": {
-      "expression": {
+      "collection_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -1738,11 +1724,11 @@
       }
     },
     "list_pattern": {
-      "pattern": {
+      "patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -1856,11 +1842,11 @@
       }
     },
     "parameters": {
-      "parameter": {
+      "parameters": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -1887,23 +1873,23 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "print_statement": {
-      "argument": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
       "chevron": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
+        "nonEmpty": false
+      },
+      "argument": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -1949,12 +1935,12 @@
       }
     },
     "set": {
-      "expression": {
+      "collection_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "set_comprehension": {
@@ -2093,20 +2079,20 @@
       }
     },
     "tuple": {
-      "expression": {
+      "collection_elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
     "tuple_pattern": {
-      "pattern": {
+      "patterns": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -2324,7 +2310,7 @@
       "expression": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }

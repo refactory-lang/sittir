@@ -1346,7 +1346,6 @@ export const enum TSFieldId {
   FieldKind = 41,
   FieldLabel = 42,
   FieldLeft = 43,
-  FieldMembers = 44,
   FieldModule = 45,
   FieldName = 46,
   FieldObject = 47,
@@ -1376,7 +1375,6 @@ export const enum TSFieldId {
   FieldTypeIdentifier = 72,
   FieldTypeParameters = 73,
   FieldTypePredicate = 74,
-  FieldUsingMarker = 75,
   FieldValue = 76,
 }
 
@@ -1424,7 +1422,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
   "kind": TSFieldId.FieldKind,
   "label": TSFieldId.FieldLabel,
   "left": TSFieldId.FieldLeft,
-  "members": TSFieldId.FieldMembers,
   "module": TSFieldId.FieldModule,
   "name": TSFieldId.FieldName,
   "object": TSFieldId.FieldObject,
@@ -1454,7 +1451,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
   "type_identifier": TSFieldId.FieldTypeIdentifier,
   "type_parameters": TSFieldId.FieldTypeParameters,
   "type_predicate": TSFieldId.FieldTypePredicate,
-  "using_marker": TSFieldId.FieldUsingMarker,
   "value": TSFieldId.FieldValue,
 } as const satisfies Record<string, TSFieldId>;
 
@@ -1502,7 +1498,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
   [TSFieldId.FieldKind]: "kind",
   [TSFieldId.FieldLabel]: "label",
   [TSFieldId.FieldLeft]: "left",
-  [TSFieldId.FieldMembers]: "members",
   [TSFieldId.FieldModule]: "module",
   [TSFieldId.FieldName]: "name",
   [TSFieldId.FieldObject]: "object",
@@ -1532,7 +1527,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
   [TSFieldId.FieldTypeIdentifier]: "type_identifier",
   [TSFieldId.FieldTypeParameters]: "type_parameters",
   [TSFieldId.FieldTypePredicate]: "type_predicate",
-  [TSFieldId.FieldUsingMarker]: "using_marker",
   [TSFieldId.FieldValue]: "value",
 } as const;
 
@@ -1580,7 +1574,6 @@ export const TREE_SITTER_FIELD_ID_JSON = [
   { name: "kind", id: 41, enumName: "FieldKind", cName: "field_kind" },
   { name: "label", id: 42, enumName: "FieldLabel", cName: "field_label" },
   { name: "left", id: 43, enumName: "FieldLeft", cName: "field_left" },
-  { name: "members", id: 44, enumName: "FieldMembers", cName: "field_members" },
   { name: "module", id: 45, enumName: "FieldModule", cName: "field_module" },
   { name: "name", id: 46, enumName: "FieldName", cName: "field_name" },
   { name: "object", id: 47, enumName: "FieldObject", cName: "field_object" },
@@ -1610,7 +1603,6 @@ export const TREE_SITTER_FIELD_ID_JSON = [
   { name: "type_identifier", id: 72, enumName: "FieldTypeIdentifier", cName: "field_type_identifier" },
   { name: "type_parameters", id: 73, enumName: "FieldTypeParameters", cName: "field_type_parameters" },
   { name: "type_predicate", id: 74, enumName: "FieldTypePredicate", cName: "field_type_predicate" },
-  { name: "using_marker", id: 75, enumName: "FieldUsingMarker", cName: "field_using_marker" },
   { name: "value", id: 76, enumName: "FieldValue", cName: "field_value" },
 ] as const;
 
@@ -1670,7 +1662,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_export_statement_type_export': [
     { name: 'exportClause', required: true, multiple: false },
-    { name: 'source', required: false, multiple: false },
+    { name: 'source', required: true, multiple: false },
     { name: 'semicolon', required: false, multiple: false },
   ],
   '_for_header_lhs': [
@@ -1693,7 +1685,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'mappedTypeClause', required: true, multiple: false },
   ],
   '_jsx_string': [
-    { name: 'unescapedDoubleJsxStringFragments', required: false, multiple: true },
+    { name: 'unescapedDoubleJsxStringFragment', required: true, multiple: false },
   ],
   '_lhs_expression': [
     { name: 'memberExpression', required: true, multiple: false },
@@ -1772,7 +1764,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'asserts', required: true, multiple: false },
   ],
   'assignment_expression': [
-    { name: 'usingMarker', required: false, multiple: false },
     { name: 'left', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
   ],
@@ -1906,8 +1897,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'enum_body': [
-    { name: 'names', required: false, multiple: true },
-    { name: 'enumAssignments', required: false, multiple: true },
+    { name: 'openings', required: false, multiple: true },
   ],
   'enum_declaration': [
     { name: 'constMarker', required: false, multiple: false },
@@ -1938,7 +1928,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'export_statement_type_export': [
     { name: 'exportClause', required: true, multiple: false },
-    { name: 'source', required: false, multiple: false },
+    { name: 'source', required: true, multiple: false },
     { name: 'semicolon', required: false, multiple: false },
   ],
   'expression_statement': [
@@ -1946,7 +1936,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'semicolon', required: false, multiple: false },
   ],
   'extends_clause': [
-    { name: 'values', required: true, multiple: true },
+    { name: 'value', required: true, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
   ],
   'extends_type_clause': [
@@ -1956,7 +1946,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'decorators', required: false, multiple: true },
     { name: 'staticMarker', required: false, multiple: false },
     { name: 'property', required: true, multiple: false },
-    { name: 'value', required: false, multiple: false },
+    { name: 'value', required: true, multiple: false },
   ],
   'finally_clause': [
     { name: 'body', required: true, multiple: false },
@@ -1965,7 +1955,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'primaryType', required: true, multiple: false },
   ],
   'for_in_statement': [
-    { name: 'awaitMarker', required: false, multiple: false },
     { name: 'forHeaderLhs', required: true, multiple: false },
     { name: 'operator', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
@@ -2092,7 +2081,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'infer_type': [
     { name: 'typeIdentifier', required: true, multiple: false },
-    { name: 'type', required: false, multiple: false },
+    { name: 'constraint', required: true, multiple: false },
   ],
   'instantiation_expression': [
     { name: 'expression', required: true, multiple: false },
@@ -2131,12 +2120,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'jsxIdentifier', required: true, multiple: false },
   ],
   'jsx_opening_element': [
-    { name: 'name', required: false, multiple: false },
+    { name: 'name', required: true, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
     { name: 'attributes', required: false, multiple: true },
   ],
   'jsx_self_closing_element': [
-    { name: 'name', required: false, multiple: false },
+    { name: 'name', required: true, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
     { name: 'attributes', required: false, multiple: true },
   ],
@@ -2234,7 +2223,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'object_type': [
     { name: 'opening', required: true, multiple: false },
-    { name: 'members', required: false, multiple: true },
+    { name: 'exportStatements', required: true, multiple: true },
+    { name: 'semicolon', required: false, multiple: false },
     { name: 'closing', required: true, multiple: false },
   ],
   'omitting_type_annotation': [
@@ -2250,7 +2240,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'readonlyMarker', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
-    { name: 'value', required: false, multiple: false },
+    { name: 'value', required: true, multiple: false },
   ],
   'optional_tuple_parameter': [
     { name: 'name', required: true, multiple: false },
@@ -2293,11 +2283,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'public_field_definition': [
     { name: 'decorators', required: false, multiple: true },
     { name: 'publicFieldDefinitionDeclareFirst', required: false, multiple: false },
-    { name: 'publicFieldDefinitionStaticMods', required: false, multiple: false },
+    { name: 'publicFieldDefinitionStaticMods', required: true, multiple: false },
     { name: 'name', required: true, multiple: false },
     { name: 'optionalityMarker', required: false, multiple: false },
     { name: 'type', required: false, multiple: false },
-    { name: 'value', required: false, multiple: false },
+    { name: 'value', required: true, multiple: false },
   ],
   'readonly_type': [
     { name: 'type', required: true, multiple: false },
@@ -2313,7 +2303,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'readonlyMarker', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
-    { name: 'value', required: false, multiple: false },
+    { name: 'value', required: true, multiple: false },
   ],
   'rest_pattern': [
     { name: 'lhsExpression', required: true, multiple: false },
@@ -2341,7 +2331,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'string': [
     { name: 'opening', required: true, multiple: false },
-    { name: 'contents', required: false, multiple: true },
+    { name: 'contents', required: true, multiple: false },
     { name: 'closing', required: true, multiple: false },
   ],
   'subscript_expression': [
@@ -2461,7 +2451,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'yield_expression': [
-    { name: 'expression', required: false, multiple: false },
+    { name: 'expression', required: true, multiple: false },
   ],
 };
 

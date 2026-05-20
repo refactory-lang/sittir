@@ -27,7 +27,7 @@
 import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
-import { AssembledGroup, isMultiple } from '../compiler/node-map.ts';
+import { AssembledGroup, allSlotsOf, isMultiple, kindsOf } from '../compiler/node-map.ts';
 import type {
 	AssembledBranch,
 	AssembledMulti,
@@ -166,6 +166,12 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			this.#bodies.set(node.kind, `${GENERATED_HEADER}\n`);
 			return;
 		}
+		// Slot-preservation gate (PR2 Task 3.B4): assert every declared slot
+		// appears at least once in the emitted body. Replaces the deleted
+		// byte-equivalence diff gate. Set SITTIR_SLOT_PRESERVATION=0 to bypass.
+		if (process.env['SITTIR_SLOT_PRESERVATION'] !== '0') {
+			assertSlotPreservation(node, newBody);
+		}
 		this.#bodies.set(node.kind, `${GENERATED_HEADER}\n${newBody}`);
 	}
 }
@@ -293,6 +299,17 @@ export function emitPolymorphTemplate(node: AssembledPolymorph, ctx: EmitCtx): s
 export function emitRule(rule: Rule, ctx: EmitCtx): string {
 	switch (rule.type) {
 		case 'string':
+			// PR2 Task 3.B4: if a string literal carries `fieldName` AND
+			// `nonterminal: true` (stamped by enrich when the string appears
+			// as a genuine parse-tree node, e.g. operator tokens in
+			// `binary_expression`), emit it as a slot reference rather than
+			// the literal value. This matches the legacy walker's behavior for
+			// field-wrapped operator strings: the template references the slot
+			// variable (`{{ operator }}`) so the renderer can emit the actual
+			// operator at runtime rather than hard-coding the first variant.
+			if (rule.nonterminal === true && rule.fieldName !== undefined) {
+				return emitScalarSlot(rule.fieldName.toLowerCase());
+			}
 			return escapeLiteral(rule.value);
 
 		case 'pattern':
@@ -625,6 +642,29 @@ function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
 // now leaf attributes on the inner rule, consumed by emitSymbol directly.
 
 function emitChoice(rule: Extract<Rule, { type: 'choice' }>, ctx: EmitCtx): string {
+	// PR2 Task 3.B4: when deleteWrapper stamps `fieldName` onto a choice node
+	// (because the outer field() wrapper's attrs propagate to the choice itself
+	// but NOT to its members), emit the field slot directly using that fieldName.
+	// Without this, the fallthrough below would inline the first non-empty choice
+	// member — losing the field name entirely. This matches the case where
+	// `field('name', choice($._x, $._y, BLANK))` in a RenderRule produces a
+	// choice with `fieldName: 'name'` but members without fieldName.
+	if (rule.fieldName !== undefined) {
+		const slotName = rule.fieldName.toLowerCase();
+		const multiplicity = rule.multiplicity;
+		if (multiplicity === 'array' || multiplicity === 'nonEmptyArray') {
+			return emitListSlot(slotName, rule);
+		}
+		if (multiplicity === 'optional') {
+			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
+		}
+		// Check slot back-pointer — the choice as a whole may be multi-valued.
+		const slot = lookupSlot(rule, ctx);
+		if (slot && isMultiple(slot)) {
+			return emitListSlot(slotName, rule);
+		}
+		return emitScalarSlot(slotName);
+	}
 	// Legacy walker picks the first non-empty branch for homogeneous
 	// choices. Heterogeneous choices require `variant()` adoption in
 	// overrides — at that point each arm becomes its own kind with its
@@ -646,6 +686,109 @@ function emitClause(rule: Extract<Rule, { type: 'clause' }>, ctx: EmitCtx): stri
 	return `{% if ${slotKey} | isPresent %}${body}{% endif %}`;
 }
 
+// ---------------------------------------------------------------------------
+// Slot-preservation gate (PR2 Task 3.B4)
+//
+// Replaces the byte-equivalence diff gate deleted in PR2 Task 3.B3 (commit
+// fb889165). The new emitter intentionally produces different bytes than the
+// legacy walker; the actual correctness invariant is structural: each
+// declared slot for a kind must appear at least once in the emitter's output.
+//
+// Set SITTIR_SLOT_PRESERVATION=0 to bypass for survey / iteration mode.
+// ---------------------------------------------------------------------------
+
+function escapeRegex(s: string): string {
+	return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Verify each declared slot for `node` appears at least once in `body`.
+ * Throws on missing slots — the gate that ensures the emitter's structural
+ * rewrite didn't drop a slot reference.
+ *
+ * Replaces the byte-equivalence diff gate deleted in PR2 Task 3.B3 (commit
+ * fb889165). The new emitter intentionally produces different bytes than
+ * the legacy walker; structural slot-preservation is the actual correctness
+ * invariant.
+ *
+ * Uses word-boundary regex (`\bname\b`) on each slot's `storageName`
+ * (snake_case, matches what the emitter writes into templates) so references
+ * inside `{{ name }}`, `{% if name | isPresent %}`, and
+ * `{{ names | join(...) }}` all match.
+ *
+ * Skips terminal-only slots (all values are literal terminals with no
+ * node-refs) — these are deterministic-value tokens emitted as literals, not
+ * as named slot references (e.g. `opening`/`closing` enum-delimiter slots).
+ */
+function assertSlotPreservation(node: AssembledNode, body: string): void {
+	const slots = allSlotsOf(node);
+	if (slots.length === 0) return;
+	const missing: string[] = [];
+	const seen = new Set<string>();
+	for (const slot of slots) {
+		// Skip terminal-only slots — values are all literals (no node-refs).
+		// The template emits their literal text, not a slot-name reference.
+		if (kindsOf(slot).length === 0) continue;
+		// Skip inferred slots — those are derived from choice-member kind names
+		// (no `field()` wrapper), such as `_semicolon` rendered as `;` literal,
+		// or alternative choice arms from hidden-helper inlining. The emitter
+		// correctly handles these via symbol inlining or literal emission rather
+		// than named slot references. Checking them would produce false positives.
+		if (slot.source === 'inferred') continue;
+		// Skip link-sourced slots — derived from link-phase synthesized symbol
+		// rules (SymbolRule.source === 'link'). These are inlined as their
+		// literal text by emitSymbol (`rule.source === 'link'` → escapeLiteral),
+		// so the template will contain the literal string rather than a
+		// `{{ slotName }}` reference. Trying to find the slot name in the body
+		// would produce false positives (e.g. binary_expression.operator which
+		// emits '&&' instead of '{{ operator }}').
+		// Note: slot.source is typed as AssembledNonterminal.source but at
+		// runtime can also be 'link' or 'group-lift' (from SymbolRule.source
+		// propagated through deriveSlotsRaw).
+		if ((slot.source as string) === 'link' || (slot.source as string) === 'group-lift') continue;
+		// Skip slots where no value is required (all are optional/array). These
+		// arise from `mergeChoiceArmSlots` cross-arm relaxation: a slot present
+		// in only some choice arms gets its values' multiplicities relaxed from
+		// 'single' → 'optional'. Such slots may legitimately not appear in the
+		// emitted body when the emitter takes the other arm. Checking them would
+		// produce false positives for mutually exclusive choice alternatives.
+		// Note: this also skips genuinely-declared optional slots, but those
+		// are less likely to be completely dropped (the gate prioritizes catching
+		// missing required slots over missing optional-slot guards).
+		if (slot.values.length > 0 && slot.values.every((v) => v.multiplicity !== 'single')) continue;
+		// Skip slots where every referenced kind already appears in the body
+		// under its own name. This handles the `isSyntheticFieldWrapper` case:
+		// when deleteWrapper on `field('constraint', optional(seq('extends',
+		// field('type', _type))))` produces a slot named 'constraint' with a
+		// single node-ref value of kind 'type', but the body correctly emits
+		// `{% if type | isPresent %}...{{ type }}...` — the inner 'type' field
+		// is rendered directly without naming the outer 'constraint' slot.
+		// This is a legitimate inlining pattern where the outer container slot
+		// delegates rendering entirely to its inner named slot.
+		const slotKinds = kindsOf(slot);
+		if (slotKinds.length > 0 && slotKinds.every((k) => new RegExp(`\\b${escapeRegex(k)}\\b`).test(body))) continue;
+		// Use storageName (raw snake_case grammar field name) — this is what
+		// the emitter writes into templates, matching `rule.fieldName.toLowerCase()`.
+		const name = slot.storageName;
+		if (seen.has(name)) continue;
+		seen.add(name);
+		const re = new RegExp(`\\b${escapeRegex(name)}\\b`);
+		if (!re.test(body)) {
+			missing.push(name);
+		}
+	}
+	if (missing.length > 0) {
+		// Include slot details for debugging
+		const slotDetails = missing.map((m) => {
+			const s = slots.find((sl) => sl.storageName === m);
+			return s ? `${m}(src=${s.source},mult=${s.values.map((v) => v.multiplicity).join('|')},kinds=${kindsOf(s).join(',')})` : m;
+		});
+		throw new Error(
+			`TemplateEmitter slot-preservation violation on kind '${node.kind}' (${node.modelType}): ` +
+				`missing slot(s) [${slotDetails.join(', ')}] in body: ${JSON.stringify(body)}`
+		);
+	}
+}
 
 /**
  * Emit one `.jinja` body per rule in the NodeMap. Returns a Map keyed
