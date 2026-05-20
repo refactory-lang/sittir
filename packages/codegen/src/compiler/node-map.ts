@@ -840,6 +840,35 @@ function mergeChoiceArmSlots(arms: readonly AssembledNonterminal[][]): Assembled
 }
 
 /**
+ * Extract a separator string from a Rule['separator'] value.
+ * Returns undefined when the separator is absent or empty.
+ * Handles string, Rule[], and the object form { rules, trailing?, leading? }.
+ */
+function extractSeparatorString(sep: Rule['separator']): string | undefined {
+	if (sep === undefined) return undefined;
+	if (typeof sep === 'string') return sep || undefined;
+	if (Array.isArray(sep)) {
+		const str = sep.map((r) => ('value' in r ? (r as { value: string }).value : '')).join('');
+		return str || undefined;
+	}
+	// Object form { rules: Rule[], trailing?, leading? }
+	const rules = (sep as { rules: readonly { value?: string }[] }).rules;
+	const str = rules.map((r) => r.value ?? '').join('');
+	return str || undefined;
+}
+
+/**
+ * Stamp separator onto array/nonEmptyArray multiplicity values.
+ * Single-value slots are left unchanged — separator is meaningless for them.
+ */
+function stampSeparatorOnValues(values: NodeOrTerminal[], separatorStr: string | undefined): NodeOrTerminal[] {
+	if (!separatorStr) return values;
+	return values.map((v) =>
+		v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray' ? { ...v, separator: separatorStr } : v
+	);
+}
+
+/**
  * Build a field slot from a RenderRule leaf that carries `fieldName` as a
  * stamped attribute (set by `applyWrapperDeletion`). Mirrors the logic in
  * `deriveSlotsRaw`'s `case 'field':` handler but operates on the leaf
@@ -876,9 +905,9 @@ function deriveSlotsRawFromLeafAttr(
 			: fieldContentMultiplicity(rule, outerMultiplicity);
 
 	const rawValues = deriveValuesForRule(rule, innerMult, kindEntries);
-	const values = dedupeValues(rawValues);
+	const dedupedValues = dedupeValues(rawValues);
 
-	const isMultiSlot = values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
+	const isMultiSlot = dedupedValues.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 
 	// Trailing/leading flags: if `rule.separator` is the object form
 	// `{ rules, trailing, leading }`, extract from there. Otherwise use
@@ -894,6 +923,12 @@ function deriveSlotsRawFromLeafAttr(
 		(typeof sep === 'object' && !Array.isArray(sep) && sep !== null
 			? (sep as { rules: unknown[]; leading?: boolean }).leading === true
 			: findRepeatFlag(rule, 'leading'));
+
+	// Stamp separator string onto list-multiplicity values so downstream
+	// emitters (emitStruct → EmittedField.separator → buildTypedTemplateBody)
+	// can read it per-slot without re-deriving from the simplified rule.
+	const separatorStr = isMultiSlot ? extractSeparatorString(sep) : undefined;
+	const values = stampSeparatorOnValues(dedupedValues, separatorStr);
 
 	const propertyName = isMultiSlot ? pluralize(basePropertyName) : basePropertyName;
 

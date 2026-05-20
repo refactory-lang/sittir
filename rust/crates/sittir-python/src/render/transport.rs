@@ -26010,7 +26010,7 @@ fn render_match_block_block(node: &MatchBlockBlockTransport, dest: &mut dyn ::st
     let template = MatchBlockBlockTemplate {
         alternative: ListNonterminalView {
             items: alternative_buf.as_slice(),
-            separator: "",
+            separator: "\n",
             leading: false,
             trailing: false,
         },
@@ -26301,7 +26301,7 @@ fn render_class_pattern(node: &ClassPatternTransport, dest: &mut dyn ::std::fmt:
     let template = ClassPatternTemplate {
         arguments: ListNonterminalView {
             items: arguments_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -26552,14 +26552,14 @@ fn render_except_clause(node: &ExceptClauseTransport, dest: &mut dyn ::std::fmt:
         },
         block: ListNonterminalView {
             items: &[],
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
         suite: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.suite)),
         value: ListNonterminalView {
             items: value_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -26655,7 +26655,7 @@ fn render_for_in_clause(node: &ForInClauseTransport, dest: &mut dyn ::std::fmt::
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         right: ListNonterminalView {
             items: right_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -26725,7 +26725,7 @@ fn render_future_import_statement(node: &FutureImportStatementTransport, dest: &
     let template = FutureImportStatementTemplate {
         name: ListNonterminalView {
             items: name_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -26840,7 +26840,7 @@ fn render_import_statement(node: &ImportStatementTransport, dest: &mut dyn ::std
     let template = ImportStatementTemplate {
         name: ListNonterminalView {
             items: name_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -27017,7 +27017,7 @@ fn render_match_statement(node: &MatchStatementTransport, dest: &mut dyn ::std::
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         subject: ListNonterminalView {
             items: subject_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -27164,7 +27164,7 @@ fn render_print_statement(node: &PrintStatementTransport, dest: &mut dyn ::std::
     let template = PrintStatementTemplate {
         argument: ListNonterminalView {
             items: argument_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -27340,7 +27340,7 @@ fn render_subscript(node: &SubscriptTransport, dest: &mut dyn ::std::fmt::Write)
     let template = SubscriptTemplate {
         subscript: ListNonterminalView {
             items: subscript_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },

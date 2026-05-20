@@ -3458,7 +3458,7 @@ export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle) {
     ...data,
     $type: TSKindId.TupleExpression as const,
     _attributes: normalizeRepeatedWrapSlot(data._attributes, false, "attributes"),
-    _elements: normalizeRepeatedWrapSlot(data._elements, false, "elements"),
+    _elements: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._elements, ["_expression","_expression_except_range","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","_literal","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","_reserved_identifier","self","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","unit_expression","break_expression","continue_expression","index_expression","metavariable","closure_expression","parenthesized_expression","struct_expression","_expression_ending_with_block","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"]), false, "elements"),
 
     attributes() { return drillInAll<T.AttributeItem>(this._attributes as readonly T.AttributeItem[] | undefined, tree); },
     elements() { return drillInAll<T.Expression>(this._elements as readonly T.Expression[] | undefined, tree); },

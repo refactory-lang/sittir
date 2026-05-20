@@ -47242,13 +47242,13 @@ fn render_tuple_expression(node: &TupleExpressionTransport, dest: &mut dyn ::std
     let template = TupleExpressionTemplate {
         attributes: ListNonterminalView {
             items: attributes_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
         elements: ListNonterminalView {
             items: elements_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },

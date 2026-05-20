@@ -2107,7 +2107,7 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.EnumBody as const,
-    _opening: normalizeRepeatedWrapSlot(data._opening, false, "opening"),
+    _opening: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._opening, ["_property_name","_property_identifier","identifier","_reserved_identifier","private_property_identifier","string","number","computed_property_name","enum_assignment"]), false, "opening"),
 
     openings() { return drillInAll<T.PropertyName | T.EnumAssignment>(this._opening as readonly (T.PropertyName | T.EnumAssignment)[] | undefined, tree); },
     $with: {
@@ -2285,7 +2285,7 @@ export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExtendsTypeClause as const,
-    _type: normalizeRepeatedWrapSlot(data._type, true, "type"),
+    _type: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._type, ["_type_identifier","nested_type_identifier","generic_type"]), true, "type"),
 
     types() { return drillInAll<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(this._type as readonly (T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType)[] | undefined, tree); },
     $with: {
@@ -2921,7 +2921,7 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
     ...data,
     $type: TSKindId.LexicalDeclaration as const,
     _kind: projectKindEnumStorage(normalizeSingularWrapSlot(data._kind, "kind", true, data.$type)),
-    _declarators: normalizeRepeatedWrapSlot(data._declarators, true, "declarators"),
+    _declarators: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._declarators, ["variable_declarator"]), true, "declarators"),
     _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     kind() { return this._kind; },
@@ -4150,7 +4150,7 @@ export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.VariableDeclaration as const,
-    _declarators: normalizeRepeatedWrapSlot(data._declarators, true, "declarators"),
+    _declarators: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._declarators, ["variable_declarator"]), true, "declarators"),
     _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
     declarators() { return drillInAll<T.VariableDeclarator>(this._declarators as readonly T.VariableDeclarator[] | undefined, tree); },

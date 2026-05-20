@@ -50079,19 +50079,19 @@ fn render_enum_body(node: &EnumBodyTransport, dest: &mut dyn ::std::fmt::Write) 
     let template = EnumBodyTemplate {
         enum_assignment: ListNonterminalView {
             items: &[],
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
         name: ListNonterminalView {
             items: &[],
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
         opening: ListNonterminalView {
             items: opening_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -50234,7 +50234,7 @@ fn render_extends_type_clause(node: &ExtendsTypeClauseTransport, dest: &mut dyn 
     let template = ExtendsTypeClauseTemplate {
         type_: ListNonterminalView {
             items: type__buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -50838,7 +50838,7 @@ fn render_lexical_declaration(node: &LexicalDeclarationTransport, dest: &mut dyn
     let template = LexicalDeclarationTemplate {
         declarators: ListNonterminalView {
             items: declarators_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -51909,7 +51909,7 @@ fn render_variable_declaration(node: &VariableDeclarationTransport, dest: &mut d
     let template = VariableDeclarationTemplate {
         declarators: ListNonterminalView {
             items: declarators_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },

@@ -303,6 +303,15 @@ pub(crate) fn resolve_field(node: &NodeData, name: &str, required: bool) -> Resu
 
 pub(crate) fn separator_for(kind_id: u16) -> &'static str {
     match kind_id {
+        246 => "\n", // "_match_block_block"
+        173 => ",", // "class_pattern"
+        140 => ",", // "except_clause"
+        227 => ",", // "for_in_clause"
+        114 => ",", // "future_import_statement"
+        111 => ",", // "import_statement"
+        134 => ",", // "match_statement"
+        119 => ",", // "print_statement"
+        204 => ",", // "subscript"
         _ => "",
     }
 }

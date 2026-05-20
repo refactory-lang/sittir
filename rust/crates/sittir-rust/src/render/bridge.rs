@@ -303,6 +303,7 @@ pub(crate) fn resolve_field(node: &NodeData, name: &str, required: bool) -> Resu
 
 pub(crate) fn separator_for(kind_id: u16) -> &'static str {
     match kind_id {
+        260 => ",", // "tuple_expression"
         _ => "",
     }
 }

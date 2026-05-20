@@ -303,6 +303,10 @@ pub(crate) fn resolve_field(node: &NodeData, name: &str, required: bool) -> Resu
 
 pub(crate) fn separator_for(kind_id: u16) -> &'static str {
     match kind_id {
+        291 => ",", // "enum_body"
+        289 => ",", // "extends_type_clause"
+        184 => ",", // "lexical_declaration"
+        183 => ",", // "variable_declaration"
         _ => "",
     }
 }

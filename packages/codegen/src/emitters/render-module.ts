@@ -38,7 +38,6 @@ import {
 	allFormFieldsOf
 } from '../compiler/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { findRepeatSeparator } from '../compiler/template-walker.ts';
 import { compileWordMatcher } from '../compiler/common.ts';
 import type { TemplateFile } from './template-hash.ts';
 import { computeTemplateBundleHash } from './template-hash.ts';
@@ -112,77 +111,18 @@ export interface RenderModuleEmitterConfig {
 	generatedIdTables?: GeneratedIdTables;
 }
 
-interface RenderModuleCollectedEntry {
-	node: AssembledNode;
-	separator: string | undefined;
-	isListContainer: boolean;
-	variants: Map<string, string> | undefined;
-}
-
-function collectRenderModuleEntry(node: AssembledNode): RenderModuleCollectedEntry {
-	let separator: string | undefined;
-	let isListContainer = false;
-	let variants: Map<string, string> | undefined;
-	if (node.userFacing) {
-		if (node instanceof AssembledBranch) {
-			separator = node.separator ?? findRepeatSeparator(node.simplifiedRule);
-			if (node.fields.length === 0 && node.children.length > 0) isListContainer = true;
-		} else if (node instanceof AssembledGroup) {
-			separator = findRepeatSeparator(node.simplifiedRule);
-		}
-		if (node instanceof AssembledPolymorph) {
-			const map = new Map<string, string>();
-			for (const form of node.forms) {
-				map.set(form.kind, form.name);
-			}
-			// Override polymorphs have visible child kinds (e.g. 'array_expression_list')
-			// whose real parse-tree names differ from the internal form kinds
-			// ('array_expression__form_list'). Pair them by position: variantChildKinds[i]
-			// corresponds to the i-th non-passthrough form in polyForms order.
-			const nonPassthroughForms = node.forms.filter((f) => !f.overridePassthrough);
-			for (let i = 0; i < node.variantChildKinds.length; i++) {
-				const childKind = node.variantChildKinds[i]!;
-				if (!map.has(childKind) && i < nonPassthroughForms.length) {
-					map.set(childKind, nonPassthroughForms[i]!.name);
-				}
-			}
-			if (map.size > 0) variants = map;
-		}
-	}
-	return { node, separator, isListContainer, variants };
-}
-
-/** Derives MetaData from collected emitter entries — same derivation as
- *  `collectMetaData` but operating on the pre-extracted per-entry fields. */
-function buildMetaDataFromEntries(entries: readonly RenderModuleCollectedEntry[]): MetaData {
-	const separators = new Map<string, string>();
-	const listContainers = new Set<string>();
-	const variants = new Map<string, Map<string, string>>();
-	for (const entry of entries) {
-		if (!entry.node.userFacing) continue;
-		const kind = entry.node.kind;
-		if (entry.separator !== undefined) separators.set(kind, entry.separator);
-		if (entry.isListContainer) listContainers.add(kind);
-		if (entry.variants !== undefined) variants.set(kind, entry.variants);
-	}
-	return { separators, listContainers, variants };
-}
-
 interface SynthesizeRenderModuleBundleConfig {
 	grammar: Grammar;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
-	entries: readonly RenderModuleCollectedEntry[];
 	templates: EmittedTemplates;
 }
 
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
-	const { grammar, nodeMap, generatedIdTables, entries, templates } = config;
-	const meta = buildMetaDataFromEntries(entries);
-	const nodesByKind = new Map<string, AssembledNode>(entries.map((e) => [e.node.kind, e.node]));
+	const { grammar, nodeMap, generatedIdTables, templates } = config;
 	const files = templateFilesFromEmittedTemplates(templates);
 	return {
-		emit: emitRenderModule(grammar, files, nodeMap, generatedIdTables, { meta, nodesByKind }),
+		emit: emitRenderModule(grammar, files, nodeMap, generatedIdTables),
 		templateCopies: planRenderModuleTemplateCopies(grammar, templates)
 	};
 }
@@ -191,7 +131,6 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 	readonly #grammar: Grammar;
 	readonly #nodeMap: NodeMap;
 	readonly #generatedIdTables?: GeneratedIdTables;
-	readonly #entries: RenderModuleCollectedEntry[] = [];
 
 	constructor(config: RenderModuleEmitterConfig) {
 		this.#grammar = config.grammar;
@@ -199,28 +138,20 @@ export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, E
 		this.#generatedIdTables = config.generatedIdTables;
 	}
 
-	emitLeaf(node: Extract<AssembledNode, { modelType: 'pattern' | 'keyword' | 'enum' }>): void {
-		this.#entries.push(collectRenderModuleEntry(node));
-	}
+	// No per-node accumulation needed — emitRenderModule reads the full nodeMap.
+	emitLeaf(_node: Extract<AssembledNode, { modelType: 'pattern' | 'keyword' | 'enum' }>): void {}
 
-	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
-		this.#entries.push(collectRenderModuleEntry(node));
-	}
+	emitBranch(_node: Extract<AssembledNode, { modelType: 'branch' }>): void {}
 
-	emitPolymorph(node: Extract<AssembledNode, { modelType: 'polymorph' }>): void {
-		this.#entries.push(collectRenderModuleEntry(node));
-	}
+	emitPolymorph(_node: Extract<AssembledNode, { modelType: 'polymorph' }>): void {}
 
-	emitGroup(node: Extract<AssembledNode, { modelType: 'group' }>): void {
-		this.#entries.push(collectRenderModuleEntry(node));
-	}
+	emitGroup(_node: Extract<AssembledNode, { modelType: 'group' }>): void {}
 
 	finalize(templates: EmittedTemplates): RenderModuleBundle {
 		return synthesizeRenderModuleBundle({
 			grammar: this.#grammar,
 			nodeMap: this.#nodeMap,
 			generatedIdTables: this.#generatedIdTables,
-			entries: this.#entries,
 			templates
 		});
 	}
@@ -1579,39 +1510,42 @@ function renderInlinedMatchArm(s: EmittedStruct): string[] {
 // ----------------------------------------------------------------------
 
 interface MetaData {
-	separators: Map<string, string>; // kind → separator
-	listContainers: Set<string>;
+	separators: Map<string, string>; // kind → separator (fallback for inferred slots)
 	variants: Map<string, Map<string, string>>; // parentKind → (childKind → label)
 }
 
 function collectMetaData(nodeMap: NodeMap): MetaData {
 	const separators = new Map<string, string>();
-	const listContainers = new Set<string>();
 	const variants = new Map<string, Map<string, string>>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!node.userFacing) continue;
-		// Separator — derive from ALL branches and groups, not just
-		// container-shaped ones. Non-container branches (e.g. `parameters`,
-		// `arguments`, `field_declaration_list`) carry repeat separators
-		// inside their simplified rule that `findRepeatSeparator` extracts.
-		// The prior code only checked `isContainerShape` branches, causing
-		// the transport render path to use "" for 138+ kinds that need ","
-		// or other separators.
-		//
-		// NOTE: per-slot separator is now read from slot.values during
-		// EmittedField construction (emitStruct's separatorByName) and used
-		// per-slot at the ListNonterminalView emission site. This node-wide
-		// `separators` map remains as a fallback for slots whose values
-		// don't carry a separator stamp yet (TODO: PR3 — migrate stamping
-		// to all kinds and drop this fallback).
-		if (node instanceof AssembledBranch) {
-			const sep = node.separator ?? findRepeatSeparator(node.simplifiedRule);
-			if (sep !== undefined) separators.set(kind, sep);
-			if (node.fields.length === 0 && node.children.length > 0) {
-				listContainers.add(kind);
+		// Separator — scan slot values for stamped separators (set by
+		// deriveSlotsRawFromLeafAttr via stampSeparatorOnValues for named
+		// field slots). Falls back to node.separator (AssembledBranch
+		// simplified-rule separator) for container-shaped nodes whose
+		// separator lives on the simplified rule rather than slot values.
+		if (node instanceof AssembledBranch || node instanceof AssembledGroup) {
+			let sep: string | undefined;
+			// 1. Check named/unnamed slot values for a stamped separator.
+			const allSlots =
+				node instanceof AssembledBranch
+					? [...node.fields, ...node.children]
+					: [...node.fields, ...node.children];
+			outer: for (const slot of allSlots) {
+				for (const v of slot.values) {
+					if ((v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray') && v.separator) {
+						sep = v.separator;
+						break outer;
+					}
+				}
 			}
-		} else if (node instanceof AssembledGroup) {
-			const sep = findRepeatSeparator(node.simplifiedRule);
+			// 2. Fall back to AssembledBranch.separator (from simplified rule)
+			//    for list-container nodes where the separator lives on the
+			//    top-level repeat and children are inferred/positional (no
+			//    deriveSlotsRawFromLeafAttr path).
+			if (sep === undefined && node instanceof AssembledBranch) {
+				sep = node.separator ?? undefined;
+			}
 			if (sep !== undefined) separators.set(kind, sep);
 		}
 		// Variant-branching polymorphs — `variantChildKinds` holds the
@@ -1645,7 +1579,7 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 			if (map.size > 0) variants.set(kind, map);
 		}
 	}
-	return { separators, listContainers, variants };
+	return { separators, variants };
 }
 
 // ----------------------------------------------------------------------
@@ -2018,7 +1952,9 @@ function renderTypedBranchFn(node: AssembledNode, struct: EmittedStruct, meta: M
 	const lines: string[] = [];
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const structName = rustTransportStructName(node);
-	const separator = meta.separators.get(node.kind) ?? '';
+	// Node-wide fallback separator — used for list slots whose values don't
+	// carry per-slot separator stamps (inferred/positional slots).
+	const nodeSeparator = meta.separators.get(node.kind) ?? '';
 	const slotModel = renderSlotModelOf(node);
 
 	// Build per-field kind maps for typed render call selection — named and
@@ -2028,7 +1964,7 @@ function renderTypedBranchFn(node: AssembledNode, struct: EmittedStruct, meta: M
 	const fieldMixedByName = buildFieldMixedByName(allSlots);
 
 	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
-	lines.push(...buildTypedTemplateBody(struct, separator, fieldKindsByName, fieldMixedByName, nodeMap, slotModel));
+	lines.push(...buildTypedTemplateBody(struct, nodeSeparator, fieldKindsByName, fieldMixedByName, nodeMap, slotModel));
 	lines.push(`}`);
 	lines.push('');
 
@@ -2353,13 +2289,6 @@ export function emitHashFiles(
 	};
 }
 
-/** Pre-computed state passed from `RenderModuleEmitter` to avoid
- *  redundant traversals — when present, `collectMetaData` is skipped. */
-interface PrecomputedState {
-	meta: MetaData;
-	nodesByKind: ReadonlyMap<string, AssembledNode>;
-}
-
 /**
  * Emit the full render module for a grammar — hash files, per-kind
  * template structs, direct-render helpers, render_dispatch, lib.rs,
@@ -2371,8 +2300,6 @@ interface PrecomputedState {
  * @param nodeMap — the assembled node map, source of direct-render
  *   metadata tables and typeName lookups.
  * @param generatedIdTables — optional numeric KindID tables (T021+).
- * @param precomputed — optional pre-derived state from `RenderModuleEmitter`.
- *   When present, skips `collectMetaData` and uses the emitter-collected maps.
  * @returns paired file contents. The CLI writes them + handles the
  *   `.jinja` directory copy separately (T030).
  */
@@ -2380,8 +2307,7 @@ export function emitRenderModule(
 	lang: Grammar,
 	files: readonly TemplateFile[],
 	nodeMap: NodeMap,
-	generatedIdTables?: GeneratedIdTables,
-	precomputed?: PrecomputedState
+	generatedIdTables?: GeneratedIdTables
 ): RustRenderModuleEmit {
 	const { hashRs, hashTs } = emitHashFiles(lang, files);
 	const structs: EmittedStruct[] = [];
@@ -2391,14 +2317,14 @@ export function emitRenderModule(
 	for (const f of sortedFiles) {
 		if (!f.filename.endsWith('.jinja')) continue;
 		const kind = f.filename.slice(0, -'.jinja'.length);
-		const node = precomputed?.nodesByKind.get(kind) ?? nodeMap.nodes.get(kind);
+		const node = nodeMap.nodes.get(kind);
 		// Only user-facing nodes get templates emitted (see templates.ts
 		// emitJinjaTemplates); if the jinja file exists, the node exists
 		// and is userFacing.
 		const rendered = node?.renderTemplate(nodeMap.rules ?? {}, wordMatcher ?? /\w/, nodeMap.externals);
 		structs.push(emitStruct(kind, node, mergeTemplateSurfaceFromBody(f.content, rendered?.surface)));
 	}
-	const meta = precomputed?.meta ?? collectMetaData(nodeMap);
+	const meta = collectMetaData(nodeMap);
 	const hasNumericDispatch = generatedIdTables !== undefined;
 	const kindIdByKind = generatedIdTables
 		? buildKindIdByKind(collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables))
