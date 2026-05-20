@@ -106,14 +106,10 @@ export function assemble(
 			inlineGroupRefs(assemblyRule, optimized.rules)
 		);
 		const modelType = classifyNode(kind, inlinedRule, { variantParents });
-		// `simplifiedRules[kind]` is already inlined + fixpoint-reduced
-		// by `simplifyRules` in optimize — pass through as-is.
-		// TODO PR2: alias-body kinds are not in simplifiedRules / renderRules — eliminate
-		// the per-call simplifyRule / deleteWrapper fallback once alias bodies are snapshotted.
-		const simplifiedRule = optimized.topLevelAliasBodies?.has(kind)
-			? simplifyRule(assemblyRule, wordMatcher)
-			: optimized.simplifiedRules[kind]!;
-		const renderRule: RenderRule = optimized.renderRules?.[kind] ?? deleteWrapper(assemblyRule);
+		// `simplifiedRules[kind]` and `renderRules[kind]` are both pre-computed
+		// by optimize — alias-body kinds are now also snapshotted there (PR2 Task 3.B-prereq-alias).
+		const simplifiedRule = optimized.simplifiedRules[kind]!;
+		const renderRule: RenderRule = optimized.renderRules![kind]!;
 		const variantChildKinds = variantChildrenByParent.get(kind);
 
 		switch (modelType) {

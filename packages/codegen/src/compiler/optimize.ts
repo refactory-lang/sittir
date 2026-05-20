@@ -67,6 +67,23 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
 	const rules = applyNormalizationPasses(linked.rules, linked.patternReplacementKinds);
 	const renderRules = applyWrapperDeletion(rules);
 	const simplifiedRules = computeSimplifiedRules(renderRules, linked.word);
+
+	// Alias-body kinds: thread the alias-target bodies through the same pipeline
+	// so renderRules / simplifiedRules cover them too. Eliminates the
+	// assemble.ts simplifyRule(assemblyRule) fallback (PR1's TODO PR2).
+	if (linked.topLevelAliasBodies) {
+		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(linked.topLevelAliasBodies);
+		const aliasBodiesNormalized = applyNormalizationPasses(aliasBodiesRaw, linked.patternReplacementKinds);
+		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesNormalized);
+		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, linked.word);
+		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
+			renderRules[kind] = rule;
+		}
+		for (const [kind, rule] of Object.entries(aliasBodiesSimplified)) {
+			simplifiedRules[kind] = rule;
+		}
+	}
+
 	return {
 		name: linked.name,
 		rules,

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { assemble, classifyNode, simplifyRule, nameNode, nameField } from '../compiler/assemble.ts';
 import { simplifyRules } from '../compiler/simplify.ts';
+import { applyWrapperDeletion } from '../compiler/wrapper-deletion.ts';
 import type { Rule } from '../compiler/rule.ts';
 import type { OptimizedGrammar } from '../compiler/types.ts';
 import { deriveSlots, isRequired, isMultiple, allSlotsOf } from '../compiler/node-map.ts';
@@ -13,10 +14,26 @@ function deriveFields(rule: Parameters<typeof deriveSlots>[0]) {
 }
 
 function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<OptimizedGrammar>): OptimizedGrammar {
+	const renderRules = applyWrapperDeletion(rules);
+	const simplifiedRules = simplifyRules(renderRules);
+	// If topLevelAliasBodies are provided, thread them through the same pipeline
+	// so their canonical snapshots are available under the alias kind name.
+	if (overrides?.topLevelAliasBodies) {
+		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(overrides.topLevelAliasBodies);
+		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesRaw);
+		const aliasBodiesSimplified = simplifyRules(aliasBodiesRender);
+		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
+			renderRules[kind] = rule;
+		}
+		for (const [kind, rule] of Object.entries(aliasBodiesSimplified)) {
+			simplifiedRules[kind] = rule;
+		}
+	}
 	return {
 		name: 'test',
 		rules,
-		simplifiedRules: simplifyRules(rules),
+		renderRules,
+		simplifiedRules,
 		supertypes: new Set(),
 		word: null,
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
