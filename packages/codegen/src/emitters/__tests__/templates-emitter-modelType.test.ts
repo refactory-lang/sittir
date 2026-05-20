@@ -32,7 +32,8 @@ import type {
 	AssembledGroup,
 	AssembledMulti,
 	AssembledNonterminal,
-	AssembledPolymorph
+	AssembledPolymorph,
+	NodeOrTerminal
 } from '../../compiler/node-map.ts';
 import {
 	emitBranchTemplate,
@@ -57,13 +58,26 @@ function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 	};
 }
 
+/**
+ * A minimal terminal value with `multiplicity: 'single'` so `isRequired`
+ * returns `true`. Slots that represent required scalar fields need at least
+ * one single-multiplicity value; otherwise `isRequired` conservatively
+ * returns `false` (empty values array = no evidence of requiredness) and the
+ * emitter wraps the slot in a `{% if ... | isPresent %}` guard.
+ */
+const SINGLE_REQUIRED_VALUE: NodeOrTerminal = {
+	kind: 'terminal',
+	value: 'x',
+	multiplicity: 'single'
+};
+
 function makeSlot(overrides: Partial<AssembledNonterminal>): AssembledNonterminal {
 	return {
 		name: 'value',
 		propertyName: 'value',
 		configKey: 'value',
 		storageName: 'value',
-		values: [],
+		values: [SINGLE_REQUIRED_VALUE],
 		paramName: 'value',
 		hasTrailing: false,
 		hasLeading: false,
@@ -225,23 +239,23 @@ describe('emitMultiTemplate', () => {
 });
 
 describe('emitPolymorphTemplate', () => {
-	it('emits a single `$variant`-guarded body for a one-form polymorph', () => {
+	it('emits a single `variant`-guarded body for a one-form polymorph', () => {
 		const rule: StringRule = { type: 'string', value: 'A' };
 		const form = mockGroup(rule, 'formA');
 		expect(emitPolymorphTemplate(mockPolymorph([form]), makeCtx())).toBe(
-			'{%- if $variant == "formA" -%}A{%- endif -%}'
+			'{%- if variant == "formA" -%}A{%- endif -%}'
 		);
 	});
 
-	it('aggregates two forms into separate `$variant` guards', () => {
+	it('aggregates two forms into separate `variant` guards', () => {
 		const ruleA: StringRule = { type: 'string', value: 'A' };
 		const ruleB: StringRule = { type: 'string', value: 'B' };
 		const formA = mockGroup(ruleA, 'formA');
 		const formB = mockGroup(ruleB, 'formB');
 		const out = emitPolymorphTemplate(mockPolymorph([formA, formB]), makeCtx());
 		expect(out).toBe(
-			'{%- if $variant == "formA" -%}A{%- endif -%}' +
-				'{%- if $variant == "formB" -%}B{%- endif -%}'
+			'{%- if variant == "formA" -%}A{%- endif -%}' +
+				'{%- if variant == "formB" -%}B{%- endif -%}'
 		);
 	});
 
@@ -269,8 +283,8 @@ describe('emitPolymorphTemplate', () => {
 		const formA = mockGroup(ruleA, 'binary');
 		const formB = mockGroup(ruleB, 'literal');
 		expect(emitPolymorphTemplate(mockPolymorph([formA, formB]), ctx)).toBe(
-			'{%- if $variant == "binary" -%}{{ left }} + {{ left }}{%- endif -%}' +
-				'{%- if $variant == "literal" -%}B{%- endif -%}'
+			'{%- if variant == "binary" -%}{{ left }} + {{ left }}{%- endif -%}' +
+				'{%- if variant == "literal" -%}B{%- endif -%}'
 		);
 	});
 

@@ -28,13 +28,14 @@
 import * as fs from 'node:fs';
 import { join } from 'node:path';
 import type { NodeMap } from '../compiler/types.ts';
-import { AssembledGroup, allSlotsOf, isMultiple, kindsOf } from '../compiler/node-map.ts';
+import { AssembledGroup, allSlotsOf, isMultiple, isRequired, kindsOf, isUnresolvedRef } from '../compiler/node-map.ts';
 import type {
 	AssembledBranch,
 	AssembledMulti,
 	AssembledNode,
 	AssembledNonterminal,
-	AssembledPolymorph
+	AssembledPolymorph,
+	TerminalValue
 } from '../compiler/node-map.ts';
 import type { Rule } from '../compiler/rule.ts';
 import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
@@ -64,6 +65,16 @@ export interface EmitCtx {
 	 * via this field. Each call to `emitOne()` resets it.
 	 */
 	readonly visitingHelpers: Set<string>;
+	/**
+	 * Owner-level slots for the current node being emitted, keyed by
+	 * `storageName` (snake_case, matches `rule.fieldName.toLowerCase()`).
+	 * Used as a fallback when `slotByRuleId` lookup fails because the
+	 * symbol's rule `id` doesn't match the slot's `sourceRuleId` — a gap
+	 * that occurs when `simplifyRule` creates new rule objects without
+	 * preserving the original ID. Set by `emitBranchTemplate` and
+	 * `emitGroupTemplate` before recursing into the node's `renderRule`.
+	 */
+	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
 }
 
 // Nunjucks whitespace control (`{#- ... -#}`) strips whitespace
@@ -219,12 +230,19 @@ export function emitBranchTemplate(node: AssembledBranch, ctx: EmitCtx): string 
 	// PR2 Task 3.B3: consume renderRule (RenderRule, wrapper-free) instead
 	// of rule (RawRule, wrapper-bearing). Wrapper attributes (fieldName,
 	// multiplicity, separator) are now on the leaf rules themselves.
-	return emitRule(node.renderRule, ctx);
+	//
+	// Populate ownerSlots so emitSymbol can fall back to name-based slot
+	// lookup when slotByRuleId lookup fails (gap: simplifyRule may create
+	// new rule objects without preserving IDs, breaking slotByRuleId).
+	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: node.slots };
+	return emitRule(node.renderRule, ctxWithSlots);
 }
 
 export function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
 	// PR2 Task 3.B3: consume renderRule (RenderRule, wrapper-free).
-	return emitRule(node.renderRule, ctx);
+	// Populate ownerSlots for the same reason as emitBranchTemplate.
+	const ctxWithSlots: EmitCtx = { ...ctx, ownerSlots: node.slots };
+	return emitRule(node.renderRule, ctxWithSlots);
 }
 
 export function emitMultiTemplate(node: AssembledMulti, ctx: EmitCtx): string {
@@ -538,14 +556,50 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 // ---------------------------------------------------------------------------
 
 /**
- * Look up an `AssembledNonterminal` from `slotByRuleId` for a rule that
- * carries an `id`. Returns `undefined` for rules without an id (test
- * fixtures, transient sub-rules) — callers fall back to name-based
- * derivation.
+ * Look up an `AssembledNonterminal` for a rule from two sources:
+ *
+ * 1. `slotByRuleId` — registered during assembly via `slot.sourceRuleId`.
+ *    Fast O(1) lookup. Fails when `simplifyRule` creates new rule objects
+ *    without preserving the original ID, or when the FieldRule ID doesn't
+ *    match the renderRule's symbol ID.
+ *
+ * 2. `ctx.ownerSlots` fallback — keyed by `storageName` (which equals
+ *    `rule.fieldName.toLowerCase()` for named fields). Used when the
+ *    slotByRuleId lookup fails. Safe because `storageName` is unique within
+ *    a node's slot set.
+ *
+ * Returns `undefined` when neither source finds a slot (test fixtures,
+ * transient sub-rules without a registered slot).
  */
 function lookupSlot(rule: Rule, ctx: EmitCtx): AssembledNonterminal | undefined {
-	if (!rule.id) return undefined;
-	return ctx.nodeMap.slotByRuleId.get(rule.id);
+	// Primary: slotByRuleId (by registered rule ID)
+	if (rule.id) {
+		const byId = ctx.nodeMap.slotByRuleId.get(rule.id);
+		if (byId) return byId;
+	}
+	if (ctx.ownerSlots) {
+		// Fallback A: fieldName → storageName. For grammar-named fields whose
+		// FieldRule ID doesn't match the renderRule symbol's ID (because
+		// simplifyRule created new objects without preserving the original ID),
+		// look up the slot by the field name the symbol carries.
+		if (rule.fieldName !== undefined) {
+			const byFieldName = ctx.ownerSlots[rule.fieldName.toLowerCase()];
+			if (byFieldName) return byFieldName;
+		}
+		// Fallback B: symbol name (exact, no underscore-stripping) → storageName.
+		// For inferred slots derived from tree-sitter's node-types.json children,
+		// the slot's storageName equals the dominant choice-arm kind name. When
+		// a symbol in the renderRule has the same name as the slot's storageName,
+		// map it. Only fires for symbols without fieldName (fieldName symbols are
+		// handled by Fallback A). Uses the EXACT name (no leading-_ stripping) to
+		// avoid false positives where `_hidden_rule` would match slot `hidden_rule`.
+		if (rule.type === 'symbol' && rule.fieldName === undefined && !rule.name.startsWith('_')) {
+			const exactName = rule.name.toLowerCase();
+			const byExactName = ctx.ownerSlots[exactName];
+			if (byExactName) return byExactName;
+		}
+	}
+	return undefined;
 }
 
 /**
@@ -609,10 +663,25 @@ const DEFAULT_JOIN_SEPARATOR = ' ';
  * `slot.propertyName` (camelCase + pluralized) because the walker's
  * template output is byte-compared against the new emitter and any
  * naming divergence breaks the diff gate.
+ *
+ * When the optional `slot` back-pointer is supplied, the separator is
+ * overridden to `""` (empty concatenation) when ALL values in the slot
+ * are `token.immediate(…)` terminal entries. Immediate tokens must
+ * adjoin the preceding token with no whitespace separator — e.g. the
+ * content fragments of a Python string literal (`string_content`,
+ * `interpolation`) must concatenate without separator.
  */
-function emitListSlot(slotName: string, rule: Rule): string {
+function emitListSlot(slotName: string, rule: Rule, slot?: AssembledNonterminal): string {
 	const filter = selectJoinFilter(rule);
-	const sep = separatorToString(rule) ?? DEFAULT_JOIN_SEPARATOR;
+	// Immediate-terminal check: when ALL slot values are terminal entries
+	// stamped with `immediate: true` (produced by `token.immediate(…)` in
+	// the grammar), the correct separator is the empty string — the tokens
+	// must be concatenated adjacently, no whitespace between them.
+	const allImmediate =
+		slot !== undefined &&
+		slot.values.length > 0 &&
+		slot.values.every((v) => v.kind === 'terminal' && (v as TerminalValue).immediate === true);
+	const sep = allImmediate ? '' : (separatorToString(rule) ?? DEFAULT_JOIN_SEPARATOR);
 	return `{{ ${slotName} | ${filter}("${escapeJinjaString(sep)}") }}`;
 }
 
@@ -685,13 +754,14 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 		const multiplicity = rule.multiplicity;
 		const isArray = multiplicity === 'array' || multiplicity === 'nonEmptyArray';
 		if (isArray) {
-			return emitListSlot(slotName, rule);
+			const slot = lookupSlot(rule, ctx);
+			return emitListSlot(slotName, rule, slot ?? undefined);
 		}
 		// Check slot back-pointer for list shape (walker infers multiplicity
 		// from surrounding structure; slot back-pointer captures that decision).
 		const slot = lookupSlot(rule, ctx);
 		if (slot && isMultiple(slot)) {
-			return emitListSlot(slotName, rule);
+			return emitListSlot(slotName, rule, slot);
 		}
 		if (multiplicity === 'optional') {
 			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
@@ -718,9 +788,16 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 		const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
 		const multiplicity = rule.multiplicity;
 		if (multiplicity === 'array' || multiplicity === 'nonEmptyArray' || isMultiple(slot)) {
-			return emitListSlot(slotName, rule);
+			return emitListSlot(slotName, rule, slot);
 		}
 		if (multiplicity === 'optional') {
+			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
+		}
+		// Bug 5 fix (path 2): if the slot back-pointer says optional (not all
+		// values are required multiplicity), emit a conditional guard. This
+		// catches cases where the grammar wraps the field in optional() but the
+		// push-down pass didn't stamp 'optional' onto the leaf symbol.
+		if (!isRequired(slot)) {
 			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
 		}
 		return emitScalarSlot(slotName);
@@ -800,7 +877,20 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 		ctx.visitingHelpers.add(rule.name);
 		try {
 			const target = deleteWrapper(ctx.rules[rule.name]!);
-			return emitRule(target, ctx);
+			const helperBody = emitRule(target, ctx);
+			const multiplicity = rule.multiplicity;
+			// Bug 5 fix (hidden-helper path): when the surrounding context stamped
+			// `multiplicity: 'optional'` onto this symbol (e.g. the symbol was
+			// inside optional(_initializer)), wrap the inlined body in a conditional
+			// keyed on the first field inside the helper. This matches the group-lift
+			// path's behavior (lines 780-789) and ensures optional hidden helpers
+			// produce `{% if condKey | isPresent %}body{% endif %}` not bare `body`.
+			if (multiplicity === 'optional' && helperBody) {
+				const condKey = pickConditionalKey(target, ctx)
+					?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+				return `{% if ${condKey} | isPresent %}${helperBody}{% endif %}`;
+			}
+			return helperBody;
 		} finally {
 			ctx.visitingHelpers.delete(rule.name);
 		}
