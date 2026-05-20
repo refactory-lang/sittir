@@ -45111,9 +45111,11 @@ fn render_closure_parameters(node: &ClosureParametersTransport, dest: &mut dyn :
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ClosureParametersTemplate {
-        parameter: match &node.pattern {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
+        parameter: ListNonterminalView {
+            items: pattern_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
         },
         pattern: ListNonterminalView {
             items: pattern_buf.as_slice(),
@@ -46744,7 +46746,12 @@ fn render_trait_bounds(node: &TraitBoundsTransport, dest: &mut dyn ::std::fmt::W
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TraitBoundsTemplate {
-        lifetime: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.type_.as_ref())),
+        lifetime: ListNonterminalView {
+            items: type__buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
         type_: ListNonterminalView {
             items: type__buf.as_slice(),
             separator: "",
@@ -46839,9 +46846,11 @@ fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt:
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TuplePatternTemplate {
-        closure_expression: match &node.pattern {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
+        closure_expression: ListNonterminalView {
+            items: pattern_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
         },
         pattern: ListNonterminalView {
             items: pattern_buf.as_slice(),

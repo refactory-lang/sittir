@@ -847,11 +847,14 @@ function renderStructDefs(structs: EmittedStruct[]): string {
  *   reserved for future cases where the walker can't decide.
  */
 function slotFieldType(f: EmittedField): string {
-	// list view OR field-view-with-multiple → always-list
-	if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
+	// list view OR field-view-with-multiple → always-list (original cases).
+	// Also treat any multiple-backed field as list: transport type Vec<X> or
+	// Option<Vec<X>> doesn't implement AsRef<dyn RenderableTransport>, so
+	// it must be emitted as ListNonterminalView populated from the *_buf slice.
+	if (f.view === 'list' || f.multiple) {
 		return `ListNonterminalView<'a>`;
 	}
-	// scalar OR field-view-single
+	// scalar OR field-view-single, non-multiple
 	if (f.required) return `SingleNonterminalView<'a>`;
 	return `OptionalNonterminalView<'a>`;
 }
@@ -1458,7 +1461,9 @@ function renderInlinedMatchArm(s: EmittedStruct): string[] {
 	if (wantsChildren && s.childrenMultiple)
 		lines.push(`${indent}let children_renderables = children.renderable_items();`);
 	for (const [index, f] of namedFields.entries()) {
-		if (f.view === 'scalar') continue;
+		// Emit renderable buffer for any field that becomes a ListNonterminalView
+		// in the template struct (view='list' or multiple=true).
+		if (f.view !== 'list' && !f.multiple) continue;
 		lines.push(`${indent}let field_${index}_renderables = field_${index}.renderable_items();`);
 	}
 	lines.push(`${indent}let template = ${s.name} {`);
@@ -1468,7 +1473,8 @@ function renderInlinedMatchArm(s: EmittedStruct): string[] {
 	for (const f of s.fields) {
 		if (!f.isUnnamed) continue;
 		const templateIdent = rustFieldIdent(f.name);
-		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
+		// All list-view or multiple fields use ListNonterminalView (see slotFieldType fix).
+		if (f.view === 'list' || f.multiple) {
 			lines.push(`${indent}    ${templateIdent}: ListNonterminalView {`);
 			lines.push(`${indent}        items: children_renderables.as_slice(),`);
 			lines.push(`${indent}        separator: children.separator,`);
@@ -1525,7 +1531,8 @@ function renderInlinedMatchArm(s: EmittedStruct): string[] {
 	if (s.hasText) lines.push(`${indent}    text: text.as_str(),`);
 	for (const [index, f] of namedFields.entries()) {
 		const rIdent = rustFieldIdent(f.name);
-		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
+		// All list-view or multiple fields use ListNonterminalView in the template struct.
+		if (f.view === 'list' || f.multiple) {
 			lines.push(`${indent}    ${rIdent}: ListNonterminalView {`);
 			lines.push(`${indent}        items: field_${index}_renderables.as_slice(),`);
 			lines.push(`${indent}        separator: field_${index}.separator,`);
@@ -2179,14 +2186,16 @@ function buildTypedTemplateBody(
 	// `*_buf` once per unique storage to avoid duplicate `let` bindings.
 	const emittedBufferIdents = new Set<string>();
 	for (const f of struct.fields) {
-		if (f.view === 'scalar') continue;
 		if (!f.hasTransportField) continue;
+		// Emit a Renderable-slice buffer for every slot that becomes a
+		// ListNonterminalView in the template struct — i.e. view='list' OR
+		// multiple=true (including the new case where a scalar-view template var
+		// is backed by a Vec transport field, e.g. `{{ lifetime }}` → Vec<X>).
+		if (f.view !== 'list' && !f.multiple) continue;
 		const rIdent = rustFieldIdent(f.storageName);
-		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
-			if (emittedBufferIdents.has(rIdent)) continue;
-			emittedBufferIdents.add(rIdent);
-			lines.push(...emitListSlotBuffer(rIdent, f.required));
-		}
+		if (emittedBufferIdents.has(rIdent)) continue;
+		emittedBufferIdents.add(rIdent);
+		lines.push(...emitListSlotBuffer(rIdent, f.required));
 	}
 
 	// Build template struct — all single-value fields use Renderable::Transport.
@@ -2207,8 +2216,12 @@ function buildTypedTemplateBody(
 		const kinds = fieldKindsByName.get(f.name) ?? [];
 		const cls = classifyField(f.name, kinds);
 		const isBoxed = cls.tag === 'heterogeneous' && cls.useBox !== false;
-		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
-			// Always-list slot. Empty list when transport-field absent.
+		if (f.view === 'list' || f.multiple) {
+			// Any slot that becomes a ListNonterminalView in the template struct:
+			// - view='list' (iterated in template via {% for %} or | join)
+			// - multiple=true (any view — transport field is Vec<X> or Option<Vec<X>>)
+			// Vec doesn't implement AsRef<dyn RenderableTransport>, so always use
+			// the *_buf slice. Empty list when transport-field absent.
 			const items = f.hasTransportField ? `${rIdent}_buf.as_slice()` : '&[]';
 			lines.push(`        ${templateIdent}: ListNonterminalView {`);
 			lines.push(`            items: ${items},`);
