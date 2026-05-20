@@ -321,23 +321,32 @@ export function emitPolymorphTemplate(node: AssembledPolymorph, ctx: EmitCtx): s
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-// Bug 1: seq inter-member spacing helpers
+// Bug 6 (replaces Bug 1): seq inter-member spacing via grammar-derived
+// word-regex boundary check on rule-tree literals.
 //
-// The new emitter must insert spaces between consecutive seq members that
-// would merge into a single lexeme at render time (e.g. `fn{{ name }}` →
-// `fn foo` requires `fn {{ name }}`). The original template-walker used
-// `needsSpace` + `effectiveSpacingChar` to decide; the new emitter ports
-// the same idea adapted for RenderRule (wrapper-free) input.
+// The old Bug 1 approach used ad-hoc character classes on emitted Jinja
+// strings (seqEffectiveFirstChar / seqEffectiveLastChar). Bug 6 replaces
+// those helpers with rule-tree walkers that find the rightmost/leftmost
+// literal text at each adjacent boundary, then tests `leftText + rightFirstChar`
+// against the grammar's compiled word regex. This is authoritative because
+// the grammar's word rule governs how tree-sitter's lexer tokenises word
+// boundaries.
 //
 // Key decisions:
-// - A Jinja variable `{{ slot }}` is treated as word-like on both ends:
-//   it renders to user content, typically an identifier.
-// - A Jinja conditional `{% if x | isPresent %}body{% endif %}` is
-//   word-like if its body is non-empty and not pure punctuation.
-// - When a space IS needed and the next token is a conditional, absorb
+// - Walk left/right subtrees through structural containers to find
+//   rightmost/leftmost StringRule text.
+// - Honor `immediate: true` on right-side token rules as authoritative
+//   no-space override (tree-sitter token.immediate construct).
+// - Test `leftLiteralText + rightFirstChar` against wordMatcher. If the
+//   regex extends past the boundary (match length > leftText.length), a
+//   space is needed.
+// - Conservative fallback for unresolvable boundaries (symbol refs,
+//   patterns, opaque terminals, choice with no literals) → insert space
+//   (round-trip safe: extra spaces are always accepted by the parser).
+// - When a space IS needed and the next emission is a conditional, absorb
 //   the space INSIDE the conditional body (leading absorption). This
-//   prevents trailing spaces when the conditional is absent.
-// - When a space IS needed and the CURRENT token is a conditional and
+//   prevents trailing spaces when the optional part is absent.
+// - When a space IS needed and the CURRENT emission is a conditional and
 //   the next token is word-like, absorb the space as a TRAILING space
 //   inside the conditional body (trailing absorption). This keeps spaces
 //   adjacent to visible content (e.g. `pub fn` not `pub  fn` nor `pubfn`).
@@ -347,59 +356,219 @@ export function emitPolymorphTemplate(node: AssembledPolymorph, ctx: EmitCtx): s
 const JINJA_COND_FULL_RE = /^(\{%-? if [^%]+-?%\})([\s\S]*)(\{%-? endif -?%\})$/;
 
 /**
- * Compute the effective first character of a template fragment for spacing.
- * Jinja variables `{{ ... }}` and non-empty conditional bodies are treated
- * as word-like ('a'). Pure punctuation bodies are returned as-is.
+ * Walk a Rule subtree rightward to find the rightmost string literal text.
+ * Returns `undefined` if no literal is reachable (opaque refs, patterns, etc.).
+ * Does NOT follow symbol refs (conservative — triggers space-fallback).
  */
-function seqEffectiveFirstChar(s: string): string {
-	// Jinja whitespace-stripping tag → suppress-side
-	if (s.startsWith('{%-')) return '';
-	// Jinja conditional — inspect the body's first char
-	const cond = s.match(JINJA_COND_FULL_RE);
-	if (cond) {
-		const body = cond[2] ?? '';
-		if (body.length === 0) return '';
-		const bodyFirst = seqEffectiveFirstChar(body);
-		// Pure punctuation body → use the punct char
-		if (bodyFirst && /^[^\w\s$]$/.test(bodyFirst)) return bodyFirst;
-		return 'a'; // word-like
+function rightmostLiteralOfSubtree(rule: Rule): string | undefined {
+	switch (rule.type) {
+		case 'string':
+			// Named field-wrapped string — it becomes a slot, not a literal in output.
+			if (rule.fieldName !== undefined) return undefined;
+			return rule.value;
+		case 'seq': {
+			for (let i = rule.members.length - 1; i >= 0; i--) {
+				const text = rightmostLiteralOfSubtree(rule.members[i]!);
+				if (text !== undefined) return text;
+			}
+			return undefined;
+		}
+		case 'choice': {
+			// All arms must agree on a rightmost literal; take the first non-undefined.
+			// Conservative: if any arm is undefined, return undefined.
+			let found: string | undefined;
+			for (const m of rule.members) {
+				const text = rightmostLiteralOfSubtree(m);
+				if (text === undefined) return undefined;
+				if (found === undefined) found = text;
+			}
+			return found;
+		}
+		case 'polymorph': {
+			// Symmetric to choice: all forms must agree.
+			let found: string | undefined;
+			for (const f of rule.forms) {
+				const text = rightmostLiteralOfSubtree(f.content);
+				if (text === undefined) return undefined;
+				if (found === undefined) found = text;
+			}
+			return found;
+		}
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'variant':
+		case 'group':
+		case 'clause':
+		case 'field':
+		case 'alias':
+		case 'token':
+		case 'terminal':
+			if ('content' in rule) return rightmostLiteralOfSubtree((rule as { content: Rule }).content);
+			return undefined;
+		case 'enum':
+			// EnumRule: rightmost member's value.
+			return rule.members.length > 0 ? rule.members[rule.members.length - 1]!.value : undefined;
+		case 'symbol':
+		case 'pattern':
+		case 'supertype':
+		case 'indent':
+		case 'dedent':
+		case 'newline':
+		default:
+			return undefined;
 	}
-	// Jinja variable `{{ ... }}` → word-like (renders to an identifier)
-	if (s.startsWith('{{')) return 'a';
-	return s[0] ?? '';
 }
 
 /**
- * Compute the effective last character of a template fragment for spacing.
- * Jinja variables `{{ ... }}` and non-empty conditional bodies are treated
- * as word-like ('a'). Pure punctuation bodies are returned as-is.
+ * Walk a Rule subtree leftward to find the leftmost string literal text.
+ * Symmetric to `rightmostLiteralOfSubtree`.
  */
-function seqEffectiveLastChar(s: string): string {
-	// Jinja conditional — inspect the body's last char
-	const cond = s.match(JINJA_COND_FULL_RE);
-	if (cond) {
-		const body = cond[2] ?? '';
-		if (body.length === 0) return '';
-		const bodyLast = seqEffectiveLastChar(body);
-		if (bodyLast && /^[^\w\s$]$/.test(bodyLast)) return bodyLast;
-		return 'a'; // word-like
+function leftmostLiteralOfSubtree(rule: Rule): string | undefined {
+	switch (rule.type) {
+		case 'string':
+			if (rule.fieldName !== undefined) return undefined;
+			return rule.value;
+		case 'seq': {
+			for (let i = 0; i < rule.members.length; i++) {
+				const text = leftmostLiteralOfSubtree(rule.members[i]!);
+				if (text !== undefined) return text;
+			}
+			return undefined;
+		}
+		case 'choice': {
+			let found: string | undefined;
+			for (const m of rule.members) {
+				const text = leftmostLiteralOfSubtree(m);
+				if (text === undefined) return undefined;
+				if (found === undefined) found = text;
+			}
+			return found;
+		}
+		case 'polymorph': {
+			let found: string | undefined;
+			for (const f of rule.forms) {
+				const text = leftmostLiteralOfSubtree(f.content);
+				if (text === undefined) return undefined;
+				if (found === undefined) found = text;
+			}
+			return found;
+		}
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'variant':
+		case 'group':
+		case 'clause':
+		case 'field':
+		case 'alias':
+		case 'token':
+		case 'terminal':
+			if ('content' in rule) return leftmostLiteralOfSubtree((rule as { content: Rule }).content);
+			return undefined;
+		case 'enum':
+			return rule.members.length > 0 ? rule.members[0]!.value : undefined;
+		case 'symbol':
+		case 'pattern':
+		case 'supertype':
+		case 'indent':
+		case 'dedent':
+		case 'newline':
+		default:
+			return undefined;
 	}
-	// Jinja variable `{{ ... }}` → word-like
-	if (s.endsWith('}}')) return 'a';
-	return s[s.length - 1] ?? '';
 }
 
 /**
- * Decide if a space is needed between two adjacent seq-member emissions.
- * Uses the grammar's `wordMatcher` (compiled from the `word` rule) so the
- * same rules that govern lexer word-recognition govern spacing decisions.
+ * Return true if the leftmost terminal in the rule subtree is a
+ * `token.immediate(...)` wrapper — meaning tree-sitter requires it to
+ * immediately follow the preceding token with no whitespace.
  */
-function needsSeqSpace(prev: string, next: string, wordMatcher: RegExp): boolean {
-	if (!prev || !next) return false;
-	const lastChar = seqEffectiveLastChar(prev);
-	const firstChar = seqEffectiveFirstChar(next);
-	if (!lastChar || !firstChar) return false;
-	return wordMatcher.test(lastChar + firstChar);
+function isLeftmostTerminalImmediate(rule: Rule): boolean {
+	switch (rule.type) {
+		case 'token':
+			return (rule as { immediate: boolean }).immediate === true;
+		case 'seq': {
+			for (const m of rule.members) {
+				// Only recurse into the first non-empty member.
+				const result = isLeftmostTerminalImmediate(m);
+				// A string member is not immediate (it's a bare literal, not token.immediate)
+				if (m.type === 'string' || m.type === 'pattern') return false;
+				return result;
+			}
+			return false;
+		}
+		case 'choice': {
+			// Immediate only if ALL arms are immediate.
+			return rule.members.length > 0 && rule.members.every((m) => isLeftmostTerminalImmediate(m));
+		}
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'variant':
+		case 'group':
+		case 'clause':
+		case 'field':
+		case 'alias':
+		case 'terminal':
+			if ('content' in rule) return isLeftmostTerminalImmediate((rule as { content: Rule }).content);
+			return false;
+		default:
+			return false;
+	}
+}
+
+/**
+ * Decide if a space is needed between two adjacent seq-member Rule nodes.
+ *
+ * Algorithm (Bug 6):
+ * 1. Authoritative no-space: if right's leftmost terminal is `token.immediate`,
+ *    return false (no space).
+ * 2. Word-regex extension check: find rightmost literal of left subtree and
+ *    leftmost literal of right subtree. Concatenate them and test anchored
+ *    against the grammar's wordMatcher. If the match extends past leftText,
+ *    a word boundary has been crossed — space is needed.
+ * 3. Conservative fallback: if either boundary is unresolvable (symbol ref,
+ *    pattern, opaque), return true (insert space — round-trip safe).
+ *
+ * Examples with `wordMatcher = /^\w+$/` (rust/ts/python all use word rules):
+ *   `let` + `mut`  → combined `letmut`, match length 6 > 3 → space ✓
+ *   `fn`  + `(`    → combined `fn(`,    match `fn` length 2 = 2 → no space ✓
+ *   `=`   + `value`→ combined `=value`, no match → no space ✓
+ *   `pub` + `fn`   → combined `pubfn`,  match length 5 > 3 → space ✓
+ */
+function needsSeqSpace(left: Rule, right: Rule, wordMatcher: RegExp): boolean {
+	// 1. Authoritative immediate override — tree-sitter token.immediate means
+	//    the token MUST adjoin the preceding token with no whitespace.
+	if (isLeftmostTerminalImmediate(right)) return false;
+
+	// 2. Word-regex extension check using full literal texts.
+	const leftText = rightmostLiteralOfSubtree(left);
+	const rightText = leftmostLiteralOfSubtree(right);
+	if (leftText === undefined || rightText === undefined) {
+		// 3. Conservative fallback — can't resolve boundary, default to space.
+		return true;
+	}
+	if (leftText.length === 0 || rightText.length === 0) {
+		// Empty boundary — no space needed (nothing to run together).
+		return false;
+	}
+	const combined = leftText + rightText;
+	try {
+		// Strip $ anchor from wordMatcher (it's a full-match pattern like `^...$`);
+		// re-anchor at start only so we can measure how far the match extends.
+		const src = wordMatcher.source.replace(/\$$/, '');
+		const flags = wordMatcher.flags.replace(/[gm]/g, '');
+		const anchoredRe = new RegExp(`^(?:${src})`, flags);
+		const m = combined.match(anchoredRe);
+		if (m && m[0] !== undefined && m[0].length > leftText.length) {
+			return true; // word match consumed past the boundary — space needed
+		}
+	} catch {
+		// Regex construction failed — conservative fallback.
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -457,32 +626,41 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			return rule.members.length > 0 ? escapeLiteral(rule.members[0]!.value) : '';
 
 		case 'seq': {
-			// Bug 1 fix: insert spaces between consecutive seq members that
-			// would merge into a single lexeme at render time. Uses the
-			// grammar's wordMatcher to detect word boundaries, with special
-			// handling for Jinja variable and conditional fragments.
-			const parts = rule.members.map((m) => emitRule(m, ctx)).filter((p) => p !== '');
-			if (parts.length === 0) return '';
-			const out: string[] = [parts[0]!];
-			for (let i = 1; i < parts.length; i++) {
-				const prev = out[out.length - 1]!;
-				const curr = parts[i]!;
-				if (needsSeqSpace(prev, curr, ctx.wordMatcher)) {
+			// Bug 6 fix (replaces Bug 1): insert spaces between consecutive seq
+			// members that would merge into a single lexeme at render time. Uses
+			// rule-tree literal walks + grammar wordMatcher to detect word
+			// boundaries — grammar-derived rather than ad-hoc character classes.
+			//
+			// Emit each member, retaining a parallel [rule, emission] pair so the
+			// boundary check can walk the original Rule subtrees for literal text,
+			// while the output array holds the (possibly space-absorbed) strings.
+			const emitted: Array<{ rule: Rule; text: string }> = [];
+			for (const m of rule.members) {
+				const text = emitRule(m, ctx);
+				if (text !== '') emitted.push({ rule: m, text });
+			}
+			if (emitted.length === 0) return '';
+			const out: string[] = [emitted[0]!.text];
+			for (let i = 1; i < emitted.length; i++) {
+				const prevRule = emitted[i - 1]!.rule;
+				const currRule = emitted[i]!.rule;
+				const currText = emitted[i]!.text;
+				if (needsSeqSpace(prevRule, currRule, ctx.wordMatcher)) {
 					// Prefer absorbing the space INSIDE adjacent conditionals so
 					// the separator disappears when the optional part is absent.
-					if (JINJA_COND_FULL_RE.test(curr)) {
+					if (JINJA_COND_FULL_RE.test(currText)) {
 						// Next is a conditional → absorb space as leading
-						out.push(absorbLeadingSpaceIntoConditional(curr));
-					} else if (JINJA_COND_FULL_RE.test(prev)) {
+						out.push(absorbLeadingSpaceIntoConditional(currText));
+					} else if (JINJA_COND_FULL_RE.test(out[out.length - 1]!)) {
 						// Prev is a conditional → absorb space as trailing inside it
-						out[out.length - 1] = absorbTrailingSpaceIntoConditional(prev);
-						out.push(curr);
+						out[out.length - 1] = absorbTrailingSpaceIntoConditional(out[out.length - 1]!);
+						out.push(currText);
 					} else {
 						out.push(' ');
-						out.push(curr);
+						out.push(currText);
 					}
 				} else {
-					out.push(curr);
+					out.push(currText);
 				}
 			}
 			return out.join('');
