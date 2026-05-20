@@ -29,6 +29,7 @@
 
 import type {
 	Rule,
+	RenderRule,
 	RuleSource,
 	SeqRule,
 	ChoiceRule,
@@ -2850,6 +2851,15 @@ export class AssembledBranch<
 	 */
 	readonly simplifiedRule: Rule;
 	/**
+	 * Wrapper-deleted view of the rule, sourced from
+	 * `optimized.renderRules[kind]` at assemble time. Optional / field /
+	 * repeat / repeat1 wrappers are pushed down to leaf attributes;
+	 * structural rules (seq / choice / variant / group / polymorph) are
+	 * preserved. Populated alongside `simplifiedRule`; consumed by PR1
+	 * Task 2.A5 and later passes that operate on the wrapper-less shape.
+	 */
+	readonly renderRule: RenderRule;
+	/**
 	 * Visible variant-child kinds registered via `variant()` adoption in
 	 * overrides.ts (empty on non-override-polymorph parents). Populated
 	 * for parents whose variant children live deep in the rule and were
@@ -2893,6 +2903,7 @@ export class AssembledBranch<
 		kind: string,
 		rule: R,
 		simplifiedRule: Rule,
+		renderRule: RenderRule,
 		opts?: {
 			factoryName?: string;
 			irKey?: string;
@@ -2904,6 +2915,7 @@ export class AssembledBranch<
 	) {
 		super(kind, rule, opts);
 		this.simplifiedRule = simplifiedRule;
+		this.renderRule = renderRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
 		this._slots = opts?.slotRecord ?? buildSlotsRecord(kind, simplifiedRule, opts?.kindEntries);
 	}
@@ -3895,6 +3907,8 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 	// any Rule type).
 	/** See `AssembledBranch.simplifiedRule`. */
 	readonly simplifiedRule: Rule;
+	/** See `AssembledBranch.renderRule`. Sourced from `optimized.renderRules[kind]` at assemble time. */
+	readonly renderRule: RenderRule;
 	readonly detectToken?: string;
 	/** Short label (e.g., variant name like 'pub' or 'tuple'). Defaults to kind. */
 	readonly name: string;
@@ -3926,6 +3940,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		kind: string,
 		rule: Rule,
 		simplifiedRule: Rule,
+		renderRule: RenderRule,
 		opts?: {
 			factoryName?: string;
 			irKey?: string;
@@ -3948,6 +3963,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		const factoryName = opts?.factoryName ?? (kind.startsWith('_') ? `_${nameNode(kind).factoryName}` : undefined);
 		super(kind, rule, { factoryName, irKey: opts?.irKey });
 		this.simplifiedRule = simplifiedRule;
+		this.renderRule = renderRule;
 		this.detectToken = opts?.detectToken;
 		this.name = opts?.name ?? kind;
 		this.parentKind = opts?.parentKind;
