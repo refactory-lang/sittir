@@ -19,7 +19,7 @@
  * too; splitting it into `./node-map.ts` is a later step.
  */
 
-import type { Rule, RenderRule, RuleId, SymbolRef } from './rule.ts';
+import type { Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from './rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
 
@@ -417,7 +417,7 @@ export interface OptimizedGrammar {
 	 * templates still read `rules` because they need anonymous
 	 * delimiters to surface as template literals.
 	 */
-	readonly simplifiedRules: Record<string, Rule>;
+	readonly simplifiedRules: Record<string, SimplifiedRule>;
 	/**
 	 * Wrapper-deleted view of every rule in `rules`, produced by
 	 * `applyWrapperDeletion` as the new last pass in `optimize()`.

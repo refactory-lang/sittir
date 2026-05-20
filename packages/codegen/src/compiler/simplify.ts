@@ -31,7 +31,7 @@
  * produces a full `simplifiedRules` map on `OptimizedGrammar`.
  */
 
-import type { Rule, RenderRule, ChoiceRule, SeqRule, FieldRule, RepeatRule, Repeat1Rule } from './rule.ts';
+import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, RepeatRule, Repeat1Rule } from './rule.ts';
 import type { AssembledNode } from './node-map.ts';
 import { compileWordMatcher } from './common.ts';
 
@@ -223,9 +223,23 @@ export function simplifyRules(rules: Record<string, Rule>, wordMatcher?: RegExp)
 export function computeSimplifiedRules(
 	renderRules: Record<string, RenderRule>,
 	word: string | null
-): ReturnType<typeof simplifyRules> {
+): Record<string, SimplifiedRule> {
 	const wordMatcher = compileWordMatcher(word, renderRules as Record<string, Rule>);
-	return simplifyRules(renderRules as Record<string, Rule>, wordMatcher);
+	const simplified = simplifyRules(renderRules as Record<string, Rule>, wordMatcher);
+	const canonicalized: Record<string, SimplifiedRule> = {};
+	for (const [kind, rule] of Object.entries(simplified)) {
+		canonicalized[kind] = canonicalizeSeqOfLeaves(rule) as SimplifiedRule;
+	}
+	// Gate universal-shape assertion behind an env var so we can ramp
+	// without breaking existing kinds that still violate the invariant.
+	// Tasks 3.B-derive-rewrite / 3.B3 / 3.B4 enable it for testing;
+	// Task 3.B6 flips the default once all kinds pass.
+	if (process.env['SITTIR_ASSERT_UNIVERSAL_SHAPE'] === '1') {
+		for (const [kind, rule] of Object.entries(canonicalized)) {
+			assertUniversalShapeRule(rule, kind);
+		}
+	}
+	return canonicalized;
 }
 
 /**
@@ -981,6 +995,36 @@ export function assertUniversalShape(node: AssembledNode): void {
 		if (!isLeaf(member)) {
 			throw new Error(
 				`Universal-shape violation in kind '${node.kind}': seq member is not a leaf; found ${member.type}`
+			);
+		}
+	}
+}
+
+/**
+ * Rule-level universal-shape assertion. Mirrors {@link assertUniversalShape}
+ * (which checks AssembledNode.simplifiedRule) but operates on a Rule
+ * directly — used by computeSimplifiedRules to fail-fast at the simplify
+ * boundary rather than at assembly time.
+ *
+ * Called (gated) inside `computeSimplifiedRules` when the env var
+ * `SITTIR_ASSERT_UNIVERSAL_SHAPE=1` is set. Not yet wired unconditionally
+ * because many kinds still violate the invariant; the env-var gate lets
+ * Tasks 3.B-derive-rewrite / 3.B3 / 3.B4 enable it incrementally and
+ * Task 3.B6 flip the default once every kind passes.
+ */
+export function assertUniversalShapeRule(rule: Rule, kind: string): void {
+	if (rule.type !== 'seq') {
+		if (!isLeaf(rule)) {
+			throw new Error(
+				`Universal-shape violation in kind '${kind}': body is not a seq of leaves; found ${rule.type}`
+			);
+		}
+		return;
+	}
+	for (const member of rule.members) {
+		if (!isLeaf(member)) {
+			throw new Error(
+				`Universal-shape violation in kind '${kind}': seq member is not a leaf; found ${member.type}`
 			);
 		}
 	}
