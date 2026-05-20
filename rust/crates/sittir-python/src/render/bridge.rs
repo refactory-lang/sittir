@@ -727,7 +727,6 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("left"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("operators"), true)?;
-            let field_1_renderables = field_1.renderable_items();
             let template = ComparisonOperatorTemplate {
                 primary_expression: match children.kind {
                 ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
@@ -1097,7 +1096,6 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         236 => { // "format_specifier"
             let field_0 = resolve_slot(node, SlotAccessor::Field("format_expression"), false)?;
-            let field_0_renderables = field_0.renderable_items();
             let template = FormatSpecifierTemplate {
                 format_expression: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
@@ -1224,7 +1222,6 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let field_1 = resolve_slot(node, SlotAccessor::Field("name"), false)?;
             let field_2 = resolve_slot(node, SlotAccessor::Field("wildcard_import"), true)?;
             let field_1_renderables = field_1.renderable_items();
-            let field_2_renderables = field_2.renderable_items();
             let template = ImportFromStatementTemplate {
                 module_name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
                 name: ListNonterminalView {
@@ -1513,7 +1510,6 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         156 => { // "parenthesized_list_splat"
             let field_0 = resolve_slot(node, SlotAccessor::Field("parenthesized_expression"), false)?;
-            let field_0_renderables = field_0.renderable_items();
             let template = ParenthesizedListSplatTemplate {
                 parenthesized_expression: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
@@ -1677,7 +1673,6 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         209 => { // "splat_type"
             let field_0 = resolve_slot(node, SlotAccessor::Field("identifier"), true)?;
-            let field_0_renderables = field_0.renderable_items();
             let template = SplatTypeTemplate {
                 identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };

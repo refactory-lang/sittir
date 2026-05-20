@@ -8,4 +8,4 @@
 // hash to detect drift between the baked Rust binary and the TS
 // templates, falling through to the TS engine on mismatch (FR-020).
 
-pub const TEMPLATE_BUNDLE_HASH: &str = "ae8f35d02eda7f98c5dc7957770aaabb5c92db732dc7b183d8440d8bbf80fd2f";
+pub const TEMPLATE_BUNDLE_HASH: &str = "cbd91cfc58741ddd1e0262252d2ac8149111d63493c17b5d2b0f8788d931b938";

@@ -50603,8 +50603,16 @@ fn render_import_statement(node: &ImportStatementTransport, dest: &mut dyn ::std
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
+    let from_clause_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.from_clause.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = ImportStatementTemplate {
-        from_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.from_clause)),
+        from_clause: ListNonterminalView {
+            items: from_clause_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
         import_attribute: match &node.import_attribute {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -51126,9 +51134,17 @@ fn render_object_pattern(node: &ObjectPatternTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_object_type(node: &ObjectTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let export_statement_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.export_statement.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = ObjectTypeTemplate {
         closing: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.closing)),
-        export_statement: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.export_statement)),
+        export_statement: ListNonterminalView {
+            items: export_statement_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
         members: ListNonterminalView {
             items: &[],
             separator: "",

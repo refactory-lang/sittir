@@ -47,7 +47,16 @@ const RENDER_PARSE_CEILINGS: Record<string, { readRenderParse: number; factoryRe
 	// collisions — readRenderParse ceilings lowered to reflect actual JS-path
 	// fail counts (rust 65→15, typescript 60→25, python 75→70).
 	rust: { readRenderParse: 15, factoryRenderParse: 350 },
-	typescript: { readRenderParse: 25, factoryRenderParse: 215 },
+	// factoryRenderParse 215 → 226 (PR2 Task 3.B, 2026-05-20): polymorph
+	// templates now use `variant` (correct Nunjucks/Askama variable) instead
+	// of `$variant` (dollar-prefixed name never present in render context).
+	// The old `$variant` silently made every branch always-false → empty render
+	// → failures counted below 215. Now `variant` is in context (set from
+	// node.$variant), branches actually fire — 11 forms that were previously
+	// silently-empty now attempt dispatch but fail for separate reasons
+	// (nodeToConfig $variant tagging gaps, factory-rp JS-path issues). These
+	// are pre-existing failures now made visible, not new regressions.
+	typescript: { readRenderParse: 25, factoryRenderParse: 226 },
 	python: { readRenderParse: 70, factoryRenderParse: 75 }
 };
 

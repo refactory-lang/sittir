@@ -292,7 +292,6 @@ export interface AssignmentExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _using_marker?: Box<AnyTransport>
   _left: Box<AssignmentExpressionLeftTransportSlot>
   _right: Box<ExpressionTransport>
 }
@@ -519,7 +518,7 @@ export interface ClassHeritageExtendsClauseTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _extends_clause: ExtendsClauseTransport
+  _extends_clause: Box<ExtendsClauseTransport>
   _implements_clause?: ImplementsClauseTransport
 }
 
@@ -565,7 +564,7 @@ export interface ClassHeritageTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _class_heritage_extends_clause: ClassHeritageExtendsClauseTransport
+  _class_heritage_extends_clause: Box<ClassHeritageExtendsClauseTransport>
   _class_heritage_implements_clause: ClassHeritageImplementsClauseTransport
 }
 
@@ -591,7 +590,7 @@ export interface ClassTransport {
   _decorator?: Array<DecoratorTransport>
   _name?: TypeIdentifierTransport
   _type_parameters?: TypeParametersTransport
-  _class_heritage?: ClassHeritageTransport
+  _class_heritage?: Box<ClassHeritageTransport>
   _body: ClassBodyTransport
 }
 
@@ -788,8 +787,7 @@ export interface EnumBodyTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: Array<PropertyNameTransport>
-  _enum_assignment?: Array<EnumAssignmentTransport>
+  _opening?: Array<EnumBodyOpeningTransportSlot>
 }
 
 export interface EnumDeclarationTransport {
@@ -983,7 +981,7 @@ export interface ExportStatementTypeExportTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _source?: StringTransport
+  _source: StringTransport
   _export_clause: ExportClauseTransport
   _semicolon?: SemicolonTransport
 }
@@ -996,7 +994,7 @@ export interface ExportStatementTypeExportTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _source?: StringTransport
+  _source: StringTransport
   _export_clause: ExportClauseTransport
   _semicolon?: SemicolonTransport
 }
@@ -1033,7 +1031,7 @@ export interface ExtendsClauseTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _value: Array<ExpressionTransport>
+  _value: Box<ExpressionTransport>
   _type_arguments?: TypeArgumentsTransport
 }
 
@@ -1059,7 +1057,7 @@ export interface FieldDefinitionTransport {
   _decorator?: Array<DecoratorTransport>
   _static_marker?: StaticMarkerTransport
   _property: PropertyNameTransport
-  _value?: ExpressionTransport
+  _value: ExpressionTransport
 }
 
 export interface FinallyClauseTransport {
@@ -1128,9 +1126,8 @@ export interface ForHeaderVarKindTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _kind: Box<AnyTransport>
   _left: ForHeaderVarKindLeftTransportSlot
-  _initializer?: InitializerTransport
+  _value: ExpressionTransport
 }
 
 export interface ForInStatementTransport {
@@ -1141,7 +1138,6 @@ export interface ForInStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _await_marker?: Box<AnyTransport>
   _operator: ForHeaderOperatorEnum
   _right: ExpressionsTransport
   _body: Box<StatementTransport>
@@ -1559,7 +1555,7 @@ export interface InferTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type_identifier: TypeIdentifierTransport
-  _type?: Box<TypeTransport>
+  _constraint: Box<TypeTransport>
 }
 
 export interface InitializerTransport {
@@ -1689,7 +1685,7 @@ export interface JsxOpeningElementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: JsxElementNameTransport
+  _name: JsxElementNameTransport
   _type_arguments?: TypeArgumentsTransport
   _attribute?: Array<_JsxAttributeTransport>
 }
@@ -1702,7 +1698,7 @@ export interface JsxSelfClosingElementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: JsxElementNameTransport
+  _name: JsxElementNameTransport
   _type_arguments?: TypeArgumentsTransport
   _attribute?: Array<_JsxAttributeTransport>
 }
@@ -1715,7 +1711,7 @@ export interface JsxStartOpeningElementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: JsxElementNameTransport
+  _name: JsxElementNameTransport
   _type_arguments?: TypeArgumentsTransport
   _attribute?: Array<_JsxAttributeTransport>
 }
@@ -1728,7 +1724,7 @@ export interface JsxStringTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _unescaped_double_jsx_string_fragment?: Array<JsxStringUnescapedDoubleJsxStringFragmentTransportSlot>
+  _unescaped_double_jsx_string_fragment: JsxStringUnescapedDoubleJsxStringFragmentTransportSlot
 }
 
 export interface LabeledStatementTransport {
@@ -2019,8 +2015,9 @@ export interface ObjectTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _opening: ObjectTypeOpeningEnum
-  _members?: Array<ObjectTypeMembersTransportSlot>
   _closing: ObjectTypeClosingEnum
+  _export_statement: Array<ObjectTypeExportStatementTransportSlot>
+  _semicolon?: ObjectTypeSemicolonTransportSlot
 }
 
 export interface OmittingTypeAnnotationTransport {
@@ -2057,7 +2054,7 @@ export interface OptionalParameterTransport {
   _readonly_marker?: ReadonlyMarkerTransport
   _pattern: OptionalParameterPatternTransportSlot
   _type?: TypeAnnotationTransport
-  _value?: ExpressionTransport
+  _value: ExpressionTransport
   _accessibility_modifier?: AccessibilityModifierEnum
   _override_modifier?: OverrideModifierTransport
 }
@@ -2230,7 +2227,6 @@ export interface PublicFieldDefinitionAccessFirstTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _declare_marker?: Box<AnyTransport>
   _accessibility_modifier: AccessibilityModifierEnum
 }
 
@@ -2293,9 +2289,9 @@ export interface PublicFieldDefinitionTransport {
   _name: PropertyNameTransport
   _optionality_marker?: PublicFieldDefinitionOptionalityMarkerEnum
   _type?: TypeAnnotationTransport
-  _value?: ExpressionTransport
+  _value: ExpressionTransport
   _public_field_definition_declare_first?: PublicFieldDefinitionPublicFieldDefinitionDeclareFirstTransportSlot
-  _public_field_definition_static_mods?: PublicFieldDefinitionPublicFieldDefinitionStaticModsTransportSlot
+  _public_field_definition_static_mods: PublicFieldDefinitionPublicFieldDefinitionStaticModsTransportSlot
 }
 
 export interface ReadonlyTypeTransport {
@@ -2333,7 +2329,7 @@ export interface RequiredParameterTransport {
   _readonly_marker?: ReadonlyMarkerTransport
   _pattern: RequiredParameterPatternTransportSlot
   _type?: TypeAnnotationTransport
-  _value?: ExpressionTransport
+  _value: ExpressionTransport
   _accessibility_modifier?: AccessibilityModifierEnum
   _override_modifier?: OverrideModifierTransport
 }
@@ -2427,7 +2423,7 @@ export interface StringTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _opening: StringOpeningEnum
-  _contents?: Array<StringContentsTransportSlot>
+  _contents: StringContentsTransportSlot
   _closing: StringOpeningEnum
 }
 
@@ -2891,5 +2887,5 @@ export interface YieldExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expression?: Box<ExpressionTransport>
+  _expression: Box<ExpressionTransport>
 }

@@ -302,8 +302,8 @@ export interface ComparisonOperatorTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _left: Box<PrimaryExpressionTransport>
-  _operators: Array<ComparisonOperatorOperatorsTransportSlot>
-  _primary_expression: Array<PrimaryExpressionTransport>
+  _operators: ComparisonOperatorOperatorsTransportSlot
+  _primary_expression: Box<PrimaryExpressionTransport>
 }
 
 export interface ComplexPatternTransport {
@@ -314,7 +314,6 @@ export interface ComplexPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _real?: Box<AnyTransport>
   _imaginary: PrimaryExpressionTransport
   _integer: PrimaryExpressionTransport
 }
@@ -529,7 +528,7 @@ export interface ExecStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _code: PrimaryExpressionTransport
-  _in_clause?: Array<ExecStatementInClauseTransportSlot>
+  _expression: Array<ExpressionTransport>
 }
 
 export interface ExpressionListTransport {
@@ -540,7 +539,7 @@ export interface ExpressionListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expression: Array<ExpressionListExpressionTransportSlot>
+  _expression: Box<ExpressionListExpressionTransportSlot>
 }
 
 export interface ExpressionStatementTransport {
@@ -714,8 +713,7 @@ export interface ImportFromStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _module_name: ImportFromStatementModuleNameTransportSlot
-  _name?: Array<ImportFromStatementNameTransportSlot>
-  _wildcard_import?: WildcardImportTransport
+  _wildcard_import: ImportFromStatementWildcardImportTransportSlot
 }
 
 export interface ImportListTransport {
@@ -808,7 +806,7 @@ export interface LambdaParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _parameter: Array<ParameterTransport>
+  _parameters: Box<AnyTransport>
 }
 
 export interface LambdaTransport {
@@ -866,7 +864,7 @@ export interface ListPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _pattern?: Array<PatternTransport>
+  _patterns?: Box<AnyTransport>
 }
 
 export interface ListSplatPatternTransport {
@@ -899,7 +897,7 @@ export interface ListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expression?: Array<ListExpressionTransportSlot>
+  _collection_elements?: Box<AnyTransport>
 }
 
 export interface MatchBlockBlockTransport {
@@ -1013,7 +1011,7 @@ export interface ParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _parameter?: Array<ParameterTransport>
+  _parameters?: Box<AnyTransport>
 }
 
 export interface ParenthesizedExpressionTransport {
@@ -1046,7 +1044,7 @@ export interface PatternListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _pattern: Array<PatternListPatternTransportSlot>
+  _pattern: Box<PatternListPatternTransportSlot>
 }
 
 export interface PrintStatementTransport {
@@ -1116,7 +1114,7 @@ export interface SetTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expression: Array<SetExpressionTransportSlot>
+  _collection_elements: Box<AnyTransport>
 }
 
 export interface SimplePatternNegativeTransport {
@@ -1256,7 +1254,7 @@ export interface TuplePatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _pattern?: Array<PatternTransport>
+  _patterns?: Box<AnyTransport>
 }
 
 export interface TupleTransport {
@@ -1267,7 +1265,7 @@ export interface TupleTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expression?: Array<TupleExpressionTransportSlot>
+  _collection_elements?: Box<AnyTransport>
 }
 
 export interface TypeAliasStatementTransport {
@@ -1455,5 +1453,5 @@ export interface YieldTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expression?: Box<YieldExpressionTransportSlot>
+  _expression: Box<YieldExpressionTransportSlot>
 }

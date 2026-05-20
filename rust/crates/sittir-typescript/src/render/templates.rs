@@ -1064,7 +1064,7 @@ pub struct ImportSpecifierTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "import_statement.jinja", escape = "none")]
 pub struct ImportStatementTemplate<'a> {
-    pub from_clause: SingleNonterminalView<'a>,
+    pub from_clause: ListNonterminalView<'a>,
     pub import_attribute: OptionalNonterminalView<'a>,
     pub import_clause: OptionalNonterminalView<'a>,
     pub import_require_clause: ListNonterminalView<'a>,
@@ -1326,7 +1326,7 @@ pub struct ObjectPatternTemplate<'a> {
 #[template(path = "object_type.jinja", escape = "none")]
 pub struct ObjectTypeTemplate<'a> {
     pub closing: SingleNonterminalView<'a>,
-    pub export_statement: SingleNonterminalView<'a>,
+    pub export_statement: ListNonterminalView<'a>,
     pub members: ListNonterminalView<'a>,
     pub opening: SingleNonterminalView<'a>,
 }
