@@ -62,7 +62,7 @@ import { optimize } from '../compiler/optimize.ts';
 import { assemble, hydrateSlotRefs } from '../compiler/assemble.ts';
 import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { emitTypes } from '../emitters/types.ts';
-import { emitJinjaTemplates } from '../emitters/templates.ts';
+import { runTemplateEmitter } from '../emitters/templates.ts';
 
 async function main(argv: string[]): Promise<number> {
 	const { values } = parseArgs({
@@ -132,7 +132,7 @@ async function main(argv: string[]): Promise<number> {
 			stages.emitInterface = { error: String((e as Error).message ?? e) };
 		}
 		try {
-			const tpl = emitJinjaTemplates({ grammar, nodeMap });
+			const tpl = runTemplateEmitter({ grammar, nodeMap });
 			const body = tpl.bodies.get(kind);
 			stages.emitTemplate = body ?? null;
 		} catch (e) {

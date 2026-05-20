@@ -3,20 +3,21 @@
  *
  * The YAML template format (`templates directory`) was retired in favor of
  * per-rule `.jinja` files — see ADR-0013 / spec 011 for design notes.
- * This file owns the two functions that drive that emission:
+ * This file owns the functions that drive that emission:
  *
- *   - `emitJinjaTemplates(config)` — pure function: walks the NodeMap,
- *     asks each node for its `.renderTemplate()` Jinja body, returns
- *     a Map keyed by rule kind (values include the `@generated` header).
+ *   - `runTemplateEmitter(config)` — runs the authoritative TemplateEmitter
+ *     class introduced in PR2. Walks the NodeMap, dispatches each node by
+ *     its modelType, and returns a Map keyed by rule kind (values include
+ *     the `@generated` header).
  *   - `writeJinjaTemplates(emitted, outputDir)` — writes the Map to
  *     disk and removes any stale `.jinja` files whose rule kinds are
  *     no longer present.
  *
- * All template generation now happens inside the `AssembledNode`
- * class hierarchy in `compiler/node-map.ts`. Each `renderTemplate()`
- * method returns Jinja-shaped output directly — clause / variant
- * inlining, `$VAR` → `{{ var }}` translation, and separator-filter
- * selection are all collapsed into that one chokepoint.
+ * All template generation happens inside the `AssembledNode` class
+ * hierarchy in `compiler/node-map.ts`. Each `renderTemplate()` method
+ * returns Jinja-shaped output directly — clause / variant inlining,
+ * `$VAR` → `{{ var }}` translation, and separator-filter selection are
+ * all collapsed into that one chokepoint.
  *
  * These emitted files are the canonical authored templates under
  * `packages/{lang}/templates/`. The native Askama copies under
@@ -796,13 +797,74 @@ function assertSlotPreservation(node: AssembledNode, body: string): void {
 }
 
 /**
- * Emit one `.jinja` body per rule in the NodeMap. Returns a Map keyed
- * by rule kind; values are the full file contents (including the
- * `@generated` comment header).
+ * Run the new TemplateEmitter over an entire NodeMap. Convenience wrapper
+ * around the per-modelType dispatch in emit.ts so test fixtures and
+ * diagnostic tools don't have to duplicate the loop.
  *
- * Rules without a template (leaves / keywords / tokens / supertypes /
- * enums / non-polymorph-form groups / multis) are skipped — the
- * renderer's fallback handles them.
+ * Dispatches each node by its modelType, calling the appropriate per-type
+ * emitter method (emitLeaf, emitBranch, emitPolymorph, emitGroup), and
+ * honors the legacy skip-emit gate via classifyTemplateEmission.
+ *
+ * @param config Grammar, NodeMap, and optional grammar SHA
+ * @returns EmittedTemplates with bodies keyed by kind
+ */
+export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplates {
+	const te = new TemplateEmitter(config);
+	for (const [, node] of config.nodeMap.nodes) {
+		// Skip-emit gate: if this node doesn't need a template, skip entirely
+		const templateEmission = classifyTemplateEmission(node);
+		if (templateEmission !== 'emit') continue;
+
+		// Dispatch by modelType — mirrors production emit.ts:183-218
+		switch (node.modelType) {
+			case 'pattern':
+			case 'keyword':
+			case 'enum':
+				te.emitLeaf(node);
+				break;
+			case 'branch':
+				te.emitBranch(node);
+				break;
+			case 'polymorph':
+				te.emitPolymorph(node);
+				break;
+			case 'group':
+				te.emitGroup(node);
+				break;
+			case 'supertype':
+			case 'token':
+			case 'multi':
+				// These modelTypes don't emit templates; classifyTemplateEmission
+				// should have already skipped them, so this is a safety fallback.
+				break;
+			default: {
+				const _exhaustive: never = node;
+				throw new Error(
+					`runTemplateEmitter: unhandled modelType ${(_exhaustive as AssembledNode).modelType}`
+				);
+			}
+		}
+	}
+	return te.finalize();
+}
+
+/**
+ * Legacy emitJinjaTemplates — walks the nodeMap's legacy walker
+ * (emitBodyForNode) to emit templates. Called by test fixtures that
+ * create minimal AssembledNodes without full rule setup.
+ *
+ * Emit templates for each node in the NodeMap. Returns a map keyed
+ * by kind, where each value is a Jinja template body.
+ *
+ * Skips:
+ * - Pattern, keyword, token, supertype, enum, multi (leaves)
+ * - Hidden non-userFacing groups
+ * - Nodes where classifyTemplateEmission returns 'skip' or 'no-file'
+ *
+ * The returned bodies are prepended with the @generated header.
+ *
+ * @param config Grammar, NodeMap, and optional grammar SHA
+ * @returns EmittedTemplates with bodies keyed by kind
  */
 export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplates {
 	const { nodeMap } = config;
