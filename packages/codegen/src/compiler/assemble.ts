@@ -405,7 +405,12 @@ function buildAssembledFormGroups(
 		// form's content under the same formKind key (PR2 Task 3.B-prereq-snapshots Site 1).
 		// Fall back to per-call computation only when the snapshot is absent (should not
 		// happen in normal operation — the fallback guards against future gaps).
-		const formSimplified = optimized.simplifiedRules[formKind] ?? simplifyRule(form.content);
+		// Snapshot lookup: if the form kind isn't pre-snapshotted (e.g. in
+		// test fixtures that skip the optimize pipeline), apply deleteWrapper
+		// after simplifyRule to maintain the wrapper-free invariant.
+		const formSimplified =
+			optimized.simplifiedRules[formKind] ??
+			(deleteWrapper(simplifyRule(form.content)) as ReturnType<typeof simplifyRule>);
 		const formRender = optimized.renderRules[formKind] ?? deleteWrapper(form.content);
 		return new AssembledGroup(formKind, form.content, formSimplified, formRender, {
 			factoryName: formNames.factoryName,

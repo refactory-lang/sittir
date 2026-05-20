@@ -49,10 +49,17 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 		// ----- Wrapper cases — peel and accumulate -----
 
 		case 'optional': {
-			// Only stamp multiplicity if not already set by an outer wrapper
+			// Only stamp multiplicity if not already set by an outer wrapper.
+			// Special case: optional(repeat(...)) and optional(repeat1(...)) are both
+			// array (zero-or-more) — the outer optional makes the empty case valid,
+			// overriding repeat/repeat1 semantics. repeat already produces array; the
+			// key correction is repeat1: optional(repeat1(X)) must be array, not
+			// nonEmptyArray. This mirrors the original deriveSlotsRaw `case 'optional'`
+			// special-case and collectChildFromMember behavior.
+			const innerIsRepeatVariant = rule.content.type === 'repeat' || rule.content.type === 'repeat1';
 			const next: WrapperAttrs = {
 				...attrs,
-				multiplicity: attrs.multiplicity ?? 'optional',
+				multiplicity: attrs.multiplicity ?? (innerIsRepeatVariant ? 'array' : 'optional'),
 			};
 			return deleteWrapperWith(rule.content, next);
 		}

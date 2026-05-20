@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { assemble, classifyNode, simplifyRule, nameNode, nameField } from '../compiler/assemble.ts';
-import { simplifyRules } from '../compiler/simplify.ts';
-import { applyWrapperDeletion } from '../compiler/wrapper-deletion.ts';
+import { computeSimplifiedRules } from '../compiler/simplify.ts';
+import { applyWrapperDeletion, deleteWrapper } from '../compiler/wrapper-deletion.ts';
 import type { Rule } from '../compiler/rule.ts';
 import type { OptimizedGrammar } from '../compiler/types.ts';
 import { deriveSlots, isRequired, isMultiple, allSlotsOf } from '../compiler/node-map.ts';
@@ -9,19 +9,22 @@ import { deriveSlots, isRequired, isMultiple, allSlotsOf } from '../compiler/nod
 // Helper — fields-equivalent view over deriveSlots: every slot that came
 // from a grammar `field(name, ...)` wrapper (excludes kind-derived
 // positional children, which carry source='inferred').
-function deriveFields(rule: Parameters<typeof deriveSlots>[0]) {
-	return deriveSlots(rule).filter((s) => s.source !== 'inferred');
+// Pre-process raw rules through deleteWrapper so deriveSlotsRaw receives
+// canonical (wrapper-free) input — mirrors how the production pipeline
+// applies applyWrapperDeletion before assembling.
+function deriveFields(rule: Rule) {
+	return deriveSlots(deleteWrapper(rule)).filter((s) => s.source !== 'inferred');
 }
 
 function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<OptimizedGrammar>): OptimizedGrammar {
 	const renderRules = applyWrapperDeletion(rules);
-	const simplifiedRules = simplifyRules(renderRules);
+	const simplifiedRules = computeSimplifiedRules(renderRules, null);
 	// If topLevelAliasBodies are provided, thread them through the same pipeline
 	// so their canonical snapshots are available under the alias kind name.
 	if (overrides?.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(overrides.topLevelAliasBodies);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesRaw);
-		const aliasBodiesSimplified = simplifyRules(aliasBodiesRender);
+		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, null);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			renderRules[kind] = rule;
 		}
@@ -512,7 +515,7 @@ describe('Rule — deriveFields', () => {
 			]
 		};
 
-		const slots = deriveSlots(rule);
+		const slots = deriveSlots(deleteWrapper(rule));
 		const declaration = slots.find((slot) => slot.name === 'declaration');
 		const childSlot = slots.find((slot) => slot.source === 'inferred');
 

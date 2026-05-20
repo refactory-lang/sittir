@@ -1,13 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { deriveSlots, isNonEmpty, isMultiple } from '../compiler/node-map.ts';
+import { deleteWrapper } from '../compiler/wrapper-deletion.ts';
 import type { Rule } from '../compiler/rule.ts';
 
 // Helper — children-equivalent view over deriveSlots: kind-derived
 // positional slots (source='inferred'). This regression test predates
 // the Phase 1d.iv unification and was scoped to the children walker;
 // the same expectations hold over the unified slots view.
+// Pre-process raw rules through deleteWrapper so deriveSlotsRaw receives
+// canonical (wrapper-free) input.
 function deriveChildren(rule: Rule) {
-	return deriveSlots(rule).filter((s) => s.source === 'inferred');
+	return deriveSlots(deleteWrapper(rule)).filter((s) => s.source === 'inferred');
 }
 
 /**

@@ -55,6 +55,7 @@ import { tokenToName } from './optimize.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { fieldContentIsMultiSibling } from './field-shape.ts';
 import type { SlotOrigin } from './slot-model.ts';
+import { deleteWrapper } from './wrapper-deletion.ts';
 
 // ---------------------------------------------------------------------------
 // NodeOrTerminal — unified slot-content type
@@ -752,10 +753,17 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
 /**
  * Internal — fields-side walk. The exported derivation surface is
  * `deriveSlots`; this helper is its fields-portion.
+ *
+ * Applies `deleteWrapper` before dispatching so test fixtures that pass raw
+ * rule trees (with `field` / `optional` / `repeat` / `repeat1` wrappers) get
+ * canonical input automatically. In production the rule arrives already
+ * wrapper-free from `computeSimplifiedRules` — `deleteWrapper` is idempotent
+ * on wrapper-free input, so this is a no-op on the hot path.
  */
 function _deriveSlotsInternal(rule: Rule, kindEntries?: readonly GeneratedKindEntry[]): AssembledNonterminal[] {
-	auditDerivationShape(rule, 'fields');
-	return mergeSlotsByName(deriveSlotsRaw(rule, 'single', kindEntries));
+	const canonical = deleteWrapper(rule) as Rule;
+	auditDerivationShape(canonical, 'fields');
+	return mergeSlotsByName(deriveSlotsRaw(canonical, 'single', kindEntries));
 }
 
 /**
@@ -948,57 +956,6 @@ function deriveSlotsRaw(
 			: outerMultiplicity;
 
 	switch (rule.type) {
-		case 'field': {
-			// Synthetic outer-field wrapper: the autogen wraps a multi-
-			// member seq containing inner fields in `field('x', seq(...))`.
-			// Tree-sitter doesn't produce a single runtime value for such
-			// wrappers — the inner fields are the real data. The template
-			// walker already descends into these; field derivation has to
-			// match so factories don't emit phantom parameters that the
-			// template can't reference.
-			if (isSyntheticFieldWrapper(rule.content)) {
-				return deriveSlotsRaw(rule.content, outerMultiplicity, kindEntries);
-			}
-
-			const aliasSources = deriveAliasSources(rule.content);
-			const basePropertyName = snakeToCamel(rule.name);
-
-			// Determine the multiplicity for this field's content. The
-			// field's own content rule (repeat/optional wrapper) takes
-			// precedence over any outer multiplicity from a surrounding
-			// repeat(field('x', ...)).
-			const innerMult = fieldContentMultiplicity(rule.content, outerMultiplicity);
-
-			// Derive values — each NodeOrTerminal entry carries its own multiplicity.
-			const rawValues = deriveValuesForRule(rule.content, innerMult, kindEntries);
-			const values = dedupeValues(rawValues);
-
-			// Derive trailing/leading flags — only meaningful for array/nonEmptyArray
-			// slots (i.e. the field backs a repeat that carries the flag). Gate on
-			// multiplicity first so optional(repeat(...)) shapes don't pollute the flag.
-			const isMultiSlot = values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
-			const hasTrailing = isMultiSlot && findRepeatFlag(rule.content, 'trailing');
-			const hasLeading = isMultiSlot && findRepeatFlag(rule.content, 'leading');
-
-			const propertyName = isMultiSlot ? pluralize(basePropertyName) : basePropertyName;
-
-			const outerField: AssembledNonterminal = {
-				name: rule.name,
-				propertyName,
-				configKey: basePropertyName,
-				storageName: rule.name,
-				paramName: safeParamName(propertyName),
-				values,
-				hasTrailing,
-				hasLeading,
-				aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
-				source: rule.source ?? 'grammar',
-				sourceRuleId: rule.id
-				// projection field eliminated — consumers use kindsOf(slot)
-			};
-
-			return [outerField];
-		}
 		case 'seq':
 			// A seq with `fieldName` means the entire seq is the content of a
 			// field (e.g. `field('body', seq(a, b))` → after wrapper-deletion
@@ -1008,24 +965,6 @@ function deriveSlotsRaw(
 				return deriveSlotsRawFromLeafAttr(rule, effectiveMultiplicity, kindEntries);
 			}
 			return rule.members.flatMap((m) => deriveSlotsRaw(m, effectiveMultiplicity, kindEntries));
-		case 'optional':
-			// `optional(repeat1(X, sep))` is the canonical lift of
-			// `optional(commaSep1(X))` — e.g. python `parameters: seq('(',
-			// optional(_parameters), ')')` where `_parameters` inlines to
-			// `repeat1($.parameter, ',')`. Empty `()` is valid input, so
-			// the slot is array-multiplicity (zero-or-more), NOT
-			// nonEmptyArray. Recursing through repeat1 with the default
-			// rule would clobber it back to nonEmptyArray, producing a
-			// slot the factory refuses to construct empty. Mirrors
-			// `collectChildFromMember` and `deriveValuesForRule`.
-			if (rule.content.type === 'repeat1') {
-				return deriveSlotsRaw(rule.content.content, 'array', kindEntries);
-			}
-			return deriveSlotsRaw(rule.content, 'optional', kindEntries);
-		case 'repeat':
-			return deriveSlotsRaw(rule.content, 'array', kindEntries);
-		case 'repeat1':
-			return deriveSlotsRaw(rule.content, 'nonEmptyArray', kindEntries);
 		case 'choice': {
 			const armSlots = rule.members.map((member) => deriveSlotsRaw(member, effectiveMultiplicity, kindEntries));
 			const hasDeclaredFieldArm = armSlots.some((slots) => slots.some((slot) => slot.source !== 'inferred'));
@@ -1081,8 +1020,6 @@ function deriveSlotsRaw(
 				}
 			];
 		}
-		case 'clause':
-			return deriveSlotsRaw(rule.content, 'optional', kindEntries);
 		case 'variant':
 			// Rare — post-simplify most variant wrappers are either
 			// promoted to polymorph forms (variant() adoption) or
@@ -1163,19 +1100,32 @@ function deriveSlotsRaw(
 			// discriminated-union switch ends in either a complete
 			// per-variant arm or assertNever).
 			return [];
+		case 'clause':
+			// `clause` is a sittir DSL node that survives the full pipeline
+			// (deleteWrapper / computeSimplifiedRules preserve it); it acts
+			// like `optional` for slot-derivation purposes — its name provides
+			// the optional-field key in templates, and the body contributes the
+			// content slot. Unwrap to optional multiplicity.
+			return deriveSlotsRaw(rule.content, 'optional', kindEntries);
+		case 'field':
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
 		case 'alias':
 		case 'group':
 		case 'polymorph':
-			// `group` / `alias` are simplify-stripped by the time
-			// derivation sees the rule; `polymorph` has its own
-			// assemble path (classifyNode returns 'polymorph' and
-			// routes into AssembledPolymorph instead of Branch/
-			// Container getters). Reaching any of them here means a
-			// canonicalization gap — throw so the next audit-clean
-			// session investigates.
+			// Wrapper rules (field / optional / repeat / repeat1) are eliminated
+			// by applyWrapperDeletion + canonicalizeSeqOfLeaves before deriveSlotsRaw
+			// is called; their multiplicity/fieldName attributes are promoted onto
+			// the inner leaf.  `group` / `alias` are simplify-stripped; `polymorph`
+			// has its own assemble path (classifyNode returns 'polymorph' and routes
+			// into AssembledPolymorph instead of Branch/Container getters).
+			// Reaching any of them here means a canonicalization gap — throw loudly
+			// so the next audit-clean session can investigate.
 			throw new Error(
 				`deriveSlotsRaw: unexpected '${rule.type}' in canonical input — ` +
-					`simplify should have stripped / classified it before derivation. ` +
+					`applyWrapperDeletion + canonicalizeSeqOfLeaves + assemble snapshot ` +
+					`should have eliminated / classified it before derivation. ` +
 					`currentAuditKind=${currentAuditKind ?? '(none)'}`
 			);
 	}

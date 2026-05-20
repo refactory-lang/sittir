@@ -11,8 +11,9 @@ import {
 	AssembledSupertype,
 } from '../../compiler/node-map.ts';
 import type { AssembledNode } from '../../compiler/node-map.ts';
-import type { ChoiceRule, SeqRule } from '../../compiler/rule.ts';
+import type { ChoiceRule, RenderRule, SeqRule } from '../../compiler/rule.ts';
 import type { NodeMap } from '../../compiler/types.ts';
+import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 
 export function makeNodeMapWith(nodes: Map<string, AssembledNode>, polymorphFormKinds: ReadonlySet<string> = new Set()): NodeMap {
 	return {
@@ -65,7 +66,8 @@ export function makeMinimalNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('call_expression', new AssembledBranch('call_expression', callRule, callRule));
+	const callRuleSimplified = deleteWrapper(callRule) as RenderRule & typeof callRule;
+	nodes.set('call_expression', new AssembledBranch('call_expression', callRule, callRuleSimplified));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
 	nodes.set('kw_fn', new AssembledKeyword('kw_fn', { type: 'string', value: 'fn' }));
 	nodes.set('self', new AssembledKeyword('self', { type: 'string', value: 'self' }));
