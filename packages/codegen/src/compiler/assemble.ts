@@ -9,6 +9,7 @@ import type {
 	Rule,
 	RenderRule,
 	PolymorphRule,
+	GroupRule,
 	SymbolRule,
 	SeqRule,
 	ChoiceRule,
@@ -556,9 +557,12 @@ function unwrapGroupRuleAndSimplified(
 	renderRule: RenderRule
 ): { groupRule: Rule; groupSimplified: Rule; groupRenderRule: RenderRule } {
 	const groupRule = rule.type === 'group' ? rule.content : rule;
-	const groupSimplified = rule.type === 'group' ? simplifyRule(groupRule) : simplifiedRule;
-	// TODO PR2: group inner content has no snapshot entry — fallback to per-call deleteWrapper.
-	const groupRenderRule = rule.type === 'group' ? deleteWrapper(groupRule) : renderRule;
+	// applyWrapperDeletion preserves group structure: renderRule.type === 'group'
+	// when the source rule was a group, with renderRule.content being the
+	// wrapper-deleted inner content. Same for simplifiedRule (simplifyRule recurses
+	// through group wrappers preserving the outer group node).
+	const groupSimplified = rule.type === 'group' ? (simplifiedRule as GroupRule).content : simplifiedRule;
+	const groupRenderRule = rule.type === 'group' ? (renderRule as GroupRule).content : renderRule;
 	return { groupRule, groupSimplified, groupRenderRule };
 }
 
