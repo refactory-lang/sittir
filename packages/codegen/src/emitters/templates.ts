@@ -302,18 +302,129 @@ export function emitPolymorphTemplate(node: AssembledPolymorph, ctx: EmitCtx): s
 //   pass downstream.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Bug 1: seq inter-member spacing helpers
+//
+// The new emitter must insert spaces between consecutive seq members that
+// would merge into a single lexeme at render time (e.g. `fn{{ name }}` →
+// `fn foo` requires `fn {{ name }}`). The original template-walker used
+// `needsSpace` + `effectiveSpacingChar` to decide; the new emitter ports
+// the same idea adapted for RenderRule (wrapper-free) input.
+//
+// Key decisions:
+// - A Jinja variable `{{ slot }}` is treated as word-like on both ends:
+//   it renders to user content, typically an identifier.
+// - A Jinja conditional `{% if x | isPresent %}body{% endif %}` is
+//   word-like if its body is non-empty and not pure punctuation.
+// - When a space IS needed and the next token is a conditional, absorb
+//   the space INSIDE the conditional body (leading absorption). This
+//   prevents trailing spaces when the conditional is absent.
+// - When a space IS needed and the CURRENT token is a conditional and
+//   the next token is word-like, absorb the space as a TRAILING space
+//   inside the conditional body (trailing absorption). This keeps spaces
+//   adjacent to visible content (e.g. `pub fn` not `pub  fn` nor `pubfn`).
+// ---------------------------------------------------------------------------
+
+/** Full Jinja conditional: `{% if ... %}...{% endif %}` (incl. whitespace-strip variants). */
+const JINJA_COND_FULL_RE = /^(\{%-? if [^%]+-?%\})([\s\S]*)(\{%-? endif -?%\})$/;
+
+/**
+ * Compute the effective first character of a template fragment for spacing.
+ * Jinja variables `{{ ... }}` and non-empty conditional bodies are treated
+ * as word-like ('a'). Pure punctuation bodies are returned as-is.
+ */
+function seqEffectiveFirstChar(s: string): string {
+	// Jinja whitespace-stripping tag → suppress-side
+	if (s.startsWith('{%-')) return '';
+	// Jinja conditional — inspect the body's first char
+	const cond = s.match(JINJA_COND_FULL_RE);
+	if (cond) {
+		const body = cond[2] ?? '';
+		if (body.length === 0) return '';
+		const bodyFirst = seqEffectiveFirstChar(body);
+		// Pure punctuation body → use the punct char
+		if (bodyFirst && /^[^\w\s$]$/.test(bodyFirst)) return bodyFirst;
+		return 'a'; // word-like
+	}
+	// Jinja variable `{{ ... }}` → word-like (renders to an identifier)
+	if (s.startsWith('{{')) return 'a';
+	return s[0] ?? '';
+}
+
+/**
+ * Compute the effective last character of a template fragment for spacing.
+ * Jinja variables `{{ ... }}` and non-empty conditional bodies are treated
+ * as word-like ('a'). Pure punctuation bodies are returned as-is.
+ */
+function seqEffectiveLastChar(s: string): string {
+	// Jinja conditional — inspect the body's last char
+	const cond = s.match(JINJA_COND_FULL_RE);
+	if (cond) {
+		const body = cond[2] ?? '';
+		if (body.length === 0) return '';
+		const bodyLast = seqEffectiveLastChar(body);
+		if (bodyLast && /^[^\w\s$]$/.test(bodyLast)) return bodyLast;
+		return 'a'; // word-like
+	}
+	// Jinja variable `{{ ... }}` → word-like
+	if (s.endsWith('}}')) return 'a';
+	return s[s.length - 1] ?? '';
+}
+
+/**
+ * Decide if a space is needed between two adjacent seq-member emissions.
+ * Uses the grammar's `wordMatcher` (compiled from the `word` rule) so the
+ * same rules that govern lexer word-recognition govern spacing decisions.
+ */
+function needsSeqSpace(prev: string, next: string, wordMatcher: RegExp): boolean {
+	if (!prev || !next) return false;
+	const lastChar = seqEffectiveLastChar(prev);
+	const firstChar = seqEffectiveFirstChar(next);
+	if (!lastChar || !firstChar) return false;
+	return wordMatcher.test(lastChar + firstChar);
+}
+
+/**
+ * Absorb a leading space INTO a Jinja conditional body so the space only
+ * renders when the conditional fires. Converts
+ * `{% if x | isPresent %}body{% endif %}` →
+ * `{% if x | isPresent %} body{% endif %}`.
+ *
+ * Falls back to unconditional space prepend if the pattern doesn't match.
+ */
+function absorbLeadingSpaceIntoConditional(cond: string): string {
+	return cond.replace(/^(\{%-? if [^%]+-?%\})/, '$1 ');
+}
+
+/**
+ * Absorb a trailing space INTO a Jinja conditional body so the space only
+ * renders when the conditional fires. Converts
+ * `{% if x | isPresent %}body{% endif %}` →
+ * `{% if x | isPresent %}body {% endif %}`.
+ *
+ * Falls back to unconditional space append if the pattern doesn't match.
+ */
+function absorbTrailingSpaceIntoConditional(cond: string): string {
+	return cond.replace(/(\{%-? endif -?%\})$/, ' $1');
+}
+
 export function emitRule(rule: Rule, ctx: EmitCtx): string {
 	switch (rule.type) {
 		case 'string':
-			// PR2 Task 3.B4: if a string literal carries `fieldName` AND
-			// `nonterminal: true` (stamped by enrich when the string appears
-			// as a genuine parse-tree node, e.g. operator tokens in
-			// `binary_expression`), emit it as a slot reference rather than
-			// the literal value. This matches the legacy walker's behavior for
-			// field-wrapped operator strings: the template references the slot
-			// variable (`{{ operator }}`) so the renderer can emit the actual
-			// operator at runtime rather than hard-coding the first variant.
-			if (rule.nonterminal === true && rule.fieldName !== undefined) {
+			// Bug 3 fix: if a string literal carries `fieldName` (stamped by
+			// deleteWrapper when peeling a field() wrapper), emit it as a slot
+			// reference rather than the literal value. This makes
+			// `field('operator', string('&&'))` emit `{{ operator }}` instead of
+			// `&&`, matching the legacy walker's behavior for field-wrapped
+			// operator strings.
+			//
+			// The original code also required `nonterminal: true`, but that
+			// attribute is only stamped by the DSL enrich pass (dsl/enrich.ts)
+			// and is NOT propagated by deleteWrapper at emitter time. Since
+			// `fieldName` on a string can only come from deleteWrapper peeling a
+			// `field()` wrapper, the `nonterminal` check is redundant and
+			// incorrect — the presence of `fieldName` is sufficient.
+			if (rule.fieldName !== undefined) {
 				return emitScalarSlot(rule.fieldName.toLowerCase());
 			}
 			return escapeLiteral(rule.value);
@@ -327,8 +438,37 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 		case 'enum':
 			return rule.members.length > 0 ? escapeLiteral(rule.members[0]!.value) : '';
 
-		case 'seq':
-			return rule.members.map((m) => emitRule(m, ctx)).join('');
+		case 'seq': {
+			// Bug 1 fix: insert spaces between consecutive seq members that
+			// would merge into a single lexeme at render time. Uses the
+			// grammar's wordMatcher to detect word boundaries, with special
+			// handling for Jinja variable and conditional fragments.
+			const parts = rule.members.map((m) => emitRule(m, ctx)).filter((p) => p !== '');
+			if (parts.length === 0) return '';
+			const out: string[] = [parts[0]!];
+			for (let i = 1; i < parts.length; i++) {
+				const prev = out[out.length - 1]!;
+				const curr = parts[i]!;
+				if (needsSeqSpace(prev, curr, ctx.wordMatcher)) {
+					// Prefer absorbing the space INSIDE adjacent conditionals so
+					// the separator disappears when the optional part is absent.
+					if (JINJA_COND_FULL_RE.test(curr)) {
+						// Next is a conditional → absorb space as leading
+						out.push(absorbLeadingSpaceIntoConditional(curr));
+					} else if (JINJA_COND_FULL_RE.test(prev)) {
+						// Prev is a conditional → absorb space as trailing inside it
+						out[out.length - 1] = absorbTrailingSpaceIntoConditional(prev);
+						out.push(curr);
+					} else {
+						out.push(' ');
+						out.push(curr);
+					}
+				} else {
+					out.push(curr);
+				}
+			}
+			return out.join('');
+		}
 
 		// Transparent wrappers — recurse into content. Variant / group /
 		// terminal / token / unnamed-alias have no template-level surface
@@ -520,7 +660,20 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	// Link-synthesized symbols carry their original literal text — render
 	// it verbatim so keyword tokens lifted from `_kw_foo` helpers emit as
 	// `foo` not as a slot reference.
+	//
+	// Bug 3 fix: when a link-sourced symbol carries `fieldName` (stamped by
+	// deleteWrapper from a surrounding field() wrapper, e.g.
+	// `field('operator', symbol(name='amp_amp', source='link', literal='&&'))`),
+	// emit a slot reference instead of the literal. This handles
+	// `binary_expression` where each choice arm has a different operator literal
+	// but they all share the same `fieldName: 'operator'` — the template must
+	// reference `{{ operator }}` so the renderer substitutes the actual operator
+	// from the parse tree, not the first variant's literal.
 	if (rule.source === 'link') {
+		if (rule.fieldName !== undefined) {
+			// Choice-of-link-symbols with shared fieldName: emit as slot.
+			return emitScalarSlot(rule.fieldName.toLowerCase());
+		}
 		return rule.literal !== undefined ? escapeLiteral(rule.literal) : '';
 	}
 
@@ -551,8 +704,17 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	// input, a symbol with a slot and no multiplicity attribute is a single
 	// required value → scalar. Array / optional shapes carry their
 	// multiplicity attribute from the push-down pass.
+	//
+	// Bug 2 fix: When the slot is INFERRED (derived from the group-lift
+	// helper name rather than a declared grammar field) AND the rule is a
+	// group-lift symbol, we must NOT emit the inferred slot name — it is not
+	// a real FROM/read-populated field. Instead, fall through to the
+	// group-lift inlining path below. The inferred-slot path fires because
+	// assemble registers a back-pointer for EVERY rule position it processes,
+	// including auto-synthesized helpers. We skip it here so the group-lift
+	// inline logic handles it correctly.
 	const slot = lookupSlot(rule, ctx);
-	if (slot) {
+	if (slot && !((slot.source as string) === 'inferred' && rule.source === 'group-lift')) {
 		const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
 		const multiplicity = rule.multiplicity;
 		if (multiplicity === 'array' || multiplicity === 'nonEmptyArray' || isMultiple(slot)) {
@@ -563,10 +725,60 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 		}
 		return emitScalarSlot(slotName);
 	}
-	// Group-lifted symbols carry their own template; emit as a
-	// kind-named slot, never inline-expand. Scalar — group outputs a
-	// single rendered string, not a list.
+	// Bug 2 fix: Group-lifted symbols that are auto-synthesized hidden helpers
+	// (e.g. `_function_item_optional1`, `_type_parameters_repeat1`) must be
+	// INLINED rather than emitted as opaque slot references. These helpers
+	// exist in `ctx.nodeMap.nodes` as AssembledGroup nodes with their own
+	// `renderRule`, but they do NOT correspond to declared fields that FROM/read
+	// can populate — emitting `{{ function_item_optional1 }}` as a slot
+	// reference produces unresolvable template variables.
+	//
+	// The correct behavior: look up the target in `ctx.nodeMap.nodes`. If it
+	// has a `renderRule`, recursively emit that rule inline (matching the
+	// simplify-side inlining that tree-sitter applies at parse time for
+	// grammar.inline helpers). Guard against cycles with `visitingHelpers`.
+	//
+	// Non-hidden group-lift symbols (no leading `_`) or those without a
+	// `renderRule` in the nodeMap fall through to the scalar slot path — they
+	// represent proper named groups whose output is a single rendered string.
 	if (rule.source === 'group-lift') {
+		// Only inline HIDDEN auto-synthesized helpers (name starts with `_`).
+		// Visible group-lift symbols are user-facing kinds with their own
+		// templates; emit them as scalar slots like before.
+		if (rule.name.startsWith('_')) {
+			const targetNode = ctx.nodeMap.nodes.get(rule.name);
+			if (targetNode && 'renderRule' in targetNode && targetNode.renderRule) {
+				if (ctx.visitingHelpers.has(rule.name)) {
+					// Cycle guard — emit opaque scalar to break recursion
+					const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+					return emitScalarSlot(slotName);
+				}
+				ctx.visitingHelpers.add(rule.name);
+				try {
+					const helperRenderRule = (targetNode as { renderRule: Rule }).renderRule;
+					const helperBody = emitRule(helperRenderRule, ctx);
+					const multiplicity = rule.multiplicity;
+					// When the group-lift symbol is optional (its parent wrapped it in
+					// optional()), wrap the inlined body in a conditional keyed on the
+					// first declared field inside the helper's body. This preserves the
+					// "only render this block when the optional part is present" semantics.
+					if ((multiplicity === 'optional' || multiplicity === 'array' || multiplicity === 'nonEmptyArray') && helperBody) {
+						const condKey = pickConditionalKey(helperRenderRule, ctx)
+							?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+						if (multiplicity === 'optional') {
+							return `{% if ${condKey} | isPresent %}${helperBody}{% endif %}`;
+						}
+						// Array group-lifts — emit the body directly (repeat handling
+						// is already captured in the body's join filter from the
+						// helper's renderRule).
+					}
+					return helperBody;
+				} finally {
+					ctx.visitingHelpers.delete(rule.name);
+				}
+			}
+		}
+		// Visible group-lift or hidden without renderRule → scalar slot
 		const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
 		return emitScalarSlot(slotName);
 	}
