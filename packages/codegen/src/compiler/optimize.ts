@@ -84,6 +84,45 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
 		}
 	}
 
+	// Polymorph form contents: each form of a polymorph becomes an AssembledGroup
+	// in assemble.ts under a synthesized kind name (formKind). Snapshot
+	// renderRule + simplifiedRule for each form's content under that same key so
+	// assemble's buildAssembledFormGroups can look them up from the snapshot
+	// instead of computing per-call simplifyRule / deleteWrapper.
+	//
+	// Disambiguation must exactly mirror buildAssembledFormGroups in assemble.ts:
+	//   - first occurrence of a form name → bare name
+	//   - duplicate names → `${name}${count + 1}` (one-indexed second occurrence)
+	//
+	// polySource = 'override' when rule.source === 'override' (same logic as assemble),
+	// giving formKind = `${parentKind}__form_${disambiguated}` vs `${parentKind}_${disambiguated}`.
+	const polyFormBodies: Record<string, Rule> = {};
+	for (const [parentKind, rule] of Object.entries(rules)) {
+		if (rule.type !== 'polymorph') continue;
+		const polySource = rule.source === 'override' ? 'override' : 'promoted';
+		const nameCounts = new Map<string, number>();
+		for (const form of (rule as PolymorphRule).forms) {
+			const seen = nameCounts.get(form.name) ?? 0;
+			nameCounts.set(form.name, seen + 1);
+			const disambiguated = seen === 0 ? form.name : `${form.name}${seen + 1}`;
+			const formKind =
+				polySource === 'override'
+					? `${parentKind}__form_${disambiguated}`
+					: `${parentKind}_${disambiguated}`;
+			polyFormBodies[formKind] = form.content;
+		}
+	}
+	if (Object.keys(polyFormBodies).length > 0) {
+		const polyFormRender = applyWrapperDeletion(polyFormBodies);
+		const polyFormSimplified = computeSimplifiedRules(polyFormRender, linked.word);
+		for (const [kind, rule] of Object.entries(polyFormRender)) {
+			renderRules[kind] = rule;
+		}
+		for (const [kind, rule] of Object.entries(polyFormSimplified)) {
+			simplifiedRules[kind] = rule;
+		}
+	}
+
 	return {
 		name: linked.name,
 		rules,

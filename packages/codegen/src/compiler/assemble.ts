@@ -136,7 +136,7 @@ export function assemble(
 					assemblyRule.type === 'polymorph'
 						? (assemblyRule.source === 'override' ? 'override' : 'promoted')
 						: 'promoted';
-				const forms = buildAssembledFormGroups(kind, polyForms, polySource, kindEntries);
+				const forms = buildAssembledFormGroups(kind, polyForms, polySource, kindEntries, optimized);
 				// Forms don't get top-level nodeMap entries — they're
 				// nested inside the parent polymorph's forms array.
 				// The polymorph itself + visible variant children (below)
@@ -390,7 +390,8 @@ function buildAssembledFormGroups(
 	parentKind: string,
 	polyForms: PolymorphRule['forms'],
 	polySource: 'override' | 'promoted',
-	kindEntries: readonly GeneratedKindEntry[]
+	kindEntries: readonly GeneratedKindEntry[],
+	optimized: OptimizedGrammar
 ): AssembledGroup[] {
 	const nameCounts = new Map<string, number>();
 	return polyForms.map((form) => {
@@ -400,9 +401,13 @@ function buildAssembledFormGroups(
 		const formKind =
 			polySource === 'override' ? `${parentKind}__form_${disambiguated}` : `${parentKind}_${disambiguated}`;
 		const formNames = nameNode(formKind);
-		// TODO PR2: polymorph form content is not a top-level kind and has no snapshot entry —
-		// eliminate per-call simplifyRule / deleteWrapper once form content is snapshotted.
-		return new AssembledGroup(formKind, form.content, simplifyRule(form.content), deleteWrapper(form.content), {
+		// Snapshot lookup: optimize.ts pre-computes renderRules + simplifiedRules for each
+		// form's content under the same formKind key (PR2 Task 3.B-prereq-snapshots Site 1).
+		// Fall back to per-call computation only when the snapshot is absent (should not
+		// happen in normal operation — the fallback guards against future gaps).
+		const formSimplified = optimized.simplifiedRules[formKind] ?? simplifyRule(form.content);
+		const formRender = optimized.renderRules[formKind] ?? deleteWrapper(form.content);
+		return new AssembledGroup(formKind, form.content, formSimplified, formRender, {
 			factoryName: formNames.factoryName,
 			irKey: formNames.irKey,
 			name: disambiguated,
