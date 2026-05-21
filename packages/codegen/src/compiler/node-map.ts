@@ -565,8 +565,20 @@ function classifyTopLevelShape(rule: Rule): string {
 	//     missed it.
 	switch (rule.type) {
 		case 'seq': {
-			if (rule.members.some((m) => m.type === 'seq')) return 'seq-with-nested-seq';
 			for (const m of rule.members) {
+				if (m.type === 'seq') {
+					// A nested seq that carries its OWN cardinality
+					// (multiplicity / separator) is a canonical repeated /
+					// optional GROUP, not a flattening gap. simplify deliberately
+					// does NOT splice such a seq (splicing would lose the shared
+					// cardinality and hoist any inner choice to this seq's
+					// position). `deriveSlotsRaw` threads the group's multiplicity
+					// into its members and handles an inner choice via its own
+					// choice case, so we accept it here WITHOUT recursing.
+					const sm = m as { multiplicity?: unknown; separator?: unknown };
+					if (sm.multiplicity !== undefined || sm.separator !== undefined) continue;
+					return 'seq-with-nested-seq';
+				}
 				const inner = classifyTopLevelShape(m);
 				if (inner !== 'canonical') return `seq-member-${inner}`;
 			}

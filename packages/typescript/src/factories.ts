@@ -530,7 +530,7 @@ export function forHeaderLhs(config: T.ForHeaderLhs.Config) {
     _left,
     left() { return _left; },
     $with: {
-      left: (value: T.LhsExpression | T.ParenthesizedExpression) => forHeaderLhs({ ...config, left: value }),
+      left: (value: T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression | T.ParenthesizedExpression) => forHeaderLhs({ ...config, left: value }),
     },
   }, methodsEngine);
 }
@@ -1051,7 +1051,7 @@ export function abstractClassDeclaration(config: T.AbstractClassDeclaration.Conf
     body() { return _body; },
     $with: {
       decorators: (...values: T.Decorator[]) => abstractClassDeclaration({ ...config, decorator: values }),
-      name: (value: T.TypeIdentifier) => abstractClassDeclaration({ ...config, name: value }),
+      name: (value: T.Identifier) => abstractClassDeclaration({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => abstractClassDeclaration({ ...config, typeParameters: value }),
       classHeritage: (value?: T.ClassHeritage) => abstractClassDeclaration({ ...config, classHeritage: value }),
       body: (value: T.ClassBody) => abstractClassDeclaration({ ...config, body: value }),
@@ -1386,7 +1386,7 @@ export function assignmentExpression(config: T.AssignmentExpression.Config) {
     left() { return _left; },
     right() { return _right; },
     $with: {
-      left: (value: T.ParenthesizedExpression | T.LhsExpression) => assignmentExpression({ ...config, left: value }),
+      left: (value: T.ParenthesizedExpression | T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression) => assignmentExpression({ ...config, left: value }),
       right: (value: T.Expression) => assignmentExpression({ ...config, right: value }),
     },
   }, methodsEngine);
@@ -1606,7 +1606,7 @@ export function class_(config: T.Class.Config) {
     body() { return _body; },
     $with: {
       decorators: (...values: T.Decorator[]) => class_({ ...config, decorator: values }),
-      name: (value?: T.TypeIdentifier) => class_({ ...config, name: value }),
+      name: (value?: T.Identifier) => class_({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => class_({ ...config, typeParameters: value }),
       classHeritage: (value?: T.ClassHeritage) => class_({ ...config, classHeritage: value }),
       body: (value: T.ClassBody) => class_({ ...config, body: value }),
@@ -1651,7 +1651,7 @@ export function classDeclaration(config: T.ClassDeclaration.Config) {
     automaticSemicolon() { return _automatic_semicolon; },
     $with: {
       decorators: (...values: T.Decorator[]) => classDeclaration({ ...config, decorator: values }),
-      name: (value: T.TypeIdentifier) => classDeclaration({ ...config, name: value }),
+      name: (value: T.Identifier) => classDeclaration({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => classDeclaration({ ...config, typeParameters: value }),
       classHeritage: (value?: T.ClassHeritage) => classDeclaration({ ...config, classHeritage: value }),
       body: (value: T.ClassBody) => classDeclaration({ ...config, body: value }),
@@ -2275,7 +2275,7 @@ export function extendsTypeClause(config: T.ExtendsTypeClause.Config) {
     _type,
     types() { return _type; },
     $with: {
-      types: (...values: NonEmptyArray<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>) => extendsTypeClause({ ...config, type: values }),
+      types: (...values: NonEmptyArray<T.Identifier | T.NestedTypeIdentifier | T.GenericType>) => extendsTypeClause({ ...config, type: values }),
     },
   }, methodsEngine);
 }
@@ -2585,7 +2585,7 @@ export function genericType(config: T.GenericType.Config) {
     name() { return _name; },
     typeArguments() { return _type_arguments; },
     $with: {
-      name: (value: T.TypeIdentifier | T.NestedTypeIdentifier) => genericType({ ...config, name: value }),
+      name: (value: T.Identifier | T.NestedTypeIdentifier) => genericType({ ...config, name: value }),
       typeArguments: (value: T.TypeArguments) => genericType({ ...config, typeArguments: value }),
     },
   }, methodsEngine);
@@ -2983,7 +2983,7 @@ export function inferType(config: T.InferType.Config) {
     typeIdentifier() { return _type_identifier; },
     constraint() { return _constraint; },
     $with: {
-      typeIdentifier: (value: T.TypeIdentifier) => inferType({ ...config, typeIdentifier: value }),
+      typeIdentifier: (value: T.Identifier) => inferType({ ...config, typeIdentifier: value }),
       constraint: (value: T.Type) => inferType({ ...config, constraint: value }),
     },
   }, methodsEngine);
@@ -3025,7 +3025,7 @@ export function interfaceDeclaration(config: T.InterfaceDeclaration.Config) {
     extendsTypeClause() { return _extends_type_clause; },
     body() { return _body; },
     $with: {
-      name: (value: T.TypeIdentifier) => interfaceDeclaration({ ...config, name: value }),
+      name: (value: T.Identifier) => interfaceDeclaration({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => interfaceDeclaration({ ...config, typeParameters: value }),
       extendsTypeClause: (value?: T.ExtendsTypeClause) => interfaceDeclaration({ ...config, extendsTypeClause: value }),
       body: (value: T.ObjectType) => interfaceDeclaration({ ...config, body: value }),
@@ -3154,7 +3154,7 @@ export function mappedTypeClause(config: T.MappedTypeClause.Config) {
     type() { return _type; },
     alias() { return _alias; },
     $with: {
-      name: (value: T.TypeIdentifier) => mappedTypeClause({ ...config, name: value }),
+      name: (value: T.Identifier) => mappedTypeClause({ ...config, name: value }),
       type: (value: T.Type) => mappedTypeClause({ ...config, type: value }),
       alias: (value?: T.Type) => mappedTypeClause({ ...config, alias: value }),
     },
@@ -3392,7 +3392,7 @@ export function nestedTypeIdentifier(config: T.NestedTypeIdentifier.Config) {
     name() { return _name; },
     $with: {
       module: (value: T.Identifier | T.NestedIdentifier) => nestedTypeIdentifier({ ...config, module: value }),
-      name: (value: T.TypeIdentifier) => nestedTypeIdentifier({ ...config, name: value }),
+      name: (value: T.Identifier) => nestedTypeIdentifier({ ...config, name: value }),
     },
   }, methodsEngine);
 }
@@ -3496,74 +3496,62 @@ export function objectPattern(...children: (T.PairPattern | T.RestPattern | T.Ob
 
 export function objectType(config: ConfigOf<T.ObjectType>) {
   const _opening = coerceKindEnumStorage(config.opening, [["{", TSKindId.Lbrace] as const, ["{|", TSKindId.LbracePipe] as const]);
-  const _export_statement = config.exportStatement;
-  const _semicolon = config.semicolon;
+  const _members = config.members;
   const _closing = coerceKindEnumStorage(config.closing, [["}", TSKindId.Rbrace] as const, ["|}", TSKindId.PipeRbrace] as const]);
   return withMethods({
     $type: TSKindId.ObjectType as const,
     $source: 2 as const,
     $named: true as const,
     _opening,
-    _export_statement,
-    _semicolon,
+    _members,
     _closing,
     opening() { return _opening; },
-    exportStatements() { return _export_statement; },
-    semicolon() { return _semicolon; },
+    members() { return _members; },
     closing() { return _closing; },
     $with: {
       opening: (value: NonNullable<Parameters<typeof objectType>[0]>['opening']) => objectType({ ...config, opening: value }),
-      exportStatements: (...values: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>) => objectType({ ...config, exportStatement: values }),
-      semicolon: (value?: "," | T.Semicolon) => objectType({ ...config, semicolon: value }),
+      members: (value?: "," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon) => objectType({ ...config, members: value }),
       closing: (value: NonNullable<Parameters<typeof objectType>[0]>['closing']) => objectType({ ...config, closing: value }),
     },
   }, methodsEngine);
 }
 
-export function objectTypeCurly(config: T.ObjectType.Curly.Config) {
+export function objectTypeCurly(config?: T.ObjectType.Curly.Config) {
   const _opening = coerceKindEnumStorage("{" as const, [["{", TSKindId.Lbrace] as const, ["{|", TSKindId.LbracePipe] as const]);
-  const _export_statement = config.exportStatement;
-  const _semicolon = config.semicolon;
+  const _members = config?.members;
   const _closing = coerceKindEnumStorage("}" as const, [["}", TSKindId.Rbrace] as const, ["|}", TSKindId.PipeRbrace] as const]);
   return withMethods({
     $type: TSKindId.ObjectType as const,
     $source: 2 as const,
     $named: true as const,
     _opening,
-    _export_statement,
-    _semicolon,
+    _members,
     _closing,
     opening() { return _opening; },
-    exportStatements() { return _export_statement; },
-    semicolon() { return _semicolon; },
+    members() { return _members; },
     closing() { return _closing; },
     $with: {
-      exportStatements: (...values: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>) => objectTypeCurly({ ...config, exportStatement: values }),
-      semicolon: (value?: "," | T.Semicolon) => objectTypeCurly({ ...config, semicolon: value }),
+      members: (value?: "," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon) => objectTypeCurly({ ...config, members: value }),
     },
   }, methodsEngine);
 }
 
-export function objectTypeFlow(config: T.ObjectType.Flow.Config) {
+export function objectTypeFlow(config?: T.ObjectType.Flow.Config) {
   const _opening = coerceKindEnumStorage("{|" as const, [["{", TSKindId.Lbrace] as const, ["{|", TSKindId.LbracePipe] as const]);
-  const _export_statement = config.exportStatement;
-  const _semicolon = config.semicolon;
+  const _members = config?.members;
   const _closing = coerceKindEnumStorage("|}" as const, [["}", TSKindId.Rbrace] as const, ["|}", TSKindId.PipeRbrace] as const]);
   return withMethods({
     $type: TSKindId.ObjectType as const,
     $source: 2 as const,
     $named: true as const,
     _opening,
-    _export_statement,
-    _semicolon,
+    _members,
     _closing,
     opening() { return _opening; },
-    exportStatements() { return _export_statement; },
-    semicolon() { return _semicolon; },
+    members() { return _members; },
     closing() { return _closing; },
     $with: {
-      exportStatements: (...values: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>) => objectTypeFlow({ ...config, exportStatement: values }),
-      semicolon: (value?: "," | T.Semicolon) => objectTypeFlow({ ...config, semicolon: value }),
+      members: (value?: "," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon) => objectTypeFlow({ ...config, members: value }),
     },
   }, methodsEngine);
 }
@@ -3979,15 +3967,15 @@ export function requiredParameter(config: T.RequiredParameter.Config) {
   }, methodsEngine);
 }
 
-export function restPattern(child: T.LhsExpression) {
-  const _lhs_expression = child;
+export function restPattern(child: (T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression)) {
+  const _member_expression = child;
   return withMethods({
     $type: TSKindId.RestPattern as const,
     $source: 2 as const,
     $named: true as const,
-    _lhs_expression,
-    lhsExpression() { return _lhs_expression; },
-    $with: { $child: (v: T.LhsExpression) => restPattern(v) },
+    _member_expression,
+    memberExpression() { return _member_expression; },
+    $with: { $child: (v: (T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression)) => restPattern(v) },
   }, methodsEngine);
 }
 
@@ -4417,7 +4405,7 @@ export function typeAliasDeclaration(config: T.TypeAliasDeclaration.Config) {
     value() { return _value; },
     semicolon() { return _semicolon; },
     $with: {
-      name: (value: T.TypeIdentifier) => typeAliasDeclaration({ ...config, name: value }),
+      name: (value: T.Identifier) => typeAliasDeclaration({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => typeAliasDeclaration({ ...config, typeParameters: value }),
       value: (value: T.Type) => typeAliasDeclaration({ ...config, value: value }),
       semicolon: (value?: T.Semicolon) => typeAliasDeclaration({ ...config, semicolon: value }),
@@ -4489,7 +4477,7 @@ export function typeParameter(config: T.TypeParameter.Config) {
     value() { return _value; },
     $with: {
       constMarker: (value?: NonNullable<Parameters<typeof typeParameter>[0]>['constMarker']) => typeParameter({ ...config, constMarker: value }),
-      name: (value: T.TypeIdentifier) => typeParameter({ ...config, name: value }),
+      name: (value: T.Identifier) => typeParameter({ ...config, name: value }),
       constraint: (value?: T.Constraint) => typeParameter({ ...config, constraint: value }),
       value: (value?: T.DefaultType) => typeParameter({ ...config, value: value }),
     },

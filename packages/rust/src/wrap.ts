@@ -103,6 +103,11 @@ function drillAs<T>(entry: unknown, tree: TreeHandle, fromType: string, toType: 
   }
   return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType }) as unknown as T;
 }
+function drillAsAll<T>(entries: unknown, tree: TreeHandle, fromType: string, toType: string): T[] {
+  if (!entries) return [];
+  const arr = Array.isArray(entries) ? entries : [entries];
+  return arr.map(e => drillAs<T>(e, tree, fromType, toType));
+}
 function projectKindEnumStorage<T>(value: T): T {
   if (!value) return value;
   if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry)) as unknown as T;
@@ -374,15 +379,15 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
     $type: TSKindId.ArrayExpressionList as const,
     _attributes: normalizeRepeatedWrapSlot(data._attributes, false, "attributes"),
     _attribute_item: normalizeRepeatedWrapSlot(data._attribute_item, false, "attribute_item"),
-    _elements: normalizeSingularWrapSlot(data._elements, "elements", true, data.$type),
+    _elements: normalizeRepeatedWrapSlot(data._elements, false, "elements"),
 
     attributes() { return drillInAll<T.AttributeItem>(this._attributes as readonly T.AttributeItem[] | undefined, tree); },
     attributeItems() { return drillInAll<T.AttributeItem>(this._attribute_item as readonly T.AttributeItem[] | undefined, tree); },
-    elements() { return drillIn<T.Expression>(this._elements, tree); },
+    elements() { return drillInAll<T.Expression>(this._elements as readonly T.Expression[] | undefined, tree); },
     $with: {
       attributes: (...v: NonNullable<T.ArrayExpressionList['_attributes']>[number][]) => wrapArrayExpressionList({ ...data, _attributes: v }, tree),
       attributeItems: (...v: NonNullable<T.ArrayExpressionList['_attribute_item']>[number][]) => wrapArrayExpressionList({ ...data, _attribute_item: v }, tree),
-      elements: (v: NonNullable<T.ArrayExpressionList['_elements']>) => wrapArrayExpressionList({ ...data, _elements: v }, tree),
+      elements: (...v: NonNullable<T.ArrayExpressionList['_elements']>[number][]) => wrapArrayExpressionList({ ...data, _elements: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -522,7 +527,7 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
     _pattern: normalizeSingularWrapSlot(data._pattern, "pattern", true, data.$type),
 
-    name() { return drillIn<T.FieldIdentifier>(this._name, tree); },
+    name() { return drillAs<T.Identifier>(this._name, tree, "field_identifier", "identifier"); },
     pattern() { return drillIn<T.Pattern>(this._pattern, tree); },
     $with: {
       name: (v: NonNullable<T.FieldPatternNamed['_name']>) => wrapFieldPatternNamed({ ...data, _name: v }, tree),
@@ -578,7 +583,7 @@ export function wrapFunctionTypeTraitForm(data: T.FunctionTypeTraitForm, tree: T
     $type: TSKindId.FunctionTypeTraitForm as const,
     _trait: normalizeSingularWrapSlot(data._trait, "trait", true, data.$type),
 
-    trait() { return drillIn<T.TypeIdentifier | T.ScopedTypeIdentifier>(this._trait, tree); },
+    trait() { return drillAs<T.Identifier | T.ScopedTypeIdentifier>(this._trait, tree, "type_identifier", "identifier"); },
     $with: {
       trait: (v: NonNullable<T.FunctionTypeTraitForm['_trait']>) => wrapFunctionTypeTraitForm({ ...data, _trait: v }, tree),
     },
@@ -1059,7 +1064,7 @@ export function wrapAbstractType(data: T.AbstractType, tree: TreeHandle) {
     _trait: normalizeSingularWrapSlot(data._trait, "trait", true, data.$type),
 
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
-    trait() { return drillIn<T.TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType>(this._trait, tree); },
+    trait() { return drillAs<T.Identifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType>(this._trait, tree, "type_identifier", "identifier"); },
     $with: {
       typeParameters: (v: NonNullable<T.AbstractType['_type_parameters']>) => wrapAbstractType({ ...data, _type_parameters: v }, tree),
       trait: (v: NonNullable<T.AbstractType['_trait']>) => wrapAbstractType({ ...data, _trait: v }, tree),
@@ -1072,14 +1077,11 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Arguments as const,
-    _attribute_item: normalizeRepeatedWrapSlot(data._attribute_item, false, "attribute_item"),
-    _expression: normalizeSingularWrapSlot((data._unary_expression ?? data._reference_expression ?? data._try_expression ?? data._binary_expression ?? data._assignment_expression ?? data._compound_assignment_expr ?? data._type_cast_expression ?? data._call_expression ?? data._return_expression ?? data._yield_expression ?? data._string_literal ?? data._raw_string_literal ?? data._char_literal ?? data._boolean_literal ?? data._integer_literal ?? data._float_literal ?? data._identifier ?? data._reserved_identifier ?? data._self ?? data._scoped_identifier ?? data._generic_function ?? data._await_expression ?? data._field_expression ?? data._array_expression ?? data._tuple_expression ?? data._macro_invocation ?? data._unit_expression ?? data._break_expression ?? data._continue_expression ?? data._index_expression ?? data._metavariable ?? data._closure_expression ?? data._parenthesized_expression ?? data._struct_expression ?? data._unsafe_block ?? data._async_block ?? data._gen_block ?? data._try_block ?? data._block ?? data._if_expression ?? data._match_expression ?? data._while_expression ?? data._loop_expression ?? data._for_expression ?? data._const_block ?? data._range_expression ?? data._expression), "expression", true, data.$type),
+    _attributes: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._attributes, ["attribute_item","_expression","_expression_except_range","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","_literal","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","_reserved_identifier","self","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","unit_expression","break_expression","continue_expression","index_expression","metavariable","closure_expression","parenthesized_expression","struct_expression","_expression_ending_with_block","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"]), false, "attributes"),
 
-    attributeItems() { return drillInAll<T.AttributeItem>(this._attribute_item as readonly T.AttributeItem[] | undefined, tree); },
-    expression() { return drillIn<T.Expression>(this._expression, tree); },
+    attributes() { return drillInAll<T.AttributeItem | T.Expression>(this._attributes as readonly (T.AttributeItem | T.Expression)[] | undefined, tree); },
     $with: {
-      attributeItems: (...v: NonNullable<T.Arguments['_attribute_item']>[number][]) => wrapArguments({ ...data, _attribute_item: v }, tree),
-      expression: (v: NonNullable<T.Arguments['_expression']>) => wrapArguments({ ...data, _expression: v }, tree),
+      attributes: (...v: NonNullable<T.Arguments['_attributes']>[number][]) => wrapArguments({ ...data, _attributes: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1145,7 +1147,7 @@ export function wrapAssociatedType(data: T.AssociatedType, tree: TreeHandle) {
     _bounds: normalizeSingularWrapSlot(data._bounds, "bounds", false, data.$type),
     _where_clause: normalizeSingularWrapSlot(data._where_clause, "where_clause", false, data.$type),
 
-    name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
+    name() { return drillAs<T.Identifier>(this._name, tree, "type_identifier", "identifier"); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     bounds() { return drillIn<T.TraitBounds | undefined>(this._bounds, tree); },
     whereClause() { return drillIn<T.WhereClause | undefined>(this._where_clause, tree); },
@@ -1594,7 +1596,7 @@ export function wrapDynamicType(data: T.DynamicType, tree: TreeHandle) {
     $type: TSKindId.DynamicType as const,
     _trait: normalizeSingularWrapSlot(data._trait, "trait", true, data.$type),
 
-    trait() { return drillIn<T.HigherRankedTraitBound | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType>(this._trait, tree); },
+    trait() { return drillAs<T.HigherRankedTraitBound | T.Identifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType>(this._trait, tree, "type_identifier", "identifier"); },
     $with: {
       trait: (v: NonNullable<T.DynamicType['_trait']>) => wrapDynamicType({ ...data, _trait: v }, tree),
     },
@@ -1625,7 +1627,7 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle) {
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
-    name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
+    name() { return drillAs<T.Identifier>(this._name, tree, "type_identifier", "identifier"); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     whereClause() { return drillIn<T.WhereClause | undefined>(this._where_clause, tree); },
     body() { return drillIn<T.EnumVariantList>(this._body, tree); },
@@ -1760,7 +1762,7 @@ export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle)
     _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
     visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
-    name() { return drillIn<T.FieldIdentifier>(this._name, tree); },
+    name() { return drillAs<T.Identifier>(this._name, tree, "field_identifier", "identifier"); },
     type() { return drillIn<T._Type>(this._type, tree); },
     $with: {
       visibilityModifier: (v: NonNullable<T.FieldDeclaration['_visibility_modifier']>) => wrapFieldDeclaration({ ...data, _visibility_modifier: v }, tree),
@@ -1791,7 +1793,7 @@ export function wrapFieldExpression(data: T.FieldExpression, tree: TreeHandle) {
     _field: normalizeSingularWrapSlot(data._field, "field", true, data.$type),
 
     value() { return drillIn<T.Expression>(this._value, tree); },
-    field() { return drillIn<T.FieldIdentifier | T.IntegerLiteral>(this._field, tree); },
+    field() { return drillAs<T.Identifier | T.IntegerLiteral>(this._field, tree, "field_identifier", "identifier"); },
     $with: {
       value: (v: NonNullable<T.FieldExpression['_value']>) => wrapFieldExpression({ ...data, _value: v }, tree),
       field: (v: NonNullable<T.FieldExpression['_field']>) => wrapFieldExpression({ ...data, _field: v }, tree),
@@ -1809,7 +1811,7 @@ export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle)
     _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
 
     attributeItems() { return drillInAll<T.AttributeItem>(this._attribute_item as readonly T.AttributeItem[] | undefined, tree); },
-    field() { return drillIn<T.FieldIdentifier | T.IntegerLiteral>(this._field, tree); },
+    field() { return drillAs<T.Identifier | T.IntegerLiteral>(this._field, tree, "field_identifier", "identifier"); },
     value() { return drillIn<T.Expression>(this._value, tree); },
     $with: {
       attributeItems: (...v: NonNullable<T.FieldInitializer['_attribute_item']>[number][]) => wrapFieldInitializer({ ...data, _attribute_item: v }, tree),
@@ -2104,7 +2106,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
     _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
     _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", true, data.$type),
 
-    type() { return drillIn<T.TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier>(this._type, tree); },
+    type() { return drillAs<T.Identifier | T.ScopedTypeIdentifier>(this._type, tree, "type_identifier", "identifier"); },
     typeArguments() { return drillIn<T.TypeArguments>(this._type_arguments, tree); },
     $with: {
       type: (v: NonNullable<T.GenericType['_type']>) => wrapGenericType({ ...data, _type: v }, tree),
@@ -2121,7 +2123,7 @@ export function wrapGenericTypeWithTurbofish(data: T.GenericTypeWithTurbofish, t
     _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
     _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", true, data.$type),
 
-    type() { return drillIn<T.TypeIdentifier | T.ScopedIdentifier>(this._type, tree); },
+    type() { return drillAs<T.Identifier | T.ScopedIdentifier>(this._type, tree, "type_identifier", "identifier"); },
     typeArguments() { return drillIn<T.TypeArguments>(this._type_arguments, tree); },
     $with: {
       type: (v: NonNullable<T.GenericTypeWithTurbofish['_type']>) => wrapGenericTypeWithTurbofish({ ...data, _type: v }, tree),
@@ -2455,7 +2457,7 @@ export function wrapMacroInvocation(data: T.MacroInvocation, tree: TreeHandle) {
     _macro: normalizeSingularWrapSlot(data._macro, "macro", true, data.$type),
     _token_tree: normalizeSingularWrapSlot(data._token_tree, "token_tree", true, data.$type),
 
-    macro() { return drillIn<T.ScopedIdentifier | T.Identifier | T.ReservedIdentifier>(this._macro, tree); },
+    macro() { return drillIn<T.ScopedIdentifier | T.Identifier>(this._macro, tree); },
     tokenTree() { return drillAs<T.DelimTokenTree>(this._token_tree, tree, "token_tree", "delim_token_tree"); },
     $with: {
       macro: (v: NonNullable<T.MacroInvocation['_macro']>) => wrapMacroInvocation({ ...data, _macro: v }, tree),
@@ -2652,17 +2654,11 @@ export function wrapOrderedFieldDeclarationList(data: T.OrderedFieldDeclarationL
   const _node = withMethods({
     ...data,
     $type: TSKindId.OrderedFieldDeclarationList as const,
-    _attribute_item: normalizeRepeatedWrapSlot(data._attribute_item, false, "attribute_item"),
-    _visibility_modifier: normalizeSingularWrapSlot(data._visibility_modifier, "visibility_modifier", false, data.$type),
-    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
+    _attributes: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._attributes, ["attribute_item","visibility_modifier","_type","abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","_type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound","_primitive_type"]), false, "attributes"),
 
-    attributeItems() { return drillInAll<T.AttributeItem>(this._attribute_item as readonly T.AttributeItem[] | undefined, tree); },
-    visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
-    type() { return drillIn<T._Type>(this._type, tree); },
+    attributes() { return drillInAll<T.AttributeItem | T.VisibilityModifier | T._Type>(this._attributes as readonly (T.AttributeItem | T.VisibilityModifier | T._Type)[] | undefined, tree); },
     $with: {
-      attributeItems: (...v: NonNullable<T.OrderedFieldDeclarationList['_attribute_item']>[number][]) => wrapOrderedFieldDeclarationList({ ...data, _attribute_item: v }, tree),
-      visibilityModifier: (v: NonNullable<T.OrderedFieldDeclarationList['_visibility_modifier']>) => wrapOrderedFieldDeclarationList({ ...data, _visibility_modifier: v }, tree),
-      type: (v: NonNullable<T.OrderedFieldDeclarationList['_type']>) => wrapOrderedFieldDeclarationList({ ...data, _type: v }, tree),
+      attributes: (...v: NonNullable<T.OrderedFieldDeclarationList['_attributes']>[number][]) => wrapOrderedFieldDeclarationList({ ...data, _attributes: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2956,7 +2952,7 @@ export function wrapScopedTypeIdentifier(data: T.ScopedTypeIdentifier, tree: Tre
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
 
     path() { return drillAs<T.Path | T.GenericTypeWithTurbofish | T.BracketedType | undefined>(this._path, tree, "generic_type", "generic_type_with_turbofish"); },
-    name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
+    name() { return drillAs<T.Identifier>(this._name, tree, "type_identifier", "identifier"); },
     $with: {
       path: (v: NonNullable<T.ScopedTypeIdentifier['_path']>) => wrapScopedTypeIdentifier({ ...data, _path: v }, tree),
       name: (v: NonNullable<T.ScopedTypeIdentifier['_name']>) => wrapScopedTypeIdentifier({ ...data, _name: v }, tree),
@@ -2973,7 +2969,7 @@ export function wrapScopedTypeIdentifierInExpressionPosition(data: T.ScopedTypeI
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
 
     path() { return drillAs<T.Path | T.GenericTypeWithTurbofish | undefined>(this._path, tree, "generic_type", "generic_type_with_turbofish"); },
-    name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
+    name() { return drillAs<T.Identifier>(this._name, tree, "type_identifier", "identifier"); },
     $with: {
       path: (v: NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_path']>) => wrapScopedTypeIdentifierInExpressionPosition({ ...data, _path: v }, tree),
       name: (v: NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_name']>) => wrapScopedTypeIdentifierInExpressionPosition({ ...data, _name: v }, tree),
@@ -3110,7 +3106,7 @@ export function wrapStructExpression(data: T.StructExpression, tree: TreeHandle)
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
-    name() { return drillAs<T.TypeIdentifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish>(this._name, tree, "scoped_type_identifier", "scoped_type_identifier_in_expression_position"); },
+    name() { return drillAs<T.Identifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish>(this._name, tree, "type_identifier", "identifier"); },
     body() { return drillIn<T.FieldInitializerList>(this._body, tree); },
     $with: {
       name: (v: NonNullable<T.StructExpression['_name']>) => wrapStructExpression({ ...data, _name: v }, tree),
@@ -3156,7 +3152,7 @@ export function wrapStructPattern(data: T.StructPattern, tree: TreeHandle) {
     _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
     _field_pattern: normalizeRepeatedWrapSlot((data._field_pattern ?? data._remaining_field_pattern), false, "field_pattern"),
 
-    type() { return drillIn<T.TypeIdentifier | T.ScopedTypeIdentifier>(this._type, tree); },
+    type() { return drillAs<T.Identifier | T.ScopedTypeIdentifier>(this._type, tree, "type_identifier", "identifier"); },
     fieldPatterns() { return drillInAll<T.FieldPattern | T.RemainingFieldPattern>(this._field_pattern as readonly (T.FieldPattern | T.RemainingFieldPattern)[] | undefined, tree); },
     $with: {
       type: (v: NonNullable<T.StructPattern['_type']>) => wrapStructPattern({ ...data, _type: v }, tree),
@@ -3339,7 +3335,7 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle) {
 
     visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
     unsafeMarker() { return this._unsafe_marker; },
-    name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
+    name() { return drillAs<T.Identifier>(this._name, tree, "type_identifier", "identifier"); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     bounds() { return drillIn<T.TraitBounds | undefined>(this._bounds, tree); },
     whereClause() { return drillIn<T.WhereClause | undefined>(this._where_clause, tree); },
@@ -3448,13 +3444,13 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
     ...data,
     $type: TSKindId.TypeArguments as const,
     _type: normalizeRepeatedWrapSlot((data._abstract_type ?? data._reference_type ?? data._metavariable ?? data._pointer_type ?? data._generic_type ?? data._scoped_type_identifier ?? data._tuple_type ?? data._unit_type ?? data._array_type ?? data._function_type ?? data._type_identifier ?? data._macro_invocation ?? data._never_type ?? data._dynamic_type ?? data._bounded_type ?? data._removed_trait_bound ?? data._primitive_type ?? data._type_binding ?? data._lifetime ?? data._string_literal ?? data._raw_string_literal ?? data._char_literal ?? data._boolean_literal ?? data._integer_literal ?? data._float_literal ?? data._block ?? data._type), true, "type"),
-    _trait_bounds: normalizeRepeatedWrapSlot(data._trait_bounds, true, "trait_bounds"),
+    _trait_bounds: normalizeRepeatedWrapSlot(data._trait_bounds, false, "trait_bounds"),
 
     types() { return drillInAll<T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(this._type as readonly (T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)[] | undefined, tree); },
     traitBounds() { return drillInAll<T.TraitBounds>(this._trait_bounds as readonly T.TraitBounds[] | undefined, tree); },
     $with: {
       types: (...v: NonEmptyArray<NonNullable<T.TypeArguments['_type']>[number]>) => wrapTypeArguments({ ...data, _type: v }, tree),
-      traitBounds: (...v: NonEmptyArray<NonNullable<T.TypeArguments['_trait_bounds']>[number]>) => wrapTypeArguments({ ...data, _trait_bounds: v }, tree),
+      traitBounds: (...v: NonNullable<T.TypeArguments['_trait_bounds']>[number][]) => wrapTypeArguments({ ...data, _trait_bounds: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -3468,7 +3464,7 @@ export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle) {
     _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", false, data.$type),
     _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
-    name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
+    name() { return drillAs<T.Identifier>(this._name, tree, "type_identifier", "identifier"); },
     typeArguments() { return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree); },
     type() { return drillIn<T._Type>(this._type, tree); },
     $with: {
@@ -3509,7 +3505,7 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle) {
     _trailing_where_clause: normalizeSingularWrapSlot(data._trailing_where_clause, "trailing_where_clause", false, data.$type),
 
     visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
-    name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
+    name() { return drillAs<T.Identifier>(this._name, tree, "type_identifier", "identifier"); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     whereClause() { return drillIn<T.WhereClause | undefined>(this._where_clause, tree); },
     type() { return drillIn<T._Type>(this._type, tree); },
@@ -3534,7 +3530,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
     _bounds: normalizeSingularWrapSlot(data._bounds, "bounds", false, data.$type),
     _type_parameter_optional1: normalizeSingularWrapSlot(data._type_parameter_optional1, "type_parameter_optional1", false, data.$type),
 
-    name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
+    name() { return drillAs<T.Identifier>(this._name, tree, "type_identifier", "identifier"); },
     bounds() { return drillIn<T.TraitBounds | undefined>(this._bounds, tree); },
     typeParameterOptional1() { return drillIn<T.TypeParameterOptional1 | undefined>(this._type_parameter_optional1, tree); },
     $with: {
@@ -3586,7 +3582,7 @@ export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle) {
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
     visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
-    name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
+    name() { return drillAs<T.Identifier>(this._name, tree, "type_identifier", "identifier"); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     whereClause() { return drillIn<T.WhereClause | undefined>(this._where_clause, tree); },
     body() { return drillIn<T.FieldDeclarationList>(this._body, tree); },
@@ -3638,7 +3634,7 @@ export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle) {
     $type: TSKindId.UseBounds as const,
     _lifetime: normalizeRepeatedWrapSlot((data._lifetime ?? data._type_identifier), false, "lifetime"),
 
-    lifetimes() { return drillInAll<T.Lifetime | T.TypeIdentifier>(this._lifetime as readonly (T.Lifetime | T.TypeIdentifier)[] | undefined, tree); },
+    lifetimes() { return drillAsAll<T.Lifetime | T.Identifier>(this._lifetime, tree, "type_identifier", "identifier"); },
     $with: { $children: (...vs: readonly [never]) => wrapUseBounds({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -3756,7 +3752,7 @@ export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle) {
     _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
     _bounds: normalizeSingularWrapSlot(data._bounds, "bounds", true, data.$type),
 
-    left() { return drillAs<T.Lifetime | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType>(this._left, tree, "primitive_type", "_primitive_type"); },
+    left() { return drillAs<T.Lifetime | T.Identifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType>(this._left, tree, "type_identifier", "identifier"); },
     bounds() { return drillIn<T.TraitBounds>(this._bounds, tree); },
     $with: {
       left: (v: NonNullable<T.WherePredicate['_left']>) => wrapWherePredicate({ ...data, _left: v }, tree),
@@ -4067,7 +4063,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'expression_ending_with_block': '_expression_ending_with_block',
   'expression_except_range': '_expression_except_range',
   'extern_crate_declaration_optional1': '_extern_crate_declaration_optional1',
-  'field_identifier': '_field_identifier',
   'field_pattern_named': '_field_pattern_named',
   'for_expression_optional1': '_for_expression_optional1',
   'function_item_optional1': '_function_item_optional1',

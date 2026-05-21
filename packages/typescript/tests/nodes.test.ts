@@ -5,12 +5,12 @@ import { TSKindId } from '../src/types.js';
 
 describe('abstract_class_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.abstractClassDeclaration({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.abstractClassDeclaration({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.AbstractClassDeclaration);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.abstractClassDeclaration({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.abstractClassDeclaration({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -314,12 +314,12 @@ describe('class_body', () => {
 
 describe('class_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.classDeclaration({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.classDeclaration({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ClassDeclaration);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.classDeclaration({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.classDeclaration({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -688,12 +688,12 @@ describe('extends_clause', () => {
 
 describe('extends_type_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.extendsTypeClause({ type: [{ $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any] });
+    const node = ir.extendsTypeClause({ type: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any] });
     expect(node.$type).toBe(TSKindId.ExtendsTypeClause);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.extendsTypeClause({ type: [{ $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any] });
+    const node = ir.extendsTypeClause({ type: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any] });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -837,12 +837,12 @@ describe('generator_function_declaration', () => {
 
 describe('generic_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.genericType({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, typeArguments: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.genericType({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, typeArguments: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.GenericType);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.genericType({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, typeArguments: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.genericType({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, typeArguments: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1048,12 +1048,12 @@ describe('index_type_query', () => {
 
 describe('infer_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.inferType({ typeIdentifier: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, constraint: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.inferType({ typeIdentifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, constraint: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.InferType);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.inferType({ typeIdentifier: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, constraint: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.inferType({ typeIdentifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, constraint: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1072,12 +1072,12 @@ describe('instantiation_expression', () => {
 
 describe('interface_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.interfaceDeclaration({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.interfaceDeclaration({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.InterfaceDeclaration);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.interfaceDeclaration({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.interfaceDeclaration({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1152,12 +1152,12 @@ describe('lookup_type', () => {
 
 describe('mapped_type_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.mappedTypeClause({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, type: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.mappedTypeClause({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, type: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.MappedTypeClause);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.mappedTypeClause({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, type: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.mappedTypeClause({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, type: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1261,12 +1261,12 @@ describe('nested_identifier', () => {
 
 describe('nested_type_identifier', () => {
   it('factory produces correct type', () => {
-    const node = ir.nestedTypeIdentifier({ module: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.nestedTypeIdentifier({ module: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.NestedTypeIdentifier);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.nestedTypeIdentifier({ module: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.nestedTypeIdentifier({ module: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1343,12 +1343,12 @@ describe('object_pattern', () => {
 
 describe('object_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.objectType({ opening: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, exportStatement: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any], closing: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.objectType({ opening: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, closing: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ObjectType);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.objectType({ opening: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, exportStatement: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any], closing: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.objectType({ opening: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, closing: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1848,12 +1848,12 @@ describe('tuple_type', () => {
 
 describe('type_alias_declaration', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeAliasDeclaration({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, value: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.typeAliasDeclaration({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, value: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.TypeAliasDeclaration);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.typeAliasDeclaration({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any, value: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.typeAliasDeclaration({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, value: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1892,12 +1892,12 @@ describe('type_assertion', () => {
 
 describe('type_parameter', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeParameter({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.typeParameter({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.TypeParameter);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.typeParameter({ name: { $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.typeParameter({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });

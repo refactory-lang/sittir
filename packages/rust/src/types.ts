@@ -2127,10 +2127,10 @@ export interface ArrayExpressionList {
   readonly $type: TSKindId.ArrayExpressionList;
   readonly _attributes?: readonly (AttributeItem)[];
   readonly _attribute_item?: readonly (AttributeItem)[];
-  readonly _elements: Expression;
+  readonly _elements?: readonly (Expression)[];
   attributes(): readonly (AttributeItem)[];
   attributeItems(): readonly (AttributeItem)[];
-  elements(): Expression;
+  elements(): readonly (Expression)[];
 }
 
 export interface ArrayExpressionSemi {
@@ -2251,9 +2251,9 @@ export interface ExternCrateDeclarationOptional1 {
 
 export interface FieldPatternNamed {
   readonly $type: TSKindId.FieldPatternNamed;
-  readonly _name: FieldIdentifier;
+  readonly _name: Identifier;
   readonly _pattern: Pattern;
-  name(): FieldIdentifier;
+  name(): Identifier;
   pattern(): Pattern;
 }
 
@@ -2295,8 +2295,8 @@ export interface FunctionTypeFnForm {
 
 export interface FunctionTypeTraitForm {
   readonly $type: TSKindId.FunctionTypeTraitForm;
-  readonly _trait: TypeIdentifier | ScopedTypeIdentifier;
-  trait(): TypeIdentifier | ScopedTypeIdentifier;
+  readonly _trait: Identifier | ScopedTypeIdentifier;
+  trait(): Identifier | ScopedTypeIdentifier;
 }
 
 export interface _ImplItemBody {
@@ -2593,17 +2593,15 @@ export interface WhileExpressionOptional1 {
 export interface AbstractType {
   readonly $type: TSKindId.AbstractType;
   readonly _type_parameters?: TypeParameters;
-  readonly _trait: TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
+  readonly _trait: Identifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
   typeParameters(): TypeParameters | undefined;
-  trait(): TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
+  trait(): Identifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
 }
 
 export interface Arguments {
   readonly $type: TSKindId.Arguments;
-  readonly _attribute_item?: readonly (AttributeItem)[];
-  readonly _expression: Expression;
-  attributeItems(): readonly (AttributeItem)[];
-  expression(): Expression;
+  readonly _attributes?: readonly (AttributeItem | Expression)[];
+  attributes(): readonly (AttributeItem | Expression)[];
 }
 
 export interface ArrayExpressionUFormSemi {
@@ -2639,11 +2637,11 @@ export interface AssignmentExpression {
 
 export interface AssociatedType {
   readonly $type: TSKindId.AssociatedType;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   readonly _type_parameters?: TypeParameters;
   readonly _bounds?: TraitBounds;
   readonly _where_clause?: WhereClause;
-  name(): TypeIdentifier;
+  name(): Identifier;
   typeParameters(): TypeParameters | undefined;
   bounds(): TraitBounds | undefined;
   whereClause(): WhereClause | undefined;
@@ -2917,8 +2915,8 @@ export interface DelimTokenTreeUFormBrace {
 export type DelimTokenTree = DelimTokenTreeUFormParen | DelimTokenTreeUFormBracket | DelimTokenTreeUFormBrace;
 export interface DynamicType {
   readonly $type: TSKindId.DynamicType;
-  readonly _trait: HigherRankedTraitBound | TypeIdentifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
-  trait(): HigherRankedTraitBound | TypeIdentifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
+  readonly _trait: HigherRankedTraitBound | Identifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
+  trait(): HigherRankedTraitBound | Identifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
 }
 
 export interface ElseClause {
@@ -2930,12 +2928,12 @@ export interface ElseClause {
 export interface EnumItem {
   readonly $type: TSKindId.EnumItem;
   readonly _visibility_modifier?: VisibilityModifier;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   readonly _type_parameters?: TypeParameters;
   readonly _where_clause?: WhereClause;
   readonly _body: EnumVariantList;
   visibilityModifier(): VisibilityModifier | undefined;
-  name(): TypeIdentifier;
+  name(): Identifier;
   typeParameters(): TypeParameters | undefined;
   whereClause(): WhereClause | undefined;
   body(): EnumVariantList;
@@ -3010,10 +3008,10 @@ export interface ExternModifier {
 export interface FieldDeclaration {
   readonly $type: TSKindId.FieldDeclaration;
   readonly _visibility_modifier?: VisibilityModifier;
-  readonly _name: FieldIdentifier;
+  readonly _name: Identifier;
   readonly _type: _Type;
   visibilityModifier(): VisibilityModifier | undefined;
-  name(): FieldIdentifier;
+  name(): Identifier;
   type(): _Type;
 }
 
@@ -3026,18 +3024,18 @@ export interface FieldDeclarationList {
 export interface FieldExpression {
   readonly $type: TSKindId.FieldExpression;
   readonly _value: Expression;
-  readonly _field: FieldIdentifier | IntegerLiteral;
+  readonly _field: Identifier | IntegerLiteral;
   value(): Expression;
-  field(): FieldIdentifier | IntegerLiteral;
+  field(): Identifier | IntegerLiteral;
 }
 
 export interface FieldInitializer {
   readonly $type: TSKindId.FieldInitializer;
   readonly _attribute_item?: readonly (AttributeItem)[];
-  readonly _field: FieldIdentifier | IntegerLiteral;
+  readonly _field: Identifier | IntegerLiteral;
   readonly _value: Expression;
   attributeItems(): readonly (AttributeItem)[];
-  field(): FieldIdentifier | IntegerLiteral;
+  field(): Identifier | IntegerLiteral;
   value(): Expression;
 }
 
@@ -3221,17 +3219,17 @@ export interface GenericPattern {
 
 export interface GenericType {
   readonly $type: TSKindId.GenericType;
-  readonly _type: TypeIdentifier | ReservedIdentifier | ScopedTypeIdentifier;
+  readonly _type: Identifier | ScopedTypeIdentifier;
   readonly _type_arguments: TypeArguments;
-  type(): TypeIdentifier | ReservedIdentifier | ScopedTypeIdentifier;
+  type(): Identifier | ScopedTypeIdentifier;
   typeArguments(): TypeArguments;
 }
 
 export interface GenericTypeWithTurbofish {
   readonly $type: TSKindId.GenericTypeWithTurbofish;
-  readonly _type: TypeIdentifier | ScopedIdentifier;
+  readonly _type: Identifier | ScopedIdentifier;
   readonly _type_arguments: TypeArguments;
-  type(): TypeIdentifier | ScopedIdentifier;
+  type(): Identifier | ScopedIdentifier;
   typeArguments(): TypeArguments;
 }
 
@@ -3454,9 +3452,9 @@ export interface MacroDefinitionUFormBrace {
 export type MacroDefinition = MacroDefinitionUFormParen | MacroDefinitionUFormBracket | MacroDefinitionUFormBrace;
 export interface MacroInvocation {
   readonly $type: TSKindId.MacroInvocation;
-  readonly _macro: ScopedIdentifier | Identifier | ReservedIdentifier;
+  readonly _macro: ScopedIdentifier | Identifier;
   readonly _token_tree: DelimTokenTree;
-  macro(): ScopedIdentifier | Identifier | ReservedIdentifier;
+  macro(): ScopedIdentifier | Identifier;
   tokenTree(): DelimTokenTree;
 }
 
@@ -3582,12 +3580,8 @@ export interface OrPatternUFormPrefix {
 export type OrPattern = OrPatternUFormBinary | OrPatternUFormPrefix;
 export interface OrderedFieldDeclarationList {
   readonly $type: TSKindId.OrderedFieldDeclarationList;
-  readonly _attribute_item?: readonly (AttributeItem)[];
-  readonly _visibility_modifier?: VisibilityModifier;
-  readonly _type: _Type;
-  attributeItems(): readonly (AttributeItem)[];
-  visibilityModifier(): VisibilityModifier | undefined;
-  type(): _Type;
+  readonly _attributes?: readonly (AttributeItem | VisibilityModifier | _Type)[];
+  attributes(): readonly (AttributeItem | VisibilityModifier | _Type)[];
 }
 
 export interface Parameter {
@@ -3785,17 +3779,17 @@ export interface ScopedIdentifier {
 export interface ScopedTypeIdentifier {
   readonly $type: TSKindId.ScopedTypeIdentifier;
   readonly _path?: Path | GenericTypeWithTurbofish | BracketedType;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   path(): Path | GenericTypeWithTurbofish | BracketedType | undefined;
-  name(): TypeIdentifier;
+  name(): Identifier;
 }
 
 export interface ScopedTypeIdentifierInExpressionPosition {
   readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
   readonly _path?: Path | GenericTypeWithTurbofish;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   path(): Path | GenericTypeWithTurbofish | undefined;
-  name(): TypeIdentifier;
+  name(): Identifier;
 }
 
 export interface ScopedUseList {
@@ -3864,9 +3858,9 @@ export interface StringLiteral {
 
 export interface StructExpression {
   readonly $type: TSKindId.StructExpression;
-  readonly _name: TypeIdentifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
+  readonly _name: Identifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
   readonly _body: FieldInitializerList;
-  name(): TypeIdentifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
+  name(): Identifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
   body(): FieldInitializerList;
 }
 
@@ -3915,9 +3909,9 @@ export interface StructItemUFormUnit {
 export type StructItem = StructItemUFormBrace | StructItemUFormTuple | StructItemUFormUnit;
 export interface StructPattern {
   readonly $type: TSKindId.StructPattern;
-  readonly _type: TypeIdentifier | ScopedTypeIdentifier;
+  readonly _type: Identifier | ScopedTypeIdentifier;
   readonly _field_pattern?: readonly (FieldPattern | RemainingFieldPattern)[];
-  type(): TypeIdentifier | ScopedTypeIdentifier;
+  type(): Identifier | ScopedTypeIdentifier;
   fieldPatterns(): readonly (FieldPattern | RemainingFieldPattern)[];
 }
 
@@ -4034,7 +4028,7 @@ export interface TraitItem {
   readonly $type: TSKindId.TraitItem;
   readonly _visibility_modifier?: VisibilityModifier;
   readonly _unsafe_marker?: boolean;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   readonly _type_parameters?: TypeParameters;
   readonly _bounds?: TraitBounds;
   readonly _where_clause?: WhereClause;
@@ -4044,7 +4038,7 @@ export interface TraitItem {
   };
   visibilityModifier(): VisibilityModifier | undefined;
   unsafeMarker(): boolean | undefined;
-  name(): TypeIdentifier;
+  name(): Identifier;
   typeParameters(): TypeParameters | undefined;
   bounds(): TraitBounds | undefined;
   whereClause(): WhereClause | undefined;
@@ -4094,17 +4088,17 @@ export interface TupleType {
 export interface TypeArguments {
   readonly $type: TSKindId.TypeArguments;
   readonly _type: NonEmptyArray<_Type | TypeBinding | Lifetime | Literal | Block>;
-  readonly _trait_bounds: NonEmptyArray<TraitBounds>;
+  readonly _trait_bounds?: readonly (TraitBounds)[];
   types(): NonEmptyArray<_Type | TypeBinding | Lifetime | Literal | Block>;
-  traitBounds(): NonEmptyArray<TraitBounds>;
+  traitBounds(): readonly (TraitBounds)[];
 }
 
 export interface TypeBinding {
   readonly $type: TSKindId.TypeBinding;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   readonly _type_arguments?: TypeArguments;
   readonly _type: _Type;
-  name(): TypeIdentifier;
+  name(): Identifier;
   typeArguments(): TypeArguments | undefined;
   type(): _Type;
 }
@@ -4120,13 +4114,13 @@ export interface TypeCastExpression {
 export interface TypeItem {
   readonly $type: TSKindId.TypeItem;
   readonly _visibility_modifier?: VisibilityModifier;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   readonly _type_parameters?: TypeParameters;
   readonly _where_clause?: WhereClause;
   readonly _type: _Type;
   readonly _trailing_where_clause?: WhereClause;
   visibilityModifier(): VisibilityModifier | undefined;
-  name(): TypeIdentifier;
+  name(): Identifier;
   typeParameters(): TypeParameters | undefined;
   whereClause(): WhereClause | undefined;
   type(): _Type;
@@ -4135,10 +4129,10 @@ export interface TypeItem {
 
 export interface TypeParameter {
   readonly $type: TSKindId.TypeParameter;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   readonly _bounds?: TraitBounds;
   readonly _type_parameter_optional1?: TypeParameterOptional1;
-  name(): TypeIdentifier;
+  name(): Identifier;
   bounds(): TraitBounds | undefined;
   typeParameterOptional1(): TypeParameterOptional1 | undefined;
 }
@@ -4163,12 +4157,12 @@ export interface UnaryExpression {
 export interface UnionItem {
   readonly $type: TSKindId.UnionItem;
   readonly _visibility_modifier?: VisibilityModifier;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   readonly _type_parameters?: TypeParameters;
   readonly _where_clause?: WhereClause;
   readonly _body: FieldDeclarationList;
   visibilityModifier(): VisibilityModifier | undefined;
-  name(): TypeIdentifier;
+  name(): Identifier;
   typeParameters(): TypeParameters | undefined;
   whereClause(): WhereClause | undefined;
   body(): FieldDeclarationList;
@@ -4190,8 +4184,8 @@ export interface UseAsClause {
 
 export interface UseBounds {
   readonly $type: TSKindId.UseBounds;
-  readonly _lifetime?: readonly (Lifetime | TypeIdentifier)[];
-  lifetimes(): readonly (Lifetime | TypeIdentifier)[];
+  readonly _lifetime?: readonly (Lifetime | Identifier)[];
+  lifetimes(): readonly (Lifetime | Identifier)[];
 }
 
 export interface UseDeclaration {
@@ -4264,9 +4258,9 @@ export interface WhereClause {
 
 export interface WherePredicate {
   readonly $type: TSKindId.WherePredicate;
-  readonly _left: Lifetime | TypeIdentifier | ScopedTypeIdentifier | GenericType | ReferenceType | PointerType | TupleType | ArrayType | HigherRankedTraitBound | PrimitiveType;
+  readonly _left: Lifetime | Identifier | ScopedTypeIdentifier | GenericType | ReferenceType | PointerType | TupleType | ArrayType | HigherRankedTraitBound | PrimitiveType;
   readonly _bounds: TraitBounds;
-  left(): Lifetime | TypeIdentifier | ScopedTypeIdentifier | GenericType | ReferenceType | PointerType | TupleType | ArrayType | HigherRankedTraitBound | PrimitiveType;
+  left(): Lifetime | Identifier | ScopedTypeIdentifier | GenericType | ReferenceType | PointerType | TupleType | ArrayType | HigherRankedTraitBound | PrimitiveType;
   bounds(): TraitBounds;
 }
 

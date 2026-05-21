@@ -27,7 +27,7 @@ const _leafRe_identifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_metavariable = /^(?:\$[a-zA-Z_]\w*)/u;
 const _leafRe_shebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
 
-export function _arrayExpressionList(config: T.ArrayExpressionList.Config) {
+export function _arrayExpressionList(config: Partial<T.ArrayExpressionList.Config> = {}) {
   const _attributes = config.attributes;
   const _attribute_item = config.attributeItem;
   const _elements = config.elements;
@@ -44,7 +44,7 @@ export function _arrayExpressionList(config: T.ArrayExpressionList.Config) {
     $with: {
       attributes: (...values: T.AttributeItem[]) => _arrayExpressionList({ ...config, attributes: values }),
       attributeItems: (...values: T.AttributeItem[]) => _arrayExpressionList({ ...config, attributeItem: values }),
-      elements: (value: T.Expression) => _arrayExpressionList({ ...config, elements: value }),
+      elements: (...values: T.Expression[]) => _arrayExpressionList({ ...config, elements: values }),
     },
   }, methodsEngine);
 }
@@ -185,7 +185,7 @@ export function _fieldPatternNamed(config: T.FieldPatternNamed.Config) {
     name() { return _name; },
     pattern() { return _pattern; },
     $with: {
-      name: (value: T.FieldIdentifier) => _fieldPatternNamed({ ...config, name: value }),
+      name: (value: T.Identifier) => _fieldPatternNamed({ ...config, name: value }),
       pattern: (value: T.Pattern) => _fieldPatternNamed({ ...config, pattern: value }),
     },
   }, methodsEngine);
@@ -240,7 +240,7 @@ export function functionTypeTraitForm(config: T.FunctionTypeTraitForm.Config) {
     _trait,
     trait() { return _trait; },
     $with: {
-      trait: (value: T.TypeIdentifier | T.ScopedTypeIdentifier) => functionTypeTraitForm({ ...config, trait: value }),
+      trait: (value: T.Identifier | T.ScopedTypeIdentifier) => functionTypeTraitForm({ ...config, trait: value }),
     },
   }, methodsEngine);
 }
@@ -734,25 +734,21 @@ export function abstractType(config: T.AbstractType.Config) {
     trait() { return _trait; },
     $with: {
       typeParameters: (value?: T.TypeParameters) => abstractType({ ...config, typeParameters: value }),
-      trait: (value: T.TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) => abstractType({ ...config, trait: value }),
+      trait: (value: T.Identifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) => abstractType({ ...config, trait: value }),
     },
   }, methodsEngine);
 }
 
-export function arguments_(config: T.Arguments.Config) {
-  const _attribute_item = config.attributeItem;
-  const _expression = config.expression;
+export function arguments_(config: Partial<T.Arguments.Config> = {}) {
+  const _attributes = config.attributes;
   return withMethods({
     $type: TSKindId.Arguments as const,
     $source: 2 as const,
     $named: true as const,
-    _attribute_item,
-    _expression,
-    attributeItems() { return _attribute_item; },
-    expression() { return _expression; },
+    _attributes,
+    attributes() { return _attributes; },
     $with: {
-      attributeItems: (...values: T.AttributeItem[]) => arguments_({ ...config, attributeItem: values }),
-      expression: (value: T.Expression) => arguments_({ ...config, expression: value }),
+      attributes: (...values: (T.AttributeItem | T.Expression)[]) => arguments_({ ...config, attributes: values }),
     },
   }, methodsEngine);
 }
@@ -849,7 +845,7 @@ export function associatedType(config: T.AssociatedType.Config) {
     bounds() { return _bounds; },
     whereClause() { return _where_clause; },
     $with: {
-      name: (value: T.TypeIdentifier) => associatedType({ ...config, name: value }),
+      name: (value: T.Identifier) => associatedType({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => associatedType({ ...config, typeParameters: value }),
       bounds: (value?: T.TraitBounds) => associatedType({ ...config, bounds: value }),
       whereClause: (value?: T.WhereClause) => associatedType({ ...config, whereClause: value }),
@@ -1461,7 +1457,7 @@ export function enumItem(config: T.EnumItem.Config) {
     body() { return _body; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => enumItem({ ...config, visibilityModifier: value }),
-      name: (value: T.TypeIdentifier) => enumItem({ ...config, name: value }),
+      name: (value: T.Identifier) => enumItem({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => enumItem({ ...config, typeParameters: value }),
       whereClause: (value?: T.WhereClause) => enumItem({ ...config, whereClause: value }),
       body: (value: T.EnumVariantList) => enumItem({ ...config, body: value }),
@@ -1634,7 +1630,7 @@ export function fieldDeclaration(config: T.FieldDeclaration.Config) {
     type() { return _type; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => fieldDeclaration({ ...config, visibilityModifier: value }),
-      name: (value: T.FieldIdentifier) => fieldDeclaration({ ...config, name: value }),
+      name: (value: T.Identifier) => fieldDeclaration({ ...config, name: value }),
       type: (value: T._Type) => fieldDeclaration({ ...config, type: value }),
     },
   }, methodsEngine);
@@ -1665,7 +1661,7 @@ export function fieldExpression(config: T.FieldExpression.Config) {
     field() { return _field; },
     $with: {
       value: (value: T.Expression) => fieldExpression({ ...config, value: value }),
-      field: (value: T.FieldIdentifier | T.IntegerLiteral) => fieldExpression({ ...config, field: value }),
+      field: (value: T.Identifier | T.IntegerLiteral) => fieldExpression({ ...config, field: value }),
     },
   }, methodsEngine);
 }
@@ -1686,7 +1682,7 @@ export function fieldInitializer(config: T.FieldInitializer.Config) {
     value() { return _value; },
     $with: {
       attributeItems: (...values: T.AttributeItem[]) => fieldInitializer({ ...config, attributeItem: values }),
-      field: (value: T.FieldIdentifier | T.IntegerLiteral) => fieldInitializer({ ...config, field: value }),
+      field: (value: T.Identifier | T.IntegerLiteral) => fieldInitializer({ ...config, field: value }),
       value: (value: T.Expression) => fieldInitializer({ ...config, value: value }),
     },
   }, methodsEngine);
@@ -2077,7 +2073,7 @@ export function genericType(config: T.GenericType.Config) {
     type() { return _type; },
     typeArguments() { return _type_arguments; },
     $with: {
-      type: (value: T.TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier) => genericType({ ...config, type: value }),
+      type: (value: T.Identifier | T.ScopedTypeIdentifier) => genericType({ ...config, type: value }),
       typeArguments: (value: T.TypeArguments) => genericType({ ...config, typeArguments: value }),
     },
   }, methodsEngine);
@@ -2095,7 +2091,7 @@ export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Conf
     type() { return _type; },
     typeArguments() { return _type_arguments; },
     $with: {
-      type: (value: T.TypeIdentifier | T.ScopedIdentifier) => genericTypeWithTurbofish({ ...config, type: value }),
+      type: (value: T.Identifier | T.ScopedIdentifier) => genericTypeWithTurbofish({ ...config, type: value }),
       typeArguments: (value: T.TypeArguments) => genericTypeWithTurbofish({ ...config, typeArguments: value }),
     },
   }, methodsEngine);
@@ -2594,7 +2590,7 @@ export function macroInvocation(config: T.MacroInvocation.Config) {
     macro() { return _macro; },
     tokenTree() { return _token_tree; },
     $with: {
-      macro: (value: T.ScopedIdentifier | T.Identifier | T.ReservedIdentifier) => macroInvocation({ ...config, macro: value }),
+      macro: (value: T.ScopedIdentifier | T.Identifier) => macroInvocation({ ...config, macro: value }),
       tokenTree: (value: T.DelimTokenTree) => macroInvocation({ ...config, tokenTree: value }),
     },
   }, methodsEngine);
@@ -2889,24 +2885,16 @@ export function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUFormPrefi
   }, methodsEngine);
 }
 
-export function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationList.Config) {
-  const _attribute_item = config.attributeItem;
-  const _visibility_modifier = config.visibilityModifier;
-  const _type = config.type;
+export function orderedFieldDeclarationList(config: Partial<T.OrderedFieldDeclarationList.Config> = {}) {
+  const _attributes = config.attributes;
   return withMethods({
     $type: TSKindId.OrderedFieldDeclarationList as const,
     $source: 2 as const,
     $named: true as const,
-    _attribute_item,
-    _visibility_modifier,
-    _type,
-    attributeItems() { return _attribute_item; },
-    visibilityModifier() { return _visibility_modifier; },
-    type() { return _type; },
+    _attributes,
+    attributes() { return _attributes; },
     $with: {
-      attributeItems: (...values: T.AttributeItem[]) => orderedFieldDeclarationList({ ...config, attributeItem: values }),
-      visibilityModifier: (value?: T.VisibilityModifier) => orderedFieldDeclarationList({ ...config, visibilityModifier: value }),
-      type: (value: T._Type) => orderedFieldDeclarationList({ ...config, type: value }),
+      attributes: (...values: (T.AttributeItem | T.VisibilityModifier | T._Type)[]) => orderedFieldDeclarationList({ ...config, attributes: values }),
     },
   }, methodsEngine);
 }
@@ -3320,7 +3308,7 @@ export function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config) {
     name() { return _name; },
     $with: {
       path: (value?: T.Path | T.GenericTypeWithTurbofish | T.BracketedType) => scopedTypeIdentifier({ ...config, path: value }),
-      name: (value: T.TypeIdentifier) => scopedTypeIdentifier({ ...config, name: value }),
+      name: (value: T.Identifier) => scopedTypeIdentifier({ ...config, name: value }),
     },
   }, methodsEngine);
 }
@@ -3338,7 +3326,7 @@ export function scopedTypeIdentifierInExpressionPosition(config: T.ScopedTypeIde
     name() { return _name; },
     $with: {
       path: (value?: T.Path | T.GenericTypeWithTurbofish) => scopedTypeIdentifierInExpressionPosition({ ...config, path: value }),
-      name: (value: T.TypeIdentifier) => scopedTypeIdentifierInExpressionPosition({ ...config, name: value }),
+      name: (value: T.Identifier) => scopedTypeIdentifierInExpressionPosition({ ...config, name: value }),
     },
   }, methodsEngine);
 }
@@ -3503,7 +3491,7 @@ export function structExpression(config: T.StructExpression.Config) {
     name() { return _name; },
     body() { return _body; },
     $with: {
-      name: (value: T.TypeIdentifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish) => structExpression({ ...config, name: value }),
+      name: (value: T.Identifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish) => structExpression({ ...config, name: value }),
       body: (value: T.FieldInitializerList) => structExpression({ ...config, body: value }),
     },
   }, methodsEngine);
@@ -3610,7 +3598,7 @@ export function structPattern(config: T.StructPattern.Config) {
     type() { return _type; },
     fieldPatterns() { return _field_pattern; },
     $with: {
-      type: (value: T.TypeIdentifier | T.ScopedTypeIdentifier) => structPattern({ ...config, type: value }),
+      type: (value: T.Identifier | T.ScopedTypeIdentifier) => structPattern({ ...config, type: value }),
       fieldPatterns: (...values: (T.FieldPattern | T.RemainingFieldPattern)[]) => structPattern({ ...config, fieldPattern: values }),
     },
   }, methodsEngine);
@@ -3889,7 +3877,7 @@ export function traitItem(config: T.TraitItem.Config) {
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => traitItem({ ...config, visibilityModifier: value }),
       unsafeMarker: (value?: NonNullable<Parameters<typeof traitItem>[0]>['unsafeMarker']) => traitItem({ ...config, unsafeMarker: value }),
-      name: (value: T.TypeIdentifier) => traitItem({ ...config, name: value }),
+      name: (value: T.Identifier) => traitItem({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => traitItem({ ...config, typeParameters: value }),
       bounds: (value?: T.TraitBounds) => traitItem({ ...config, bounds: value }),
       whereClause: (value?: T.WhereClause) => traitItem({ ...config, whereClause: value }),
@@ -4000,7 +3988,7 @@ export function typeArguments(config: T.TypeArguments.Config) {
     traitBounds() { return _trait_bounds; },
     $with: {
       types: (...values: NonEmptyArray<T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>) => typeArguments({ ...config, type: values }),
-      traitBounds: (...values: NonEmptyArray<T.TraitBounds>) => typeArguments({ ...config, traitBounds: values }),
+      traitBounds: (...values: T.TraitBounds[]) => typeArguments({ ...config, traitBounds: values }),
     },
   }, methodsEngine);
 }
@@ -4020,7 +4008,7 @@ export function typeBinding(config: T.TypeBinding.Config) {
     typeArguments() { return _type_arguments; },
     type() { return _type; },
     $with: {
-      name: (value: T.TypeIdentifier) => typeBinding({ ...config, name: value }),
+      name: (value: T.Identifier) => typeBinding({ ...config, name: value }),
       typeArguments: (value?: T.TypeArguments) => typeBinding({ ...config, typeArguments: value }),
       type: (value: T._Type) => typeBinding({ ...config, type: value }),
     },
@@ -4070,7 +4058,7 @@ export function typeItem(config: T.TypeItem.Config) {
     trailingWhereClause() { return _trailing_where_clause; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => typeItem({ ...config, visibilityModifier: value }),
-      name: (value: T.TypeIdentifier) => typeItem({ ...config, name: value }),
+      name: (value: T.Identifier) => typeItem({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => typeItem({ ...config, typeParameters: value }),
       whereClause: (value?: T.WhereClause) => typeItem({ ...config, whereClause: value }),
       type: (value: T._Type) => typeItem({ ...config, type: value }),
@@ -4094,7 +4082,7 @@ export function typeParameter(config: T.TypeParameter.Config) {
     bounds() { return _bounds; },
     typeParameterOptional1() { return _type_parameter_optional1; },
     $with: {
-      name: (value: T.TypeIdentifier) => typeParameter({ ...config, name: value }),
+      name: (value: T.Identifier) => typeParameter({ ...config, name: value }),
       bounds: (value?: T.TraitBounds) => typeParameter({ ...config, bounds: value }),
       typeParameterOptional1: (value?: T.TypeParameterOptional1) => typeParameter({ ...config, typeParameterOptional1: value }),
     },
@@ -4154,7 +4142,7 @@ export function unionItem(config: T.UnionItem.Config) {
     body() { return _body; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => unionItem({ ...config, visibilityModifier: value }),
-      name: (value: T.TypeIdentifier) => unionItem({ ...config, name: value }),
+      name: (value: T.Identifier) => unionItem({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => unionItem({ ...config, typeParameters: value }),
       whereClause: (value?: T.WhereClause) => unionItem({ ...config, whereClause: value }),
       body: (value: T.FieldDeclarationList) => unionItem({ ...config, body: value }),
@@ -4214,7 +4202,7 @@ export function useAsClause(config: T.UseAsClause.Config) {
   }, methodsEngine);
 }
 
-export function useBounds(...children: (T.Lifetime | T.TypeIdentifier)[]) {
+export function useBounds(...children: (T.Lifetime | T.Identifier)[]) {
   const _lifetime = children;
   return withMethods({
     $type: TSKindId.UseBounds as const,
@@ -4222,7 +4210,7 @@ export function useBounds(...children: (T.Lifetime | T.TypeIdentifier)[]) {
     $named: true as const,
     _lifetime,
     lifetimes() { return _lifetime; },
-    $with: { $children: (...vs: (T.Lifetime | T.TypeIdentifier)[]) => useBounds(...vs) },
+    $with: { $children: (...vs: (T.Lifetime | T.Identifier)[]) => useBounds(...vs) },
   }, methodsEngine);
 }
 
@@ -4377,7 +4365,7 @@ export function wherePredicate(config: T.WherePredicate.Config) {
     left() { return _left; },
     bounds() { return _bounds; },
     $with: {
-      left: (value: T.Lifetime | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType) => wherePredicate({ ...config, left: value }),
+      left: (value: T.Lifetime | T.Identifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType) => wherePredicate({ ...config, left: value }),
       bounds: (value: T.TraitBounds) => wherePredicate({ ...config, bounds: value }),
     },
   }, methodsEngine);

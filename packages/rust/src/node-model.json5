@@ -485,13 +485,13 @@
           "name": "elements",
           "propertyName": "elements",
           "paramName": "elements",
-          "required": true,
-          "multiple": false,
+          "required": false,
+          "multiple": true,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "_expression",
               "unresolved": true
             }
@@ -1649,7 +1649,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_field_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -1657,8 +1657,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_field_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "field_identifier": "identifier"
           }
         },
         {
@@ -1926,7 +1929,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -1940,9 +1943,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
+              "identifier",
               "scoped_type_identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -4910,7 +4916,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -4954,7 +4960,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
+              "identifier",
               "scoped_type_identifier",
               "removed_trait_bound",
               "generic_type",
@@ -4962,6 +4968,9 @@
               "tuple_type",
               "bounded_type"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -4996,9 +5005,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItems",
-          "paramName": "attributeItems",
+          "name": "attributes",
+          "propertyName": "attributes",
+          "paramName": "attributes",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -5008,35 +5017,19 @@
               "multiplicity": "array",
               "name": "attribute_item",
               "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "attribute_item"
-            ]
-          }
-        },
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "_expression",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
+              "attribute_item",
               "_expression"
             ]
           }
@@ -5271,7 +5264,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -5279,8 +5272,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -7349,7 +7345,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -7382,12 +7378,15 @@
             "typeName": "",
             "kinds": [
               "higher_ranked_trait_bound",
-              "_type_identifier",
+              "identifier",
               "scoped_type_identifier",
               "generic_type",
               "function_type",
               "tuple_type"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -7506,7 +7505,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -7514,8 +7513,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -8080,7 +8082,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_field_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -8088,8 +8090,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_field_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "field_identifier": "identifier"
           }
         },
         {
@@ -8194,7 +8199,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_field_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -8208,9 +8213,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_field_identifier",
+              "identifier",
               "integer_literal"
             ]
+          },
+          "aliasSources": {
+            "field_identifier": "identifier"
           }
         }
       ],
@@ -8258,7 +8266,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_field_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -8272,9 +8280,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_field_identifier",
+              "identifier",
               "integer_literal"
             ]
+          },
+          "aliasSources": {
+            "field_identifier": "identifier"
           }
         },
         {
@@ -9754,13 +9765,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_reserved_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -9774,10 +9779,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
-              "_reserved_identifier",
+              "identifier",
               "scoped_type_identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -9825,7 +9832,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -9839,9 +9846,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
+              "identifier",
               "scoped_identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -11514,12 +11524,6 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_reserved_identifier",
-              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -11527,8 +11531,7 @@
             "typeName": "",
             "kinds": [
               "scoped_identifier",
-              "identifier",
-              "_reserved_identifier"
+              "identifier"
             ]
           }
         },
@@ -11876,7 +11879,7 @@
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "last_match_arm",
               "unresolved": true
             }
@@ -12468,9 +12471,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItems",
-          "paramName": "attributeItems",
+          "name": "attributes",
+          "propertyName": "attributes",
+          "paramName": "attributes",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -12480,50 +12483,16 @@
               "multiplicity": "array",
               "name": "attribute_item",
               "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "attribute_item"
-            ]
-          }
-        },
-        {
-          "name": "visibility_modifier",
-          "propertyName": "visibilityModifier",
-          "paramName": "visibilityModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "array",
               "name": "visibility_modifier",
               "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "visibility_modifier"
-            ]
-          }
-        },
-        {
-          "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "_type",
               "unresolved": true
             }
@@ -12532,6 +12501,8 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "attribute_item",
+              "visibility_modifier",
               "_type"
             ]
           }
@@ -13872,7 +13843,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -13880,8 +13851,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -13939,7 +13913,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -13947,8 +13921,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -14479,7 +14456,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -14499,12 +14476,13 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
+              "identifier",
               "scoped_type_identifier_in_expression_position",
               "generic_type_with_turbofish"
             ]
           },
           "aliasSources": {
+            "type_identifier": "identifier",
             "scoped_type_identifier": "scoped_type_identifier_in_expression_position"
           }
         },
@@ -14879,7 +14857,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -14893,9 +14871,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
+              "identifier",
               "scoped_type_identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -15632,7 +15613,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -15640,8 +15621,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -16108,13 +16092,13 @@
           "name": "trait_bounds",
           "propertyName": "traitBounds",
           "paramName": "traitBounds",
-          "required": true,
+          "required": false,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "trait_bounds",
               "unresolved": true
             }
@@ -16149,7 +16133,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -16157,8 +16141,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -16309,7 +16296,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -16317,8 +16304,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -16435,7 +16425,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -16443,8 +16433,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -16639,7 +16632,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -16647,8 +16640,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -16875,7 +16871,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -16884,8 +16880,11 @@
             "typeName": "",
             "kinds": [
               "lifetime",
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -17297,7 +17296,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -17354,7 +17353,7 @@
             "typeName": "",
             "kinds": [
               "lifetime",
-              "_type_identifier",
+              "identifier",
               "scoped_type_identifier",
               "generic_type",
               "reference_type",
@@ -17366,6 +17365,7 @@
             ]
           },
           "aliasSources": {
+            "type_identifier": "identifier",
             "primitive_type": "_primitive_type"
           }
         },

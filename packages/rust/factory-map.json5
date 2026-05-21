@@ -26,7 +26,6 @@
     "_expression_statement_block_ending": "spread",
     "_expression_statement_with_semi": "spread",
     "_extern_crate_declaration_optional1": "config",
-    "_field_identifier": "text",
     "_field_pattern_named": "config",
     "_field_pattern_shorthand": "config",
     "_for_expression_optional1": "config",
@@ -308,8 +307,14 @@
     "yield": "text"
   },
   "fieldAliasMap": {
+    "_field_pattern_named.name": {
+      "field_identifier": "identifier"
+    },
     "_field_pattern_shorthand.name": {
       "shorthand_field_identifier": "identifier"
+    },
+    "_function_type_trait_form.trait": {
+      "type_identifier": "identifier"
     },
     "_line_comment_doc.outer": {
       "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
@@ -323,6 +328,12 @@
     "_non_special_token.literal": {
       "primitive_type": "_primitive_type"
     },
+    "abstract_type.trait": {
+      "type_identifier": "identifier"
+    },
+    "associated_type.name": {
+      "type_identifier": "identifier"
+    },
     "attribute.arguments": {
       "token_tree": "delim_token_tree"
     },
@@ -335,8 +346,29 @@
     "block_comment.doc": {
       "doc_comment": "_block_comment_content"
     },
+    "dynamic_type.trait": {
+      "type_identifier": "identifier"
+    },
+    "enum_item.name": {
+      "type_identifier": "identifier"
+    },
+    "field_declaration.name": {
+      "field_identifier": "identifier"
+    },
+    "field_expression.field": {
+      "field_identifier": "identifier"
+    },
+    "field_initializer.field": {
+      "field_identifier": "identifier"
+    },
     "field_pattern_shorthand.name": {
       "shorthand_field_identifier": "identifier"
+    },
+    "generic_type.type": {
+      "type_identifier": "identifier"
+    },
+    "generic_type_with_turbofish.type": {
+      "type_identifier": "identifier"
     },
     "macro_invocation.token_tree": {
       "token_tree": "delim_token_tree"
@@ -354,16 +386,45 @@
     "scoped_type_identifier.path": {
       "generic_type": "generic_type_with_turbofish"
     },
+    "scoped_type_identifier.name": {
+      "type_identifier": "identifier"
+    },
     "scoped_type_identifier_in_expression_position.path": {
       "generic_type": "generic_type_with_turbofish"
     },
+    "scoped_type_identifier_in_expression_position.name": {
+      "type_identifier": "identifier"
+    },
     "struct_expression.name": {
+      "type_identifier": "identifier",
       "scoped_type_identifier": "scoped_type_identifier_in_expression_position"
+    },
+    "struct_pattern.type": {
+      "type_identifier": "identifier"
+    },
+    "trait_item.name": {
+      "type_identifier": "identifier"
     },
     "tuple_struct_pattern.type": {
       "generic_type": "generic_type_with_turbofish"
     },
+    "type_binding.name": {
+      "type_identifier": "identifier"
+    },
+    "type_item.name": {
+      "type_identifier": "identifier"
+    },
+    "type_parameter.name": {
+      "type_identifier": "identifier"
+    },
+    "union_item.name": {
+      "type_identifier": "identifier"
+    },
+    "use_bounds.lifetime": {
+      "type_identifier": "identifier"
+    },
     "where_predicate.left": {
+      "type_identifier": "identifier",
       "primitive_type": "_primitive_type"
     },
     "_visibility_modifier_pub_parens.self": {
@@ -568,8 +629,7 @@
       "trait"
     ],
     "arguments": [
-      "attribute_item",
-      "expression"
+      "attributes"
     ],
     "array_expression": [
       "array_expression_semi",
@@ -945,9 +1005,7 @@
       "or_pattern_prefix"
     ],
     "ordered_field_declaration_list": [
-      "attribute_item",
-      "visibility_modifier",
-      "type"
+      "attributes"
     ],
     "parameter": [
       "pattern",
@@ -1230,8 +1288,8 @@
       "elements": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
-        "multiple": false,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -1943,18 +2001,11 @@
       }
     },
     "arguments": {
-      "attribute_item": {
+      "attributes": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false
-      },
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3597,25 +3648,11 @@
       }
     },
     "ordered_field_declaration_list": {
-      "attribute_item": {
+      "attributes": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
-        "nonEmpty": false
-      },
-      "visibility_modifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -4391,9 +4428,9 @@
       "trait_bounds": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": true,
-        "nonEmpty": true
+        "nonEmpty": false
       }
     },
     "type_binding": {
@@ -5093,7 +5130,7 @@
           "identifier"
         ],
         "named": [
-          "field_identifier",
+          "identifier",
           "string_literal",
           "raw_string_literal",
           "char_literal",
@@ -5101,7 +5138,6 @@
           "integer_literal",
           "float_literal",
           "negative_literal",
-          "identifier",
           "scoped_identifier",
           "generic_pattern",
           "tuple_pattern",

@@ -2336,8 +2336,8 @@ export interface ForHeaderLetConstKind {
 
 export interface ForHeaderLhs {
   readonly $type: TSKindId.ForHeaderLhs;
-  readonly _left: LhsExpression | ParenthesizedExpression;
-  left(): LhsExpression | ParenthesizedExpression;
+  readonly _left: MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression | ParenthesizedExpression;
+  left(): MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression | ParenthesizedExpression;
 }
 
 export interface ForHeaderVarKind {
@@ -2410,10 +2410,10 @@ export interface Initializer {
 
 export interface JsxStartOpeningElement {
   readonly $type: "_jsx_start_opening_element";
-  readonly _name: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
+  readonly _name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   readonly _type_arguments?: TypeArguments;
   readonly _attribute?: readonly (_JsxAttribute)[];
-  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
+  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
   typeArguments(): TypeArguments | undefined;
   attributes(): readonly (_JsxAttribute)[];
 }
@@ -2621,12 +2621,12 @@ export interface UpdateExpressionPrefix {
 export interface AbstractClassDeclaration {
   readonly $type: TSKindId.AbstractClassDeclaration;
   readonly _decorator?: readonly (Decorator)[];
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   readonly _type_parameters?: TypeParameters;
   readonly _class_heritage?: ClassHeritage;
   readonly _body: ClassBody;
   decorators(): readonly (Decorator)[];
-  name(): TypeIdentifier;
+  name(): Identifier;
   typeParameters(): TypeParameters | undefined;
   classHeritage(): ClassHeritage | undefined;
   body(): ClassBody;
@@ -2783,9 +2783,9 @@ export interface AssertsAnnotation {
 
 export interface AssignmentExpression {
   readonly $type: TSKindId.AssignmentExpression;
-  readonly _left: ParenthesizedExpression | LhsExpression;
+  readonly _left: ParenthesizedExpression | MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
   readonly _right: Expression;
-  left(): ParenthesizedExpression | LhsExpression;
+  left(): ParenthesizedExpression | MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
   right(): Expression;
 }
 
@@ -2882,12 +2882,12 @@ export interface CatchClause {
 export interface Class {
   readonly $type: TSKindId.Class;
   readonly _decorator?: readonly (Decorator)[];
-  readonly _name?: TypeIdentifier;
+  readonly _name?: Identifier;
   readonly _type_parameters?: TypeParameters;
   readonly _class_heritage?: ClassHeritage;
   readonly _body: ClassBody;
   decorators(): readonly (Decorator)[];
-  name(): TypeIdentifier | undefined;
+  name(): Identifier | undefined;
   typeParameters(): TypeParameters | undefined;
   classHeritage(): ClassHeritage | undefined;
   body(): ClassBody;
@@ -2902,13 +2902,13 @@ export interface ClassBody {
 export interface ClassDeclaration {
   readonly $type: TSKindId.ClassDeclaration;
   readonly _decorator?: readonly (Decorator)[];
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   readonly _type_parameters?: TypeParameters;
   readonly _class_heritage?: ClassHeritage;
   readonly _body: ClassBody;
   readonly _automatic_semicolon?: string;
   decorators(): readonly (Decorator)[];
-  name(): TypeIdentifier;
+  name(): Identifier;
   typeParameters(): TypeParameters | undefined;
   classHeritage(): ClassHeritage | undefined;
   body(): ClassBody;
@@ -3189,8 +3189,8 @@ export interface ExtendsClause {
 
 export interface ExtendsTypeClause {
   readonly $type: TSKindId.ExtendsTypeClause;
-  readonly _type: NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
-  types(): NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
+  readonly _type: NonEmptyArray<Identifier | NestedTypeIdentifier | GenericType>;
+  types(): NonEmptyArray<Identifier | NestedTypeIdentifier | GenericType>;
 }
 
 export interface FieldDefinition {
@@ -3360,9 +3360,9 @@ export interface GeneratorFunctionDeclaration {
 
 export interface GenericType {
   readonly $type: TSKindId.GenericType;
-  readonly _name: TypeIdentifier | NestedTypeIdentifier;
+  readonly _name: Identifier | NestedTypeIdentifier;
   readonly _type_arguments: TypeArguments;
-  name(): TypeIdentifier | NestedTypeIdentifier;
+  name(): Identifier | NestedTypeIdentifier;
   typeArguments(): TypeArguments;
 }
 
@@ -3537,9 +3537,9 @@ export interface IndexTypeQuery {
 
 export interface InferType {
   readonly $type: TSKindId.InferType;
-  readonly _type_identifier: TypeIdentifier;
+  readonly _type_identifier: Identifier;
   readonly _constraint: Type;
-  typeIdentifier(): TypeIdentifier;
+  typeIdentifier(): Identifier;
   constraint(): Type;
 }
 
@@ -3553,11 +3553,11 @@ export interface InstantiationExpression {
 
 export interface InterfaceDeclaration {
   readonly $type: TSKindId.InterfaceDeclaration;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   readonly _type_parameters?: TypeParameters;
   readonly _extends_type_clause?: ExtendsTypeClause;
   readonly _body: ObjectType;
-  name(): TypeIdentifier;
+  name(): Identifier;
   typeParameters(): TypeParameters | undefined;
   extendsTypeClause(): ExtendsTypeClause | undefined;
   body(): ObjectType;
@@ -3617,20 +3617,20 @@ export interface JsxNamespaceName {
 
 export interface JsxOpeningElement {
   readonly $type: "jsx_opening_element";
-  readonly _name: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
+  readonly _name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   readonly _type_arguments?: TypeArguments;
   readonly _attribute?: readonly (_JsxAttribute)[];
-  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
+  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
   typeArguments(): TypeArguments | undefined;
   attributes(): readonly (_JsxAttribute)[];
 }
 
 export interface JsxSelfClosingElement {
   readonly $type: "jsx_self_closing_element";
-  readonly _name: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
+  readonly _name?: _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
   readonly _type_arguments?: TypeArguments;
   readonly _attribute?: readonly (_JsxAttribute)[];
-  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier;
+  name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
   typeArguments(): TypeArguments | undefined;
   attributes(): readonly (_JsxAttribute)[];
 }
@@ -3672,10 +3672,10 @@ export interface LookupType {
 
 export interface MappedTypeClause {
   readonly $type: TSKindId.MappedTypeClause;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   readonly _type: Type;
   readonly _alias?: Type;
-  name(): TypeIdentifier;
+  name(): Identifier;
   type(): Type;
   alias(): Type | undefined;
 }
@@ -3802,9 +3802,9 @@ export interface NestedIdentifier {
 export interface NestedTypeIdentifier {
   readonly $type: TSKindId.NestedTypeIdentifier;
   readonly _module: Identifier | NestedIdentifier;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   module(): Identifier | NestedIdentifier;
-  name(): TypeIdentifier;
+  name(): Identifier;
 }
 
 export interface NewExpression {
@@ -3846,16 +3846,14 @@ export interface ObjectPattern {
 export interface ObjectType {
   readonly $type: TSKindId.ObjectType;
   readonly _opening: number;
-  readonly _export_statement: NonEmptyArray<ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature>;
-  readonly _semicolon?: "," | Semicolon;
+  readonly _members?: "," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon;
   readonly _closing: number;
   readonly __inputHints__?: {
     readonly opening: KindEnum<"{" | "{|", TSKindId.Lbrace | TSKindId.LbracePipe>;
     readonly closing: KindEnum<"}" | "|}", TSKindId.Rbrace | TSKindId.PipeRbrace>;
   };
   opening(): number;
-  exportStatements(): NonEmptyArray<ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature>;
-  semicolon(): "," | Semicolon | undefined;
+  members(): "," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon | undefined;
   closing(): number;
 }
 
@@ -4044,8 +4042,8 @@ export interface RequiredParameter {
 
 export interface RestPattern {
   readonly $type: TSKindId.RestPattern;
-  readonly _lhs_expression: LhsExpression;
-  lhsExpression(): LhsExpression;
+  readonly _member_expression: MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
+  memberExpression(): MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
 }
 
 export interface RestType {
@@ -4213,11 +4211,11 @@ export interface TupleType {
 
 export interface TypeAliasDeclaration {
   readonly $type: TSKindId.TypeAliasDeclaration;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   readonly _type_parameters?: TypeParameters;
   readonly _value: Type;
   readonly _semicolon?: Semicolon;
-  name(): TypeIdentifier;
+  name(): Identifier;
   typeParameters(): TypeParameters | undefined;
   value(): Type;
   semicolon(): Semicolon | undefined;
@@ -4246,14 +4244,14 @@ export interface TypeAssertion {
 export interface TypeParameter {
   readonly $type: TSKindId.TypeParameter;
   readonly _const_marker?: boolean;
-  readonly _name: TypeIdentifier;
+  readonly _name: Identifier;
   readonly _constraint?: Constraint;
   readonly _value?: DefaultType;
   readonly __inputHints__?: {
     readonly const_marker?: BooleanKeyword<"const">;
   };
   constMarker(): boolean | undefined;
-  name(): TypeIdentifier;
+  name(): Identifier;
   constraint(): Constraint | undefined;
   value(): DefaultType | undefined;
 }

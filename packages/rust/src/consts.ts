@@ -1580,8 +1580,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'trait', required: true, multiple: false },
   ],
   'arguments': [
-    { name: 'attributeItems', required: false, multiple: true },
-    { name: 'expression', required: true, multiple: false },
+    { name: 'attributes', required: false, multiple: true },
   ],
   'array_expression': [
     { name: 'arrayExpressionSemi', required: true, multiple: false },
@@ -1974,9 +1973,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'orPatternPrefix', required: true, multiple: false },
   ],
   'ordered_field_declaration_list': [
-    { name: 'attributeItems', required: false, multiple: true },
-    { name: 'visibilityModifier', required: false, multiple: false },
-    { name: 'type', required: true, multiple: false },
+    { name: 'attributes', required: false, multiple: true },
   ],
   'parameter': [
     { name: 'mutableSpecifier', required: false, multiple: false },
@@ -2171,7 +2168,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'type_arguments': [
     { name: 'types', required: true, multiple: true },
-    { name: 'traitBounds', required: true, multiple: true },
+    { name: 'traitBounds', required: false, multiple: true },
   ],
   'type_binding': [
     { name: 'name', required: true, multiple: false },

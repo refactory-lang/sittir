@@ -2501,27 +2501,18 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         337 => { // "object_type"
-            let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("closing"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("members"), false)?;
-            let field_2 = resolve_slot(node, SlotAccessor::Field("opening"), true)?;
-            let children_renderables = children.renderable_items();
-            let field_1_renderables = field_1.renderable_items();
+            let field_1 = resolve_slot(node, SlotAccessor::Field("export_statement"), true)?;
+            let field_2 = resolve_slot(node, SlotAccessor::Field("members"), false)?;
+            let field_3 = resolve_slot(node, SlotAccessor::Field("opening"), true)?;
             let template = ObjectTypeTemplate {
-                export_statement: ListNonterminalView {
-                    items: children_renderables.as_slice(),
-                    separator: children.separator,
-                    leading: children.leading_sep,
-                    trailing: children.trailing_sep,
-                },
                 closing: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                members: ListNonterminalView {
-                    items: field_1_renderables.as_slice(),
-                    separator: field_1.separator,
-                    leading: field_1.leading_sep,
-                    trailing: field_1.trailing_sep,
+                export_statement: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                members: match field_2.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
                 },
-                opening: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                opening: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
             };
             template.render_into(dest)
         }
@@ -2802,26 +2793,18 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         260 => { // "rest_pattern"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
-            let field_0 = resolve_slot(node, SlotAccessor::Field("member_expression"), false)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("non_null_expression"), false)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("non_null_expression"), false)?;
             let field_0_renderables = field_0.renderable_items();
-            let field_1_renderables = field_1.renderable_items();
             let template = RestPatternTemplate {
-                lhs_expression: match children.kind {
+                member_expression: match children.kind {
                 ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
                 ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
             },
-                member_expression: ListNonterminalView {
+                non_null_expression: ListNonterminalView {
                     items: field_0_renderables.as_slice(),
                     separator: field_0.separator,
                     leading: field_0.leading_sep,
                     trailing: field_0.trailing_sep,
-                },
-                non_null_expression: ListNonterminalView {
-                    items: field_1_renderables.as_slice(),
-                    separator: field_1.separator,
-                    leading: field_1.leading_sep,
-                    trailing: field_1.trailing_sep,
                 },
             };
             template.render_into(dest)

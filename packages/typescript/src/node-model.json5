@@ -2295,7 +2295,37 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_lhs_expression",
+              "name": "member_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "subscript_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_destructuring_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "non_null_expression",
               "unresolved": true
             },
             {
@@ -2309,9 +2339,17 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_lhs_expression",
+              "member_expression",
+              "subscript_expression",
+              "_identifier",
+              "_reserved_identifier",
+              "_destructuring_pattern",
+              "non_null_expression",
               "parenthesized_expression"
             ]
+          },
+          "aliasSources": {
+            "identifier": "_reserved_identifier"
           }
         }
       ],
@@ -2931,31 +2969,31 @@
           "name": "name",
           "propertyName": "name",
           "paramName": "name",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_jsx_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "jsx_namespace_name",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "nested_identifier",
               "unresolved": true
             }
@@ -4906,7 +4944,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -4914,8 +4952,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -6102,7 +6143,37 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_lhs_expression",
+              "name": "member_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "subscript_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_destructuring_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "non_null_expression",
               "unresolved": true
             }
           ],
@@ -6111,8 +6182,16 @@
             "typeName": "",
             "kinds": [
               "parenthesized_expression",
-              "_lhs_expression"
+              "member_expression",
+              "subscript_expression",
+              "_identifier",
+              "_reserved_identifier",
+              "_destructuring_pattern",
+              "non_null_expression"
             ]
+          },
+          "aliasSources": {
+            "identifier": "_reserved_identifier"
           }
         },
         {
@@ -7087,7 +7166,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -7095,8 +7174,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -7278,7 +7360,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -7286,8 +7368,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -9462,7 +9547,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -9482,10 +9567,13 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
+              "identifier",
               "nested_type_identifier",
               "generic_type"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -10926,7 +11014,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -10940,9 +11028,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
+              "identifier",
               "nested_type_identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -12248,7 +12339,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -12256,8 +12347,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -12382,7 +12476,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -12390,8 +12484,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -12881,31 +12978,31 @@
           "name": "name",
           "propertyName": "name",
           "paramName": "name",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_jsx_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "jsx_namespace_name",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "nested_identifier",
               "unresolved": true
             }
@@ -12985,31 +13082,31 @@
           "name": "name",
           "propertyName": "name",
           "paramName": "name",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_jsx_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "jsx_namespace_name",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "nested_identifier",
               "unresolved": true
             }
@@ -13420,7 +13517,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -13428,8 +13525,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -14474,7 +14574,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -14482,8 +14582,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -14895,67 +14998,9 @@
           }
         },
         {
-          "name": "export_statement",
-          "propertyName": "exportStatements",
-          "paramName": "exportStatements",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "export_statement",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "property_signature",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "call_signature",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "construct_signature",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "index_signature",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "method_signature",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "export_statement",
-              "property_signature",
-              "call_signature",
-              "construct_signature",
-              "index_signature",
-              "method_signature"
-            ]
-          }
-        },
-        {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
+          "name": "members",
+          "propertyName": "members",
+          "paramName": "members",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -14966,16 +15011,63 @@
               "value": ","
             },
             {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": ";"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "export_statement",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "property_signature",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "call_signature",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "construct_signature",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "index_signature",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "method_signature",
+              "unresolved": true
+            },
+            {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_semicolon",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
+              "export_statement",
+              "property_signature",
+              "call_signature",
+              "construct_signature",
+              "index_signature",
+              "method_signature",
               "_semicolon"
             ]
           }
@@ -16548,9 +16640,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "lhs_expression",
-          "propertyName": "lhsExpression",
-          "paramName": "lhsExpression",
+          "name": "member_expression",
+          "propertyName": "memberExpression",
+          "paramName": "memberExpression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -16558,7 +16650,37 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_lhs_expression",
+              "name": "member_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "subscript_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_reserved_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_destructuring_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "non_null_expression",
               "unresolved": true
             }
           ],
@@ -16566,8 +16688,16 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_lhs_expression"
+              "member_expression",
+              "subscript_expression",
+              "_identifier",
+              "_reserved_identifier",
+              "_destructuring_pattern",
+              "non_null_expression"
             ]
+          },
+          "aliasSources": {
+            "identifier": "_reserved_identifier"
           }
         }
       ],
@@ -17882,7 +18012,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -17890,8 +18020,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -18133,7 +18266,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -18141,8 +18274,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {

@@ -96,7 +96,7 @@ pub mod filters {
 pub struct ArrayExpressionListTemplate<'a> {
     pub attribute_item: ListNonterminalView<'a>,
     pub attributes: ListNonterminalView<'a>,
-    pub elements: SingleNonterminalView<'a>,
+    pub elements: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -511,9 +511,8 @@ pub struct AbstractTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "arguments.jinja", escape = "none")]
 pub struct ArgumentsTemplate<'a> {
-    pub attribute_item: ListNonterminalView<'a>,
+    pub attribute_item: SingleNonterminalView<'a>,
     pub attributes: ListNonterminalView<'a>,
-    pub expression: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1211,8 +1210,8 @@ pub struct OrPatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "ordered_field_declaration_list.jinja", escape = "none")]
 pub struct OrderedFieldDeclarationListTemplate<'a> {
-    pub attribute_item: ListNonterminalView<'a>,
-    pub type_: SingleNonterminalView<'a>,
+    pub attribute_item: OptionalNonterminalView<'a>,
+    pub type_: OptionalNonterminalView<'a>,
     pub visibility_modifier: OptionalNonterminalView<'a>,
 }
 

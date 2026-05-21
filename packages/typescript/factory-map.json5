@@ -48,7 +48,6 @@
     "_index_signature_colon": "config",
     "_index_signature_mapped_type_clause": "spread",
     "_kind": "text",
-    "_lhs_expression": "spread",
     "_number": "config",
     "_object_type_closing": "text",
     "_object_type_opening": "text",
@@ -68,7 +67,6 @@
     "_semicolon": "text",
     "_static_marker": "text",
     "_string_opening": "text",
-    "_type_identifier": "text",
     "_type_query_call_expression": "config",
     "_type_query_call_expression_in_type_annotation": "config",
     "_type_query_instantiation_expression": "config",
@@ -345,6 +343,9 @@
       "for_header_var_kind": "_for_header_var_kind",
       "for_header_let_const_kind": "_for_header_let_const_kind"
     },
+    "_for_header_lhs.left": {
+      "identifier": "_reserved_identifier"
+    },
     "_index_signature_colon.name": {
       "identifier": "_reserved_identifier"
     },
@@ -388,7 +389,13 @@
       "member_expression": "_type_query_member_expression",
       "call_expression": "_type_query_call_expression"
     },
+    "abstract_class_declaration.name": {
+      "type_identifier": "identifier"
+    },
     "arrow_function_parameter.parameter": {
+      "identifier": "_reserved_identifier"
+    },
+    "assignment_expression.left": {
       "identifier": "_reserved_identifier"
     },
     "augmented_assignment_expression.left": {
@@ -397,10 +404,16 @@
     "break_statement.label": {
       "statement_identifier": "identifier"
     },
+    "class.name": {
+      "type_identifier": "identifier"
+    },
     "class_body.class_body_method": {
       "class_body_method": "_class_body_method",
       "class_body_method_sig": "_class_body_method_sig",
       "class_body_member": "_class_body_member"
+    },
+    "class_declaration.name": {
+      "type_identifier": "identifier"
     },
     "continue_statement.label": {
       "statement_identifier": "identifier"
@@ -423,10 +436,22 @@
       "member_expression": "decorator_member_expression",
       "call_expression": "decorator_call_expression"
     },
+    "extends_type_clause.type": {
+      "type_identifier": "identifier"
+    },
     "for_in_statement.for_header_lhs": {
       "for_header_lhs": "_for_header_lhs",
       "for_header_var_kind": "_for_header_var_kind",
       "for_header_let_const_kind": "_for_header_let_const_kind"
+    },
+    "generic_type.name": {
+      "type_identifier": "identifier"
+    },
+    "infer_type.type_identifier": {
+      "type_identifier": "identifier"
+    },
+    "interface_declaration.name": {
+      "type_identifier": "identifier"
     },
     "interface_declaration.body": {
       "interface_body": "object_type"
@@ -443,6 +468,9 @@
     "literal_type.number": {
       "unary_expression": "_number"
     },
+    "mapped_type_clause.name": {
+      "type_identifier": "identifier"
+    },
     "member_expression.property": {
       "property_identifier": "identifier"
     },
@@ -451,6 +479,9 @@
     },
     "nested_identifier.property": {
       "property_identifier": "identifier"
+    },
+    "nested_type_identifier.name": {
+      "type_identifier": "identifier"
     },
     "object.pair": {
       "shorthand_property_identifier": "_shorthand_property_identifier"
@@ -471,6 +502,9 @@
       "public_field_definition_readonly_first": "_public_field_definition_readonly_first",
       "public_field_definition_accessor_opt": "_public_field_definition_accessor_opt"
     },
+    "rest_pattern.member_expression": {
+      "identifier": "_reserved_identifier"
+    },
     "string.contents": {
       "string_fragment": "unescaped_single_string_fragment"
     },
@@ -479,6 +513,12 @@
     },
     "template_string.template_chars": {
       "string_fragment": "_template_chars"
+    },
+    "type_alias_declaration.name": {
+      "type_identifier": "identifier"
+    },
+    "type_parameter.name": {
+      "type_identifier": "identifier"
     },
     "type_predicate.name": {
       "identifier": "predefined_type"
@@ -618,9 +658,6 @@
     ],
     "_index_signature_mapped_type_clause": [
       "mapped_type_clause"
-    ],
-    "_lhs_expression": [
-      "member_expression"
     ],
     "_number": [
       "operator",
@@ -1172,8 +1209,7 @@
     ],
     "object_type": [
       "opening",
-      "export_statement",
-      "semicolon",
+      "members",
       "closing"
     ],
     "omitting_type_annotation": [
@@ -1247,7 +1283,7 @@
       "value"
     ],
     "rest_pattern": [
-      "lhs_expression"
+      "member_expression"
     ],
     "rest_type": [
       "type"
@@ -1887,15 +1923,6 @@
     },
     "_index_signature_mapped_type_clause": {
       "mapped_type_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_lhs_expression": {
-      "member_expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3958,7 +3985,7 @@
       "name": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       },
@@ -3981,7 +4008,7 @@
       "name": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       },
@@ -4424,14 +4451,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "export_statement": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      },
-      "semicolon": {
+      "members": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4801,7 +4821,7 @@
       }
     },
     "rest_pattern": {
-      "lhs_expression": {
+      "member_expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,

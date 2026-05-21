@@ -318,13 +318,6 @@ pub struct _IndexSignatureMappedTypeClauseTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_lhs_expression.jinja", escape = "none")]
-pub struct LhsExpressionTemplate<'a> {
-    pub member_expression: SingleNonterminalView<'a>,
-    pub non_null_expression: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_number.jinja", escape = "none")]
 pub struct _NumberTemplate<'a> {
     pub argument: SingleNonterminalView<'a>,
@@ -1169,14 +1162,14 @@ pub struct JsxNamespaceNameTemplate<'a> {
 #[template(path = "jsx_opening_element.jinja", escape = "none")]
 pub struct JsxOpeningElementTemplate<'a> {
     pub attribute: ListNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
+    pub name: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "jsx_self_closing_element.jinja", escape = "none")]
 pub struct JsxSelfClosingElementTemplate<'a> {
     pub attribute: ListNonterminalView<'a>,
-    pub name: SingleNonterminalView<'a>,
+    pub name: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1326,8 +1319,8 @@ pub struct ObjectPatternTemplate<'a> {
 #[template(path = "object_type.jinja", escape = "none")]
 pub struct ObjectTypeTemplate<'a> {
     pub closing: SingleNonterminalView<'a>,
-    pub export_statement: ListNonterminalView<'a>,
-    pub members: ListNonterminalView<'a>,
+    pub export_statement: SingleNonterminalView<'a>,
+    pub members: OptionalNonterminalView<'a>,
     pub opening: SingleNonterminalView<'a>,
 }
 
@@ -1468,8 +1461,7 @@ pub struct RequiredParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "rest_pattern.jinja", escape = "none")]
 pub struct RestPatternTemplate<'a> {
-    pub lhs_expression: SingleNonterminalView<'a>,
-    pub member_expression: ListNonterminalView<'a>,
+    pub member_expression: SingleNonterminalView<'a>,
     pub non_null_expression: ListNonterminalView<'a>,
 }
 

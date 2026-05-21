@@ -98,7 +98,23 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
 					if (m.type === 'seq' && m.members.length === 0) return false;
 					return true;
 				})
-				.flatMap((m) => (m.type === 'seq' ? m.members : [m]));
+				.flatMap((m) => {
+					if (m.type !== 'seq') return [m];
+					// Splicing a nested seq into the parent drops the seq NODE.
+					// That is only safe when the seq carries no cardinality of its
+					// own. A seq with a pushed-down `multiplicity` / `separator` /
+					// `fieldName` (e.g. a `repeat(seq(...))` whose wrapper-deletion
+					// stamped the seq) is a distinct repeated/optional GROUP whose
+					// members share a cardinality that differs from the surrounding
+					// seq — splicing would both lose that cardinality and hoist any
+					// inner choice to the parent's seq position (creating a
+					// non-canonical choice-at-seq). Keep such a seq as one member.
+					const sm = m as SeqRule & { multiplicity?: LeafMultiplicity; separator?: unknown; fieldName?: string };
+					if (sm.multiplicity !== undefined || sm.separator !== undefined || sm.fieldName !== undefined) {
+						return [m];
+					}
+					return sm.members;
+				});
 			if (members.length === 0) return withAttrsFrom(rule, { type: 'seq', members: [] });
 			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
 			return withAttrsFrom(rule, { type: 'seq', members });
@@ -793,11 +809,11 @@ export function inlineRefs(
 			// repeat wrapper) so the referrer's walker sees the fields / multi
 			// slot directly and no bare `group` rule leaks into simplified
 			// output; every other target inlines its body verbatim.
-			if (
-				inlineKinds.has(rule.name) &&
-				((rule as { source?: string }).source === 'group-lift' ||
-					resolveGroupOrMultiInlineTarget(rules[rule.name] ?? rule) !== null)
-			) {
+			// `inlineKinds` here is the pre-filtered inline-DECISION set (built in
+			// generate.ts): grammar.inline membership minus supertype / keyword /
+			// token / pattern / enum modelTypes. So a plain membership test is the
+			// gate — supertypes and lexeme leaves were already excluded upstream.
+			if (inlineKinds.has(rule.name)) {
 				if (visited.has(rule.name)) return rule;
 				const target = rules[rule.name];
 				if (!target) return rule;
@@ -912,6 +928,40 @@ function reapplyInlinedLeafAttrs(ref: Rule, inlined: Rule): Rule {
 	return pushAttrsToLeaves(inlined, r.multiplicity, r.separator, r.fieldName);
 }
 
+type LeafMultiplicity = 'optional' | 'array' | 'nonEmptyArray' | undefined;
+
+/**
+ * Combine an OUTER multiplicity (pushed down from an enclosing wrapper) with
+ * a leaf's own INNER multiplicity into the effective slot multiplicity.
+ *
+ * `undefined` means "single / exactly one". The lattice:
+ *   - nothing pushed (`outer === undefined`) → keep `inner`.
+ *   - either side is a collection (array / nonEmptyArray) → the result is a
+ *     collection. It is `nonEmptyArray` only when BOTH sides guarantee ≥1
+ *     element (a side guarantees ≥1 iff it is single (`undefined`) or
+ *     `nonEmptyArray`); otherwise `array` (allows empty).
+ *   - neither is a collection → `optional` if either is optional, else single.
+ *
+ * Examples (the cases this fixes):
+ *   combine('nonEmptyArray', undefined)  → 'nonEmptyArray'  (type_arguments union: ≥1)
+ *   combine('nonEmptyArray', 'optional') → 'array'          (trait_bounds: 0-or-more)
+ *   combine('array', 'optional')         → 'array'
+ *   combine('optional', 'optional')      → 'optional'
+ *
+ * This replaces the prior "outer wins unless inner is already an array" rule,
+ * which clobbered an inner `optional` with the outer `nonEmptyArray` and
+ * produced `NonEmptyArray<T>` where the runtime slot is 0-or-more.
+ */
+function combineMultiplicity(outer: LeafMultiplicity, inner: LeafMultiplicity): LeafMultiplicity {
+	if (outer === undefined) return inner;
+	const isCollection = (m: LeafMultiplicity): boolean => m === 'array' || m === 'nonEmptyArray';
+	const guaranteesOne = (m: LeafMultiplicity): boolean => m === undefined || m === 'nonEmptyArray';
+	if (isCollection(outer) || isCollection(inner)) {
+		return guaranteesOne(outer) && guaranteesOne(inner) ? 'nonEmptyArray' : 'array';
+	}
+	return outer === 'optional' || inner === 'optional' ? 'optional' : undefined;
+}
+
 /**
  * Stamp `multiplicity` / `separator` / `fieldName` onto the slot-bearing
  * leaves of a (wrapper-free) rule body. Structural nodes are descended;
@@ -938,8 +988,8 @@ function pushAttrsToLeaves(
 			// then overrides each arm value with it — so stamp the node itself.
 			// The node survives flattening (only seqs flatten), so leaf-level
 			// stamping of the arms is unnecessary here.
-			const cur = (rule as { multiplicity?: string }).multiplicity;
-			const nextMult = cur === 'array' || cur === 'nonEmptyArray' ? cur : (multiplicity ?? cur);
+			const cur = (rule as { multiplicity?: 'optional' | 'array' | 'nonEmptyArray' }).multiplicity;
+			const nextMult = combineMultiplicity(multiplicity, cur);
 			const patch: Record<string, unknown> = {};
 			if (nextMult !== undefined) patch['multiplicity'] = nextMult;
 			if (separator !== undefined) patch['separator'] = separator;
@@ -957,9 +1007,8 @@ function pushAttrsToLeaves(
 			return { ...rule, content: recurse((rule as { content: Rule }).content) } as Rule;
 		default: {
 			// Leaf: symbol / string / pattern / terminal / enum / supertype / etc.
-			const cur = (rule as { multiplicity?: string }).multiplicity;
-			const nextMult =
-				cur === 'array' || cur === 'nonEmptyArray' ? cur : (multiplicity ?? cur);
+			const cur = (rule as { multiplicity?: 'optional' | 'array' | 'nonEmptyArray' }).multiplicity;
+			const nextMult = combineMultiplicity(multiplicity, cur);
 			const patch: Record<string, unknown> = {};
 			if (nextMult !== undefined) patch['multiplicity'] = nextMult;
 			if (separator !== undefined) patch['separator'] = separator;
