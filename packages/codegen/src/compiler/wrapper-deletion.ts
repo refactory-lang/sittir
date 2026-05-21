@@ -33,6 +33,8 @@ interface WrapperAttrs {
 	fieldName?: string;
 	multiplicity?: 'optional' | 'array' | 'nonEmptyArray';
 	separator?: Rule['separator'];
+	aliasedFrom?: string;
+	aliasNamed?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -151,9 +153,19 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 		}
 
 		case 'alias': {
-			// alias.content is structural — recurse
-			const content = deleteWrapperWith(rule.content, {});
-			return stampAttrs({ ...rule, content }, attrs);
+			// Push the alias down to the leaf, exactly like field/optional/
+			// repeat: `alias(content, value)` stamps `aliasedFrom = value`
+			// (the target name tree-sitter emits) + `aliasNamed` onto the
+			// innermost rule, and the `alias` wrapper node disappears. The
+			// wrapper-free RenderRule/SimplifiedRule then carries alias
+			// provenance as a leaf attribute — consumers no longer match a
+			// mid-tree `alias` node. Outer alias wins if already set.
+			const next: WrapperAttrs = {
+				...attrs,
+				aliasedFrom: attrs.aliasedFrom ?? rule.value,
+				aliasNamed: attrs.aliasNamed ?? rule.named,
+			};
+			return deleteWrapperWith(rule.content, next);
 		}
 
 		case 'polymorph': {
@@ -181,13 +193,21 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
  * with `undefined`-valued fields.
  */
 function stampAttrs(rule: Rule, attrs: WrapperAttrs): RenderRule {
-	if (attrs.fieldName === undefined && attrs.multiplicity === undefined && attrs.separator === undefined) {
+	if (
+		attrs.fieldName === undefined &&
+		attrs.multiplicity === undefined &&
+		attrs.separator === undefined &&
+		attrs.aliasedFrom === undefined &&
+		attrs.aliasNamed === undefined
+	) {
 		return rule as RenderRule;
 	}
 	const patch: Record<string, unknown> = {};
 	if (attrs.fieldName !== undefined) patch['fieldName'] = attrs.fieldName;
 	if (attrs.multiplicity !== undefined) patch['multiplicity'] = attrs.multiplicity;
 	if (attrs.separator !== undefined) patch['separator'] = attrs.separator;
+	if (attrs.aliasedFrom !== undefined) patch['aliasedFrom'] = attrs.aliasedFrom;
+	if (attrs.aliasNamed !== undefined) patch['aliasNamed'] = attrs.aliasNamed;
 	return { ...rule, ...patch } as RenderRule;
 }
 

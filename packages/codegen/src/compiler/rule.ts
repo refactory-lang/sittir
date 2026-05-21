@@ -63,6 +63,20 @@ export interface RuleBase {
 	readonly multiplicity?: Multiplicity;
 	readonly nonterminal?: boolean;
 
+	/**
+	 * Alias provenance pushed down from an `alias()` wrapper by
+	 * `applyWrapperDeletion`, exactly as `fieldName` / `multiplicity` /
+	 * `separator` are pushed down from `field` / `optional` / `repeat`.
+	 * `aliasedFrom` is the alias TARGET (`AliasRule.value` — the name
+	 * tree-sitter emits for the node), `aliasNamed` mirrors
+	 * `AliasRule.named`. Consumers of the wrapper-free RenderRule /
+	 * SimplifiedRule read these off the leaf instead of matching a mid-tree
+	 * `alias` node. (`SymbolRule.aliasedFrom` predates this and carries the
+	 * same target name for Link-resolved symbol aliases.)
+	 */
+	readonly aliasedFrom?: string;
+	readonly aliasNamed?: boolean;
+
 	readonly separator?:
 		| string
 		| readonly Rule[]
