@@ -245,31 +245,96 @@ function classifyIntrinsic(rule: Rule, children: readonly BuildResult[]): RuleCl
 	switch (rule.type) {
 		case 'symbol':
 		case 'supertype':
+		case 'pattern':
+		case 'enum':
+			return 'nonterminal';
+		case 'choice':
+		case 'repeat':
+		case 'repeat1':
+			// Unconditionally nonterminal: a choice is a single union slot
+			// (literal-only = enum); a repeat captures a variable-length
+			// sequence (array slot) even when its content is terminal.
 			return 'nonterminal';
 		case 'string':
-		case 'pattern':
+		case 'terminal':
 		case 'indent':
 		case 'dedent':
 		case 'newline':
 			return 'terminal';
 		case 'token':
-		case 'terminal':
-			return 'terminal';
 		case 'field':
 		case 'alias':
 		case 'seq':
-		case 'choice':
 		case 'optional':
-		case 'repeat':
-		case 'repeat1':
 		case 'variant':
 		case 'clause':
-		case 'enum':
 		case 'group':
 		case 'polymorph':
+			// Recursive: nonterminal iff any child is.
 			return children.some((child) => child.classification.kind === 'nonterminal') ? 'nonterminal' : 'terminal';
 		default:
 			return assertNever(rule);
+	}
+}
+
+/**
+ * Pure, children-free terminality predicate over a {@link Rule}.
+ *
+ * Mirrors {@link classifyIntrinsic} exactly (Table 1 in the
+ * nonterminal-driven-slot-derivation design), but recurses on the rule's
+ * own children instead of pre-classified `BuildResult`s, so it can be
+ * called outside the catalog build (e.g. wrapper-deletion push-down).
+ *
+ * Returns `true` when the rule is intrinsically a slot-bearing nonterminal.
+ */
+export function isNonterminalRuleType(rule: Rule): boolean {
+	switch (rule.type) {
+		case 'symbol':
+		case 'supertype':
+		case 'pattern':
+		case 'enum':
+			return true;
+		case 'choice':
+		case 'repeat':
+		case 'repeat1':
+			return true;
+		case 'string':
+		case 'terminal':
+		case 'indent':
+		case 'dedent':
+		case 'newline':
+			return false;
+		case 'token':
+		case 'field':
+		case 'alias':
+		case 'optional':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'polymorph':
+			return ruleChildren(rule).some(isNonterminalRuleType);
+		case 'seq':
+			return rule.members.some(isNonterminalRuleType);
+		default:
+			return assertNever(rule);
+	}
+}
+
+function ruleChildren(rule: Rule): readonly Rule[] {
+	switch (rule.type) {
+		case 'token':
+		case 'field':
+		case 'alias':
+		case 'optional':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'terminal':
+			return [rule.content];
+		case 'polymorph':
+			return rule.forms.map((form) => form.content);
+		default:
+			return [];
 	}
 }
 
