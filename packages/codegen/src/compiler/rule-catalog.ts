@@ -241,8 +241,17 @@ function classifyRule(
 	};
 }
 
-function classifyIntrinsic(rule: Rule, children: readonly BuildResult[]): RuleClassification['kind'] {
-	switch (rule.type) {
+/**
+ * Single source of truth for the rule-type → terminality decision
+ * (Table 1 in the nonterminal-driven-slot-derivation design).
+ *
+ * Both {@link classifyIntrinsic} (catalog build, classifies pre-built
+ * `BuildResult` children) and {@link isNonterminalRuleType} (children-free
+ * predicate over a bare `Rule`) call this with their own computation of
+ * `anyChildNonterminal`, so the per-rule-type table lives in one place.
+ */
+function classifyByType(ruleType: Rule['type'], anyChildNonterminal: boolean): RuleClassification['kind'] {
+	switch (ruleType) {
 		case 'symbol':
 		case 'supertype':
 		case 'pattern':
@@ -271,53 +280,30 @@ function classifyIntrinsic(rule: Rule, children: readonly BuildResult[]): RuleCl
 		case 'group':
 		case 'polymorph':
 			// Recursive: nonterminal iff any child is.
-			return children.some((child) => child.classification.kind === 'nonterminal') ? 'nonterminal' : 'terminal';
+			return anyChildNonterminal ? 'nonterminal' : 'terminal';
 		default:
-			return assertNever(rule);
+			return assertNever(ruleType);
 	}
+}
+
+function classifyIntrinsic(rule: Rule, children: readonly BuildResult[]): RuleClassification['kind'] {
+	const anyChildNonterminal = children.some((child) => child.classification.kind === 'nonterminal');
+	return classifyByType(rule.type, anyChildNonterminal);
 }
 
 /**
  * Pure, children-free terminality predicate over a {@link Rule}.
  *
- * Mirrors {@link classifyIntrinsic} exactly (Table 1 in the
- * nonterminal-driven-slot-derivation design), but recurses on the rule's
- * own children instead of pre-classified `BuildResult`s, so it can be
- * called outside the catalog build (e.g. wrapper-deletion push-down).
+ * Shares the per-rule-type decision table with {@link classifyIntrinsic} via
+ * {@link classifyByType}, but recurses on the rule's own children instead of
+ * pre-classified `BuildResult`s, so it can be called outside the catalog
+ * build (e.g. wrapper-deletion push-down).
  *
  * Returns `true` when the rule is intrinsically a slot-bearing nonterminal.
  */
 export function isNonterminalRuleType(rule: Rule): boolean {
-	switch (rule.type) {
-		case 'symbol':
-		case 'supertype':
-		case 'pattern':
-		case 'enum':
-			return true;
-		case 'choice':
-		case 'repeat':
-		case 'repeat1':
-			return true;
-		case 'string':
-		case 'terminal':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
-			return false;
-		case 'token':
-		case 'field':
-		case 'alias':
-		case 'optional':
-		case 'variant':
-		case 'clause':
-		case 'group':
-		case 'polymorph':
-			return ruleChildren(rule).some(isNonterminalRuleType);
-		case 'seq':
-			return rule.members.some(isNonterminalRuleType);
-		default:
-			return assertNever(rule);
-	}
+	const anyChildNonterminal = ruleChildren(rule).some(isNonterminalRuleType);
+	return classifyByType(rule.type, anyChildNonterminal) === 'nonterminal';
 }
 
 function ruleChildren(rule: Rule): readonly Rule[] {
@@ -331,6 +317,8 @@ function ruleChildren(rule: Rule): readonly Rule[] {
 		case 'group':
 		case 'terminal':
 			return [rule.content];
+		case 'seq':
+			return rule.members;
 		case 'polymorph':
 			return rule.forms.map((form) => form.content);
 		default:
