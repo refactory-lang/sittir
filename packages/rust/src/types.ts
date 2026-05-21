@@ -515,12 +515,12 @@ export const enum TSKindId {
   Lbrace = 114,
   Rbrace = 115,
   Extern = 116,
-  Else = 117,
-  Lt2 = 118,
-  Dyn = 119,
-  MutableSpecifier = 120,
-  Raw = 121,
-  Yield = 122,
+  Lt2 = 117,
+  Dyn = 118,
+  MutableSpecifier = 119,
+  Raw = 120,
+  Yield = 121,
+  Else = 122,
   In = 123,
   Try = 124,
   Ref = 125,
@@ -775,33 +775,33 @@ export const enum TSKindId {
   TokenRepetitionRepeat1 = 374,
   _NonSpecialTokenRepeat1 = 375,
   DeclarationListRepeat1 = 376,
-  EnumVariantListRepeat1 = 377,
-  EnumVariantListRepeat2 = 378,
-  FieldDeclarationListRepeat1 = 379,
-  OrderedFieldDeclarationListRepeat1 = 380,
-  FunctionModifiersRepeat1 = 381,
-  WhereClauseRepeat1 = 382,
-  TraitBoundsRepeat1 = 383,
-  TypeParametersRepeat1 = 384,
-  UseListRepeat1 = 385,
-  ParametersRepeat1 = 386,
-  ForLifetimesRepeat1 = 387,
-  TupleTypeRepeat1 = 388,
-  UseBoundsRepeat1 = 389,
-  TypeArgumentsRepeat1 = 390,
-  ArgumentsRepeat1 = 391,
-  TupleExpressionRepeat1 = 392,
-  FieldInitializerListRepeat1 = 393,
-  MatchBlockRepeat1 = 394,
-  MatchArmRepeat1 = 395,
-  ClosureParametersRepeat1 = 396,
-  TuplePatternRepeat1 = 397,
-  SlicePatternRepeat1 = 398,
-  StructPatternRepeat1 = 399,
-  StringLiteralRepeat1 = 400,
-  _ArrayExpressionListRepeat1 = 401,
-  _MacroDefinitionParenRepeat1 = 402,
-  _DelimTokenTreeParenRepeat1 = 403,
+  OrderedFieldDeclarationListRepeat1 = 377,
+  OrderedFieldDeclarationListRepeat2 = 378,
+  FunctionModifiersRepeat1 = 379,
+  TraitBoundsRepeat1 = 380,
+  TypeParametersRepeat1 = 381,
+  ForLifetimesRepeat1 = 382,
+  TupleTypeRepeat1 = 383,
+  TypeArgumentsRepeat1 = 384,
+  ArgumentsRepeat1 = 385,
+  TupleExpressionRepeat1 = 386,
+  MatchArmRepeat1 = 387,
+  StringLiteralRepeat1 = 388,
+  _ArrayExpressionListRepeat1 = 389,
+  _MacroDefinitionParenRepeat1 = 390,
+  _DelimTokenTreeParenRepeat1 = 391,
+  _EnumVariantListOptional1Repeat1 = 392,
+  _FieldDeclarationListOptional1Repeat1 = 393,
+  _WhereClauseOptional1Repeat1 = 394,
+  _UseListOptional1Repeat1 = 395,
+  _ParametersOptional1Repeat1 = 396,
+  _UseBoundsOptional1Repeat1 = 397,
+  _FieldInitializerListOptional1Repeat1 = 398,
+  _MatchBlockOptional1Repeat1 = 399,
+  _ClosureParametersOptional1Repeat1 = 400,
+  _TuplePatternOptional1Repeat1 = 401,
+  _SlicePatternOptional1Repeat1 = 402,
+  _StructPatternOptional1Repeat1 = 403,
   FieldIdentifier = 404,
   _ShorthandFieldIdentifier = 406,
   TypeIdentifier = 407,
@@ -924,12 +924,12 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [114, "lbrace"],
   [115, "rbrace"],
   [116, "extern"],
-  [117, "else"],
-  [118, "lt2"],
-  [119, "dyn"],
-  [120, "mutable_specifier"],
-  [121, "raw"],
-  [122, "yield"],
+  [117, "lt2"],
+  [118, "dyn"],
+  [119, "mutable_specifier"],
+  [120, "raw"],
+  [121, "yield"],
+  [122, "else"],
   [123, "in"],
   [124, "try"],
   [125, "ref"],
@@ -1184,33 +1184,33 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [374, "token_repetition_repeat1"],
   [375, "_non_special_token_repeat1"],
   [376, "declaration_list_repeat1"],
-  [377, "enum_variant_list_repeat1"],
-  [378, "enum_variant_list_repeat2"],
-  [379, "field_declaration_list_repeat1"],
-  [380, "ordered_field_declaration_list_repeat1"],
-  [381, "function_modifiers_repeat1"],
-  [382, "where_clause_repeat1"],
-  [383, "trait_bounds_repeat1"],
-  [384, "type_parameters_repeat1"],
-  [385, "use_list_repeat1"],
-  [386, "parameters_repeat1"],
-  [387, "for_lifetimes_repeat1"],
-  [388, "tuple_type_repeat1"],
-  [389, "use_bounds_repeat1"],
-  [390, "type_arguments_repeat1"],
-  [391, "arguments_repeat1"],
-  [392, "tuple_expression_repeat1"],
-  [393, "field_initializer_list_repeat1"],
-  [394, "match_block_repeat1"],
-  [395, "match_arm_repeat1"],
-  [396, "closure_parameters_repeat1"],
-  [397, "tuple_pattern_repeat1"],
-  [398, "slice_pattern_repeat1"],
-  [399, "struct_pattern_repeat1"],
-  [400, "string_literal_repeat1"],
-  [401, "_array_expression_list_repeat1"],
-  [402, "_macro_definition_paren_repeat1"],
-  [403, "_delim_token_tree_paren_repeat1"],
+  [377, "ordered_field_declaration_list_repeat1"],
+  [378, "ordered_field_declaration_list_repeat2"],
+  [379, "function_modifiers_repeat1"],
+  [380, "trait_bounds_repeat1"],
+  [381, "type_parameters_repeat1"],
+  [382, "for_lifetimes_repeat1"],
+  [383, "tuple_type_repeat1"],
+  [384, "type_arguments_repeat1"],
+  [385, "arguments_repeat1"],
+  [386, "tuple_expression_repeat1"],
+  [387, "match_arm_repeat1"],
+  [388, "string_literal_repeat1"],
+  [389, "_array_expression_list_repeat1"],
+  [390, "_macro_definition_paren_repeat1"],
+  [391, "_delim_token_tree_paren_repeat1"],
+  [392, "_enum_variant_list_optional1_repeat1"],
+  [393, "_field_declaration_list_optional1_repeat1"],
+  [394, "_where_clause_optional1_repeat1"],
+  [395, "_use_list_optional1_repeat1"],
+  [396, "_parameters_optional1_repeat1"],
+  [397, "_use_bounds_optional1_repeat1"],
+  [398, "_field_initializer_list_optional1_repeat1"],
+  [399, "_match_block_optional1_repeat1"],
+  [400, "_closure_parameters_optional1_repeat1"],
+  [401, "_tuple_pattern_optional1_repeat1"],
+  [402, "_slice_pattern_optional1_repeat1"],
+  [403, "_struct_pattern_optional1_repeat1"],
   [404, "_field_identifier"],
   [406, "_shorthand_field_identifier"],
   [407, "_type_identifier"],
@@ -1334,12 +1334,12 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "lbrace": return TSKindId.Lbrace;
     case "rbrace": return TSKindId.Rbrace;
     case "extern": return TSKindId.Extern;
-    case "else": return TSKindId.Else;
     case "lt2": return TSKindId.Lt2;
     case "dyn": return TSKindId.Dyn;
     case "mutable_specifier": return TSKindId.MutableSpecifier;
     case "raw": return TSKindId.Raw;
     case "yield": return TSKindId.Yield;
+    case "else": return TSKindId.Else;
     case "in": return TSKindId.In;
     case "try": return TSKindId.Try;
     case "ref": return TSKindId.Ref;
@@ -1594,33 +1594,33 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "token_repetition_repeat1": return TSKindId.TokenRepetitionRepeat1;
     case "_non_special_token_repeat1": return TSKindId._NonSpecialTokenRepeat1;
     case "declaration_list_repeat1": return TSKindId.DeclarationListRepeat1;
-    case "enum_variant_list_repeat1": return TSKindId.EnumVariantListRepeat1;
-    case "enum_variant_list_repeat2": return TSKindId.EnumVariantListRepeat2;
-    case "field_declaration_list_repeat1": return TSKindId.FieldDeclarationListRepeat1;
     case "ordered_field_declaration_list_repeat1": return TSKindId.OrderedFieldDeclarationListRepeat1;
+    case "ordered_field_declaration_list_repeat2": return TSKindId.OrderedFieldDeclarationListRepeat2;
     case "function_modifiers_repeat1": return TSKindId.FunctionModifiersRepeat1;
-    case "where_clause_repeat1": return TSKindId.WhereClauseRepeat1;
     case "trait_bounds_repeat1": return TSKindId.TraitBoundsRepeat1;
     case "type_parameters_repeat1": return TSKindId.TypeParametersRepeat1;
-    case "use_list_repeat1": return TSKindId.UseListRepeat1;
-    case "parameters_repeat1": return TSKindId.ParametersRepeat1;
     case "for_lifetimes_repeat1": return TSKindId.ForLifetimesRepeat1;
     case "tuple_type_repeat1": return TSKindId.TupleTypeRepeat1;
-    case "use_bounds_repeat1": return TSKindId.UseBoundsRepeat1;
     case "type_arguments_repeat1": return TSKindId.TypeArgumentsRepeat1;
     case "arguments_repeat1": return TSKindId.ArgumentsRepeat1;
     case "tuple_expression_repeat1": return TSKindId.TupleExpressionRepeat1;
-    case "field_initializer_list_repeat1": return TSKindId.FieldInitializerListRepeat1;
-    case "match_block_repeat1": return TSKindId.MatchBlockRepeat1;
     case "match_arm_repeat1": return TSKindId.MatchArmRepeat1;
-    case "closure_parameters_repeat1": return TSKindId.ClosureParametersRepeat1;
-    case "tuple_pattern_repeat1": return TSKindId.TuplePatternRepeat1;
-    case "slice_pattern_repeat1": return TSKindId.SlicePatternRepeat1;
-    case "struct_pattern_repeat1": return TSKindId.StructPatternRepeat1;
     case "string_literal_repeat1": return TSKindId.StringLiteralRepeat1;
     case "_array_expression_list_repeat1": return TSKindId._ArrayExpressionListRepeat1;
     case "_macro_definition_paren_repeat1": return TSKindId._MacroDefinitionParenRepeat1;
     case "_delim_token_tree_paren_repeat1": return TSKindId._DelimTokenTreeParenRepeat1;
+    case "_enum_variant_list_optional1_repeat1": return TSKindId._EnumVariantListOptional1Repeat1;
+    case "_field_declaration_list_optional1_repeat1": return TSKindId._FieldDeclarationListOptional1Repeat1;
+    case "_where_clause_optional1_repeat1": return TSKindId._WhereClauseOptional1Repeat1;
+    case "_use_list_optional1_repeat1": return TSKindId._UseListOptional1Repeat1;
+    case "_parameters_optional1_repeat1": return TSKindId._ParametersOptional1Repeat1;
+    case "_use_bounds_optional1_repeat1": return TSKindId._UseBoundsOptional1Repeat1;
+    case "_field_initializer_list_optional1_repeat1": return TSKindId._FieldInitializerListOptional1Repeat1;
+    case "_match_block_optional1_repeat1": return TSKindId._MatchBlockOptional1Repeat1;
+    case "_closure_parameters_optional1_repeat1": return TSKindId._ClosureParametersOptional1Repeat1;
+    case "_tuple_pattern_optional1_repeat1": return TSKindId._TuplePatternOptional1Repeat1;
+    case "_slice_pattern_optional1_repeat1": return TSKindId._SlicePatternOptional1Repeat1;
+    case "_struct_pattern_optional1_repeat1": return TSKindId._StructPatternOptional1Repeat1;
     case "_field_identifier": return TSKindId.FieldIdentifier;
     case "_shorthand_field_identifier": return TSKindId._ShorthandFieldIdentifier;
     case "_type_identifier": return TSKindId.TypeIdentifier;
@@ -2622,9 +2622,9 @@ export type ArrayExpression = ArrayExpressionUFormSemi | ArrayExpressionUFormLis
 export interface ArrayType {
   readonly $type: TSKindId.ArrayType;
   readonly _element: _Type;
-  readonly _array_type_optional1?: ArrayTypeOptional1;
+  readonly _length?: Expression;
   element(): _Type;
-  arrayTypeOptional1(): ArrayTypeOptional1 | undefined;
+  length(): Expression | undefined;
 }
 
 export interface AssignmentExpression {
@@ -2855,10 +2855,10 @@ export interface ConstParameter {
   readonly $type: TSKindId.ConstParameter;
   readonly _name: Identifier;
   readonly _type: _Type;
-  readonly _const_parameter_optional1?: ConstParameterOptional1;
+  readonly _value?: Block | Identifier | Literal | NegativeLiteral;
   name(): Identifier;
   type(): _Type;
-  constParameterOptional1(): ConstParameterOptional1 | undefined;
+  value(): Block | Identifier | Literal | NegativeLiteral | undefined;
 }
 
 export interface ContinueExpression {
@@ -2944,11 +2944,11 @@ export interface EnumVariant {
   readonly _visibility_modifier?: VisibilityModifier;
   readonly _name: Identifier;
   readonly _body?: FieldDeclarationList | OrderedFieldDeclarationList;
-  readonly _enum_variant_optional1?: EnumVariantOptional1;
+  readonly _value?: Expression;
   visibilityModifier(): VisibilityModifier | undefined;
   name(): Identifier;
   body(): FieldDeclarationList | OrderedFieldDeclarationList | undefined;
-  enumVariantOptional1(): EnumVariantOptional1 | undefined;
+  value(): Expression | undefined;
 }
 
 export interface EnumVariantList {
@@ -2989,14 +2989,14 @@ export interface ExternCrateDeclaration {
   readonly _visibility_modifier?: VisibilityModifier;
   readonly _crate: number;
   readonly _name: Identifier;
-  readonly _extern_crate_declaration_optional1?: ExternCrateDeclarationOptional1;
+  readonly _alias?: Identifier;
   readonly __inputHints__?: {
     readonly crate: KindEnum<"crate", TSKindId.Crate>;
   };
   visibilityModifier(): VisibilityModifier | undefined;
   crate(): number;
   name(): Identifier;
-  externCrateDeclarationOptional1(): ExternCrateDeclarationOptional1 | undefined;
+  alias(): Identifier | undefined;
 }
 
 export interface ExternModifier {
@@ -3139,7 +3139,7 @@ export interface FunctionItem {
   readonly _name: Identifier | Metavariable;
   readonly _type_parameters?: TypeParameters;
   readonly _parameters: Parameters;
-  readonly _function_item_optional1?: FunctionItemOptional1;
+  readonly _return_type?: _Type;
   readonly _where_clause?: WhereClause;
   readonly _body: Block;
   visibilityModifier(): VisibilityModifier | undefined;
@@ -3147,7 +3147,7 @@ export interface FunctionItem {
   name(): Identifier | Metavariable;
   typeParameters(): TypeParameters | undefined;
   parameters(): Parameters;
-  functionItemOptional1(): FunctionItemOptional1 | undefined;
+  returnType(): _Type | undefined;
   whereClause(): WhereClause | undefined;
   body(): Block;
 }
@@ -3347,16 +3347,16 @@ export interface LetDeclaration {
   readonly $type: TSKindId.LetDeclaration;
   readonly _mutable_specifier?: boolean;
   readonly _pattern: Pattern;
-  readonly _let_declaration_optional1?: LetDeclarationOptional1;
-  readonly _let_declaration_optional2?: LetDeclarationOptional2;
+  readonly _type?: _Type;
+  readonly _value?: Expression;
   readonly _let_declaration_optional3?: LetDeclarationOptional3;
   readonly __inputHints__?: {
     readonly mutable_specifier?: BooleanKeyword<"mut">;
   };
   mutableSpecifier(): boolean | undefined;
   pattern(): Pattern;
-  letDeclarationOptional1(): LetDeclarationOptional1 | undefined;
-  letDeclarationOptional2(): LetDeclarationOptional2 | undefined;
+  type(): _Type | undefined;
+  value(): Expression | undefined;
   letDeclarationOptional3(): LetDeclarationOptional3 | undefined;
 }
 
@@ -3512,9 +3512,9 @@ export interface MatchExpression {
 export interface MatchPattern {
   readonly $type: TSKindId.MatchPattern;
   readonly _pattern: Pattern;
-  readonly _match_pattern_optional1?: MatchPatternOptional1;
+  readonly _condition?: Condition;
   pattern(): Pattern;
-  matchPatternOptional1(): MatchPatternOptional1 | undefined;
+  condition(): Condition | undefined;
 }
 
 export interface ModItemInline {
@@ -4131,10 +4131,10 @@ export interface TypeParameter {
   readonly $type: TSKindId.TypeParameter;
   readonly _name: Identifier;
   readonly _bounds?: TraitBounds;
-  readonly _type_parameter_optional1?: TypeParameterOptional1;
+  readonly _default_type?: _Type;
   name(): Identifier;
   bounds(): TraitBounds | undefined;
-  typeParameterOptional1(): TypeParameterOptional1 | undefined;
+  defaultType(): _Type | undefined;
 }
 
 export interface TypeParameters {
@@ -4266,10 +4266,10 @@ export interface WherePredicate {
 
 export interface WhileExpression {
   readonly $type: TSKindId.WhileExpression;
-  readonly _while_expression_optional1?: WhileExpressionOptional1;
+  readonly _label?: Label;
   readonly _condition: Condition;
   readonly _body: Block;
-  whileExpressionOptional1(): WhileExpressionOptional1 | undefined;
+  label(): Label | undefined;
   condition(): Condition;
   body(): Block;
 }

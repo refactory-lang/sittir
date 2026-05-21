@@ -189,25 +189,56 @@ function synthesizeOptionalGroups(
 	const recursed = recurseChildren(rule, (r) =>
 		synthesizeOptionalGroups(r, synthRules, parentKind, state, dedupe)
 	);
-	if (!isOptionalType(recursed.type)) return recursed;
-	const content = (recursed as unknown as { content?: Rule }).content;
-	if (!content || typeof content !== 'object') return recursed;
-	const t = (content as { type?: string }).type;
-	// STRICT trigger: only seq content. Drops the prior choice case so
-	// authored choices and polymorphs survive untouched. No
-	// hasSlotBearingMember filter — strict-seq is the trigger.
-	if (!isSeqType(t)) return recursed;
 
-	const synName = synthesizeGroupName(content, parentKind, 'optional', state, dedupe);
-	if (!(synName in synthRules)) {
-		synthRules[synName] = content;
+	// Case 1 — sittir-shape `optional(seq(...))` (the IR/evaluate path, where
+	// `optional()` keeps its lowercase wrapper).
+	if (isOptionalType(recursed.type)) {
+		const content = (recursed as unknown as { content?: Rule }).content;
+		if (!content || typeof content !== 'object') return recursed;
+		if (!isSeqType((content as { type?: string }).type)) return recursed;
+		const synName = synthesizeGroupName(content, parentKind, 'optional', state, dedupe);
+		if (!(synName in synthRules)) synthRules[synName] = content;
+		const symbolRef = {
+			type: detectCase(recursed) === 'upper' ? 'SYMBOL' : 'symbol',
+			name: synName,
+			source: 'group-lift'
+		} as unknown as Rule;
+		return { ...recursed, content: symbolRef } as Rule;
 	}
-	const symbolRef = {
-		type: detectCase(recursed) === 'upper' ? 'SYMBOL' : 'symbol',
-		name: synName,
-		source: 'group-lift'
-	} as unknown as Rule;
-	return { ...recursed, content: symbolRef } as Rule;
+
+	// Case 2 — tree-sitter NORMALIZED optional `CHOICE[<seq>, BLANK]` (the
+	// grammar-feeding path, where the global `optional()` lowers to a 2-member
+	// choice with a BLANK). This is what reaches grammar.json, so without this
+	// branch NO `_*_optional<N>` helper is ever synthesized into the parser.
+	// A 2-member CHOICE with exactly one BLANK and one SEQ is unambiguously an
+	// optional(seq) — real unions never carry a BLANK member. Mirrors enrich's
+	// CHOICE[X,BLANK] descent. The non-blank SEQ member is lifted; the choice
+	// is rewritten to CHOICE[SYMBOL(helper), BLANK] so `optional` semantics and
+	// the inline-flat runtime are preserved.
+	if (isChoiceType(recursed.type)) {
+		const members = (recursed as unknown as { members?: Rule[] }).members;
+		if (!Array.isArray(members) || members.length !== 2) return recursed;
+		const isBlank = (m: Rule | undefined): boolean => {
+			const mt = (m as { type?: string } | undefined)?.type;
+			return mt === 'BLANK' || mt === 'blank';
+		};
+		const blankIdx = members.findIndex(isBlank);
+		const seqIdx = members.findIndex((m) => isSeqType((m as { type?: string }).type));
+		if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return recursed;
+		const seqMember = members[seqIdx]!;
+		const synName = synthesizeGroupName(seqMember, parentKind, 'optional', state, dedupe);
+		if (!(synName in synthRules)) synthRules[synName] = seqMember;
+		const symbolRef = {
+			type: detectCase(recursed) === 'upper' ? 'SYMBOL' : 'symbol',
+			name: synName,
+			source: 'group-lift'
+		} as unknown as Rule;
+		const newMembers = members.slice();
+		newMembers[seqIdx] = symbolRef;
+		return { ...recursed, members: newMembers } as Rule;
+	}
+
+	return recursed;
 }
 
 // ---------------------------------------------------------------------------

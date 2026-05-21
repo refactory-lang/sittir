@@ -478,21 +478,42 @@ function synthesizeOptionalGroups(rule, synthRules, parentKind, state, dedupe) {
     rule,
     (r) => synthesizeOptionalGroups(r, synthRules, parentKind, state, dedupe)
   );
-  if (!isOptionalType(recursed.type)) return recursed;
-  const content = recursed.content;
-  if (!content || typeof content !== "object") return recursed;
-  const t = content.type;
-  if (!isSeqType(t)) return recursed;
-  const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
-  if (!(synName in synthRules)) {
-    synthRules[synName] = content;
+  if (isOptionalType(recursed.type)) {
+    const content = recursed.content;
+    if (!content || typeof content !== "object") return recursed;
+    if (!isSeqType(content.type)) return recursed;
+    const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
+    if (!(synName in synthRules)) synthRules[synName] = content;
+    const symbolRef = {
+      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
+      name: synName,
+      source: "group-lift"
+    };
+    return { ...recursed, content: symbolRef };
   }
-  const symbolRef = {
-    type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
-    name: synName,
-    source: "group-lift"
-  };
-  return { ...recursed, content: symbolRef };
+  if (isChoiceType(recursed.type)) {
+    const members = recursed.members;
+    if (!Array.isArray(members) || members.length !== 2) return recursed;
+    const isBlank = (m) => {
+      const mt = m?.type;
+      return mt === "BLANK" || mt === "blank";
+    };
+    const blankIdx = members.findIndex(isBlank);
+    const seqIdx = members.findIndex((m) => isSeqType(m.type));
+    if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return recursed;
+    const seqMember = members[seqIdx];
+    const synName = synthesizeGroupName(seqMember, parentKind, "optional", state, dedupe);
+    if (!(synName in synthRules)) synthRules[synName] = seqMember;
+    const symbolRef = {
+      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
+      name: synName,
+      source: "group-lift"
+    };
+    const newMembers = members.slice();
+    newMembers[seqIdx] = symbolRef;
+    return { ...recursed, members: newMembers };
+  }
+  return recursed;
 }
 function synthesizeRepeatGroups(rule, synthRules, parentKind, state, dedupe) {
   const recursed = recurseChildren(

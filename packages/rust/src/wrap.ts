@@ -1109,13 +1109,13 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ArrayType as const,
     _element: normalizeSingularWrapSlot(data._element, "element", true, data.$type),
-    _array_type_optional1: normalizeSingularWrapSlot(data._array_type_optional1, "array_type_optional1", false, data.$type),
+    _length: normalizeSingularWrapSlot(data._length, "length", false, data.$type),
 
     element() { return drillIn<T._Type>(this._element, tree); },
-    arrayTypeOptional1() { return drillIn<T.ArrayTypeOptional1 | undefined>(this._array_type_optional1, tree); },
+    length() { return drillIn<T.Expression | undefined>(this._length, tree); },
     $with: {
       element: (v: NonNullable<T.ArrayType['_element']>) => wrapArrayType({ ...data, _element: v }, tree),
-      arrayTypeOptional1: (v: NonNullable<T.ArrayType['_array_type_optional1']>) => wrapArrayType({ ...data, _array_type_optional1: v }, tree),
+      length: (v: NonNullable<T.ArrayType['_length']>) => wrapArrayType({ ...data, _length: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1497,15 +1497,15 @@ export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle) {
     $type: TSKindId.ConstParameter as const,
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
     _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
-    _const_parameter_optional1: normalizeSingularWrapSlot(data._const_parameter_optional1, "const_parameter_optional1", false, data.$type),
+    _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type),
 
     name() { return drillIn<T.Identifier>(this._name, tree); },
     type() { return drillIn<T._Type>(this._type, tree); },
-    constParameterOptional1() { return drillIn<T.ConstParameterOptional1 | undefined>(this._const_parameter_optional1, tree); },
+    value() { return drillIn<T.Block | T.Identifier | T.Literal | T.NegativeLiteral | undefined>(this._value, tree); },
     $with: {
       name: (v: NonNullable<T.ConstParameter['_name']>) => wrapConstParameter({ ...data, _name: v }, tree),
       type: (v: NonNullable<T.ConstParameter['_type']>) => wrapConstParameter({ ...data, _type: v }, tree),
-      constParameterOptional1: (v: NonNullable<T.ConstParameter['_const_parameter_optional1']>) => wrapConstParameter({ ...data, _const_parameter_optional1: v }, tree),
+      value: (v: NonNullable<T.ConstParameter['_value']>) => wrapConstParameter({ ...data, _value: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1649,17 +1649,17 @@ export function wrapEnumVariant(data: T.EnumVariant, tree: TreeHandle) {
     _visibility_modifier: normalizeSingularWrapSlot(data._visibility_modifier, "visibility_modifier", false, data.$type),
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
     _body: normalizeSingularWrapSlot(data._body, "body", false, data.$type),
-    _enum_variant_optional1: normalizeSingularWrapSlot(data._enum_variant_optional1, "enum_variant_optional1", false, data.$type),
+    _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type),
 
     visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
     name() { return drillIn<T.Identifier>(this._name, tree); },
     body() { return drillIn<T.FieldDeclarationList | T.OrderedFieldDeclarationList | undefined>(this._body, tree); },
-    enumVariantOptional1() { return drillIn<T.EnumVariantOptional1 | undefined>(this._enum_variant_optional1, tree); },
+    value() { return drillIn<T.Expression | undefined>(this._value, tree); },
     $with: {
       visibilityModifier: (v: NonNullable<T.EnumVariant['_visibility_modifier']>) => wrapEnumVariant({ ...data, _visibility_modifier: v }, tree),
       name: (v: NonNullable<T.EnumVariant['_name']>) => wrapEnumVariant({ ...data, _name: v }, tree),
       body: (v: NonNullable<T.EnumVariant['_body']>) => wrapEnumVariant({ ...data, _body: v }, tree),
-      enumVariantOptional1: (v: NonNullable<T.EnumVariant['_enum_variant_optional1']>) => wrapEnumVariant({ ...data, _enum_variant_optional1: v }, tree),
+      value: (v: NonNullable<T.EnumVariant['_value']>) => wrapEnumVariant({ ...data, _value: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1723,17 +1723,17 @@ export function wrapExternCrateDeclaration(data: T.ExternCrateDeclaration, tree:
     _visibility_modifier: normalizeSingularWrapSlot(data._visibility_modifier, "visibility_modifier", false, data.$type),
     _crate: projectKindEnumStorage(normalizeSingularWrapSlot(data._crate, "crate", true, data.$type)),
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
-    _extern_crate_declaration_optional1: normalizeSingularWrapSlot(data._extern_crate_declaration_optional1, "extern_crate_declaration_optional1", false, data.$type),
+    _alias: normalizeSingularWrapSlot(data._alias, "alias", false, data.$type),
 
     visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
     crate() { return this._crate; },
     name() { return drillIn<T.Identifier>(this._name, tree); },
-    externCrateDeclarationOptional1() { return drillIn<T.ExternCrateDeclarationOptional1 | undefined>(this._extern_crate_declaration_optional1, tree); },
+    alias() { return drillIn<T.Identifier | undefined>(this._alias, tree); },
     $with: {
       visibilityModifier: (v: NonNullable<T.ExternCrateDeclaration['_visibility_modifier']>) => wrapExternCrateDeclaration({ ...data, _visibility_modifier: v }, tree),
       crate: (v: NonNullable<T.ExternCrateDeclaration['_crate']>) => wrapExternCrateDeclaration({ ...data, _crate: v }, tree),
       name: (v: NonNullable<T.ExternCrateDeclaration['_name']>) => wrapExternCrateDeclaration({ ...data, _name: v }, tree),
-      externCrateDeclarationOptional1: (v: NonNullable<T.ExternCrateDeclaration['_extern_crate_declaration_optional1']>) => wrapExternCrateDeclaration({ ...data, _extern_crate_declaration_optional1: v }, tree),
+      alias: (v: NonNullable<T.ExternCrateDeclaration['_alias']>) => wrapExternCrateDeclaration({ ...data, _alias: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1950,7 +1950,7 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle) {
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
     _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
     _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
-    _function_item_optional1: normalizeSingularWrapSlot(data._function_item_optional1, "function_item_optional1", false, data.$type),
+    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
     _where_clause: normalizeSingularWrapSlot(data._where_clause, "where_clause", false, data.$type),
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
@@ -1959,7 +1959,7 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle) {
     name() { return drillIn<T.Identifier | T.Metavariable>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     parameters() { return drillIn<T.Parameters>(this._parameters, tree); },
-    functionItemOptional1() { return drillIn<T.FunctionItemOptional1 | undefined>(this._function_item_optional1, tree); },
+    returnType() { return drillIn<T._Type | undefined>(this._return_type, tree); },
     whereClause() { return drillIn<T.WhereClause | undefined>(this._where_clause, tree); },
     body() { return drillIn<T.Block>(this._body, tree); },
     $with: {
@@ -1968,7 +1968,7 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle) {
       name: (v: NonNullable<T.FunctionItem['_name']>) => wrapFunctionItem({ ...data, _name: v }, tree),
       typeParameters: (v: NonNullable<T.FunctionItem['_type_parameters']>) => wrapFunctionItem({ ...data, _type_parameters: v }, tree),
       parameters: (v: NonNullable<T.FunctionItem['_parameters']>) => wrapFunctionItem({ ...data, _parameters: v }, tree),
-      functionItemOptional1: (v: NonNullable<T.FunctionItem['_function_item_optional1']>) => wrapFunctionItem({ ...data, _function_item_optional1: v }, tree),
+      returnType: (v: NonNullable<T.FunctionItem['_return_type']>) => wrapFunctionItem({ ...data, _return_type: v }, tree),
       whereClause: (v: NonNullable<T.FunctionItem['_where_clause']>) => wrapFunctionItem({ ...data, _where_clause: v }, tree),
       body: (v: NonNullable<T.FunctionItem['_body']>) => wrapFunctionItem({ ...data, _body: v }, tree),
     },
@@ -2306,20 +2306,20 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle) {
     $type: TSKindId.LetDeclaration as const,
     _mutable_specifier: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._mutable_specifier, "mutable_specifier", false, data.$type)),
     _pattern: normalizeSingularWrapSlot(data._pattern, "pattern", true, data.$type),
-    _let_declaration_optional1: normalizeSingularWrapSlot(data._let_declaration_optional1, "let_declaration_optional1", false, data.$type),
-    _let_declaration_optional2: normalizeSingularWrapSlot(data._let_declaration_optional2, "let_declaration_optional2", false, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", false, data.$type),
+    _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type),
     _let_declaration_optional3: normalizeSingularWrapSlot(data._let_declaration_optional3, "let_declaration_optional3", false, data.$type),
 
     mutableSpecifier() { return this._mutable_specifier; },
     pattern() { return drillIn<T.Pattern>(this._pattern, tree); },
-    letDeclarationOptional1() { return drillIn<T.LetDeclarationOptional1 | undefined>(this._let_declaration_optional1, tree); },
-    letDeclarationOptional2() { return drillIn<T.LetDeclarationOptional2 | undefined>(this._let_declaration_optional2, tree); },
+    type() { return drillIn<T._Type | undefined>(this._type, tree); },
+    value() { return drillIn<T.Expression | undefined>(this._value, tree); },
     letDeclarationOptional3() { return drillIn<T.LetDeclarationOptional3 | undefined>(this._let_declaration_optional3, tree); },
     $with: {
       mutableSpecifier: (v: NonNullable<T.LetDeclaration['_mutable_specifier']>) => wrapLetDeclaration({ ...data, _mutable_specifier: v }, tree),
       pattern: (v: NonNullable<T.LetDeclaration['_pattern']>) => wrapLetDeclaration({ ...data, _pattern: v }, tree),
-      letDeclarationOptional1: (v: NonNullable<T.LetDeclaration['_let_declaration_optional1']>) => wrapLetDeclaration({ ...data, _let_declaration_optional1: v }, tree),
-      letDeclarationOptional2: (v: NonNullable<T.LetDeclaration['_let_declaration_optional2']>) => wrapLetDeclaration({ ...data, _let_declaration_optional2: v }, tree),
+      type: (v: NonNullable<T.LetDeclaration['_type']>) => wrapLetDeclaration({ ...data, _type: v }, tree),
+      value: (v: NonNullable<T.LetDeclaration['_value']>) => wrapLetDeclaration({ ...data, _value: v }, tree),
       letDeclarationOptional3: (v: NonNullable<T.LetDeclaration['_let_declaration_optional3']>) => wrapLetDeclaration({ ...data, _let_declaration_optional3: v }, tree),
     },
   }, methodsEngine);
@@ -2554,13 +2554,13 @@ export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle) {
     ...data,
     $type: TSKindId.MatchPattern as const,
     _pattern: normalizeSingularWrapSlot(data._pattern, "pattern", true, data.$type),
-    _match_pattern_optional1: normalizeSingularWrapSlot(data._match_pattern_optional1, "match_pattern_optional1", false, data.$type),
+    _condition: normalizeSingularWrapSlot(data._condition, "condition", false, data.$type),
 
     pattern() { return drillIn<T.Pattern>(this._pattern, tree); },
-    matchPatternOptional1() { return drillIn<T.MatchPatternOptional1 | undefined>(this._match_pattern_optional1, tree); },
+    condition() { return drillIn<T.Condition | undefined>(this._condition, tree); },
     $with: {
       pattern: (v: NonNullable<T.MatchPattern['_pattern']>) => wrapMatchPattern({ ...data, _pattern: v }, tree),
-      matchPatternOptional1: (v: NonNullable<T.MatchPattern['_match_pattern_optional1']>) => wrapMatchPattern({ ...data, _match_pattern_optional1: v }, tree),
+      condition: (v: NonNullable<T.MatchPattern['_condition']>) => wrapMatchPattern({ ...data, _condition: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -3528,15 +3528,15 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
     $type: TSKindId.TypeParameter as const,
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
     _bounds: normalizeSingularWrapSlot(data._bounds, "bounds", false, data.$type),
-    _type_parameter_optional1: normalizeSingularWrapSlot(data._type_parameter_optional1, "type_parameter_optional1", false, data.$type),
+    _default_type: normalizeSingularWrapSlot(data._default_type, "default_type", false, data.$type),
 
     name() { return drillAs<T.Identifier>(this._name, tree, "type_identifier", "identifier"); },
     bounds() { return drillIn<T.TraitBounds | undefined>(this._bounds, tree); },
-    typeParameterOptional1() { return drillIn<T.TypeParameterOptional1 | undefined>(this._type_parameter_optional1, tree); },
+    defaultType() { return drillIn<T._Type | undefined>(this._default_type, tree); },
     $with: {
       name: (v: NonNullable<T.TypeParameter['_name']>) => wrapTypeParameter({ ...data, _name: v }, tree),
       bounds: (v: NonNullable<T.TypeParameter['_bounds']>) => wrapTypeParameter({ ...data, _bounds: v }, tree),
-      typeParameterOptional1: (v: NonNullable<T.TypeParameter['_type_parameter_optional1']>) => wrapTypeParameter({ ...data, _type_parameter_optional1: v }, tree),
+      defaultType: (v: NonNullable<T.TypeParameter['_default_type']>) => wrapTypeParameter({ ...data, _default_type: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -3766,15 +3766,15 @@ export function wrapWhileExpression(data: T.WhileExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.WhileExpression as const,
-    _while_expression_optional1: normalizeSingularWrapSlot(data._while_expression_optional1, "while_expression_optional1", false, data.$type),
+    _label: normalizeSingularWrapSlot(data._label, "label", false, data.$type),
     _condition: normalizeSingularWrapSlot(data._condition, "condition", true, data.$type),
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
 
-    whileExpressionOptional1() { return drillIn<T.WhileExpressionOptional1 | undefined>(this._while_expression_optional1, tree); },
+    label() { return drillIn<T.Label | undefined>(this._label, tree); },
     condition() { return drillIn<T.Condition>(this._condition, tree); },
     body() { return drillIn<T.Block>(this._body, tree); },
     $with: {
-      whileExpressionOptional1: (v: NonNullable<T.WhileExpression['_while_expression_optional1']>) => wrapWhileExpression({ ...data, _while_expression_optional1: v }, tree),
+      label: (v: NonNullable<T.WhileExpression['_label']>) => wrapWhileExpression({ ...data, _label: v }, tree),
       condition: (v: NonNullable<T.WhileExpression['_condition']>) => wrapWhileExpression({ ...data, _condition: v }, tree),
       body: (v: NonNullable<T.WhileExpression['_body']>) => wrapWhileExpression({ ...data, _body: v }, tree),
     },
@@ -4044,7 +4044,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 const _aliasTargetToSource: Record<string, string> = {
   'array_expression_list': '_array_expression_list',
   'array_expression_semi': '_array_expression_semi',
-  'array_type_optional1': '_array_type_optional1',
   'attributed_enum_variant': '_attributed_enum_variant',
   'attributed_field_declaration': '_attributed_field_declaration',
   'attributed_parameter': '_attributed_parameter',
@@ -4055,23 +4054,17 @@ const _aliasTargetToSource: Record<string, string> = {
   'compound_assignment_expr_operator': '_compound_assignment_expr_operator',
   'condition': '_condition',
   'const_item_optional1': '_const_item_optional1',
-  'const_parameter_optional1': '_const_parameter_optional1',
   'declaration_statement': '_declaration_statement',
   'delim_tokens': '_delim_tokens',
-  'enum_variant_optional1': '_enum_variant_optional1',
   'expression': '_expression',
   'expression_ending_with_block': '_expression_ending_with_block',
   'expression_except_range': '_expression_except_range',
-  'extern_crate_declaration_optional1': '_extern_crate_declaration_optional1',
   'field_pattern_named': '_field_pattern_named',
   'for_expression_optional1': '_for_expression_optional1',
-  'function_item_optional1': '_function_item_optional1',
   'function_signature_item_optional1': '_function_signature_item_optional1',
   'function_type_fn_form': '_function_type_fn_form',
   'function_type_trait_form': '_function_type_trait_form',
   'let_chain': '_let_chain',
-  'let_declaration_optional1': '_let_declaration_optional1',
-  'let_declaration_optional2': '_let_declaration_optional2',
   'let_declaration_optional3': '_let_declaration_optional3',
   'line_comment_content': '_line_comment_content',
   'line_comment_doc': '_line_comment_doc',
@@ -4081,7 +4074,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'literal_pattern': '_literal_pattern',
   'loop_expression_optional1': '_loop_expression_optional1',
   'match_arm_with_comma': '_match_arm_with_comma',
-  'match_pattern_optional1': '_match_pattern_optional1',
   'move_marker': '_move_marker',
   'or_pattern_binary': '_or_pattern_binary',
   'or_pattern_prefix': '_or_pattern_prefix',
@@ -4106,14 +4098,12 @@ const _aliasTargetToSource: Record<string, string> = {
   'token_pattern': '_token_pattern',
   'tokens': '_tokens',
   'type_identifier': '_type_identifier',
-  'type_parameter_optional1': '_type_parameter_optional1',
   'unary_expression_operator': '_unary_expression_operator',
   'unsafe_marker': '_unsafe_marker',
   'use_clause': '_use_clause',
   'visibility_modifier_in_path': '_visibility_modifier_in_path',
   'visibility_modifier_pub': '_visibility_modifier_pub',
   'visibility_modifier_pub_parens': '_visibility_modifier_pub_parens',
-  'while_expression_optional1': '_while_expression_optional1',
 };
 
 /** Wrap a NodeData into its lazy read-only view. */

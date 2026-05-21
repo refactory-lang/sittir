@@ -5153,9 +5153,9 @@
           }
         },
         {
-          "name": "array_type_optional1",
-          "propertyName": "arrayTypeOptional1",
-          "paramName": "arrayTypeOptional1",
+          "name": "length",
+          "propertyName": "length",
+          "paramName": "length",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5163,15 +5163,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_array_type_optional1",
+              "name": "_expression",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_array_type_optional1"
+              "_expression"
             ]
           }
         }
@@ -6965,9 +6965,9 @@
           }
         },
         {
-          "name": "const_parameter_optional1",
-          "propertyName": "constParameterOptional1",
-          "paramName": "constParameterOptional1",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6975,15 +6975,36 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_const_parameter_optional1",
+              "name": "block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_literal",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "negative_literal",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_const_parameter_optional1"
+              "block",
+              "identifier",
+              "_literal",
+              "negative_literal"
             ]
           }
         }
@@ -7677,9 +7698,9 @@
           }
         },
         {
-          "name": "enum_variant_optional1",
-          "propertyName": "enumVariantOptional1",
-          "paramName": "enumVariantOptional1",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7687,15 +7708,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_enum_variant_optional1",
+              "name": "_expression",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_enum_variant_optional1"
+              "_expression"
             ]
           }
         }
@@ -7981,9 +8002,9 @@
           }
         },
         {
-          "name": "extern_crate_declaration_optional1",
-          "propertyName": "externCrateDeclarationOptional1",
-          "paramName": "externCrateDeclarationOptional1",
+          "name": "alias",
+          "propertyName": "alias",
+          "paramName": "alias",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7991,15 +8012,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_extern_crate_declaration_optional1",
+              "name": "identifier",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_extern_crate_declaration_optional1"
+              "identifier"
             ]
           }
         }
@@ -9106,9 +9127,9 @@
           }
         },
         {
-          "name": "function_item_optional1",
-          "propertyName": "functionItemOptional1",
-          "paramName": "functionItemOptional1",
+          "name": "return_type",
+          "propertyName": "returnType",
+          "paramName": "returnType",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9116,15 +9137,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_function_item_optional1",
+              "name": "_type",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_function_item_optional1"
+              "_type"
             ]
           }
         },
@@ -10820,9 +10841,9 @@
           }
         },
         {
-          "name": "let_declaration_optional1",
-          "propertyName": "letDeclarationOptional1",
-          "paramName": "letDeclarationOptional1",
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10830,22 +10851,22 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_let_declaration_optional1",
+              "name": "_type",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_let_declaration_optional1"
+              "_type"
             ]
           }
         },
         {
-          "name": "let_declaration_optional2",
-          "propertyName": "letDeclarationOptional2",
-          "paramName": "letDeclarationOptional2",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10853,15 +10874,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_let_declaration_optional2",
+              "name": "_expression",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_let_declaration_optional2"
+              "_expression"
             ]
           }
         },
@@ -11985,9 +12006,9 @@
           }
         },
         {
-          "name": "match_pattern_optional1",
-          "propertyName": "matchPatternOptional1",
-          "paramName": "matchPatternOptional1",
+          "name": "condition",
+          "propertyName": "condition",
+          "paramName": "condition",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11995,15 +12016,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_match_pattern_optional1",
+              "name": "_condition",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_match_pattern_optional1"
+              "_condition"
             ]
           }
         }
@@ -16464,9 +16485,9 @@
           }
         },
         {
-          "name": "type_parameter_optional1",
-          "propertyName": "typeParameterOptional1",
-          "paramName": "typeParameterOptional1",
+          "name": "default_type",
+          "propertyName": "defaultType",
+          "paramName": "defaultType",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -16474,15 +16495,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_type_parameter_optional1",
+              "name": "_type",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_parameter_optional1"
+              "_type"
             ]
           }
         }
@@ -17414,9 +17435,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "while_expression_optional1",
-          "propertyName": "whileExpressionOptional1",
-          "paramName": "whileExpressionOptional1",
+          "name": "label",
+          "propertyName": "label",
+          "paramName": "label",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17424,15 +17445,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_while_expression_optional1",
+              "name": "label",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_while_expression_optional1"
+              "label"
             ]
           }
         },

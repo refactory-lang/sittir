@@ -7,7 +7,6 @@
     "__range_expression_binary_operator": "text",
     "_array_expression_list": "config",
     "_array_expression_semi": "config",
-    "_array_type_optional1": "config",
     "_attributed_enum_variant": "config",
     "_attributed_field_declaration": "config",
     "_attributed_parameter": "config",
@@ -18,26 +17,20 @@
     "_closure_expression_static_marker": "text",
     "_compound_assignment_expr_operator": "text",
     "_const_item_optional1": "config",
-    "_const_parameter_optional1": "config",
     "_delim_token_tree_brace": "spread",
     "_delim_token_tree_bracket": "spread",
     "_delim_token_tree_paren": "spread",
-    "_enum_variant_optional1": "config",
     "_expression_statement_block_ending": "spread",
     "_expression_statement_with_semi": "spread",
-    "_extern_crate_declaration_optional1": "config",
     "_field_pattern_named": "config",
     "_field_pattern_shorthand": "config",
     "_for_expression_optional1": "config",
     "_foreign_mod_item_body": "config",
-    "_function_item_optional1": "config",
     "_function_signature_item_optional1": "config",
     "_function_type_fn_form": "spread",
     "_function_type_trait_form": "config",
     "_impl_item_body": "config",
     "_let_chain": "spread",
-    "_let_declaration_optional1": "config",
-    "_let_declaration_optional2": "config",
     "_let_declaration_optional3": "config",
     "_line_comment_content": "text",
     "_line_comment_doc": "config",
@@ -48,7 +41,6 @@
     "_macro_definition_paren": "spread",
     "_match_arm_block_ending": "config",
     "_match_arm_with_comma": "config",
-    "_match_pattern_optional1": "config",
     "_mod_item_inline": "config",
     "_move_marker": "text",
     "_mutable_specifier": "text",
@@ -77,13 +69,11 @@
     "_token_tree_pattern_bracket": "spread",
     "_token_tree_pattern_paren": "spread",
     "_type_identifier": "text",
-    "_type_parameter_optional1": "config",
     "_unary_expression_operator": "text",
     "_unsafe_marker": "text",
     "_visibility_modifier_crate": "config",
     "_visibility_modifier_in_path": "config",
     "_visibility_modifier_pub": "config",
-    "_while_expression_optional1": "config",
     "abstract_type": "config",
     "arguments": "config",
     "array_expression": "config",
@@ -442,9 +432,6 @@
       "elements",
       "length"
     ],
-    "_array_type_optional1": [
-      "length"
-    ],
     "_attributed_enum_variant": [
       "attribute_item",
       "enum_variant"
@@ -471,9 +458,6 @@
     "_const_item_optional1": [
       "value"
     ],
-    "_const_parameter_optional1": [
-      "value"
-    ],
     "_delim_token_tree_brace": [
       "delim_tokens"
     ],
@@ -483,17 +467,11 @@
     "_delim_token_tree_paren": [
       "delim_tokens"
     ],
-    "_enum_variant_optional1": [
-      "value"
-    ],
     "_expression_statement_block_ending": [
       "expression_ending_with_block"
     ],
     "_expression_statement_with_semi": [
       "expression"
-    ],
-    "_extern_crate_declaration_optional1": [
-      "alias"
     ],
     "_field_pattern_named": [
       "name",
@@ -507,9 +485,6 @@
     ],
     "_foreign_mod_item_body": [
       "body"
-    ],
-    "_function_item_optional1": [
-      "return_type"
     ],
     "_function_signature_item_optional1": [
       "return_type"
@@ -525,12 +500,6 @@
     ],
     "_let_chain": [
       "let_chain"
-    ],
-    "_let_declaration_optional1": [
-      "type"
-    ],
-    "_let_declaration_optional2": [
-      "value"
     ],
     "_let_declaration_optional3": [
       "alternative"
@@ -555,9 +524,6 @@
     ],
     "_match_arm_with_comma": [
       "value"
-    ],
-    "_match_pattern_optional1": [
-      "condition"
     ],
     "_mod_item_inline": [
       "body"
@@ -612,17 +578,11 @@
     "_token_tree_pattern_paren": [
       "token_pattern"
     ],
-    "_type_parameter_optional1": [
-      "default_type"
-    ],
     "_visibility_modifier_in_path": [
       "path"
     ],
     "_visibility_modifier_pub": [
       "visibility_modifier_pub_parens"
-    ],
-    "_while_expression_optional1": [
-      "label"
     ],
     "abstract_type": [
       "type_parameters",
@@ -637,7 +597,7 @@
     ],
     "array_type": [
       "element",
-      "array_type_optional1"
+      "length"
     ],
     "assignment_expression": [
       "left",
@@ -729,7 +689,7 @@
     "const_parameter": [
       "name",
       "type",
-      "const_parameter_optional1"
+      "value"
     ],
     "continue_expression": [
       "label"
@@ -768,7 +728,7 @@
       "visibility_modifier",
       "name",
       "body",
-      "enum_variant_optional1"
+      "value"
     ],
     "enum_variant_list": [
       "attributed_enum_variant"
@@ -786,7 +746,7 @@
     "extern_crate_declaration": [
       "visibility_modifier",
       "name",
-      "extern_crate_declaration_optional1"
+      "alias"
     ],
     "extern_modifier": [
       "string_literal"
@@ -841,7 +801,7 @@
       "name",
       "type_parameters",
       "parameters",
-      "function_item_optional1",
+      "return_type",
       "where_clause",
       "body"
     ],
@@ -923,8 +883,8 @@
     ],
     "let_declaration": [
       "pattern",
-      "let_declaration_optional1",
-      "let_declaration_optional2",
+      "type",
+      "value",
       "let_declaration_optional3"
     ],
     "lifetime": [
@@ -984,7 +944,7 @@
     ],
     "match_pattern": [
       "pattern",
-      "match_pattern_optional1"
+      "condition"
     ],
     "mod_item_inline": [
       "body"
@@ -1206,7 +1166,7 @@
     "type_parameter": [
       "name",
       "bounds",
-      "type_parameter_optional1"
+      "default_type"
     ],
     "type_parameters": [
       "attributed_type_parameter"
@@ -1258,7 +1218,7 @@
       "bounds"
     ],
     "while_expression": [
-      "while_expression_optional1",
+      "label",
       "condition",
       "body"
     ],
@@ -1312,15 +1272,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_array_type_optional1": {
-      "length": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1423,15 +1374,6 @@
         "nonEmpty": false
       }
     },
-    "_const_parameter_optional1": {
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_delim_token_tree_brace": {
       "delim_tokens": {
         "unnamed": false,
@@ -1459,15 +1401,6 @@
         "nonEmpty": false
       }
     },
-    "_enum_variant_optional1": {
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_expression_statement_block_ending": {
       "expression_ending_with_block": {
         "unnamed": false,
@@ -1482,15 +1415,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_extern_crate_declaration_optional1": {
-      "alias": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1538,15 +1462,6 @@
         "nonEmpty": false
       }
     },
-    "_function_item_optional1": {
-      "return_type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_function_signature_item_optional1": {
       "return_type": {
         "unnamed": false,
@@ -1588,24 +1503,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_let_declaration_optional1": {
-      "type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_let_declaration_optional2": {
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1692,15 +1589,6 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_match_pattern_optional1": {
-      "condition": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1925,15 +1813,6 @@
         "nonEmpty": false
       }
     },
-    "_type_parameter_optional1": {
-      "default_type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "_visibility_modifier_crate": {
       "crate": {
         "unnamed": false,
@@ -1968,15 +1847,6 @@
         "nonEmpty": false
       },
       "visibility_modifier_pub_parens": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_while_expression_optional1": {
-      "label": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2033,7 +1903,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "array_type_optional1": {
+      "length": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2443,7 +2313,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "const_parameter_optional1": {
+      "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2596,7 +2466,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "enum_variant_optional1": {
+      "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2669,7 +2539,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "extern_crate_declaration_optional1": {
+      "alias": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2919,7 +2789,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "function_item_optional1": {
+      "return_type": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3312,14 +3182,14 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "let_declaration_optional1": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "let_declaration_optional2": {
+      "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3559,7 +3429,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "match_pattern_optional1": {
+      "condition": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4531,7 +4401,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "type_parameter_optional1": {
+      "default_type": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4743,7 +4613,7 @@
       }
     },
     "while_expression": {
-      "while_expression_optional1": {
+      "label": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,

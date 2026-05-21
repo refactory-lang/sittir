@@ -793,18 +793,18 @@ export function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayExpression
 
 export function arrayType(config: T.ArrayType.Config) {
   const _element = config.element;
-  const _array_type_optional1 = config.arrayTypeOptional1;
+  const _length = config.length;
   return withMethods({
     $type: TSKindId.ArrayType as const,
     $source: 2 as const,
     $named: true as const,
     _element,
-    _array_type_optional1,
+    _length,
     element() { return _element; },
-    arrayTypeOptional1() { return _array_type_optional1; },
+    length() { return _length; },
     $with: {
       element: (value: T._Type) => arrayType({ ...config, element: value }),
-      arrayTypeOptional1: (value?: T.ArrayTypeOptional1) => arrayType({ ...config, arrayTypeOptional1: value }),
+      length: (value?: T.Expression) => arrayType({ ...config, length: value }),
     },
   }, methodsEngine);
 }
@@ -1265,21 +1265,21 @@ export function constItem(config: T.ConstItem.Config) {
 export function constParameter(config: T.ConstParameter.Config) {
   const _name = config.name;
   const _type = config.type;
-  const _const_parameter_optional1 = config.constParameterOptional1;
+  const _value = config.value;
   return withMethods({
     $type: TSKindId.ConstParameter as const,
     $source: 2 as const,
     $named: true as const,
     _name,
     _type,
-    _const_parameter_optional1,
+    _value,
     name() { return _name; },
     type() { return _type; },
-    constParameterOptional1() { return _const_parameter_optional1; },
+    value() { return _value; },
     $with: {
       name: (value: T.Identifier) => constParameter({ ...config, name: value }),
       type: (value: T._Type) => constParameter({ ...config, type: value }),
-      constParameterOptional1: (value?: T.ConstParameterOptional1) => constParameter({ ...config, constParameterOptional1: value }),
+      value: (value?: T.Block | T.Identifier | T.Literal | T.NegativeLiteral) => constParameter({ ...config, value: value }),
     },
   }, methodsEngine);
 }
@@ -1469,7 +1469,7 @@ export function enumVariant(config: T.EnumVariant.Config) {
   const _visibility_modifier = config.visibilityModifier;
   const _name = config.name;
   const _body = config.body;
-  const _enum_variant_optional1 = config.enumVariantOptional1;
+  const _value = config.value;
   return withMethods({
     $type: TSKindId.EnumVariant as const,
     $source: 2 as const,
@@ -1477,16 +1477,16 @@ export function enumVariant(config: T.EnumVariant.Config) {
     _visibility_modifier,
     _name,
     _body,
-    _enum_variant_optional1,
+    _value,
     visibilityModifier() { return _visibility_modifier; },
     name() { return _name; },
     body() { return _body; },
-    enumVariantOptional1() { return _enum_variant_optional1; },
+    value() { return _value; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => enumVariant({ ...config, visibilityModifier: value }),
       name: (value: T.Identifier) => enumVariant({ ...config, name: value }),
       body: (value?: T.FieldDeclarationList | T.OrderedFieldDeclarationList) => enumVariant({ ...config, body: value }),
-      enumVariantOptional1: (value?: T.EnumVariantOptional1) => enumVariant({ ...config, enumVariantOptional1: value }),
+      value: (value?: T.Expression) => enumVariant({ ...config, value: value }),
     },
   }, methodsEngine);
 }
@@ -1579,7 +1579,7 @@ export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) 
   const _visibility_modifier = config.visibilityModifier;
   const _crate = coerceKindEnumStorage("crate" as const, [["crate", TSKindId.Crate] as const]);
   const _name = config.name;
-  const _extern_crate_declaration_optional1 = config.externCrateDeclarationOptional1;
+  const _alias = config.alias;
   return withMethods({
     $type: TSKindId.ExternCrateDeclaration as const,
     $source: 2 as const,
@@ -1587,15 +1587,15 @@ export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) 
     _visibility_modifier,
     _crate,
     _name,
-    _extern_crate_declaration_optional1,
+    _alias,
     visibilityModifier() { return _visibility_modifier; },
     crate() { return _crate; },
     name() { return _name; },
-    externCrateDeclarationOptional1() { return _extern_crate_declaration_optional1; },
+    alias() { return _alias; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => externCrateDeclaration({ ...config, visibilityModifier: value }),
       name: (value: T.Identifier) => externCrateDeclaration({ ...config, name: value }),
-      externCrateDeclarationOptional1: (value?: T.ExternCrateDeclarationOptional1) => externCrateDeclaration({ ...config, externCrateDeclarationOptional1: value }),
+      alias: (value?: T.Identifier) => externCrateDeclaration({ ...config, alias: value }),
     },
   }, methodsEngine);
 }
@@ -1889,7 +1889,7 @@ export function functionItem(config: T.FunctionItem.Config) {
   const _name = config.name;
   const _type_parameters = config.typeParameters;
   const _parameters = config.parameters;
-  const _function_item_optional1 = config.functionItemOptional1;
+  const _return_type = config.returnType;
   const _where_clause = config.whereClause;
   const _body = config.body;
   return withMethods({
@@ -1901,7 +1901,7 @@ export function functionItem(config: T.FunctionItem.Config) {
     _name,
     _type_parameters,
     _parameters,
-    _function_item_optional1,
+    _return_type,
     _where_clause,
     _body,
     visibilityModifier() { return _visibility_modifier; },
@@ -1909,7 +1909,7 @@ export function functionItem(config: T.FunctionItem.Config) {
     name() { return _name; },
     typeParameters() { return _type_parameters; },
     parameters() { return _parameters; },
-    functionItemOptional1() { return _function_item_optional1; },
+    returnType() { return _return_type; },
     whereClause() { return _where_clause; },
     body() { return _body; },
     $with: {
@@ -1918,7 +1918,7 @@ export function functionItem(config: T.FunctionItem.Config) {
       name: (value: T.Identifier | T.Metavariable) => functionItem({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => functionItem({ ...config, typeParameters: value }),
       parameters: (value: T.Parameters) => functionItem({ ...config, parameters: value }),
-      functionItemOptional1: (value?: T.FunctionItemOptional1) => functionItem({ ...config, functionItemOptional1: value }),
+      returnType: (value?: T._Type) => functionItem({ ...config, returnType: value }),
       whereClause: (value?: T.WhereClause) => functionItem({ ...config, whereClause: value }),
       body: (value: T.Block) => functionItem({ ...config, body: value }),
     },
@@ -2345,8 +2345,8 @@ export function letCondition(config: T.LetCondition.Config) {
 export function letDeclaration(config: T.LetDeclaration.Config) {
   const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
   const _pattern = config.pattern;
-  const _let_declaration_optional1 = config.letDeclarationOptional1;
-  const _let_declaration_optional2 = config.letDeclarationOptional2;
+  const _type = config.type;
+  const _value = config.value;
   const _let_declaration_optional3 = config.letDeclarationOptional3;
   return withMethods({
     $type: TSKindId.LetDeclaration as const,
@@ -2354,19 +2354,19 @@ export function letDeclaration(config: T.LetDeclaration.Config) {
     $named: true as const,
     _mutable_specifier,
     _pattern,
-    _let_declaration_optional1,
-    _let_declaration_optional2,
+    _type,
+    _value,
     _let_declaration_optional3,
     mutableSpecifier() { return _mutable_specifier; },
     pattern() { return _pattern; },
-    letDeclarationOptional1() { return _let_declaration_optional1; },
-    letDeclarationOptional2() { return _let_declaration_optional2; },
+    type() { return _type; },
+    value() { return _value; },
     letDeclarationOptional3() { return _let_declaration_optional3; },
     $with: {
       mutableSpecifier: (value?: NonNullable<Parameters<typeof letDeclaration>[0]>['mutableSpecifier']) => letDeclaration({ ...config, mutableSpecifier: value }),
       pattern: (value: T.Pattern) => letDeclaration({ ...config, pattern: value }),
-      letDeclarationOptional1: (value?: T.LetDeclarationOptional1) => letDeclaration({ ...config, letDeclarationOptional1: value }),
-      letDeclarationOptional2: (value?: T.LetDeclarationOptional2) => letDeclaration({ ...config, letDeclarationOptional2: value }),
+      type: (value?: T._Type) => letDeclaration({ ...config, type: value }),
+      value: (value?: T.Expression) => letDeclaration({ ...config, value: value }),
       letDeclarationOptional3: (value?: T.LetDeclarationOptional3) => letDeclaration({ ...config, letDeclarationOptional3: value }),
     },
   }, methodsEngine);
@@ -2714,18 +2714,18 @@ export function matchExpression(config: T.MatchExpression.Config) {
 
 export function matchPattern(config: T.MatchPattern.Config) {
   const _pattern = config.pattern;
-  const _match_pattern_optional1 = config.matchPatternOptional1;
+  const _condition = config.condition;
   return withMethods({
     $type: TSKindId.MatchPattern as const,
     $source: 2 as const,
     $named: true as const,
     _pattern,
-    _match_pattern_optional1,
+    _condition,
     pattern() { return _pattern; },
-    matchPatternOptional1() { return _match_pattern_optional1; },
+    condition() { return _condition; },
     $with: {
       pattern: (value: T.Pattern) => matchPattern({ ...config, pattern: value }),
-      matchPatternOptional1: (value?: T.MatchPatternOptional1) => matchPattern({ ...config, matchPatternOptional1: value }),
+      condition: (value?: T.Condition) => matchPattern({ ...config, condition: value }),
     },
   }, methodsEngine);
 }
@@ -4070,21 +4070,21 @@ export function typeItem(config: T.TypeItem.Config) {
 export function typeParameter(config: T.TypeParameter.Config) {
   const _name = config.name;
   const _bounds = config.bounds;
-  const _type_parameter_optional1 = config.typeParameterOptional1;
+  const _default_type = config.defaultType;
   return withMethods({
     $type: TSKindId.TypeParameter as const,
     $source: 2 as const,
     $named: true as const,
     _name,
     _bounds,
-    _type_parameter_optional1,
+    _default_type,
     name() { return _name; },
     bounds() { return _bounds; },
-    typeParameterOptional1() { return _type_parameter_optional1; },
+    defaultType() { return _default_type; },
     $with: {
       name: (value: T.Identifier) => typeParameter({ ...config, name: value }),
       bounds: (value?: T.TraitBounds) => typeParameter({ ...config, bounds: value }),
-      typeParameterOptional1: (value?: T.TypeParameterOptional1) => typeParameter({ ...config, typeParameterOptional1: value }),
+      defaultType: (value?: T._Type) => typeParameter({ ...config, defaultType: value }),
     },
   }, methodsEngine);
 }
@@ -4372,21 +4372,21 @@ export function wherePredicate(config: T.WherePredicate.Config) {
 }
 
 export function whileExpression(config: T.WhileExpression.Config) {
-  const _while_expression_optional1 = config.whileExpressionOptional1;
+  const _label = config.label;
   const _condition = config.condition;
   const _body = config.body;
   return withMethods({
     $type: TSKindId.WhileExpression as const,
     $source: 2 as const,
     $named: true as const,
-    _while_expression_optional1,
+    _label,
     _condition,
     _body,
-    whileExpressionOptional1() { return _while_expression_optional1; },
+    label() { return _label; },
     condition() { return _condition; },
     body() { return _body; },
     $with: {
-      whileExpressionOptional1: (value?: T.WhileExpressionOptional1) => whileExpression({ ...config, whileExpressionOptional1: value }),
+      label: (value?: T.Label) => whileExpression({ ...config, label: value }),
       condition: (value: T.Condition) => whileExpression({ ...config, condition: value }),
       body: (value: T.Block) => whileExpression({ ...config, body: value }),
     },

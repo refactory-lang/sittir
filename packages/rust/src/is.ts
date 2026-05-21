@@ -408,18 +408,18 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 
 const _supertype_condition_ids = new Set<number>([247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 129, 313, 126, 151, 1, 139, 243, 225, 287, 288, 258, 260, 239, 261, 284, 285, 286, 142, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246, 268, 269]);
 const _supertype_declarationStatement_ids = new Set<number>([185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
-const _supertype_delimTokens_ids = new Set<number>([311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141, 240]);
+const _supertype_delimTokens_ids = new Set<number>([311, 312, 129, 313, 126, 151, 1, 119, 139, 140, 141, 240]);
 const _supertype_expression_ids = new Set<number>([247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 129, 313, 126, 151, 1, 139, 243, 225, 287, 288, 258, 260, 239, 261, 284, 285, 286, 142, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246]);
 const _supertype_expressionEndingWithBlock_ids = new Set<number>([289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280]);
 const _supertype_expressionExceptRange_ids = new Set<number>([247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 129, 313, 126, 151, 1, 139, 243, 225, 287, 288, 258, 260, 239, 261, 284, 285, 286, 142, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280]);
 const _supertype_literal_ids = new Set<number>([311, 312, 129, 313, 126, 151]);
 const _supertype_literalPattern_ids = new Set<number>([311, 312, 129, 313, 126, 151, 310]);
-const _supertype_nonDelimToken_ids = new Set<number>([311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
+const _supertype_nonDelimToken_ids = new Set<number>([311, 312, 129, 313, 126, 151, 1, 119, 139, 140, 141]);
 const _supertype_path_ids = new Set<number>([139, 1, 142, 140, 141, 243]);
 const _supertype_pattern_ids = new Set<number>([311, 312, 129, 313, 126, 151, 310, 1, 243, 295, 296, 298, 299, 304, 297, 305, 306, 302, 303, 307, 280, 239, 320]);
 const _supertype_statement_ids = new Set<number>([160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
-const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 142, 311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
-const _supertype_tokens_ids = new Set<number>([168, 169, 142, 311, 312, 129, 313, 126, 151, 1, 120, 139, 140, 141]);
+const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 142, 311, 312, 129, 313, 126, 151, 1, 119, 139, 140, 141]);
+const _supertype_tokens_ids = new Set<number>([168, 169, 142, 311, 312, 129, 313, 126, 151, 1, 119, 139, 140, 141]);
 const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 407, 239, 236, 228, 198]);
 const _supertype_useClause_ids = new Set<number>([139, 1, 142, 140, 141, 243, 208, 207, 206, 209]);
 
@@ -455,11 +455,11 @@ const _kindIdByKind = new Map<string, number>([
     ["where", TSKindId.Where],
     ["while", TSKindId.While],
     ["extern", TSKindId.Extern],
-    ["else", TSKindId.Else],
     ["dyn", TSKindId.Dyn],
     ["mutable_specifier", TSKindId.MutableSpecifier],
     ["raw", TSKindId.Raw],
     ["yield", TSKindId.Yield],
+    ["else", TSKindId.Else],
     ["in", TSKindId.In],
     ["try", TSKindId.Try],
     ["ref", TSKindId.Ref],
