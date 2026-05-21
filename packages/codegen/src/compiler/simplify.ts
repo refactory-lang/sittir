@@ -75,8 +75,7 @@ function isKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean
  * win (non-overriding).
  */
 function withAttrsFrom(original: Rule, result: Rule): Rule {
-	const { fieldName, multiplicity, separator } = original;
-	if (fieldName === undefined && multiplicity === undefined && separator === undefined) return result;
+	const { fieldName, multiplicity, separator, id } = original;
 	const patch: Record<string, unknown> = {};
 	if (fieldName !== undefined && !Object.prototype.hasOwnProperty.call(result, 'fieldName'))
 		patch['fieldName'] = fieldName;
@@ -84,6 +83,14 @@ function withAttrsFrom(original: Rule, result: Rule): Rule {
 		patch['multiplicity'] = multiplicity;
 	if (separator !== undefined && !Object.prototype.hasOwnProperty.call(result, 'separator'))
 		patch['separator'] = separator;
+	// Preserve the rule's identity through simplify: renderRule.id === simplifiedRule.id
+	// so the emitter (walks renderRule) and collectSlots (reads simplifiedRule) agree
+	// on the slot's `sourceRuleId`, making `slotByRuleId` (the canonical, primary slot
+	// lookup) resolve instead of degrading to the fragile fieldName/symbol-name
+	// fallbacks. The `hasOwnProperty` guard keeps a passed-through inner node's own id
+	// on collapse (e.g. `seq(field) → field`), only stamping the source id onto a
+	// freshly-rebuilt structural node (`{ type:'choice', members }`).
+	if (id !== undefined && !Object.prototype.hasOwnProperty.call(result, 'id')) patch['id'] = id;
 	if (Object.keys(patch).length === 0) return result;
 	return { ...result, ...patch };
 }

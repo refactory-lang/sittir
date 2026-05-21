@@ -1263,7 +1263,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let children_renderables = children.renderable_items();
             let template = ClosureParametersTemplate {
-                parameter: ListNonterminalView {
+                content: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
                     leading: children.leading_sep,
@@ -1562,6 +1562,12 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let children_renderables = children.renderable_items();
             let template = FieldInitializerListTemplate {
+                content: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
                 shorthand_field_initializer: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
@@ -1942,6 +1948,12 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children_renderables = children.renderable_items();
             let template = LastMatchArmTemplate {
                 attribute_item: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
+                content: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
                     leading: children.leading_sep,
@@ -2597,6 +2609,12 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let children_renderables = children.renderable_items();
             let template = StringLiteralTemplate {
+                content: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
                 escape_sequence: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
@@ -2652,6 +2670,12 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let field_0 = resolve_slot(node, SlotAccessor::Field("type"), true)?;
             let children_renderables = children.renderable_items();
             let template = StructPatternTemplate {
+                content: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
                 field_pattern: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
@@ -2741,7 +2765,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let children_renderables = children.renderable_items();
             let template = TraitBoundsTemplate {
-                lifetime: ListNonterminalView {
+                content: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
                     leading: children.leading_sep,
@@ -2829,7 +2853,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let children_renderables = children.renderable_items();
             let template = TuplePatternTemplate {
-                closure_expression: ListNonterminalView {
+                content: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
                     leading: children.leading_sep,
@@ -3062,6 +3086,12 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let children_renderables = children.renderable_items();
             let template = UseBoundsTemplate {
+                content: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
                 lifetime: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,

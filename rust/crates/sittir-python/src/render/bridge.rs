@@ -468,6 +468,12 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let children_renderables = children.renderable_items();
             let template = ComprehensionClausesTemplate {
+                content: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
                 for_in_clause: match children.kind {
                 ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
                 ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
@@ -564,6 +570,12 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let children_renderables = children.renderable_items();
             let template = ArgumentListTemplate {
+                content: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
                 expression: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
@@ -709,11 +721,19 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         163 => { // "case_pattern"
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("as_pattern"), false)?;
+            let field_0_renderables = field_0.renderable_items();
             let template = CasePatternTemplate {
-                as_pattern: match field_0.kind {
-                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                content: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                as_pattern: ListNonterminalView {
+                    items: field_0_renderables.as_slice(),
+                    separator: field_0.separator,
+                    leading: field_0.leading_sep,
+                    trailing: field_0.trailing_sep,
                 },
             };
             template.render_into(dest)
@@ -951,6 +971,12 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let children_renderables = children.renderable_items();
             let template = DictionaryTemplate {
+                content: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
                 pair: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
@@ -999,14 +1025,21 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("except_clause_as"), false)?;
             let children_renderables = children.renderable_items();
+            let field_0_renderables = field_0.renderable_items();
             let template = ExceptClauseTemplate {
                 block: match children.kind {
                 ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
                 ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
             },
-                except_clause_as: match field_0.kind {
+                content: match children.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+                },
+                except_clause_as: ListNonterminalView {
+                    items: field_0_renderables.as_slice(),
+                    separator: field_0.separator,
+                    leading: field_0.leading_sep,
+                    trailing: field_0.trailing_sep,
                 },
             };
             template.render_into(dest)
@@ -1143,11 +1176,22 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         236 => { // "format_specifier"
+            let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("format_expression"), false)?;
+            let children_renderables = children.renderable_items();
+            let field_0_renderables = field_0.renderable_items();
             let template = FormatSpecifierTemplate {
-                format_expression: match field_0.kind {
-                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                content: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
+                format_expression: ListNonterminalView {
+                    items: field_0_renderables.as_slice(),
+                    separator: field_0.separator,
+                    leading: field_0.leading_sep,
+                    trailing: field_0.trailing_sep,
                 },
             };
             template.render_into(dest)
@@ -1729,6 +1773,12 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let children_renderables = children.renderable_items();
             let template = StringContentTemplate {
+                content: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
                 escape_interpolation: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
@@ -1861,11 +1911,19 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         208 => { // "type"
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("expression"), false)?;
+            let field_0_renderables = field_0.renderable_items();
             let template = TypeTemplate {
-                expression: match field_0.kind {
-                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                content: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                expression: ListNonterminalView {
+                    items: field_0_renderables.as_slice(),
+                    separator: field_0.separator,
+                    leading: field_0.leading_sep,
+                    trailing: field_0.trailing_sep,
                 },
             };
             template.render_into(dest)

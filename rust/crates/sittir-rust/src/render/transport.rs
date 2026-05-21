@@ -45478,7 +45478,7 @@ fn render_closure_parameters(node: &ClosureParametersTransport, dest: &mut dyn :
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ClosureParametersTemplate {
-        parameter: ListNonterminalView {
+        content: ListNonterminalView {
             items: content_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -45496,7 +45496,13 @@ fn render_closure_parameters(node: &ClosureParametersTransport, dest: &mut dyn :
 
 fn render_comment(node: &CommentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = CommentTemplate {
-        line_comment: OptionalNonterminalView::Missing,
+        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
+        line_comment: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
     };
     template.render_into(dest)
 }
@@ -45883,6 +45889,12 @@ fn render_field_initializer_list(node: &FieldInitializerListTransport, dest: &mu
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = FieldInitializerListTemplate {
+        content: ListNonterminalView {
+            items: content_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
         shorthand_field_initializer: ListNonterminalView {
             items: content_buf.as_slice(),
             separator: ",",
@@ -46217,6 +46229,12 @@ fn render_last_match_arm(node: &LastMatchArmTransport, dest: &mut dyn ::std::fmt
         .collect();
     let template = LastMatchArmTemplate {
         attribute_item: ListNonterminalView {
+            items: content_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        content: ListNonterminalView {
             items: content_buf.as_slice(),
             separator: "",
             leading: false,
@@ -46910,6 +46928,12 @@ fn render_string_literal(node: &StringLiteralTransport, dest: &mut dyn ::std::fm
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = StringLiteralTemplate {
+        content: ListNonterminalView {
+            items: content_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
         escape_sequence: ListNonterminalView {
             items: content_buf.as_slice(),
             separator: "",
@@ -46953,6 +46977,12 @@ fn render_struct_pattern(node: &StructPatternTransport, dest: &mut dyn ::std::fm
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = StructPatternTemplate {
+        content: ListNonterminalView {
+            items: content_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
         field_pattern: ListNonterminalView {
             items: content_buf.as_slice(),
             separator: ",",
@@ -47175,7 +47205,7 @@ fn render_trait_bounds(node: &TraitBoundsTransport, dest: &mut dyn ::std::fmt::W
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TraitBoundsTemplate {
-        lifetime: ListNonterminalView {
+        content: ListNonterminalView {
             items: content_buf.as_slice(),
             separator: "+",
             leading: false,
@@ -47275,7 +47305,7 @@ fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt:
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TuplePatternTemplate {
-        closure_expression: ListNonterminalView {
+        content: ListNonterminalView {
             items: content_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -47518,6 +47548,12 @@ fn render_use_bounds(node: &UseBoundsTransport, dest: &mut dyn ::std::fmt::Write
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = UseBoundsTemplate {
+        content: ListNonterminalView {
+            items: content_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
         lifetime: ListNonterminalView {
             items: content_buf.as_slice(),
             separator: ",",
