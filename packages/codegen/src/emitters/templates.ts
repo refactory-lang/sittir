@@ -755,6 +755,14 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			if (rule.fieldName !== undefined) {
 				return emitScalarSlot(rule.fieldName.toLowerCase());
 			}
+			// An optional anonymous separator literal (e.g. the trailing
+			// `optional(',')` in a comma-list, stamped `multiplicity:'optional'`
+			// by deleteWrapper) has no slot to gate on. Canonical render omits
+			// it — emitting it unconditionally produces a spurious trailing
+			// token (`f(a,b,)` instead of `f(a,b)`).
+			if (rule.multiplicity === 'optional') {
+				return '';
+			}
 			return escapeLiteral(rule.value);
 
 		case 'pattern':
@@ -1354,10 +1362,25 @@ function emitChoice(rule: Extract<Rule, { type: 'choice' }>, ctx: EmitCtx): stri
 		}
 		return emitScalarSlot(slotName);
 	}
-	// Legacy walker picks the first non-empty branch for homogeneous
-	// choices. Heterogeneous choices require `variant()` adoption in
-	// overrides — at that point each arm becomes its own kind with its
-	// own template and this code never sees a heterogeneous choice.
+	// Every choice that surfaces as data is a registered slot — there is no
+	// "positional choice" anymore; the assembler gives each a name. Look the
+	// slot up by the choice's rule id and emit it FROM THE SLOT's identity +
+	// multiplicity (feedback_ruleid_backpointer) — never first-arm-pick (which
+	// dropped the other arms + any separator) and never re-derive a name from
+	// the members. `storageName` is the key the render struct field uses.
+	const slot = lookupSlot(rule, ctx);
+	if (slot) {
+		const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
+		if (isMultiple(slot)) {
+			return emitListSlot(slotName, rule, slot);
+		}
+		if (!isRequired(slot)) {
+			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
+		}
+		return emitScalarSlot(slotName);
+	}
+	// No registered slot → a choice of pure literals/patterns (no data slot).
+	// Emit the first non-empty branch's literal text.
 	for (const member of rule.members) {
 		const text = emitRule(member, ctx);
 		if (text) return text;
