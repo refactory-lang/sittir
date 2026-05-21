@@ -25,6 +25,7 @@
 
 import type { Rule, RenderRule, PolymorphRule } from './rule.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
+import { isNonterminalRuleType } from './rule-catalog.ts';
 
 // ---------------------------------------------------------------------------
 // Accumulated modifier attributes from unwrapped wrappers
@@ -36,6 +37,7 @@ interface WrapperAttrs {
 	separator?: Rule['separator'];
 	aliasedFrom?: string;
 	aliasNamed?: boolean;
+	nonterminal?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -63,6 +65,10 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 			const next: WrapperAttrs = {
 				...attrs,
 				multiplicity: attrs.multiplicity ?? (innerIsRepeatVariant ? 'array' : 'optional'),
+				// optional stays recursive: it forces a slot only when its
+				// content is intrinsically nonterminal (Table 2). optional(',')
+				// → no slot; optional(symbol)/optional(repeat) → slot.
+				nonterminal: attrs.nonterminal ?? (isNonterminalRuleType(rule.content) || undefined),
 			};
 			return deleteWrapperWith(rule.content, next);
 		}
@@ -72,6 +78,8 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 			const next: WrapperAttrs = {
 				...attrs,
 				fieldName: attrs.fieldName ?? rule.name,
+				// field forces a slot on its content (Table 2), incl. terminal.
+				nonterminal: true,
 			};
 			return deleteWrapperWith(rule.content, next);
 		}
@@ -92,7 +100,8 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 					sep = rule.separator;
 				}
 			}
-			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep };
+			// repeat forces an array slot (Table 2), incl. terminal content.
+			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep, nonterminal: true };
 			return deleteWrapperWith(rule.content, next);
 		}
 
@@ -111,7 +120,8 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 					sep = rule.separator;
 				}
 			}
-			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep };
+			// repeat1 forces a nonEmptyArray slot (Table 2), incl. terminal content.
+			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep, nonterminal: true };
 			return deleteWrapperWith(rule.content, next);
 		}
 
@@ -165,6 +175,8 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 				...attrs,
 				aliasedFrom: attrs.aliasedFrom ?? rule.value,
 				aliasNamed: attrs.aliasNamed ?? rule.named,
+				// A named alias forces a slot on its content (Table 2).
+				nonterminal: attrs.nonterminal ?? (rule.named || undefined),
 			};
 			return deleteWrapperWith(rule.content, next);
 		}
@@ -199,7 +211,8 @@ function stampAttrs(rule: Rule, attrs: WrapperAttrs): RenderRule {
 		attrs.multiplicity === undefined &&
 		attrs.separator === undefined &&
 		attrs.aliasedFrom === undefined &&
-		attrs.aliasNamed === undefined
+		attrs.aliasNamed === undefined &&
+		attrs.nonterminal === undefined
 	) {
 		return rule as RenderRule;
 	}
@@ -209,6 +222,7 @@ function stampAttrs(rule: Rule, attrs: WrapperAttrs): RenderRule {
 	if (attrs.separator !== undefined) patch['separator'] = attrs.separator;
 	if (attrs.aliasedFrom !== undefined) patch['aliasedFrom'] = attrs.aliasedFrom;
 	if (attrs.aliasNamed !== undefined) patch['aliasNamed'] = attrs.aliasNamed;
+	if (attrs.nonterminal !== undefined) patch['nonterminal'] = attrs.nonterminal;
 	return { ...rule, ...patch } as RenderRule;
 }
 
