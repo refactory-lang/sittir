@@ -1465,7 +1465,7 @@ export interface AliasedImport {
 export interface ArgumentList {
   readonly $type: TSKindId.ArgumentList;
   readonly _expression?: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
-  expression(): readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
+  expressions(): readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
 }
 
 export interface AsPattern {
@@ -1638,7 +1638,7 @@ export interface ComplexPattern {
 export interface ConcatenatedString {
   readonly $type: TSKindId.ConcatenatedString;
   readonly _string: NonEmptyArray<String>;
-  string(): NonEmptyArray<String>;
+  strings(): NonEmptyArray<String>;
 }
 
 export interface ConditionalExpression {
@@ -1759,8 +1759,8 @@ export interface ExecStatement {
 
 export interface ExpressionList {
   readonly $type: TSKindId.ExpressionList;
-  readonly _expression: Expression | ",";
-  expression(): Expression | ",";
+  readonly _expression: NonEmptyArray<Expression>;
+  expressions(): NonEmptyArray<Expression>;
 }
 
 export interface ExpressionStatementTuple {
@@ -2080,8 +2080,8 @@ export interface ParenthesizedListSplat {
 
 export interface PatternList {
   readonly $type: TSKindId.PatternList;
-  readonly _pattern: Pattern | ",";
-  pattern(): Pattern | ",";
+  readonly _pattern: NonEmptyArray<Pattern>;
+  patterns(): NonEmptyArray<Pattern>;
 }
 
 export interface PrintStatement {
@@ -2255,7 +2255,7 @@ export interface UnaryOperator {
 export interface UnionPattern {
   readonly $type: TSKindId.UnionPattern;
   readonly _simple_pattern: NonEmptyArray<SimplePattern>;
-  simplePattern(): NonEmptyArray<SimplePattern>;
+  simplePatterns(): NonEmptyArray<SimplePattern>;
 }
 
 export interface UnionType {

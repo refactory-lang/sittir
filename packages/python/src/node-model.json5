@@ -1437,42 +1437,12 @@
       "fields": [
         {
           "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
+          "propertyName": "expressions",
+          "paramName": "expressions",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "list_splat",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "dictionary_splat",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "parenthesized_list_splat",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "keyword_argument",
-              "unresolved": true
-            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -2993,18 +2963,12 @@
       "fields": [
         {
           "name": "string",
-          "propertyName": "string",
-          "paramName": "string",
+          "propertyName": "strings",
+          "paramName": "strings",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
           "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "string",
-              "unresolved": true
-            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
@@ -4039,22 +4003,17 @@
       "fields": [
         {
           "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
+          "propertyName": "expressions",
+          "paramName": "expressions",
           "required": true,
-          "multiple": false,
-          "nonEmpty": false,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "nonEmptyArray",
               "name": "expression",
               "unresolved": true
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ","
             }
           ],
           "source": "inferred",
@@ -6517,22 +6476,17 @@
       "fields": [
         {
           "name": "pattern",
-          "propertyName": "pattern",
-          "paramName": "pattern",
+          "propertyName": "patterns",
+          "paramName": "patterns",
           "required": true,
-          "multiple": false,
-          "nonEmpty": false,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "nonEmptyArray",
               "name": "pattern",
               "unresolved": true
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": ","
             }
           ],
           "source": "inferred",
@@ -7998,18 +7952,12 @@
       "fields": [
         {
           "name": "simple_pattern",
-          "propertyName": "simplePattern",
-          "paramName": "simplePattern",
+          "propertyName": "simplePatterns",
+          "paramName": "simplePatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
           "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_simple_pattern",
-              "unresolved": true
-            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",

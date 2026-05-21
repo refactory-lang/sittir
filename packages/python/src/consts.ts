@@ -1112,7 +1112,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: true, multiple: false },
   ],
   'argument_list': [
-    { name: 'expression', required: false, multiple: true },
+    { name: 'expressions', required: false, multiple: true },
   ],
   'as_pattern': [
     { name: 'expression', required: true, multiple: false },
@@ -1186,7 +1186,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'integer', required: true, multiple: false },
   ],
   'concatenated_string': [
-    { name: 'string', required: true, multiple: true },
+    { name: 'strings', required: true, multiple: true },
   ],
   'conditional_expression': [
     { name: 'body', required: true, multiple: false },
@@ -1247,7 +1247,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'inClause', required: false, multiple: false },
   ],
   'expression_list': [
-    { name: 'expression', required: true, multiple: false },
+    { name: 'expressions', required: true, multiple: true },
   ],
   'expression_statement': [
     { name: 'expression', required: true, multiple: false },
@@ -1392,7 +1392,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'parenthesizedListSplat', required: true, multiple: false },
   ],
   'pattern_list': [
-    { name: 'pattern', required: true, multiple: false },
+    { name: 'patterns', required: true, multiple: true },
   ],
   'print_statement': [
     { name: 'chevron', required: false, multiple: false },
@@ -1476,7 +1476,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'argument', required: true, multiple: false },
   ],
   'union_pattern': [
-    { name: 'simplePattern', required: true, multiple: true },
+    { name: 'simplePatterns', required: true, multiple: true },
   ],
   'union_type': [
     { name: 'left', required: true, multiple: false },

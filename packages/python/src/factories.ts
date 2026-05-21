@@ -282,7 +282,7 @@ export function argumentList(...children: (T.Expression | T.ListSplat | T.Dictio
     $source: 2 as const,
     $named: true as const,
     _expression,
-    expression() { return _expression; },
+    expressions() { return _expression; },
     $with: { $children: (...vs: (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[]) => argumentList(...vs) },
   }, methodsEngine);
 }
@@ -667,7 +667,7 @@ export function concatenatedString(...children: T.String[]) {
     $source: 2 as const,
     $named: true as const,
     _string,
-    string() { return _string; },
+    strings() { return _string; },
     $with: { $children: (...vs: T.String[]) => concatenatedString(...vs) },
   }, methodsEngine);
 }
@@ -944,15 +944,16 @@ export function execStatement(config: T.ExecStatement.Config) {
   }, methodsEngine);
 }
 
-export function expressionList(child: T.Expression) {
-  const _expression = child;
+export function expressionList(...children: T.Expression[]) {
+  _assertNonEmpty(children, 'expression_list.children');
+  const _expression = children;
   return withMethods({
     $type: TSKindId.ExpressionList as const,
     $source: 2 as const,
     $named: true as const,
     _expression,
-    expression() { return _expression; },
-    $with: { $child: (v: T.Expression) => expressionList(v) },
+    expressions() { return _expression; },
+    $with: { $children: (...vs: T.Expression[]) => expressionList(...vs) },
   }, methodsEngine);
 }
 
@@ -1694,15 +1695,16 @@ export function passStatement() {
   }, methodsEngine);
 }
 
-export function patternList(child: T.Pattern) {
-  const _pattern = child;
+export function patternList(...children: T.Pattern[]) {
+  _assertNonEmpty(children, 'pattern_list.children');
+  const _pattern = children;
   return withMethods({
     $type: TSKindId.PatternList as const,
     $source: 2 as const,
     $named: true as const,
     _pattern,
-    pattern() { return _pattern; },
-    $with: { $child: (v: T.Pattern) => patternList(v) },
+    patterns() { return _pattern; },
+    $with: { $children: (...vs: T.Pattern[]) => patternList(...vs) },
   }, methodsEngine);
 }
 
@@ -2086,7 +2088,7 @@ export function unionPattern(...children: T.SimplePattern[]) {
     $source: 2 as const,
     $named: true as const,
     _simple_pattern,
-    simplePattern() { return _simple_pattern; },
+    simplePatterns() { return _simple_pattern; },
     $with: { $children: (...vs: T.SimplePattern[]) => unionPattern(...vs) },
   }, methodsEngine);
 }

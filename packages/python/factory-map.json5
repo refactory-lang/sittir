@@ -59,7 +59,7 @@
     "escape_sequence": "text",
     "except_clause": "config",
     "exec_statement": "config",
-    "expression_list": "direct",
+    "expression_list": "spread",
     "expression_statement_tuple": "spread",
     "expression_statement": "config",
     "false": "text",
@@ -105,7 +105,7 @@
     "parenthesized_expression": "direct",
     "parenthesized_list_splat": "direct",
     "pass_statement": "text",
-    "pattern_list": "direct",
+    "pattern_list": "spread",
     "print_statement": "config",
     "raise_statement": "config",
     "relative_import": "config",
@@ -1349,8 +1349,8 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "expression_statement_tuple": {
@@ -1908,8 +1908,8 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "print_statement": {

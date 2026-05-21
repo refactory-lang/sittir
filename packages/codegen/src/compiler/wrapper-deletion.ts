@@ -24,6 +24,7 @@
  */
 
 import type { Rule, RenderRule, PolymorphRule } from './rule.ts';
+import { fuseHeadRepeatLists } from './list-fusion.ts';
 
 // ---------------------------------------------------------------------------
 // Accumulated modifier attributes from unwrapped wrappers
@@ -236,7 +237,11 @@ export function deleteWrapper(rule: Rule): RenderRule {
 export function applyWrapperDeletion(rules: Record<string, Rule>): Record<string, RenderRule> {
 	const result: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
-		result[name] = deleteWrapper(rule);
+		// Fuse separated-list head+repeat pairs into one multi slot AFTER
+		// wrapper-deletion has pushed multiplicity/separator to leaves, so the
+		// renderRule the emitter consumes already has the canonical single
+		// multi slot (no head single + tail array split).
+		result[name] = fuseHeadRepeatLists(deleteWrapper(rule)) as RenderRule;
 	}
 	return result;
 }

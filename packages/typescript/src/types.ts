@@ -3826,7 +3826,7 @@ export interface NonNullExpression {
 export interface Object {
   readonly $type: TSKindId.Object;
   readonly _pair?: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
-  pair(): readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
+  pairs(): readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
 }
 
 export interface ObjectAssignmentPattern {
@@ -3840,7 +3840,7 @@ export interface ObjectAssignmentPattern {
 export interface ObjectPattern {
   readonly $type: TSKindId.ObjectPattern;
   readonly _pair_pattern?: readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
-  pairPattern(): readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
+  pairPatterns(): readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
 }
 
 export interface ObjectType {

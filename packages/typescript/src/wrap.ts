@@ -3225,7 +3225,7 @@ export function wrapObject(data: T.Object, tree: TreeHandle) {
     $type: TSKindId.Object as const,
     _pair: normalizeRepeatedWrapSlot((data._pair ?? data._spread_element ?? data._method_definition ?? data._identifier ?? data._reserved_identifier), false, "pair"),
 
-    pair() { return drillAsAll<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(this._pair, tree, "shorthand_property_identifier", "_shorthand_property_identifier"); },
+    pairs() { return drillAsAll<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(this._pair, tree, "shorthand_property_identifier", "_shorthand_property_identifier"); },
     $with: { $children: (...vs: readonly [never]) => wrapObject({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -3254,7 +3254,7 @@ export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle) {
     $type: TSKindId.ObjectPattern as const,
     _pair_pattern: normalizeRepeatedWrapSlot((data._pair_pattern ?? data._rest_pattern ?? data._object_assignment_pattern ?? data._identifier ?? data._reserved_identifier), false, "pair_pattern"),
 
-    pairPattern() { return drillAsAll<T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern>(this._pair_pattern, tree, "shorthand_property_identifier_pattern", "_shorthand_property_identifier_pattern"); },
+    pairPatterns() { return drillAsAll<T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern>(this._pair_pattern, tree, "shorthand_property_identifier_pattern", "_shorthand_property_identifier_pattern"); },
     $with: { $children: (...vs: readonly [never]) => wrapObjectPattern({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;

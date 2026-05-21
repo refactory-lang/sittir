@@ -545,7 +545,7 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle) {
     $type: TSKindId.ArgumentList as const,
     _expression: normalizeRepeatedWrapSlot((data._comparison_operator ?? data._not_operator ?? data._boolean_operator ?? data._lambda ?? data._await ?? data._binary_operator ?? data._identifier ?? data._keyword_identifier ?? data._string ?? data._concatenated_string ?? data._integer ?? data._float ?? data._true ?? data._false ?? data._none ?? data._unary_operator ?? data._attribute ?? data._subscript ?? data._call ?? data._list ?? data._list_comprehension ?? data._dictionary ?? data._dictionary_comprehension ?? data._set ?? data._set_comprehension ?? data._tuple ?? data._parenthesized_expression ?? data._generator_expression ?? data._ellipsis ?? data._list_splat_pattern ?? data._conditional_expression ?? data._named_expression ?? data._as_pattern ?? data._list_splat ?? data._dictionary_splat ?? data._keyword_argument ?? data._expression), false, "expression"),
 
-    expression() { return drillAsAll<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(this._expression, tree, "parenthesized_expression", "parenthesized_list_splat"); },
+    expressions() { return drillAsAll<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(this._expression, tree, "parenthesized_expression", "parenthesized_list_splat"); },
     $with: { $children: (...vs: readonly [never]) => wrapArgumentList({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -849,7 +849,7 @@ export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHan
     $type: TSKindId.ConcatenatedString as const,
     _string: normalizeRepeatedWrapSlot(data._string, true, "string"),
 
-    string() { return drillInAll<T.String>(this._string as readonly T.String[] | undefined, tree); },
+    strings() { return drillInAll<T.String>(this._string as readonly T.String[] | undefined, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapConcatenatedString({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -1105,9 +1105,9 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExpressionList as const,
-    _expression: normalizeSingularWrapSlot((data._comparison_operator ?? data._not_operator ?? data._boolean_operator ?? data._lambda ?? data._await ?? data._binary_operator ?? data._identifier ?? data._keyword_identifier ?? data._string ?? data._concatenated_string ?? data._integer ?? data._float ?? data._true ?? data._false ?? data._none ?? data._unary_operator ?? data._attribute ?? data._subscript ?? data._call ?? data._list ?? data._list_comprehension ?? data._dictionary ?? data._dictionary_comprehension ?? data._set ?? data._set_comprehension ?? data._tuple ?? data._parenthesized_expression ?? data._generator_expression ?? data._ellipsis ?? data._list_splat_pattern ?? data._conditional_expression ?? data._named_expression ?? data._as_pattern ?? data._expression), "expression", true, data.$type),
+    _expression: normalizeRepeatedWrapSlot((data._comparison_operator ?? data._not_operator ?? data._boolean_operator ?? data._lambda ?? data._await ?? data._binary_operator ?? data._identifier ?? data._keyword_identifier ?? data._string ?? data._concatenated_string ?? data._integer ?? data._float ?? data._true ?? data._false ?? data._none ?? data._unary_operator ?? data._attribute ?? data._subscript ?? data._call ?? data._list ?? data._list_comprehension ?? data._dictionary ?? data._dictionary_comprehension ?? data._set ?? data._set_comprehension ?? data._tuple ?? data._parenthesized_expression ?? data._generator_expression ?? data._ellipsis ?? data._list_splat_pattern ?? data._conditional_expression ?? data._named_expression ?? data._as_pattern ?? data._expression), true, "expression"),
 
-    expression() { return drillIn<T.Expression | ",">(this._expression, tree); },
+    expressions() { return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapExpressionList({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -1695,9 +1695,9 @@ export function wrapPatternList(data: T.PatternList, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.PatternList as const,
-    _pattern: normalizeSingularWrapSlot((data._identifier ?? data._keyword_identifier ?? data._subscript ?? data._attribute ?? data._list_splat_pattern ?? data._tuple_pattern ?? data._list_pattern ?? data._pattern), "pattern", true, data.$type),
+    _pattern: normalizeRepeatedWrapSlot((data._identifier ?? data._keyword_identifier ?? data._subscript ?? data._attribute ?? data._list_splat_pattern ?? data._tuple_pattern ?? data._list_pattern ?? data._pattern), true, "pattern"),
 
-    pattern() { return drillIn<T.Pattern | ",">(this._pattern, tree); },
+    patterns() { return drillInAll<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapPatternList({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -2047,7 +2047,7 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
     $type: TSKindId.UnionPattern as const,
     _simple_pattern: normalizeRepeatedWrapSlot((data._class_pattern ?? data._splat_pattern ?? data._union_pattern ?? data._list_pattern ?? data._tuple_pattern ?? data._dict_pattern ?? data._string ?? data._concatenated_string ?? data._true ?? data._false ?? data._none ?? data._simple_pattern_negative ?? data._complex_pattern ?? data._dotted_name ?? data._simple_pattern), true, "simple_pattern"),
 
-    simplePattern() { return drillInAll<T.SimplePattern>(this._simple_pattern as readonly T.SimplePattern[] | undefined, tree); },
+    simplePatterns() { return drillInAll<T.SimplePattern>(this._simple_pattern as readonly T.SimplePattern[] | undefined, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapUnionPattern({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;

@@ -2216,14 +2216,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expression', required: true, multiple: false },
   ],
   'object': [
-    { name: 'pair', required: false, multiple: true },
+    { name: 'pairs', required: false, multiple: true },
   ],
   'object_assignment_pattern': [
     { name: 'left', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
   ],
   'object_pattern': [
-    { name: 'pairPattern', required: false, multiple: true },
+    { name: 'pairPatterns', required: false, multiple: true },
   ],
   'object_type': [
     { name: 'opening', required: true, multiple: false },

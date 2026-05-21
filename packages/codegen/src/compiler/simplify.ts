@@ -35,6 +35,7 @@ import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, 
 import type { AssembledNode } from './node-map.ts';
 import { compileWordMatcher } from './common.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
+import { fuseHeadRepeatLists } from './list-fusion.ts';
 
 /** Does this string lex as a "word" under the grammar's `word` rule? */
 /**
@@ -256,7 +257,14 @@ export function computeSimplifiedRules(
 		// deleteWrapper as a final pass to push any surviving wrapper attributes
 		// back down to leaf attributes, satisfying the SimplifiedRule = RenderRule
 		// (wrapper-free) invariant. deleteWrapper is idempotent on wrapper-free input.
-		const wrapperFree = deleteWrapper(canonicalizeSeqOfLeaves(rule) as Rule) as SimplifiedRule;
+		// Re-fuse separated-list head+repeat pairs here too: inlineRefs can
+		// splice a hidden helper's body into a parent and re-expose a head
+		// single + tail array of the same element that wasn't adjacent in the
+		// renderRule. Running the same fusion keeps the deriver's
+		// simplifiedRule view in agreement with the emitter's renderRule.
+		const wrapperFree = fuseHeadRepeatLists(
+			deleteWrapper(canonicalizeSeqOfLeaves(rule) as Rule) as Rule
+		) as SimplifiedRule;
 		canonicalized[kind] = wrapperFree;
 	}
 	// Gate universal-shape assertion behind an env var so we can ramp

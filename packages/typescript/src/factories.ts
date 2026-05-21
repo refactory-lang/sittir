@@ -3459,7 +3459,7 @@ export function object(...children: (T.Pair | T.SpreadElement | T.MethodDefiniti
     $source: 2 as const,
     $named: true as const,
     _pair,
-    pair() { return _pair; },
+    pairs() { return _pair; },
     $with: { $children: (...vs: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) => object(...vs) },
   }, methodsEngine);
 }
@@ -3489,7 +3489,7 @@ export function objectPattern(...children: (T.PairPattern | T.RestPattern | T.Ob
     $source: 2 as const,
     $named: true as const,
     _pair_pattern,
-    pairPattern() { return _pair_pattern; },
+    pairPatterns() { return _pair_pattern; },
     $with: { $children: (...vs: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) => objectPattern(...vs) },
   }, methodsEngine);
 }

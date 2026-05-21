@@ -15863,12 +15863,6 @@
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
               "multiplicity": "array",
               "name": "_expression",
               "unresolved": true

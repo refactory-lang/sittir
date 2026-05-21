@@ -14745,36 +14745,12 @@
       "fields": [
         {
           "name": "pair",
-          "propertyName": "pair",
-          "paramName": "pair",
+          "propertyName": "pairs",
+          "paramName": "pairs",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "pair",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "spread_element",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "method_definition",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_shorthand_property_identifier",
-              "unresolved": true
-            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -14894,36 +14870,12 @@
       "fields": [
         {
           "name": "pair_pattern",
-          "propertyName": "pairPattern",
-          "paramName": "pairPattern",
+          "propertyName": "pairPatterns",
+          "paramName": "pairPatterns",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "pair_pattern",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "rest_pattern",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "object_assignment_pattern",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_shorthand_property_identifier_pattern",
-              "unresolved": true
-            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
