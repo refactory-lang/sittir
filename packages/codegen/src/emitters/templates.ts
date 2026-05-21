@@ -1104,6 +1104,23 @@ function emitSlotReference(rule: Rule, slot: AssembledNonterminal): string {
 }
 
 /**
+ * Fallback slot emission keyed on a field name + the leaf `rule.multiplicity`,
+ * for a field-wrapped rule that has NO registered back-pointer slot (rare —
+ * e.g. a deleteWrapper-stamped fieldName whose rule id / fieldName didn't
+ * resolve in `lookupSlot`). Prefer `emitSlotReference` whenever a slot exists.
+ */
+function emitFieldNameSlot(slotName: string, rule: Rule): string {
+	const mult = (rule as { multiplicity?: string }).multiplicity;
+	if (mult === 'array' || mult === 'nonEmptyArray') {
+		return emitListSlot(slotName, rule);
+	}
+	if (mult === 'optional') {
+		return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
+	}
+	return emitScalarSlot(slotName);
+}
+
+/**
  * Emit a kind-named scalar slot for a named alias reference. In RenderRule
  * input, a named alias represents a single visible kind — always scalar.
  * (The legacy walker emitted list form here via `$$$SLOT` → join; the new
@@ -1160,23 +1177,13 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	// rules. fieldName is set when the symbol was formerly inside a FieldRule;
 	// multiplicity when inside a RepeatRule or OptionalRule.
 	if (rule.fieldName !== undefined) {
-		const slotName = rule.fieldName.toLowerCase();
-		const multiplicity = rule.multiplicity;
-		const isArray = multiplicity === 'array' || multiplicity === 'nonEmptyArray';
-		if (isArray) {
-			const slot = lookupSlot(rule, ctx);
-			return emitListSlot(slotName, rule, slot ?? undefined);
-		}
-		// Check slot back-pointer for list shape (walker infers multiplicity
-		// from surrounding structure; slot back-pointer captures that decision).
+		// Prefer the registered slot (single source); fall back to the field
+		// name + leaf multiplicity only when no slot is registered.
 		const slot = lookupSlot(rule, ctx);
-		if (slot && isMultiple(slot)) {
-			return emitListSlot(slotName, rule, slot);
+		if (slot) {
+			return emitSlotReference(rule, slot);
 		}
-		if (multiplicity === 'optional') {
-			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
-		}
-		return emitScalarSlot(slotName);
+		return emitFieldNameSlot(rule.fieldName.toLowerCase(), rule);
 	}
 
 	// Slot back-pointer: when assembly registered a slot for this rule
@@ -1360,15 +1367,7 @@ function emitChoice(rule: Extract<Rule, { type: 'choice' }>, ctx: EmitCtx): stri
 	// around a choice whose members carry no fieldName): emit by the field
 	// name directly.
 	if (rule.fieldName !== undefined) {
-		const slotName = rule.fieldName.toLowerCase();
-		const multiplicity = rule.multiplicity;
-		if (multiplicity === 'array' || multiplicity === 'nonEmptyArray') {
-			return emitListSlot(slotName, rule);
-		}
-		if (multiplicity === 'optional') {
-			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
-		}
-		return emitScalarSlot(slotName);
+		return emitFieldNameSlot(rule.fieldName.toLowerCase(), rule);
 	}
 	// No slot, no fieldName → a choice of pure literals/patterns (no data slot).
 	// Emit the first non-empty branch's literal text.
