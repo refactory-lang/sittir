@@ -1157,19 +1157,18 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	// it verbatim so keyword tokens lifted from `_kw_foo` helpers emit as
 	// `foo` not as a slot reference.
 	//
-	// Bug 3 fix: when a link-sourced symbol carries `fieldName` (stamped by
+	// Chunk D2: a link-symbol renders its literal verbatim ONLY when it has no
+	// `fieldName`. A field-wrapped link-operator literal (stamped by
 	// deleteWrapper from a surrounding field() wrapper, e.g.
-	// `field('operator', symbol(name='amp_amp', source='link', literal='&&'))`),
-	// emit a slot reference instead of the literal. This handles
-	// `binary_expression` where each choice arm has a different operator literal
-	// but they all share the same `fieldName: 'operator'` — the template must
-	// reference `{{ operator }}` so the renderer substitutes the actual operator
-	// from the parse tree, not the first variant's literal.
-	if (rule.source === 'link') {
-		if (rule.fieldName !== undefined) {
-			// Choice-of-link-symbols with shared fieldName: emit as slot.
-			return emitScalarSlot(rule.fieldName.toLowerCase());
-		}
+	// `field('operator', symbol(name='amp_amp', source='link', literal='&&'))`)
+	// is a SLOT — it must fall through to the standard slot path below so the
+	// renderer substitutes the actual operator from the parse tree (the now-
+	// separate operator slot, Chunk D1) instead of the first arm's hard-coded
+	// literal. (`binary_expression` / `comparison_operator` share one
+	// `fieldName: 'operator'` across arms with different literals.) Emitting the
+	// literal here would render `a < b` as the first arm's operator regardless
+	// of the parsed operator and leave read unable to populate the slot.
+	if (rule.source === 'link' && rule.fieldName === undefined) {
 		return rule.literal !== undefined ? escapeLiteral(rule.literal) : '';
 	}
 

@@ -537,8 +537,8 @@
           "name": "for_in_clause",
           "propertyName": "forInClause",
           "paramName": "forInClause",
-          "required": false,
-          "multiple": true,
+          "required": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
@@ -546,7 +546,24 @@
               "multiplicity": "single",
               "name": "for_in_clause",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "for_in_clause"
+            ]
+          }
+        },
+        {
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -913,9 +930,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "match_block_block",
-          "propertyName": "matchBlockBlock",
-          "paramName": "matchBlockBlock",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -1086,9 +1103,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "integer",
-          "propertyName": "integer",
-          "paramName": "integer",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -1214,9 +1231,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -1436,9 +1453,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "expression",
-          "propertyName": "expressions",
-          "paramName": "expressions",
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -1673,6 +1690,9 @@
                 "kinds": [
                   "_assignment_eq"
                 ]
+              },
+              "aliasSources": {
+                "assignment_eq": "_assignment_eq"
               }
             }
           ],
@@ -1730,6 +1750,9 @@
                 "kinds": [
                   "_assignment_type"
                 ]
+              },
+              "aliasSources": {
+                "assignment_type": "_assignment_type"
               }
             }
           ],
@@ -1787,6 +1810,9 @@
                 "kinds": [
                   "_assignment_typed"
                 ]
+              },
+              "aliasSources": {
+                "assignment_typed": "_assignment_typed"
               }
             }
           ],
@@ -2025,102 +2051,75 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "plus",
-              "unresolved": true
+              "value": "+"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "dash",
-              "unresolved": true
+              "value": "-"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "star",
-              "unresolved": true
+              "value": "*"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "at",
-              "unresolved": true
+              "value": "@"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "slash",
-              "unresolved": true
+              "value": "/"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "percent",
-              "unresolved": true
+              "value": "%"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "slash_slash",
-              "unresolved": true
+              "value": "//"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "star_star",
-              "unresolved": true
+              "value": "**"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "pipe",
-              "unresolved": true
+              "value": "|"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "amp",
-              "unresolved": true
+              "value": "&"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "caret",
-              "unresolved": true
+              "value": "^"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "lt_lt",
-              "unresolved": true
+              "value": "<<"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "gt_gt",
-              "unresolved": true
+              "value": ">>"
             }
           ],
-          "source": "link",
+          "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "plus",
-              "dash",
-              "star",
-              "at",
-              "slash",
-              "percent",
-              "slash_slash",
-              "star_star",
-              "pipe",
-              "amp",
-              "caret",
-              "lt_lt",
-              "gt_gt"
-            ]
+            "kinds": []
           }
         },
         {
@@ -2223,25 +2222,20 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "and",
-              "unresolved": true
+              "value": "and"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "or",
-              "unresolved": true
+              "value": "or"
             }
           ],
-          "source": "link",
+          "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "and",
-              "or"
-            ]
+            "kinds": []
           }
         },
         {
@@ -2430,9 +2424,9 @@
           }
         },
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -2481,9 +2475,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "as_pattern",
-          "propertyName": "asPattern",
-          "paramName": "asPattern",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -2645,9 +2639,9 @@
           }
         },
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -2784,97 +2778,94 @@
           }
         },
         {
-          "name": "comparators",
-          "propertyName": "comparators",
-          "paramName": "comparators",
-          "required": true,
+          "name": "operators",
+          "propertyName": "operators",
+          "paramName": "operators",
+          "required": false,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "lt",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "lt_eq",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "eq_eq",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "bang_eq",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "gt_eq",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "gt",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "lt_gt",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "in",
-              "unresolved": true
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "<"
             },
             {
               "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
+              "value": "<="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "=="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "!="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": ">="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": ">"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "<>"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "in"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
               "value": "not in"
             },
             {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "is",
-              "unresolved": true
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "is"
             },
             {
               "kind": "terminal",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "value": "is not"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "primary_expression",
-              "unresolved": true
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "primary_expression",
+          "propertyName": "primaryExpressions",
+          "paramName": "primaryExpressions",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "primary_expression",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
             "kinds": [
-              "lt",
-              "lt_eq",
-              "eq_eq",
-              "bang_eq",
-              "gt_eq",
-              "gt",
-              "lt_gt",
-              "in",
-              "is",
               "primary_expression"
             ]
           }
@@ -2921,9 +2912,9 @@
           }
         },
         {
-          "name": "integer",
-          "propertyName": "integer",
-          "paramName": "integer",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3249,20 +3240,6 @@
               "expression"
             ]
           }
-        },
-        {
-          "name": "newline",
-          "propertyName": "newline",
-          "paramName": "newline",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": []
-          }
         }
       ],
       "children": []
@@ -3414,6 +3391,9 @@
             "kinds": [
               "_dict_pattern_kv"
             ]
+          },
+          "aliasSources": {
+            "dict_pattern_kv": "_dict_pattern_kv"
           }
         }
       ],
@@ -3428,9 +3408,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "pair",
-          "propertyName": "pairs",
-          "paramName": "pairs",
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -3560,9 +3540,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3675,9 +3655,9 @@
           }
         },
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3746,9 +3726,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3821,9 +3801,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "except_clause_as",
-          "propertyName": "exceptClauseAs",
-          "paramName": "exceptClauseAs",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -3855,9 +3835,9 @@
           }
         },
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3946,26 +3926,21 @@
           }
         },
         {
-          "name": "in_clause",
-          "propertyName": "inClause",
-          "paramName": "inClause",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
+          "name": "expression",
+          "propertyName": "expressions",
+          "paramName": "expressions",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "in"
-            },
-            {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "nonEmptyArray",
               "name": "expression",
               "unresolved": true
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4107,6 +4082,9 @@
                 "kinds": [
                   "_expression_statement_tuple"
                 ]
+              },
+              "aliasSources": {
+                "expression_statement_tuple": "_expression_statement_tuple"
               }
             }
           ],
@@ -4280,9 +4258,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4498,9 +4476,9 @@
           }
         },
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4572,9 +4550,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "interpolation",
-          "propertyName": "interpolations",
-          "paramName": "interpolations",
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -4734,9 +4712,9 @@
           }
         },
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5070,9 +5048,9 @@
           }
         },
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5194,25 +5172,42 @@
           "name": "wildcard_import",
           "propertyName": "wildcardImport",
           "paramName": "wildcardImport",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "wildcard_import",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "wildcard_import"
+            ]
+          }
+        },
+        {
+          "name": "name",
+          "propertyName": "names",
+          "paramName": "names",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "dotted_name",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "aliased_import",
               "unresolved": true
             }
@@ -5221,7 +5216,6 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "wildcard_import",
               "dotted_name",
               "aliased_import"
             ]
@@ -5859,9 +5853,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6353,9 +6347,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6394,9 +6388,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "parenthesized_list_splat",
-          "propertyName": "parenthesizedListSplat",
-          "paramName": "parenthesizedListSplat",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -7028,7 +7022,24 @@
               "multiplicity": "single",
               "name": "_identifier",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_identifier"
+            ]
+          }
+        },
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -7041,11 +7052,10 @@
               "value": "_"
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_identifier",
               "identifier"
             ]
           }
@@ -7210,34 +7220,34 @@
       "hidden": false,
       "fields": [
         {
-          "name": "escape_interpolation",
-          "propertyName": "escapeInterpolations",
-          "paramName": "escapeInterpolations",
-          "required": true,
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
+          "required": false,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "escape_interpolation",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "escape_sequence",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "_not_escape_sequence",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "_string_content",
               "unresolved": true
             }
@@ -7366,9 +7376,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -7554,9 +7564,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -7823,9 +7833,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -8075,9 +8085,9 @@
           }
         },
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -8203,6 +8213,9 @@
                 "kinds": [
                   "_with_clause_bare"
                 ]
+              },
+              "aliasSources": {
+                "with_clause_bare": "_with_clause_bare"
               }
             }
           ],
@@ -8237,6 +8250,9 @@
                 "kinds": [
                   "_with_clause_paren"
                 ]
+              },
+              "aliasSources": {
+                "with_clause_paren": "_with_clause_paren"
               }
             }
           ],
@@ -8401,9 +8417,9 @@
           }
         },
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -8455,24 +8471,36 @@
           "name": "expression",
           "propertyName": "expression",
           "paramName": "expression",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "from"
-            },
-            {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "expression",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        },
+        {
+          "name": "expressions",
+          "propertyName": "expressions",
+          "paramName": "expressions",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_expressions",
               "unresolved": true
             }
@@ -8481,7 +8509,6 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "expression",
               "_expressions"
             ]
           }

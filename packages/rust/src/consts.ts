@@ -1477,11 +1477,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_attributed_parameter': [
     { name: 'attributeItem', required: false, multiple: false },
-    { name: 'parameter', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   '_attributed_type_parameter': [
     { name: 'attributeItems', required: false, multiple: true },
-    { name: 'metavariable', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   '_closure_expression_expr': [
     { name: 'body', required: true, multiple: false },
@@ -1517,7 +1517,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   '_let_chain': [
-    { name: 'letChain', required: true, multiple: false },
+    { name: 'letChain', required: false, multiple: false },
+    { name: 'letCondition', required: false, multiple: false },
+    { name: 'expression', required: false, multiple: false },
   ],
   '_macro_definition_brace': [
     { name: 'macroRules', required: false, multiple: true },
@@ -1535,7 +1537,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   '_non_special_token': [
-    { name: 'literal', required: true, multiple: false },
+    { name: 'contents', required: false, multiple: true },
   ],
   '_pointer_type_mut': [
     { name: 'mutableSpecifier', required: true, multiple: false },
@@ -1565,12 +1567,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'tokenPatterns', required: false, multiple: true },
   ],
   '_type_arguments_repeat1': [
-    { name: 'type', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
     { name: 'traitBounds', required: false, multiple: false },
   ],
   '_type_parameters_repeat1': [
     { name: 'attributeItems', required: false, multiple: true },
-    { name: 'metavariable', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   '_visibility_modifier_crate': [
     { name: 'crate', required: true, multiple: false },
@@ -1580,7 +1582,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'trait', required: true, multiple: false },
   ],
   'arguments': [
-    { name: 'attributes', required: false, multiple: true },
+    { name: 'attributeItems', required: false, multiple: true },
+    { name: 'expressions', required: false, multiple: true },
   ],
   'array_expression': [
     { name: 'arrayExpressionSemi', required: true, multiple: false },
@@ -1638,7 +1641,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'bracketed_type': [
-    { name: 'type', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'break_expression': [
     { name: 'label', required: false, multiple: false },
@@ -1664,10 +1667,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'closure_parameters': [
-    { name: 'patterns', required: false, multiple: true },
+    { name: 'contents', required: false, multiple: true },
   ],
   'comment': [
-    { name: 'lineComment', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'compound_assignment_expr': [
     { name: 'left', required: true, multiple: false },
@@ -1712,7 +1715,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'trait', required: true, multiple: false },
   ],
   'else_clause': [
-    { name: 'block', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'enum_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -1767,7 +1770,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'field_initializer_list': [
-    { name: 'shorthandFieldInitializers', required: false, multiple: true },
+    { name: 'contents', required: false, multiple: true },
   ],
   'field_pattern': [
     { name: 'refMarker', required: false, multiple: false },
@@ -1834,7 +1837,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeArguments', required: true, multiple: false },
   ],
   'generic_pattern': [
-    { name: 'identifier', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
     { name: 'typeArguments', required: true, multiple: false },
   ],
   'generic_type': [
@@ -1878,7 +1881,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'identifier', required: true, multiple: false },
   ],
   'last_match_arm': [
-    { name: 'attributeItems', required: false, multiple: true },
+    { name: 'contents', required: false, multiple: true },
     { name: 'pattern', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
   ],
@@ -1973,7 +1976,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'orPatternPrefix', required: true, multiple: false },
   ],
   'ordered_field_declaration_list': [
-    { name: 'attributes', required: false, multiple: true },
+    { name: 'attributeItems', required: false, multiple: true },
+    { name: 'visibilityModifier', required: false, multiple: false },
+    { name: 'types', required: false, multiple: true },
   ],
   'parameter': [
     { name: 'mutableSpecifier', required: false, multiple: false },
@@ -2020,7 +2025,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: true, multiple: false },
   ],
   'reference_expression': [
-    { name: 'referenceExpressionRawConst', required: true, multiple: false },
+    { name: 'content', required: false, multiple: false },
     { name: 'value', required: true, multiple: false },
   ],
   'reference_pattern': [
@@ -2078,7 +2083,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: false, multiple: false },
   ],
   'string_literal': [
-    { name: 'escapeSequences', required: false, multiple: true },
+    { name: 'contents', required: false, multiple: true },
   ],
   'struct_expression': [
     { name: 'name', required: true, multiple: false },
@@ -2094,7 +2099,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'struct_pattern': [
     { name: 'type', required: true, multiple: false },
-    { name: 'fieldPatterns', required: false, multiple: true },
+    { name: 'contents', required: false, multiple: true },
   ],
   'token_binding_pattern': [
     { name: 'name', required: true, multiple: false },
@@ -2135,7 +2140,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'tokenPatterns', required: false, multiple: true },
   ],
   'trait_bounds': [
-    { name: 'types', required: true, multiple: true },
+    { name: 'contents', required: false, multiple: true },
   ],
   'trait_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -2157,7 +2162,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'elements', required: false, multiple: true },
   ],
   'tuple_pattern': [
-    { name: 'patterns', required: false, multiple: true },
+    { name: 'contents', required: false, multiple: true },
   ],
   'tuple_struct_pattern': [
     { name: 'type', required: true, multiple: false },
@@ -2167,7 +2172,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'types', required: true, multiple: true },
   ],
   'type_arguments': [
-    { name: 'types', required: true, multiple: true },
+    { name: 'contents', required: false, multiple: true },
     { name: 'traitBounds', required: false, multiple: true },
   ],
   'type_binding': [
@@ -2214,7 +2219,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: true, multiple: false },
   ],
   'use_bounds': [
-    { name: 'lifetimes', required: false, multiple: true },
+    { name: 'contents', required: false, multiple: true },
   ],
   'use_declaration': [
     { name: 'visibilityModifier', required: false, multiple: false },

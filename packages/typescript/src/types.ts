@@ -2184,10 +2184,8 @@ export interface _CallSignature {
 
 export interface ClassBodyMember {
   readonly $type: TSKindId.ClassBodyMember;
-  readonly _abstract_method_signature: AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
-  readonly _semicolon?: Semicolon | ",";
-  abstractMethodSignature(): AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
-  semicolon(): Semicolon | "," | undefined;
+  readonly _content?: AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition | Semicolon | ",";
+  content(): AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition | Semicolon | "," | undefined;
 }
 
 export interface ClassBodyMethod {
@@ -2248,9 +2246,9 @@ export interface ExportStatementDefaultDeclArmDefaultKwValue {
 
 export interface ExportStatementDefaultFromArm {
   readonly $type: TSKindId.ExportStatementDefaultFromArm;
-  readonly _export_statement_default_from_arm_star_from: ExportStatementDefaultFromArmStarFrom | ExportStatementDefaultFromArmNsFrom | ExportStatementDefaultFromArmClauseFrom | ExportClause;
+  readonly _content: ExportStatementDefaultFromArmStarFrom | ExportStatementDefaultFromArmNsFrom | ExportStatementDefaultFromArmClauseFrom | ExportClause;
   readonly _semicolon?: Semicolon;
-  exportStatementDefaultFromArmStarFrom(): ExportStatementDefaultFromArmStarFrom | ExportStatementDefaultFromArmNsFrom | ExportStatementDefaultFromArmClauseFrom | ExportClause;
+  content(): ExportStatementDefaultFromArmStarFrom | ExportStatementDefaultFromArmNsFrom | ExportStatementDefaultFromArmClauseFrom | ExportClause;
   semicolon(): Semicolon | undefined;
 }
 
@@ -2312,13 +2310,13 @@ export interface ExtendsClauseSingle {
 
 export interface ForHeader {
   readonly $type: TSKindId.ForHeader;
-  readonly _for_header_lhs: ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
+  readonly _content: ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
   readonly _operator: number;
   readonly _right: Expressions;
   readonly __inputHints__?: {
     readonly operator: KindEnum<"in" | "of", TSKindId.In | TSKindId.Of>;
   };
-  forHeaderLhs(): ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
+  content(): ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
   operator(): number;
   right(): Expressions;
 }
@@ -2357,9 +2355,9 @@ export interface FromClause {
 export interface _ImportClauseDefaultImport {
   readonly $type: TSKindId._ImportClauseDefaultImport;
   readonly _import_identifier: ImportIdentifier;
-  readonly _namespace_import?: NamespaceImport | NamedImports;
+  readonly _content?: NamespaceImport | NamedImports;
   importIdentifier(): ImportIdentifier;
-  namespaceImport(): NamespaceImport | NamedImports | undefined;
+  content(): NamespaceImport | NamedImports | undefined;
 }
 
 export interface _ImportClauseNamedImports {
@@ -2420,14 +2418,14 @@ export interface JsxStartOpeningElement {
 
 export interface JsxString {
   readonly $type: "_jsx_string";
-  readonly _unescaped_double_jsx_string_fragment: UnescapedDoubleJsxStringFragment | HtmlCharacterReference | UnescapedSingleJsxStringFragment;
-  unescapedDoubleJsxStringFragment(): UnescapedDoubleJsxStringFragment | HtmlCharacterReference | UnescapedSingleJsxStringFragment;
+  readonly _content?: readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference | UnescapedSingleJsxStringFragment)[];
+  contents(): readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference | UnescapedSingleJsxStringFragment)[];
 }
 
 export interface LhsExpression {
   readonly $type: "_lhs_expression";
-  readonly _member_expression: MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
-  memberExpression(): MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
+  readonly _content: MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
+  content(): MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
 }
 
 export interface _Module {
@@ -2694,20 +2692,20 @@ export interface AmbientDeclarationUFormModule {
 export type AmbientDeclaration = AmbientDeclarationUFormDeclaration | AmbientDeclarationUFormGlobal | AmbientDeclarationUFormModule;
 export interface Arguments {
   readonly $type: TSKindId.Arguments;
-  readonly _expression?: readonly (Expression | SpreadElement)[];
-  expressions(): readonly (Expression | SpreadElement)[];
+  readonly _content?: readonly (Expression | SpreadElement)[];
+  contents(): readonly (Expression | SpreadElement)[];
 }
 
 export interface Array {
   readonly $type: TSKindId.Array;
-  readonly _expression?: readonly (Expression | SpreadElement)[];
-  expressions(): readonly (Expression | SpreadElement)[];
+  readonly _content?: readonly (Expression | SpreadElement)[];
+  contents(): readonly (Expression | SpreadElement)[];
 }
 
 export interface ArrayPattern {
   readonly $type: TSKindId.ArrayPattern;
-  readonly _pattern?: readonly (Pattern | AssignmentPattern)[];
-  patterns(): readonly (Pattern | AssignmentPattern)[];
+  readonly _content?: readonly (Pattern | AssignmentPattern)[];
+  contents(): readonly (Pattern | AssignmentPattern)[];
 }
 
 export interface ArrayType {
@@ -2764,15 +2762,15 @@ export type ArrowFunction = ArrowFunctionUFormParameter | ArrowFunctionUFormUCal
 export interface AsExpression {
   readonly $type: TSKindId.AsExpression;
   readonly _expression: Expression;
-  readonly _type_annotation: Const | Type;
+  readonly _type_annotation: "const" | Type;
   expression(): Expression;
-  typeAnnotation(): Const | Type;
+  typeAnnotation(): "const" | Type;
 }
 
 export interface Asserts {
   readonly $type: TSKindId.Asserts;
-  readonly _type_predicate: TypePredicate | Identifier | This;
-  typePredicate(): TypePredicate | Identifier | This;
+  readonly _content: TypePredicate | Identifier | This;
+  content(): TypePredicate | Identifier | This;
 }
 
 export interface AssertsAnnotation {
@@ -2895,8 +2893,8 @@ export interface Class {
 
 export interface ClassBody {
   readonly $type: TSKindId.ClassBody;
-  readonly _class_body_method?: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ";")[];
-  classBodyMethods(): readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ";")[];
+  readonly _content?: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ";")[];
+  contents(): readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ";")[];
 }
 
 export interface ClassDeclaration {
@@ -2906,13 +2904,11 @@ export interface ClassDeclaration {
   readonly _type_parameters?: TypeParameters;
   readonly _class_heritage?: ClassHeritage;
   readonly _body: ClassBody;
-  readonly _automatic_semicolon?: string;
   decorators(): readonly (Decorator)[];
   name(): Identifier;
   typeParameters(): TypeParameters | undefined;
   classHeritage(): ClassHeritage | undefined;
   body(): ClassBody;
-  automaticSemicolon(): string | undefined;
 }
 
 export interface ClassHeritageExtendsClause {
@@ -3020,8 +3016,8 @@ export interface DebuggerStatement {
 
 export interface Decorator {
   readonly $type: TSKindId.Decorator;
-  readonly _identifier: Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression;
-  identifier(): Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression;
+  readonly _content: Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression;
+  content(): Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression;
 }
 
 export interface DecoratorCallExpression {
@@ -3044,8 +3040,8 @@ export interface DecoratorMemberExpression {
 
 export interface DecoratorParenthesizedExpression {
   readonly $type: TSKindId.DecoratorParenthesizedExpression;
-  readonly _identifier: Identifier | DecoratorMemberExpression | DecoratorCallExpression;
-  identifier(): Identifier | DecoratorMemberExpression | DecoratorCallExpression;
+  readonly _content: Identifier | DecoratorMemberExpression | DecoratorCallExpression;
+  content(): Identifier | DecoratorMemberExpression | DecoratorCallExpression;
 }
 
 export interface DefaultType {
@@ -3080,8 +3076,10 @@ export interface EnumAssignment {
 
 export interface EnumBody {
   readonly $type: TSKindId.EnumBody;
-  readonly _opening?: readonly (PropertyName | EnumAssignment)[];
-  openings(): readonly (PropertyName | EnumAssignment)[];
+  readonly _name?: readonly (PropertyName)[];
+  readonly _enum_assignment?: readonly (EnumAssignment)[];
+  names(): readonly (PropertyName)[];
+  enumAssignments(): readonly (EnumAssignment)[];
 }
 
 export interface EnumDeclaration {
@@ -3222,14 +3220,14 @@ export interface FlowMaybeType {
 
 export interface ForInStatement {
   readonly $type: TSKindId.ForInStatement;
-  readonly _for_header_lhs: ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
+  readonly _content: ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
   readonly _operator: number;
   readonly _right: Expressions;
   readonly _body: Statement;
   readonly __inputHints__?: {
     readonly operator: KindEnum<"in" | "of", TSKindId.In | TSKindId.Of>;
   };
-  forHeaderLhs(): ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
+  content(): ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
   operator(): number;
   right(): Expressions;
   body(): Statement;
@@ -3413,9 +3411,9 @@ export interface ImportClauseNamedImports {
 export interface ImportClauseDefaultImport {
   readonly $type: "import_clause_default_import";
   readonly _import_identifier: ImportIdentifier;
-  readonly _namespace_import?: NamespaceImport | NamedImports;
+  readonly _content?: NamespaceImport | NamedImports;
   importIdentifier(): ImportIdentifier;
-  namespaceImport(): NamespaceImport | NamedImports | undefined;
+  content(): NamespaceImport | NamedImports | undefined;
 }
 
 export interface ImportClauseUFormNamespaceImport {
@@ -3481,15 +3479,14 @@ export interface ImportSpecifierUFormAs {
 export type ImportSpecifier = ImportSpecifierUFormName | ImportSpecifierUFormAs;
 export interface ImportStatement {
   readonly $type: TSKindId.ImportStatement;
-  readonly _import_clause?: number;
-  readonly _from_clause: NonEmptyArray<ImportClause | String | ImportRequireClause>;
+  readonly _import_clause?: "type" | "typeof" | ImportClause;
+  readonly _source?: String;
+  readonly _import_require_clause?: ImportRequireClause;
   readonly _import_attribute?: ImportAttribute;
   readonly _semicolon?: Semicolon;
-  readonly __inputHints__?: {
-    readonly import_clause?: KindEnum<"type" | "typeof", TSKindId.Type | TSKindId.Typeof>;
-  };
-  importClause(): number | undefined;
-  fromClauses(): NonEmptyArray<ImportClause | String | ImportRequireClause>;
+  importClause(): "type" | "typeof" | ImportClause | undefined;
+  source(): String | undefined;
+  importRequireClause(): ImportRequireClause | undefined;
   importAttribute(): ImportAttribute | undefined;
   semicolon(): Semicolon | undefined;
 }
@@ -3538,9 +3535,9 @@ export interface IndexTypeQuery {
 export interface InferType {
   readonly $type: TSKindId.InferType;
   readonly _type_identifier: Identifier;
-  readonly _constraint: Type;
+  readonly _type?: Type;
   typeIdentifier(): Identifier;
-  constraint(): Type;
+  type(): Type | undefined;
 }
 
 export interface InstantiationExpression {
@@ -3605,8 +3602,8 @@ export interface JsxElement {
 
 export interface JsxExpression {
   readonly $type: "jsx_expression";
-  readonly _expression?: Expression | SequenceExpression | SpreadElement;
-  expression(): Expression | SequenceExpression | SpreadElement | undefined;
+  readonly _content?: Expression | SequenceExpression | SpreadElement;
+  content(): Expression | SequenceExpression | SpreadElement | undefined;
 }
 
 export interface JsxNamespaceName {
@@ -3658,8 +3655,8 @@ export interface LexicalDeclaration {
 
 export interface LiteralType {
   readonly $type: TSKindId.LiteralType;
-  readonly _number: _Number | Number | String | True | False | Null | Undefined;
-  number(): _Number | Number | String | True | False | Null | Undefined;
+  readonly _content: _Number | Number | String | True | False | Null | Undefined;
+  content(): _Number | Number | String | True | False | Null | Undefined;
 }
 
 export interface LookupType {
@@ -3825,8 +3822,8 @@ export interface NonNullExpression {
 
 export interface Object {
   readonly $type: TSKindId.Object;
-  readonly _pair?: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
-  pairs(): readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
+  readonly _content?: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
+  contents(): readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
 }
 
 export interface ObjectAssignmentPattern {
@@ -3839,21 +3836,21 @@ export interface ObjectAssignmentPattern {
 
 export interface ObjectPattern {
   readonly $type: TSKindId.ObjectPattern;
-  readonly _pair_pattern?: readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
-  pairPatterns(): readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
+  readonly _content?: readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
+  contents(): readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
 }
 
 export interface ObjectType {
   readonly $type: TSKindId.ObjectType;
   readonly _opening: number;
-  readonly _members?: "," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon;
+  readonly _content?: readonly (ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | "," | Semicolon)[];
   readonly _closing: number;
   readonly __inputHints__?: {
     readonly opening: KindEnum<"{" | "{|", TSKindId.Lbrace | TSKindId.LbracePipe>;
     readonly closing: KindEnum<"}" | "|}", TSKindId.Rbrace | TSKindId.PipeRbrace>;
   };
   opening(): number;
-  members(): "," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon | undefined;
+  contents(): readonly (ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | "," | Semicolon)[];
   closing(): number;
 }
 
@@ -3985,8 +3982,7 @@ export interface PropertySignature {
 export interface PublicFieldDefinition {
   readonly $type: TSKindId.PublicFieldDefinition;
   readonly _decorator?: readonly (Decorator)[];
-  readonly _public_field_definition_declare_first?: PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst;
-  readonly _public_field_definition_static_mods: PublicFieldDefinitionStaticMods | PublicFieldDefinitionAbstractFirst | PublicFieldDefinitionReadonlyFirst | PublicFieldDefinitionAccessorOpt;
+  readonly _content?: PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | PublicFieldDefinitionStaticMods | PublicFieldDefinitionAbstractFirst | PublicFieldDefinitionReadonlyFirst | PublicFieldDefinitionAccessorOpt;
   readonly _name: PropertyName;
   readonly _optionality_marker?: number;
   readonly _type?: TypeAnnotation;
@@ -3995,8 +3991,7 @@ export interface PublicFieldDefinition {
     readonly optionality_marker?: KindEnum<"?" | "!", TSKindId.Qmark | TSKindId.Bang>;
   };
   decorators(): readonly (Decorator)[];
-  publicFieldDefinitionDeclareFirst(): PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | undefined;
-  publicFieldDefinitionStaticMods(): PublicFieldDefinitionStaticMods | PublicFieldDefinitionAbstractFirst | PublicFieldDefinitionReadonlyFirst | PublicFieldDefinitionAccessorOpt;
+  content(): PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | PublicFieldDefinitionStaticMods | PublicFieldDefinitionAbstractFirst | PublicFieldDefinitionReadonlyFirst | PublicFieldDefinitionAccessorOpt | undefined;
   name(): PropertyName;
   optionalityMarker(): number | undefined;
   type(): TypeAnnotation | undefined;
@@ -4042,8 +4037,8 @@ export interface RequiredParameter {
 
 export interface RestPattern {
   readonly $type: TSKindId.RestPattern;
-  readonly _member_expression: MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
-  memberExpression(): MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
+  readonly _content: MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
+  content(): MemberExpression | SubscriptExpression | _Identifier | ReservedIdentifier | DestructuringPattern | NonNullExpression;
 }
 
 export interface RestType {
@@ -4083,22 +4078,20 @@ export interface SpreadElement {
 export interface StatementBlock {
   readonly $type: TSKindId.StatementBlock;
   readonly _statements?: readonly (Statement)[];
-  readonly _automatic_semicolon?: string;
   statements(): readonly (Statement)[];
-  automaticSemicolon(): string | undefined;
 }
 
 export interface String {
   readonly $type: TSKindId.String;
   readonly _opening: number;
-  readonly _contents: UnescapedDoubleStringFragment | EscapeSequence | UnescapedSingleStringFragment;
+  readonly _contents?: readonly (UnescapedDoubleStringFragment | EscapeSequence | UnescapedSingleStringFragment)[];
   readonly _closing: number;
   readonly __inputHints__?: {
     readonly opening: KindEnum<"\"" | "'", TSKindId.Dquote | TSKindId.Squote>;
     readonly closing: KindEnum<"\"" | "'", TSKindId.Dquote | TSKindId.Squote>;
   };
   opening(): number;
-  contents(): UnescapedDoubleStringFragment | EscapeSequence | UnescapedSingleStringFragment;
+  contents(): readonly (UnescapedDoubleStringFragment | EscapeSequence | UnescapedSingleStringFragment)[];
   closing(): number;
 }
 
@@ -4117,8 +4110,8 @@ export interface SubscriptExpression {
 
 export interface SwitchBody {
   readonly $type: TSKindId.SwitchBody;
-  readonly _switch_case?: readonly (SwitchCase | SwitchDefault)[];
-  switchCases(): readonly (SwitchCase | SwitchDefault)[];
+  readonly _content?: readonly (SwitchCase | SwitchDefault)[];
+  contents(): readonly (SwitchCase | SwitchDefault)[];
 }
 
 export interface SwitchCase {
@@ -4145,14 +4138,14 @@ export interface SwitchStatement {
 
 export interface TemplateLiteralType {
   readonly $type: TSKindId.TemplateLiteralType;
-  readonly _template_chars?: readonly (TemplateChars | TemplateType)[];
-  templateChars(): readonly (TemplateChars | TemplateType)[];
+  readonly _content?: readonly (TemplateChars | TemplateType)[];
+  contents(): readonly (TemplateChars | TemplateType)[];
 }
 
 export interface TemplateString {
   readonly $type: TSKindId.TemplateString;
-  readonly _template_chars?: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
-  templateChars(): readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
+  readonly _content?: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
+  contents(): readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
 }
 
 export interface TemplateSubstitution {
@@ -4163,8 +4156,8 @@ export interface TemplateSubstitution {
 
 export interface TemplateType {
   readonly $type: TSKindId.TemplateType;
-  readonly _primary_type: PrimaryType | InferType;
-  primaryType(): PrimaryType | InferType;
+  readonly _content: PrimaryType | InferType;
+  content(): PrimaryType | InferType;
 }
 
 export interface TernaryExpression {
@@ -4278,8 +4271,8 @@ export interface TypePredicateAnnotation {
 
 export interface TypeQuery {
   readonly $type: TSKindId.TypeQuery;
-  readonly _type_query_subscript_expression: TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression | TypeQueryInstantiationExpression | Identifier | This;
-  typeQuerySubscriptExpression(): TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression | TypeQueryInstantiationExpression | Identifier | This;
+  readonly _content: TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression | TypeQueryInstantiationExpression | Identifier | This;
+  content(): TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression | TypeQueryInstantiationExpression | Identifier | This;
 }
 
 export interface UnaryExpression {
@@ -4352,8 +4345,8 @@ export interface WithStatement {
 
 export interface YieldExpression {
   readonly $type: TSKindId.YieldExpression;
-  readonly _expression: Expression;
-  expression(): Expression;
+  readonly _expression?: Expression;
+  expression(): Expression | undefined;
 }
 
 
@@ -4406,9 +4399,6 @@ export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
 export type Oror = Terminal<"||", string>;
 export type JsxText = Terminal<TSKindId.JsxText, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
-export type Const = Terminal<TSKindId.Const, "const">;
-export type Instanceof = Terminal<TSKindId.Instanceof, "instanceof">;
-export type In = Terminal<TSKindId.In, "in">;
 
 // Tree types
 export interface _AmbientDeclarationDeclarationTree extends AnyTreeNode { readonly type: "_ambient_declaration_declaration"; }
@@ -5071,52 +5061,6 @@ export type ExistentialType = Terminal<TSKindId.ExistentialType>;
 export interface ExistentialTypeTree extends AnyTreeNode { readonly type: "existential_type"; }
 export type OptionalChain = Terminal<TSKindId.OptionalChain>;
 export interface OptionalChainTree extends AnyTreeNode { readonly type: "optional_chain"; }
-export type AmpAmp = Terminal<TSKindId.AmpAmp>;
-export interface AmpAmpTree extends AnyTreeNode { readonly type: "amp_amp"; }
-export type PipePipe = Terminal<TSKindId.PipePipe>;
-export interface PipePipeTree extends AnyTreeNode { readonly type: "pipe_pipe"; }
-export type GtGt = Terminal<TSKindId.GtGt>;
-export interface GtGtTree extends AnyTreeNode { readonly type: "gt_gt"; }
-export type GtGtGt = Terminal<TSKindId.GtGtGt>;
-export interface GtGtGtTree extends AnyTreeNode { readonly type: "gt_gt_gt"; }
-export type LtLt = Terminal<TSKindId.LtLt>;
-export interface LtLtTree extends AnyTreeNode { readonly type: "lt_lt"; }
-export type Amp2 = Terminal<TSKindId.Amp2>;
-export interface Amp2Tree extends AnyTreeNode { readonly type: "amp"; }
-export type Caret = Terminal<TSKindId.Caret>;
-export interface CaretTree extends AnyTreeNode { readonly type: "caret"; }
-export type Pipe2 = Terminal<TSKindId.Pipe2>;
-export interface Pipe2Tree extends AnyTreeNode { readonly type: "pipe"; }
-export type Plus = Terminal<TSKindId.Plus>;
-export interface PlusTree extends AnyTreeNode { readonly type: "plus"; }
-export type Dash = Terminal<TSKindId.Dash>;
-export interface DashTree extends AnyTreeNode { readonly type: "dash"; }
-export type Star2 = Terminal<TSKindId.Star2>;
-export interface Star2Tree extends AnyTreeNode { readonly type: "star"; }
-export type Slash2 = Terminal<TSKindId.Slash2>;
-export interface Slash2Tree extends AnyTreeNode { readonly type: "slash"; }
-export type Percent = Terminal<TSKindId.Percent>;
-export interface PercentTree extends AnyTreeNode { readonly type: "percent"; }
-export type StarStar = Terminal<TSKindId.StarStar>;
-export interface StarStarTree extends AnyTreeNode { readonly type: "star_star"; }
-export type Lt2 = Terminal<TSKindId.Lt2>;
-export interface Lt2Tree extends AnyTreeNode { readonly type: "lt"; }
-export type LtEq = Terminal<TSKindId.LtEq>;
-export interface LtEqTree extends AnyTreeNode { readonly type: "lt_eq"; }
-export type EqEq = Terminal<TSKindId.EqEq>;
-export interface EqEqTree extends AnyTreeNode { readonly type: "eq_eq"; }
-export type EqEqEq = Terminal<TSKindId.EqEqEq>;
-export interface EqEqEqTree extends AnyTreeNode { readonly type: "eq_eq_eq"; }
-export type BangEq = Terminal<TSKindId.BangEq>;
-export interface BangEqTree extends AnyTreeNode { readonly type: "bang_eq"; }
-export type BangEqEq = Terminal<TSKindId.BangEqEq>;
-export interface BangEqEqTree extends AnyTreeNode { readonly type: "bang_eq_eq"; }
-export type GtEq = Terminal<TSKindId.GtEq>;
-export interface GtEqTree extends AnyTreeNode { readonly type: "gt_eq"; }
-export type Gt2 = Terminal<TSKindId.Gt2>;
-export interface Gt2Tree extends AnyTreeNode { readonly type: "gt"; }
-export type QmarkQmark = Terminal<TSKindId.QmarkQmark>;
-export interface QmarkQmarkTree extends AnyTreeNode { readonly type: "qmark_qmark"; }
 
 export type TypescriptNode =
   | _AmbientDeclarationDeclaration
@@ -5634,9 +5578,6 @@ export interface KindMap {
   '||': Oror;
   'jsx_text': JsxText;
   '__error_recovery': ErrorRecovery;
-  'const': Const;
-  'instanceof': Instanceof;
-  'in': In;
 }
 
 export interface VariantMap {

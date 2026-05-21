@@ -61,7 +61,8 @@ export interface ArgumentsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributes?: Array<ArgumentsAttributesTransportSlot>
+  _attribute_item?: Array<AttributeItemTransport>
+  _expression?: Array<ExpressionTransport>
 }
 
 export interface ArrayExpressionListTransport {
@@ -196,7 +197,7 @@ export interface AttributedParameterTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attribute_item?: AttributeItemTransport
-  _parameter: AttributedParameterParameterTransportSlot
+  _content: AttributedParameterContentTransportSlot
 }
 
 export interface AttributedTypeParameterTransport {
@@ -208,7 +209,7 @@ export interface AttributedTypeParameterTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attribute_item?: Array<AttributeItemTransport>
-  _metavariable: AttributedTypeParameterMetavariableTransportSlot
+  _content: AttributedTypeParameterContentTransportSlot
 }
 
 export interface AttributeItemTransport {
@@ -266,7 +267,7 @@ export interface BinaryExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _left: Box<ExpressionTransport>
-  _operator: BinaryExpressionOperatorTransportSlot
+  _operator: Box<AnyTransport>
   _right: Box<ExpressionTransport>
 }
 
@@ -316,7 +317,7 @@ export interface BracketedTypeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type: Box<BracketedTypeTypeTransportSlot>
+  _content: Box<BracketedTypeContentTransportSlot>
 }
 
 export interface BreakExpressionTransport {
@@ -413,7 +414,7 @@ export interface ClosureParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _pattern?: Array<ClosureParametersPatternTransportSlot>
+  _content?: Array<ClosureParametersContentTransportSlot>
 }
 
 export interface CommentTransport {
@@ -424,7 +425,7 @@ export interface CommentTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _line_comment: CommentLineCommentTransportSlot
+  _content: CommentContentTransportSlot
 }
 
 export interface CompoundAssignmentExprTransport {
@@ -620,7 +621,7 @@ export interface ElseClauseTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _block: Box<ExpressionEndingWithBlockTransport>
+  _content: Box<ExpressionEndingWithBlockTransport>
 }
 
 export interface EngineOptions {
@@ -814,7 +815,7 @@ export interface FieldInitializerListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _shorthand_field_initializer?: Array<FieldInitializerListShorthandFieldInitializerTransportSlot>
+  _content?: Array<FieldInitializerListContentTransportSlot>
 }
 
 export interface FieldInitializerTransport {
@@ -1088,7 +1089,7 @@ export interface GenericPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type_arguments: TypeArgumentsTransport
-  _identifier: Box<PathTransport>
+  _content: Box<PathTransport>
 }
 
 export interface GenericTypeTransport {
@@ -1224,7 +1225,7 @@ export interface LastMatchArmTransport {
   '$triviaData'?: TransportTrivia
   _pattern: MatchPatternTransport
   _value: ExpressionTransport
-  _attribute_item?: Array<DeclarationStatementTransport>
+  _content?: Array<DeclarationStatementTransport>
 }
 
 export interface LetChainTransport {
@@ -1235,7 +1236,9 @@ export interface LetChainTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _let_chain: Box<ConditionTransport>
+  _let_chain?: Box<LetChainTransport>
+  _let_condition?: Box<LetConditionTransport>
+  _expression?: Box<ExpressionTransport>
 }
 
 export interface LetConditionTransport {
@@ -1634,7 +1637,7 @@ export interface NonSpecialTokenTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _literal: NonSpecialTokenLiteralTransportSlot
+  _content?: Array<NonSpecialTokenContentTransportSlot>
 }
 
 export interface OrderedFieldDeclarationListTransport {
@@ -1645,7 +1648,9 @@ export interface OrderedFieldDeclarationListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributes?: Array<OrderedFieldDeclarationListAttributesTransportSlot>
+  _type?: Array<_TypeTransport>
+  _attribute_item?: Array<AttributeItemTransport>
+  _visibility_modifier?: VisibilityModifierTransport
 }
 
 export interface OrPatternBinaryTransport {
@@ -1905,7 +1910,7 @@ export interface ReferenceExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _value: Box<ExpressionTransport>
-  _reference_expression_raw_const: ReferenceExpressionReferenceExpressionRawConstTransportSlot
+  _content?: ReferenceExpressionContentTransportSlot
 }
 
 export interface ReferencePatternTransport {
@@ -2085,7 +2090,7 @@ export interface StringLiteralTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _escape_sequence?: Array<StringLiteralEscapeSequenceTransportSlot>
+  _content?: Array<StringLiteralContentTransportSlot>
 }
 
 export interface StructExpressionTransport {
@@ -2149,7 +2154,7 @@ export interface StructPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Box<StructPatternTypeTransportSlot>
-  _field_pattern?: Array<StructPatternFieldPatternTransportSlot>
+  _content?: Array<StructPatternContentTransportSlot>
 }
 
 export interface TokenBindingPatternTransport {
@@ -2352,7 +2357,7 @@ export interface TraitBoundsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type: Array<TraitBoundsTypeTransportSlot>
+  _content?: Array<TraitBoundsContentTransportSlot>
 }
 
 export interface TraitItemTransport {
@@ -2414,7 +2419,7 @@ export interface TuplePatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _pattern?: Array<TuplePatternPatternTransportSlot>
+  _content?: Array<TuplePatternContentTransportSlot>
 }
 
 export interface TupleStructPatternTransport {
@@ -2448,7 +2453,7 @@ export interface TypeArgumentsRepeat1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type: TypeArgumentsRepeat1TypeTransportSlot
+  _content: TypeArgumentsRepeat1ContentTransportSlot
   _trait_bounds?: TraitBoundsTransport
 }
 
@@ -2460,7 +2465,7 @@ export interface TypeArgumentsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type: Array<TypeArgumentsTypeTransportSlot>
+  _content?: Array<TypeArgumentsContentTransportSlot>
   _trait_bounds?: Array<TraitBoundsTransport>
 }
 
@@ -2525,7 +2530,7 @@ export interface TypeParametersRepeat1Transport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attribute_item?: Array<AttributeItemTransport>
-  _metavariable: TypeParametersRepeat1MetavariableTransportSlot
+  _content: TypeParametersRepeat1ContentTransportSlot
 }
 
 export interface TypeParametersTransport {
@@ -2610,7 +2615,7 @@ export interface UseBoundsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _lifetime?: Array<UseBoundsLifetimeTransportSlot>
+  _content?: Array<UseBoundsContentTransportSlot>
 }
 
 export interface UseDeclarationTransport {
@@ -2701,7 +2706,7 @@ export interface VisibilityModifierPubParensTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _self: VisibilityModifierPubParensSelf_TransportSlot
+  _content: VisibilityModifierPubParensContentTransportSlot
 }
 
 export interface VisibilityModifierPubTransport {
