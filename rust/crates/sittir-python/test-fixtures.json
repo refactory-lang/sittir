@@ -1199,6 +1199,56 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 119,
+        "end": 121
+      },
+      "$nodeHandle": 3,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 119,
+          "end": 120
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 120,
+          "end": 121
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 206,
       "$source": 0,
       "$span": {
@@ -1394,6 +1444,56 @@
     "expectedReparseTree": "(call function: (identifier) arguments: (argument_list (identifier) (integer)))",
     "wrappedText": "i (j, 5,)",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 5,
+        "end": 7
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 5,
+          "end": 6
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 6,
+          "end": 7
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
   },
   {
     "kind": "render",
@@ -1749,6 +1849,56 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 5,
+        "end": 7
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 5,
+          "end": 6
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 6,
+          "end": 7
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 148,
       "$source": 0,
       "$span": {
@@ -1868,7 +2018,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def a(print):b"
+    "expectedOutput": "def a (print):b"
   },
   {
     "kind": "roundtrip",
@@ -1876,9 +2026,9 @@
     "sourceIn": "def a(print):\n  b",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a(print):b",
+    "expectedSourceOut": "def a (print):b",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (identifier)) body: (block (expression_statement (identifier))))",
-    "wrappedText": "def a(print):b",
+    "wrappedText": "def a (print):b",
     "wrappedOffset": 0
   },
   {
@@ -1954,7 +2104,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def a(printer=print):c"
+    "expectedOutput": "def a (printer=print):c"
   },
   {
     "kind": "roundtrip",
@@ -1962,9 +2112,9 @@
     "sourceIn": "def a(printer=print):\n  c",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a(printer=print):c",
+    "expectedSourceOut": "def a (printer=print):c",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (default_parameter name: (identifier) value: (identifier))) body: (block (expression_statement (identifier))))",
-    "wrappedText": "def a(printer=print):c",
+    "wrappedText": "def a (printer=print):c",
     "wrappedOffset": 0
   },
   {
@@ -2040,7 +2190,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def a(*print):b"
+    "expectedOutput": "def a (*print):b"
   },
   {
     "kind": "roundtrip",
@@ -2048,9 +2198,9 @@
     "sourceIn": "def a(*print):\n  b",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a(*print):b",
+    "expectedSourceOut": "def a (*print):b",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (list_splat_pattern (identifier))) body: (block (expression_statement (identifier))))",
-    "wrappedText": "def a(*print):b",
+    "wrappedText": "def a (*print):b",
     "wrappedOffset": 0
   },
   {
@@ -2126,7 +2276,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def a(**print):b"
+    "expectedOutput": "def a (**print):b"
   },
   {
     "kind": "roundtrip",
@@ -2134,9 +2284,9 @@
     "sourceIn": "def a(**print):\n  b",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a(**print):b",
+    "expectedSourceOut": "def a (**print):b",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (dictionary_splat_pattern (identifier))) body: (block (expression_statement (identifier))))",
-    "wrappedText": "def a(**print):b",
+    "wrappedText": "def a (**print):b",
     "wrappedOffset": 0
   },
   {
@@ -2212,7 +2362,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def print():a"
+    "expectedOutput": "def print ():a"
   },
   {
     "kind": "roundtrip",
@@ -2220,9 +2370,9 @@
     "sourceIn": "def print():\n  a",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def print():a",
+    "expectedSourceOut": "def print ():a",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (identifier))))",
-    "wrappedText": "def print():a",
+    "wrappedText": "def print ():a",
     "wrappedOffset": 0
   },
   {
@@ -4314,6 +4464,56 @@
     "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
     "wrappedText": "_ = a ()",
     "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 1,
+        "end": 3
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 1,
+          "end": 2
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 2,
+          "end": 3
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
   },
   {
     "kind": "render",
@@ -7454,7 +7654,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def foo(answer=(p := 42)):return answer;"
+    "expectedOutput": "def foo (answer=(p := 42)):return answer;"
   },
   {
     "kind": "roundtrip",
@@ -7462,9 +7662,9 @@
     "sourceIn": "def foo(answer=(p := 42)):\n  return answer;",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def foo(answer=(p := 42)):return answer;",
+    "expectedSourceOut": "def foo (answer=(p := 42)):return answer;",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (default_parameter name: (identifier) value: (parenthesized_expression (named_expression name: (identifier) value: (integer))))) body: (block (return_statement (identifier))))",
-    "wrappedText": "def foo(answer=(p := 42)):return answer;",
+    "wrappedText": "def foo (answer=(p := 42)):return answer;",
     "wrappedOffset": 0
   },
   {
@@ -7540,7 +7740,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def foo(answer: (p := 42) = 5):return answer;"
+    "expectedOutput": "def foo (answer: (p := 42) = 5):return answer;"
   },
   {
     "kind": "roundtrip",
@@ -7548,9 +7748,9 @@
     "sourceIn": "def foo(answer: (p := 42) = 5):\n  return answer;",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def foo(answer: (p := 42) = 5):return answer;",
+    "expectedSourceOut": "def foo (answer: (p := 42) = 5):return answer;",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (typed_default_parameter name: (identifier) type: (type (parenthesized_expression (named_expression name: (identifier) value: (integer)))) value: (integer))) body: (block (return_statement (identifier))))",
-    "wrappedText": "def foo(answer: (p := 42) = 5):return answer;",
+    "wrappedText": "def foo (answer: (p := 42) = 5):return answer;",
     "wrappedOffset": 0
   },
   {
@@ -8346,7 +8546,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def comp_args((a, b)=(3, 4)):return a, b"
+    "expectedOutput": "def comp_args ((a, b)=(3, 4)):return a, b"
   },
   {
     "kind": "roundtrip",
@@ -8354,9 +8554,9 @@
     "sourceIn": "def comp_args((a, b)=(3, 4)):\n    return a, b",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "def comp_args((a, b)=(3, 4)):return a, b",
+    "expectedSourceOut": "def comp_args ((a, b)=(3, 4)):return a, b",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (default_parameter name: (tuple_pattern (identifier) (identifier)) value: (tuple (integer) (integer)))) body: (block (return_statement (expression_list (identifier) (identifier)))))",
-    "wrappedText": "def comp_args((a, b)=(3, 4)):return a, b",
+    "wrappedText": "def comp_args ((a, b)=(3, 4)):return a, b",
     "wrappedOffset": 0
   },
   {
@@ -8721,6 +8921,56 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 27,
+        "end": 29
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 27,
+          "end": 28
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 28,
+          "end": 29
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 185,
       "$source": 0,
       "$span": {
@@ -8754,7 +9004,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 281,
+        "$type": 283,
         "$source": 0,
         "$text": "b",
         "$span": {
@@ -11542,7 +11792,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def function():return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\""
+    "expectedOutput": "def function ():return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\""
   },
   {
     "kind": "roundtrip",
@@ -11550,9 +11800,9 @@
     "sourceIn": "def function():\n    return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def function():return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
+    "expectedSourceOut": "def function ():return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (block (return_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (conditional_expression body: (string string_start: (string_start) content: (string_content) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content) string_end: (string_end)))) string_end: (string_end)))))",
-    "wrappedText": "def function():return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
+    "wrappedText": "def function ():return f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
     "wrappedOffset": 0
   },
   {
@@ -11628,7 +11878,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def test(self):self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')"
+    "expectedOutput": "def test (self):self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')"
   },
   {
     "kind": "roundtrip",
@@ -11636,9 +11886,9 @@
     "sourceIn": "def test(self):\n    self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def test(self):self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
+    "expectedSourceOut": "def test (self):self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (identifier)) body: (block (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) content: (interpolation expression: (integer) (comment)) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))))))",
-    "wrappedText": "def test(self):self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
+    "wrappedText": "def test (self):self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
     "wrappedOffset": 0
   },
   {
@@ -13571,6 +13821,56 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 52,
+        "end": 54
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 52,
+          "end": 53
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 53,
+          "end": 54
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 191,
       "$source": 0,
       "$span": {
@@ -13802,6 +14102,56 @@
     "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
     "wrappedText": "_ = a ()",
     "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 148,
+        "end": 150
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 148,
+          "end": 149
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 149,
+          "end": 150
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
   },
   {
     "kind": "render",
@@ -14150,6 +14500,56 @@
     "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
     "wrappedText": "_ = a ()",
     "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 52,
+        "end": 54
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 52,
+          "end": 53
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 53,
+          "end": 54
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
   },
   {
     "kind": "render",
@@ -15323,6 +15723,156 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 19,
+        "end": 21
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 19,
+          "end": 20
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 20,
+          "end": 21
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 85,
+        "end": 87
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 85,
+          "end": 86
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 86,
+          "end": 87
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 136,
+        "end": 138
+      },
+      "$nodeHandle": 3,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 136,
+          "end": 137
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 137,
+          "end": 138
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 231,
       "$source": 0,
       "$span": {
@@ -15931,6 +16481,56 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 19,
+        "end": 21
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 19,
+          "end": 20
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 20,
+          "end": 21
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 231,
       "$source": 0,
       "$span": {
@@ -16224,6 +16824,56 @@
     "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
     "wrappedText": "[command.split]",
     "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 19,
+        "end": 21
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 19,
+          "end": 20
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 20,
+          "end": 21
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
   },
   {
     "kind": "render",
@@ -16708,6 +17358,56 @@
     "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
     "wrappedText": "[current_room.neighbor]",
     "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 19,
+        "end": 21
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 19,
+          "end": 20
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 20,
+          "end": 21
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
   },
   {
     "kind": "render",
@@ -17569,6 +18269,56 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 19,
+        "end": 21
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 19,
+          "end": 20
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 20,
+          "end": 21
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 231,
       "$source": 0,
       "$span": {
@@ -18010,7 +18760,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def foo(**match):pass"
+    "expectedOutput": "def foo (**match):pass"
   },
   {
     "kind": "roundtrip",
@@ -18018,9 +18768,9 @@
     "sourceIn": "def foo(**match): pass",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def foo(**match):pass",
+    "expectedSourceOut": "def foo (**match):pass",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (dictionary_splat_pattern (identifier))) body: (block (pass_statement)))",
-    "wrappedText": "def foo(**match):pass",
+    "wrappedText": "def foo (**match):pass",
     "wrappedOffset": 0
   },
   {
@@ -18797,6 +19547,56 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 52,
+        "end": 54
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 52,
+          "end": 53
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 53,
+          "end": 54
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 131,
       "$source": 0,
       "$span": {
@@ -18854,7 +19654,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):return 42 "
+    "expectedOutput": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):return 42  "
   },
   {
     "kind": "roundtrip",
@@ -18862,9 +19662,9 @@
     "sourceIn": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):\n    return 42",
     "pattern": "module",
     "edits": [],
-    "expectedSourceOut": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):return 42 ",
+    "expectedSourceOut": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):return 42  ",
     "expectedReparseTree": "(if_statement condition: (named_expression name: (identifier) value: (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) string_end: (string_end)) (identifier) (keyword_argument name: (identifier) value: (attribute object: (identifier) attribute: (identifier)))))) consequence: (block (return_statement (integer))))",
-    "wrappedText": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):return 42 ",
+    "wrappedText": "if match := re.fullmatch(r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\", time, flags=re.ASCII):return 42  ",
     "wrappedOffset": 0
   },
   {
@@ -19679,6 +20479,156 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 15,
+        "end": 17
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 15,
+          "end": 16
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 16,
+          "end": 17
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 141,
+        "end": 143
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 141,
+          "end": 142
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 142,
+          "end": 143
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 205,
+        "end": 207
+      },
+      "$nodeHandle": 3,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 205,
+          "end": 206
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 206,
+          "end": 207
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 231,
       "$source": 0,
       "$span": {
@@ -20039,6 +20989,56 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 15,
+        "end": 17
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 15,
+          "end": 16
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 16,
+          "end": 17
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 134,
       "$source": 0,
       "$span": {
@@ -20270,6 +21270,56 @@
     "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
     "wrappedText": "[event.get]",
     "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 15,
+        "end": 17
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 15,
+          "end": 16
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 16,
+          "end": 17
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
   },
   {
     "kind": "render",
@@ -21376,6 +22426,56 @@
     "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
     "wrappedText": "[ui.play]",
     "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 326,
+        "end": 328
+      },
+      "$nodeHandle": 4,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 326,
+          "end": 327
+        },
+        "$nodeHandle": 4,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 327,
+          "end": 328
+        },
+        "$nodeHandle": 4,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
   },
   {
     "kind": "render",
@@ -22911,6 +24011,406 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 53,
+        "end": 55
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 53,
+          "end": 54
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 54,
+          "end": 55
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 121,
+        "end": 123
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 121,
+          "end": 122
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 122,
+          "end": 123
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 176,
+        "end": 178
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 176,
+          "end": 177
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 177,
+          "end": 178
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 234,
+        "end": 236
+      },
+      "$nodeHandle": 3,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 234,
+          "end": 235
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 235,
+          "end": 236
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 309,
+        "end": 311
+      },
+      "$nodeHandle": 4,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 309,
+          "end": 310
+        },
+        "$nodeHandle": 4,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 310,
+          "end": 311
+        },
+        "$nodeHandle": 4,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 379,
+        "end": 381
+      },
+      "$nodeHandle": 5,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 379,
+          "end": 380
+        },
+        "$nodeHandle": 5,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 380,
+          "end": 381
+        },
+        "$nodeHandle": 5,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 452,
+        "end": 454
+      },
+      "$nodeHandle": 6,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 452,
+          "end": 453
+        },
+        "$nodeHandle": 6,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 453,
+          "end": 454
+        },
+        "$nodeHandle": 6,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 542,
+        "end": 544
+      },
+      "$nodeHandle": 7,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 542,
+          "end": 543
+        },
+        "$nodeHandle": 7,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 543,
+          "end": 544
+        },
+        "$nodeHandle": 7,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 134,
       "$source": 0,
       "$span": {
@@ -23774,7 +25274,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 281,
+        "$type": 283,
         "$source": 0,
         "$text": "e",
         "$span": {
@@ -23836,7 +25336,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 281,
+        "$type": 283,
         "$source": 0,
         "$text": "e",
         "$span": {
@@ -23898,7 +25398,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 281,
+        "$type": 283,
         "$source": 0,
         "$text": "b",
         "$span": {
@@ -23960,7 +25460,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 281,
+        "$type": 283,
         "$source": 0,
         "$text": "d",
         "$span": {
@@ -24022,7 +25522,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 281,
+        "$type": 283,
         "$source": 0,
         "$text": "e",
         "$span": {
@@ -24084,7 +25584,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 281,
+        "$type": 283,
         "$source": 0,
         "$text": "f",
         "$span": {
@@ -24146,7 +25646,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 281,
+        "$type": 283,
         "$source": 0,
         "$text": "h",
         "$span": {
@@ -24642,7 +26142,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def e((a,b)):return (a,b)"
+    "expectedOutput": "def e ((a,b)):return (a,b)"
   },
   {
     "kind": "roundtrip",
@@ -24650,9 +26150,9 @@
     "sourceIn": "def e((a,b)):\n  return (a,b)",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def e((a,b)):return (a,b)",
+    "expectedSourceOut": "def e ((a,b)):return (a,b)",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (tuple_pattern (identifier) (identifier))) body: (block (return_statement (tuple (identifier) (identifier)))))",
-    "wrappedText": "def e((a,b)):return (a,b)",
+    "wrappedText": "def e ((a,b)):return (a,b)",
     "wrappedOffset": 0
   },
   {
@@ -24728,7 +26228,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def e(*list: str):pass"
+    "expectedOutput": "def e (*list: str):pass"
   },
   {
     "kind": "roundtrip",
@@ -24736,9 +26236,9 @@
     "sourceIn": "def e(*list: str):\n  pass",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def e(*list: str):pass",
+    "expectedSourceOut": "def e (*list: str):pass",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (typed_parameter (list_splat_pattern (identifier)) type: (type (identifier)))) body: (block (pass_statement)))",
-    "wrappedText": "def e(*list: str):pass",
+    "wrappedText": "def e (*list: str):pass",
     "wrappedOffset": 0
   },
   {
@@ -24814,7 +26314,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def e(**list: str):pass"
+    "expectedOutput": "def e (**list: str):pass"
   },
   {
     "kind": "roundtrip",
@@ -24822,9 +26322,9 @@
     "sourceIn": "def e(**list: str):\n  pass",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def e(**list: str):pass",
+    "expectedSourceOut": "def e (**list: str):pass",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (typed_parameter (dictionary_splat_pattern (identifier)) type: (type (identifier)))) body: (block (pass_statement)))",
-    "wrappedText": "def e(**list: str):pass",
+    "wrappedText": "def e (**list: str):pass",
     "wrappedOffset": 0
   },
   {
@@ -24900,7 +26400,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def f():nonlocal a"
+    "expectedOutput": "def f ():nonlocal a"
   },
   {
     "kind": "roundtrip",
@@ -24908,9 +26408,9 @@
     "sourceIn": "def f():\n  nonlocal a",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def f():nonlocal a",
+    "expectedSourceOut": "def f ():nonlocal a",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (block (nonlocal_statement (identifier))))",
-    "wrappedText": "def f():nonlocal a",
+    "wrappedText": "def f ():nonlocal a",
     "wrappedOffset": 0
   },
   {
@@ -24986,7 +26486,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def g(h, i, /, j, *, k=100, **kwarg):return h,i,j,k,kwarg"
+    "expectedOutput": "def g (h, i, /, j, *, k=100, **kwarg):return h,i,j,k,kwarg"
   },
   {
     "kind": "roundtrip",
@@ -24994,9 +26494,9 @@
     "sourceIn": "def g(h, i, /, j, *, k=100, **kwarg):\n  return h,i,j,k,kwarg",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def g(h, i, /, j, *, k=100, **kwarg):return h,i,j,k,kwarg",
+    "expectedSourceOut": "def g (h, i, /, j, *, k=100, **kwarg):return h,i,j,k,kwarg",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (identifier) (identifier) (positional_separator) (identifier) (keyword_separator) (default_parameter name: (identifier) value: (integer)) (dictionary_splat_pattern (identifier))) body: (block (return_statement (expression_list (identifier) (identifier) (identifier) (identifier) (identifier)))))",
-    "wrappedText": "def g(h, i, /, j, *, k=100, **kwarg):return h,i,j,k,kwarg",
+    "wrappedText": "def g (h, i, /, j, *, k=100, **kwarg):return h,i,j,k,kwarg",
     "wrappedOffset": 0
   },
   {
@@ -25072,7 +26572,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def foo():pass"
+    "expectedOutput": "def foo ():pass"
   },
   {
     "kind": "roundtrip",
@@ -25080,9 +26580,9 @@
     "sourceIn": "def foo():\n    pass",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def foo():pass",
+    "expectedSourceOut": "def foo ():pass",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (block (pass_statement)))",
-    "wrappedText": "def foo():pass",
+    "wrappedText": "def foo ():pass",
     "wrappedOffset": 0
   },
   {
@@ -25358,7 +26858,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def a(b, c):"
+    "expectedOutput": "def a (b, c):"
   },
   {
     "kind": "roundtrip",
@@ -25366,9 +26866,9 @@
     "sourceIn": "def a(b, c):",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def a(b, c):",
+    "expectedSourceOut": "def a (b, c):",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (identifier) (identifier)) body: (block))",
-    "wrappedText": "def a(b, c):",
+    "wrappedText": "def a (b, c):",
     "wrappedOffset": 0
   },
   {
@@ -25420,6 +26920,56 @@
     "expectedReparseTree": "(call function: (identifier) arguments: (argument_list))",
     "wrappedText": "_ = f ()",
     "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 220,
+        "end": 222
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 220,
+          "end": 221
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 221,
+          "end": 222
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
   },
   {
     "kind": "render",
@@ -25494,7 +27044,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def b(self):return c"
+    "expectedOutput": "def b (self):return c"
   },
   {
     "kind": "roundtrip",
@@ -25502,9 +27052,9 @@
     "sourceIn": "def b(self):\n    return c",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def b(self):return c",
+    "expectedSourceOut": "def b (self):return c",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (identifier)) body: (block (return_statement (identifier))))",
-    "wrappedText": "def b(self):return c",
+    "wrappedText": "def b (self):return c",
     "wrappedOffset": 0
   },
   {
@@ -25580,7 +27130,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def method1(self):return"
+    "expectedOutput": "def method1 (self):return"
   },
   {
     "kind": "roundtrip",
@@ -25588,10 +27138,60 @@
     "sourceIn": "def method1(self):\n    return",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def method1(self):return",
+    "expectedSourceOut": "def method1 (self):return",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters (identifier)) body: (block (return_statement)))",
-    "wrappedText": "def method1(self):return",
+    "wrappedText": "def method1 (self):return",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 44,
+        "end": 46
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 44,
+          "end": 45
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 45,
+          "end": 46
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
   },
   {
     "kind": "render",
@@ -25840,7 +27440,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def d():e"
+    "expectedOutput": "def d ():e"
   },
   {
     "kind": "roundtrip",
@@ -25848,9 +27448,9 @@
     "sourceIn": "def d():\n    e",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def d():e",
+    "expectedSourceOut": "def d ():e",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (identifier))))",
-    "wrappedText": "def d():e",
+    "wrappedText": "def d ():e",
     "wrappedOffset": 0
   },
   {
@@ -26317,6 +27917,56 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 56,
+        "end": 58
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 56,
+          "end": 57
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 57,
+          "end": 58
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 204,
       "$source": 0,
       "$span": {
@@ -26534,7 +28184,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def spam():..."
+    "expectedOutput": "def spam ():..."
   },
   {
     "kind": "roundtrip",
@@ -26542,9 +28192,9 @@
     "sourceIn": "def spam():\n    ...",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def spam():...",
+    "expectedSourceOut": "def spam ():...",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (ellipsis))))",
-    "wrappedText": "def spam():...",
+    "wrappedText": "def spam ():...",
     "wrappedOffset": 0
   },
   {
@@ -26620,7 +28270,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def f():g"
+    "expectedOutput": "def f ():g"
   },
   {
     "kind": "roundtrip",
@@ -26628,9 +28278,9 @@
     "sourceIn": "def f():\n    g",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def f():g",
+    "expectedSourceOut": "def f ():g",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (identifier))))",
-    "wrappedText": "def f():g",
+    "wrappedText": "def f ():g",
     "wrappedOffset": 0
   },
   {
@@ -27621,6 +29271,206 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 13,
+        "end": 15
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 13,
+          "end": 14
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 14,
+          "end": 15
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 23,
+        "end": 25
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 23,
+          "end": 24
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 24,
+          "end": 25
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 62,
+        "end": 64
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 62,
+          "end": 63
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 63,
+          "end": 64
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$span": {
+        "start": 52,
+        "end": 54
+      },
+      "$nodeHandle": 3,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 52,
+          "end": 53
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 53,
+          "end": 54
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 145,
       "$source": 0,
       "$span": {
@@ -27690,7 +29540,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "def d():e()"
+    "expectedOutput": "def d ():e()"
   },
   {
     "kind": "roundtrip",
@@ -27698,9 +29548,9 @@
     "sourceIn": "def d():\n\n\n        e()",
     "pattern": "function_definition",
     "edits": [],
-    "expectedSourceOut": "def d():e()",
+    "expectedSourceOut": "def d ():e()",
     "expectedReparseTree": "(function_definition name: (identifier) parameters: (parameters) body: (block (expression_statement (call function: (identifier) arguments: (argument_list)))))",
-    "wrappedText": "def d():e()",
+    "wrappedText": "def d ():e()",
     "wrappedOffset": 0
   },
   {
