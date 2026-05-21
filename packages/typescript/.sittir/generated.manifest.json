@@ -1,7 +1,7 @@
 {
   "grammar": "typescript",
-  "generated_at": "2026-05-21T20:26:41.737Z",
-  "source_hash": "452bde727a3e50dd43a8658c3a81c0ce2628301408ce712656f2c809b81b5f6c",
+  "generated_at": "2026-05-21T20:37:08.502Z",
+  "source_hash": "492eb180b715deb8ab998f05682f95e7ff961b4a0e208992fe20f0103e59274a",
   "files": {
     "packages/typescript/.sittir/grammar.js": "620ed032101e3ae29c2bbf8d76098e37a1847caee30a4468652b73dd8089b2da",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
