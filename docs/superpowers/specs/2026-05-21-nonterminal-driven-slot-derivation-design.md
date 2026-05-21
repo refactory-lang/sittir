@@ -96,6 +96,22 @@ Multi-slot `optional(seq(...))` / `repeat(seq(...))` are lifted to a synthesized
 
 **Why `comparison_operator`'s `repeat1(seq(operators, operand))` isn't grouped (corrected):** NOT a "hasSlotBearingMember filter" (that was removed — `auto-groups.ts:262-265`). The real cause is the **authored-skip**: `comparison_operator` has a `transforms:` entry → `collectAuthoredSynthesisKinds` adds it (`wire.ts:606-624`) → `applyAutoGroups` skips it (`auto-groups.ts:131`). That skip is DELIBERATE — it keeps the rule tree in the shape the authored positional `transforms` (`0`,`1`) address. So the fix is NOT "fire on all authored kinds" (that shifts the positional patches and risks LR/parser regressions). The fix must **cooperate with authored transform order**: synthesize the group AFTER the author's positional patches resolve, or have the transform/grouping interleave so positions stay stable. With grouping reliable, `comparison_operator` → `left` (1) + group(`operators` enum, operand); `operators` never folded.
 
+#### Inline-vs-group rule (REQUIRED — surfaced by the C+D execution attempt)
+
+A multi-member `optional(seq(...))` / `repeat(seq(...))` must be classified by **how many NONTERMINAL slots it contains** (flanking `string`/`token` literals don't count):
+
+- **Single nonterminal slot → INLINE into the parent.** The one field becomes the PARENT's slot, carrying the wrapper's multiplicity (`optional`→optional, `repeat`→array); the flanking literals render inline conditionally. e.g. rust `let_declaration`'s `optional(seq('else', field('alternative', X)))` → parent slot `alternative` (optional), template `{% if alternative %} else {{ alternative }}{% endif %}`. This MATCHES node-types (`alternative` is a field of `let_declaration`, not of a sub-kind). Do NOT synthesize a group / sub-template.
+- **Two+ nonterminal slots → GROUP** (synthesize a group kind; parent references it as one slot), as §4 above.
+
+**Why this is mandatory:** the C+D attempt (covPass rust 172→167, broad RT loss) regressed precisely because `collectSlots`+emitter routed single-slot `optional(seq)` bodies (`const_item.value`, `let_declaration.alternative`, `for_expression.label`, `loop_expression.label`, `function_signature_item.return_type`) to separate `_<kind>_optionalN.jinja` sub-templates, making the field invisible to the parent's coverage AND render. Baseline inlined them. So Chunk B owns BOTH faces: group multi-slot seqs, and inline single-slot seqs (keep the field on the parent).
+
+### Execution status (2026-05-21)
+- Chunk A: DONE + reviewed (`d5b70a4d`, `f8202e64`, `343c06d6`).
+- C1 `collectSlots` (`4a3549b5`) + C2 choice→`content`+warn (`92b1e1b0`): committed, inert.
+- D (operator-enum + emitSymbol `fieldName===undefined` gate): VALIDATED correct (operator string-enum, no phantom `Lt`, 8 unresolved-ref warnings gone) — but lives in the C3+D stash, uncommitted.
+- C3+D together: BLOCKED on the inline-vs-group issue above → `git stash@{0}` ("C3+D-collectSlots-swap-PLUS-operator-enum-BLOCKED-covPass-regression-rust-172to167"). Tree HEAD-clean.
+- **Next session:** implement Chunk B WITH the inline-vs-group rule, then pop the C3+D stash and land C+D on top, gated covPass (rust 172 / python 104 / ts 172). The seq-multiplicity inherit already in the stash's `collect-slots.ts` stays. Run the SDD review (codex) per [[project_pr2_session_handoff]].
+
 ## Why this is correct (worked examples)
 - `field('body', $._suite)` → symbol nonterminal → 1 `body` slot (block). ✓
 - `field('operators', choice(<,<=,==,…))` → choice nonterminal → 1 `operators` slot (operator enum). ✓ (No phantom `lt`; B's operator-enum = the choice-of-string-literals → enum value type, with kindId-at-assemble for read-time `$type`.)
