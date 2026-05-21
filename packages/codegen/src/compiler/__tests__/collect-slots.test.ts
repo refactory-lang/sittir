@@ -13,8 +13,8 @@
  * `collectSlots` wrapper-free input).
  */
 
-import { describe, it, expect } from 'vitest';
-import { collectSlots } from '../collect-slots.ts';
+import { describe, it, expect, afterEach } from 'vitest';
+import { collectSlots, setUnnamedChoiceWarner } from '../collect-slots.ts';
 import { deleteWrapper } from '../wrapper-deletion.ts';
 import type { Rule } from '../rule.ts';
 
@@ -26,6 +26,11 @@ function slots(rule: Rule) {
 }
 
 describe('collectSlots — nonterminal-node enumeration', () => {
+	afterEach(() => {
+		// Restore the default console.warn-backed warner between tests.
+		setUnnamedChoiceWarner((kind) => console.warn(`unnamed choice slot found in branch '${kind ?? '(unknown)'}'`));
+	});
+
 	it('field(body, symbol) → one body slot', () => {
 		const out = slots({ type: 'field', name: 'body', content: sym('_suite') });
 		expect(out).toHaveLength(1);
@@ -96,6 +101,43 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 		// operators slot holds the literal union (terminals), not folded away.
 		expect(operators.values.every((v) => v.kind === 'terminal')).toBe(true);
 		expect(operators.values.map((v) => (v as { value: string }).value)).toEqual(['<', '<=', '==', '>']);
+	});
+
+	it('unnamed top-level choice → content slot + warning', () => {
+		const warned: (string | undefined)[] = [];
+		setUnnamedChoiceWarner((k) => warned.push(k));
+		const rule: Rule = { type: 'choice', members: [sym('a'), sym('b')] };
+		const out = collectSlots(deleteWrapper(rule) as Rule, 'my_kind');
+		expect(out).toHaveLength(1);
+		expect(out[0]!.name).toBe('content');
+		expect(warned).toEqual(['my_kind']);
+	});
+
+	it('field-named choice → fieldName slot, no warning', () => {
+		const warned: (string | undefined)[] = [];
+		setUnnamedChoiceWarner((k) => warned.push(k));
+		const rule: Rule = { type: 'field', name: 'value', content: { type: 'choice', members: [sym('a'), sym('b')] } };
+		const out = collectSlots(deleteWrapper(rule) as Rule, 'my_kind');
+		expect(out).toHaveLength(1);
+		expect(out[0]!.name).toBe('value');
+		expect(warned).toEqual([]);
+	});
+
+	it('polymorph → content slot, no unnamed-choice warning', () => {
+		const warned: (string | undefined)[] = [];
+		setUnnamedChoiceWarner((k) => warned.push(k));
+		const rule: Rule = {
+			type: 'polymorph',
+			name: 'except_clause',
+			forms: [
+				{ name: 'as', content: sym('as_pattern') },
+				{ name: 'list', content: sym('expression_list') },
+			],
+		} as unknown as Rule;
+		const out = collectSlots(deleteWrapper(rule) as Rule, 'except_clause');
+		expect(out).toHaveLength(1);
+		expect(out[0]!.name).toBe('content');
+		expect(warned).toEqual([]); // polymorph metadata is type-surface-only; no warn
 	});
 
 	it('seq distributes — two symbol members → two slots', () => {

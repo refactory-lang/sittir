@@ -128,7 +128,13 @@ function buildSlot(
 	}
 
 	// --- Build values for the slot from the node itself ---
-	const rawValues = deriveValuesForRule(rule, mult, kindEntries);
+	// A polymorph is a choice-of-forms: its `content` slot's values are the
+	// union of each form's content. (`deriveValuesForRule` has no polymorph
+	// case — derive from the forms here.)
+	const rawValues =
+		rule.type === 'polymorph'
+			? rule.forms.flatMap((f) => deriveValuesForRule(f.content, mult, kindEntries))
+			: deriveValuesForRule(rule, mult, kindEntries);
 	const dedupedValues = dedupeValues(rawValues);
 	if (dedupedValues.length === 0) return null;
 
