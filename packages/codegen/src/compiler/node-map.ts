@@ -414,7 +414,7 @@ const TS_RESERVED = new Set([
 	'public'
 ]);
 
-function safeParamName(name: string): string {
+export function safeParamName(name: string): string {
 	return TS_RESERVED.has(name) ? `${name}_` : name;
 }
 
@@ -856,7 +856,7 @@ function mergeChoiceArmSlots(arms: readonly AssembledNonterminal[][]): Assembled
  * Returns undefined when the separator is absent or empty.
  * Handles string, Rule[], and the object form { rules, trailing?, leading? }.
  */
-function extractSeparatorString(sep: Rule['separator']): string | undefined {
+export function extractSeparatorString(sep: Rule['separator']): string | undefined {
 	if (sep === undefined) return undefined;
 	if (typeof sep === 'string') return sep || undefined;
 	if (Array.isArray(sep)) {
@@ -873,7 +873,7 @@ function extractSeparatorString(sep: Rule['separator']): string | undefined {
  * Stamp separator onto array/nonEmptyArray multiplicity values.
  * Single-value slots are left unchanged — separator is meaningless for them.
  */
-function stampSeparatorOnValues(values: NodeOrTerminal[], separatorStr: string | undefined): NodeOrTerminal[] {
+export function stampSeparatorOnValues(values: NodeOrTerminal[], separatorStr: string | undefined): NodeOrTerminal[] {
 	if (!separatorStr) return values;
 	return values.map((v) =>
 		v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray' ? { ...v, separator: separatorStr } : v
@@ -1188,7 +1188,7 @@ function deriveSlotsRaw(
  * `field('x', optional($.foo))` → content is `optional` → `'optional'`
  * `field('x', $.foo)` → content is `symbol`, outerMultiplicity is `single` → `'single'`
  */
-function fieldContentMultiplicity(content: Rule, outerMultiplicity: Multiplicity): Multiplicity {
+export function fieldContentMultiplicity(content: Rule, outerMultiplicity: Multiplicity): Multiplicity {
 	switch (content.type) {
 		case 'repeat':
 			return 'array';
@@ -1300,7 +1300,7 @@ export function deriveSlots(rule: Rule, kindEntries?: readonly GeneratedKindEntr
  * wrap emitter consumes this to emit `drillAs(entry, tree, target, source)`
  * rewriting `$type` at drill-in for alias-target rewrites.
  */
-function deriveAliasSources(rule: Rule): Record<string, string> {
+export function deriveAliasSources(rule: Rule): Record<string, string> {
 	const out: Record<string, string> = {};
 	const walk = (r: Rule): void => {
 		switch (r.type) {
@@ -1369,7 +1369,7 @@ export function isSyntheticFieldWrapper(content: Rule): boolean {
  *
  * A `choice` produces MULTIPLE entries — one per arm (with deduplication).
  */
-function deriveValuesForRule(
+export function deriveValuesForRule(
 	rule: Rule,
 	multiplicity: Multiplicity,
 	kindEntries?: readonly GeneratedKindEntry[]
@@ -1498,7 +1498,7 @@ function deriveValuesForRule(
  * different multiplicities in different choice arms, keep BOTH entries — the
  * per-value shape is the point.
  */
-function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
+export function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
 	const seen = new Set<string>();
 	const result: NodeOrTerminal[] = [];
 	for (const v of values) {
