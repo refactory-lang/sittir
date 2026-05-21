@@ -144,6 +144,11 @@ export const suggestedRules = {
 // ---------------------------------------------------------------
 export const suggestedGroups = {
   // [held] 1 candidate(s)
+  _except_clause_as: {
+    '0/1/0': 'alias',
+  },
+
+  // [held] 1 candidate(s)
   _suite: {
     '1': 'block',
   },
@@ -156,11 +161,6 @@ export const suggestedGroups = {
   // [held] 1 candidate(s)
   comparison_operator: {
     '1/0': 'operators',
-  },
-
-  // [held] 1 candidate(s)
-  except_clause: {
-    '2/0/0': 'value',
   },
 
   // [held] 1 candidate(s)

@@ -32,6 +32,7 @@ pub enum AnyTransport {
     AsyncMarker(AsyncMarkerTransport),
     AugmentedAssignmentOperator(AugmentedAssignmentOperatorEnum),
     ComprehensionClauses(ComprehensionClausesTransport),
+    ExceptClauseAs(ExceptClauseAsTransport),
     _Identifier(_IdentifierEnum),
     ImportList(ImportListTransport),
     IsNot(IsNotTransport),
@@ -289,6 +290,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: _comprehension_clauses (_COMPREHENSION_CLAUSES)
                 224 => Ok(AnyTransport::ComprehensionClauses(
                     ComprehensionClausesTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _except_clause_as (_EXCEPT_CLAUSE_AS)
+                249 => Ok(AnyTransport::ExceptClauseAs(
+                    ExceptClauseAsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_list (_IMPORT_LIST)
                 116 => Ok(AnyTransport::ImportList(
@@ -5872,6 +5877,114 @@ impl RenderableTransport for CallArgumentsTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum CaseClauseSimpleStatementsTransportSlot {
+    SimpleStatements(SimpleStatementsTransport),
+    Block(BlockTransport),
+    Newline(NewlineTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for CaseClauseSimpleStatementsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in CaseClauseSimpleStatementsTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("CaseClauseSimpleStatementsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in CaseClauseSimpleStatementsTransportSlot")
+        )?;
+        match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in CaseClauseSimpleStatementsTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CaseClauseSimpleStatementsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("CaseClauseSimpleStatementsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<CaseClauseSimpleStatementsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        CaseClauseSimpleStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<CaseClauseSimpleStatementsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        CaseClauseSimpleStatementsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn case_clause_simple_statements_transport_slot_to_any(t: CaseClauseSimpleStatementsTransportSlot) -> AnyTransport {
+    match t {
+        CaseClauseSimpleStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
+        CaseClauseSimpleStatementsTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        CaseClauseSimpleStatementsTransportSlot::Newline(inner) => AnyTransport::Newline(inner),
+        CaseClauseSimpleStatementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for CaseClauseSimpleStatementsTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            CaseClauseSimpleStatementsTransportSlot::SimpleStatements(inner) => render_simple_statements(inner, dest),
+            CaseClauseSimpleStatementsTransportSlot::Block(inner) => render_block(inner, dest),
+            CaseClauseSimpleStatementsTransportSlot::Newline(inner) => render_newline(inner, dest),
+            CaseClauseSimpleStatementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum CasePatternAsPatternTransportSlot {
     _AsPattern(_AsPatternTransport),
     KeywordPattern(KeywordPatternTransport),
@@ -6091,14 +6204,149 @@ impl RenderableTransport for CasePatternAsPatternTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ComparisonOperatorOperatorsTransportSlot {
-    In(InTransport),
-    Literal0_6e_6f_74_20_69_6e,
-    Literal1_69_73_20_6e_6f_74,
+pub enum ClassDefinitionSimpleStatementsTransportSlot {
+    SimpleStatements(SimpleStatementsTransport),
+    Block(BlockTransport),
+    Newline(NewlineTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorOperatorsTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ClassDefinitionSimpleStatementsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ClassDefinitionSimpleStatementsTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("ClassDefinitionSimpleStatementsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in ClassDefinitionSimpleStatementsTransportSlot")
+        )?;
+        match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ClassDefinitionSimpleStatementsTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ClassDefinitionSimpleStatementsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ClassDefinitionSimpleStatementsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassDefinitionSimpleStatementsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ClassDefinitionSimpleStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassDefinitionSimpleStatementsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ClassDefinitionSimpleStatementsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn class_definition_simple_statements_transport_slot_to_any(t: ClassDefinitionSimpleStatementsTransportSlot) -> AnyTransport {
+    match t {
+        ClassDefinitionSimpleStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
+        ClassDefinitionSimpleStatementsTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        ClassDefinitionSimpleStatementsTransportSlot::Newline(inner) => AnyTransport::Newline(inner),
+        ClassDefinitionSimpleStatementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for ClassDefinitionSimpleStatementsTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ClassDefinitionSimpleStatementsTransportSlot::SimpleStatements(inner) => render_simple_statements(inner, dest),
+            ClassDefinitionSimpleStatementsTransportSlot::Block(inner) => render_block(inner, dest),
+            ClassDefinitionSimpleStatementsTransportSlot::Newline(inner) => render_newline(inner, dest),
+            ClassDefinitionSimpleStatementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ComparisonOperatorComparatorsTransportSlot {
+    In(InTransport),
+    Await(AwaitTransport),
+    BinaryOperator(BinaryOperatorTransport),
+    Identifier(IdentifierTransport),
+    KeywordIdentifier(KeywordIdentifierTransport),
+    String(StringTransport),
+    ConcatenatedString(ConcatenatedStringTransport),
+    Integer(IntegerTransport),
+    Float(FloatTransport),
+    True(TrueTransport),
+    False(FalseTransport),
+    None(NoneTransport),
+    UnaryOperator(UnaryOperatorTransport),
+    Attribute(AttributeTransport),
+    Subscript(SubscriptTransport),
+    Call(CallTransport),
+    List(ListTransport),
+    ListComprehension(ListComprehensionTransport),
+    Dictionary(DictionaryTransport),
+    DictionaryComprehension(DictionaryComprehensionTransport),
+    Set(SetTransport),
+    SetComprehension(SetComprehensionTransport),
+    Tuple(TupleTransport),
+    ParenthesizedExpression(ParenthesizedExpressionTransport),
+    GeneratorExpression(GeneratorExpressionTransport),
+    Ellipsis2(Ellipsis2Transport),
+    ListSplatPattern(ListSplatPatternTransport),
+    Literal0_6e_6f_74_20_69_6e,
+    Literal1_69_73_20_6e_6f_74,
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorComparatorsTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -6108,78 +6356,285 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComparisonOperatorOperatorsTrans
                 30 => Ok(Self::In(
                     InTransport::from_napi_value(env, napi_val)?
                 )),
+                237 => Ok(Self::Await(
+                    AwaitTransport::from_napi_value(env, napi_val)?
+                )),
+                191 => Ok(Self::BinaryOperator(
+                    BinaryOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                231 => Ok(Self::String(
+                    StringTransport::from_napi_value(env, napi_val)?
+                )),
+                230 => Ok(Self::ConcatenatedString(
+                    ConcatenatedStringTransport::from_napi_value(env, napi_val)?
+                )),
+                93 => Ok(Self::Integer(
+                    IntegerTransport::from_napi_value(env, napi_val)?
+                )),
+                94 => Ok(Self::Float(
+                    FloatTransport::from_napi_value(env, napi_val)?
+                )),
+                96 => Ok(Self::True(
+                    TrueTransport::from_napi_value(env, napi_val)?
+                )),
+                97 => Ok(Self::False(
+                    FalseTransport::from_napi_value(env, napi_val)?
+                )),
+                98 => Ok(Self::None(
+                    NoneTransport::from_napi_value(env, napi_val)?
+                )),
+                192 => Ok(Self::UnaryOperator(
+                    UnaryOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                203 => Ok(Self::Attribute(
+                    AttributeTransport::from_napi_value(env, napi_val)?
+                )),
+                204 => Ok(Self::Subscript(
+                    SubscriptTransport::from_napi_value(env, napi_val)?
+                )),
+                206 => Ok(Self::Call(
+                    CallTransport::from_napi_value(env, napi_val)?
+                )),
+                215 => Ok(Self::List(
+                    ListTransport::from_napi_value(env, napi_val)?
+                )),
+                220 => Ok(Self::ListComprehension(
+                    ListComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                218 => Ok(Self::Dictionary(
+                    DictionaryTransport::from_napi_value(env, napi_val)?
+                )),
+                221 => Ok(Self::DictionaryComprehension(
+                    DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                216 => Ok(Self::Set(
+                    SetTransport::from_napi_value(env, napi_val)?
+                )),
+                222 => Ok(Self::SetComprehension(
+                    SetComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                217 => Ok(Self::Tuple(
+                    TupleTransport::from_napi_value(env, napi_val)?
+                )),
+                225 => Ok(Self::ParenthesizedExpression(
+                    ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                223 => Ok(Self::GeneratorExpression(
+                    GeneratorExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                87 => Ok(Self::Ellipsis2(
+                    Ellipsis2Transport::from_napi_value(env, napi_val)?
+                )),
+                183 => Ok(Self::ListSplatPattern(
+                    ListSplatPatternTransport::from_napi_value(env, napi_val)?
+                )),
                 193 => Ok(Self::Literal0_6e_6f_74_20_69_6e),
                 194 => Ok(Self::Literal1_69_73_20_6e_6f_74),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in ComparisonOperatorOperatorsTransportSlot",
+                    "unknown kind id {other} in ComparisonOperatorComparatorsTransportSlot",
                 ))),
             };
         }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
-            .map_err(|_| ::napi::Error::from_reason("ComparisonOperatorOperatorsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+            .map_err(|_| ::napi::Error::from_reason("ComparisonOperatorComparatorsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
         let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-            ::napi::Error::from_reason("$type property missing in ComparisonOperatorOperatorsTransportSlot")
+            ::napi::Error::from_reason("$type property missing in ComparisonOperatorComparatorsTransportSlot")
         )?;
         match kind_id {
                 30 => Ok(Self::In(
                     InTransport::from_napi_value(env, napi_val)?
                 )),
+                237 => Ok(Self::Await(
+                    AwaitTransport::from_napi_value(env, napi_val)?
+                )),
+                191 => Ok(Self::BinaryOperator(
+                    BinaryOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                231 => Ok(Self::String(
+                    StringTransport::from_napi_value(env, napi_val)?
+                )),
+                230 => Ok(Self::ConcatenatedString(
+                    ConcatenatedStringTransport::from_napi_value(env, napi_val)?
+                )),
+                93 => Ok(Self::Integer(
+                    IntegerTransport::from_napi_value(env, napi_val)?
+                )),
+                94 => Ok(Self::Float(
+                    FloatTransport::from_napi_value(env, napi_val)?
+                )),
+                96 => Ok(Self::True(
+                    TrueTransport::from_napi_value(env, napi_val)?
+                )),
+                97 => Ok(Self::False(
+                    FalseTransport::from_napi_value(env, napi_val)?
+                )),
+                98 => Ok(Self::None(
+                    NoneTransport::from_napi_value(env, napi_val)?
+                )),
+                192 => Ok(Self::UnaryOperator(
+                    UnaryOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                203 => Ok(Self::Attribute(
+                    AttributeTransport::from_napi_value(env, napi_val)?
+                )),
+                204 => Ok(Self::Subscript(
+                    SubscriptTransport::from_napi_value(env, napi_val)?
+                )),
+                206 => Ok(Self::Call(
+                    CallTransport::from_napi_value(env, napi_val)?
+                )),
+                215 => Ok(Self::List(
+                    ListTransport::from_napi_value(env, napi_val)?
+                )),
+                220 => Ok(Self::ListComprehension(
+                    ListComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                218 => Ok(Self::Dictionary(
+                    DictionaryTransport::from_napi_value(env, napi_val)?
+                )),
+                221 => Ok(Self::DictionaryComprehension(
+                    DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                216 => Ok(Self::Set(
+                    SetTransport::from_napi_value(env, napi_val)?
+                )),
+                222 => Ok(Self::SetComprehension(
+                    SetComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                217 => Ok(Self::Tuple(
+                    TupleTransport::from_napi_value(env, napi_val)?
+                )),
+                225 => Ok(Self::ParenthesizedExpression(
+                    ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                223 => Ok(Self::GeneratorExpression(
+                    GeneratorExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                87 => Ok(Self::Ellipsis2(
+                    Ellipsis2Transport::from_napi_value(env, napi_val)?
+                )),
+                183 => Ok(Self::ListSplatPattern(
+                    ListSplatPatternTransport::from_napi_value(env, napi_val)?
+                )),
                 193 => Ok(Self::Literal0_6e_6f_74_20_69_6e),
                 194 => Ok(Self::Literal1_69_73_20_6e_6f_74),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in ComparisonOperatorOperatorsTransportSlot",
+                    "unknown kind id {other} in ComparisonOperatorComparatorsTransportSlot",
                 ))),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ComparisonOperatorOperatorsTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ComparisonOperatorComparatorsTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ComparisonOperatorOperatorsTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ComparisonOperatorComparatorsTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ComparisonOperatorOperatorsTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ComparisonOperatorComparatorsTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ComparisonOperatorOperatorsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ComparisonOperatorComparatorsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ComparisonOperatorOperatorsTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ComparisonOperatorComparatorsTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ComparisonOperatorOperatorsTransportSlot::to_napi_value(env, *val)
+        ComparisonOperatorComparatorsTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn comparison_operator_operators_transport_slot_to_any(t: ComparisonOperatorOperatorsTransportSlot) -> AnyTransport {
+fn comparison_operator_comparators_transport_slot_to_any(t: ComparisonOperatorComparatorsTransportSlot) -> AnyTransport {
     match t {
-        ComparisonOperatorOperatorsTransportSlot::In(inner) => AnyTransport::In(inner),
-        ComparisonOperatorOperatorsTransportSlot::Literal0_6e_6f_74_20_69_6e => AnyTransport::Literal0_6e_6f_74_20_69_6e,
-        ComparisonOperatorOperatorsTransportSlot::Literal1_69_73_20_6e_6f_74 => AnyTransport::Literal1_69_73_20_6e_6f_74,
+        ComparisonOperatorComparatorsTransportSlot::In(inner) => AnyTransport::In(inner),
+        ComparisonOperatorComparatorsTransportSlot::Await(inner) => AnyTransport::Await(inner),
+        ComparisonOperatorComparatorsTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
+        ComparisonOperatorComparatorsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        ComparisonOperatorComparatorsTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
+        ComparisonOperatorComparatorsTransportSlot::String(inner) => AnyTransport::String(inner),
+        ComparisonOperatorComparatorsTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
+        ComparisonOperatorComparatorsTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
+        ComparisonOperatorComparatorsTransportSlot::Float(inner) => AnyTransport::Float(inner),
+        ComparisonOperatorComparatorsTransportSlot::True(inner) => AnyTransport::True(inner),
+        ComparisonOperatorComparatorsTransportSlot::False(inner) => AnyTransport::False(inner),
+        ComparisonOperatorComparatorsTransportSlot::None(inner) => AnyTransport::None(inner),
+        ComparisonOperatorComparatorsTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
+        ComparisonOperatorComparatorsTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
+        ComparisonOperatorComparatorsTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
+        ComparisonOperatorComparatorsTransportSlot::Call(inner) => AnyTransport::Call(inner),
+        ComparisonOperatorComparatorsTransportSlot::List(inner) => AnyTransport::List(inner),
+        ComparisonOperatorComparatorsTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
+        ComparisonOperatorComparatorsTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
+        ComparisonOperatorComparatorsTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
+        ComparisonOperatorComparatorsTransportSlot::Set(inner) => AnyTransport::Set(inner),
+        ComparisonOperatorComparatorsTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
+        ComparisonOperatorComparatorsTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
+        ComparisonOperatorComparatorsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
+        ComparisonOperatorComparatorsTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
+        ComparisonOperatorComparatorsTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        ComparisonOperatorComparatorsTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
+        ComparisonOperatorComparatorsTransportSlot::Literal0_6e_6f_74_20_69_6e => AnyTransport::Literal0_6e_6f_74_20_69_6e,
+        ComparisonOperatorComparatorsTransportSlot::Literal1_69_73_20_6e_6f_74 => AnyTransport::Literal1_69_73_20_6e_6f_74,
+        ComparisonOperatorComparatorsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for ComparisonOperatorOperatorsTransportSlot {
+impl RenderableTransport for ComparisonOperatorComparatorsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ComparisonOperatorOperatorsTransportSlot::In(inner) => render_in(inner, dest),
-            ComparisonOperatorOperatorsTransportSlot::Literal0_6e_6f_74_20_69_6e => dest.write_str("not in").map_err(::askama::Error::from),
-            ComparisonOperatorOperatorsTransportSlot::Literal1_69_73_20_6e_6f_74 => dest.write_str("is not").map_err(::askama::Error::from),
+            ComparisonOperatorComparatorsTransportSlot::In(inner) => render_in(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::Await(inner) => render_await(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::String(inner) => render_string(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::Integer(inner) => render_integer(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::Float(inner) => render_float(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::True(inner) => render_true(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::False(inner) => render_false(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::None(inner) => render_none(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::UnaryOperator(inner) => render_unary_operator(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::Attribute(inner) => render_attribute(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::Subscript(inner) => render_subscript(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::Call(inner) => render_call(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::List(inner) => render_list(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::ListComprehension(inner) => render_list_comprehension(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::Dictionary(inner) => render_dictionary(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::DictionaryComprehension(inner) => render_dictionary_comprehension(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::Set(inner) => render_set(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::SetComprehension(inner) => render_set_comprehension(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::Tuple(inner) => render_tuple(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::GeneratorExpression(inner) => render_generator_expression(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::Ellipsis2(inner) => render_ellipsis2(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::ListSplatPattern(inner) => render_list_splat_pattern(inner, dest),
+            ComparisonOperatorComparatorsTransportSlot::Literal0_6e_6f_74_20_69_6e => dest.write_str("not in").map_err(::askama::Error::from),
+            ComparisonOperatorComparatorsTransportSlot::Literal1_69_73_20_6e_6f_74 => dest.write_str("is not").map_err(::askama::Error::from),
+            ComparisonOperatorComparatorsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -6273,6 +6728,786 @@ impl RenderableTransport for DictionaryPairTransportSlot {
         match self {
             DictionaryPairTransportSlot::Pair(inner) => render_pair(inner, dest),
             DictionaryPairTransportSlot::DictionarySplat(inner) => render_dictionary_splat(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ElifClauseSimpleStatementsTransportSlot {
+    SimpleStatements(SimpleStatementsTransport),
+    Block(BlockTransport),
+    Newline(NewlineTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ElifClauseSimpleStatementsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ElifClauseSimpleStatementsTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("ElifClauseSimpleStatementsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in ElifClauseSimpleStatementsTransportSlot")
+        )?;
+        match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ElifClauseSimpleStatementsTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ElifClauseSimpleStatementsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ElifClauseSimpleStatementsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ElifClauseSimpleStatementsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ElifClauseSimpleStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ElifClauseSimpleStatementsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ElifClauseSimpleStatementsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn elif_clause_simple_statements_transport_slot_to_any(t: ElifClauseSimpleStatementsTransportSlot) -> AnyTransport {
+    match t {
+        ElifClauseSimpleStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
+        ElifClauseSimpleStatementsTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        ElifClauseSimpleStatementsTransportSlot::Newline(inner) => AnyTransport::Newline(inner),
+        ElifClauseSimpleStatementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for ElifClauseSimpleStatementsTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ElifClauseSimpleStatementsTransportSlot::SimpleStatements(inner) => render_simple_statements(inner, dest),
+            ElifClauseSimpleStatementsTransportSlot::Block(inner) => render_block(inner, dest),
+            ElifClauseSimpleStatementsTransportSlot::Newline(inner) => render_newline(inner, dest),
+            ElifClauseSimpleStatementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ElseClauseSimpleStatementsTransportSlot {
+    SimpleStatements(SimpleStatementsTransport),
+    Block(BlockTransport),
+    Newline(NewlineTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseSimpleStatementsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ElseClauseSimpleStatementsTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("ElseClauseSimpleStatementsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in ElseClauseSimpleStatementsTransportSlot")
+        )?;
+        match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ElseClauseSimpleStatementsTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ElseClauseSimpleStatementsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ElseClauseSimpleStatementsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ElseClauseSimpleStatementsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ElseClauseSimpleStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ElseClauseSimpleStatementsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ElseClauseSimpleStatementsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn else_clause_simple_statements_transport_slot_to_any(t: ElseClauseSimpleStatementsTransportSlot) -> AnyTransport {
+    match t {
+        ElseClauseSimpleStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
+        ElseClauseSimpleStatementsTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        ElseClauseSimpleStatementsTransportSlot::Newline(inner) => AnyTransport::Newline(inner),
+        ElseClauseSimpleStatementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for ElseClauseSimpleStatementsTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ElseClauseSimpleStatementsTransportSlot::SimpleStatements(inner) => render_simple_statements(inner, dest),
+            ElseClauseSimpleStatementsTransportSlot::Block(inner) => render_block(inner, dest),
+            ElseClauseSimpleStatementsTransportSlot::Newline(inner) => render_newline(inner, dest),
+            ElseClauseSimpleStatementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ExceptClauseExceptClauseAsTransportSlot {
+    ExceptClauseAs(ExceptClauseAsTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseExceptClauseAsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                249 => Ok(Self::ExceptClauseAs(
+                    ExceptClauseAsTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ExceptClauseExceptClauseAsTransportSlot",
+                ))),
+            };
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("ExceptClauseExceptClauseAsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in ExceptClauseExceptClauseAsTransportSlot")
+        )?;
+        match kind_id {
+                249 => Ok(Self::ExceptClauseAs(
+                    ExceptClauseAsTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ExceptClauseExceptClauseAsTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExceptClauseExceptClauseAsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ExceptClauseExceptClauseAsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseExceptClauseAsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExceptClauseExceptClauseAsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseExceptClauseAsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExceptClauseExceptClauseAsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn except_clause_except_clause_as_transport_slot_to_any(t: ExceptClauseExceptClauseAsTransportSlot) -> AnyTransport {
+    match t {
+        ExceptClauseExceptClauseAsTransportSlot::ExceptClauseAs(inner) => AnyTransport::ExceptClauseAs(inner),
+    }
+}
+
+impl RenderableTransport for ExceptClauseExceptClauseAsTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ExceptClauseExceptClauseAsTransportSlot::ExceptClauseAs(inner) => render_except_clause_as(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ExceptClauseSimpleStatementsTransportSlot {
+    SimpleStatements(SimpleStatementsTransport),
+    Block(BlockTransport),
+    Newline(NewlineTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseSimpleStatementsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ExceptClauseSimpleStatementsTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("ExceptClauseSimpleStatementsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in ExceptClauseSimpleStatementsTransportSlot")
+        )?;
+        match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ExceptClauseSimpleStatementsTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExceptClauseSimpleStatementsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ExceptClauseSimpleStatementsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseSimpleStatementsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExceptClauseSimpleStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseSimpleStatementsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExceptClauseSimpleStatementsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn except_clause_simple_statements_transport_slot_to_any(t: ExceptClauseSimpleStatementsTransportSlot) -> AnyTransport {
+    match t {
+        ExceptClauseSimpleStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
+        ExceptClauseSimpleStatementsTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        ExceptClauseSimpleStatementsTransportSlot::Newline(inner) => AnyTransport::Newline(inner),
+        ExceptClauseSimpleStatementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for ExceptClauseSimpleStatementsTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ExceptClauseSimpleStatementsTransportSlot::SimpleStatements(inner) => render_simple_statements(inner, dest),
+            ExceptClauseSimpleStatementsTransportSlot::Block(inner) => render_block(inner, dest),
+            ExceptClauseSimpleStatementsTransportSlot::Newline(inner) => render_newline(inner, dest),
+            ExceptClauseSimpleStatementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ExecStatementInClauseTransportSlot {
+    ComparisonOperator(ComparisonOperatorTransport),
+    NotOperator(NotOperatorTransport),
+    BooleanOperator(BooleanOperatorTransport),
+    Lambda(LambdaTransport),
+    Await(AwaitTransport),
+    BinaryOperator(BinaryOperatorTransport),
+    Identifier(IdentifierTransport),
+    KeywordIdentifier(KeywordIdentifierTransport),
+    String(StringTransport),
+    ConcatenatedString(ConcatenatedStringTransport),
+    Integer(IntegerTransport),
+    Float(FloatTransport),
+    True(TrueTransport),
+    False(FalseTransport),
+    None(NoneTransport),
+    UnaryOperator(UnaryOperatorTransport),
+    Attribute(AttributeTransport),
+    Subscript(SubscriptTransport),
+    Call(CallTransport),
+    List(ListTransport),
+    ListComprehension(ListComprehensionTransport),
+    Dictionary(DictionaryTransport),
+    DictionaryComprehension(DictionaryComprehensionTransport),
+    Set(SetTransport),
+    SetComprehension(SetComprehensionTransport),
+    Tuple(TupleTransport),
+    ParenthesizedExpression(ParenthesizedExpressionTransport),
+    GeneratorExpression(GeneratorExpressionTransport),
+    Ellipsis2(Ellipsis2Transport),
+    ListSplatPattern(ListSplatPatternTransport),
+    ConditionalExpression(ConditionalExpressionTransport),
+    NamedExpression(NamedExpressionTransport),
+    AsPattern(AsPatternTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ExecStatementInClauseTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                195 => Ok(Self::ComparisonOperator(
+                    ComparisonOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                189 => Ok(Self::NotOperator(
+                    NotOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                190 => Ok(Self::BooleanOperator(
+                    BooleanOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                196 => Ok(Self::Lambda(
+                    LambdaTransport::from_napi_value(env, napi_val)?
+                )),
+                237 => Ok(Self::Await(
+                    AwaitTransport::from_napi_value(env, napi_val)?
+                )),
+                191 => Ok(Self::BinaryOperator(
+                    BinaryOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                231 => Ok(Self::String(
+                    StringTransport::from_napi_value(env, napi_val)?
+                )),
+                230 => Ok(Self::ConcatenatedString(
+                    ConcatenatedStringTransport::from_napi_value(env, napi_val)?
+                )),
+                93 => Ok(Self::Integer(
+                    IntegerTransport::from_napi_value(env, napi_val)?
+                )),
+                94 => Ok(Self::Float(
+                    FloatTransport::from_napi_value(env, napi_val)?
+                )),
+                96 => Ok(Self::True(
+                    TrueTransport::from_napi_value(env, napi_val)?
+                )),
+                97 => Ok(Self::False(
+                    FalseTransport::from_napi_value(env, napi_val)?
+                )),
+                98 => Ok(Self::None(
+                    NoneTransport::from_napi_value(env, napi_val)?
+                )),
+                192 => Ok(Self::UnaryOperator(
+                    UnaryOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                203 => Ok(Self::Attribute(
+                    AttributeTransport::from_napi_value(env, napi_val)?
+                )),
+                204 => Ok(Self::Subscript(
+                    SubscriptTransport::from_napi_value(env, napi_val)?
+                )),
+                206 => Ok(Self::Call(
+                    CallTransport::from_napi_value(env, napi_val)?
+                )),
+                215 => Ok(Self::List(
+                    ListTransport::from_napi_value(env, napi_val)?
+                )),
+                220 => Ok(Self::ListComprehension(
+                    ListComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                218 => Ok(Self::Dictionary(
+                    DictionaryTransport::from_napi_value(env, napi_val)?
+                )),
+                221 => Ok(Self::DictionaryComprehension(
+                    DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                216 => Ok(Self::Set(
+                    SetTransport::from_napi_value(env, napi_val)?
+                )),
+                222 => Ok(Self::SetComprehension(
+                    SetComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                217 => Ok(Self::Tuple(
+                    TupleTransport::from_napi_value(env, napi_val)?
+                )),
+                225 => Ok(Self::ParenthesizedExpression(
+                    ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                223 => Ok(Self::GeneratorExpression(
+                    GeneratorExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                87 => Ok(Self::Ellipsis2(
+                    Ellipsis2Transport::from_napi_value(env, napi_val)?
+                )),
+                183 => Ok(Self::ListSplatPattern(
+                    ListSplatPatternTransport::from_napi_value(env, napi_val)?
+                )),
+                229 => Ok(Self::ConditionalExpression(
+                    ConditionalExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                123 => Ok(Self::NamedExpression(
+                    NamedExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                185 => Ok(Self::AsPattern(
+                    AsPatternTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ExecStatementInClauseTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("ExecStatementInClauseTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in ExecStatementInClauseTransportSlot")
+        )?;
+        match kind_id {
+                195 => Ok(Self::ComparisonOperator(
+                    ComparisonOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                189 => Ok(Self::NotOperator(
+                    NotOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                190 => Ok(Self::BooleanOperator(
+                    BooleanOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                196 => Ok(Self::Lambda(
+                    LambdaTransport::from_napi_value(env, napi_val)?
+                )),
+                237 => Ok(Self::Await(
+                    AwaitTransport::from_napi_value(env, napi_val)?
+                )),
+                191 => Ok(Self::BinaryOperator(
+                    BinaryOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                231 => Ok(Self::String(
+                    StringTransport::from_napi_value(env, napi_val)?
+                )),
+                230 => Ok(Self::ConcatenatedString(
+                    ConcatenatedStringTransport::from_napi_value(env, napi_val)?
+                )),
+                93 => Ok(Self::Integer(
+                    IntegerTransport::from_napi_value(env, napi_val)?
+                )),
+                94 => Ok(Self::Float(
+                    FloatTransport::from_napi_value(env, napi_val)?
+                )),
+                96 => Ok(Self::True(
+                    TrueTransport::from_napi_value(env, napi_val)?
+                )),
+                97 => Ok(Self::False(
+                    FalseTransport::from_napi_value(env, napi_val)?
+                )),
+                98 => Ok(Self::None(
+                    NoneTransport::from_napi_value(env, napi_val)?
+                )),
+                192 => Ok(Self::UnaryOperator(
+                    UnaryOperatorTransport::from_napi_value(env, napi_val)?
+                )),
+                203 => Ok(Self::Attribute(
+                    AttributeTransport::from_napi_value(env, napi_val)?
+                )),
+                204 => Ok(Self::Subscript(
+                    SubscriptTransport::from_napi_value(env, napi_val)?
+                )),
+                206 => Ok(Self::Call(
+                    CallTransport::from_napi_value(env, napi_val)?
+                )),
+                215 => Ok(Self::List(
+                    ListTransport::from_napi_value(env, napi_val)?
+                )),
+                220 => Ok(Self::ListComprehension(
+                    ListComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                218 => Ok(Self::Dictionary(
+                    DictionaryTransport::from_napi_value(env, napi_val)?
+                )),
+                221 => Ok(Self::DictionaryComprehension(
+                    DictionaryComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                216 => Ok(Self::Set(
+                    SetTransport::from_napi_value(env, napi_val)?
+                )),
+                222 => Ok(Self::SetComprehension(
+                    SetComprehensionTransport::from_napi_value(env, napi_val)?
+                )),
+                217 => Ok(Self::Tuple(
+                    TupleTransport::from_napi_value(env, napi_val)?
+                )),
+                225 => Ok(Self::ParenthesizedExpression(
+                    ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                223 => Ok(Self::GeneratorExpression(
+                    GeneratorExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                87 => Ok(Self::Ellipsis2(
+                    Ellipsis2Transport::from_napi_value(env, napi_val)?
+                )),
+                183 => Ok(Self::ListSplatPattern(
+                    ListSplatPatternTransport::from_napi_value(env, napi_val)?
+                )),
+                229 => Ok(Self::ConditionalExpression(
+                    ConditionalExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                123 => Ok(Self::NamedExpression(
+                    NamedExpressionTransport::from_napi_value(env, napi_val)?
+                )),
+                185 => Ok(Self::AsPattern(
+                    AsPatternTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ExecStatementInClauseTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExecStatementInClauseTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ExecStatementInClauseTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExecStatementInClauseTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExecStatementInClauseTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExecStatementInClauseTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExecStatementInClauseTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn exec_statement_in_clause_transport_slot_to_any(t: ExecStatementInClauseTransportSlot) -> AnyTransport {
+    match t {
+        ExecStatementInClauseTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
+        ExecStatementInClauseTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
+        ExecStatementInClauseTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
+        ExecStatementInClauseTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
+        ExecStatementInClauseTransportSlot::Await(inner) => AnyTransport::Await(inner),
+        ExecStatementInClauseTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
+        ExecStatementInClauseTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        ExecStatementInClauseTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
+        ExecStatementInClauseTransportSlot::String(inner) => AnyTransport::String(inner),
+        ExecStatementInClauseTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
+        ExecStatementInClauseTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
+        ExecStatementInClauseTransportSlot::Float(inner) => AnyTransport::Float(inner),
+        ExecStatementInClauseTransportSlot::True(inner) => AnyTransport::True(inner),
+        ExecStatementInClauseTransportSlot::False(inner) => AnyTransport::False(inner),
+        ExecStatementInClauseTransportSlot::None(inner) => AnyTransport::None(inner),
+        ExecStatementInClauseTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
+        ExecStatementInClauseTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
+        ExecStatementInClauseTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
+        ExecStatementInClauseTransportSlot::Call(inner) => AnyTransport::Call(inner),
+        ExecStatementInClauseTransportSlot::List(inner) => AnyTransport::List(inner),
+        ExecStatementInClauseTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
+        ExecStatementInClauseTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
+        ExecStatementInClauseTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
+        ExecStatementInClauseTransportSlot::Set(inner) => AnyTransport::Set(inner),
+        ExecStatementInClauseTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
+        ExecStatementInClauseTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
+        ExecStatementInClauseTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
+        ExecStatementInClauseTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
+        ExecStatementInClauseTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        ExecStatementInClauseTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
+        ExecStatementInClauseTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
+        ExecStatementInClauseTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
+        ExecStatementInClauseTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
+        ExecStatementInClauseTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for ExecStatementInClauseTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ExecStatementInClauseTransportSlot::ComparisonOperator(inner) => render_comparison_operator(inner, dest),
+            ExecStatementInClauseTransportSlot::NotOperator(inner) => render_not_operator(inner, dest),
+            ExecStatementInClauseTransportSlot::BooleanOperator(inner) => render_boolean_operator(inner, dest),
+            ExecStatementInClauseTransportSlot::Lambda(inner) => render_lambda(inner, dest),
+            ExecStatementInClauseTransportSlot::Await(inner) => render_await(inner, dest),
+            ExecStatementInClauseTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
+            ExecStatementInClauseTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            ExecStatementInClauseTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
+            ExecStatementInClauseTransportSlot::String(inner) => render_string(inner, dest),
+            ExecStatementInClauseTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
+            ExecStatementInClauseTransportSlot::Integer(inner) => render_integer(inner, dest),
+            ExecStatementInClauseTransportSlot::Float(inner) => render_float(inner, dest),
+            ExecStatementInClauseTransportSlot::True(inner) => render_true(inner, dest),
+            ExecStatementInClauseTransportSlot::False(inner) => render_false(inner, dest),
+            ExecStatementInClauseTransportSlot::None(inner) => render_none(inner, dest),
+            ExecStatementInClauseTransportSlot::UnaryOperator(inner) => render_unary_operator(inner, dest),
+            ExecStatementInClauseTransportSlot::Attribute(inner) => render_attribute(inner, dest),
+            ExecStatementInClauseTransportSlot::Subscript(inner) => render_subscript(inner, dest),
+            ExecStatementInClauseTransportSlot::Call(inner) => render_call(inner, dest),
+            ExecStatementInClauseTransportSlot::List(inner) => render_list(inner, dest),
+            ExecStatementInClauseTransportSlot::ListComprehension(inner) => render_list_comprehension(inner, dest),
+            ExecStatementInClauseTransportSlot::Dictionary(inner) => render_dictionary(inner, dest),
+            ExecStatementInClauseTransportSlot::DictionaryComprehension(inner) => render_dictionary_comprehension(inner, dest),
+            ExecStatementInClauseTransportSlot::Set(inner) => render_set(inner, dest),
+            ExecStatementInClauseTransportSlot::SetComprehension(inner) => render_set_comprehension(inner, dest),
+            ExecStatementInClauseTransportSlot::Tuple(inner) => render_tuple(inner, dest),
+            ExecStatementInClauseTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
+            ExecStatementInClauseTransportSlot::GeneratorExpression(inner) => render_generator_expression(inner, dest),
+            ExecStatementInClauseTransportSlot::Ellipsis2(inner) => render_ellipsis2(inner, dest),
+            ExecStatementInClauseTransportSlot::ListSplatPattern(inner) => render_list_splat_pattern(inner, dest),
+            ExecStatementInClauseTransportSlot::ConditionalExpression(inner) => render_conditional_expression(inner, dest),
+            ExecStatementInClauseTransportSlot::NamedExpression(inner) => render_named_expression(inner, dest),
+            ExecStatementInClauseTransportSlot::AsPattern(inner) => render_as_pattern(inner, dest),
+            ExecStatementInClauseTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -6650,6 +7885,330 @@ impl RenderableTransport for ExpressionListExpressionTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum FinallyClauseSimpleStatementsTransportSlot {
+    SimpleStatements(SimpleStatementsTransport),
+    Block(BlockTransport),
+    Newline(NewlineTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FinallyClauseSimpleStatementsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in FinallyClauseSimpleStatementsTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("FinallyClauseSimpleStatementsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in FinallyClauseSimpleStatementsTransportSlot")
+        )?;
+        match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in FinallyClauseSimpleStatementsTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FinallyClauseSimpleStatementsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("FinallyClauseSimpleStatementsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FinallyClauseSimpleStatementsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FinallyClauseSimpleStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FinallyClauseSimpleStatementsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FinallyClauseSimpleStatementsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn finally_clause_simple_statements_transport_slot_to_any(t: FinallyClauseSimpleStatementsTransportSlot) -> AnyTransport {
+    match t {
+        FinallyClauseSimpleStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
+        FinallyClauseSimpleStatementsTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        FinallyClauseSimpleStatementsTransportSlot::Newline(inner) => AnyTransport::Newline(inner),
+        FinallyClauseSimpleStatementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for FinallyClauseSimpleStatementsTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            FinallyClauseSimpleStatementsTransportSlot::SimpleStatements(inner) => render_simple_statements(inner, dest),
+            FinallyClauseSimpleStatementsTransportSlot::Block(inner) => render_block(inner, dest),
+            FinallyClauseSimpleStatementsTransportSlot::Newline(inner) => render_newline(inner, dest),
+            FinallyClauseSimpleStatementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ForStatementSimpleStatementsTransportSlot {
+    SimpleStatements(SimpleStatementsTransport),
+    Block(BlockTransport),
+    Newline(NewlineTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ForStatementSimpleStatementsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ForStatementSimpleStatementsTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("ForStatementSimpleStatementsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in ForStatementSimpleStatementsTransportSlot")
+        )?;
+        match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ForStatementSimpleStatementsTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ForStatementSimpleStatementsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ForStatementSimpleStatementsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ForStatementSimpleStatementsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ForStatementSimpleStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ForStatementSimpleStatementsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ForStatementSimpleStatementsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn for_statement_simple_statements_transport_slot_to_any(t: ForStatementSimpleStatementsTransportSlot) -> AnyTransport {
+    match t {
+        ForStatementSimpleStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
+        ForStatementSimpleStatementsTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        ForStatementSimpleStatementsTransportSlot::Newline(inner) => AnyTransport::Newline(inner),
+        ForStatementSimpleStatementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for ForStatementSimpleStatementsTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ForStatementSimpleStatementsTransportSlot::SimpleStatements(inner) => render_simple_statements(inner, dest),
+            ForStatementSimpleStatementsTransportSlot::Block(inner) => render_block(inner, dest),
+            ForStatementSimpleStatementsTransportSlot::Newline(inner) => render_newline(inner, dest),
+            ForStatementSimpleStatementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum FunctionDefinitionSimpleStatementsTransportSlot {
+    SimpleStatements(SimpleStatementsTransport),
+    Block(BlockTransport),
+    Newline(NewlineTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionSimpleStatementsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in FunctionDefinitionSimpleStatementsTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("FunctionDefinitionSimpleStatementsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in FunctionDefinitionSimpleStatementsTransportSlot")
+        )?;
+        match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in FunctionDefinitionSimpleStatementsTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FunctionDefinitionSimpleStatementsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("FunctionDefinitionSimpleStatementsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionDefinitionSimpleStatementsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FunctionDefinitionSimpleStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionDefinitionSimpleStatementsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FunctionDefinitionSimpleStatementsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn function_definition_simple_statements_transport_slot_to_any(t: FunctionDefinitionSimpleStatementsTransportSlot) -> AnyTransport {
+    match t {
+        FunctionDefinitionSimpleStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
+        FunctionDefinitionSimpleStatementsTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        FunctionDefinitionSimpleStatementsTransportSlot::Newline(inner) => AnyTransport::Newline(inner),
+        FunctionDefinitionSimpleStatementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for FunctionDefinitionSimpleStatementsTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            FunctionDefinitionSimpleStatementsTransportSlot::SimpleStatements(inner) => render_simple_statements(inner, dest),
+            FunctionDefinitionSimpleStatementsTransportSlot::Block(inner) => render_block(inner, dest),
+            FunctionDefinitionSimpleStatementsTransportSlot::Newline(inner) => render_newline(inner, dest),
+            FunctionDefinitionSimpleStatementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum FutureImportStatementNameTransportSlot {
     DottedName(DottedNameTransport),
     AliasedImport(AliasedImportTransport),
@@ -6831,6 +8390,114 @@ impl RenderableTransport for IfStatementAlternativeTransportSlot {
         match self {
             IfStatementAlternativeTransportSlot::ElifClause(inner) => render_elif_clause(inner, dest),
             IfStatementAlternativeTransportSlot::ElseClause(inner) => render_else_clause(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum IfStatementSimpleStatementsTransportSlot {
+    SimpleStatements(SimpleStatementsTransport),
+    Block(BlockTransport),
+    Newline(NewlineTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for IfStatementSimpleStatementsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in IfStatementSimpleStatementsTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("IfStatementSimpleStatementsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in IfStatementSimpleStatementsTransportSlot")
+        )?;
+        match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in IfStatementSimpleStatementsTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for IfStatementSimpleStatementsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("IfStatementSimpleStatementsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<IfStatementSimpleStatementsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        IfStatementSimpleStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<IfStatementSimpleStatementsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        IfStatementSimpleStatementsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn if_statement_simple_statements_transport_slot_to_any(t: IfStatementSimpleStatementsTransportSlot) -> AnyTransport {
+    match t {
+        IfStatementSimpleStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
+        IfStatementSimpleStatementsTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        IfStatementSimpleStatementsTransportSlot::Newline(inner) => AnyTransport::Newline(inner),
+        IfStatementSimpleStatementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for IfStatementSimpleStatementsTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            IfStatementSimpleStatementsTransportSlot::SimpleStatements(inner) => render_simple_statements(inner, dest),
+            IfStatementSimpleStatementsTransportSlot::Block(inner) => render_block(inner, dest),
+            IfStatementSimpleStatementsTransportSlot::Newline(inner) => render_newline(inner, dest),
+            IfStatementSimpleStatementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -8156,6 +9823,114 @@ impl RenderableTransport for SubscriptSubscriptTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum TryStatementSimpleStatementsTransportSlot {
+    SimpleStatements(SimpleStatementsTransport),
+    Block(BlockTransport),
+    Newline(NewlineTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for TryStatementSimpleStatementsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in TryStatementSimpleStatementsTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("TryStatementSimpleStatementsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in TryStatementSimpleStatementsTransportSlot")
+        )?;
+        match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in TryStatementSimpleStatementsTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TryStatementSimpleStatementsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("TryStatementSimpleStatementsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TryStatementSimpleStatementsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        TryStatementSimpleStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TryStatementSimpleStatementsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        TryStatementSimpleStatementsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn try_statement_simple_statements_transport_slot_to_any(t: TryStatementSimpleStatementsTransportSlot) -> AnyTransport {
+    match t {
+        TryStatementSimpleStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
+        TryStatementSimpleStatementsTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        TryStatementSimpleStatementsTransportSlot::Newline(inner) => AnyTransport::Newline(inner),
+        TryStatementSimpleStatementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for TryStatementSimpleStatementsTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            TryStatementSimpleStatementsTransportSlot::SimpleStatements(inner) => render_simple_statements(inner, dest),
+            TryStatementSimpleStatementsTransportSlot::Block(inner) => render_block(inner, dest),
+            TryStatementSimpleStatementsTransportSlot::Newline(inner) => render_newline(inner, dest),
+            TryStatementSimpleStatementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum TypeExpressionTransportSlot {
     ComparisonOperator(ComparisonOperatorTransport),
     NotOperator(NotOperatorTransport),
@@ -8568,6 +10343,222 @@ impl RenderableTransport for TypeExpressionTransportSlot {
             TypeExpressionTransportSlot::ConstrainedType(inner) => render_constrained_type(inner, dest),
             TypeExpressionTransportSlot::MemberType(inner) => render_member_type(inner, dest),
             TypeExpressionTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum WhileStatementSimpleStatementsTransportSlot {
+    SimpleStatements(SimpleStatementsTransport),
+    Block(BlockTransport),
+    Newline(NewlineTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for WhileStatementSimpleStatementsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in WhileStatementSimpleStatementsTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("WhileStatementSimpleStatementsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in WhileStatementSimpleStatementsTransportSlot")
+        )?;
+        match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in WhileStatementSimpleStatementsTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for WhileStatementSimpleStatementsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("WhileStatementSimpleStatementsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<WhileStatementSimpleStatementsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        WhileStatementSimpleStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<WhileStatementSimpleStatementsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        WhileStatementSimpleStatementsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn while_statement_simple_statements_transport_slot_to_any(t: WhileStatementSimpleStatementsTransportSlot) -> AnyTransport {
+    match t {
+        WhileStatementSimpleStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
+        WhileStatementSimpleStatementsTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        WhileStatementSimpleStatementsTransportSlot::Newline(inner) => AnyTransport::Newline(inner),
+        WhileStatementSimpleStatementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for WhileStatementSimpleStatementsTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            WhileStatementSimpleStatementsTransportSlot::SimpleStatements(inner) => render_simple_statements(inner, dest),
+            WhileStatementSimpleStatementsTransportSlot::Block(inner) => render_block(inner, dest),
+            WhileStatementSimpleStatementsTransportSlot::Newline(inner) => render_newline(inner, dest),
+            WhileStatementSimpleStatementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum WithStatementSimpleStatementsTransportSlot {
+    SimpleStatements(SimpleStatementsTransport),
+    Block(BlockTransport),
+    Newline(NewlineTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for WithStatementSimpleStatementsTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in WithStatementSimpleStatementsTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("WithStatementSimpleStatementsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in WithStatementSimpleStatementsTransportSlot")
+        )?;
+        match kind_id {
+                110 => Ok(Self::SimpleStatements(
+                    SimpleStatementsTransport::from_napi_value(env, napi_val)?
+                )),
+                160 => Ok(Self::Block(
+                    BlockTransport::from_napi_value(env, napi_val)?
+                )),
+                101 => Ok(Self::Newline(
+                    NewlineTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in WithStatementSimpleStatementsTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for WithStatementSimpleStatementsTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("WithStatementSimpleStatementsTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<WithStatementSimpleStatementsTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        WithStatementSimpleStatementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<WithStatementSimpleStatementsTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        WithStatementSimpleStatementsTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn with_statement_simple_statements_transport_slot_to_any(t: WithStatementSimpleStatementsTransportSlot) -> AnyTransport {
+    match t {
+        WithStatementSimpleStatementsTransportSlot::SimpleStatements(inner) => AnyTransport::SimpleStatements(inner),
+        WithStatementSimpleStatementsTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        WithStatementSimpleStatementsTransportSlot::Newline(inner) => AnyTransport::Newline(inner),
+        WithStatementSimpleStatementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for WithStatementSimpleStatementsTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            WithStatementSimpleStatementsTransportSlot::SimpleStatements(inner) => render_simple_statements(inner, dest),
+            WithStatementSimpleStatementsTransportSlot::Block(inner) => render_block(inner, dest),
+            WithStatementSimpleStatementsTransportSlot::Newline(inner) => render_newline(inner, dest),
+            WithStatementSimpleStatementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -9503,6 +11494,58 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComprehensionClausesTransport>
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ComprehensionClausesTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct ExceptClauseAsTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    pub value: ExpressionTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
+    pub alias: Option<ExpressionTransport>,
+}
+
+impl RenderableTransport for ExceptClauseAsTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_except_clause_as(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseAsTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExceptClauseAsTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseAsTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExceptClauseAsTransport::to_napi_value(env, *val)
     }
 }
 
@@ -11425,10 +13468,10 @@ pub struct CaseClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_guard"))]
     pub guard: Option<IfClauseTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
-    pub consequence: SuiteTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_case_pattern"))]
     pub case_pattern: Vec<CasePatternTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements"))]
+    pub simple_statements: CaseClauseSimpleStatementsTransportSlot,
 }
 
 impl RenderableTransport for CaseClauseTransport {
@@ -11583,8 +13626,8 @@ pub struct ClassDefinitionTransport {
     pub type_parameters: Option<TypeParameterTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_superclasses"))]
     pub superclasses: Option<ArgumentListTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: SuiteTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements"))]
+    pub simple_statements: ClassDefinitionSimpleStatementsTransportSlot,
 }
 
 impl RenderableTransport for ClassDefinitionTransport {
@@ -11787,10 +13830,8 @@ pub struct ComparisonOperatorTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: Box<PrimaryExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operators"))]
-    pub operators: ComparisonOperatorOperatorsTransportSlot,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_primary_expression"))]
-    pub primary_expression: Box<PrimaryExpressionTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_comparators"))]
+    pub comparators: Vec<ComparisonOperatorComparatorsTransportSlot>,
 }
 
 impl RenderableTransport for ComparisonOperatorTransport {
@@ -12659,8 +14700,8 @@ pub struct ElifClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ExpressionTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
-    pub consequence: SuiteTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements"))]
+    pub simple_statements: ElifClauseSimpleStatementsTransportSlot,
 }
 
 impl RenderableTransport for ElifClauseTransport {
@@ -12811,8 +14852,8 @@ pub struct ElseClauseTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: SuiteTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements"))]
+    pub simple_statements: ElseClauseSimpleStatementsTransportSlot,
 }
 
 impl RenderableTransport for ElseClauseTransport {
@@ -12961,12 +15002,10 @@ pub struct ExceptClauseTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Option<Vec<ExpressionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
-    pub alias: Option<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_suite"))]
-    pub suite: SuiteTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_as"))]
+    pub except_clause_as: Option<ExceptClauseExceptClauseAsTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements"))]
+    pub simple_statements: ExceptClauseSimpleStatementsTransportSlot,
 }
 
 impl RenderableTransport for ExceptClauseTransport {
@@ -13017,8 +15056,8 @@ pub struct ExecStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_code"))]
     pub code: PrimaryExpressionTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: Vec<ExpressionTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in_clause"))]
+    pub in_clause: Option<ExecStatementInClauseTransportSlot>,
 }
 
 impl RenderableTransport for ExecStatementTransport {
@@ -13327,8 +15366,8 @@ pub struct FinallyClauseTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block"))]
-    pub block: SuiteTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements"))]
+    pub simple_statements: FinallyClauseSimpleStatementsTransportSlot,
 }
 
 impl RenderableTransport for FinallyClauseTransport {
@@ -13537,10 +15576,10 @@ pub struct ForStatementTransport {
     pub left: LeftHandSideTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: ExpressionsTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: SuiteTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<ElseClauseTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements"))]
+    pub simple_statements: ForStatementSimpleStatementsTransportSlot,
 }
 
 impl RenderableTransport for ForStatementTransport {
@@ -13649,8 +15688,8 @@ pub struct FunctionDefinitionTransport {
     pub parameters: ParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<TypeTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: SuiteTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements"))]
+    pub simple_statements: FunctionDefinitionSimpleStatementsTransportSlot,
 }
 
 impl RenderableTransport for FunctionDefinitionTransport {
@@ -14055,10 +16094,10 @@ pub struct IfStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ExpressionTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_consequence"))]
-    pub consequence: SuiteTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<Vec<IfStatementAlternativeTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements"))]
+    pub simple_statements: IfStatementSimpleStatementsTransportSlot,
 }
 
 impl RenderableTransport for IfStatementTransport {
@@ -14464,7 +16503,7 @@ pub struct KeywordArgumentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: NamedExpressionLhsTransport,
+    pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ExpressionTransport,
 }
@@ -16809,14 +18848,14 @@ pub struct TryStatementTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: SuiteTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clauses"))]
     pub except_clauses: Option<Vec<ExceptClauseTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_else_clause"))]
     pub else_clause: Option<ElseClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_finally_clause"))]
     pub finally_clause: Option<FinallyClauseTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements"))]
+    pub simple_statements: TryStatementSimpleStatementsTransportSlot,
 }
 
 impl RenderableTransport for TryStatementTransport {
@@ -17481,10 +19520,10 @@ pub struct WhileStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ExpressionTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: SuiteTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
     pub alternative: Option<ElseClauseTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements"))]
+    pub simple_statements: WhileStatementSimpleStatementsTransportSlot,
 }
 
 impl RenderableTransport for WhileStatementTransport {
@@ -17841,8 +19880,8 @@ pub struct WithStatementTransport {
     pub async_marker: Option<AsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_clause"))]
     pub with_clause: WithClauseTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: SuiteTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements"))]
+    pub simple_statements: WithStatementSimpleStatementsTransportSlot,
 }
 
 impl RenderableTransport for WithStatementTransport {
@@ -25952,6 +27991,17 @@ fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut
     template.render_into(dest)
 }
 
+fn render_except_clause_as(node: &ExceptClauseAsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = ExceptClauseAsTemplate {
+        alias: match &node.alias {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+    };
+    template.render_into(dest)
+}
+
 fn render__identifier(t: &_IdentifierEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
@@ -26055,10 +28105,8 @@ fn render_simple_statements(node: &SimpleStatementsTransport, dest: &mut dyn ::s
 }
 
 fn render_suite(node: &SuiteTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = SuiteTemplate {
-        block: OptionalNonterminalView::Missing,
-    };
-    template.render_into(dest)
+    node.simple_statements.render_into(dest)?;
+    Ok(())
 }
 
 fn render__tuple_pattern(node: &_TuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -26254,7 +28302,7 @@ fn render_case_clause(node: &CaseClauseTransport, dest: &mut dyn ::std::fmt::Wri
             leading: false,
             trailing: false,
         },
-        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
+        consequence: OptionalNonterminalView::Missing,
         guard: match &node.guard {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -26279,7 +28327,7 @@ fn render_chevron(node: &ChevronTransport, dest: &mut dyn ::std::fmt::Write) -> 
 
 fn render_class_definition(node: &ClassDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ClassDefinitionTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: OptionalNonterminalView::Missing,
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         superclasses: match &node.superclasses {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -26317,8 +28365,8 @@ fn render_comment(t: &CommentTransport, dest: &mut dyn ::std::fmt::Write) -> Res
 fn render_comparison_operator(node: &ComparisonOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ComparisonOperatorTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        operators: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operators)),
-        primary_expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.primary_expression)),
+        operators: OptionalNonterminalView::Missing,
+        primary_expression: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -26520,7 +28568,7 @@ fn render_dotted_name(node: &DottedNameTransport, dest: &mut dyn ::std::fmt::Wri
 fn render_elif_clause(node: &ElifClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ElifClauseTemplate {
         condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
-        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
+        consequence: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -26531,7 +28579,7 @@ fn render_ellipsis2(t: &Ellipsis2Transport, dest: &mut dyn ::std::fmt::Write) ->
 
 fn render_else_clause(node: &ElseClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ElseClauseTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -26541,49 +28589,23 @@ fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt
 }
 
 fn render_except_clause(node: &ExceptClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let value_owned = node.value.as_deref().unwrap_or(&[]);
-    let value_buf: Vec<::sittir_core::filters::Renderable<'_>> = value_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ExceptClauseTemplate {
-        alias: match &node.alias {
+        block: OptionalNonterminalView::Missing,
+        except_clause_as: match &node.except_clause_as {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
-        },
-        block: ListNonterminalView {
-            items: &[],
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        suite: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.suite)),
-        value: ListNonterminalView {
-            items: value_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
         },
     };
     template.render_into(dest)
 }
 
 fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.expression.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = ExecStatementTemplate {
         code: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.code)),
-        expression: ListNonterminalView {
-            items: expression_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        in_clause: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        in_clause: match &node.in_clause {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -26634,7 +28656,7 @@ fn render_false(t: &FalseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<
 
 fn render_finally_clause(node: &FinallyClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = FinallyClauseTemplate {
-        block: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.block)),
+        block: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -26673,7 +28695,7 @@ fn render_for_statement(node: &ForStatementTransport, dest: &mut dyn ::std::fmt:
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: OptionalNonterminalView::Missing,
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
@@ -26698,7 +28720,7 @@ fn render_function_definition(node: &FunctionDefinitionTransport, dest: &mut dyn
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: OptionalNonterminalView::Missing,
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
         return_type: match &node.return_type {
@@ -26805,7 +28827,7 @@ fn render_if_statement(node: &IfStatementTransport, dest: &mut dyn ::std::fmt::W
             trailing: false,
         },
         condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
-        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
+        consequence: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -27359,7 +29381,7 @@ fn render_try_statement(node: &TryStatementTransport, dest: &mut dyn ::std::fmt:
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TryStatementTemplate {
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: OptionalNonterminalView::Missing,
         else_clause: match &node.else_clause {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -27519,7 +29541,7 @@ fn render_while_statement(node: &WhileStatementTransport, dest: &mut dyn ::std::
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: OptionalNonterminalView::Missing,
         condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
     };
     template.render_into(dest)
@@ -27591,7 +29613,7 @@ fn render_with_statement(node: &WithStatementTransport, dest: &mut dyn ::std::fm
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: OptionalNonterminalView::Missing,
         with_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.with_clause)),
     };
     template.render_into(dest)
@@ -28140,6 +30162,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::AsyncMarker(t) => t.render_into(dest),
             AnyTransport::AugmentedAssignmentOperator(t) => t.render_into(dest),
             AnyTransport::ComprehensionClauses(t) => render_comprehension_clauses(t, dest),
+            AnyTransport::ExceptClauseAs(t) => render_except_clause_as(t, dest),
             AnyTransport::_Identifier(t) => t.render_into(dest),
             AnyTransport::ImportList(t) => render_import_list(t, dest),
             AnyTransport::IsNot(t) => t.render_into(dest),
@@ -28375,6 +30398,7 @@ impl AnyTransport {
             Self::AssignmentTyped(t) => t.transport_named,
             Self::AsyncMarker(t) => t.transport_named,
             Self::ComprehensionClauses(t) => t.transport_named,
+            Self::ExceptClauseAs(t) => t.transport_named,
             Self::ImportList(t) => t.transport_named,
             Self::IsNot(t) => t.transport_named,
             Self::KeyValuePattern(t) => t.transport_named,
@@ -28658,6 +30682,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::AsyncMarker(data) => transport_to_node_async_marker(data),
         AnyTransport::AugmentedAssignmentOperator(data) => transport_to_node_augmented_assignment_operator(data),
         AnyTransport::ComprehensionClauses(data) => transport_to_node_comprehension_clauses(data),
+        AnyTransport::ExceptClauseAs(data) => transport_to_node_except_clause_as(data),
         AnyTransport::_Identifier(data) => transport_to_node__identifier(data),
         AnyTransport::ImportList(data) => transport_to_node_import_list(data),
         AnyTransport::IsNot(data) => transport_to_node_is_not(data),
@@ -29021,6 +31046,30 @@ fn transport_to_node_comprehension_clauses(transport: ComprehensionClausesTransp
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(224) /* "_comprehension_clauses" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_except_clause_as(transport: ExceptClauseAsTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
+    if let Some(value) = transport.alias {
+        fields.insert("alias".to_string(), transport_field_value(expression_transport_to_any(value))?);
+    }
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(249) /* "_except_clause_as" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -29714,10 +31763,10 @@ fn transport_to_node_case_clause(transport: CaseClauseTransport) -> Result<Trans
     if let Some(value) = transport.guard {
         fields.insert("guard".to_string(), transport_field_value(AnyTransport::IfClause(value))?);
     }
-    fields.insert("consequence".to_string(), transport_field_value(AnyTransport::Suite(transport.consequence))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     children_buf.extend(transport.case_pattern.into_iter().map(|v| AnyTransport::CasePattern(v)).collect::<Vec<_>>());
+    children_buf.push(case_clause_simple_statements_transport_slot_to_any(transport.simple_statements));
     let children = if children_buf.is_empty() {
         None
     } else {
@@ -29795,9 +31844,14 @@ fn transport_to_node_class_definition(transport: ClassDefinitionTransport) -> Re
     if let Some(value) = transport.superclasses {
         fields.insert("superclasses".to_string(), transport_field_value(AnyTransport::ArgumentList(value))?);
     }
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(class_definition_simple_statements_transport_slot_to_any(transport.simple_statements));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(154) /* "class_definition" */,
@@ -29858,15 +31912,9 @@ fn transport_to_node_comment(transport: CommentTransport) -> Result<TransportNod
 fn transport_to_node_comparison_operator(transport: ComparisonOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("left".to_string(), transport_field_value(primary_expression_transport_to_any(*transport.left))?);
-    fields.insert("operators".to_string(), transport_field_value(comparison_operator_operators_transport_slot_to_any(transport.operators))?);
+    fields.insert("comparators".to_string(), transport_field_values(transport.comparators.into_iter().map(|v| comparison_operator_comparators_transport_slot_to_any(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(primary_expression_transport_to_any(*transport.primary_expression));
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(195) /* "comparison_operator" */,
@@ -30256,9 +32304,14 @@ fn transport_to_node_dotted_name(transport: DottedNameTransport) -> Result<Trans
 fn transport_to_node_elif_clause(transport: ElifClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("condition".to_string(), transport_field_value(expression_transport_to_any(transport.condition))?);
-    fields.insert("consequence".to_string(), transport_field_value(AnyTransport::Suite(transport.consequence))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(elif_clause_simple_statements_transport_slot_to_any(transport.simple_statements));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(132) /* "elif_clause" */,
@@ -30294,9 +32347,14 @@ fn transport_to_node_ellipsis2(transport: Ellipsis2Transport) -> Result<Transpor
 
 fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(else_clause_simple_statements_transport_slot_to_any(transport.simple_statements));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(133) /* "else_clause" */,
@@ -30332,15 +32390,12 @@ fn transport_to_node_escape_sequence(transport: EscapeSequenceTransport) -> Resu
 
 fn transport_to_node_except_clause(transport: ExceptClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.value {
-        fields.insert("value".to_string(), transport_field_values(value.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
-    }
-    if let Some(value) = transport.alias {
-        fields.insert("alias".to_string(), transport_field_value(expression_transport_to_any(value))?);
-    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(AnyTransport::Suite(transport.suite));
+    if let Some(value) = transport.except_clause_as {
+        children_buf.push(except_clause_except_clause_as_transport_slot_to_any(value));
+    }
+    children_buf.push(except_clause_simple_statements_transport_slot_to_any(transport.simple_statements));
     let children = if children_buf.is_empty() {
         None
     } else {
@@ -30365,14 +32420,11 @@ fn transport_to_node_except_clause(transport: ExceptClauseTransport) -> Result<T
 fn transport_to_node_exec_statement(transport: ExecStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("code".to_string(), transport_field_value(primary_expression_transport_to_any(transport.code))?);
+    if let Some(value) = transport.in_clause {
+        fields.insert("in_clause".to_string(), transport_field_value(exec_statement_in_clause_transport_slot_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.extend(transport.expression.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>());
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(152) /* "exec_statement" */,
@@ -30490,9 +32542,14 @@ fn transport_to_node_false(transport: FalseTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_finally_clause(transport: FinallyClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("block".to_string(), transport_field_value(AnyTransport::Suite(transport.block))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(finally_clause_simple_statements_transport_slot_to_any(transport.simple_statements));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(141) /* "finally_clause" */,
@@ -30558,12 +32615,17 @@ fn transport_to_node_for_statement(transport: ForStatementTransport) -> Result<T
     }
     fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
     fields.insert("right".to_string(), transport_field_value(expressions_transport_to_any(transport.right))?);
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
     if let Some(value) = transport.alternative {
         fields.insert("alternative".to_string(), transport_field_value(AnyTransport::ElseClause(value))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(for_statement_simple_statements_transport_slot_to_any(transport.simple_statements));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(137) /* "for_statement" */,
@@ -30621,9 +32683,14 @@ fn transport_to_node_function_definition(transport: FunctionDefinitionTransport)
     if let Some(value) = transport.return_type {
         fields.insert("return_type".to_string(), transport_field_value(AnyTransport::Type(value))?);
     }
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(function_definition_simple_statements_transport_slot_to_any(transport.simple_statements));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(145) /* "function_definition" */,
@@ -30777,12 +32844,17 @@ fn transport_to_node_if_clause(transport: IfClauseTransport) -> Result<Transport
 fn transport_to_node_if_statement(transport: IfStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("condition".to_string(), transport_field_value(expression_transport_to_any(transport.condition))?);
-    fields.insert("consequence".to_string(), transport_field_value(AnyTransport::Suite(transport.consequence))?);
     if let Some(value) = transport.alternative {
         fields.insert("alternative".to_string(), transport_field_values(value.into_iter().map(|v| if_statement_alternative_transport_slot_to_any(v)).collect::<Vec<_>>())?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(if_statement_simple_statements_transport_slot_to_any(transport.simple_statements));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(131) /* "if_statement" */,
@@ -30905,7 +32977,7 @@ fn transport_to_node_interpolation(transport: InterpolationTransport) -> Result<
 
 fn transport_to_node_keyword_argument(transport: KeywordArgumentTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("name".to_string(), transport_field_value(named_expression_lhs_transport_to_any(transport.name))?);
+    fields.insert("name".to_string(), transport_field_value(AnyTransport::Identifier(transport.name))?);
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -31861,7 +33933,6 @@ fn transport_to_node_true(transport: TrueTransport) -> Result<TransportNodeData,
 
 fn transport_to_node_try_statement(transport: TryStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
     if let Some(value) = transport.except_clauses {
         fields.insert("except_clauses".to_string(), transport_field_values(value.into_iter().map(|v| AnyTransport::ExceptClause(v)).collect::<Vec<_>>())?);
     }
@@ -31872,7 +33943,13 @@ fn transport_to_node_try_statement(transport: TryStatementTransport) -> Result<T
         fields.insert("finally_clause".to_string(), transport_field_value(AnyTransport::FinallyClause(value))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(try_statement_simple_statements_transport_slot_to_any(transport.simple_statements));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(139) /* "try_statement" */,
@@ -32160,12 +34237,17 @@ fn transport_to_node_union_type(transport: UnionTypeTransport) -> Result<Transpo
 fn transport_to_node_while_statement(transport: WhileStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("condition".to_string(), transport_field_value(expression_transport_to_any(transport.condition))?);
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
     if let Some(value) = transport.alternative {
         fields.insert("alternative".to_string(), transport_field_value(AnyTransport::ElseClause(value))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(while_statement_simple_statements_transport_slot_to_any(transport.simple_statements));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(138) /* "while_statement" */,
@@ -32305,9 +34387,14 @@ fn transport_to_node_with_statement(transport: WithStatementTransport) -> Result
         fields.insert("async_marker".to_string(), transport_field_value(AnyTransport::AsyncMarker(value))?);
     }
     fields.insert("with_clause".to_string(), transport_field_value(AnyTransport::WithClause(transport.with_clause))?);
-    fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(with_statement_simple_statements_transport_slot_to_any(transport.simple_statements));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(142) /* "with_statement" */,

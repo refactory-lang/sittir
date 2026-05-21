@@ -11,12 +11,12 @@
     "_async_marker": "text",
     "_augmented_assignment_operator": "text",
     "_comprehension_clauses": "spread",
+    "_except_clause_as": "config",
     "_identifier": "text",
     "_match_block": "spread",
     "_match_block_block": "config",
     "_simple_pattern_negative": "spread",
     "_simple_statements": "spread",
-    "_suite": "spread",
     "_unary_operator_operator": "text",
     "_with_clause_paren": "spread",
     "aliased_import": "config",
@@ -192,17 +192,57 @@
     "argument_list.expression": {
       "parenthesized_expression": "parenthesized_list_splat"
     },
+    "case_clause.simple_statements": {
+      "block": "_newline"
+    },
     "case_pattern.as_pattern": {
       "as_pattern": "_as_pattern"
     },
+    "class_definition.simple_statements": {
+      "block": "_newline"
+    },
+    "elif_clause.simple_statements": {
+      "block": "_newline"
+    },
+    "else_clause.simple_statements": {
+      "block": "_newline"
+    },
+    "except_clause.except_clause_as": {
+      "except_clause_as": "_except_clause_as",
+      "except_clause_list": "_except_clause_list"
+    },
+    "except_clause.simple_statements": {
+      "block": "_newline"
+    },
+    "finally_clause.simple_statements": {
+      "block": "_newline"
+    },
+    "for_statement.simple_statements": {
+      "block": "_newline"
+    },
     "format_specifier.interpolation": {
       "format_expression": "interpolation"
+    },
+    "function_definition.simple_statements": {
+      "block": "_newline"
+    },
+    "if_statement.simple_statements": {
+      "block": "_newline"
     },
     "match_statement.body": {
       "block": "_match_block"
     },
     "parenthesized_list_splat.parenthesized_list_splat": {
       "parenthesized_expression": "parenthesized_list_splat"
+    },
+    "try_statement.simple_statements": {
+      "block": "_newline"
+    },
+    "while_statement.simple_statements": {
+      "block": "_newline"
+    },
+    "with_statement.simple_statements": {
+      "block": "_newline"
     }
   },
   "factoryFields": {
@@ -223,6 +263,10 @@
     "_comprehension_clauses": [
       "for_in_clause"
     ],
+    "_except_clause_as": [
+      "value",
+      "alias"
+    ],
     "_match_block": [
       "match_block_block"
     ],
@@ -234,9 +278,6 @@
     ],
     "_simple_statements": [
       "simple_statement"
-    ],
-    "_suite": [
-      "simple_statements"
     ],
     "_with_clause_paren": [
       "with_item"
@@ -293,7 +334,7 @@
     "case_clause": [
       "case_pattern",
       "guard",
-      "consequence"
+      "simple_statements"
     ],
     "case_pattern": [
       "as_pattern"
@@ -305,7 +346,7 @@
       "name",
       "type_parameters",
       "superclasses",
-      "body"
+      "simple_statements"
     ],
     "class_pattern": [
       "dotted_name",
@@ -313,8 +354,7 @@
     ],
     "comparison_operator": [
       "left",
-      "operators",
-      "primary_expression"
+      "comparators"
     ],
     "complex_pattern": [
       "imaginary",
@@ -368,19 +408,18 @@
     ],
     "elif_clause": [
       "condition",
-      "consequence"
+      "simple_statements"
     ],
     "else_clause": [
-      "body"
+      "simple_statements"
     ],
     "except_clause": [
-      "value",
-      "alias",
-      "suite"
+      "except_clause_as",
+      "simple_statements"
     ],
     "exec_statement": [
       "code",
-      "expression"
+      "in_clause"
     ],
     "expression_list": [
       "expression"
@@ -396,7 +435,7 @@
       "yield"
     ],
     "finally_clause": [
-      "block"
+      "simple_statements"
     ],
     "for_in_clause": [
       "left",
@@ -405,7 +444,7 @@
     "for_statement": [
       "left",
       "right",
-      "body",
+      "simple_statements",
       "alternative"
     ],
     "format_specifier": [
@@ -416,7 +455,7 @@
       "type_parameters",
       "parameters",
       "return_type",
-      "body"
+      "simple_statements"
     ],
     "future_import_statement": [
       "name"
@@ -437,7 +476,7 @@
     ],
     "if_statement": [
       "condition",
-      "consequence",
+      "simple_statements",
       "alternative"
     ],
     "import_from_statement": [
@@ -573,7 +612,7 @@
       "subscript"
     ],
     "try_statement": [
-      "body",
+      "simple_statements",
       "except_clauses",
       "else_clause",
       "finally_clause"
@@ -616,7 +655,7 @@
     ],
     "while_statement": [
       "condition",
-      "body",
+      "simple_statements",
       "alternative"
     ],
     "with_clause_bare": [
@@ -634,7 +673,7 @@
     ],
     "with_statement": [
       "with_clause",
-      "body"
+      "simple_statements"
     ],
     "yield": [
       "expression"
@@ -700,6 +739,22 @@
         "nonEmpty": false
       }
     },
+    "_except_clause_as": {
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "alias": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "_match_block": {
       "match_block_block": {
         "unnamed": false,
@@ -734,15 +789,6 @@
         "required": true,
         "multiple": true,
         "nonEmpty": true
-      }
-    },
-    "_suite": {
-      "simple_statements": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
       }
     },
     "_with_clause_paren": {
@@ -968,7 +1014,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "consequence": {
+      "simple_statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1016,7 +1062,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "body": {
+      "simple_statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1048,19 +1094,12 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "operators": {
+      "comparators": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "primary_expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "complex_pattern": {
@@ -1253,7 +1292,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "consequence": {
+      "simple_statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1262,7 +1301,7 @@
       }
     },
     "else_clause": {
-      "body": {
+      "simple_statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1271,21 +1310,14 @@
       }
     },
     "except_clause": {
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": true
-      },
-      "alias": {
+      "except_clause_as": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "suite": {
+      "simple_statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1301,12 +1333,12 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "expression": {
+      "in_clause": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "expression_list": {
@@ -1365,7 +1397,7 @@
       }
     },
     "finally_clause": {
-      "block": {
+      "simple_statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1418,7 +1450,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "body": {
+      "simple_statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1478,7 +1510,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "body": {
+      "simple_statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1553,7 +1585,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "consequence": {
+      "simple_statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2049,7 +2081,7 @@
       }
     },
     "try_statement": {
-      "body": {
+      "simple_statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2225,7 +2257,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "body": {
+      "simple_statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2298,7 +2330,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "body": {
+      "simple_statements": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2426,6 +2458,13 @@
       "source": "override",
       "childKind": {
         "dict_pattern_kv": "kv"
+      }
+    },
+    "except_clause": {
+      "source": "override",
+      "childKind": {
+        "except_clause_as": "as",
+        "except_clause_list": "list"
       }
     },
     "expression_statement": {

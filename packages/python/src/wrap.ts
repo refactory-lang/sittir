@@ -364,6 +364,23 @@ export function wrapDictPatternKv(data: T.DictPatternKv, tree: TreeHandle) {
   return drillIn<T.DictPatternKv>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["_key_value_pattern","key_value_pattern","splat_pattern"]), "children", true, data.$type), tree);
 }
 
+export function wrapExceptClauseAs(data: T.ExceptClauseAs, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ExceptClauseAs as const,
+    _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
+    _alias: normalizeSingularWrapSlot(data._alias, "alias", false, data.$type),
+
+    value() { return drillIn<T.Expression>(this._value, tree); },
+    alias() { return drillIn<T.Expression | undefined>(this._alias, tree); },
+    $with: {
+      value: (v: NonNullable<T.ExceptClauseAs['_value']>) => wrapExceptClauseAs({ ...data, _value: v }, tree),
+      alias: (v: NonNullable<T.ExceptClauseAs['_alias']>) => wrapExceptClauseAs({ ...data, _alias: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrapExpressionWithinForInClause(data: T.ExpressionWithinForInClause, tree: TreeHandle) {
   return drillIn<T.ExpressionWithinForInClause>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["expression","lambda_within_for_in_clause"]), "children", true, data.$type), tree);
 }
@@ -712,15 +729,15 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
     $type: TSKindId.CaseClause as const,
     _case_pattern: normalizeRepeatedWrapSlot(data._case_pattern, true, "case_pattern"),
     _guard: normalizeSingularWrapSlot(data._guard, "guard", false, data.$type),
-    _consequence: normalizeSingularWrapSlot(data._consequence, "consequence", true, data.$type),
+    _simple_statements: normalizeSingularWrapSlot((data._simple_statements ?? data._block ?? data._newline), "simple_statements", true, data.$type),
 
     casePatterns() { return drillInAll<T.CasePattern>(this._case_pattern as readonly T.CasePattern[] | undefined, tree); },
     guard() { return drillIn<T.IfClause | undefined>(this._guard, tree); },
-    consequence() { return drillIn<T.Suite>(this._consequence, tree); },
+    simpleStatements() { return drillAs<T.SimpleStatements | T.Newline>(this._simple_statements, tree, "block", "_newline"); },
     $with: {
       casePatterns: (...v: NonEmptyArray<NonNullable<T.CaseClause['_case_pattern']>[number]>) => wrapCaseClause({ ...data, _case_pattern: v }, tree),
       guard: (v: NonNullable<T.CaseClause['_guard']>) => wrapCaseClause({ ...data, _guard: v }, tree),
-      consequence: (v: NonNullable<T.CaseClause['_consequence']>) => wrapCaseClause({ ...data, _consequence: v }, tree),
+      simpleStatements: (v: NonNullable<T.CaseClause['_simple_statements']>) => wrapCaseClause({ ...data, _simple_statements: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -759,17 +776,17 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle) {
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
     _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
     _superclasses: normalizeSingularWrapSlot(data._superclasses, "superclasses", false, data.$type),
-    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
+    _simple_statements: normalizeSingularWrapSlot((data._simple_statements ?? data._block ?? data._newline), "simple_statements", true, data.$type),
 
     name() { return drillIn<T.Identifier>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameter | undefined>(this._type_parameters, tree); },
     superclasses() { return drillIn<T.ArgumentList | undefined>(this._superclasses, tree); },
-    body() { return drillIn<T.Suite>(this._body, tree); },
+    simpleStatements() { return drillAs<T.SimpleStatements | T.Newline>(this._simple_statements, tree, "block", "_newline"); },
     $with: {
       name: (v: NonNullable<T.ClassDefinition['_name']>) => wrapClassDefinition({ ...data, _name: v }, tree),
       typeParameters: (v: NonNullable<T.ClassDefinition['_type_parameters']>) => wrapClassDefinition({ ...data, _type_parameters: v }, tree),
       superclasses: (v: NonNullable<T.ClassDefinition['_superclasses']>) => wrapClassDefinition({ ...data, _superclasses: v }, tree),
-      body: (v: NonNullable<T.ClassDefinition['_body']>) => wrapClassDefinition({ ...data, _body: v }, tree),
+      simpleStatements: (v: NonNullable<T.ClassDefinition['_simple_statements']>) => wrapClassDefinition({ ...data, _simple_statements: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -797,16 +814,13 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
     ...data,
     $type: TSKindId.ComparisonOperator as const,
     _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
-    _operators: normalizeSingularWrapSlot(data._operators, "operators", true, data.$type),
-    _primary_expression: normalizeSingularWrapSlot((data._await ?? data._binary_operator ?? data._identifier ?? data._keyword_identifier ?? data._string ?? data._concatenated_string ?? data._integer ?? data._float ?? data._true ?? data._false ?? data._none ?? data._unary_operator ?? data._attribute ?? data._subscript ?? data._call ?? data._list ?? data._list_comprehension ?? data._dictionary ?? data._dictionary_comprehension ?? data._set ?? data._set_comprehension ?? data._tuple ?? data._parenthesized_expression ?? data._generator_expression ?? data._ellipsis ?? data._list_splat_pattern ?? data._primary_expression), "primary_expression", true, data.$type),
+    _comparators: normalizeRepeatedWrapSlot(data._comparators, true, "comparators"),
 
     left() { return drillIn<T.PrimaryExpression>(this._left, tree); },
-    operators() { return drillIn<T.Lt | T.LtEq | T.EqEq | T.BangEq | T.GtEq | T.Gt | T.LtGt | T.In | "not in" | T.Is | "is not">(this._operators, tree); },
-    primaryExpression() { return drillIn<T.PrimaryExpression>(this._primary_expression, tree); },
+    comparators() { return drillInAll<T.Lt | T.LtEq | T.EqEq | T.BangEq | T.GtEq | T.Gt | T.LtGt | T.In | "not in" | T.Is | "is not" | T.PrimaryExpression>(this._comparators as readonly (T.Lt | T.LtEq | T.EqEq | T.BangEq | T.GtEq | T.Gt | T.LtGt | T.In | "not in" | T.Is | "is not" | T.PrimaryExpression)[] | undefined, tree); },
     $with: {
       left: (v: NonNullable<T.ComparisonOperator['_left']>) => wrapComparisonOperator({ ...data, _left: v }, tree),
-      operators: (v: NonNullable<T.ComparisonOperator['_operators']>) => wrapComparisonOperator({ ...data, _operators: v }, tree),
-      primaryExpression: (v: NonNullable<T.ComparisonOperator['_primary_expression']>) => wrapComparisonOperator({ ...data, _primary_expression: v }, tree),
+      comparators: (...v: NonEmptyArray<NonNullable<T.ComparisonOperator['_comparators']>[number]>) => wrapComparisonOperator({ ...data, _comparators: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1000,9 +1014,9 @@ export function wrapDictionarySplatPattern(data: T.DictionarySplatPattern, tree:
   const _node = withMethods({
     ...data,
     $type: TSKindId.DictionarySplatPattern as const,
-    _identifier: normalizeSingularWrapSlot((data._identifier ?? data._keyword_identifier ?? data._subscript ?? data._attribute), "identifier", true, data.$type),
+    _identifier: normalizeSingularWrapSlot((data._identifier ?? data._subscript ?? data._attribute), "identifier", true, data.$type),
 
-    identifier() { return drillIn<T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute>(this._identifier, tree); },
+    identifier() { return drillIn<T.Identifier | T.Subscript | T.Attribute>(this._identifier, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapDictionarySplatPattern({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -1025,13 +1039,13 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ElifClause as const,
     _condition: normalizeSingularWrapSlot(data._condition, "condition", true, data.$type),
-    _consequence: normalizeSingularWrapSlot(data._consequence, "consequence", true, data.$type),
+    _simple_statements: normalizeSingularWrapSlot((data._simple_statements ?? data._block ?? data._newline), "simple_statements", true, data.$type),
 
     condition() { return drillIn<T.Expression>(this._condition, tree); },
-    consequence() { return drillIn<T.Suite>(this._consequence, tree); },
+    simpleStatements() { return drillAs<T.SimpleStatements | T.Newline>(this._simple_statements, tree, "block", "_newline"); },
     $with: {
       condition: (v: NonNullable<T.ElifClause['_condition']>) => wrapElifClause({ ...data, _condition: v }, tree),
-      consequence: (v: NonNullable<T.ElifClause['_consequence']>) => wrapElifClause({ ...data, _consequence: v }, tree),
+      simpleStatements: (v: NonNullable<T.ElifClause['_simple_statements']>) => wrapElifClause({ ...data, _simple_statements: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1041,12 +1055,10 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ElseClause as const,
-    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
+    _simple_statements: normalizeSingularWrapSlot((data._simple_statements ?? data._block ?? data._newline), "simple_statements", true, data.$type),
 
-    body() { return drillIn<T.Suite>(this._body, tree); },
-    $with: {
-      body: (v: NonNullable<T.ElseClause['_body']>) => wrapElseClause({ ...data, _body: v }, tree),
-    },
+    simpleStatements() { return drillAs<T.SimpleStatements | T.Newline>(this._simple_statements, tree, "block", "_newline"); },
+    $with: { $children: (...vs: readonly [never]) => wrapElseClause({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1055,17 +1067,14 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExceptClause as const,
-    _value: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._value, ["expression","comparison_operator","not_operator","boolean_operator","lambda","primary_expression","await","binary_operator","identifier","keyword_identifier","string","concatenated_string","integer","float","true","false","none","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","ellipsis","list_splat_pattern","conditional_expression","named_expression","as_pattern"]), true, "value"),
-    _alias: normalizeSingularWrapSlot(data._alias, "alias", false, data.$type),
-    _suite: normalizeSingularWrapSlot(data._suite, "suite", true, data.$type),
+    _except_clause_as: normalizeSingularWrapSlot((data._except_clause_as ?? data._except_clause_list), "except_clause_as", false, data.$type),
+    _simple_statements: normalizeSingularWrapSlot((data._simple_statements ?? data._block ?? data._newline), "simple_statements", true, data.$type),
 
-    value() { return drillInAll<T.Expression>(this._value as readonly T.Expression[] | undefined, tree); },
-    alias() { return drillIn<T.Expression | undefined>(this._alias, tree); },
-    suite() { return drillIn<T.Suite>(this._suite, tree); },
+    exceptClauseAs() { return drillAs<T.ExceptClauseAs | T.ExceptClauseList | undefined>(this._except_clause_as, tree, "except_clause_as", "_except_clause_as"); },
+    simpleStatements() { return drillAs<T.SimpleStatements | T.Newline>(this._simple_statements, tree, "block", "_newline"); },
     $with: {
-      value: (...v: NonEmptyArray<NonNullable<T.ExceptClause['_value']>[number]>) => wrapExceptClause({ ...data, _value: v }, tree),
-      alias: (v: NonNullable<T.ExceptClause['_alias']>) => wrapExceptClause({ ...data, _alias: v }, tree),
-      suite: (v: NonNullable<T.ExceptClause['_suite']>) => wrapExceptClause({ ...data, _suite: v }, tree),
+      exceptClauseAs: (v: NonNullable<T.ExceptClause['_except_clause_as']>) => wrapExceptClause({ ...data, _except_clause_as: v }, tree),
+      simpleStatements: (v: NonNullable<T.ExceptClause['_simple_statements']>) => wrapExceptClause({ ...data, _simple_statements: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1076,13 +1085,13 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ExecStatement as const,
     _code: normalizeSingularWrapSlot(data._code, "code", true, data.$type),
-    _expression: normalizeRepeatedWrapSlot((data._comparison_operator ?? data._not_operator ?? data._boolean_operator ?? data._lambda ?? data._await ?? data._binary_operator ?? data._identifier ?? data._keyword_identifier ?? data._string ?? data._concatenated_string ?? data._integer ?? data._float ?? data._true ?? data._false ?? data._none ?? data._unary_operator ?? data._attribute ?? data._subscript ?? data._call ?? data._list ?? data._list_comprehension ?? data._dictionary ?? data._dictionary_comprehension ?? data._set ?? data._set_comprehension ?? data._tuple ?? data._parenthesized_expression ?? data._generator_expression ?? data._ellipsis ?? data._list_splat_pattern ?? data._conditional_expression ?? data._named_expression ?? data._as_pattern ?? data._expression), true, "expression"),
+    _in_clause: normalizeSingularWrapSlot(data._in_clause, "in_clause", false, data.$type),
 
     code() { return drillIn<T.String | T.Identifier>(this._code, tree); },
-    expressions() { return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree); },
+    inClause() { return drillIn<"in" | T.Expression | undefined>(this._in_clause, tree); },
     $with: {
       code: (v: NonNullable<T.ExecStatement['_code']>) => wrapExecStatement({ ...data, _code: v }, tree),
-      expressions: (...v: NonEmptyArray<NonNullable<T.ExecStatement['_expression']>[number]>) => wrapExecStatement({ ...data, _expression: v }, tree),
+      inClause: (v: NonNullable<T.ExecStatement['_in_clause']>) => wrapExecStatement({ ...data, _in_clause: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1145,12 +1154,10 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FinallyClause as const,
-    _block: normalizeSingularWrapSlot(data._block, "block", true, data.$type),
+    _simple_statements: normalizeSingularWrapSlot((data._simple_statements ?? data._block ?? data._newline), "simple_statements", true, data.$type),
 
-    block() { return drillIn<T.Suite>(this._block, tree); },
-    $with: {
-      block: (v: NonNullable<T.FinallyClause['_block']>) => wrapFinallyClause({ ...data, _block: v }, tree),
-    },
+    simpleStatements() { return drillAs<T.SimpleStatements | T.Newline>(this._simple_statements, tree, "block", "_newline"); },
+    $with: { $children: (...vs: readonly [never]) => wrapFinallyClause({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -1182,19 +1189,19 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
     _async_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._async_marker, "async_marker", false, data.$type)),
     _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
     _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type),
-    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
+    _simple_statements: normalizeSingularWrapSlot((data._simple_statements ?? data._block ?? data._newline), "simple_statements", true, data.$type),
     _alternative: normalizeSingularWrapSlot(data._alternative, "alternative", false, data.$type),
 
     asyncMarker() { return this._async_marker; },
     left() { return drillIn<T.LeftHandSide>(this._left, tree); },
     right() { return drillIn<T.Expressions>(this._right, tree); },
-    body() { return drillIn<T.Suite>(this._body, tree); },
+    simpleStatements() { return drillAs<T.SimpleStatements | T.Newline>(this._simple_statements, tree, "block", "_newline"); },
     alternative() { return drillIn<T.ElseClause | undefined>(this._alternative, tree); },
     $with: {
       asyncMarker: (v: NonNullable<T.ForStatement['_async_marker']>) => wrapForStatement({ ...data, _async_marker: v }, tree),
       left: (v: NonNullable<T.ForStatement['_left']>) => wrapForStatement({ ...data, _left: v }, tree),
       right: (v: NonNullable<T.ForStatement['_right']>) => wrapForStatement({ ...data, _right: v }, tree),
-      body: (v: NonNullable<T.ForStatement['_body']>) => wrapForStatement({ ...data, _body: v }, tree),
+      simpleStatements: (v: NonNullable<T.ForStatement['_simple_statements']>) => wrapForStatement({ ...data, _simple_statements: v }, tree),
       alternative: (v: NonNullable<T.ForStatement['_alternative']>) => wrapForStatement({ ...data, _alternative: v }, tree),
     },
   }, methodsEngine);
@@ -1222,21 +1229,21 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
     _type_parameters: normalizeSingularWrapSlot(data._type_parameters, "type_parameters", false, data.$type),
     _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
     _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
-    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
+    _simple_statements: normalizeSingularWrapSlot((data._simple_statements ?? data._block ?? data._newline), "simple_statements", true, data.$type),
 
     asyncMarker() { return this._async_marker; },
     name() { return drillIn<T.Identifier>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameter | undefined>(this._type_parameters, tree); },
     parameters() { return drillIn<T.Parameters>(this._parameters, tree); },
     returnType() { return drillIn<T.Type | undefined>(this._return_type, tree); },
-    body() { return drillIn<T.Suite>(this._body, tree); },
+    simpleStatements() { return drillAs<T.SimpleStatements | T.Newline>(this._simple_statements, tree, "block", "_newline"); },
     $with: {
       asyncMarker: (v: NonNullable<T.FunctionDefinition['_async_marker']>) => wrapFunctionDefinition({ ...data, _async_marker: v }, tree),
       name: (v: NonNullable<T.FunctionDefinition['_name']>) => wrapFunctionDefinition({ ...data, _name: v }, tree),
       typeParameters: (v: NonNullable<T.FunctionDefinition['_type_parameters']>) => wrapFunctionDefinition({ ...data, _type_parameters: v }, tree),
       parameters: (v: NonNullable<T.FunctionDefinition['_parameters']>) => wrapFunctionDefinition({ ...data, _parameters: v }, tree),
       returnType: (v: NonNullable<T.FunctionDefinition['_return_type']>) => wrapFunctionDefinition({ ...data, _return_type: v }, tree),
-      body: (v: NonNullable<T.FunctionDefinition['_body']>) => wrapFunctionDefinition({ ...data, _body: v }, tree),
+      simpleStatements: (v: NonNullable<T.FunctionDefinition['_simple_statements']>) => wrapFunctionDefinition({ ...data, _simple_statements: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1321,15 +1328,15 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
     ...data,
     $type: TSKindId.IfStatement as const,
     _condition: normalizeSingularWrapSlot(data._condition, "condition", true, data.$type),
-    _consequence: normalizeSingularWrapSlot(data._consequence, "consequence", true, data.$type),
+    _simple_statements: normalizeSingularWrapSlot((data._simple_statements ?? data._block ?? data._newline), "simple_statements", true, data.$type),
     _alternative: normalizeRepeatedWrapSlot(data._alternative, false, "alternative"),
 
     condition() { return drillIn<T.Expression>(this._condition, tree); },
-    consequence() { return drillIn<T.Suite>(this._consequence, tree); },
+    simpleStatements() { return drillAs<T.SimpleStatements | T.Newline>(this._simple_statements, tree, "block", "_newline"); },
     alternatives() { return drillInAll<T.ElifClause | T.ElseClause>(this._alternative as readonly (T.ElifClause | T.ElseClause)[] | undefined, tree); },
     $with: {
       condition: (v: NonNullable<T.IfStatement['_condition']>) => wrapIfStatement({ ...data, _condition: v }, tree),
-      consequence: (v: NonNullable<T.IfStatement['_consequence']>) => wrapIfStatement({ ...data, _consequence: v }, tree),
+      simpleStatements: (v: NonNullable<T.IfStatement['_simple_statements']>) => wrapIfStatement({ ...data, _simple_statements: v }, tree),
       alternatives: (...v: NonNullable<T.IfStatement['_alternative']>[number][]) => wrapIfStatement({ ...data, _alternative: v }, tree),
     },
   }, methodsEngine);
@@ -1394,7 +1401,7 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle) {
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type),
     _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
 
-    name() { return drillIn<T.Identifier | T.KeywordIdentifier>(this._name, tree); },
+    name() { return drillIn<T.Identifier>(this._name, tree); },
     value() { return drillIn<T.Expression>(this._value, tree); },
     $with: {
       name: (v: NonNullable<T.KeywordArgument['_name']>) => wrapKeywordArgument({ ...data, _name: v }, tree),
@@ -1526,9 +1533,9 @@ export function wrapListSplatPattern(data: T.ListSplatPattern, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.ListSplatPattern as const,
-    _identifier: normalizeSingularWrapSlot((data._identifier ?? data._keyword_identifier ?? data._subscript ?? data._attribute), "identifier", true, data.$type),
+    _identifier: normalizeSingularWrapSlot((data._identifier ?? data._subscript ?? data._attribute), "identifier", true, data.$type),
 
-    identifier() { return drillIn<T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute>(this._identifier, tree); },
+    identifier() { return drillIn<T.Identifier | T.Subscript | T.Attribute>(this._identifier, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapListSplatPattern({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -1893,17 +1900,17 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TryStatement as const,
-    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
+    _simple_statements: normalizeSingularWrapSlot((data._simple_statements ?? data._block ?? data._newline), "simple_statements", true, data.$type),
     _except_clauses: normalizeRepeatedWrapSlot(data._except_clauses, false, "except_clauses"),
     _else_clause: normalizeSingularWrapSlot(data._else_clause, "else_clause", false, data.$type),
     _finally_clause: normalizeSingularWrapSlot(data._finally_clause, "finally_clause", false, data.$type),
 
-    body() { return drillIn<T.Suite>(this._body, tree); },
+    simpleStatements() { return drillAs<T.SimpleStatements | T.Newline>(this._simple_statements, tree, "block", "_newline"); },
     exceptClauses() { return drillInAll<T.ExceptClause>(this._except_clauses as readonly T.ExceptClause[] | undefined, tree); },
     elseClause() { return drillIn<T.ElseClause | undefined>(this._else_clause, tree); },
     finallyClause() { return drillIn<T.FinallyClause | undefined>(this._finally_clause, tree); },
     $with: {
-      body: (v: NonNullable<T.TryStatement['_body']>) => wrapTryStatement({ ...data, _body: v }, tree),
+      simpleStatements: (v: NonNullable<T.TryStatement['_simple_statements']>) => wrapTryStatement({ ...data, _simple_statements: v }, tree),
       exceptClauses: (...v: NonNullable<T.TryStatement['_except_clauses']>[number][]) => wrapTryStatement({ ...data, _except_clauses: v }, tree),
       elseClause: (v: NonNullable<T.TryStatement['_else_clause']>) => wrapTryStatement({ ...data, _else_clause: v }, tree),
       finallyClause: (v: NonNullable<T.TryStatement['_finally_clause']>) => wrapTryStatement({ ...data, _finally_clause: v }, tree),
@@ -2068,15 +2075,15 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
     ...data,
     $type: TSKindId.WhileStatement as const,
     _condition: normalizeSingularWrapSlot(data._condition, "condition", true, data.$type),
-    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
+    _simple_statements: normalizeSingularWrapSlot((data._simple_statements ?? data._block ?? data._newline), "simple_statements", true, data.$type),
     _alternative: normalizeSingularWrapSlot(data._alternative, "alternative", false, data.$type),
 
     condition() { return drillIn<T.Expression>(this._condition, tree); },
-    body() { return drillIn<T.Suite>(this._body, tree); },
+    simpleStatements() { return drillAs<T.SimpleStatements | T.Newline>(this._simple_statements, tree, "block", "_newline"); },
     alternative() { return drillIn<T.ElseClause | undefined>(this._alternative, tree); },
     $with: {
       condition: (v: NonNullable<T.WhileStatement['_condition']>) => wrapWhileStatement({ ...data, _condition: v }, tree),
-      body: (v: NonNullable<T.WhileStatement['_body']>) => wrapWhileStatement({ ...data, _body: v }, tree),
+      simpleStatements: (v: NonNullable<T.WhileStatement['_simple_statements']>) => wrapWhileStatement({ ...data, _simple_statements: v }, tree),
       alternative: (v: NonNullable<T.WhileStatement['_alternative']>) => wrapWhileStatement({ ...data, _alternative: v }, tree),
     },
   }, methodsEngine);
@@ -2142,15 +2149,15 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
     $type: TSKindId.WithStatement as const,
     _async_marker: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._async_marker, "async_marker", false, data.$type)),
     _with_clause: normalizeSingularWrapSlot(data._with_clause, "with_clause", true, data.$type),
-    _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type),
+    _simple_statements: normalizeSingularWrapSlot((data._simple_statements ?? data._block ?? data._newline), "simple_statements", true, data.$type),
 
     asyncMarker() { return this._async_marker; },
     withClause() { return drillIn<T.WithClause>(this._with_clause, tree); },
-    body() { return drillIn<T.Suite>(this._body, tree); },
+    simpleStatements() { return drillAs<T.SimpleStatements | T.Newline>(this._simple_statements, tree, "block", "_newline"); },
     $with: {
       asyncMarker: (v: NonNullable<T.WithStatement['_async_marker']>) => wrapWithStatement({ ...data, _async_marker: v }, tree),
       withClause: (v: NonNullable<T.WithStatement['_with_clause']>) => wrapWithStatement({ ...data, _with_clause: v }, tree),
-      body: (v: NonNullable<T.WithStatement['_body']>) => wrapWithStatement({ ...data, _body: v }, tree),
+      simpleStatements: (v: NonNullable<T.WithStatement['_simple_statements']>) => wrapWithStatement({ ...data, _simple_statements: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2175,6 +2182,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_assignment_typed': (d, t) => wrapAssignmentTyped(d as unknown as T.AssignmentTyped, t),
   '_comprehension_clauses': (d, t) => wrapComprehensionClauses(d as unknown as T.ComprehensionClauses, t),
   '_dict_pattern_kv': (d, t) => wrapDictPatternKv(d as unknown as T.DictPatternKv, t),
+  '_except_clause_as': (d, t) => wrapExceptClauseAs(d as unknown as T.ExceptClauseAs, t),
   '_expression_within_for_in_clause': (d, t) => wrapExpressionWithinForInClause(d as unknown as T.ExpressionWithinForInClause, t),
   '_f_expression': (d, t) => wrapFExpression(d as unknown as T.FExpression, t),
   '_import_list': (d, t) => wrapImportList(d as unknown as T.ImportList, t),
@@ -2335,6 +2343,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'augmented_assignment_operator': '_augmented_assignment_operator',
   'comprehension_clauses': '_comprehension_clauses',
   'dict_pattern_kv': '_dict_pattern_kv',
+  'except_clause_as': '_except_clause_as',
   'expression_within_for_in_clause': '_expression_within_for_in_clause',
   'expressions': '_expressions',
   'f_expression': '_f_expression',
@@ -2349,7 +2358,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'simple_statement': '_simple_statement',
   'simple_statements': '_simple_statements',
   'statement': '_statement',
-  'suite': '_suite',
   'unary_operator_operator': '_unary_operator_operator',
 };
 

@@ -478,6 +478,7 @@ const _kindIdByKind = new Map<string, number>([
     ["_with_clause_paren", TSKindId._WithClauseParen],
     ["_match_block_block", TSKindId.MatchBlockBlock],
     ["_simple_pattern_negative", TSKindId.SimplePatternNegative],
+    ["_except_clause_as", TSKindId.ExceptClauseAs],
 ]);
 
 export const is = {

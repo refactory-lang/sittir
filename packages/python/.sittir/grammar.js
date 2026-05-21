@@ -27,7 +27,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// ../python/overrides.ts
+// packages/python/overrides.ts
 var overrides_exports = {};
 __export(overrides_exports, {
   default: () => overrides_default
@@ -35,7 +35,7 @@ __export(overrides_exports, {
 module.exports = __toCommonJS(overrides_exports);
 var import_grammar = __toESM(require("tree-sitter-python/grammar.js"), 1);
 
-// src/dsl/runtime-shapes.ts
+// packages/codegen/src/dsl/runtime-shapes.ts
 function isSymbolLike(v) {
   if (!v || typeof v !== "object") return false;
   const t = v.type;
@@ -80,7 +80,7 @@ var isPlainRepeatType = (t) => typeEq(t, "repeat");
 var isRepeatType = (t) => typeEq(t, "repeat") || typeEq(t, "repeat1");
 var isBlankType = (t) => typeEq(t, "blank");
 
-// src/dsl/transform/transform-path.ts
+// packages/codegen/src/dsl/transform/transform-path.ts
 function dsl() {
   return globalThis;
 }
@@ -422,7 +422,7 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
-// src/dsl/primitives/variant.ts
+// packages/codegen/src/dsl/primitives/variant.ts
 function isVariantPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
 }
@@ -430,21 +430,23 @@ function variant(name) {
   return { __sittirPlaceholder: "variant", name };
 }
 
-// src/dsl/primitives/alias.ts
+// packages/codegen/src/dsl/primitives/alias.ts
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
 }
 
-// src/dsl/wire/auto-groups.ts
-function applyAutoGroups(base2, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
+// packages/codegen/src/dsl/wire/auto-groups.ts
+function applyAutoGroups(base2, outRules, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
   if (!base2) return;
   const hasWrapper = "grammar" in base2 && base2.grammar !== void 0;
   const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
   if (!rulesBag) return;
   const dedupe = {};
   const synthRules = {};
+  const rewrites = {};
   for (const name of Object.keys(rulesBag)) {
     if (authoredSynthesisKinds.has(name)) continue;
+    if (context.authoredRuleNames.has(name)) continue;
     const rule = rulesBag[name];
     if (!rule) continue;
     const state = { opt: 0, rep: 0 };
@@ -452,35 +454,64 @@ function applyAutoGroups(base2, context, authoredSynthesisKinds = /* @__PURE__ *
     next = synthesizeOptionalGroups(next, synthRules, name, state, dedupe);
     next = synthesizeRepeatGroups(next, synthRules, name, state, dedupe);
     if (next !== rule) {
-      rulesBag[name] = next;
+      rewrites[name] = next;
     }
   }
   for (const synName of Object.keys(synthRules)) {
-    if (synName in rulesBag) continue;
-    rulesBag[synName] = synthRules[synName];
+    if (synName in outRules || synName in rulesBag) continue;
+    outRules[synName] = makeStaticRuleFn(synthRules[synName]);
     context.syntheticInline.add(synName);
   }
+  for (const parentName of Object.keys(rewrites)) {
+    outRules[parentName] = makeStaticRuleFn(rewrites[parentName]);
+  }
+}
+function makeStaticRuleFn(body) {
+  return function staticAutoGroupRule() {
+    return body;
+  };
 }
 function synthesizeOptionalGroups(rule, synthRules, parentKind, state, dedupe) {
   const recursed = recurseChildren(
     rule,
     (r) => synthesizeOptionalGroups(r, synthRules, parentKind, state, dedupe)
   );
-  if (!isOptionalType(recursed.type)) return recursed;
-  const content = recursed.content;
-  if (!content || typeof content !== "object") return recursed;
-  const t = content.type;
-  if (!isSeqType(t)) return recursed;
-  const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
-  if (!(synName in synthRules)) {
-    synthRules[synName] = content;
+  if (isOptionalType(recursed.type)) {
+    const content = recursed.content;
+    if (!content || typeof content !== "object") return recursed;
+    if (!isSeqType(content.type)) return recursed;
+    const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
+    if (!(synName in synthRules)) synthRules[synName] = content;
+    const symbolRef = {
+      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
+      name: synName,
+      source: "group-lift"
+    };
+    return { ...recursed, content: symbolRef };
   }
-  const symbolRef = {
-    type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
-    name: synName,
-    source: "group-lift"
-  };
-  return { ...recursed, content: symbolRef };
+  if (isChoiceType(recursed.type)) {
+    const members = recursed.members;
+    if (!Array.isArray(members) || members.length !== 2) return recursed;
+    const isBlank = (m) => {
+      const mt = m?.type;
+      return mt === "BLANK" || mt === "blank";
+    };
+    const blankIdx = members.findIndex(isBlank);
+    const seqIdx = members.findIndex((m) => isSeqType(m.type));
+    if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return recursed;
+    const seqMember = members[seqIdx];
+    const synName = synthesizeGroupName(seqMember, parentKind, "optional", state, dedupe);
+    if (!(synName in synthRules)) synthRules[synName] = seqMember;
+    const symbolRef = {
+      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
+      name: synName,
+      source: "group-lift"
+    };
+    const newMembers = members.slice();
+    newMembers[seqIdx] = symbolRef;
+    return { ...recursed, members: newMembers };
+  }
+  return recursed;
 }
 function synthesizeRepeatGroups(rule, synthRules, parentKind, state, dedupe) {
   const recursed = recurseChildren(
@@ -572,7 +603,7 @@ function recurseChildren(rule, visit) {
   return rule;
 }
 
-// src/dsl/wire/wire.ts
+// packages/codegen/src/dsl/wire/wire.ts
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
   if (!currentContext) return false;
@@ -643,6 +674,7 @@ function wire(config, base2) {
     );
     applyAutoGroups(
       base2,
+      outRules,
       context,
       authoredSynthesisKinds
     );
@@ -987,7 +1019,7 @@ function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) 
   }
 }
 
-// src/dsl/primitives/field.ts
+// packages/codegen/src/dsl/primitives/field.ts
 function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   const c = content;
   if (!c || typeof c.type !== "string") return content;
@@ -1078,7 +1110,7 @@ function buildTwoArgFieldResult(native, name, content) {
   return { ...initial, source: "override" };
 }
 
-// src/dsl/transform/transform.ts
+// packages/codegen/src/dsl/transform/transform.ts
 function transform(original, ...patchSets) {
   let rule = original;
   for (const patches of patchSets) {
@@ -1413,7 +1445,7 @@ function extractNonEmpty(rule) {
   return null;
 }
 
-// src/dsl/primitives/role.ts
+// packages/codegen/src/dsl/primitives/role.ts
 var currentRoles = null;
 var VALID_ROLE_NAMES = /* @__PURE__ */ new Set(["indent", "dedent", "newline"]);
 function role(symbol, roleName) {
@@ -1433,7 +1465,7 @@ function role(symbol, roleName) {
   return symbol;
 }
 
-// src/dsl/enrich.ts
+// packages/codegen/src/dsl/enrich.ts
 function enrich(base2) {
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
@@ -2082,7 +2114,7 @@ function rebuildOptional(optionalRule, newInner) {
   return { ...optionalRule, members: newMembers };
 }
 
-// ../python/overrides.ts
+// packages/python/overrides.ts
 var overrides_default = grammar(
   enrich(import_grammar.default),
   wire({
@@ -2108,7 +2140,17 @@ var overrides_default = grammar(
       // rule, tree-sitter needs an explicit GLR fork group to decide
       // between the bare expression and the tuple form on the `,`
       // suffix that only the tuple accepts.
-      [$.expression_statement, $._expression_statement_tuple]
+      [$.expression_statement, $._expression_statement_tuple],
+      // except_clause variant split: the `as` form (`except E as e:`)
+      // and the comma-list form (`except E1, E2:`) both begin with
+      // `field('value', expression) • …` and only diverge on the `as` /
+      // `,` continuation. Lifting each arm into its own hidden rule
+      // (`_except_clause_as` / `_except_clause_list`) requires an explicit
+      // GLR fork to decide between them after the shared prefix.
+      [$._except_clause_as, $._except_clause_list],
+      // The `as` form (`except E as e:`) overlaps with `as_pattern`
+      // (`E as e`) after the shared `expression 'as'` prefix — fork.
+      [$.as_pattern, $._except_clause_as]
     ],
     polymorphs: {
       assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
@@ -2187,7 +2229,24 @@ var overrides_default = grammar(
       // Note: `_simple_pattern` is a hidden rule, so no conflicts entry
       // is needed — tree-sitter inlines it into parent rules directly.
       // The visible variant kind is `simple_pattern_negative`.
-      _simple_pattern: { "11": "negative" }
+      _simple_pattern: { "11": "negative" },
+      // except_clause: base rule is
+      //   seq('except', optional('*'), optional(choice(
+      //     seq(field('value', expr), optional(seq('as', field('alias', expr)))),  ← arm 0 "as" form
+      //     commaSep1(field('value', expr)),                                        ← arm 1 comma-list form
+      //   )), ':', _suite)
+      // The two arms have DIFFERENT field sets (arm 0: value + optional
+      // alias; arm 1: repeated value), so the cross-branch field merge
+      // (hoistSharedFieldAcrossChoiceBranches) can't fuse them — the
+      // choice reaches derivation as the non-canonical
+      // `seq-member-choice-needs-variant-or-merge` shape (hard error).
+      // Split per variant so each form owns its template. Path: seq pos 2
+      // = the optional, `/0` = its choice content, `/0`,`/1` = the arms.
+      // `except_clause` is visible, but the arms share the `expression`
+      // prefix; if tree-sitter reports an unresolved conflict between the
+      // aliased forms, add `[$.except_clause_as, $.except_clause_list]` to
+      // `conflicts`.
+      except_clause: { "2/0/0": "as", "2/0/1": "list" }
     },
     transforms: {
       // as_pattern: 1 field(s)
