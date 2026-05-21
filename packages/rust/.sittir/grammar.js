@@ -438,15 +438,17 @@ function alias(rule, value) {
 }
 
 // packages/codegen/src/dsl/wire/auto-groups.ts
-function applyAutoGroups(base2, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
+function applyAutoGroups(base2, outRules, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
   if (!base2) return;
   const hasWrapper = "grammar" in base2 && base2.grammar !== void 0;
   const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
   if (!rulesBag) return;
   const dedupe = {};
   const synthRules = {};
+  const rewrites = {};
   for (const name of Object.keys(rulesBag)) {
     if (authoredSynthesisKinds.has(name)) continue;
+    if (context.authoredRuleNames.has(name)) continue;
     const rule = rulesBag[name];
     if (!rule) continue;
     const state = { opt: 0, rep: 0 };
@@ -454,14 +456,22 @@ function applyAutoGroups(base2, context, authoredSynthesisKinds = /* @__PURE__ *
     next = synthesizeOptionalGroups(next, synthRules, name, state, dedupe);
     next = synthesizeRepeatGroups(next, synthRules, name, state, dedupe);
     if (next !== rule) {
-      rulesBag[name] = next;
+      rewrites[name] = next;
     }
   }
   for (const synName of Object.keys(synthRules)) {
-    if (synName in rulesBag) continue;
-    rulesBag[synName] = synthRules[synName];
+    if (synName in outRules || synName in rulesBag) continue;
+    outRules[synName] = makeStaticRuleFn(synthRules[synName]);
     context.syntheticInline.add(synName);
   }
+  for (const parentName of Object.keys(rewrites)) {
+    outRules[parentName] = makeStaticRuleFn(rewrites[parentName]);
+  }
+}
+function makeStaticRuleFn(body) {
+  return function staticAutoGroupRule() {
+    return body;
+  };
 }
 function synthesizeOptionalGroups(rule, synthRules, parentKind, state, dedupe) {
   const recursed = recurseChildren(
@@ -645,6 +655,7 @@ function wire(config2, base2) {
     );
     applyAutoGroups(
       base2,
+      outRules,
       context,
       authoredSynthesisKinds
     );

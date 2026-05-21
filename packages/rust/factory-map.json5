@@ -244,7 +244,7 @@
     "type_cast_expression": "config",
     "type_item": "config",
     "type_parameter": "config",
-    "type_parameters": "direct",
+    "type_parameters": "spread",
     "unary_expression": "config",
     "union_item": "config",
     "unit_expression": "text",
@@ -4385,15 +4385,15 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
+        "multiple": true,
+        "nonEmpty": true
       },
       "trait_bounds": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "type_binding": {
@@ -4507,8 +4507,8 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "unary_expression": {

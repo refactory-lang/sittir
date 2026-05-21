@@ -779,34 +779,45 @@ export function inlineRefs(
 	const recurse = (r: Rule, v: ReadonlySet<string>): Rule => inlineRefs(r, rules, inlineKinds, v);
 	switch (rule.type) {
 		case 'symbol': {
-			// grammar.inline path for auto-synthesized group-lift helpers:
-			// B5's applyAutoGroups synthesizes hidden helpers (e.g.,
-			// `_type_arguments_repeat1`) and registers them in grammar.inline so
-			// tree-sitter inlines them at parse time. The symbol refs to these
-			// helpers have `source: 'group-lift'` and `hidden: undefined` (NOT
-			// `hidden: true`). Sittir's simplify pass must match tree-sitter's
-			// inlining: if the ref is group-lift-sourced AND the target is in
-			// grammar.inline, substitute the body inline.
+			// grammar.inline is the single source of truth for inlining. Any
+			// symbol ref whose target is listed in `grammar.inline` is inlined
+			// here — REGARDLESS of `source` (group-lift or not) or `hidden` —
+			// because tree-sitter inlines exactly those kinds at parse time. If
+			// sittir's derivation view doesn't match (i.e. it keeps a ref to a
+			// kind the parser expands away), `deriveSlots` mints a slot for a
+			// node that never materialises at runtime → singular-vs-multi and
+			// non-canonical-shape mismatches. Matching the parser's inlining is
+			// a correctness invariant.
 			//
-			// We do NOT inline all grammar.inline items — only group-lift refs.
-			// Legacy inline items (_path, _type_identifier, _reserved_identifier,
-			// etc.) are referenced via hidden symbol refs (hidden: true) and have
-			// always been skipped by the simplify pass; changing that would alter
-			// the slot derivation for kinds using those supertypes.
-			if ((rule as { source?: string }).source === 'group-lift' && inlineKinds.has(rule.name)) {
+			// Resolution: group/multi targets inline their CONTENT (the seq /
+			// repeat wrapper) so the referrer's walker sees the fields / multi
+			// slot directly and no bare `group` rule leaks into simplified
+			// output; every other target inlines its body verbatim.
+			if (
+				inlineKinds.has(rule.name) &&
+				((rule as { source?: string }).source === 'group-lift' ||
+					resolveGroupOrMultiInlineTarget(rules[rule.name] ?? rule) !== null)
+			) {
 				if (visited.has(rule.name)) return rule;
 				const target = rules[rule.name];
 				if (!target) return rule;
 				const next = new Set(visited);
 				next.add(rule.name);
-				// For group/multi targets: inline the CONTENT (not the wrapper)
-				// to avoid introducing a bare `group` rule into simplified output
-				// that deriveSlotsRaw cannot handle.
 				const inlineTarget = resolveGroupOrMultiInlineTarget(target);
-				return inlineRefs(inlineTarget ?? target, rules, inlineKinds, next);
+				const inlined = inlineRefs(inlineTarget ?? target, rules, inlineKinds, next);
+				// Preserve the referring symbol's pushed-down leaf attributes
+				// (multiplicity / separator / fieldName) onto the inlined body.
+				// wrapper-deletion stamped e.g. `repeat1(SYMBOL(_x_repeat1))` down
+				// to `SYMBOL{multiplicity:nonEmptyArray, separator}`; replacing the
+				// symbol with the target body would otherwise DROP that
+				// multiplicity, collapsing a multi slot to singular. Re-wrap the
+				// inlined body in the equivalent modifier and re-run the
+				// (idempotent) deleteWrapper to re-push the attributes onto the
+				// inlined leaves.
+				return reapplyInlinedLeafAttrs(rule, inlined);
 			}
 
-			// Non-inline-listed visible symbols: no inlining.
+			// Not inline-listed. Visible symbols are never inlined.
 			if (!rule.hidden) return rule;
 			if (visited.has(rule.name)) return rule;
 			const target = rules[rule.name];
@@ -862,6 +873,102 @@ function resolveGroupOrMultiInlineTarget(target: Rule): Rule | null {
 	const isMulti = extractRepeatShape(target) !== null;
 	if (!isGroup && !isMulti) return null;
 	return isGroup ? (target as { content: Rule }).content : target;
+}
+
+/**
+ * Re-apply a referring symbol's pushed-down leaf attributes onto the body
+ * that replaced it during inlining.
+ *
+ * wrapper-deletion collapses modifier wrappers onto the innermost leaf
+ * (e.g. `repeat1(SYMBOL(_x_repeat1))` → `SYMBOL{multiplicity:'nonEmptyArray',
+ * separator}`). When `inlineRefs` substitutes that symbol with its target
+ * body, the attributes on the symbol would be lost — collapsing a
+ * multi-valued slot to singular and dropping the separator. We reconstruct
+ * the equivalent modifier wrapper around the inlined body and re-run the
+ * idempotent `deleteWrapper`, which re-pushes the attributes onto the
+ * inlined body's leaves using the same "outer wins" rule wrapper-deletion
+ * applied originally.
+ *
+ * The attributes are pushed onto the inlined body's *leaves* (symbols /
+ * fields / terminals), not onto an enclosing seq node. A seq-level
+ * multiplicity would be lost when `canonicalizeSeqOfLeaves` flattens the
+ * inlined seq into its parent; leaf-level multiplicity survives flattening
+ * and is what `deriveSlots` reads. Stamping descends through structural
+ * nodes (seq / choice / group / variant / clause / token / alias) and stops
+ * at leaves, where it sets the multiplicity (a leaf that is already
+ * multi-valued keeps its stronger array/nonEmptyArray) and separator.
+ *
+ * No-op when the referring symbol carries no non-default leaf attributes.
+ */
+function reapplyInlinedLeafAttrs(ref: Rule, inlined: Rule): Rule {
+	const r = ref as {
+		multiplicity?: 'optional' | 'array' | 'nonEmptyArray';
+		separator?: unknown;
+		fieldName?: string;
+	};
+	if (r.multiplicity === undefined && r.separator === undefined && r.fieldName === undefined) {
+		return inlined;
+	}
+	return pushAttrsToLeaves(inlined, r.multiplicity, r.separator, r.fieldName);
+}
+
+/**
+ * Stamp `multiplicity` / `separator` / `fieldName` onto the slot-bearing
+ * leaves of a (wrapper-free) rule body. Structural nodes are descended;
+ * leaves are stamped. An existing array / nonEmptyArray multiplicity on a
+ * leaf is preserved (it is already at least as multi as the pushed value).
+ * `fieldName` is only applied to a leaf that has no field name yet.
+ */
+function pushAttrsToLeaves(
+	rule: Rule,
+	multiplicity: 'optional' | 'array' | 'nonEmptyArray' | undefined,
+	separator: unknown,
+	fieldName: string | undefined
+): Rule {
+	const recurse = (r: Rule): Rule => pushAttrsToLeaves(r, multiplicity, separator, fieldName);
+	switch (rule.type) {
+		case 'seq':
+			// A seq is flattened into its parent by `canonicalizeSeqOfLeaves`, so
+			// a seq-level multiplicity would be lost. Push into members instead.
+			return { ...rule, members: (rule as { members: Rule[] }).members.map(recurse) } as Rule;
+		case 'choice': {
+			// A choice at a seq position is a SINGLE slot boundary (the field
+			// walker unions its arms into one slot). `deriveSlotsRaw`'s choice
+			// case reads multiplicity from the choice NODE (effectiveMultiplicity),
+			// then overrides each arm value with it — so stamp the node itself.
+			// The node survives flattening (only seqs flatten), so leaf-level
+			// stamping of the arms is unnecessary here.
+			const cur = (rule as { multiplicity?: string }).multiplicity;
+			const nextMult = cur === 'array' || cur === 'nonEmptyArray' ? cur : (multiplicity ?? cur);
+			const patch: Record<string, unknown> = {};
+			if (nextMult !== undefined) patch['multiplicity'] = nextMult;
+			if (separator !== undefined) patch['separator'] = separator;
+			return { ...rule, ...patch } as Rule;
+		}
+		case 'group':
+		case 'variant':
+		case 'clause':
+		case 'token':
+		case 'alias':
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'field':
+			return { ...rule, content: recurse((rule as { content: Rule }).content) } as Rule;
+		default: {
+			// Leaf: symbol / string / pattern / terminal / enum / supertype / etc.
+			const cur = (rule as { multiplicity?: string }).multiplicity;
+			const nextMult =
+				cur === 'array' || cur === 'nonEmptyArray' ? cur : (multiplicity ?? cur);
+			const patch: Record<string, unknown> = {};
+			if (nextMult !== undefined) patch['multiplicity'] = nextMult;
+			if (separator !== undefined) patch['separator'] = separator;
+			if (fieldName !== undefined && (rule as { fieldName?: string }).fieldName === undefined) {
+				patch['fieldName'] = fieldName;
+			}
+			return { ...rule, ...patch } as Rule;
+		}
+	}
 }
 
 /**

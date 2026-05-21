@@ -55,32 +55,51 @@ import {
 import type { WireContext } from './wire.ts';
 import type { GrammarResult } from '../enrich.ts';
 
+type RuleFn = (this: unknown, $: unknown, previous?: unknown) => unknown;
+
 interface SynthCounterState {
 	opt: number;
 	rep: number;
 }
 
 /**
- * Apply auto-group-synthesis to `base.grammar.rules`. Mutates the rules
- * map in place: each parent rule's body is rewritten (optional/repeat
- * content swapped for a SymbolRule when the trigger fires), and the
- * synthesized hidden-group rules are appended.
+ * Apply auto-group-synthesis. Discovery walks the evaluated base-seed
+ * rule bodies (`base.grammar.rules`, the Rule-object map tree-sitter uses
+ * to *seed* its rule set); for every parent whose `optional(seq(...))` /
+ * `repeat(seq(...))` trigger fires, a hidden helper rule is synthesized
+ * and the parent body is rewritten to reference it via a SYMBOL ref.
  *
- * Synthesized names are also registered with
- * `context.syntheticInline` so the wired `inline:` callback drains
- * them into the grammar's inline list.
+ * CRITICAL — write target is `outRules`, NOT the base seed. tree-sitter's
+ * `grammar(base, options)` seeds its rule map from `base.grammar.rules`
+ * but then **calls each `options.rules` (= `outRules`) fn and overwrites
+ * the seeded entry per-key**. Synthesis output written only to the base
+ * seed is therefore bypassed for any rule reachable through the fn path,
+ * and unreferenced helpers get pruned from grammar.json (no kindId, no
+ * inline membership). Emitting into `outRules` is the same path enrich's
+ * per-fn wrapping and wire's polymorph/transform injection use to reach
+ * tree-sitter:
+ *   - each synthesized helper becomes an `outRules` rule fn returning its
+ *     captured content, so tree-sitter evaluates and keeps it;
+ *   - each rewritten parent becomes an `outRules` rule fn returning the
+ *     SYMBOL-referencing body, so the reference survives the fn-call
+ *     overwrite and the helper stays reachable;
+ *   - each helper name is registered in `context.syntheticInline` so the
+ *     wired `inline:` callback adds it to the grammar's inline list →
+ *     tree-sitter inlines it → flat runtime (as intended).
  *
- * `authoredSynthesisKinds` is the set of rule kinds the author has
- * already opted into authored synthesis via `transforms:`, `polymorphs:`,
- * or path-mode `groups:` entries. Auto-group-synthesis skips those rules
- * so the authored path-based machinery (`transform()`, polymorph splits,
- * group lifts) sees the rule body the author wrote, not a post-synth
- * shape that would invalidate every `'1/0/2'` style path patch.
+ * Parents already present in `outRules` are author overrides — left
+ * untouched so the authored body wins (mirrors `authoredSynthesisKinds`).
+ *
+ * `authoredSynthesisKinds` is the set of rule kinds the author opted into
+ * authored synthesis via `transforms:`, `polymorphs:`, or path-mode
+ * `groups:`. Auto-group-synthesis skips those so the path-based machinery
+ * sees the rule body the author wrote, not a post-synth shape.
  *
  * No-op when `base` is undefined or carries no rules.
  */
 export function applyAutoGroups(
 	base: { grammar?: { rules?: Record<string, Rule> }; rules?: Record<string, Rule> } | undefined,
+	outRules: Record<string, RuleFn>,
 	context: WireContext,
 	authoredSynthesisKinds: ReadonlySet<string> = new Set()
 ): void {
@@ -96,16 +115,27 @@ export function applyAutoGroups(
 	// owns the name; subsequent parents reuse it without consuming a
 	// counter slot. Matches tree-sitter's `existing_repeats` pattern.
 	const dedupe: Record<string, string> = {};
-	// Per-apply hidden-rule bag: synthesized rules are accumulated here
-	// and merged into the grammar rule map after iteration.
+	// Per-apply hidden-rule bag: synthesized rule bodies accumulate here
+	// and are emitted as `outRules` fns after discovery.
 	const synthRules: Record<string, Rule> = {};
+	// Per-apply parent rewrites: parentKind → rewritten body. Emitted as
+	// `outRules` fns after discovery so tree-sitter's fn-call path returns
+	// the SYMBOL-referencing body.
+	const rewrites: Record<string, Rule> = {};
 
 	for (const name of Object.keys(rulesBag)) {
 		// Authored synthesis wins by construction — skip rules the author
 		// opted into the structured pipeline via transforms/polymorphs/
-		// path-mode groups. Mutating them here would shift the rule tree
-		// out from under the path-string patches those mechanisms drive.
+		// path-mode groups. Rewriting them would shift the rule tree out
+		// from under the path-string patches those mechanisms drive.
 		if (authoredSynthesisKinds.has(name)) continue;
+		// Author `rules:` overrides must win — the author wrote that body.
+		// Test `authoredRuleNames` (the `config.rules` keys), NOT
+		// `name in outRules`: body-pattern `groups:` inject a *passthrough*
+		// fn for every base rule, so `name in outRules` is true for nearly
+		// all rules and would skip everything. Passthroughs just return the
+		// base body, so overwriting them with the rewritten body is correct.
+		if (context.authoredRuleNames.has(name)) continue;
 		const rule = rulesBag[name];
 		if (!rule) continue;
 		const state: SynthCounterState = { opt: 0, rep: 0 };
@@ -113,17 +143,36 @@ export function applyAutoGroups(
 		next = synthesizeOptionalGroups(next, synthRules, name, state, dedupe);
 		next = synthesizeRepeatGroups(next, synthRules, name, state, dedupe);
 		if (next !== rule) {
-			rulesBag[name] = next;
+			rewrites[name] = next;
 		}
 	}
 
-	// Merge synthesized rules into the grammar map and register for inline.
-	// Skip names the author already declared (authored synthesis wins).
+	// Emit synthesized helper rules as `outRules` fns + register for inline.
+	// A pre-existing rule of the same name wins — whether it lives in the
+	// base seed (`rulesBag`) or as an author override (`outRules`) — so a
+	// hand-authored `_<parent>_<kind><N>` body is never clobbered.
 	for (const synName of Object.keys(synthRules)) {
-		if (synName in rulesBag) continue;
-		rulesBag[synName] = synthRules[synName]!;
+		if (synName in outRules || synName in rulesBag) continue;
+		outRules[synName] = makeStaticRuleFn(synthRules[synName]!);
 		context.syntheticInline.add(synName);
 	}
+	// Emit rewritten parent bodies as `outRules` fns so the SYMBOL ref
+	// survives tree-sitter's fn-call overwrite and keeps the helper
+	// reachable.
+	for (const parentName of Object.keys(rewrites)) {
+		outRules[parentName] = makeStaticRuleFn(rewrites[parentName]!);
+	}
+}
+
+/** @internal — a rule fn that returns a fixed, already-evaluated Rule body.
+ *  Used to install synthesized helpers and rewritten parents into the
+ *  `outRules` fn map: tree-sitter calls the fn during rule iteration and
+ *  receives the captured body verbatim (the body is already in
+ *  tree-sitter-native node shape, harvested from the evaluated base seed). */
+function makeStaticRuleFn(body: Rule): RuleFn {
+	return function staticAutoGroupRule(): unknown {
+		return body;
+	};
 }
 
 // ---------------------------------------------------------------------------

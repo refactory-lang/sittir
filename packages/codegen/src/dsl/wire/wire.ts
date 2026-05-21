@@ -568,6 +568,7 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 		// via the standard inline-handling path.
 		applyAutoGroups(
 			base as Parameters<typeof applyAutoGroups>[0],
+			outRules,
 			context,
 			authoredSynthesisKinds
 		);

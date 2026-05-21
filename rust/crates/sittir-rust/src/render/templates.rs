@@ -1565,9 +1565,9 @@ pub struct TupleTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_arguments.jinja", escape = "none")]
 pub struct TypeArgumentsTemplate<'a> {
-    pub trait_bounds: OptionalNonterminalView<'a>,
+    pub trait_bounds: ListNonterminalView<'a>,
     pub type_arguments_repeat1: ListNonterminalView<'a>,
-    pub type_binding: SingleNonterminalView<'a>,
+    pub type_binding: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

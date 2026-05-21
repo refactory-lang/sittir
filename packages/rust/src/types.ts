@@ -770,45 +770,41 @@ export const enum TSKindId {
   _DelimTokenTreeParen = 369,
   _DelimTokenTreeBracket = 370,
   _DelimTokenTreeBrace = 371,
-  AttributedFieldDeclaration = 372,
-  AttributedEnumVariant = 373,
-  AttributedParameter = 374,
-  AttributedTypeParameter = 375,
-  SourceFileRepeat1 = 376,
-  TokenRepetitionPatternRepeat1 = 377,
-  TokenRepetitionRepeat1 = 378,
-  _NonSpecialTokenRepeat1 = 379,
-  DeclarationListRepeat1 = 380,
-  EnumVariantListRepeat1 = 381,
-  FieldDeclarationListRepeat1 = 382,
-  OrderedFieldDeclarationListRepeat1 = 383,
-  OrderedFieldDeclarationListRepeat2 = 384,
-  FunctionModifiersRepeat1 = 385,
-  WhereClauseRepeat1 = 386,
-  TraitBoundsRepeat1 = 387,
-  TypeParametersRepeat1 = 388,
-  UseListRepeat1 = 389,
-  ParametersRepeat1 = 390,
-  ForLifetimesRepeat1 = 391,
-  TupleTypeRepeat1 = 392,
-  UseBoundsRepeat1 = 393,
-  TypeArgumentsRepeat1 = 394,
-  ArgumentsRepeat1 = 395,
-  TupleExpressionRepeat1 = 396,
-  FieldInitializerListRepeat1 = 397,
-  MatchBlockRepeat1 = 398,
-  MatchArmRepeat1 = 399,
-  ClosureParametersRepeat1 = 400,
-  TuplePatternRepeat1 = 401,
-  SlicePatternRepeat1 = 402,
-  StructPatternRepeat1 = 403,
-  StringLiteralRepeat1 = 404,
-  _ArrayExpressionListRepeat1 = 405,
-  _MacroDefinitionParenRepeat1 = 406,
-  _DelimTokenTreeParenRepeat1 = 407,
-  FieldIdentifier = 408,
-  _ShorthandFieldIdentifier = 410,
-  TypeIdentifier = 411,
+  SourceFileRepeat1 = 372,
+  TokenRepetitionPatternRepeat1 = 373,
+  TokenRepetitionRepeat1 = 374,
+  _NonSpecialTokenRepeat1 = 375,
+  DeclarationListRepeat1 = 376,
+  EnumVariantListRepeat1 = 377,
+  EnumVariantListRepeat2 = 378,
+  FieldDeclarationListRepeat1 = 379,
+  OrderedFieldDeclarationListRepeat1 = 380,
+  FunctionModifiersRepeat1 = 381,
+  WhereClauseRepeat1 = 382,
+  TraitBoundsRepeat1 = 383,
+  TypeParametersRepeat1 = 384,
+  UseListRepeat1 = 385,
+  ParametersRepeat1 = 386,
+  ForLifetimesRepeat1 = 387,
+  TupleTypeRepeat1 = 388,
+  UseBoundsRepeat1 = 389,
+  TypeArgumentsRepeat1 = 390,
+  ArgumentsRepeat1 = 391,
+  TupleExpressionRepeat1 = 392,
+  FieldInitializerListRepeat1 = 393,
+  MatchBlockRepeat1 = 394,
+  MatchArmRepeat1 = 395,
+  ClosureParametersRepeat1 = 396,
+  TuplePatternRepeat1 = 397,
+  SlicePatternRepeat1 = 398,
+  StructPatternRepeat1 = 399,
+  StringLiteralRepeat1 = 400,
+  _ArrayExpressionListRepeat1 = 401,
+  _MacroDefinitionParenRepeat1 = 402,
+  _DelimTokenTreeParenRepeat1 = 403,
+  FieldIdentifier = 404,
+  _ShorthandFieldIdentifier = 406,
+  TypeIdentifier = 407,
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -1183,45 +1179,41 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [369, "_delim_token_tree_paren"],
   [370, "_delim_token_tree_bracket"],
   [371, "_delim_token_tree_brace"],
-  [372, "_attributed_field_declaration"],
-  [373, "_attributed_enum_variant"],
-  [374, "_attributed_parameter"],
-  [375, "_attributed_type_parameter"],
-  [376, "source_file_repeat1"],
-  [377, "token_repetition_pattern_repeat1"],
-  [378, "token_repetition_repeat1"],
-  [379, "_non_special_token_repeat1"],
-  [380, "declaration_list_repeat1"],
-  [381, "enum_variant_list_repeat1"],
-  [382, "field_declaration_list_repeat1"],
-  [383, "ordered_field_declaration_list_repeat1"],
-  [384, "ordered_field_declaration_list_repeat2"],
-  [385, "function_modifiers_repeat1"],
-  [386, "where_clause_repeat1"],
-  [387, "trait_bounds_repeat1"],
-  [388, "type_parameters_repeat1"],
-  [389, "use_list_repeat1"],
-  [390, "parameters_repeat1"],
-  [391, "for_lifetimes_repeat1"],
-  [392, "tuple_type_repeat1"],
-  [393, "use_bounds_repeat1"],
-  [394, "type_arguments_repeat1"],
-  [395, "arguments_repeat1"],
-  [396, "tuple_expression_repeat1"],
-  [397, "field_initializer_list_repeat1"],
-  [398, "match_block_repeat1"],
-  [399, "match_arm_repeat1"],
-  [400, "closure_parameters_repeat1"],
-  [401, "tuple_pattern_repeat1"],
-  [402, "slice_pattern_repeat1"],
-  [403, "struct_pattern_repeat1"],
-  [404, "string_literal_repeat1"],
-  [405, "_array_expression_list_repeat1"],
-  [406, "_macro_definition_paren_repeat1"],
-  [407, "_delim_token_tree_paren_repeat1"],
-  [408, "_field_identifier"],
-  [410, "_shorthand_field_identifier"],
-  [411, "_type_identifier"],
+  [372, "source_file_repeat1"],
+  [373, "token_repetition_pattern_repeat1"],
+  [374, "token_repetition_repeat1"],
+  [375, "_non_special_token_repeat1"],
+  [376, "declaration_list_repeat1"],
+  [377, "enum_variant_list_repeat1"],
+  [378, "enum_variant_list_repeat2"],
+  [379, "field_declaration_list_repeat1"],
+  [380, "ordered_field_declaration_list_repeat1"],
+  [381, "function_modifiers_repeat1"],
+  [382, "where_clause_repeat1"],
+  [383, "trait_bounds_repeat1"],
+  [384, "type_parameters_repeat1"],
+  [385, "use_list_repeat1"],
+  [386, "parameters_repeat1"],
+  [387, "for_lifetimes_repeat1"],
+  [388, "tuple_type_repeat1"],
+  [389, "use_bounds_repeat1"],
+  [390, "type_arguments_repeat1"],
+  [391, "arguments_repeat1"],
+  [392, "tuple_expression_repeat1"],
+  [393, "field_initializer_list_repeat1"],
+  [394, "match_block_repeat1"],
+  [395, "match_arm_repeat1"],
+  [396, "closure_parameters_repeat1"],
+  [397, "tuple_pattern_repeat1"],
+  [398, "slice_pattern_repeat1"],
+  [399, "struct_pattern_repeat1"],
+  [400, "string_literal_repeat1"],
+  [401, "_array_expression_list_repeat1"],
+  [402, "_macro_definition_paren_repeat1"],
+  [403, "_delim_token_tree_paren_repeat1"],
+  [404, "_field_identifier"],
+  [406, "_shorthand_field_identifier"],
+  [407, "_type_identifier"],
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -1597,19 +1589,15 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_delim_token_tree_paren": return TSKindId._DelimTokenTreeParen;
     case "_delim_token_tree_bracket": return TSKindId._DelimTokenTreeBracket;
     case "_delim_token_tree_brace": return TSKindId._DelimTokenTreeBrace;
-    case "_attributed_field_declaration": return TSKindId.AttributedFieldDeclaration;
-    case "_attributed_enum_variant": return TSKindId.AttributedEnumVariant;
-    case "_attributed_parameter": return TSKindId.AttributedParameter;
-    case "_attributed_type_parameter": return TSKindId.AttributedTypeParameter;
     case "source_file_repeat1": return TSKindId.SourceFileRepeat1;
     case "token_repetition_pattern_repeat1": return TSKindId.TokenRepetitionPatternRepeat1;
     case "token_repetition_repeat1": return TSKindId.TokenRepetitionRepeat1;
     case "_non_special_token_repeat1": return TSKindId._NonSpecialTokenRepeat1;
     case "declaration_list_repeat1": return TSKindId.DeclarationListRepeat1;
     case "enum_variant_list_repeat1": return TSKindId.EnumVariantListRepeat1;
+    case "enum_variant_list_repeat2": return TSKindId.EnumVariantListRepeat2;
     case "field_declaration_list_repeat1": return TSKindId.FieldDeclarationListRepeat1;
     case "ordered_field_declaration_list_repeat1": return TSKindId.OrderedFieldDeclarationListRepeat1;
-    case "ordered_field_declaration_list_repeat2": return TSKindId.OrderedFieldDeclarationListRepeat2;
     case "function_modifiers_repeat1": return TSKindId.FunctionModifiersRepeat1;
     case "where_clause_repeat1": return TSKindId.WhereClauseRepeat1;
     case "trait_bounds_repeat1": return TSKindId.TraitBoundsRepeat1;
@@ -1749,10 +1737,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "delim_token_tree_paren": return TSKindId._DelimTokenTreeParen;
     case "delim_token_tree_bracket": return TSKindId._DelimTokenTreeBracket;
     case "delim_token_tree_brace": return TSKindId._DelimTokenTreeBrace;
-    case "attributed_field_declaration": return TSKindId.AttributedFieldDeclaration;
-    case "attributed_enum_variant": return TSKindId.AttributedEnumVariant;
-    case "attributed_parameter": return TSKindId.AttributedParameter;
-    case "attributed_type_parameter": return TSKindId.AttributedTypeParameter;
     case "field_identifier": return TSKindId.FieldIdentifier;
     case "shorthand_field_identifier": return TSKindId._ShorthandFieldIdentifier;
     case "type_identifier": return TSKindId.TypeIdentifier;
@@ -2166,7 +2150,7 @@ export interface ArrayTypeOptional1 {
 }
 
 export interface AttributedEnumVariant {
-  readonly $type: TSKindId.AttributedEnumVariant;
+  readonly $type: "_attributed_enum_variant";
   readonly _attribute_item?: readonly (AttributeItem)[];
   readonly _enum_variant: EnumVariant;
   attributeItems(): readonly (AttributeItem)[];
@@ -2174,7 +2158,7 @@ export interface AttributedEnumVariant {
 }
 
 export interface AttributedFieldDeclaration {
-  readonly $type: TSKindId.AttributedFieldDeclaration;
+  readonly $type: "_attributed_field_declaration";
   readonly _attribute_item?: readonly (AttributeItem)[];
   readonly _field_declaration: FieldDeclaration;
   attributeItems(): readonly (AttributeItem)[];
@@ -2182,7 +2166,7 @@ export interface AttributedFieldDeclaration {
 }
 
 export interface AttributedParameter {
-  readonly $type: TSKindId.AttributedParameter;
+  readonly $type: "_attributed_parameter";
   readonly _attribute_item?: AttributeItem;
   readonly _parameter: Parameter | SelfParameter | VariadicParameter | "_" | _Type;
   attributeItem(): AttributeItem | undefined;
@@ -2190,7 +2174,7 @@ export interface AttributedParameter {
 }
 
 export interface AttributedTypeParameter {
-  readonly $type: TSKindId.AttributedTypeParameter;
+  readonly $type: "_attributed_type_parameter";
   readonly _attribute_item?: readonly (AttributeItem)[];
   readonly _metavariable: Metavariable | TypeParameter | LifetimeParameter | ConstParameter;
   attributeItems(): readonly (AttributeItem)[];
@@ -4109,10 +4093,10 @@ export interface TupleType {
 
 export interface TypeArguments {
   readonly $type: TSKindId.TypeArguments;
-  readonly _type: _Type | TypeBinding | Lifetime | Literal | Block;
-  readonly _trait_bounds?: TraitBounds;
-  type(): _Type | TypeBinding | Lifetime | Literal | Block;
-  traitBounds(): TraitBounds | undefined;
+  readonly _type: NonEmptyArray<_Type | TypeBinding | Lifetime | Literal | Block>;
+  readonly _trait_bounds: NonEmptyArray<TraitBounds>;
+  types(): NonEmptyArray<_Type | TypeBinding | Lifetime | Literal | Block>;
+  traitBounds(): NonEmptyArray<TraitBounds>;
 }
 
 export interface TypeBinding {
@@ -4161,8 +4145,8 @@ export interface TypeParameter {
 
 export interface TypeParameters {
   readonly $type: TSKindId.TypeParameters;
-  readonly _attributed_type_parameter: AttributedTypeParameter;
-  attributedTypeParameter(): AttributedTypeParameter;
+  readonly _attributed_type_parameter: NonEmptyArray<AttributedTypeParameter>;
+  attributedTypeParameters(): NonEmptyArray<AttributedTypeParameter>;
 }
 
 export interface UnaryExpression {

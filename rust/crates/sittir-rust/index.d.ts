@@ -49,7 +49,7 @@ export interface AbstractTypeTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type_parameters?: Box<TypeParametersTransport>
+  _type_parameters?: TypeParametersTransport
   _trait: Box<_TypeTransport>
 }
 
@@ -209,7 +209,7 @@ export interface AttributedTypeParameterTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attribute_item?: Array<AttributeItemTransport>
-  _metavariable: Box<AttributedTypeParameterMetavariableTransportSlot>
+  _metavariable: AttributedTypeParameterMetavariableTransportSlot
 }
 
 export interface AttributeItemTransport {
@@ -485,7 +485,7 @@ export interface ConstParameterOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _value?: Box<ConstParameterOptional1ValueTransportSlot>
+  _value?: ConstParameterOptional1ValueTransportSlot
 }
 
 export interface ConstParameterTransport {
@@ -497,8 +497,8 @@ export interface ConstParameterTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _name: IdentifierTransport
-  _type: Box<_TypeTransport>
-  _const_parameter_optional1?: Box<ConstParameterOptional1Transport>
+  _type: _TypeTransport
+  _const_parameter_optional1?: ConstParameterOptional1Transport
 }
 
 export interface ContinueExpressionTransport {
@@ -1077,7 +1077,7 @@ export interface GenericFunctionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _function: Box<ExpressionExceptRangeTransport>
-  _type_arguments: Box<TypeArgumentsTransport>
+  _type_arguments: TypeArgumentsTransport
 }
 
 export interface GenericPatternTransport {
@@ -1088,7 +1088,7 @@ export interface GenericPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type_arguments: Box<TypeArgumentsTransport>
+  _type_arguments: TypeArgumentsTransport
   _identifier: Box<PathTransport>
 }
 
@@ -1101,7 +1101,7 @@ export interface GenericTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Box<GenericTypeTypeTransportSlot>
-  _type_arguments: Box<TypeArgumentsTransport>
+  _type_arguments: TypeArgumentsTransport
 }
 
 export interface GenericTypeWithTurbofishTransport {
@@ -1113,7 +1113,7 @@ export interface GenericTypeWithTurbofishTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Box<GenericTypeWithTurbofishTypeTransportSlot>
-  _type_arguments: Box<TypeArgumentsTransport>
+  _type_arguments: TypeArgumentsTransport
 }
 
 export interface HigherRankedTraitBoundTransport {
@@ -1124,7 +1124,7 @@ export interface HigherRankedTraitBoundTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type_parameters: Box<TypeParametersTransport>
+  _type_parameters: TypeParametersTransport
   _type: Box<_TypeTransport>
 }
 
@@ -2463,8 +2463,8 @@ export interface TypeArgumentsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type: Box<TypeArgumentsTypeTransportSlot>
-  _trait_bounds?: TraitBoundsTransport
+  _type: Array<TypeArgumentsTypeTransportSlot>
+  _trait_bounds: Array<TraitBoundsTransport>
 }
 
 export interface TypeBindingTransport {
@@ -2476,8 +2476,8 @@ export interface TypeBindingTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _name: TypeIdentifierTransport
-  _type_arguments?: Box<TypeArgumentsTransport>
-  _type: Box<_TypeTransport>
+  _type_arguments?: TypeArgumentsTransport
+  _type: _TypeTransport
 }
 
 export interface TypeCastExpressionTransport {
@@ -2516,7 +2516,7 @@ export interface TypeParameterOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _default_type?: Box<_TypeTransport>
+  _default_type?: _TypeTransport
 }
 
 export interface TypeParametersRepeat1Transport {
@@ -2539,7 +2539,7 @@ export interface TypeParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attributed_type_parameter: Box<AttributedTypeParameterTransport>
+  _attributed_type_parameter: Array<AttributedTypeParameterTransport>
 }
 
 export interface TypeParameterTransport {
@@ -2552,7 +2552,7 @@ export interface TypeParameterTransport {
   '$triviaData'?: TransportTrivia
   _name: TypeIdentifierTransport
   _bounds?: TraitBoundsTransport
-  _type_parameter_optional1?: Box<TypeParameterOptional1Transport>
+  _type_parameter_optional1?: TypeParameterOptional1Transport
 }
 
 export interface UnaryExpressionTransport {

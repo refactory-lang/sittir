@@ -420,7 +420,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "trait_bounds": return F.traitBounds(...(children as Parameters<typeof F.traitBounds>));
     case "tuple_pattern": return F.tuplePattern(...(children as Parameters<typeof F.tuplePattern>));
     case "tuple_type": return F.tupleType(...(children as Parameters<typeof F.tupleType>));
-    case "type_parameters": return F.typeParameters(children[0] as Parameters<typeof F.typeParameters>[0]);
+    case "type_parameters": return F.typeParameters(...(children as Parameters<typeof F.typeParameters>));
     case "use_bounds": return F.useBounds(...(children as Parameters<typeof F.useBounds>));
     case "use_list": return F.useList(...(children as Parameters<typeof F.useList>));
     case "where_clause": return F.whereClause(...(children as Parameters<typeof F.whereClause>));
@@ -2016,9 +2016,13 @@ export function tupleTypeFrom(...input: readonly (T._Type | T.TupleType)[]): Ret
 
 export function typeArgumentsFrom(input: T.TypeArguments.Loose): ReturnType<typeof F.typeArguments> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.typeArguments>;
+  const _ne_types = _resolveMany<T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(input.type, _K41, _K42);
+  _assertNonEmpty(_ne_types, 'type_arguments.types');
+  const _ne_traitBounds = _resolveManyBranch<T.TraitBounds>(input.traitBounds, "trait_bounds");
+  _assertNonEmpty(_ne_traitBounds, 'type_arguments.traitBounds');
   return F.typeArguments({
-    type: _resolveOne<T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(input.type, _K41, _K42),
-    traitBounds: _resolveOneBranch<T.TraitBounds>(input.traitBounds, "trait_bounds"),
+    type: _ne_types,
+    traitBounds: _ne_traitBounds,
   });
 }
 
@@ -2060,13 +2064,14 @@ export function typeParameterFrom(input: T.TypeParameter.Loose): ReturnType<type
   });
 }
 
-export function typeParametersFrom(input?: T.AttributedTypeParameter | T.TypeParameters): ReturnType<typeof F.typeParameters> {
-  if (isNodeData(input) && input.$type === TSKindId.TypeParameters) {
-    const data = input;
-    const child = (data as unknown as { _attributed_type_parameter?: unknown })._attributed_type_parameter;
-    return F.typeParameters(child as Parameters<typeof F.typeParameters>[0]);
+export function typeParametersFrom(...input: readonly (T.AttributedTypeParameter | T.TypeParameters)[]): ReturnType<typeof F.typeParameters> {
+  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeParameters) {
+    const data = input[0];
+    const stored = (data as unknown as { _attributed_type_parameter?: unknown })._attributed_type_parameter;
+    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+    return F.typeParameters(...(children as unknown as Parameters<typeof F.typeParameters>));
   }
-  return F.typeParameters(input as Parameters<typeof F.typeParameters>[0]);
+  return F.typeParameters(...(input as unknown as Parameters<typeof F.typeParameters>));
 }
 
 export function unaryExpressionFrom(input: T.UnaryExpression.Loose): ReturnType<typeof F.unaryExpression> {

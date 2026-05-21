@@ -833,106 +833,6 @@
     }
   },
   {
-    "type": "attributed_enum_variant",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "enum_variant",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "attributed_field_declaration",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "field_declaration",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "attributed_parameter",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_type",
-          "named": true
-        },
-        {
-          "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "parameter",
-          "named": true
-        },
-        {
-          "type": "self_parameter",
-          "named": true
-        },
-        {
-          "type": "variadic_parameter",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "attributed_type_parameter",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "const_parameter",
-          "named": true
-        },
-        {
-          "type": "lifetime_parameter",
-          "named": true
-        },
-        {
-          "type": "metavariable",
-          "named": true
-        },
-        {
-          "type": "type_parameter",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "await_expression",
     "named": true,
     "fields": {
@@ -2087,10 +1987,6 @@
           "named": true
         },
         {
-          "type": "attributed_enum_variant",
-          "named": true
-        },
-        {
           "type": "enum_variant",
           "named": true
         }
@@ -2294,10 +2190,6 @@
       "types": [
         {
           "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "attributed_field_declaration",
           "named": true
         },
         {
@@ -4154,10 +4046,6 @@
         },
         {
           "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "attributed_parameter",
           "named": true
         },
         {
@@ -6209,10 +6097,6 @@
       "types": [
         {
           "type": "attribute_item",
-          "named": true
-        },
-        {
-          "type": "attributed_type_parameter",
           "named": true
         },
         {

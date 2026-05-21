@@ -16055,39 +16055,39 @@
       "fields": [
         {
           "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
+          "propertyName": "types",
+          "paramName": "types",
           "required": true,
-          "multiple": false,
-          "nonEmpty": false,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "nonEmptyArray",
               "name": "_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "nonEmptyArray",
               "name": "type_binding",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "nonEmptyArray",
               "name": "lifetime",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "nonEmptyArray",
               "name": "_literal",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "nonEmptyArray",
               "name": "block",
               "unresolved": true
             }
@@ -16108,13 +16108,13 @@
           "name": "trait_bounds",
           "propertyName": "traitBounds",
           "paramName": "traitBounds",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "nonEmptyArray",
               "name": "trait_bounds",
               "unresolved": true
             }
@@ -16506,15 +16506,15 @@
       "fields": [
         {
           "name": "attributed_type_parameter",
-          "propertyName": "attributedTypeParameter",
-          "paramName": "attributedTypeParameter",
+          "propertyName": "attributedTypeParameters",
+          "paramName": "attributedTypeParameters",
           "required": true,
-          "multiple": false,
-          "nonEmpty": false,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "nonEmptyArray",
               "name": "_attributed_type_parameter",
               "unresolved": true
             }
