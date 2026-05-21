@@ -10,7 +10,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-05-21-nonterminal-driven-slot-derivation-design.md` (read Tables 1 & 2 first).
 
-**Sequencing (independently-gated PRs):** A (predicate) → C (collectSlots) → D (operator-enum) → B (autoApplyGroups+authored, riskiest, standalone). Each PR holds covPass before the next starts.
+**Sequencing — REVISED after Chunk C execution (2026-05-21):** A (predicate, DONE: `d5b70a4d`/`f8202e64`/`343c06d6`) → **C+D TOGETHER** → B (cleanliness, last). C and D are NOT independently gatable: `collectSlots` (C) *creates* the operator `content` slots (binary_expression / comparison_operator), and only D (operator-enum + `emitSymbol fieldName===undefined` gate) makes them render/read — C alone regresses covPass ("singular slot 'content' requires one value"). C1 (`4a3549b5`) + C2 (`92b1e1b0`) are committed + inert; the C3 swap is in `git stash@{0}` ("C3-WIP-collectSlots-swap-BLOCKED-regression"). **covPass is gated after C3+D land together**, not after C alone. Also retain the one-level seq→member multiplicity/separator inherit the C agent added inside `collectSlots` — it handles un-grouped multi-slot `repeat(seq)`/`optional(seq)` (the loss B would otherwise prevent) and is needed until B groups them.
 
 **Project commands (memorize):**
 - Regen one grammar: `pnpm exec tsx packages/codegen/src/cli.ts --grammar <rust|python|typescript> -a --output packages/<g>/src` (needs sandbox disabled — spawns tree-sitter + cargo).
