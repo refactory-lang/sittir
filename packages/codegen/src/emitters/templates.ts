@@ -356,43 +356,81 @@ export function emitPolymorphTemplate(node: AssembledPolymorph, ctx: EmitCtx): s
 const JINJA_COND_FULL_RE = /^(\{%-? if [^%]+-?%\})([\s\S]*)(\{%-? endif -?%\})$/;
 
 /**
- * Walk a Rule subtree rightward to find the rightmost string literal text.
- * Returns `undefined` if no literal is reachable (opaque refs, patterns, etc.).
- * Does NOT follow symbol refs (conservative — triggers space-fallback).
+ * Boundary classification at one edge of a rule subtree.
+ *
+ *  - `{ kind: 'literal', text }` — concrete string literal text (`let`, `:`,
+ *    `=>`, …). Used by the word-regex check to test whether the boundary
+ *    extends into a single lexeme.
+ *  - `{ kind: 'slot' }` — boundary resolves to a Jinja `{{ name }}` slot whose
+ *    runtime value is unknown but typically word-like (identifier, literal
+ *    body, kind-named nested rendering). Treated as word-like by the
+ *    boundary check.
+ *  - `{ kind: 'unknown' }` — boundary is opaque (pattern, supertype with no
+ *    literal anchor, etc.). Triggers the conservative space fallback.
  */
-function rightmostLiteralOfSubtree(rule: Rule): string | undefined {
+type BoundaryEnd =
+	| { readonly kind: 'literal'; readonly text: string }
+	| { readonly kind: 'slot' }
+	| { readonly kind: 'unknown' };
+
+const SLOT_END: BoundaryEnd = { kind: 'slot' };
+const UNKNOWN_END: BoundaryEnd = { kind: 'unknown' };
+
+function literalEnd(text: string): BoundaryEnd {
+	return { kind: 'literal', text };
+}
+
+/**
+ * Walk a Rule subtree rightward to classify the rightmost boundary.
+ * Returns:
+ *   - `literal(text)` when a concrete string literal anchors the right edge.
+ *   - `slot` when the right edge is a slot-emitting symbol or field (the slot
+ *     renders to user content, treated as word-like at the boundary).
+ *   - `unknown` when nothing about the boundary can be determined (patterns,
+ *     etc.) — caller falls back to inserting a space.
+ *
+ * Does NOT follow symbol refs into other kinds (conservative — that would
+ * require cross-rule resolution and cycle handling).
+ */
+function rightmostBoundary(rule: Rule): BoundaryEnd {
 	switch (rule.type) {
 		case 'string':
-			// Named field-wrapped string — it becomes a slot, not a literal in output.
-			if (rule.fieldName !== undefined) return undefined;
-			return rule.value;
+			// Named field-wrapped string — it becomes a slot, not a literal.
+			if (rule.fieldName !== undefined) return SLOT_END;
+			return literalEnd(rule.value);
 		case 'seq': {
 			for (let i = rule.members.length - 1; i >= 0; i--) {
-				const text = rightmostLiteralOfSubtree(rule.members[i]!);
-				if (text !== undefined) return text;
+				const end = rightmostBoundary(rule.members[i]!);
+				if (end.kind !== 'unknown') return end;
 			}
-			return undefined;
+			return UNKNOWN_END;
 		}
 		case 'choice': {
-			// All arms must agree on a rightmost literal; take the first non-undefined.
-			// Conservative: if any arm is undefined, return undefined.
-			let found: string | undefined;
+			// All arms must agree; conservative on disagreement.
+			let acc: BoundaryEnd | undefined;
 			for (const m of rule.members) {
-				const text = rightmostLiteralOfSubtree(m);
-				if (text === undefined) return undefined;
-				if (found === undefined) found = text;
+				const end = rightmostBoundary(m);
+				if (end.kind === 'unknown') return UNKNOWN_END;
+				if (acc === undefined) acc = end;
+				else if (acc.kind !== end.kind) return UNKNOWN_END;
+				else if (acc.kind === 'literal' && end.kind === 'literal' && acc.text !== end.text) {
+					return UNKNOWN_END;
+				}
 			}
-			return found;
+			return acc ?? UNKNOWN_END;
 		}
 		case 'polymorph': {
-			// Symmetric to choice: all forms must agree.
-			let found: string | undefined;
+			let acc: BoundaryEnd | undefined;
 			for (const f of rule.forms) {
-				const text = rightmostLiteralOfSubtree(f.content);
-				if (text === undefined) return undefined;
-				if (found === undefined) found = text;
+				const end = rightmostBoundary(f.content);
+				if (end.kind === 'unknown') return UNKNOWN_END;
+				if (acc === undefined) acc = end;
+				else if (acc.kind !== end.kind) return UNKNOWN_END;
+				else if (acc.kind === 'literal' && end.kind === 'literal' && acc.text !== end.text) {
+					return UNKNOWN_END;
+				}
 			}
-			return found;
+			return acc ?? UNKNOWN_END;
 		}
 		case 'optional':
 		case 'repeat':
@@ -404,55 +442,66 @@ function rightmostLiteralOfSubtree(rule: Rule): string | undefined {
 		case 'alias':
 		case 'token':
 		case 'terminal':
-			if ('content' in rule) return rightmostLiteralOfSubtree((rule as { content: Rule }).content);
-			return undefined;
+			if ('content' in rule) return rightmostBoundary((rule as { content: Rule }).content);
+			return UNKNOWN_END;
 		case 'enum':
-			// EnumRule: rightmost member's value.
-			return rule.members.length > 0 ? rule.members[rule.members.length - 1]!.value : undefined;
+			// EnumRule: rightmost member's value is the boundary.
+			if (rule.members.length > 0) return literalEnd(rule.members[rule.members.length - 1]!.value);
+			return UNKNOWN_END;
 		case 'symbol':
+			// Symbol refs become slot emissions in the template — word-like at boundary.
+			return SLOT_END;
 		case 'pattern':
 		case 'supertype':
 		case 'indent':
 		case 'dedent':
 		case 'newline':
 		default:
-			return undefined;
+			return UNKNOWN_END;
 	}
 }
 
 /**
- * Walk a Rule subtree leftward to find the leftmost string literal text.
- * Symmetric to `rightmostLiteralOfSubtree`.
+ * Walk a Rule subtree leftward to classify the leftmost boundary.
+ * Symmetric to {@link rightmostBoundary}.
  */
-function leftmostLiteralOfSubtree(rule: Rule): string | undefined {
+function leftmostBoundary(rule: Rule): BoundaryEnd {
 	switch (rule.type) {
 		case 'string':
-			if (rule.fieldName !== undefined) return undefined;
-			return rule.value;
+			if (rule.fieldName !== undefined) return SLOT_END;
+			return literalEnd(rule.value);
 		case 'seq': {
 			for (let i = 0; i < rule.members.length; i++) {
-				const text = leftmostLiteralOfSubtree(rule.members[i]!);
-				if (text !== undefined) return text;
+				const end = leftmostBoundary(rule.members[i]!);
+				if (end.kind !== 'unknown') return end;
 			}
-			return undefined;
+			return UNKNOWN_END;
 		}
 		case 'choice': {
-			let found: string | undefined;
+			let acc: BoundaryEnd | undefined;
 			for (const m of rule.members) {
-				const text = leftmostLiteralOfSubtree(m);
-				if (text === undefined) return undefined;
-				if (found === undefined) found = text;
+				const end = leftmostBoundary(m);
+				if (end.kind === 'unknown') return UNKNOWN_END;
+				if (acc === undefined) acc = end;
+				else if (acc.kind !== end.kind) return UNKNOWN_END;
+				else if (acc.kind === 'literal' && end.kind === 'literal' && acc.text !== end.text) {
+					return UNKNOWN_END;
+				}
 			}
-			return found;
+			return acc ?? UNKNOWN_END;
 		}
 		case 'polymorph': {
-			let found: string | undefined;
+			let acc: BoundaryEnd | undefined;
 			for (const f of rule.forms) {
-				const text = leftmostLiteralOfSubtree(f.content);
-				if (text === undefined) return undefined;
-				if (found === undefined) found = text;
+				const end = leftmostBoundary(f.content);
+				if (end.kind === 'unknown') return UNKNOWN_END;
+				if (acc === undefined) acc = end;
+				else if (acc.kind !== end.kind) return UNKNOWN_END;
+				else if (acc.kind === 'literal' && end.kind === 'literal' && acc.text !== end.text) {
+					return UNKNOWN_END;
+				}
 			}
-			return found;
+			return acc ?? UNKNOWN_END;
 		}
 		case 'optional':
 		case 'repeat':
@@ -464,18 +513,20 @@ function leftmostLiteralOfSubtree(rule: Rule): string | undefined {
 		case 'alias':
 		case 'token':
 		case 'terminal':
-			if ('content' in rule) return leftmostLiteralOfSubtree((rule as { content: Rule }).content);
-			return undefined;
+			if ('content' in rule) return leftmostBoundary((rule as { content: Rule }).content);
+			return UNKNOWN_END;
 		case 'enum':
-			return rule.members.length > 0 ? rule.members[0]!.value : undefined;
+			if (rule.members.length > 0) return literalEnd(rule.members[0]!.value);
+			return UNKNOWN_END;
 		case 'symbol':
+			return SLOT_END;
 		case 'pattern':
 		case 'supertype':
 		case 'indent':
 		case 'dedent':
 		case 'newline':
 		default:
-			return undefined;
+			return UNKNOWN_END;
 	}
 }
 
@@ -519,56 +570,146 @@ function isLeftmostTerminalImmediate(rule: Rule): boolean {
 }
 
 /**
- * Decide if a space is needed between two adjacent seq-member Rule nodes.
- *
- * Algorithm (Bug 6):
- * 1. Authoritative no-space: if right's leftmost terminal is `token.immediate`,
- *    return false (no space).
- * 2. Word-regex extension check: find rightmost literal of left subtree and
- *    leftmost literal of right subtree. Concatenate them and test anchored
- *    against the grammar's wordMatcher. If the match extends past leftText,
- *    a word boundary has been crossed — space is needed.
- * 3. Conservative fallback: if either boundary is unresolvable (symbol ref,
- *    pattern, opaque), return true (insert space — round-trip safe).
- *
- * Examples with `wordMatcher = /^\w+$/` (rust/ts/python all use word rules):
- *   `let` + `mut`  → combined `letmut`, match length 6 > 3 → space ✓
- *   `fn`  + `(`    → combined `fn(`,    match `fn` length 2 = 2 → no space ✓
- *   `=`   + `value`→ combined `=value`, no match → no space ✓
- *   `pub` + `fn`   → combined `pubfn`,  match length 5 > 3 → space ✓
+ * A virtual word-like character used to stand in for slot emissions
+ * (`{{ name }}`) and other dynamic content whose runtime first/last char
+ * is unknown but typically an identifier / literal head. Using a real
+ * word character lets the grammar's wordMatcher decide consistently
+ * (matches `\w`, `[a-zA-Z_]`, identifier-shaped patterns).
  */
-function needsSeqSpace(left: Rule, right: Rule, wordMatcher: RegExp): boolean {
-	// 1. Authoritative immediate override — tree-sitter token.immediate means
-	//    the token MUST adjoin the preceding token with no whitespace.
-	if (isLeftmostTerminalImmediate(right)) return false;
+const SLOT_WORDLIKE_CHAR = 'a';
 
-	// 2. Word-regex extension check using full literal texts.
-	const leftText = rightmostLiteralOfSubtree(left);
-	const rightText = leftmostLiteralOfSubtree(right);
-	if (leftText === undefined || rightText === undefined) {
-		// 3. Conservative fallback — can't resolve boundary, default to space.
-		return true;
+function probeChar(end: BoundaryEnd, side: 'left' | 'right'): string | undefined {
+	if (end.kind === 'literal') {
+		return side === 'right' ? end.text[end.text.length - 1] : end.text[0];
 	}
-	if (leftText.length === 0 || rightText.length === 0) {
-		// Empty boundary — no space needed (nothing to run together).
-		return false;
-	}
-	const combined = leftText + rightText;
+	if (end.kind === 'slot') return SLOT_WORDLIKE_CHAR;
+	return undefined;
+}
+
+/**
+ * Extract the first non-Jinja-tag character from a template fragment, used
+ * to probe the inner-present leftmost char of a conditional body. The body
+ * lies between `{%- if ... %}` and `{%- endif %}` (with optional whitespace-
+ * strip markers). Returns `undefined` if the body is empty / all tags / all
+ * slots.
+ *
+ * For slot-only bodies (`{{ name }}`), returns the word-like stand-in
+ * character so the wordMatcher boundary check still fires when the slot
+ * sits next to an identifier-shaped literal.
+ */
+function firstBoundaryCharOfCondBody(condText: string): string | undefined {
+	const m = condText.match(JINJA_COND_FULL_RE);
+	if (!m) return undefined;
+	const body = m[2] ?? '';
+	return firstBoundaryCharOfFragment(body);
+}
+
+function lastBoundaryCharOfCondBody(condText: string): string | undefined {
+	const m = condText.match(JINJA_COND_FULL_RE);
+	if (!m) return undefined;
+	const body = m[2] ?? '';
+	return lastBoundaryCharOfFragment(body);
+}
+
+/**
+ * Extract the leftmost meaningful character from a template fragment:
+ * the first real text char or, if the fragment opens with a `{{ slot }}`
+ * expression, the word-like stand-in character.
+ */
+function firstBoundaryCharOfFragment(fragment: string): string | undefined {
+	if (fragment.length === 0) return undefined;
+	// Slot at start → word-like.
+	if (fragment.startsWith('{{')) return SLOT_WORDLIKE_CHAR;
+	// Otherwise the first character IS the boundary (after any whitespace).
+	const trimmed = fragment.replace(/^\s+/, '');
+	if (trimmed.length === 0) return undefined;
+	if (trimmed.startsWith('{{')) return SLOT_WORDLIKE_CHAR;
+	if (trimmed.startsWith('{%')) return undefined; // nested tag — opaque
+	return trimmed[0];
+}
+
+function lastBoundaryCharOfFragment(fragment: string): string | undefined {
+	if (fragment.length === 0) return undefined;
+	if (fragment.endsWith('}}')) return SLOT_WORDLIKE_CHAR;
+	const trimmed = fragment.replace(/\s+$/, '');
+	if (trimmed.length === 0) return undefined;
+	if (trimmed.endsWith('}}')) return SLOT_WORDLIKE_CHAR;
+	if (trimmed.endsWith('%}')) return undefined;
+	return trimmed[trimmed.length - 1];
+}
+
+/**
+ * Core word-boundary check: do `leftChar` and `rightChar` form a single
+ * lexeme under `wordMatcher`? Returns true when the regex extends past
+ * the boundary (covering both chars) — meaning a separator is required.
+ *
+ * Examples (wordMatcher = identifier regex):
+ *   `t` + `a` → `ta` matches both → space ✓
+ *   `:` + `a` → match starts at `:` → no match → no space ✓
+ *   `n` + `(` → match `n` only     → no space ✓
+ *   `b` + `f` → `bf` matches both  → space ✓
+ */
+function charsRequireSpace(leftChar: string, rightChar: string, wordMatcher: RegExp): boolean {
+	if (leftChar === '' || rightChar === '') return false;
+	const combined = leftChar + rightChar;
 	try {
-		// Strip $ anchor from wordMatcher (it's a full-match pattern like `^...$`);
-		// re-anchor at start only so we can measure how far the match extends.
 		const src = wordMatcher.source.replace(/\$$/, '');
 		const flags = wordMatcher.flags.replace(/[gm]/g, '');
 		const anchoredRe = new RegExp(`^(?:${src})`, flags);
 		const m = combined.match(anchoredRe);
-		if (m && m[0] !== undefined && m[0].length > leftText.length) {
-			return true; // word match consumed past the boundary — space needed
-		}
+		return !!(m && m[0] !== undefined && m[0].length > 1);
 	} catch {
-		// Regex construction failed — conservative fallback.
 		return true;
 	}
-	return false;
+}
+
+/**
+ * Decide if a space is needed between two adjacent seq-member Rule nodes,
+ * given their emitted text fragments.
+ *
+ * Algorithm (Bug 6):
+ * 1. Authoritative no-space: if right's leftmost terminal is `token.immediate`,
+ *    return false (no space).
+ * 2. Boundary classification: find rightmost-end of left and leftmost-end of
+ *    right via rule-tree walks (concrete literal / slot / unknown).
+ *    When a side is a conditional `{% if %}body{% endif %}`, use the body's
+ *    actual first/last char so the inner-present boundary reflects what
+ *    really sits adjacent when the conditional fires — not the symbol's
+ *    abstract slot category.
+ * 3. Word-regex extension check via {@link charsRequireSpace}.
+ * 4. Conservative fallback: unknown side → return true (round-trip safe).
+ */
+function needsSeqSpace(
+	left: Rule,
+	right: Rule,
+	wordMatcher: RegExp,
+	leftText?: string,
+	rightText?: string
+): boolean {
+	if (isLeftmostTerminalImmediate(right)) return false;
+
+	// Derive boundary chars. When the emitted text is a conditional, the body's
+	// real first/last char is the inner-present boundary; otherwise consult
+	// the rule walker.
+	let leftChar: string | undefined;
+	if (leftText !== undefined && JINJA_COND_FULL_RE.test(leftText)) {
+		leftChar = lastBoundaryCharOfCondBody(leftText);
+	} else {
+		const leftEnd = rightmostBoundary(left);
+		if (leftEnd.kind === 'unknown') return true;
+		leftChar = probeChar(leftEnd, 'right');
+	}
+	let rightChar: string | undefined;
+	if (rightText !== undefined && JINJA_COND_FULL_RE.test(rightText)) {
+		rightChar = firstBoundaryCharOfCondBody(rightText);
+	} else {
+		const rightEnd = leftmostBoundary(right);
+		if (rightEnd.kind === 'unknown') return true;
+		rightChar = probeChar(rightEnd, 'left');
+	}
+
+	if (leftChar === undefined || rightChar === undefined) return true;
+	return charsRequireSpace(leftChar, rightChar, wordMatcher);
 }
 
 /**
@@ -634,6 +775,24 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			// Emit each member, retaining a parallel [rule, emission] pair so the
 			// boundary check can walk the original Rule subtrees for literal text,
 			// while the output array holds the (possibly space-absorbed) strings.
+			//
+			// Absorb-into-conditional refinement (Bug 6 follow-up): when a
+			// conditional sits between two literals, the inner-present space
+			// (between conditional content and its outer neighbour) and the
+			// outer-absent space (between the conditional's two non-conditional
+			// neighbours, when the conditional is absent at runtime) are
+			// INDEPENDENT decisions. To avoid double-emitting the outer-absent
+			// space, we anchor it to the AFTER-conditional boundary only:
+			//
+			//   for `A {% if c %}…{% endif %} B`:
+			//     - boundary (A, cond): inner-present check decides absorb-leading
+			//     - boundary (cond, B): inner-present check decides absorb-trailing
+			//       AND outer-absent check (A vs B) decides literal space between
+			//       `{% endif %}` and B
+			//
+			// This produces master's canonical pattern:
+			//   `A{% if c %} … {% endif %} B`  (inner-leading absorbed + outer
+			//                                     space after endif)
 			const emitted: Array<{ rule: Rule; text: string }> = [];
 			for (const m of rule.members) {
 				const text = emitRule(m, ctx);
@@ -645,21 +804,65 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 				const prevRule = emitted[i - 1]!.rule;
 				const currRule = emitted[i]!.rule;
 				const currText = emitted[i]!.text;
-				if (needsSeqSpace(prevRule, currRule, ctx.wordMatcher)) {
-					// Prefer absorbing the space INSIDE adjacent conditionals so
-					// the separator disappears when the optional part is absent.
-					if (JINJA_COND_FULL_RE.test(currText)) {
-						// Next is a conditional → absorb space as leading
-						out.push(absorbLeadingSpaceIntoConditional(currText));
-					} else if (JINJA_COND_FULL_RE.test(out[out.length - 1]!)) {
-						// Prev is a conditional → absorb space as trailing inside it
-						out[out.length - 1] = absorbTrailingSpaceIntoConditional(out[out.length - 1]!);
-						out.push(currText);
-					} else {
+				const prevText = out[out.length - 1]!;
+				const currIsCond = JINJA_COND_FULL_RE.test(currText);
+				const prevIsCond = JINJA_COND_FULL_RE.test(prevText);
+
+				// Inner-present check: the boundary as written between prev and curr
+				// when any conditional fires. Pass texts so conditional bodies
+				// contribute their real first/last chars instead of being treated
+				// as opaque slot emissions.
+				const needsInnerSpace = needsSeqSpace(
+					prevRule, currRule, ctx.wordMatcher,
+					prevIsCond ? prevText : undefined,
+					currIsCond ? currText : undefined
+				);
+
+				if (prevIsCond && !currIsCond) {
+					// AFTER-conditional boundary: own the outer-absent space for prev.
+					// If prev is absent at runtime, emitted[i-2] meets currRule. Use
+					// rule-only check (no text) since the absent case has no
+					// conditional body to consult.
+					const beforePrev = emitted[i - 2]?.rule;
+					const needsOuterSpace =
+						beforePrev !== undefined &&
+						needsSeqSpace(beforePrev, currRule, ctx.wordMatcher);
+
+					if (needsOuterSpace) {
+						// Outer space handles BOTH the absent case (prev=empty,
+						// beforePrev meets curr) AND the present case (prev's content
+						// followed by space then curr). No need to also absorb-trailing.
 						out.push(' ');
+					} else if (needsInnerSpace) {
+						// No outer space — must absorb-trailing so the inner-present
+						// boundary still has a separator when prev fires.
+						out[out.length - 1] = absorbTrailingSpaceIntoConditional(prevText);
+					}
+					out.push(currText);
+				} else if (!prevIsCond && currIsCond) {
+					// BEFORE-conditional boundary: handle inner-present absorb-leading
+					// only. The outer-absent space (prev vs whatever comes after curr)
+					// is owned by the AFTER-conditional boundary at the next iteration.
+					if (needsInnerSpace) {
+						out.push(absorbLeadingSpaceIntoConditional(currText));
+					} else {
+						out.push(currText);
+					}
+				} else if (prevIsCond && currIsCond) {
+					// Both conditionals: absorb-leading into curr to handle the
+					// inner-present boundary where both fire. This matches master's
+					// pattern (no inter-conditional space; leading absorption on each
+					// conditional handles its own internal needs).
+					if (needsInnerSpace) {
+						out.push(absorbLeadingSpaceIntoConditional(currText));
+					} else {
 						out.push(currText);
 					}
 				} else {
+					// Neither is a conditional — simple literal boundary.
+					if (needsInnerSpace) {
+						out.push(' ');
+					}
 					out.push(currText);
 				}
 			}
