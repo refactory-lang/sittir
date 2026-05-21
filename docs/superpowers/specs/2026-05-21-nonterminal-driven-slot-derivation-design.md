@@ -70,7 +70,7 @@ Terminal leaves (`string`/`terminal`/indent/dedent/newline) → no slot, ALWAYS 
 
 ### 2. Slot collection (the new `deriveSlots`)
 
-Walk the (wrapper-free) rule; for each node:
+Walk the **`simplifiedRule`** (NOT the renderRule) — same input the old `deriveSlots` consumed. It is wrapper-free AND canonicalized, so a single-slot `seq(lit, x, lit)` has already been reduced to its content `x` (simplify does this), and collection sees the real slot directly. (Reading the un-reduced renderRule was the C3 mistake — it manufactured generic `_<kind>_optionalN` slots.) For each node:
 - **symbol** (nonterminal) → 1 slot. name = `fieldName` ?? kind-synthesized storageName (assemble synthesizes storageName from kind). type = the symbol's kind. multiplicity/separator = the node's own leaf attrs.
 - **choice** (nonterminal) → 1 slot. name = `fieldName` (REQUIRED — see naming rule). type = union of arm kinds (enum when arms are string literals). Arms are NOT recursed into separate slots — **the choice is the slot.**
 - **seq** → distribute: flat-collect the slots of its nonterminal members. The seq itself is not a slot (no folding).
@@ -96,14 +96,15 @@ Multi-slot `optional(seq(...))` / `repeat(seq(...))` are lifted to a synthesized
 
 **Why `comparison_operator`'s `repeat1(seq(operators, operand))` isn't grouped (corrected):** NOT a "hasSlotBearingMember filter" (that was removed — `auto-groups.ts:262-265`). The real cause is the **authored-skip**: `comparison_operator` has a `transforms:` entry → `collectAuthoredSynthesisKinds` adds it (`wire.ts:606-624`) → `applyAutoGroups` skips it (`auto-groups.ts:131`). That skip is DELIBERATE — it keeps the rule tree in the shape the authored positional `transforms` (`0`,`1`) address. So the fix is NOT "fire on all authored kinds" (that shifts the positional patches and risks LR/parser regressions). The fix must **cooperate with authored transform order**: synthesize the group AFTER the author's positional patches resolve, or have the transform/grouping interleave so positions stay stable. With grouping reliable, `comparison_operator` → `left` (1) + group(`operators` enum, operand); `operators` never folded.
 
-#### Inline-vs-group rule (REQUIRED — surfaced by the C+D execution attempt)
+#### Single-slot seq collapse is SIMPLIFY's job (not B); B only groups multi-slot seqs
 
-A multi-member `optional(seq(...))` / `repeat(seq(...))` must be classified by **how many NONTERMINAL slots it contains** (flanking `string`/`token` literals don't count):
+The "inline" case is a **simplify canonicalization**, NOT a Chunk B rule:
 
-- **Single nonterminal slot → INLINE into the parent.** The one field becomes the PARENT's slot, carrying the wrapper's multiplicity (`optional`→optional, `repeat`→array); the flanking literals render inline conditionally. e.g. rust `let_declaration`'s `optional(seq('else', field('alternative', X)))` → parent slot `alternative` (optional), template `{% if alternative %} else {{ alternative }}{% endif %}`. This MATCHES node-types (`alternative` is a field of `let_declaration`, not of a sub-kind). Do NOT synthesize a group / sub-template.
-- **Two+ nonterminal slots → GROUP** (synthesize a group kind; parent references it as one slot), as §4 above.
+- **Simplify reduces `seq(lit, x, lit) → seq(x) → x`** — a seq with exactly ONE nonterminal member (the rest `string`/`token` literals) collapses to that member; the flanking literals are demoted to render-only (they remain in the renderRule for the template). So `optional(seq('else', field('alternative', X)))` simplifies to `optional(field('alternative', X))`.
+- **`collectSlots` consumes the SIMPLIFIED rule**, so it sees `optional(field('alternative'))` → one slot `alternative` on the parent (matches node-types). No sub-template, no inline-vs-group branching, no B involvement. The emitter (on the renderRule, which keeps the literals) walks the seq inline: `{% if alternative %} else {{ alternative }}{% endif %}`.
+- **Chunk B's scope shrinks to multi-slot seqs only** — `optional(seq)`/`repeat(seq)` with **2+** nonterminal slots → group (the togetherness/pairing case, §4). Single-slot is handled upstream by simplify.
 
-**Why this is mandatory:** the C+D attempt (covPass rust 172→167, broad RT loss) regressed precisely because `collectSlots`+emitter routed single-slot `optional(seq)` bodies (`const_item.value`, `let_declaration.alternative`, `for_expression.label`, `loop_expression.label`, `function_signature_item.return_type`) to separate `_<kind>_optionalN.jinja` sub-templates, making the field invisible to the parent's coverage AND render. Baseline inlined them. So Chunk B owns BOTH faces: group multi-slot seqs, and inline single-slot seqs (keep the field on the parent).
+**Re-diagnosis of the C+D regression** (covPass rust 172→167, broad RT loss on `const_item.value`/`let_declaration.alternative`/`for_expression.label`/`loop_expression.label`/`function_signature_item.return_type`): the C3 `collectSlots` walked the **un-collapsed RenderRule** and manufactured a generic `_<kind>_optionalN` slot → sub-template → field invisible to parent coverage+render. **Fix: `collectSlots` reads the simplified rule, AND simplify performs `seq(lit,x,lit)→x`.** Verify simplify (`canonicalizeSeqOfLeaves`/computeSimplifiedRules) actually drops flanking literals to a single member; if not, that's the change. This is the corrected blocker for landing C+D (B no longer needed for these single-slot cases — only for genuine multi-slot groups).
 
 ### Execution status (2026-05-21)
 - Chunk A: DONE + reviewed (`d5b70a4d`, `f8202e64`, `343c06d6`).
