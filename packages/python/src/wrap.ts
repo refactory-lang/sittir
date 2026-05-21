@@ -559,7 +559,7 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle) {
     _alias: normalizeSingularWrapSlot(data._alias, "alias", true, data.$type),
 
     expression() { return drillIn<T.Expression>(this._expression, tree); },
-    alias() { return drillIn<T.AsPatternTarget>(this._alias, tree); },
+    alias() { return drillAs<T.Expression>(this._alias, tree, "as_pattern_target", "expression"); },
     $with: {
       expression: (v: NonNullable<T.AsPattern['_expression']>) => wrapAsPattern({ ...data, _expression: v }, tree),
       alias: (v: NonNullable<T.AsPattern['_alias']>) => wrapAsPattern({ ...data, _alias: v }, tree),

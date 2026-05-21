@@ -300,7 +300,7 @@ export function asPattern(config: T.AsPattern.Config) {
     alias() { return _alias; },
     $with: {
       expression: (value: T.Expression) => asPattern({ ...config, expression: value }),
-      alias: (value: T.AsPatternTarget) => asPattern({ ...config, alias: value }),
+      alias: (value: T.Expression) => asPattern({ ...config, alias: value }),
     },
   }, methodsEngine);
 }

@@ -192,6 +192,9 @@
     "argument_list.expression": {
       "parenthesized_expression": "parenthesized_list_splat"
     },
+    "as_pattern.alias": {
+      "as_pattern_target": "expression"
+    },
     "case_clause.simple_statements": {
       "block": "_newline"
     },

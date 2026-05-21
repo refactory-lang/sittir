@@ -495,7 +495,7 @@ export function asPatternFrom(input: T.AsPattern.Loose): ReturnType<typeof F.asP
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.asPattern>;
   return F.asPattern({
     expression: _resolveOne<T.Expression>(input.expression, _K0, _K1),
-    alias: _resolveOneBranch<T.AsPatternTarget>(input.alias, "as_pattern_target"),
+    alias: _resolveOne<T.Expression>(input.alias, _K0, _K1),
   });
 }
 

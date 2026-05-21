@@ -12843,7 +12843,7 @@ pub struct AsPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
-    pub alias: Box<AnyTransport>,
+    pub alias: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for AsPatternTransport {
@@ -28179,7 +28179,7 @@ fn render_argument_list(node: &ArgumentListTransport, dest: &mut dyn ::std::fmt:
 
 fn render_as_pattern(node: &AsPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AsPatternTemplate {
-        alias: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.alias.as_ref())),
+        alias: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alias)),
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
     template.render_into(dest)
@@ -31505,7 +31505,7 @@ fn transport_to_node_argument_list(transport: ArgumentListTransport) -> Result<T
 fn transport_to_node_as_pattern(transport: AsPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(*transport.expression))?);
-    fields.insert("alias".to_string(), transport_field_value(*transport.alias)?);
+    fields.insert("alias".to_string(), transport_field_value(expression_transport_to_any(*transport.alias))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());

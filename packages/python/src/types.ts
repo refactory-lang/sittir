@@ -1471,9 +1471,9 @@ export interface ArgumentList {
 export interface AsPattern {
   readonly $type: TSKindId.AsPattern;
   readonly _expression: Expression;
-  readonly _alias: AsPatternTarget;
+  readonly _alias: Expression;
   expression(): Expression;
-  alias(): AsPatternTarget;
+  alias(): Expression;
 }
 
 export interface AssertStatement {
@@ -2364,7 +2364,6 @@ export type And = Terminal<TSKindId.And, "and">;
 export type Or = Terminal<TSKindId.Or, "or">;
 export type In = Terminal<TSKindId.In, "in">;
 
-export type AsPatternTarget = Terminal<"as_pattern_target", string>;
 export type Lt = Terminal<TSKindId.Lt, string>;
 export type LtEq = Terminal<TSKindId.LtEq, string>;
 export type EqEq = Terminal<TSKindId.EqEq, string>;

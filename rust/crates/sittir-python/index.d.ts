@@ -85,7 +85,7 @@ export interface AsPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _expression: Box<ExpressionTransport>
-  _alias: Box<AnyTransport>
+  _alias: Box<ExpressionTransport>
 }
 
 export interface AssertStatementTransport {

@@ -1574,7 +1574,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "as_pattern_target",
+              "name": "expression",
               "unresolved": true
             }
           ],
@@ -1582,8 +1582,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "as_pattern_target"
+              "expression"
             ]
+          },
+          "aliasSources": {
+            "as_pattern_target": "expression"
           }
         }
       ],

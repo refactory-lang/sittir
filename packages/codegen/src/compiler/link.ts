@@ -583,7 +583,14 @@ function dereferenceTopLevelAliasBody(
  */
 function extractAliasedFromName(content: Rule, supertypes: Set<string>): string | undefined {
 	if (content.type === 'symbol') {
-		if (supertypes.has(content.name)) return undefined;
+		// Record the alias SOURCE as provenance even when it is a supertype.
+		// `alias($.expression, $.as_pattern_target)` aliases the `expression`
+		// supertype: the slot must be typed by that source (the expression
+		// union, which IS in the node map), NOT by the bare target label
+		// `as_pattern_target` — the target has no rule body, so leaving
+		// aliasedFrom unset makes `refName = aliasedFrom ?? name` fall back to
+		// the target and emit a phantom unresolved ref. The target still
+		// survives as the symbol `name` (the CST `$type` the reader matches).
 		return content.name;
 	}
 	if (
