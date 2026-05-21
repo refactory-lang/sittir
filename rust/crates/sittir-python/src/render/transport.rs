@@ -28799,7 +28799,6 @@ fn render_slice(node: &SliceTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
         }
     }
     let template = SliceTemplate {
-        expression: OptionalNonterminalView::Missing,
         expression1: OptionalNonterminalView::Missing,
         expression2: OptionalNonterminalView::Missing,
         start: match &node.start {

@@ -1083,6 +1083,27 @@ function emitScalarSlot(slotName: string): string {
 }
 
 /**
+ * Emit a slot reference from its registered back-pointer slot — the single
+ * shared path for symbol, choice, and field-wrapped slots
+ * (feedback_ruleid_backpointer). Identity and multiplicity come FROM THE SLOT
+ * (its `storageName` is the render-struct field key), never re-derived per
+ * call site from `rule.name` / `rule.fieldName`. The leaf `rule.multiplicity`
+ * is honoured as a fallback for the case where wrapper push-down stamped the
+ * leaf but slot derivation under-counted (the prior emitSymbol "Bug 5" path).
+ */
+function emitSlotReference(rule: Rule, slot: AssembledNonterminal): string {
+	const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
+	const mult = (rule as { multiplicity?: string }).multiplicity;
+	if (mult === 'array' || mult === 'nonEmptyArray' || isMultiple(slot)) {
+		return emitListSlot(slotName, rule, slot);
+	}
+	if (mult === 'optional' || !isRequired(slot)) {
+		return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
+	}
+	return emitScalarSlot(slotName);
+}
+
+/**
  * Emit a kind-named scalar slot for a named alias reference. In RenderRule
  * input, a named alias represents a single visible kind — always scalar.
  * (The legacy walker emitted list form here via `$$$SLOT` → join; the new
@@ -1174,22 +1195,7 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 	// inline logic handles it correctly.
 	const slot = lookupSlot(rule, ctx);
 	if (slot && !((slot.source as string) === 'inferred' && rule.source === 'group-lift')) {
-		const slotName = (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
-		const multiplicity = rule.multiplicity;
-		if (multiplicity === 'array' || multiplicity === 'nonEmptyArray' || isMultiple(slot)) {
-			return emitListSlot(slotName, rule, slot);
-		}
-		if (multiplicity === 'optional') {
-			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
-		}
-		// Bug 5 fix (path 2): if the slot back-pointer says optional (not all
-		// values are required multiplicity), emit a conditional guard. This
-		// catches cases where the grammar wraps the field in optional() but the
-		// push-down pass didn't stamp 'optional' onto the leaf symbol.
-		if (!isRequired(slot)) {
-			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
-		}
-		return emitScalarSlot(slotName);
+		return emitSlotReference(rule, slot);
 	}
 	// Bug 2 fix: Group-lifted symbols that are auto-synthesized hidden helpers
 	// (e.g. `_function_item_optional1`, `_type_parameters_repeat1`) must be
@@ -1339,13 +1345,20 @@ function pickConditionalKey(content: Rule, ctx: EmitCtx): string | undefined {
 // now leaf attributes on the inner rule, consumed by emitSymbol directly.
 
 function emitChoice(rule: Extract<Rule, { type: 'choice' }>, ctx: EmitCtx): string {
-	// PR2 Task 3.B4: when deleteWrapper stamps `fieldName` onto a choice node
-	// (because the outer field() wrapper's attrs propagate to the choice itself
-	// but NOT to its members), emit the field slot directly using that fieldName.
-	// Without this, the fallthrough below would inline the first non-empty choice
-	// member — losing the field name entirely. This matches the case where
-	// `field('name', choice($._x, $._y, BLANK))` in a RenderRule produces a
-	// choice with `fieldName: 'name'` but members without fieldName.
+	// Every choice that surfaces as data is a registered slot — there is no
+	// "positional choice" anymore (kind-named slots). Look the slot up by the
+	// choice's rule id (the deleteWrapper-stamped `fieldName` case resolves via
+	// lookupSlot's fieldName→storageName fallback) and emit it FROM THE SLOT
+	// through the shared `emitSlotReference` (feedback_ruleid_backpointer) — no
+	// first-arm-pick (which dropped the other arms + the separator), no
+	// per-site name re-derivation.
+	const slot = lookupSlot(rule, ctx);
+	if (slot) {
+		return emitSlotReference(rule, slot);
+	}
+	// No back-pointer slot but a deleteWrapper-stamped fieldName (a `field()`
+	// around a choice whose members carry no fieldName): emit by the field
+	// name directly.
 	if (rule.fieldName !== undefined) {
 		const slotName = rule.fieldName.toLowerCase();
 		const multiplicity = rule.multiplicity;
@@ -1355,31 +1368,9 @@ function emitChoice(rule: Extract<Rule, { type: 'choice' }>, ctx: EmitCtx): stri
 		if (multiplicity === 'optional') {
 			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
 		}
-		// Check slot back-pointer — the choice as a whole may be multi-valued.
-		const slot = lookupSlot(rule, ctx);
-		if (slot && isMultiple(slot)) {
-			return emitListSlot(slotName, rule);
-		}
 		return emitScalarSlot(slotName);
 	}
-	// Every choice that surfaces as data is a registered slot — there is no
-	// "positional choice" anymore; the assembler gives each a name. Look the
-	// slot up by the choice's rule id and emit it FROM THE SLOT's identity +
-	// multiplicity (feedback_ruleid_backpointer) — never first-arm-pick (which
-	// dropped the other arms + any separator) and never re-derive a name from
-	// the members. `storageName` is the key the render struct field uses.
-	const slot = lookupSlot(rule, ctx);
-	if (slot) {
-		const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
-		if (isMultiple(slot)) {
-			return emitListSlot(slotName, rule, slot);
-		}
-		if (!isRequired(slot)) {
-			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
-		}
-		return emitScalarSlot(slotName);
-	}
-	// No registered slot → a choice of pure literals/patterns (no data slot).
+	// No slot, no fieldName → a choice of pure literals/patterns (no data slot).
 	// Emit the first non-empty branch's literal text.
 	for (const member of rule.members) {
 		const text = emitRule(member, ctx);

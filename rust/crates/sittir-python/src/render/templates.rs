@@ -738,7 +738,6 @@ pub struct SetTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "slice.jinja", escape = "none")]
 pub struct SliceTemplate<'a> {
-    pub expression: OptionalNonterminalView<'a>,
     pub expression1: OptionalNonterminalView<'a>,
     pub expression2: OptionalNonterminalView<'a>,
     pub start: OptionalNonterminalView<'a>,
