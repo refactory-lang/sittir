@@ -61,8 +61,7 @@ export interface ArgumentsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attribute_item?: Array<AttributeItemTransport>
-  _expression?: Array<ExpressionTransport>
+  _attributed_argument?: Array<AttributedArgumentTransport>
 }
 
 export interface ArrayExpressionListTransport {
@@ -162,6 +161,18 @@ export interface AsyncBlockTransport {
   '$triviaData'?: TransportTrivia
   _move_marker?: MoveMarkerTransport
   _block: Box<BlockTransport>
+}
+
+export interface AttributedArgumentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _attribute_item?: Array<AttributeItemTransport>
+  _expression: ExpressionTransport
 }
 
 export interface AttributedEnumVariantTransport {

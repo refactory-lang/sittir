@@ -6435,70 +6435,9 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "FIELD",
-              "name": "attributes",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "REPEAT",
-                        "content": {
-                          "type": "SYMBOL",
-                          "name": "attribute_item",
-                          "multiplicity": "array",
-                          "nonterminal": true
-                        },
-                        "multiplicity": "array",
-                        "nonterminal": true
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "_expression"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "REPEAT",
-                    "content": {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "STRING",
-                          "value": ","
-                        },
-                        {
-                          "type": "SEQ",
-                          "members": [
-                            {
-                              "type": "REPEAT",
-                              "content": {
-                                "type": "SYMBOL",
-                                "name": "attribute_item",
-                                "multiplicity": "array",
-                                "nonterminal": true
-                              },
-                              "multiplicity": "array",
-                              "nonterminal": true
-                            },
-                            {
-                              "type": "SYMBOL",
-                              "name": "_expression"
-                            }
-                          ]
-                        }
-                      ],
-                      "multiplicity": "array",
-                      "nonterminal": true
-                    },
-                    "multiplicity": "array",
-                    "nonterminal": true
-                  }
-                ]
-              },
-              "source": "override"
+              "type": "SYMBOL",
+              "name": "_arguments_optional1",
+              "source": "group-lift"
             },
             {
               "type": "BLANK"
@@ -11119,6 +11058,22 @@
         }
       ]
     },
+    "_attributed_argument": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute_item"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_expression"
+        }
+      ]
+    },
     "_enum_variant_list_optional1": {
       "type": "SEQ",
       "members": [
@@ -11593,6 +11548,45 @@
       "multiplicity": "array",
       "nonterminal": true
     },
+    "_arguments_optional1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_attributed_argument"
+          },
+          "named": true,
+          "value": "attributed_argument"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_attributed_argument"
+                },
+                "named": true,
+                "value": "attributed_argument"
+              }
+            ],
+            "multiplicity": "array",
+            "nonterminal": true
+          },
+          "multiplicity": "array",
+          "nonterminal": true
+        }
+      ]
+    },
     "_match_block_optional1": {
       "type": "SEQ",
       "members": [
@@ -11829,6 +11823,7 @@
     "_for_lifetimes_repeat1",
     "_tuple_type_repeat1",
     "_type_arguments_repeat1",
+    "_arguments_optional1",
     "_match_block_optional1",
     "_match_pattern_optional1",
     "_while_expression_optional1",

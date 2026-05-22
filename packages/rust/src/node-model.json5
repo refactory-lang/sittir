@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 392,
+  "nodeCount": 393,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -613,6 +613,63 @@
             }
           ],
           "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_expression"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_attributed_argument",
+      "modelType": "branch",
+      "typeName": "AttributedArgument",
+      "factoryName": "attributedArgument",
+      "irKey": "attributedArgument",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "attribute_item",
+          "propertyName": "attributeItems",
+          "paramName": "attributeItems",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "attribute_item",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "attribute_item"
+            ]
+          }
+        },
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_expression",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5035,9 +5092,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItems",
-          "paramName": "attributeItems",
+          "name": "attributed_argument",
+          "propertyName": "attributedArguments",
+          "paramName": "attributedArguments",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -5045,7 +5102,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "attribute_item",
+              "name": "_attributed_argument",
               "unresolved": true
             }
           ],
@@ -5053,31 +5110,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "attribute_item"
+              "_attributed_argument"
             ]
-          }
-        },
-        {
-          "name": "expression",
-          "propertyName": "expressions",
-          "paramName": "expressions",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_expression",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression"
-            ]
+          },
+          "aliasSources": {
+            "attributed_argument": "_attributed_argument"
           }
         }
       ],

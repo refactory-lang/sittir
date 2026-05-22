@@ -211,11 +211,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  arguments: {
-    '1/0/0': 'attribute_item',
-  },
-
-  // [held] 1 candidate(s)
   attribute: {
     '1/0/0': 'value',
   },

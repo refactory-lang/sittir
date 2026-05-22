@@ -7,6 +7,7 @@
     "__range_expression_binary_operator": "text",
     "_array_expression_list": "config",
     "_array_expression_semi": "config",
+    "_attributed_argument": "config",
     "_attributed_enum_variant": "config",
     "_attributed_field_declaration": "config",
     "_attributed_parameter": "config",
@@ -75,7 +76,7 @@
     "_visibility_modifier_in_path": "config",
     "_visibility_modifier_pub": "config",
     "abstract_type": "config",
-    "arguments": "config",
+    "arguments": "spread",
     "array_expression": "config",
     "array_type": "config",
     "assignment_expression": "config",
@@ -319,6 +320,9 @@
     },
     "abstract_type.trait": {
       "type_identifier": "identifier"
+    },
+    "arguments.attributed_argument": {
+      "attributed_argument": "_attributed_argument"
     },
     "array_expression.array_expression_semi": {
       "array_expression_semi": "_array_expression_semi"
@@ -596,6 +600,10 @@
       "elements",
       "length"
     ],
+    "_attributed_argument": [
+      "attribute_item",
+      "expression"
+    ],
     "_attributed_enum_variant": [
       "attribute_item",
       "enum_variant"
@@ -755,8 +763,7 @@
       "trait"
     ],
     "arguments": [
-      "attribute_item",
-      "expression"
+      "attributed_argument"
     ],
     "array_expression": [
       "array_expression_semi",
@@ -1445,6 +1452,22 @@
         "nonEmpty": false
       }
     },
+    "_attributed_argument": {
+      "attribute_item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "_attributed_enum_variant": {
       "attribute_item": {
         "unnamed": false,
@@ -2054,14 +2077,7 @@
       }
     },
     "arguments": {
-      "attribute_item": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "expression": {
+      "attributed_argument": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,

@@ -512,6 +512,23 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
+        376 => { // "_attributed_argument" | "attributed_argument"
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let children_renderables = children.renderable_items();
+            let template = AttributedArgumentTemplate {
+                attribute_item: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
+                expression: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+            };
+            template.render_into(dest)
+        }
         373 => { // "_attributed_enum_variant" | "attributed_enum_variant"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let children_renderables = children.renderable_items();
@@ -1054,27 +1071,13 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         257 => { // "arguments"
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
-            let field_0 = resolve_slot(node, SlotAccessor::Field("attributes"), false)?;
             let children_renderables = children.renderable_items();
-            let field_0_renderables = field_0.renderable_items();
             let template = ArgumentsTemplate {
-                attribute_item: ListNonterminalView {
+                attributed_argument: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
-                },
-                expression: ListNonterminalView {
-                    items: children_renderables.as_slice(),
-                    separator: children.separator,
-                    leading: children.leading_sep,
-                    trailing: children.trailing_sep,
-                },
-                attributes: ListNonterminalView {
-                    items: field_0_renderables.as_slice(),
-                    separator: field_0.separator,
-                    leading: field_0.leading_sep,
-                    trailing: field_0.trailing_sep,
                 },
             };
             template.render_into(dest)

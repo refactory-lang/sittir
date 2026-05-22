@@ -419,6 +419,23 @@ export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeH
   return _node;
 }
 
+export function wrapAttributedArgument(data: T.AttributedArgument, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.AttributedArgument as const,
+    _attribute_item: normalizeRepeatedWrapSlot(data._attribute_item, false, "attribute_item"),
+    _expression: normalizeSingularWrapSlot((data._unary_expression ?? data._reference_expression ?? data._try_expression ?? data._binary_expression ?? data._assignment_expression ?? data._compound_assignment_expr ?? data._type_cast_expression ?? data._call_expression ?? data._return_expression ?? data._yield_expression ?? data._string_literal ?? data._raw_string_literal ?? data._char_literal ?? data._boolean_literal ?? data._integer_literal ?? data._float_literal ?? data._identifier ?? data._reserved_identifier ?? data._self ?? data._scoped_identifier ?? data._generic_function ?? data._await_expression ?? data._field_expression ?? data._array_expression ?? data._tuple_expression ?? data._macro_invocation ?? data._unit_expression ?? data._break_expression ?? data._continue_expression ?? data._index_expression ?? data._metavariable ?? data._closure_expression ?? data._parenthesized_expression ?? data._struct_expression ?? data._unsafe_block ?? data._async_block ?? data._gen_block ?? data._try_block ?? data._block ?? data._if_expression ?? data._match_expression ?? data._while_expression ?? data._loop_expression ?? data._for_expression ?? data._const_block ?? data._range_expression ?? data._expression), "expression", true, data.$type),
+
+    attributeItems() { return drillInAll<T.AttributeItem>(this._attribute_item as readonly T.AttributeItem[] | undefined, tree); },
+    expression() { return drillIn<T.Expression>(this._expression, tree); },
+    $with: {
+      attributeItems: (...v: NonNullable<T.AttributedArgument['_attribute_item']>[number][]) => wrapAttributedArgument({ ...data, _attribute_item: v }, tree),
+      expression: (v: NonNullable<T.AttributedArgument['_expression']>) => wrapAttributedArgument({ ...data, _expression: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrapAttributedEnumVariant(data: T.AttributedEnumVariant, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
@@ -1159,15 +1176,10 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Arguments as const,
-    _attribute_item: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._attribute_item, ["attribute_item"]), false, "attribute_item"),
-    _expression: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind((data._unary_expression ?? data._reference_expression ?? data._try_expression ?? data._binary_expression ?? data._assignment_expression ?? data._compound_assignment_expr ?? data._type_cast_expression ?? data._call_expression ?? data._return_expression ?? data._yield_expression ?? data._string_literal ?? data._raw_string_literal ?? data._char_literal ?? data._boolean_literal ?? data._integer_literal ?? data._float_literal ?? data._identifier ?? data._reserved_identifier ?? data._self ?? data._scoped_identifier ?? data._generic_function ?? data._await_expression ?? data._field_expression ?? data._array_expression ?? data._tuple_expression ?? data._macro_invocation ?? data._unit_expression ?? data._break_expression ?? data._continue_expression ?? data._index_expression ?? data._metavariable ?? data._closure_expression ?? data._parenthesized_expression ?? data._struct_expression ?? data._unsafe_block ?? data._async_block ?? data._gen_block ?? data._try_block ?? data._block ?? data._if_expression ?? data._match_expression ?? data._while_expression ?? data._loop_expression ?? data._for_expression ?? data._const_block ?? data._range_expression ?? data._expression), ["_expression","_expression_except_range","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","_literal","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","_reserved_identifier","self","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","unit_expression","break_expression","continue_expression","index_expression","metavariable","closure_expression","parenthesized_expression","struct_expression","_expression_ending_with_block","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"]), false, "expression"),
+    _attributed_argument: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._attributed_argument, ["_attributed_argument","attributed_argument"]), false, "attributed_argument"),
 
-    attributeItems() { return drillInAll<T.AttributeItem>(this._attribute_item as readonly T.AttributeItem[] | undefined, tree); },
-    expressions() { return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree); },
-    $with: {
-      attributeItems: (...v: NonNullable<T.Arguments['_attribute_item']>[number][]) => wrapArguments({ ...data, _attribute_item: v }, tree),
-      expressions: (...v: NonNullable<T.Arguments['_expression']>[number][]) => wrapArguments({ ...data, _expression: v }, tree),
-    },
+    attributedArguments() { return drillAsAll<T.AttributedArgument>(this._attributed_argument, tree, "attributed_argument", "_attributed_argument"); },
+    $with: { $children: (...vs: readonly [never]) => wrapArguments({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -3898,6 +3910,7 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
   '_array_expression_list': (d, t) => wrapArrayExpressionList(d as unknown as T.ArrayExpressionList, t),
   '_array_expression_semi': (d, t) => wrapArrayExpressionSemi(d as unknown as T.ArrayExpressionSemi, t),
+  '_attributed_argument': (d, t) => wrapAttributedArgument(d as unknown as T.AttributedArgument, t),
   '_attributed_enum_variant': (d, t) => wrapAttributedEnumVariant(d as unknown as T.AttributedEnumVariant, t),
   '_attributed_field_declaration': (d, t) => wrapAttributedFieldDeclaration(d as unknown as T.AttributedFieldDeclaration, t),
   '_attributed_parameter': (d, t) => wrapAttributedParameter(d as unknown as T.AttributedParameter, t),
@@ -4149,6 +4162,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 const _aliasTargetToSource: Record<string, string> = {
   'array_expression_list': '_array_expression_list',
   'array_expression_semi': '_array_expression_semi',
+  'attributed_argument': '_attributed_argument',
   'attributed_enum_variant': '_attributed_enum_variant',
   'attributed_field_declaration': '_attributed_field_declaration',
   'attributed_parameter': '_attributed_parameter',

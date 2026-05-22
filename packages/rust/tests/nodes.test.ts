@@ -17,13 +17,9 @@ describe('abstract_type', () => {
 
 describe('arguments', () => {
   it('factory produces correct type', () => {
-    const node = ir.arguments({});
+    const node = ir.arguments();
     expect(node.$type).toBe(TSKindId.Arguments);
     expect(node.$source).toBe(2);
-  });
-  it('render does not throw on minimal config', () => {
-    const node = ir.arguments({});
-    expect(() => node.$render!()).not.toThrow();
   });
 });
 

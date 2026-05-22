@@ -2,6 +2,7 @@
 
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
+  '_attributed_argument',
   '_attributed_enum_variant',
   '_attributed_field_declaration',
   '_attributed_parameter',
@@ -681,8 +682,9 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "_attributed_enum_variant": 373,
   "_attributed_parameter": 374,
   "_attributed_type_parameter": 375,
-  "_field_identifier": 408,
-  "_type_identifier": 411,
+  "_attributed_argument": 376,
+  "_field_identifier": 409,
+  "_type_identifier": 412,
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -937,8 +939,9 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [373]: "_attributed_enum_variant",
   [374]: "_attributed_parameter",
   [375]: "_attributed_type_parameter",
-  [408]: "_field_identifier",
-  [411]: "_type_identifier",
+  [376]: "_attributed_argument",
+  [409]: "_field_identifier",
+  [412]: "_type_identifier",
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -1193,8 +1196,9 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "_attributed_enum_variant", id: 373, enumName: "AttributedEnumVariant", cName: "sym__attributed_enum_variant" },
   { name: "_attributed_parameter", id: 374, enumName: "AttributedParameter", cName: "sym__attributed_parameter" },
   { name: "_attributed_type_parameter", id: 375, enumName: "AttributedTypeParameter", cName: "sym__attributed_type_parameter" },
-  { name: "_field_identifier", id: 408, enumName: "AliasFieldIdentifier", cName: "alias_sym_field_identifier" },
-  { name: "_type_identifier", id: 411, enumName: "AliasTypeIdentifier", cName: "alias_sym_type_identifier" },
+  { name: "_attributed_argument", id: 376, enumName: "AttributedArgument", cName: "sym__attributed_argument" },
+  { name: "_field_identifier", id: 409, enumName: "AliasFieldIdentifier", cName: "alias_sym_field_identifier" },
+  { name: "_type_identifier", id: 412, enumName: "AliasTypeIdentifier", cName: "alias_sym_type_identifier" },
 ] as const;
 
 export const enum TSFieldId {
@@ -1487,6 +1491,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   required: boolean;
   multiple: boolean;
 }>> = {
+  '_attributed_argument': [
+    { name: 'attributeItems', required: false, multiple: true },
+    { name: 'expression', required: true, multiple: false },
+  ],
   '_attributed_enum_variant': [
     { name: 'attributeItems', required: false, multiple: true },
     { name: 'enumVariant', required: true, multiple: false },
@@ -1602,8 +1610,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'trait', required: true, multiple: false },
   ],
   'arguments': [
-    { name: 'attributeItems', required: false, multiple: true },
-    { name: 'expressions', required: false, multiple: true },
+    { name: 'attributedArguments', required: false, multiple: true },
   ],
   'array_expression': [
     { name: 'arrayExpressionSemi', required: true, multiple: false },

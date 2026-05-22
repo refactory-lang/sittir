@@ -26,6 +26,7 @@ import type {
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
+    AttributedArgument<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedArgument };
     AttributedEnumVariant<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedEnumVariant };
     AttributedFieldDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedFieldDeclaration };
     AttributedParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributedParameter };
@@ -217,6 +218,7 @@ export interface IsGuards {
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
+    AttributedArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedArgument };
     AttributedEnumVariant(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedEnumVariant };
     AttributedFieldDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedFieldDeclaration };
     AttributedParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedParameter };
@@ -428,7 +430,7 @@ const _supertype_pattern_ids = new Set<number>([311, 312, 129, 313, 126, 151, 31
 const _supertype_statement_ids = new Set<number>([160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
 const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 142, 311, 312, 129, 313, 126, 151, 1, 119, 139, 140, 141]);
 const _supertype_tokens_ids = new Set<number>([168, 169, 142, 311, 312, 129, 313, 126, 151, 1, 119, 139, 140, 141]);
-const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 411, 239, 236, 228, 198]);
+const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 412, 239, 236, 228, 198]);
 const _supertype_useClause_ids = new Set<number>([139, 1, 142, 140, 141, 243, 208, 207, 206, 209]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -681,11 +683,13 @@ const _kindIdByKind = new Map<string, number>([
     ["_attributed_enum_variant", TSKindId.AttributedEnumVariant],
     ["_attributed_parameter", TSKindId.AttributedParameter],
     ["_attributed_type_parameter", TSKindId.AttributedTypeParameter],
+    ["_attributed_argument", TSKindId.AttributedArgument],
     ["_field_identifier", TSKindId.FieldIdentifier],
     ["_type_identifier", TSKindId.TypeIdentifier],
 ]);
 
 export const is = {
+    AttributedArgument: _g(TSKindId.AttributedArgument),
     AttributedEnumVariant: _g(TSKindId.AttributedEnumVariant),
     AttributedFieldDeclaration: _g(TSKindId.AttributedFieldDeclaration),
     AttributedParameter: _g(TSKindId.AttributedParameter),
@@ -901,6 +905,7 @@ function _makeAssertKind(guard: _AnyGuard) {
 }
 
 export const assert = {
+    AttributedArgument: _makeAssert('AttributedArgument', is.AttributedArgument as _AnyGuard),
     AttributedEnumVariant: _makeAssert('AttributedEnumVariant', is.AttributedEnumVariant as _AnyGuard),
     AttributedFieldDeclaration: _makeAssert('AttributedFieldDeclaration', is.AttributedFieldDeclaration as _AnyGuard),
     AttributedParameter: _makeAssert('AttributedParameter', is.AttributedParameter as _AnyGuard),

@@ -71,6 +71,24 @@ export function _arrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
   }, methodsEngine);
 }
 
+export function attributedArgument(config: T.AttributedArgument.Config) {
+  const _attribute_item = config.attributeItem;
+  const _expression = config.expression;
+  return withMethods({
+    $type: TSKindId.AttributedArgument as const,
+    $source: 2 as const,
+    $named: true as const,
+    _attribute_item,
+    _expression,
+    attributeItems() { return _attribute_item; },
+    expression() { return _expression; },
+    $with: {
+      attributeItems: (...values: T.AttributeItem[]) => attributedArgument({ ...config, attributeItem: values }),
+      expression: (value: T.Expression) => attributedArgument({ ...config, expression: value }),
+    },
+  }, methodsEngine);
+}
+
 export function attributedEnumVariant(config: T.AttributedEnumVariant.Config) {
   const _attribute_item = config.attributeItem;
   const _enum_variant = config.enumVariant;
@@ -821,21 +839,15 @@ export function abstractType(config: T.AbstractType.Config) {
   }, methodsEngine);
 }
 
-export function arguments_(config: Partial<T.Arguments.Config> = {}) {
-  const _attribute_item = config.attributeItem;
-  const _expression = config.expression;
+export function arguments_(...children: T.AttributedArgument[]) {
+  const _attributed_argument = children;
   return withMethods({
     $type: TSKindId.Arguments as const,
     $source: 2 as const,
     $named: true as const,
-    _attribute_item,
-    _expression,
-    attributeItems() { return _attribute_item; },
-    expressions() { return _expression; },
-    $with: {
-      attributeItems: (...values: T.AttributeItem[]) => arguments_({ ...config, attributeItem: values }),
-      expressions: (...values: T.Expression[]) => arguments_({ ...config, expression: values }),
-    },
+    _attributed_argument,
+    attributedArguments() { return _attributed_argument; },
+    $with: { $children: (...vs: T.AttributedArgument[]) => arguments_(...vs) },
   }, methodsEngine);
 }
 
@@ -4561,6 +4573,7 @@ export function errorSentinel(text: string) {
 export type FluentKindMap = {
   "_array_expression_list": T.ArrayExpressionList;
   "_array_expression_semi": T.ArrayExpressionSemi;
+  "_attributed_argument": FluentNode<"_attributed_argument", T.AttributedArgument.Config>;
   "_attributed_enum_variant": FluentNode<"_attributed_enum_variant", T.AttributedEnumVariant.Config>;
   "_attributed_field_declaration": FluentNode<"_attributed_field_declaration", T.AttributedFieldDeclaration.Config>;
   "_attributed_parameter": FluentNode<"_attributed_parameter", T.AttributedParameter.Config>;
@@ -4798,6 +4811,7 @@ export type FluentKindMap = {
 export const _factoryMap = {
   "_array_expression_list": _arrayExpressionList,
   "_array_expression_semi": _arrayExpressionSemi,
+  "_attributed_argument": attributedArgument,
   "_attributed_enum_variant": attributedEnumVariant,
   "_attributed_field_declaration": attributedFieldDeclaration,
   "_attributed_parameter": attributedParameter,

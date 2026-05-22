@@ -2223,7 +2223,14 @@ var config = {
     attributed_type_parameter: ($) => seq(
       repeat($.attribute_item),
       choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)
-    )
+    ),
+    // arguments: each call arg is seq(repeat(attribute_item), _expression).
+    // Synthesize a visible `attributed_argument` kind (mirrors
+    // attributed_parameter / attributed_type_parameter) so the arg list
+    // renders `attributed_argument` items. Replaces the transforms:
+    // field('attributes') collision-patch, which named the attribute but
+    // left `_expression` (the actual args) as an empty `$children` slot.
+    attributed_argument: ($) => seq(repeat($.attribute_item), $._expression)
   },
   transforms: {
     // abstract_type: 1 field(s)
@@ -2271,14 +2278,9 @@ var config = {
     // aliasing — composition-order inversion in wire() lets this
     // flow declaratively instead of inline in rules:.
     array_expression: [{ 1: field("attributes") }, { "2/(_expression)": field("elements") }],
-    // arguments: seq('(', repeat(seq(repeat(attribute_item), _expression,
-    // optional(','))), ')').
-    // storageName collision: repeat(attribute_item) at inner-seq pos 0
-    // and _expression at inner-seq pos 1 both infer storageName='children'.
-    // Promote attribute_item to named field; expression stays as $children.
-    arguments: {
-      "1/0": field("attributes")
-    },
+    // arguments: handled by the `attributed_argument` body-pattern group
+    // (see groups: above) — each call arg is synthesized as a visible
+    // `attributed_argument` kind, like `attributed_parameter`.
     // attribute: seq(_path, optional(choice(seq('=', field('value',
     // _expression)), field('arguments', delim_token_tree)))).
     // storageName collision: _path (pos 0) and the optional choice

@@ -85,6 +85,7 @@ export const enum SyntaxKind {
   ArrayExpressionList = "_array_expression_list",
   ArrayExpressionSemi = "_array_expression_semi",
   ArrayTypeOptional1 = "_array_type_optional1",
+  AttributedArgument = "_attributed_argument",
   AttributedEnumVariant = "_attributed_enum_variant",
   AttributedFieldDeclaration = "_attributed_field_declaration",
   AttributedParameter = "_attributed_parameter",
@@ -774,21 +775,21 @@ export const enum TSKindId {
   AttributedEnumVariant = 373,
   AttributedParameter = 374,
   AttributedTypeParameter = 375,
-  SourceFileRepeat1 = 376,
-  TokenRepetitionPatternRepeat1 = 377,
-  TokenRepetitionRepeat1 = 378,
-  _NonSpecialTokenRepeat1 = 379,
-  DeclarationListRepeat1 = 380,
-  OrderedFieldDeclarationListRepeat1 = 381,
-  OrderedFieldDeclarationListRepeat2 = 382,
-  FunctionModifiersRepeat1 = 383,
-  TraitBoundsRepeat1 = 384,
-  TypeParametersRepeat1 = 385,
-  ForLifetimesRepeat1 = 386,
-  TupleTypeRepeat1 = 387,
-  UseBoundsRepeat1 = 388,
-  TypeArgumentsRepeat1 = 389,
-  ArgumentsRepeat1 = 390,
+  AttributedArgument = 376,
+  SourceFileRepeat1 = 377,
+  TokenRepetitionPatternRepeat1 = 378,
+  TokenRepetitionRepeat1 = 379,
+  _NonSpecialTokenRepeat1 = 380,
+  DeclarationListRepeat1 = 381,
+  OrderedFieldDeclarationListRepeat1 = 382,
+  OrderedFieldDeclarationListRepeat2 = 383,
+  FunctionModifiersRepeat1 = 384,
+  TraitBoundsRepeat1 = 385,
+  TypeParametersRepeat1 = 386,
+  ForLifetimesRepeat1 = 387,
+  TupleTypeRepeat1 = 388,
+  UseBoundsRepeat1 = 389,
+  TypeArgumentsRepeat1 = 390,
   TupleExpressionRepeat1 = 391,
   FieldInitializerListRepeat1 = 392,
   MatchArmRepeat1 = 393,
@@ -804,11 +805,12 @@ export const enum TSKindId {
   _WhereClauseOptional1Repeat1 = 403,
   _UseListOptional1Repeat1 = 404,
   _ParametersOptional1Repeat1 = 405,
-  _MatchBlockOptional1Repeat1 = 406,
-  _SlicePatternOptional1Repeat1 = 407,
-  FieldIdentifier = 408,
-  _ShorthandFieldIdentifier = 410,
-  TypeIdentifier = 411,
+  _ArgumentsOptional1Repeat1 = 406,
+  _MatchBlockOptional1Repeat1 = 407,
+  _SlicePatternOptional1Repeat1 = 408,
+  FieldIdentifier = 409,
+  _ShorthandFieldIdentifier = 411,
+  TypeIdentifier = 412,
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -1187,21 +1189,21 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [373, "_attributed_enum_variant"],
   [374, "_attributed_parameter"],
   [375, "_attributed_type_parameter"],
-  [376, "source_file_repeat1"],
-  [377, "token_repetition_pattern_repeat1"],
-  [378, "token_repetition_repeat1"],
-  [379, "_non_special_token_repeat1"],
-  [380, "declaration_list_repeat1"],
-  [381, "ordered_field_declaration_list_repeat1"],
-  [382, "ordered_field_declaration_list_repeat2"],
-  [383, "function_modifiers_repeat1"],
-  [384, "trait_bounds_repeat1"],
-  [385, "type_parameters_repeat1"],
-  [386, "for_lifetimes_repeat1"],
-  [387, "tuple_type_repeat1"],
-  [388, "use_bounds_repeat1"],
-  [389, "type_arguments_repeat1"],
-  [390, "arguments_repeat1"],
+  [376, "_attributed_argument"],
+  [377, "source_file_repeat1"],
+  [378, "token_repetition_pattern_repeat1"],
+  [379, "token_repetition_repeat1"],
+  [380, "_non_special_token_repeat1"],
+  [381, "declaration_list_repeat1"],
+  [382, "ordered_field_declaration_list_repeat1"],
+  [383, "ordered_field_declaration_list_repeat2"],
+  [384, "function_modifiers_repeat1"],
+  [385, "trait_bounds_repeat1"],
+  [386, "type_parameters_repeat1"],
+  [387, "for_lifetimes_repeat1"],
+  [388, "tuple_type_repeat1"],
+  [389, "use_bounds_repeat1"],
+  [390, "type_arguments_repeat1"],
   [391, "tuple_expression_repeat1"],
   [392, "field_initializer_list_repeat1"],
   [393, "match_arm_repeat1"],
@@ -1217,11 +1219,12 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [403, "_where_clause_optional1_repeat1"],
   [404, "_use_list_optional1_repeat1"],
   [405, "_parameters_optional1_repeat1"],
-  [406, "_match_block_optional1_repeat1"],
-  [407, "_slice_pattern_optional1_repeat1"],
-  [408, "_field_identifier"],
-  [410, "_shorthand_field_identifier"],
-  [411, "_type_identifier"],
+  [406, "_arguments_optional1_repeat1"],
+  [407, "_match_block_optional1_repeat1"],
+  [408, "_slice_pattern_optional1_repeat1"],
+  [409, "_field_identifier"],
+  [411, "_shorthand_field_identifier"],
+  [412, "_type_identifier"],
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -1601,6 +1604,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_attributed_enum_variant": return TSKindId.AttributedEnumVariant;
     case "_attributed_parameter": return TSKindId.AttributedParameter;
     case "_attributed_type_parameter": return TSKindId.AttributedTypeParameter;
+    case "_attributed_argument": return TSKindId.AttributedArgument;
     case "source_file_repeat1": return TSKindId.SourceFileRepeat1;
     case "token_repetition_pattern_repeat1": return TSKindId.TokenRepetitionPatternRepeat1;
     case "token_repetition_repeat1": return TSKindId.TokenRepetitionRepeat1;
@@ -1615,7 +1619,6 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "tuple_type_repeat1": return TSKindId.TupleTypeRepeat1;
     case "use_bounds_repeat1": return TSKindId.UseBoundsRepeat1;
     case "type_arguments_repeat1": return TSKindId.TypeArgumentsRepeat1;
-    case "arguments_repeat1": return TSKindId.ArgumentsRepeat1;
     case "tuple_expression_repeat1": return TSKindId.TupleExpressionRepeat1;
     case "field_initializer_list_repeat1": return TSKindId.FieldInitializerListRepeat1;
     case "match_arm_repeat1": return TSKindId.MatchArmRepeat1;
@@ -1631,6 +1634,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_where_clause_optional1_repeat1": return TSKindId._WhereClauseOptional1Repeat1;
     case "_use_list_optional1_repeat1": return TSKindId._UseListOptional1Repeat1;
     case "_parameters_optional1_repeat1": return TSKindId._ParametersOptional1Repeat1;
+    case "_arguments_optional1_repeat1": return TSKindId._ArgumentsOptional1Repeat1;
     case "_match_block_optional1_repeat1": return TSKindId._MatchBlockOptional1Repeat1;
     case "_slice_pattern_optional1_repeat1": return TSKindId._SlicePatternOptional1Repeat1;
     case "_field_identifier": return TSKindId.FieldIdentifier;
@@ -1753,6 +1757,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "attributed_enum_variant": return TSKindId.AttributedEnumVariant;
     case "attributed_parameter": return TSKindId.AttributedParameter;
     case "attributed_type_parameter": return TSKindId.AttributedTypeParameter;
+    case "attributed_argument": return TSKindId.AttributedArgument;
     case "field_identifier": return TSKindId.FieldIdentifier;
     case "shorthand_field_identifier": return TSKindId._ShorthandFieldIdentifier;
     case "type_identifier": return TSKindId.TypeIdentifier;
@@ -2163,6 +2168,14 @@ export interface ArrayTypeOptional1 {
   readonly $type: "_array_type_optional1";
   readonly _length?: Expression;
   length(): Expression | undefined;
+}
+
+export interface AttributedArgument {
+  readonly $type: TSKindId.AttributedArgument;
+  readonly _attribute_item?: readonly (AttributeItem)[];
+  readonly _expression: Expression;
+  attributeItems(): readonly (AttributeItem)[];
+  expression(): Expression;
 }
 
 export interface AttributedEnumVariant {
@@ -2620,10 +2633,8 @@ export interface AbstractType {
 
 export interface Arguments {
   readonly $type: TSKindId.Arguments;
-  readonly _attribute_item?: readonly (AttributeItem)[];
-  readonly _expression?: readonly (Expression)[];
-  attributeItems(): readonly (AttributeItem)[];
-  expressions(): readonly (Expression)[];
+  readonly _attributed_argument?: readonly (AttributedArgument)[];
+  attributedArguments(): readonly (AttributedArgument)[];
 }
 
 export interface ArrayExpressionUFormSemi {
@@ -4351,6 +4362,7 @@ export type BlockCommentContent = Terminal<TSKindId._BlockCommentContent, string
 export interface ArrayExpressionListTree extends AnyTreeNode { readonly type: "_array_expression_list"; }
 export interface ArrayExpressionSemiTree extends AnyTreeNode { readonly type: "_array_expression_semi"; }
 export interface ArrayTypeOptional1Tree extends AnyTreeNode { readonly type: "_array_type_optional1"; }
+export interface AttributedArgumentTree extends AnyTreeNode { readonly type: "_attributed_argument"; }
 export interface AttributedEnumVariantTree extends AnyTreeNode { readonly type: "_attributed_enum_variant"; }
 export interface AttributedFieldDeclarationTree extends AnyTreeNode { readonly type: "_attributed_field_declaration"; }
 export interface AttributedParameterTree extends AnyTreeNode { readonly type: "_attributed_parameter"; }
@@ -5106,6 +5118,7 @@ export type RustNode =
   | ArrayExpressionList
   | ArrayExpressionSemi
   | ArrayTypeOptional1
+  | AttributedArgument
   | AttributedEnumVariant
   | AttributedFieldDeclaration
   | AttributedParameter
@@ -5339,6 +5352,7 @@ export interface KindMap {
   '_array_expression_list': ArrayExpressionList;
   '_array_expression_semi': ArrayExpressionSemi;
   '_array_type_optional1': ArrayTypeOptional1;
+  '_attributed_argument': AttributedArgument;
   '_attributed_enum_variant': AttributedEnumVariant;
   '_attributed_field_declaration': AttributedFieldDeclaration;
   '_attributed_parameter': AttributedParameter;
@@ -5624,6 +5638,7 @@ export interface VariantMap {
 export interface ArrayExpressionListNs extends NodeNs<ArrayExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayExpressionSemiNs extends NodeNs<ArrayExpressionSemi, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ArrayTypeOptional1Ns extends NodeNs<ArrayTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributedArgumentNs extends NodeNs<AttributedArgument, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AttributedEnumVariantNs extends NodeNs<AttributedEnumVariant, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AttributedFieldDeclarationNs extends NodeNs<AttributedFieldDeclaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AttributedParameterNs extends NodeNs<AttributedParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5856,6 +5871,7 @@ export interface NamespaceMap {
   '_array_expression_list': ArrayExpressionListNs;
   '_array_expression_semi': ArrayExpressionSemiNs;
   '_array_type_optional1': ArrayTypeOptional1Ns;
+  '_attributed_argument': AttributedArgumentNs;
   '_attributed_enum_variant': AttributedEnumVariantNs;
   '_attributed_field_declaration': AttributedFieldDeclarationNs;
   '_attributed_parameter': AttributedParameterNs;
@@ -6112,6 +6128,13 @@ export namespace ArrayTypeOptional1 {
   export type Loose = LooseFor<'_array_type_optional1'>;
   export type Tree = TreeFor<'_array_type_optional1'>;
   export type Kind = '_array_type_optional1';
+}
+export namespace AttributedArgument {
+  export type Config = ConfigFor<'_attributed_argument'>;
+  export type Fluent = FluentFor<'_attributed_argument'>;
+  export type Loose = LooseFor<'_attributed_argument'>;
+  export type Tree = TreeFor<'_attributed_argument'>;
+  export type Kind = '_attributed_argument';
 }
 export namespace AttributedEnumVariant {
   export type Config = ConfigFor<'_attributed_enum_variant'>;
