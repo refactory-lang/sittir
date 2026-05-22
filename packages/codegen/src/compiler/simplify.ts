@@ -1040,6 +1040,14 @@ function pushAttrsToLeaves(
 			const patch: Record<string, unknown> = {};
 			if (nextMult !== undefined) patch['multiplicity'] = nextMult;
 			if (separator !== undefined) patch['separator'] = separator;
+			// Propagate the pushed-down fieldName onto the choice NODE too (the
+			// leaf case does this; the choice case forgot). A choice is the slot
+			// boundary, so without this an inlined `field('body', _suite)` whose
+			// `_suite` is a choice loses the `body` name → buildSlot falls back to
+			// an arbitrary arm kind (`block`). See python `function_definition.body`.
+			if (fieldName !== undefined && (rule as { fieldName?: string }).fieldName === undefined) {
+				patch['fieldName'] = fieldName;
+			}
 			return { ...rule, ...patch } as Rule;
 		}
 		case 'group':

@@ -532,21 +532,21 @@ export function call(config: T.Call.Config) {
 export function caseClause(config: T.CaseClause.Config) {
   const _case_pattern = config.casePattern;
   const _guard = config.guard;
-  const _block = config.block;
+  const _consequence = config.consequence;
   return withMethods({
     $type: TSKindId.CaseClause as const,
     $source: 2 as const,
     $named: true as const,
     _case_pattern,
     _guard,
-    _block,
+    _consequence,
     casePatterns() { return _case_pattern; },
     guard() { return _guard; },
-    block() { return _block; },
+    consequence() { return _consequence; },
     $with: {
       casePatterns: (...values: NonEmptyArray<T.CasePattern>) => caseClause({ ...config, casePattern: values }),
       guard: (value?: T.IfClause) => caseClause({ ...config, guard: value }),
-      block: (value: T.SimpleStatements | T.Newline) => caseClause({ ...config, block: value }),
+      consequence: (value: T.SimpleStatements | T.Newline) => caseClause({ ...config, consequence: value }),
     },
   }, methodsEngine);
 }
@@ -581,7 +581,7 @@ export function classDefinition(config: T.ClassDefinition.Config) {
   const _name = config.name;
   const _type_parameters = config.typeParameters;
   const _superclasses = config.superclasses;
-  const _block = config.block;
+  const _body = config.body;
   return withMethods({
     $type: TSKindId.ClassDefinition as const,
     $source: 2 as const,
@@ -589,16 +589,16 @@ export function classDefinition(config: T.ClassDefinition.Config) {
     _name,
     _type_parameters,
     _superclasses,
-    _block,
+    _body,
     name() { return _name; },
     typeParameters() { return _type_parameters; },
     superclasses() { return _superclasses; },
-    block() { return _block; },
+    body() { return _body; },
     $with: {
       name: (value: T.Identifier) => classDefinition({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameter) => classDefinition({ ...config, typeParameters: value }),
       superclasses: (value?: T.ArgumentList) => classDefinition({ ...config, superclasses: value }),
-      block: (value: T.SimpleStatements | T.Newline) => classDefinition({ ...config, block: value }),
+      body: (value: T.SimpleStatements | T.Newline) => classDefinition({ ...config, body: value }),
     },
   }, methodsEngine);
 }
@@ -880,31 +880,33 @@ export function dottedName(...children: T.Identifier[]) {
 
 export function elifClause(config: T.ElifClause.Config) {
   const _condition = config.condition;
-  const _block = config.block;
+  const _consequence = config.consequence;
   return withMethods({
     $type: TSKindId.ElifClause as const,
     $source: 2 as const,
     $named: true as const,
     _condition,
-    _block,
+    _consequence,
     condition() { return _condition; },
-    block() { return _block; },
+    consequence() { return _consequence; },
     $with: {
       condition: (value: T.Expression) => elifClause({ ...config, condition: value }),
-      block: (value: T.SimpleStatements | T.Newline) => elifClause({ ...config, block: value }),
+      consequence: (value: T.SimpleStatements | T.Newline) => elifClause({ ...config, consequence: value }),
     },
   }, methodsEngine);
 }
 
-export function elseClause(child: (T.SimpleStatements | T.Block | T.Newline)) {
-  const _block = child;
+export function elseClause(body: T.ElseClause.Config['body']) {
+  const _body = body;
   return withMethods({
     $type: TSKindId.ElseClause as const,
     $source: 2 as const,
     $named: true as const,
-    _block,
-    block() { return _block; },
-    $with: { $child: (v: (T.SimpleStatements | T.Block | T.Newline)) => elseClause(v) },
+    _body,
+    body() { return _body; },
+    $with: {
+      body: (value: T.ElseClause.Config['body']) => elseClause(value),
+    },
   }, methodsEngine);
 }
 
@@ -1075,15 +1077,17 @@ export function false_() {
   }, methodsEngine);
 }
 
-export function finallyClause(child: (T.SimpleStatements | T.Block | T.Newline)) {
-  const _block = child;
+export function finallyClause(block: T.FinallyClause.Config['block']) {
+  const _block = block;
   return withMethods({
     $type: TSKindId.FinallyClause as const,
     $source: 2 as const,
     $named: true as const,
     _block,
     block() { return _block; },
-    $with: { $child: (v: (T.SimpleStatements | T.Block | T.Newline)) => finallyClause(v) },
+    $with: {
+      block: (value: T.FinallyClause.Config['block']) => finallyClause(value),
+    },
   }, methodsEngine);
 }
 
@@ -1123,7 +1127,7 @@ export function forStatement(config: T.ForStatement.Config) {
   const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
   const _left = config.left;
   const _right = config.right;
-  const _block = config.block;
+  const _body = config.body;
   const _alternative = config.alternative;
   return withMethods({
     $type: TSKindId.ForStatement as const,
@@ -1132,18 +1136,18 @@ export function forStatement(config: T.ForStatement.Config) {
     _async_marker,
     _left,
     _right,
-    _block,
+    _body,
     _alternative,
     asyncMarker() { return _async_marker; },
     left() { return _left; },
     right() { return _right; },
-    block() { return _block; },
+    body() { return _body; },
     alternative() { return _alternative; },
     $with: {
       asyncMarker: (value?: NonNullable<Parameters<typeof forStatement>[0]>['asyncMarker']) => forStatement({ ...config, asyncMarker: value }),
       left: (value: T.LeftHandSide) => forStatement({ ...config, left: value }),
       right: (value: T.Expressions) => forStatement({ ...config, right: value }),
-      block: (value: T.SimpleStatements | T.Newline) => forStatement({ ...config, block: value }),
+      body: (value: T.SimpleStatements | T.Newline) => forStatement({ ...config, body: value }),
       alternative: (value?: T.ElseClause) => forStatement({ ...config, alternative: value }),
     },
   }, methodsEngine);
@@ -1167,7 +1171,7 @@ export function functionDefinition(config: T.FunctionDefinition.Config) {
   const _type_parameters = config.typeParameters;
   const _parameters = config.parameters;
   const _return_type = config.returnType;
-  const _block = config.block;
+  const _body = config.body;
   return withMethods({
     $type: TSKindId.FunctionDefinition as const,
     $source: 2 as const,
@@ -1177,20 +1181,20 @@ export function functionDefinition(config: T.FunctionDefinition.Config) {
     _type_parameters,
     _parameters,
     _return_type,
-    _block,
+    _body,
     asyncMarker() { return _async_marker; },
     name() { return _name; },
     typeParameters() { return _type_parameters; },
     parameters() { return _parameters; },
     returnType() { return _return_type; },
-    block() { return _block; },
+    body() { return _body; },
     $with: {
       asyncMarker: (value?: NonNullable<Parameters<typeof functionDefinition>[0]>['asyncMarker']) => functionDefinition({ ...config, asyncMarker: value }),
       name: (value: T.Identifier) => functionDefinition({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameter) => functionDefinition({ ...config, typeParameters: value }),
       parameters: (value: T.Parameters) => functionDefinition({ ...config, parameters: value }),
       returnType: (value?: T.Type) => functionDefinition({ ...config, returnType: value }),
-      block: (value: T.SimpleStatements | T.Newline) => functionDefinition({ ...config, block: value }),
+      body: (value: T.SimpleStatements | T.Newline) => functionDefinition({ ...config, body: value }),
     },
   }, methodsEngine);
 }
@@ -1284,21 +1288,21 @@ export function ifClause(expression: T.IfClause.Config['expression']) {
 
 export function ifStatement(config: T.IfStatement.Config) {
   const _condition = config.condition;
-  const _block = config.block;
+  const _consequence = config.consequence;
   const _alternative = config.alternative;
   return withMethods({
     $type: TSKindId.IfStatement as const,
     $source: 2 as const,
     $named: true as const,
     _condition,
-    _block,
+    _consequence,
     _alternative,
     condition() { return _condition; },
-    block() { return _block; },
+    consequence() { return _consequence; },
     alternatives() { return _alternative; },
     $with: {
       condition: (value: T.Expression) => ifStatement({ ...config, condition: value }),
-      block: (value: T.SimpleStatements | T.Newline) => ifStatement({ ...config, block: value }),
+      consequence: (value: T.SimpleStatements | T.Newline) => ifStatement({ ...config, consequence: value }),
       alternatives: (...values: (T.ElifClause | T.ElseClause)[]) => ifStatement({ ...config, alternative: values }),
     },
   }, methodsEngine);
@@ -1306,22 +1310,18 @@ export function ifStatement(config: T.IfStatement.Config) {
 
 export function importFromStatement(config: T.ImportFromStatement.Config) {
   const _module_name = config.moduleName;
-  const _wildcard_import = coerceBooleanKeywordStorage(config.wildcardImport);
-  const _name = config.name;
+  const _wildcard_import = config.wildcardImport;
   return withMethods({
     $type: TSKindId.ImportFromStatement as const,
     $source: 2 as const,
     $named: true as const,
     _module_name,
     _wildcard_import,
-    _name,
     moduleName() { return _module_name; },
-    wildcardImport() { return _wildcard_import; },
-    names() { return _name; },
+    wildcardImports() { return _wildcard_import; },
     $with: {
       moduleName: (value: T.RelativeImport | T.DottedName) => importFromStatement({ ...config, moduleName: value }),
-      wildcardImport: (value?: NonNullable<Parameters<typeof importFromStatement>[0]>['wildcardImport']) => importFromStatement({ ...config, wildcardImport: value }),
-      names: (...values: (T.DottedName | T.AliasedImport)[]) => importFromStatement({ ...config, name: values }),
+      wildcardImports: (...values: NonEmptyArray<T.WildcardImport | T.DottedName | T.AliasedImport>) => importFromStatement({ ...config, wildcardImport: values }),
     },
   }, methodsEngine);
 }
@@ -1934,7 +1934,7 @@ export function true_() {
 }
 
 export function tryStatement(config: T.TryStatement.Config) {
-  const _block = config.block;
+  const _body = config.body;
   const _except_clauses = config.exceptClauses;
   const _else_clause = config.elseClause;
   const _finally_clause = config.finallyClause;
@@ -1942,16 +1942,16 @@ export function tryStatement(config: T.TryStatement.Config) {
     $type: TSKindId.TryStatement as const,
     $source: 2 as const,
     $named: true as const,
-    _block,
+    _body,
     _except_clauses,
     _else_clause,
     _finally_clause,
-    block() { return _block; },
+    body() { return _body; },
     exceptClauses() { return _except_clauses; },
     elseClause() { return _else_clause; },
     finallyClause() { return _finally_clause; },
     $with: {
-      block: (value: T.SimpleStatements | T.Newline) => tryStatement({ ...config, block: value }),
+      body: (value: T.SimpleStatements | T.Newline) => tryStatement({ ...config, body: value }),
       exceptClauses: (...values: T.ExceptClause[]) => tryStatement({ ...config, exceptClauses: values }),
       elseClause: (value?: T.ElseClause) => tryStatement({ ...config, elseClause: value }),
       finallyClause: (value?: T.FinallyClause) => tryStatement({ ...config, finallyClause: value }),
@@ -2130,21 +2130,21 @@ export function unionType(config: T.UnionType.Config) {
 
 export function whileStatement(config: T.WhileStatement.Config) {
   const _condition = config.condition;
-  const _block = config.block;
+  const _body = config.body;
   const _alternative = config.alternative;
   return withMethods({
     $type: TSKindId.WhileStatement as const,
     $source: 2 as const,
     $named: true as const,
     _condition,
-    _block,
+    _body,
     _alternative,
     condition() { return _condition; },
-    block() { return _block; },
+    body() { return _body; },
     alternative() { return _alternative; },
     $with: {
       condition: (value: T.Expression) => whileStatement({ ...config, condition: value }),
-      block: (value: T.SimpleStatements | T.Newline) => whileStatement({ ...config, block: value }),
+      body: (value: T.SimpleStatements | T.Newline) => whileStatement({ ...config, body: value }),
       alternative: (value?: T.ElseClause) => whileStatement({ ...config, alternative: value }),
     },
   }, methodsEngine);
@@ -2231,21 +2231,21 @@ export function withItem(value: T.WithItem.Config['value']) {
 export function withStatement(config: T.WithStatement.Config) {
   const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
   const _with_clause = config.withClause;
-  const _block = config.block;
+  const _body = config.body;
   return withMethods({
     $type: TSKindId.WithStatement as const,
     $source: 2 as const,
     $named: true as const,
     _async_marker,
     _with_clause,
-    _block,
+    _body,
     asyncMarker() { return _async_marker; },
     withClause() { return _with_clause; },
-    block() { return _block; },
+    body() { return _body; },
     $with: {
       asyncMarker: (value?: NonNullable<Parameters<typeof withStatement>[0]>['asyncMarker']) => withStatement({ ...config, asyncMarker: value }),
       withClause: (value: T.WithClause) => withStatement({ ...config, withClause: value }),
-      block: (value: T.SimpleStatements | T.Newline) => withStatement({ ...config, block: value }),
+      body: (value: T.SimpleStatements | T.Newline) => withStatement({ ...config, body: value }),
     },
   }, methodsEngine);
 }

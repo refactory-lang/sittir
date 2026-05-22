@@ -8711,9 +8711,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "name",
-          "propertyName": "names",
-          "paramName": "names",
+          "name": "opening",
+          "propertyName": "openings",
+          "paramName": "openings",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -8723,24 +8723,7 @@
               "multiplicity": "array",
               "name": "_property_name",
               "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_property_name"
-            ]
-          }
-        },
-        {
-          "name": "enum_assignment",
-          "propertyName": "enumAssignments",
-          "paramName": "enumAssignments",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -8748,10 +8731,11 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
+              "_property_name",
               "enum_assignment"
             ]
           }
@@ -11912,64 +11896,47 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "typeof"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "from_clause",
+          "propertyName": "fromClause",
+          "paramName": "fromClause",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "import_clause",
+              "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "import_clause",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "import_clause"
-            ]
-          }
-        },
-        {
-          "name": "source",
-          "propertyName": "source",
-          "paramName": "source",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "string",
               "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "string"
-            ]
-          }
-        },
-        {
-          "name": "import_require_clause",
-          "propertyName": "importRequireClause",
-          "paramName": "importRequireClause",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "import_require_clause",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
+              "import_clause",
+              "string",
               "import_require_clause"
             ]
           }

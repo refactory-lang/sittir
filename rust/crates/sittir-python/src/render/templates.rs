@@ -253,7 +253,7 @@ pub struct CallTemplate<'a> {
 #[template(path = "case_clause.jinja", escape = "none")]
 pub struct CaseClauseTemplate<'a> {
     pub case_pattern: ListNonterminalView<'a>,
-    pub consequence: OptionalNonterminalView<'a>,
+    pub consequence: SingleNonterminalView<'a>,
     pub guard: OptionalNonterminalView<'a>,
 }
 
@@ -273,7 +273,7 @@ pub struct ChevronTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "class_definition.jinja", escape = "none")]
 pub struct ClassDefinitionTemplate<'a> {
-    pub body: OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
     pub superclasses: OptionalNonterminalView<'a>,
     pub type_parameters: OptionalNonterminalView<'a>,
@@ -394,19 +394,20 @@ pub struct DottedNameTemplate<'a> {
 #[template(path = "elif_clause.jinja", escape = "none")]
 pub struct ElifClauseTemplate<'a> {
     pub condition: SingleNonterminalView<'a>,
-    pub consequence: OptionalNonterminalView<'a>,
+    pub consequence: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "else_clause.jinja", escape = "none")]
 pub struct ElseClauseTemplate<'a> {
-    pub body: OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "except_clause.jinja", escape = "none")]
 pub struct ExceptClauseTemplate<'a> {
     pub block: SingleNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
     pub content: OptionalNonterminalView<'a>,
     pub except_clause_as: ListNonterminalView<'a>,
 }
@@ -461,7 +462,7 @@ pub struct ForInClauseTemplate<'a> {
 pub struct ForStatementTemplate<'a> {
     pub alternative: OptionalNonterminalView<'a>,
     pub async_marker: OptionalNonterminalView<'a>,
-    pub body: OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
     pub left: SingleNonterminalView<'a>,
     pub right: SingleNonterminalView<'a>,
 }
@@ -477,7 +478,7 @@ pub struct FormatSpecifierTemplate<'a> {
 #[template(path = "function_definition.jinja", escape = "none")]
 pub struct FunctionDefinitionTemplate<'a> {
     pub async_marker: OptionalNonterminalView<'a>,
-    pub body: OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
     pub parameters: SingleNonterminalView<'a>,
     pub return_type: OptionalNonterminalView<'a>,
@@ -523,14 +524,15 @@ pub struct IfClauseTemplate<'a> {
 pub struct IfStatementTemplate<'a> {
     pub alternative: ListNonterminalView<'a>,
     pub condition: SingleNonterminalView<'a>,
-    pub consequence: OptionalNonterminalView<'a>,
+    pub consequence: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "import_from_statement.jinja", escape = "none")]
 pub struct ImportFromStatementTemplate<'a> {
     pub module_name: SingleNonterminalView<'a>,
-    pub wildcard_import: OptionalNonterminalView<'a>,
+    pub name: ListNonterminalView<'a>,
+    pub wildcard_import: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -785,7 +787,7 @@ pub struct SubscriptTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "try_statement.jinja", escape = "none")]
 pub struct TryStatementTemplate<'a> {
-    pub body: OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
     pub else_clause: OptionalNonterminalView<'a>,
     pub except_clauses: ListNonterminalView<'a>,
     pub finally_clause: OptionalNonterminalView<'a>,
@@ -865,7 +867,7 @@ pub struct UnionTypeTemplate<'a> {
 #[template(path = "while_statement.jinja", escape = "none")]
 pub struct WhileStatementTemplate<'a> {
     pub alternative: OptionalNonterminalView<'a>,
-    pub body: OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
     pub condition: SingleNonterminalView<'a>,
 }
 
@@ -899,7 +901,7 @@ pub struct WithItemTemplate<'a> {
 #[template(path = "with_statement.jinja", escape = "none")]
 pub struct WithStatementTemplate<'a> {
     pub async_marker: OptionalNonterminalView<'a>,
-    pub body: OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
     pub with_clause: SingleNonterminalView<'a>,
 }
 

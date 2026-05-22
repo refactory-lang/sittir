@@ -2111,14 +2111,11 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.EnumBody as const,
-    _name: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._name, ["_property_name","_property_identifier","identifier","_reserved_identifier","private_property_identifier","string","number","computed_property_name"]), false, "name"),
-    _enum_assignment: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._enum_assignment, ["enum_assignment"]), false, "enum_assignment"),
+    _opening: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._opening, ["_property_name","_property_identifier","identifier","_reserved_identifier","private_property_identifier","string","number","computed_property_name","enum_assignment"]), false, "opening"),
 
-    names() { return drillInAll<T.PropertyName>(this._name as readonly T.PropertyName[] | undefined, tree); },
-    enumAssignments() { return drillInAll<T.EnumAssignment>(this._enum_assignment as readonly T.EnumAssignment[] | undefined, tree); },
+    openings() { return drillInAll<T.PropertyName | T.EnumAssignment>(this._opening as readonly (T.PropertyName | T.EnumAssignment)[] | undefined, tree); },
     $with: {
-      names: (...v: NonNullable<T.EnumBody['_name']>[number][]) => wrapEnumBody({ ...data, _name: v }, tree),
-      enumAssignments: (...v: NonNullable<T.EnumBody['_enum_assignment']>[number][]) => wrapEnumBody({ ...data, _enum_assignment: v }, tree),
+      openings: (...v: NonNullable<T.EnumBody['_opening']>[number][]) => wrapEnumBody({ ...data, _opening: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2748,21 +2745,18 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportStatement as const,
-    _import_clause: normalizeSingularWrapSlot(data._import_clause, "import_clause", false, data.$type),
-    _source: normalizeSingularWrapSlot(data._source, "source", false, data.$type),
-    _import_require_clause: normalizeSingularWrapSlot(data._import_require_clause, "import_require_clause", false, data.$type),
+    _import_clause: projectKindEnumStorage(normalizeSingularWrapSlot(data._import_clause, "import_clause", false, data.$type)),
+    _from_clause: normalizeSingularWrapSlot(data._from_clause, "from_clause", true, data.$type),
     _import_attribute: normalizeSingularWrapSlot(data._import_attribute, "import_attribute", false, data.$type),
     _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
 
-    importClause() { return drillIn<"type" | "typeof" | T.ImportClause | undefined>(this._import_clause, tree); },
-    source() { return drillIn<T.String | undefined>(this._source, tree); },
-    importRequireClause() { return drillIn<T.ImportRequireClause | undefined>(this._import_require_clause, tree); },
+    importClause() { return this._import_clause; },
+    fromClause() { return drillIn<T.ImportClause | T.String | T.ImportRequireClause>(this._from_clause, tree); },
     importAttribute() { return drillIn<T.ImportAttribute | undefined>(this._import_attribute, tree); },
     semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
     $with: {
       importClause: (v: NonNullable<T.ImportStatement['_import_clause']>) => wrapImportStatement({ ...data, _import_clause: v }, tree),
-      source: (v: NonNullable<T.ImportStatement['_source']>) => wrapImportStatement({ ...data, _source: v }, tree),
-      importRequireClause: (v: NonNullable<T.ImportStatement['_import_require_clause']>) => wrapImportStatement({ ...data, _import_require_clause: v }, tree),
+      fromClause: (v: NonNullable<T.ImportStatement['_from_clause']>) => wrapImportStatement({ ...data, _from_clause: v }, tree),
       importAttribute: (v: NonNullable<T.ImportStatement['_import_attribute']>) => wrapImportStatement({ ...data, _import_attribute: v }, tree),
       semicolon: (v: NonNullable<T.ImportStatement['_semicolon']>) => wrapImportStatement({ ...data, _semicolon: v }, tree),
     },

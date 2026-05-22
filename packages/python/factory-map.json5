@@ -204,22 +204,22 @@
     "assignment.assignment_typed": {
       "assignment_typed": "_assignment_typed"
     },
-    "case_clause.block": {
+    "case_clause.consequence": {
       "block": "_newline"
     },
     "case_pattern.content": {
       "as_pattern": "_as_pattern"
     },
-    "class_definition.block": {
+    "class_definition.body": {
       "block": "_newline"
     },
     "dict_pattern.dict_pattern_kv": {
       "dict_pattern_kv": "_dict_pattern_kv"
     },
-    "elif_clause.block": {
+    "elif_clause.consequence": {
       "block": "_newline"
     },
-    "else_clause.block": {
+    "else_clause.body": {
       "block": "_newline"
     },
     "except_clause.content": {
@@ -235,16 +235,16 @@
     "finally_clause.block": {
       "block": "_newline"
     },
-    "for_statement.block": {
+    "for_statement.body": {
       "block": "_newline"
     },
     "format_specifier.content": {
       "format_expression": "interpolation"
     },
-    "function_definition.block": {
+    "function_definition.body": {
       "block": "_newline"
     },
-    "if_statement.block": {
+    "if_statement.consequence": {
       "block": "_newline"
     },
     "match_statement.body": {
@@ -253,10 +253,10 @@
     "parenthesized_list_splat.content": {
       "parenthesized_expression": "parenthesized_list_splat"
     },
-    "try_statement.block": {
+    "try_statement.body": {
       "block": "_newline"
     },
-    "while_statement.block": {
+    "while_statement.body": {
       "block": "_newline"
     },
     "with_clause.with_clause_bare": {
@@ -265,7 +265,7 @@
     "with_clause.with_clause_paren": {
       "with_clause_paren": "_with_clause_paren"
     },
-    "with_statement.block": {
+    "with_statement.body": {
       "block": "_newline"
     }
   },
@@ -359,7 +359,7 @@
     "case_clause": [
       "case_pattern",
       "guard",
-      "block"
+      "consequence"
     ],
     "case_pattern": [
       "content"
@@ -371,7 +371,7 @@
       "name",
       "type_parameters",
       "superclasses",
-      "block"
+      "body"
     ],
     "class_pattern": [
       "dotted_name",
@@ -432,10 +432,10 @@
     ],
     "elif_clause": [
       "condition",
-      "block"
+      "consequence"
     ],
     "else_clause": [
-      "block"
+      "body"
     ],
     "except_clause": [
       "content",
@@ -468,7 +468,7 @@
     "for_statement": [
       "left",
       "right",
-      "block",
+      "body",
       "alternative"
     ],
     "format_specifier": [
@@ -479,7 +479,7 @@
       "type_parameters",
       "parameters",
       "return_type",
-      "block"
+      "body"
     ],
     "future_import_statement": [
       "name"
@@ -500,12 +500,12 @@
     ],
     "if_statement": [
       "condition",
-      "block",
+      "consequence",
       "alternative"
     ],
     "import_from_statement": [
       "module_name",
-      "name"
+      "wildcard_import"
     ],
     "import_statement": [
       "name"
@@ -637,7 +637,7 @@
       "subscript"
     ],
     "try_statement": [
-      "block",
+      "body",
       "except_clauses",
       "else_clause",
       "finally_clause"
@@ -680,7 +680,7 @@
     ],
     "while_statement": [
       "condition",
-      "block",
+      "body",
       "alternative"
     ],
     "with_clause_bare": [
@@ -698,7 +698,7 @@
     ],
     "with_statement": [
       "with_clause",
-      "block"
+      "body"
     ],
     "yield": [
       "expression",
@@ -1047,7 +1047,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "block": {
+      "consequence": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1095,7 +1095,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "block": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1325,7 +1325,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "block": {
+      "consequence": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1334,7 +1334,7 @@
       }
     },
     "else_clause": {
-      "block": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1483,7 +1483,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "block": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1543,7 +1543,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "block": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1618,7 +1618,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "block": {
+      "consequence": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1644,16 +1644,9 @@
       "wildcard_import": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "import_statement": {
@@ -2128,7 +2121,7 @@
       }
     },
     "try_statement": {
-      "block": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2304,7 +2297,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "block": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2377,7 +2370,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "block": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,

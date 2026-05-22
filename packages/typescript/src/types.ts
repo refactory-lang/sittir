@@ -3076,10 +3076,8 @@ export interface EnumAssignment {
 
 export interface EnumBody {
   readonly $type: TSKindId.EnumBody;
-  readonly _name?: readonly (PropertyName)[];
-  readonly _enum_assignment?: readonly (EnumAssignment)[];
-  names(): readonly (PropertyName)[];
-  enumAssignments(): readonly (EnumAssignment)[];
+  readonly _opening?: readonly (PropertyName | EnumAssignment)[];
+  openings(): readonly (PropertyName | EnumAssignment)[];
 }
 
 export interface EnumDeclaration {
@@ -3479,14 +3477,15 @@ export interface ImportSpecifierUFormAs {
 export type ImportSpecifier = ImportSpecifierUFormName | ImportSpecifierUFormAs;
 export interface ImportStatement {
   readonly $type: TSKindId.ImportStatement;
-  readonly _import_clause?: "type" | "typeof" | ImportClause;
-  readonly _source?: String;
-  readonly _import_require_clause?: ImportRequireClause;
+  readonly _import_clause?: number;
+  readonly _from_clause: ImportClause | String | ImportRequireClause;
   readonly _import_attribute?: ImportAttribute;
   readonly _semicolon?: Semicolon;
-  importClause(): "type" | "typeof" | ImportClause | undefined;
-  source(): String | undefined;
-  importRequireClause(): ImportRequireClause | undefined;
+  readonly __inputHints__?: {
+    readonly import_clause?: KindEnum<"type" | "typeof", TSKindId.Type | TSKindId.Typeof>;
+  };
+  importClause(): number | undefined;
+  fromClause(): ImportClause | String | ImportRequireClause;
   importAttribute(): ImportAttribute | undefined;
   semicolon(): Semicolon | undefined;
 }

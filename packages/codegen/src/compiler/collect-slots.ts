@@ -45,6 +45,7 @@ import {
 	snakeToCamel,
 	pluralize,
 	safeParamName,
+	kindsOf,
 } from './node-map.ts';
 import { findRepeatFlag } from './template-walker.ts';
 
@@ -419,7 +420,7 @@ function buildSlot(
 
 	const aliasSources = deriveAliasSources(rule);
 
-	return {
+	const slot: AssembledNonterminal = {
 		name: baseName,
 		propertyName,
 		configKey: basePropertyName,
@@ -433,6 +434,15 @@ function buildSlot(
 		...(origin ? { origin } : {}),
 		sourceRuleId: rule.id,
 	};
+	// --- _new centralized naming (foundation for retiring the scattered
+	// origin/baseName/distribution logic). `fieldName` wins; else the single
+	// referenced kind name (incl. a supertype's own name); else warn → 'content'.
+	// `parseNames` = [fieldName] (parser routes by field) or the ref-kind names.
+	const refKindNames = kindsOf(slot);
+	const fieldName = rule.fieldName;
+	const parseNamesNew = fieldName !== undefined ? [fieldName] : [...refKindNames];
+	const storageNameNew = fieldName ?? (refKindNames.length === 1 ? refKindNames[0]! : 'content');
+	return { ...slot, fieldName, storageNameNew, nameNew: snakeToCamel(storageNameNew), parseNamesNew };
 }
 
 /**
@@ -502,7 +512,12 @@ export function collectSlots(
 			// to optional. A choice whose arms are all bare kinds / literals
 			// (`choice(<,>,...)`, `choice(symA, symB)`) is a true union → ONE slot
 			// (handled by `buildSlot` in the default case below).
-			if (isStructuralChoice(rule)) {
+			// A FIELD-named choice (`field('body', choice(...))`, e.g. python
+			// `function_definition.body` over the inlined `_suite` choice) is ONE
+			// slot named by the field — do NOT distribute its arms. Distribution
+			// drops the field name and splits the choice into per-arm slots (the
+			// arms all alias to `block`, so the body slot mis-derives to `block`).
+			if (rule.fieldName === undefined && isStructuralChoice(rule)) {
 				const armMult = rule.multiplicity ?? inherited;
 				const armSlots = rule.members.map((m) =>
 					mergeByName(collectSlots(m, kindForName, kindEntries, armMult, rule.separator ?? inheritedSeparator))

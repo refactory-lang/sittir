@@ -978,8 +978,7 @@
       "value"
     ],
     "enum_body": [
-      "name",
-      "enum_assignment"
+      "opening"
     ],
     "enum_declaration": [
       "name",
@@ -1138,8 +1137,7 @@
     ],
     "import_statement": [
       "import_clause",
-      "source",
-      "import_require_clause",
+      "from_clause",
       "import_attribute",
       "semicolon"
     ],
@@ -3072,14 +3070,7 @@
       }
     },
     "enum_body": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "enum_assignment": {
+      "opening": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3821,17 +3812,10 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "source": {
+      "from_clause": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "import_require_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       },

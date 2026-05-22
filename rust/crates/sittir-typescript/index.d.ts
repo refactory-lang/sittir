@@ -785,8 +785,7 @@ export interface EnumBodyTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: Array<PropertyNameTransport>
-  _enum_assignment?: Array<EnumAssignmentTransport>
+  _opening?: Array<EnumBodyOpeningTransportSlot>
 }
 
 export interface EnumDeclarationTransport {
@@ -1480,11 +1479,10 @@ export interface ImportStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _import_clause?: ImportStatementImportClauseTransportSlot
-  _source?: StringTransport
+  _import_clause?: Box<AnyTransport>
+  _from_clause: ImportStatementFromClauseTransportSlot
   _import_attribute?: ImportAttributeTransport
   _semicolon?: SemicolonTransport
-  _import_require_clause?: ImportRequireClauseTransport
 }
 
 export interface IndexSignatureColonTransport {

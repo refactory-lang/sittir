@@ -1564,6 +1564,14 @@ export interface AssembledNonterminal {
 	 */
 	readonly sourceRuleId?: RuleId;
 	storageInfo?: FieldStorageInfo;
+	// --- _new centralized naming (DIAGNOSTIC, pre-switch-over) ---
+	// Single-source naming: `fieldName` wins; else the single referenced kind
+	// name; else a warn → 'content'. Compare against `name`/`storageName` to find
+	// where the legacy scattered derivation deviates before migrating.
+	readonly fieldName?: string;
+	readonly storageNameNew?: string;
+	readonly nameNew?: string;
+	readonly parseNamesNew?: readonly string[];
 }
 
 /**

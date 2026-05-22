@@ -2019,19 +2019,15 @@ export function enumAssignment(config: T.EnumAssignment.Config) {
 }
 
 export function enumBody(config: Partial<T.EnumBody.Config> = {}) {
-  const _name = config.name;
-  const _enum_assignment = config.enumAssignment;
+  const _opening = config.opening;
   return withMethods({
     $type: TSKindId.EnumBody as const,
     $source: 2 as const,
     $named: true as const,
-    _name,
-    _enum_assignment,
-    names() { return _name; },
-    enumAssignments() { return _enum_assignment; },
+    _opening,
+    openings() { return _opening; },
     $with: {
-      names: (...values: T.PropertyName[]) => enumBody({ ...config, name: values }),
-      enumAssignments: (...values: T.EnumAssignment[]) => enumBody({ ...config, enumAssignment: values }),
+      openings: (...values: (T.PropertyName | T.EnumAssignment)[]) => enumBody({ ...config, opening: values }),
     },
   }, methodsEngine);
 }
@@ -2865,10 +2861,9 @@ export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUF
   }, methodsEngine);
 }
 
-export function importStatement(config: Partial<T.ImportStatement.Config> = {}) {
-  const _import_clause = config.importClause;
-  const _source = config.source;
-  const _import_require_clause = config.importRequireClause;
+export function importStatement(config: T.ImportStatement.Config) {
+  const _import_clause = coerceKindEnumStorage(config.importClause, [["type", TSKindId.Type] as const, ["typeof", TSKindId.Typeof] as const]);
+  const _from_clause = config.fromClause;
   const _import_attribute = config.importAttribute;
   const _semicolon = config.semicolon;
   return withMethods({
@@ -2876,19 +2871,16 @@ export function importStatement(config: Partial<T.ImportStatement.Config> = {}) 
     $source: 2 as const,
     $named: true as const,
     _import_clause,
-    _source,
-    _import_require_clause,
+    _from_clause,
     _import_attribute,
     _semicolon,
     importClause() { return _import_clause; },
-    source() { return _source; },
-    importRequireClause() { return _import_require_clause; },
+    fromClause() { return _from_clause; },
     importAttribute() { return _import_attribute; },
     semicolon() { return _semicolon; },
     $with: {
-      importClause: (value?: "type" | "typeof" | T.ImportClause) => importStatement({ ...config, importClause: value }),
-      source: (value?: T.String) => importStatement({ ...config, source: value }),
-      importRequireClause: (value?: T.ImportRequireClause) => importStatement({ ...config, importRequireClause: value }),
+      importClause: (value?: NonNullable<Parameters<typeof importStatement>[0]>['importClause']) => importStatement({ ...config, importClause: value }),
+      fromClause: (value: T.ImportClause | T.String | T.ImportRequireClause) => importStatement({ ...config, fromClause: value }),
       importAttribute: (value?: T.ImportAttribute) => importStatement({ ...config, importAttribute: value }),
       semicolon: (value?: T.Semicolon) => importStatement({ ...config, semicolon: value }),
     },

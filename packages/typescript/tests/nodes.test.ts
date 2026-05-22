@@ -1015,13 +1015,13 @@ describe('import_specifier', () => {
 
 describe('import_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.importStatement({});
+    const node = ir.importStatement({ fromClause: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ImportStatement);
     expect(node.$source).toBe(2);
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.importStatement({});
-    expect(() => node.$render!()).not.toThrow();
+  it('render produces non-empty string', () => {
+    const node = ir.importStatement({ fromClause: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 

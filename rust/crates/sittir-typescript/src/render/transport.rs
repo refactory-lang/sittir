@@ -5709,6 +5709,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                     if let Ok(value) = ExportStatementTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::ExportStatement(value));
                     }
+                    if let Ok(value) = ImportStatementTransport::from_napi_value(env, napi_val) {
+                        return Ok(Self::ImportStatement(value));
+                    }
                     if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::ExpressionStatement(value));
                     }
@@ -5744,9 +5747,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                     }
                     if let Ok(value) = LabeledStatementTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::LabeledStatement(value));
-                    }
-                    if let Ok(value) = ImportStatementTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::ImportStatement(value));
                     }
                     if let Ok(value) = DebuggerStatementTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::DebuggerStatement(value));
@@ -5885,6 +5885,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                     if let Ok(value) = ExportStatementTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::ExportStatement(value));
                     }
+                    if let Ok(value) = ImportStatementTransport::from_napi_value(env, napi_val) {
+                        return Ok(Self::ImportStatement(value));
+                    }
                     if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::ExpressionStatement(value));
                     }
@@ -5920,9 +5923,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                     }
                     if let Ok(value) = LabeledStatementTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::LabeledStatement(value));
-                    }
-                    if let Ok(value) = ImportStatementTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::ImportStatement(value));
                     }
                     if let Ok(value) = DebuggerStatementTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::DebuggerStatement(value));
@@ -12606,6 +12606,144 @@ impl RenderableTransport for DecoratorParenthesizedExpressionContentTransportSlo
 }
 
 #[derive(Debug, Clone)]
+pub enum EnumBodyOpeningTransportSlot {
+    Identifier(IdentifierTransport),
+    ReservedIdentifier(ReservedIdentifierTransport),
+    PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
+    String(StringTransport),
+    Number(NumberTransport),
+    ComputedPropertyName(ComputedPropertyNameTransport),
+    EnumAssignment(EnumAssignmentTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyOpeningTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                106 => Ok(Self::PrivatePropertyIdentifier(
+                    PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::String(
+                    StringTransport::from_napi_value(env, napi_val)?
+                )),
+                105 => Ok(Self::Number(
+                    NumberTransport::from_napi_value(env, napi_val)?
+                )),
+                265 => Ok(Self::ComputedPropertyName(
+                    ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
+                )),
+                292 => Ok(Self::EnumAssignment(
+                    EnumAssignmentTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in EnumBodyOpeningTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("EnumBodyOpeningTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in EnumBodyOpeningTransportSlot")
+        )?;
+        match kind_id {
+                1 => Ok(Self::Identifier(
+                    IdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                106 => Ok(Self::PrivatePropertyIdentifier(
+                    PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
+                )),
+                247 => Ok(Self::String(
+                    StringTransport::from_napi_value(env, napi_val)?
+                )),
+                105 => Ok(Self::Number(
+                    NumberTransport::from_napi_value(env, napi_val)?
+                )),
+                265 => Ok(Self::ComputedPropertyName(
+                    ComputedPropertyNameTransport::from_napi_value(env, napi_val)?
+                )),
+                292 => Ok(Self::EnumAssignment(
+                    EnumAssignmentTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in EnumBodyOpeningTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for EnumBodyOpeningTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("EnumBodyOpeningTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<EnumBodyOpeningTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        EnumBodyOpeningTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<EnumBodyOpeningTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        EnumBodyOpeningTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn enum_body_opening_transport_slot_to_any(t: EnumBodyOpeningTransportSlot) -> AnyTransport {
+    match t {
+        EnumBodyOpeningTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        EnumBodyOpeningTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        EnumBodyOpeningTransportSlot::PrivatePropertyIdentifier(inner) => AnyTransport::PrivatePropertyIdentifier(inner),
+        EnumBodyOpeningTransportSlot::String(inner) => AnyTransport::String(inner),
+        EnumBodyOpeningTransportSlot::Number(inner) => AnyTransport::Number(inner),
+        EnumBodyOpeningTransportSlot::ComputedPropertyName(inner) => AnyTransport::ComputedPropertyName(inner),
+        EnumBodyOpeningTransportSlot::EnumAssignment(inner) => AnyTransport::EnumAssignment(inner),
+        EnumBodyOpeningTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for EnumBodyOpeningTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            EnumBodyOpeningTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            EnumBodyOpeningTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+            EnumBodyOpeningTransportSlot::PrivatePropertyIdentifier(inner) => render_private_property_identifier(inner, dest),
+            EnumBodyOpeningTransportSlot::String(inner) => render_string(inner, dest),
+            EnumBodyOpeningTransportSlot::Number(inner) => render_number(inner, dest),
+            EnumBodyOpeningTransportSlot::ComputedPropertyName(inner) => render_computed_property_name(inner, dest),
+            EnumBodyOpeningTransportSlot::EnumAssignment(inner) => render_enum_assignment(inner, dest),
+            EnumBodyOpeningTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ExtendsTypeClauseTypeTransportSlot {
     Identifier(IdentifierTransport),
     NestedTypeIdentifier(NestedTypeIdentifierTransport),
@@ -14820,13 +14958,14 @@ impl RenderableTransport for ImportClauseDefaultImportContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ImportStatementImportClauseTransportSlot {
+pub enum ImportStatementFromClauseTransportSlot {
     ImportClause(ImportClauseTransport),
-    Literal16_74_79_70_65,
+    String(StringTransport),
+    ImportRequireClause(ImportRequireClauseTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementImportClauseTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementFromClauseTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -14836,74 +14975,86 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementImportClauseTrans
                 175 => Ok(Self::ImportClause(
                     ImportClauseTransport::from_napi_value(env, napi_val)?
                 )),
-                307 => Ok(Self::Literal16_74_79_70_65),
+                247 => Ok(Self::String(
+                    StringTransport::from_napi_value(env, napi_val)?
+                )),
+                277 => Ok(Self::ImportRequireClause(
+                    ImportRequireClauseTransport::from_napi_value(env, napi_val)?
+                )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in ImportStatementImportClauseTransportSlot",
+                    "unknown kind id {other} in ImportStatementFromClauseTransportSlot",
                 ))),
             };
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
-            .map_err(|_| ::napi::Error::from_reason("ImportStatementImportClauseTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+            .map_err(|_| ::napi::Error::from_reason("ImportStatementFromClauseTransportSlot: expected u16 kind_id, string, or object with $type"))?;
         let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-            ::napi::Error::from_reason("$type property missing in ImportStatementImportClauseTransportSlot")
+            ::napi::Error::from_reason("$type property missing in ImportStatementFromClauseTransportSlot")
         )?;
         match kind_id {
                 175 => Ok(Self::ImportClause(
                     ImportClauseTransport::from_napi_value(env, napi_val)?
                 )),
-                307 => Ok(Self::Literal16_74_79_70_65),
+                247 => Ok(Self::String(
+                    StringTransport::from_napi_value(env, napi_val)?
+                )),
+                277 => Ok(Self::ImportRequireClause(
+                    ImportRequireClauseTransport::from_napi_value(env, napi_val)?
+                )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in ImportStatementImportClauseTransportSlot",
+                    "unknown kind id {other} in ImportStatementFromClauseTransportSlot",
                 ))),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ImportStatementImportClauseTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ImportStatementFromClauseTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ImportStatementImportClauseTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ImportStatementFromClauseTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportStatementImportClauseTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportStatementFromClauseTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ImportStatementImportClauseTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ImportStatementFromClauseTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportStatementImportClauseTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportStatementFromClauseTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ImportStatementImportClauseTransportSlot::to_napi_value(env, *val)
+        ImportStatementFromClauseTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn import_statement_import_clause_transport_slot_to_any(t: ImportStatementImportClauseTransportSlot) -> AnyTransport {
+fn import_statement_from_clause_transport_slot_to_any(t: ImportStatementFromClauseTransportSlot) -> AnyTransport {
     match t {
-        ImportStatementImportClauseTransportSlot::ImportClause(inner) => AnyTransport::ImportClause(inner),
-        ImportStatementImportClauseTransportSlot::Literal16_74_79_70_65 => AnyTransport::Literal16_74_79_70_65,
+        ImportStatementFromClauseTransportSlot::ImportClause(inner) => AnyTransport::ImportClause(inner),
+        ImportStatementFromClauseTransportSlot::String(inner) => AnyTransport::String(inner),
+        ImportStatementFromClauseTransportSlot::ImportRequireClause(inner) => AnyTransport::ImportRequireClause(inner),
     }
 }
 
-impl RenderableTransport for ImportStatementImportClauseTransportSlot {
+impl RenderableTransport for ImportStatementFromClauseTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ImportStatementImportClauseTransportSlot::ImportClause(inner) => render_import_clause(inner, dest),
-            ImportStatementImportClauseTransportSlot::Literal16_74_79_70_65 => dest.write_str("type").map_err(::askama::Error::from),
+            ImportStatementFromClauseTransportSlot::ImportClause(inner) => render_import_clause(inner, dest),
+            ImportStatementFromClauseTransportSlot::String(inner) => render_string(inner, dest),
+            ImportStatementFromClauseTransportSlot::ImportRequireClause(inner) => render_import_require_clause(inner, dest),
         }
     }
 }
@@ -28305,10 +28456,8 @@ pub struct EnumBodyTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<Vec<PropertyNameTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_enum_assignment"))]
-    pub enum_assignment: Option<Vec<EnumAssignmentTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opening"))]
+    pub opening: Option<Vec<EnumBodyOpeningTransportSlot>>,
 }
 
 impl RenderableTransport for EnumBodyTransport {
@@ -30884,15 +31033,13 @@ pub struct ImportStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_clause"))]
-    pub import_clause: Option<ImportStatementImportClauseTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
-    pub source: Option<StringTransport>,
+    pub import_clause: Option<Box<AnyTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_from_clause"))]
+    pub from_clause: ImportStatementFromClauseTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_attribute"))]
     pub import_attribute: Option<ImportAttributeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: Option<SemicolonTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_require_clause"))]
-    pub import_require_clause: Option<ImportRequireClauseTransport>,
 }
 
 impl RenderableTransport for ImportStatementTransport {
@@ -49902,24 +50049,30 @@ fn render_enum_assignment(node: &EnumAssignmentTransport, dest: &mut dyn ::std::
 }
 
 fn render_enum_body(node: &EnumBodyTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.name.as_deref().is_none_or(<[_]>::is_empty) && node.enum_assignment.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.opening.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let name_owned = node.name.as_deref().unwrap_or(&[]);
-    let name_buf: Vec<::sittir_core::filters::Renderable<'_>> = name_owned.iter()
+    let opening_owned = node.opening.as_deref().unwrap_or(&[]);
+    let opening_buf: Vec<::sittir_core::filters::Renderable<'_>> = opening_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = EnumBodyTemplate {
+        enum_assignment: ListNonterminalView {
+            items: &[],
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
         name: ListNonterminalView {
-            items: name_buf.as_slice(),
+            items: &[],
             separator: ",",
             leading: false,
             trailing: false,
         },
         opening: ListNonterminalView {
-            items: &[],
+            items: opening_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -50449,29 +50602,27 @@ fn render_import_specifier(node: &ImportSpecifierTransport, dest: &mut dyn ::std
 }
 
 fn render_import_statement(node: &ImportStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.import_clause.is_none() && node.source.is_none() && node.import_attribute.is_none() && node.semicolon.is_none() && node.import_require_clause.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let template = ImportStatementTemplate {
-        from_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        from_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.from_clause)),
         import_attribute: match &node.import_attribute {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
         import_clause: match &node.import_clause {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
             None => OptionalNonterminalView::Missing,
+        },
+        import_require_clause: ListNonterminalView {
+            items: &[],
+            separator: "",
+            leading: false,
+            trailing: false,
         },
         semicolon: match &node.semicolon {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        source: match &node.source {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        source: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -57276,19 +57427,11 @@ fn transport_to_node_enum_assignment(transport: EnumAssignmentTransport) -> Resu
 
 fn transport_to_node_enum_body(transport: EnumBodyTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.name {
-        fields.insert("name".to_string(), transport_field_values(value.into_iter().map(|v| property_name_transport_to_any(v)).collect::<Vec<_>>())?);
+    if let Some(value) = transport.opening {
+        fields.insert("opening".to_string(), transport_field_values(value.into_iter().map(|v| enum_body_opening_transport_slot_to_any(v)).collect::<Vec<_>>())?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.enum_assignment {
-        children_buf.extend(value.into_iter().map(|v| AnyTransport::EnumAssignment(v)).collect::<Vec<_>>());
-    }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(291) /* "enum_body" */,
@@ -58352,11 +58495,9 @@ fn transport_to_node_import_specifier(transport: ImportSpecifierTransport) -> Re
 fn transport_to_node_import_statement(transport: ImportStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     if let Some(value) = transport.import_clause {
-        fields.insert("import_clause".to_string(), transport_field_value(import_statement_import_clause_transport_slot_to_any(value))?);
+        fields.insert("import_clause".to_string(), transport_field_value(*value)?);
     }
-    if let Some(value) = transport.source {
-        fields.insert("source".to_string(), transport_field_value(AnyTransport::String(value))?);
-    }
+    fields.insert("from_clause".to_string(), transport_field_value(import_statement_from_clause_transport_slot_to_any(transport.from_clause))?);
     if let Some(value) = transport.import_attribute {
         fields.insert("import_attribute".to_string(), transport_field_value(AnyTransport::ImportAttribute(value))?);
     }
@@ -58364,15 +58505,7 @@ fn transport_to_node_import_statement(transport: ImportStatementTransport) -> Re
         fields.insert("semicolon".to_string(), transport_field_value(AnyTransport::Semicolon(value))?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.import_require_clause {
-        children_buf.push(AnyTransport::ImportRequireClause(value));
-    }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(174) /* "import_statement" */,

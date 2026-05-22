@@ -866,6 +866,7 @@ export const enum TSFieldId {
   FieldCause = 10,
   FieldCode = 11,
   FieldCondition = 13,
+  FieldConsequence = 14,
   FieldConstraint = 15,
   FieldContent = 16,
   FieldDefinition = 17,
@@ -921,6 +922,7 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
   "cause": TSFieldId.FieldCause,
   "code": TSFieldId.FieldCode,
   "condition": TSFieldId.FieldCondition,
+  "consequence": TSFieldId.FieldConsequence,
   "constraint": TSFieldId.FieldConstraint,
   "content": TSFieldId.FieldContent,
   "definition": TSFieldId.FieldDefinition,
@@ -976,6 +978,7 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
   [TSFieldId.FieldCause]: "cause",
   [TSFieldId.FieldCode]: "code",
   [TSFieldId.FieldCondition]: "condition",
+  [TSFieldId.FieldConsequence]: "consequence",
   [TSFieldId.FieldConstraint]: "constraint",
   [TSFieldId.FieldContent]: "content",
   [TSFieldId.FieldDefinition]: "definition",
@@ -1031,6 +1034,7 @@ export const TREE_SITTER_FIELD_ID_JSON = [
   { name: "cause", id: 10, enumName: "FieldCause", cName: "field_cause" },
   { name: "code", id: 11, enumName: "FieldCode", cName: "field_code" },
   { name: "condition", id: 13, enumName: "FieldCondition", cName: "field_condition" },
+  { name: "consequence", id: 14, enumName: "FieldConsequence", cName: "field_consequence" },
   { name: "constraint", id: 15, enumName: "FieldConstraint", cName: "field_constraint" },
   { name: "content", id: 16, enumName: "FieldContent", cName: "field_content" },
   { name: "definition", id: 17, enumName: "FieldDefinition", cName: "field_definition" },
@@ -1160,7 +1164,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'case_clause': [
     { name: 'casePatterns', required: true, multiple: true },
     { name: 'guard', required: false, multiple: false },
-    { name: 'block', required: true, multiple: false },
+    { name: 'consequence', required: true, multiple: false },
   ],
   'case_pattern': [
     { name: 'content', required: true, multiple: false },
@@ -1172,7 +1176,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'superclasses', required: false, multiple: false },
-    { name: 'block', required: true, multiple: false },
+    { name: 'body', required: true, multiple: false },
   ],
   'class_pattern': [
     { name: 'dottedName', required: true, multiple: false },
@@ -1234,10 +1238,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'elif_clause': [
     { name: 'condition', required: true, multiple: false },
-    { name: 'block', required: true, multiple: false },
+    { name: 'consequence', required: true, multiple: false },
   ],
   'else_clause': [
-    { name: 'block', required: true, multiple: false },
+    { name: 'body', required: true, multiple: false },
   ],
   'except_clause': [
     { name: 'content', required: false, multiple: false },
@@ -1272,7 +1276,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'asyncMarker', required: false, multiple: false },
     { name: 'left', required: true, multiple: false },
     { name: 'right', required: true, multiple: false },
-    { name: 'block', required: true, multiple: false },
+    { name: 'body', required: true, multiple: false },
     { name: 'alternative', required: false, multiple: false },
   ],
   'format_specifier': [
@@ -1284,7 +1288,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'parameters', required: true, multiple: false },
     { name: 'returnType', required: false, multiple: false },
-    { name: 'block', required: true, multiple: false },
+    { name: 'body', required: true, multiple: false },
   ],
   'future_import_statement': [
     { name: 'names', required: true, multiple: true },
@@ -1305,13 +1309,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'if_statement': [
     { name: 'condition', required: true, multiple: false },
-    { name: 'block', required: true, multiple: false },
+    { name: 'consequence', required: true, multiple: false },
     { name: 'alternatives', required: false, multiple: true },
   ],
   'import_from_statement': [
     { name: 'moduleName', required: true, multiple: false },
-    { name: 'wildcardImport', required: false, multiple: false },
-    { name: 'names', required: false, multiple: true },
+    { name: 'wildcardImports', required: true, multiple: true },
   ],
   'import_statement': [
     { name: 'names', required: true, multiple: true },
@@ -1443,7 +1446,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'subscripts', required: true, multiple: true },
   ],
   'try_statement': [
-    { name: 'block', required: true, multiple: false },
+    { name: 'body', required: true, multiple: false },
     { name: 'exceptClauses', required: false, multiple: true },
     { name: 'elseClause', required: false, multiple: false },
     { name: 'finallyClause', required: false, multiple: false },
@@ -1487,7 +1490,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'while_statement': [
     { name: 'condition', required: true, multiple: false },
-    { name: 'block', required: true, multiple: false },
+    { name: 'body', required: true, multiple: false },
     { name: 'alternative', required: false, multiple: false },
   ],
   'with_clause': [
@@ -1506,7 +1509,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'with_statement': [
     { name: 'asyncMarker', required: false, multiple: false },
     { name: 'withClause', required: true, multiple: false },
-    { name: 'block', required: true, multiple: false },
+    { name: 'body', required: true, multiple: false },
   ],
   'yield': [
     { name: 'expression', required: false, multiple: false },

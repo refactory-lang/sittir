@@ -2424,9 +2424,9 @@
           }
         },
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "consequence",
+          "propertyName": "consequence",
+          "paramName": "consequence",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -2450,7 +2450,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -2639,9 +2639,9 @@
           }
         },
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -2665,7 +2665,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -3655,9 +3655,9 @@
           }
         },
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "consequence",
+          "propertyName": "consequence",
+          "paramName": "consequence",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3681,7 +3681,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -3726,9 +3726,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3752,7 +3752,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4284,7 +4284,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4476,9 +4476,9 @@
           }
         },
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4502,7 +4502,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -4712,9 +4712,9 @@
           }
         },
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4738,7 +4738,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5048,9 +5048,9 @@
           }
         },
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "consequence",
+          "propertyName": "consequence",
+          "paramName": "consequence",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5074,7 +5074,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5170,44 +5170,27 @@
         },
         {
           "name": "wildcard_import",
-          "propertyName": "wildcardImport",
-          "paramName": "wildcardImport",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
+          "propertyName": "wildcardImports",
+          "paramName": "wildcardImports",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "nonEmptyArray",
               "name": "wildcard_import",
               "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "wildcard_import"
-            ]
-          }
-        },
-        {
-          "name": "name",
-          "propertyName": "names",
-          "paramName": "names",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "dotted_name",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "aliased_import",
               "unresolved": true
             }
@@ -5216,6 +5199,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "wildcard_import",
               "dotted_name",
               "aliased_import"
             ]
@@ -7376,9 +7360,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -7402,7 +7386,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8085,9 +8069,9 @@
           }
         },
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -8111,7 +8095,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8417,9 +8401,9 @@
           }
         },
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "body",
+          "propertyName": "body",
+          "paramName": "body",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -8443,7 +8427,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
