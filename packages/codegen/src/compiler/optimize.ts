@@ -39,6 +39,26 @@ import { applyWrapperDeletion } from './wrapper-deletion.ts';
  * promotion are surfaced via suggested.ts; the user authors variant() in
  * overrides.ts to make them explicit.
  */
+// DIAGNOSTIC (`DBG_ID_LOSS=<kind>`): print the first choice's id for <kind>
+// after each normalization pass, to pinpoint where a rule id gets dropped.
+function dbgChoiceId(label: string, rules: Record<string, Rule>): void {
+	const target = process.env.DBG_ID_LOSS;
+	if (!target) return;
+	const r = rules[target];
+	if (!r) return;
+	const find = (x: Rule): string | undefined => {
+		if (x.type === 'choice') return (x as { id?: string }).id ?? '<NONE>';
+		const xs = x as { members?: readonly Rule[]; content?: Rule };
+		for (const m of xs.members ?? []) {
+			const g = find(m);
+			if (g) return g;
+		}
+		if (xs.content) return find(xs.content);
+		return undefined;
+	};
+	process.stderr.write(`[DBG_ID] ${label}: choice id=${find(r) ?? '<no-choice>'}\n`);
+}
+
 function applyNormalizationPasses(
 	rawRules: Record<string, Rule>,
 	preserveKinds?: ReadonlySet<string>
@@ -47,19 +67,25 @@ function applyNormalizationPasses(
 	for (const [name, rule] of Object.entries(rawRules)) {
 		rules[name] = collapseWrappers(rule);
 	}
+	dbgChoiceId('after collapseWrappers#1', rules);
 	for (const name of Object.keys(rules)) {
 		rules[name] = fanOutSeqChoices(rules[name]!);
 	}
+	dbgChoiceId('after fanOutSeqChoices', rules);
 	for (const name of Object.keys(rules)) {
 		rules[name] = factorChoiceBranches(rules[name]!);
 	}
+	dbgChoiceId('after factorChoiceBranches', rules);
 	for (const name of Object.keys(rules)) {
 		rules[name] = dedupeSeqMembers(rules[name]!);
 	}
+	dbgChoiceId('after dedupeSeqMembers', rules);
 	rules = inlineSingleUseHidden(rules, preserveKinds);
+	dbgChoiceId('after inlineSingleUseHidden', rules);
 	for (const name of Object.keys(rules)) {
 		rules[name] = collapseWrappers(rules[name]!);
 	}
+	dbgChoiceId('after collapseWrappers#2', rules);
 	return rules;
 }
 
@@ -178,7 +204,11 @@ export function fanOutSeqChoices(rule: Rule): Rule {
 				const flat: Rule = { type: 'seq', members: seqMembers };
 				return branch.type === 'variant' ? { type: 'variant', name: branch.name, content: flat } : flat;
 			});
-			return { type: 'choice', members: branches };
+			// The fanned choice replaces this seq 1:1 — carry the seq's rule id
+			// so downstream slot resolution (slotByRuleId) still finds it. A
+			// fresh `{ type: 'choice', ... }` here drops the id (the source of
+			// the UNRESOLVED slotByRuleId misses).
+			return { ...(rule.id !== undefined ? { id: rule.id } : {}), type: 'choice', members: branches };
 		}
 		case 'choice': {
 			const members = rule.members.map(fanOutSeqChoices);
@@ -301,7 +331,12 @@ export function factorChoiceBranches(rule: Rule): Rule {
 				// Every branch was empty → prefix/suffix already cover it.
 				return outerFromParts(prefix, suffix);
 			}
-			const core: Rule = nonEmpty.length === 1 ? nonEmpty[0]! : { type: 'choice', members: nonEmpty };
+			// Carry the factored choice's id onto the re-factored inner choice —
+			// it's the same data slot (a fresh `{ type: 'choice' }` drops the id).
+			const core: Rule =
+				nonEmpty.length === 1
+					? nonEmpty[0]!
+					: { ...(rule.id !== undefined ? { id: rule.id } : {}), type: 'choice', members: nonEmpty };
 			const inner: Rule = hasEmpty ? { type: 'optional', content: core } : core;
 			const outerMembers: Rule[] = [...prefix, inner, ...suffix];
 			return outerMembers.length === 1 ? outerMembers[0]! : { type: 'seq', members: outerMembers };

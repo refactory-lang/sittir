@@ -75,6 +75,49 @@ export interface EmitCtx {
 	 * `emitGroupTemplate` before recursing into the node's `renderRule`.
 	 */
 	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
+	/**
+	 * DIAGNOSTIC (`DBG_SLOT_MISS=1`): the kind currently being emitted, threaded
+	 * by `emitOne` so `lookupSlot` can attribute a `slotByRuleId` miss to a kind.
+	 */
+	readonly currentKind?: string;
+}
+
+// ---------------------------------------------------------------------------
+// DIAGNOSTIC: slotByRuleId-miss inventory (env-gated via `DBG_SLOT_MISS=1`).
+//
+// Records every rule where the primary O(1) `slotByRuleId.get(rule.id)` lookup
+// FAILED (no id, or id not registered), plus whether a name-based fallback
+// recovered it. `recoveredBy: 'none'` is the bug class — the emitter then falls
+// back to the arm/symbol name (e.g. choice `parameter` instead of slot
+// `content`), producing a `.jinja` var with no matching transport field.
+// Surfaces the rule-ID-not-preserved gap so it can be fixed at the source.
+// ---------------------------------------------------------------------------
+interface SlotLookupMiss {
+	readonly kind: string | undefined;
+	readonly ruleType: string;
+	readonly ruleId: string | undefined;
+	readonly name: string | undefined;
+	readonly fieldName: string | undefined;
+	readonly recoveredBy: 'fieldName' | 'symbol-name' | 'none';
+}
+const DBG_SLOT_MISS = process.env.DBG_SLOT_MISS === '1';
+const SLOT_MISS_LOG: SlotLookupMiss[] = [];
+function dumpSlotMissLog(grammar: string): void {
+	if (!DBG_SLOT_MISS || SLOT_MISS_LOG.length === 0) return;
+	const tally = { fieldName: 0, 'symbol-name': 0, none: 0 } as Record<string, number>;
+	for (const m of SLOT_MISS_LOG) tally[m.recoveredBy]++;
+	process.stderr.write(
+		`\n=== slotByRuleId MISS inventory [${grammar}] — ${SLOT_MISS_LOG.length} total ` +
+			`(recovered fieldName=${tally.fieldName} symbol-name=${tally['symbol-name']} UNRESOLVED=${tally.none}) ===\n`
+	);
+	for (const m of SLOT_MISS_LOG) {
+		const tag = m.recoveredBy === 'none' ? 'UNRESOLVED ' : `recov:${m.recoveredBy} `;
+		const label = m.name ? `${m.ruleType}(${m.name})` : m.ruleType;
+		process.stderr.write(
+			`  ${tag} kind=${m.kind ?? '?'} ${label}${m.fieldName ? ` field=${m.fieldName}` : ''} id=${m.ruleId ?? '<none>'}\n`
+		);
+	}
+	SLOT_MISS_LOG.length = 0;
 }
 
 // Nunjucks whitespace control (`{#- ... -#}`) strips whitespace
@@ -149,6 +192,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	}
 
 	finalize(): EmittedTemplates {
+		dumpSlotMissLog(this.#config.grammar);
 		return { bodies: new Map(this.#bodies) };
 	}
 
@@ -189,15 +233,16 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 }
 
 function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
+	const ctxK: EmitCtx = DBG_SLOT_MISS ? { ...ctx, currentKind: node.kind } : ctx;
 	switch (node.modelType) {
 		case 'branch':
-			return emitBranchTemplate(node, ctx);
+			return emitBranchTemplate(node, ctxK);
 		case 'polymorph':
-			return emitPolymorphTemplate(node, ctx);
+			return emitPolymorphTemplate(node, ctxK);
 		case 'group':
-			return emitGroupTemplate(node, ctx);
+			return emitGroupTemplate(node, ctxK);
 		case 'multi':
-			return emitMultiTemplate(node, ctx);
+			return emitMultiTemplate(node, ctxK);
 		case 'supertype':
 		case 'pattern':
 		case 'keyword':
@@ -966,6 +1011,10 @@ function lookupSlot(rule: Rule, ctx: EmitCtx): AssembledNonterminal | undefined 
 		const byId = ctx.nodeMap.slotByRuleId.get(rule.id);
 		if (byId) return byId;
 	}
+	// PRIMARY MISSED (no id, or id not registered — the rule-ID-not-preserved
+	// gap). Try the name-based fallbacks and record the miss for the diagnostic.
+	let recovered: AssembledNonterminal | undefined;
+	let recoveredBy: SlotLookupMiss['recoveredBy'] = 'none';
 	if (ctx.ownerSlots) {
 		// Fallback A: fieldName → storageName. For grammar-named fields whose
 		// FieldRule ID doesn't match the renderRule symbol's ID (because
@@ -973,7 +1022,10 @@ function lookupSlot(rule: Rule, ctx: EmitCtx): AssembledNonterminal | undefined 
 		// look up the slot by the field name the symbol carries.
 		if (rule.fieldName !== undefined) {
 			const byFieldName = ctx.ownerSlots[rule.fieldName.toLowerCase()];
-			if (byFieldName) return byFieldName;
+			if (byFieldName) {
+				recovered = byFieldName;
+				recoveredBy = 'fieldName';
+			}
 		}
 		// Fallback B: symbol name (exact, no underscore-stripping) → storageName.
 		// For inferred slots derived from tree-sitter's node-types.json children,
@@ -982,13 +1034,26 @@ function lookupSlot(rule: Rule, ctx: EmitCtx): AssembledNonterminal | undefined 
 		// map it. Only fires for symbols without fieldName (fieldName symbols are
 		// handled by Fallback A). Uses the EXACT name (no leading-_ stripping) to
 		// avoid false positives where `_hidden_rule` would match slot `hidden_rule`.
-		if (rule.type === 'symbol' && rule.fieldName === undefined && !rule.name.startsWith('_')) {
+		if (recovered === undefined && rule.type === 'symbol' && rule.fieldName === undefined && !rule.name.startsWith('_')) {
 			const exactName = rule.name.toLowerCase();
 			const byExactName = ctx.ownerSlots[exactName];
-			if (byExactName) return byExactName;
+			if (byExactName) {
+				recovered = byExactName;
+				recoveredBy = 'symbol-name';
+			}
 		}
 	}
-	return undefined;
+	if (DBG_SLOT_MISS) {
+		SLOT_MISS_LOG.push({
+			kind: ctx.currentKind,
+			ruleType: rule.type,
+			ruleId: rule.id,
+			name: (rule as { name?: string }).name,
+			fieldName: rule.fieldName,
+			recoveredBy
+		});
+	}
+	return recovered;
 }
 
 /**
