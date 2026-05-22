@@ -6655,9 +6655,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "parameters",
+          "propertyName": "parameters",
+          "paramName": "parameters",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -6675,7 +6675,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10723,9 +10723,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "attributes",
+          "propertyName": "attributes",
+          "paramName": "attributes",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -10743,7 +10743,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15093,9 +15093,9 @@
           }
         },
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "fields",
+          "propertyName": "fields",
+          "paramName": "fields",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -15113,7 +15113,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15740,33 +15740,33 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
-          "required": false,
+          "name": "bounds",
+          "propertyName": "bounds",
+          "paramName": "bounds",
+          "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "lifetime",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "nonEmptyArray",
               "name": "higher_ranked_trait_bound",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17083,9 +17083,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "bounds",
+          "propertyName": "bounds",
+          "paramName": "bounds",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -17103,7 +17103,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [

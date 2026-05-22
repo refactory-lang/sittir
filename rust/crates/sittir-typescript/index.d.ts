@@ -152,7 +152,7 @@ export interface ArgumentsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<ArgumentsContentTransportSlot>
+  _arguments?: Array<ArgumentsArgumentsTransportSlot>
 }
 
 export interface ArrayPatternTransport {
@@ -163,7 +163,7 @@ export interface ArrayPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<ArrayPatternContentTransportSlot>
+  _elements?: Array<ArrayPatternElementsTransportSlot>
 }
 
 export interface ArrayTransport {
@@ -174,7 +174,7 @@ export interface ArrayTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<ArrayContentTransportSlot>
+  _elements?: Array<ArrayElementsTransportSlot>
 }
 
 export interface ArrayTypeTransport {
@@ -1663,7 +1663,7 @@ export interface JsxExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: JsxExpressionContentTransportSlot
+  _expression?: JsxExpressionExpressionTransportSlot
 }
 
 export interface JsxNamespaceNameTransport {
@@ -1992,7 +1992,7 @@ export interface ObjectPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<ObjectPatternContentTransportSlot>
+  _properties?: Array<ObjectPatternPropertiesTransportSlot>
 }
 
 export interface ObjectTransport {
@@ -2003,7 +2003,7 @@ export interface ObjectTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<ObjectContentTransportSlot>
+  _properties?: Array<ObjectPropertiesTransportSlot>
 }
 
 export interface ObjectTypeTransport {
@@ -2445,7 +2445,7 @@ export interface SwitchBodyTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<SwitchBodyContentTransportSlot>
+  _cases?: Array<SwitchBodyCasesTransportSlot>
 }
 
 export interface SwitchCaseTransport {

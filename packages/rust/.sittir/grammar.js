@@ -2230,6 +2230,22 @@ var config = {
     tuple_pattern: {
       1: field("elements")
     },
+    // Naked-choice field names (was unresolvable `content` slots).
+    closure_parameters: {
+      1: field("parameters")
+    },
+    struct_pattern: {
+      2: field("fields")
+    },
+    trait_bounds: {
+      1: field("bounds")
+    },
+    use_bounds: {
+      2: field("bounds")
+    },
+    last_match_arm: {
+      0: field("attributes")
+    },
     // async_block: seq('async', optional('move'), $.block).
     // Field-promotion wave 1 (016 task #23): label the standalone
     // optional `move` punct as `move_marker` so render preserves it

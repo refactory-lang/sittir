@@ -925,7 +925,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export default function point(x: number, y: number) {\n    return { x, y };\n} export default class A {} export async function readFile(filename: string): Promise<Buffer>",
-    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_decl_arm (export_statement_default_decl_arm_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type)))) body: (statement_block statements: (return_statement (object (shorthand_property_identifier) (shorthand_property_identifier))))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm (export_statement_default_decl_arm_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type)))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier)))))))))",
+    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_decl_arm (export_statement_default_decl_arm_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type)))) body: (statement_block statements: (return_statement (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))))))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm (export_statement_default_decl_arm_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body)))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (function_signature name: (identifier) parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type)))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier)))))))))",
     "wrappedText": "export default function point(x: number, y: number) {\n    return { x, y };\n} export default class A {} export async function readFile(filename: string): Promise<Buffer>",
     "wrappedOffset": 0
   },
@@ -999,7 +999,7 @@
     "pattern": "function_declaration",
     "edits": [],
     "expectedSourceOut": "function point(x: number, y: number) {\n    return { x, y };\n}",
-    "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type)))) body: (statement_block statements: (return_statement (object (shorthand_property_identifier) (shorthand_property_identifier)))))",
+    "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (identifier) type: (type_annotation type: (predefined_type)))) body: (statement_block statements: (return_statement (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier)))))",
     "wrappedText": "function point(x: number, y: number) {\n    return { x, y };\n}",
     "wrappedOffset": 0
   },
@@ -1261,9 +1261,97 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{ return { x, y }; }",
-    "expectedReparseTree": "(statement_block statements: (return_statement (object (shorthand_property_identifier) (shorthand_property_identifier))))",
+    "expectedReparseTree": "(statement_block statements: (return_statement (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))))",
     "wrappedText": "{ return { x, y }; }",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 213,
+      "$source": 0,
+      "$span": {
+        "start": 65,
+        "end": 73
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_{": {
+        "$type": 5,
+        "$source": 0,
+        "$text": "{",
+        "$span": {
+          "start": 65,
+          "end": 66
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_properties": [
+        {
+          "$type": 422,
+          "$source": 0,
+          "$text": "x",
+          "$span": {
+            "start": 67,
+            "end": 68
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 6,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 68,
+            "end": 69
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": false
+        },
+        {
+          "$type": 422,
+          "$source": 0,
+          "$text": "y",
+          "$span": {
+            "start": 70,
+            "end": 71
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        }
+      ],
+      "_}": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "}",
+        "$span": {
+          "start": 72,
+          "end": 73
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": false
+      }
+    },
+    "expectedOutput": "{ x,y }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{ x, y }",
+    "pattern": "object",
+    "edits": [],
+    "expectedSourceOut": "{ x,y }",
+    "expectedReparseTree": "(object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))",
+    "wrappedText": "let _ = { x,y };",
+    "wrappedOffset": 8
   },
   {
     "kind": "render",
@@ -2637,9 +2725,121 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "x = { name, description, private: private_ }",
-    "expectedReparseTree": "(program statements: (expression_statement (assignment_expression left: (identifier) right: (object (shorthand_property_identifier) (shorthand_property_identifier) (pair key: (property_identifier) value: (identifier))))))",
+    "expectedReparseTree": "(program statements: (expression_statement (assignment_expression left: (identifier) right: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier) properties: (pair key: (property_identifier) value: (identifier))))))",
     "wrappedText": "x = { name, description, private: private_ }",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 213,
+      "$source": 0,
+      "$span": {
+        "start": 4,
+        "end": 44
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_{": {
+        "$type": 5,
+        "$source": 0,
+        "$text": "{",
+        "$span": {
+          "start": 4,
+          "end": 5
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_properties": [
+        {
+          "$type": 422,
+          "$source": 0,
+          "$text": "name",
+          "$span": {
+            "start": 6,
+            "end": 10
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 6,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 10,
+            "end": 11
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": false
+        },
+        {
+          "$type": 422,
+          "$source": 0,
+          "$text": "description",
+          "$span": {
+            "start": 12,
+            "end": 23
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        },
+        {
+          "$type": 6,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 23,
+            "end": 24
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 4,
+          "$named": false
+        },
+        {
+          "$type": 262,
+          "$source": 0,
+          "$text": "private: private_",
+          "$span": {
+            "start": 25,
+            "end": 42
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 5,
+          "$named": true
+        }
+      ],
+      "_}": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "}",
+        "$span": {
+          "start": 43,
+          "end": 44
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 6,
+        "$named": false
+      }
+    },
+    "expectedOutput": "{ name,description,private: private_ }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{ name, description, private: private_ }",
+    "pattern": "object",
+    "edits": [],
+    "expectedSourceOut": "{ name,description,private: private_ }",
+    "expectedReparseTree": "(object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier) properties: (pair key: (property_identifier) value: (identifier)))",
+    "wrappedText": "let _ = { name,description,private: private_ };",
+    "wrappedOffset": 8
   },
   {
     "kind": "render",
@@ -6947,9 +7147,257 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class A extends B<C>(D) implements C {} export class A extends B<C>(D) implements C {} class A extends B<C>(D)<E> implements C {} export class A extends B<C>(D)<E> implements C {} export class A extends B<C, D> implements C {}",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments (identifier))))) (implements_clause (type_identifier)))) body: (class_body)) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments (identifier))))) (implements_clause (type_identifier)))) body: (class_body))))) statements: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments (identifier)))) type_arguments: (type_arguments (type_identifier))) (implements_clause (type_identifier)))) body: (class_body)) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments (identifier)))) type_arguments: (type_arguments (type_identifier))) (implements_clause (type_identifier)))) body: (class_body))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (identifier) type_arguments: (type_arguments (type_identifier) (type_identifier))) (implements_clause (type_identifier)))) body: (class_body))))))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments arguments: (identifier))))) (implements_clause (type_identifier)))) body: (class_body)) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments arguments: (identifier))))) (implements_clause (type_identifier)))) body: (class_body))))) statements: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments arguments: (identifier)))) type_arguments: (type_arguments (type_identifier))) (implements_clause (type_identifier)))) body: (class_body)) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments arguments: (identifier)))) type_arguments: (type_arguments (type_identifier))) (implements_clause (type_identifier)))) body: (class_body))))) statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (identifier) type_arguments: (type_arguments (type_identifier) (type_identifier))) (implements_clause (type_identifier)))) body: (class_body))))))",
     "wrappedText": "class A extends B<C>(D) implements C {} export class A extends B<C>(D) implements C {} class A extends B<C>(D)<E> implements C {} export class A extends B<C>(D)<E> implements C {} export class A extends B<C, D> implements C {}",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 252,
+      "$source": 0,
+      "$span": {
+        "start": 20,
+        "end": 23
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 22,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 20,
+          "end": 21
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_arguments": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "D",
+        "$span": {
+          "start": 21,
+          "end": 22
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_)": {
+        "$type": 24,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 22,
+          "end": 23
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(D)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "(D)",
+    "pattern": "arguments",
+    "edits": [],
+    "expectedSourceOut": "(D)",
+    "expectedReparseTree": "(arguments arguments: (identifier))",
+    "wrappedText": "_f(D);",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 252,
+      "$source": 0,
+      "$span": {
+        "start": 108,
+        "end": 111
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_(": {
+        "$type": 22,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 108,
+          "end": 109
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_arguments": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "D",
+        "$span": {
+          "start": 109,
+          "end": 110
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_)": {
+        "$type": 24,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 110,
+          "end": 111
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 2,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(D)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "(D)",
+    "pattern": "arguments",
+    "edits": [],
+    "expectedSourceOut": "(D)",
+    "expectedReparseTree": "(arguments arguments: (identifier))",
+    "wrappedText": "_f(D);",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 252,
+      "$source": 0,
+      "$span": {
+        "start": 67,
+        "end": 70
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_(": {
+        "$type": 22,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 67,
+          "end": 68
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_arguments": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "D",
+        "$span": {
+          "start": 68,
+          "end": 69
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_)": {
+        "$type": 24,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 69,
+          "end": 70
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 2,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(D)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "(D)",
+    "pattern": "arguments",
+    "edits": [],
+    "expectedSourceOut": "(D)",
+    "expectedReparseTree": "(arguments arguments: (identifier))",
+    "wrappedText": "_f(D);",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 252,
+      "$source": 0,
+      "$span": {
+        "start": 158,
+        "end": 161
+      },
+      "$nodeHandle": 3,
+      "$named": true,
+      "_(": {
+        "$type": 22,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 158,
+          "end": 159
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_arguments": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "D",
+        "$span": {
+          "start": 159,
+          "end": 160
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_)": {
+        "$type": 24,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 160,
+          "end": 161
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 2,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(D)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "(D)",
+    "pattern": "arguments",
+    "edits": [],
+    "expectedSourceOut": "(D)",
+    "expectedReparseTree": "(arguments arguments: (identifier))",
+    "wrappedText": "_f(D);",
+    "wrappedOffset": 2
   },
   {
     "kind": "render",
@@ -8297,7 +8745,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "[, a, , b, , , , s, , , ]",
-    "expectedReparseTree": "(program statements: (expression_statement (array (identifier) (identifier) (identifier))))",
+    "expectedReparseTree": "(program statements: (expression_statement (array elements: (identifier) elements: (identifier) elements: (identifier))))",
     "wrappedText": "[, a, , b, , , , s, , , ]",
     "wrappedOffset": 0
   },
@@ -9609,9 +10057,233 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "{\n  public: true,\n  private: true,\n  readonly: true\n}; {\n  readonly: 1,\n  abstract: 1,\n  static: 1\n};",
-    "expectedReparseTree": "(program statements: (expression_statement (object (pair key: (property_identifier) value: (true)) (pair key: (property_identifier) value: (true)) (pair key: (property_identifier) value: (true)))) statements: (expression_statement (object (pair key: (property_identifier) value: (number)) (pair key: (property_identifier) value: (number)) (pair key: (property_identifier) value: (number)))))",
+    "expectedReparseTree": "(program statements: (expression_statement (object properties: (pair key: (property_identifier) value: (true)) properties: (pair key: (property_identifier) value: (true)) properties: (pair key: (property_identifier) value: (true)))) statements: (expression_statement (object properties: (pair key: (property_identifier) value: (number)) properties: (pair key: (property_identifier) value: (number)) properties: (pair key: (property_identifier) value: (number)))))",
     "wrappedText": "{\n  public: true,\n  private: true,\n  readonly: true\n}; {\n  readonly: 1,\n  abstract: 1,\n  static: 1\n};",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 213,
+      "$source": 0,
+      "$span": {
+        "start": 0,
+        "end": 53
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_{": {
+        "$type": 5,
+        "$source": 0,
+        "$text": "{",
+        "$span": {
+          "start": 0,
+          "end": 1
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_properties": [
+        {
+          "$type": 262,
+          "$source": 0,
+          "$text": "public: true",
+          "$span": {
+            "start": 4,
+            "end": 16
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 6,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 16,
+            "end": 17
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": false
+        },
+        {
+          "$type": 262,
+          "$source": 0,
+          "$text": "private: true",
+          "$span": {
+            "start": 20,
+            "end": 33
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        },
+        {
+          "$type": 6,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 33,
+            "end": 34
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 4,
+          "$named": false
+        },
+        {
+          "$type": 262,
+          "$source": 0,
+          "$text": "readonly: true",
+          "$span": {
+            "start": 37,
+            "end": 51
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 5,
+          "$named": true
+        }
+      ],
+      "_}": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "}",
+        "$span": {
+          "start": 52,
+          "end": 53
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 6,
+        "$named": false
+      }
+    },
+    "expectedOutput": "{ public: true,private: true,readonly: true }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{\n  public: true,\n  private: true,\n  readonly: true\n}",
+    "pattern": "object",
+    "edits": [],
+    "expectedSourceOut": "{ public: true,private: true,readonly: true }",
+    "expectedReparseTree": "(object properties: (pair key: (property_identifier) value: (true)) properties: (pair key: (property_identifier) value: (true)) properties: (pair key: (property_identifier) value: (true)))",
+    "wrappedText": "let _ = { public: true,private: true,readonly: true };",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 213,
+      "$source": 0,
+      "$span": {
+        "start": 56,
+        "end": 101
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_{": {
+        "$type": 5,
+        "$source": 0,
+        "$text": "{",
+        "$span": {
+          "start": 56,
+          "end": 57
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_properties": [
+        {
+          "$type": 262,
+          "$source": 0,
+          "$text": "readonly: 1",
+          "$span": {
+            "start": 60,
+            "end": 71
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 6,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 71,
+            "end": 72
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 2,
+          "$named": false
+        },
+        {
+          "$type": 262,
+          "$source": 0,
+          "$text": "abstract: 1",
+          "$span": {
+            "start": 75,
+            "end": 86
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 3,
+          "$named": true
+        },
+        {
+          "$type": 6,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 86,
+            "end": 87
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 4,
+          "$named": false
+        },
+        {
+          "$type": 262,
+          "$source": 0,
+          "$text": "static: 1",
+          "$span": {
+            "start": 90,
+            "end": 99
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 5,
+          "$named": true
+        }
+      ],
+      "_}": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "}",
+        "$span": {
+          "start": 100,
+          "end": 101
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 6,
+        "$named": false
+      }
+    },
+    "expectedOutput": "{ readonly: 1,abstract: 1,static: 1 }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{\n  readonly: 1,\n  abstract: 1,\n  static: 1\n}",
+    "pattern": "object",
+    "edits": [],
+    "expectedSourceOut": "{ readonly: 1,abstract: 1,static: 1 }",
+    "expectedReparseTree": "(object properties: (pair key: (property_identifier) value: (number)) properties: (pair key: (property_identifier) value: (number)) properties: (pair key: (property_identifier) value: (number)))",
+    "wrappedText": "let _ = { readonly: 1,abstract: 1,static: 1 };",
+    "wrappedOffset": 8
   },
   {
     "kind": "render",
@@ -10047,9 +10719,71 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "f<T>(x)",
-    "expectedReparseTree": "(program statements: (expression_statement (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments (identifier))))))",
+    "expectedReparseTree": "(program statements: (expression_statement (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments arguments: (identifier))))))",
     "wrappedText": "f<T>(x)",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 252,
+      "$source": 0,
+      "$span": {
+        "start": 4,
+        "end": 7
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 22,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 4,
+          "end": 5
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_arguments": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "x",
+        "$span": {
+          "start": 5,
+          "end": 6
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_)": {
+        "$type": 24,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 6,
+          "end": 7
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(x)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "(x)",
+    "pattern": "arguments",
+    "edits": [],
+    "expectedSourceOut": "(x)",
+    "expectedReparseTree": "(arguments arguments: (identifier))",
+    "wrappedText": "_f(x);",
+    "wrappedOffset": 2
   },
   {
     "kind": "render",
@@ -17579,7 +18313,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "let foo: ({a}: Foo) => number",
-    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (object_pattern (shorthand_property_identifier_pattern)) type: (type_annotation type: (type_identifier)))) return_type: (predefined_type))))))",
+    "expectedReparseTree": "(program statements: (lexical_declaration declarators: (variable_declarator name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (object_pattern properties: (shorthand_property_identifier_pattern)) type: (type_annotation type: (type_identifier)))) return_type: (predefined_type))))))",
     "wrappedText": "let foo: ({a}: Foo) => number",
     "wrappedOffset": 0
   },
@@ -17629,7 +18363,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "let foo: ({a}: Foo) => number",
-    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (object_pattern (shorthand_property_identifier_pattern)) type: (type_annotation type: (type_identifier)))) return_type: (predefined_type)))))",
+    "expectedReparseTree": "(lexical_declaration declarators: (variable_declarator name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (object_pattern properties: (shorthand_property_identifier_pattern)) type: (type_annotation type: (type_identifier)))) return_type: (predefined_type)))))",
     "wrappedText": "let foo: ({a}: Foo) => number",
     "wrappedOffset": 0
   },
@@ -17679,7 +18413,7 @@
     "pattern": "variable_declarator",
     "edits": [],
     "expectedSourceOut": "foo : ({a}: Foo) => number",
-    "expectedReparseTree": "(variable_declarator name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (object_pattern (shorthand_property_identifier_pattern)) type: (type_annotation type: (type_identifier)))) return_type: (predefined_type))))",
+    "expectedReparseTree": "(variable_declarator name: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (object_pattern properties: (shorthand_property_identifier_pattern)) type: (type_annotation type: (type_identifier)))) return_type: (predefined_type))))",
     "wrappedText": "let foo : ({a}: Foo) => number;",
     "wrappedOffset": 4
   },
@@ -17729,7 +18463,7 @@
     "pattern": "type_annotation",
     "edits": [],
     "expectedSourceOut": ":({a}: Foo) => number",
-    "expectedReparseTree": "(type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (object_pattern (shorthand_property_identifier_pattern)) type: (type_annotation type: (type_identifier)))) return_type: (predefined_type)))",
+    "expectedReparseTree": "(type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (object_pattern properties: (shorthand_property_identifier_pattern)) type: (type_annotation type: (type_identifier)))) return_type: (predefined_type)))",
     "wrappedText": "let _:({a}: Foo) => number;",
     "wrappedOffset": 5
   },
@@ -17841,9 +18575,71 @@
     "pattern": "function_type",
     "edits": [],
     "expectedSourceOut": "({a}: Foo)=>number",
-    "expectedReparseTree": "(function_type parameters: (formal_parameters (required_parameter pattern: (object_pattern (shorthand_property_identifier_pattern)) type: (type_annotation type: (type_identifier)))) return_type: (predefined_type))",
+    "expectedReparseTree": "(function_type parameters: (formal_parameters (required_parameter pattern: (object_pattern properties: (shorthand_property_identifier_pattern)) type: (type_annotation type: (type_identifier)))) return_type: (predefined_type))",
     "wrappedText": "type _X = ({a}: Foo)=>number;",
     "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 214,
+      "$source": 0,
+      "$span": {
+        "start": 10,
+        "end": 13
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_{": {
+        "$type": 5,
+        "$source": 0,
+        "$text": "{",
+        "$span": {
+          "start": 10,
+          "end": 11
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_properties": {
+        "$type": 423,
+        "$source": 0,
+        "$text": "a",
+        "$span": {
+          "start": 11,
+          "end": 12
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_}": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "}",
+        "$span": {
+          "start": 12,
+          "end": 13
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": false
+      }
+    },
+    "expectedOutput": "{ a }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{a}",
+    "pattern": "object_pattern",
+    "edits": [],
+    "expectedSourceOut": "{ a }",
+    "expectedReparseTree": "(object_pattern properties: (shorthand_property_identifier_pattern))",
+    "wrappedText": "let { a } = null;",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",

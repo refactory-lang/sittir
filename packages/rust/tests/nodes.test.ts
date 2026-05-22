@@ -272,9 +272,13 @@ describe('closure_expression', () => {
 
 describe('closure_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.closureParameters();
+    const node = ir.closureParameters({});
     expect(node.$type).toBe(TSKindId.ClosureParameters);
     expect(node.$source).toBe(2);
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.closureParameters({});
+    expect(() => node.$render!()).not.toThrow();
   });
 });
 
@@ -1649,9 +1653,13 @@ describe('token_tree_pattern', () => {
 
 describe('trait_bounds', () => {
   it('factory produces correct type', () => {
-    const node = ir.traitBounds();
+    const node = ir.traitBounds({ bounds: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any] });
     expect(node.$type).toBe(TSKindId.TraitBounds);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.traitBounds({ bounds: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any] });
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1871,9 +1879,13 @@ describe('use_as_clause', () => {
 
 describe('use_bounds', () => {
   it('factory produces correct type', () => {
-    const node = ir.useBounds();
+    const node = ir.useBounds({});
     expect(node.$type).toBe(TSKindId.UseBounds);
     expect(node.$source).toBe(2);
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.useBounds({});
+    expect(() => node.$render!()).not.toThrow();
   });
 });
 

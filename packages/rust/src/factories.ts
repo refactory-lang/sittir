@@ -1202,15 +1202,17 @@ export function closureExpressionUFormExpr(config: Omit<ConfigOf<T.ClosureExpres
   }, methodsEngine);
 }
 
-export function closureParameters(...children: (T.Pattern | T.Parameter)[]) {
-  const _content = children;
+export function closureParameters(config: Partial<T.ClosureParameters.Config> = {}) {
+  const _parameters = config.parameters;
   return withMethods({
     $type: TSKindId.ClosureParameters as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.Pattern | T.Parameter)[]) => closureParameters(...vs) },
+    _parameters,
+    parameters() { return _parameters; },
+    $with: {
+      parameters: (...values: (T.Pattern | T.Parameter)[]) => closureParameters({ ...config, parameters: values }),
+    },
   }, methodsEngine);
 }
 
@@ -2319,21 +2321,21 @@ export function label(identifier: T.Label.Config['identifier']) {
 }
 
 export function lastMatchArm(config: T.LastMatchArm.Config) {
-  const _content = config.content;
+  const _attributes = config.attributes;
   const _pattern = config.pattern;
   const _value = config.value;
   return withMethods({
     $type: TSKindId.LastMatchArm as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
+    _attributes,
     _pattern,
     _value,
-    contents() { return _content; },
+    attributes() { return _attributes; },
     pattern() { return _pattern; },
     value() { return _value; },
     $with: {
-      contents: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) => lastMatchArm({ ...config, content: values }),
+      attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) => lastMatchArm({ ...config, attributes: values }),
       pattern: (value: T.MatchPattern) => lastMatchArm({ ...config, pattern: value }),
       value: (value: T.Expression) => lastMatchArm({ ...config, value: value }),
     },
@@ -3612,18 +3614,18 @@ export function structItemUFormUnit(config: Omit<ConfigOf<T.StructItemUFormUnit>
 
 export function structPattern(config: T.StructPattern.Config) {
   const _type = config.type;
-  const _content = config.content;
+  const _fields = config.fields;
   return withMethods({
     $type: TSKindId.StructPattern as const,
     $source: 2 as const,
     $named: true as const,
     _type,
-    _content,
+    _fields,
     type() { return _type; },
-    contents() { return _content; },
+    fields() { return _fields; },
     $with: {
       type: (value: T.Identifier | T.ScopedTypeIdentifier) => structPattern({ ...config, type: value }),
-      contents: (...values: (T.FieldPattern | T.RemainingFieldPattern)[]) => structPattern({ ...config, content: values }),
+      fields: (...values: (T.FieldPattern | T.RemainingFieldPattern)[]) => structPattern({ ...config, fields: values }),
     },
   }, methodsEngine);
 }
@@ -3859,15 +3861,17 @@ export function tokenTreePatternUFormBrace(config: Omit<ConfigOf<T.TokenTreePatt
   }, methodsEngine);
 }
 
-export function traitBounds(...children: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) {
-  const _content = children;
+export function traitBounds(config: T.TraitBounds.Config) {
+  const _bounds = config.bounds;
   return withMethods({
     $type: TSKindId.TraitBounds as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) => traitBounds(...vs) },
+    _bounds,
+    bounds() { return _bounds; },
+    $with: {
+      bounds: (...values: NonEmptyArray<T._Type | T.Lifetime | T.HigherRankedTraitBound>) => traitBounds({ ...config, bounds: values }),
+    },
   }, methodsEngine);
 }
 
@@ -4227,15 +4231,17 @@ export function useAsClause(config: T.UseAsClause.Config) {
   }, methodsEngine);
 }
 
-export function useBounds(...children: (T.Lifetime | T.Identifier)[]) {
-  const _content = children;
+export function useBounds(config: Partial<T.UseBounds.Config> = {}) {
+  const _bounds = config.bounds;
   return withMethods({
     $type: TSKindId.UseBounds as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.Lifetime | T.Identifier)[]) => useBounds(...vs) },
+    _bounds,
+    bounds() { return _bounds; },
+    $with: {
+      bounds: (...values: (T.Lifetime | T.Identifier)[]) => useBounds({ ...config, bounds: values }),
+    },
   }, methodsEngine);
 }
 

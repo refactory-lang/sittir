@@ -414,7 +414,7 @@ export interface ClosureParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<ClosureParametersContentTransportSlot>
+  _parameters?: Array<ClosureParametersParametersTransportSlot>
 }
 
 export interface CommentTransport {
@@ -1223,9 +1223,9 @@ export interface LastMatchArmTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _attributes?: Array<DeclarationStatementTransport>
   _pattern: MatchPatternTransport
   _value: ExpressionTransport
-  _content?: Array<DeclarationStatementTransport>
 }
 
 export interface LetChainTransport {
@@ -2154,7 +2154,7 @@ export interface StructPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _type: Box<StructPatternTypeTransportSlot>
-  _content?: Array<StructPatternContentTransportSlot>
+  _fields?: Array<StructPatternFieldsTransportSlot>
 }
 
 export interface TokenBindingPatternTransport {
@@ -2357,7 +2357,7 @@ export interface TraitBoundsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<TraitBoundsContentTransportSlot>
+  _bounds: Array<TraitBoundsBoundsTransportSlot>
 }
 
 export interface TraitItemTransport {
@@ -2615,7 +2615,7 @@ export interface UseBoundsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<UseBoundsContentTransportSlot>
+  _bounds?: Array<UseBoundsBoundsTransportSlot>
 }
 
 export interface UseDeclarationTransport {

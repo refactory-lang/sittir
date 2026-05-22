@@ -1184,39 +1184,45 @@ export function ambientDeclarationUFormModule(config: Omit<ConfigOf<T.AmbientDec
   }, methodsEngine);
 }
 
-export function arguments_(...children: (T.Expression | T.SpreadElement)[]) {
-  const _content = children;
+export function arguments_(config: Partial<T.Arguments.Config> = {}) {
+  const _arguments = config.arguments;
   return withMethods({
     $type: TSKindId.Arguments as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => arguments_(...vs) },
+    _arguments,
+    arguments() { return _arguments; },
+    $with: {
+      arguments: (...values: (T.Expression | T.SpreadElement)[]) => arguments_({ ...config, arguments: values }),
+    },
   }, methodsEngine);
 }
 
-export function array(...children: (T.Expression | T.SpreadElement)[]) {
-  const _content = children;
+export function array(config: Partial<T.Array.Config> = {}) {
+  const _elements = config.elements;
   return withMethods({
     $type: TSKindId.Array as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => array(...vs) },
+    _elements,
+    elements() { return _elements; },
+    $with: {
+      elements: (...values: (T.Expression | T.SpreadElement)[]) => array({ ...config, elements: values }),
+    },
   }, methodsEngine);
 }
 
-export function arrayPattern(...children: (T.Pattern | T.AssignmentPattern)[]) {
-  const _content = children;
+export function arrayPattern(config: Partial<T.ArrayPattern.Config> = {}) {
+  const _elements = config.elements;
   return withMethods({
     $type: TSKindId.ArrayPattern as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.Pattern | T.AssignmentPattern)[]) => arrayPattern(...vs) },
+    _elements,
+    elements() { return _elements; },
+    $with: {
+      elements: (...values: (T.Pattern | T.AssignmentPattern)[]) => arrayPattern({ ...config, elements: values }),
+    },
   }, methodsEngine);
 }
 
@@ -3450,15 +3456,17 @@ export function number(text: string) {
   }, methodsEngine);
 }
 
-export function object(...children: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) {
-  const _content = children;
+export function object(config: Partial<T.Object.Config> = {}) {
+  const _properties = config.properties;
   return withMethods({
     $type: TSKindId.Object as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) => object(...vs) },
+    _properties,
+    properties() { return _properties; },
+    $with: {
+      properties: (...values: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) => object({ ...config, properties: values }),
+    },
   }, methodsEngine);
 }
 
@@ -3480,15 +3488,17 @@ export function objectAssignmentPattern(config: T.ObjectAssignmentPattern.Config
   }, methodsEngine);
 }
 
-export function objectPattern(...children: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) {
-  const _content = children;
+export function objectPattern(config: Partial<T.ObjectPattern.Config> = {}) {
+  const _properties = config.properties;
   return withMethods({
     $type: TSKindId.ObjectPattern as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) => objectPattern(...vs) },
+    _properties,
+    properties() { return _properties; },
+    $with: {
+      properties: (...values: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) => objectPattern({ ...config, properties: values }),
+    },
   }, methodsEngine);
 }
 
@@ -4157,15 +4167,17 @@ export function super_() {
   }, methodsEngine);
 }
 
-export function switchBody(...children: (T.SwitchCase | T.SwitchDefault)[]) {
-  const _content = children;
+export function switchBody(config: Partial<T.SwitchBody.Config> = {}) {
+  const _cases = config.cases;
   return withMethods({
     $type: TSKindId.SwitchBody as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.SwitchCase | T.SwitchDefault)[]) => switchBody(...vs) },
+    _cases,
+    cases() { return _cases; },
+    $with: {
+      cases: (...values: (T.SwitchCase | T.SwitchDefault)[]) => switchBody({ ...config, cases: values }),
+    },
   }, methodsEngine);
 }
 

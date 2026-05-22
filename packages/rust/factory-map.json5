@@ -97,7 +97,7 @@
     "char_literal": "text",
     "closure_expression_expr": "direct",
     "closure_expression": "config",
-    "closure_parameters": "spread",
+    "closure_parameters": "config",
     "comment": "direct",
     "compound_assignment_expr": "config",
     "const_block": "direct",
@@ -220,7 +220,7 @@
     "token_tree_pattern_bracket": "spread",
     "token_tree_pattern_brace": "spread",
     "token_tree_pattern": "config",
-    "trait_bounds": "spread",
+    "trait_bounds": "config",
     "trait_item": "config",
     "try_block": "direct",
     "try_expression": "direct",
@@ -240,7 +240,7 @@
     "unit_type": "text",
     "unsafe_block": "direct",
     "use_as_clause": "config",
-    "use_bounds": "spread",
+    "use_bounds": "config",
     "use_declaration": "config",
     "use_list": "spread",
     "use_wildcard": "direct",
@@ -565,7 +565,7 @@
     "union_item.name": {
       "type_identifier": "identifier"
     },
-    "use_bounds.content": {
+    "use_bounds.bounds": {
       "type_identifier": "identifier"
     },
     "visibility_modifier.visibility_modifier_crate": {
@@ -834,7 +834,7 @@
       "closure_expression_expr"
     ],
     "closure_parameters": [
-      "content"
+      "parameters"
     ],
     "comment": [
       "content"
@@ -1040,7 +1040,7 @@
       "identifier"
     ],
     "last_match_arm": [
-      "content",
+      "attributes",
       "pattern",
       "value"
     ],
@@ -1240,7 +1240,7 @@
     ],
     "struct_pattern": [
       "type",
-      "content"
+      "fields"
     ],
     "token_binding_pattern": [
       "name",
@@ -1281,7 +1281,7 @@
       "token_tree_pattern_brace"
     ],
     "trait_bounds": [
-      "content"
+      "bounds"
     ],
     "trait_item": [
       "visibility_modifier",
@@ -1359,7 +1359,7 @@
       "alias"
     ],
     "use_bounds": [
-      "content"
+      "bounds"
     ],
     "use_declaration": [
       "visibility_modifier",
@@ -2409,7 +2409,7 @@
       }
     },
     "closure_parameters": {
-      "content": {
+      "parameters": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3319,7 +3319,7 @@
       }
     },
     "last_match_arm": {
-      "content": {
+      "attributes": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4221,7 +4221,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "fields": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4364,12 +4364,12 @@
       }
     },
     "trait_bounds": {
-      "content": {
+      "bounds": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "trait_item": {
@@ -4701,7 +4701,7 @@
       }
     },
     "use_bounds": {
-      "content": {
+      "bounds": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,

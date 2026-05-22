@@ -5478,9 +5478,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "arguments",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -5498,7 +5498,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5519,9 +5519,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -5539,7 +5539,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -5560,9 +5560,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -5580,7 +5580,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -12903,9 +12903,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -12929,7 +12929,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14763,9 +14763,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "properties",
+          "propertyName": "properties",
+          "paramName": "properties",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -14795,7 +14795,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -14888,9 +14888,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "properties",
+          "propertyName": "properties",
+          "paramName": "properties",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -14920,7 +14920,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -17210,9 +17210,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "cases",
+          "propertyName": "cases",
+          "paramName": "cases",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -17230,7 +17230,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [

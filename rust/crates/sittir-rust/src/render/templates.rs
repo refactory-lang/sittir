@@ -601,8 +601,7 @@ pub struct ClosureExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "closure_parameters.jinja", escape = "none")]
 pub struct ClosureParametersTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
-    pub pattern: ListNonterminalView<'a>,
+    pub parameters: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -976,8 +975,7 @@ pub struct LabelTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "last_match_arm.jinja", escape = "none")]
 pub struct LastMatchArmTemplate<'a> {
-    pub attribute_item: ListNonterminalView<'a>,
-    pub content: ListNonterminalView<'a>,
+    pub attributes: ListNonterminalView<'a>,
     pub pattern: SingleNonterminalView<'a>,
     pub value: SingleNonterminalView<'a>,
 }
@@ -1369,8 +1367,7 @@ pub struct StructItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "struct_pattern.jinja", escape = "none")]
 pub struct StructPatternTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
-    pub field_pattern: ListNonterminalView<'a>,
+    pub fields: ListNonterminalView<'a>,
     pub type_: SingleNonterminalView<'a>,
 }
 
@@ -1450,8 +1447,7 @@ pub struct TokenTreeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "trait_bounds.jinja", escape = "none")]
 pub struct TraitBoundsTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
-    pub type_: ListNonterminalView<'a>,
+    pub bounds: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1590,8 +1586,7 @@ pub struct UseAsClauseTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "use_bounds.jinja", escape = "none")]
 pub struct UseBoundsTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
-    pub lifetime: ListNonterminalView<'a>,
+    pub bounds: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

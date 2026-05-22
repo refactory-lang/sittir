@@ -2692,20 +2692,20 @@ export interface AmbientDeclarationUFormModule {
 export type AmbientDeclaration = AmbientDeclarationUFormDeclaration | AmbientDeclarationUFormGlobal | AmbientDeclarationUFormModule;
 export interface Arguments {
   readonly $type: TSKindId.Arguments;
-  readonly _content?: readonly (Expression | SpreadElement)[];
-  contents(): readonly (Expression | SpreadElement)[];
+  readonly _arguments?: readonly (Expression | SpreadElement)[];
+  arguments(): readonly (Expression | SpreadElement)[];
 }
 
 export interface Array {
   readonly $type: TSKindId.Array;
-  readonly _content?: readonly (Expression | SpreadElement)[];
-  contents(): readonly (Expression | SpreadElement)[];
+  readonly _elements?: readonly (Expression | SpreadElement)[];
+  elements(): readonly (Expression | SpreadElement)[];
 }
 
 export interface ArrayPattern {
   readonly $type: TSKindId.ArrayPattern;
-  readonly _content?: readonly (Pattern | AssignmentPattern)[];
-  contents(): readonly (Pattern | AssignmentPattern)[];
+  readonly _elements?: readonly (Pattern | AssignmentPattern)[];
+  elements(): readonly (Pattern | AssignmentPattern)[];
 }
 
 export interface ArrayType {
@@ -3602,8 +3602,8 @@ export interface JsxElement {
 
 export interface JsxExpression {
   readonly $type: "jsx_expression";
-  readonly _content?: Expression | SequenceExpression | SpreadElement;
-  content(): Expression | SequenceExpression | SpreadElement | undefined;
+  readonly _expression?: Expression | SequenceExpression | SpreadElement;
+  expression(): Expression | SequenceExpression | SpreadElement | undefined;
 }
 
 export interface JsxNamespaceName {
@@ -3822,8 +3822,8 @@ export interface NonNullExpression {
 
 export interface Object {
   readonly $type: TSKindId.Object;
-  readonly _content?: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
-  contents(): readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
+  readonly _properties?: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
+  properties(): readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
 }
 
 export interface ObjectAssignmentPattern {
@@ -3836,8 +3836,8 @@ export interface ObjectAssignmentPattern {
 
 export interface ObjectPattern {
   readonly $type: TSKindId.ObjectPattern;
-  readonly _content?: readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
-  contents(): readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
+  readonly _properties?: readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
+  properties(): readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
 }
 
 export interface ObjectType {
@@ -4110,8 +4110,8 @@ export interface SubscriptExpression {
 
 export interface SwitchBody {
   readonly $type: TSKindId.SwitchBody;
-  readonly _content?: readonly (SwitchCase | SwitchDefault)[];
-  contents(): readonly (SwitchCase | SwitchDefault)[];
+  readonly _cases?: readonly (SwitchCase | SwitchDefault)[];
+  cases(): readonly (SwitchCase | SwitchDefault)[];
 }
 
 export interface SwitchCase {

@@ -82,9 +82,9 @@
     "adding_type_annotation": "direct",
     "ambient_declaration_declaration": "direct",
     "ambient_declaration": "config",
-    "arguments": "spread",
-    "array": "spread",
-    "array_pattern": "spread",
+    "arguments": "config",
+    "array": "config",
+    "array_pattern": "config",
     "array_type": "direct",
     "arrow_function_parameter": "direct",
     "arrow_function__call_signature": "config",
@@ -201,9 +201,9 @@
     "non_null_expression": "direct",
     "null": "text",
     "number": "text",
-    "object": "spread",
+    "object": "config",
     "object_assignment_pattern": "config",
-    "object_pattern": "spread",
+    "object_pattern": "config",
     "object_type": "config",
     "omitting_type_annotation": "direct",
     "opting_type_annotation": "direct",
@@ -236,7 +236,7 @@
     "string": "config",
     "subscript_expression": "config",
     "super": "text",
-    "switch_body": "spread",
+    "switch_body": "config",
     "switch_case": "config",
     "switch_default": "config",
     "switch_statement": "config",
@@ -552,13 +552,13 @@
     "nested_type_identifier.name": {
       "type_identifier": "identifier"
     },
-    "object.content": {
+    "object.properties": {
       "shorthand_property_identifier": "_shorthand_property_identifier"
     },
     "object_assignment_pattern.left": {
       "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern"
     },
-    "object_pattern.content": {
+    "object_pattern.properties": {
       "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern"
     },
     "parenthesized_expression.parenthesized_expression_typed": {
@@ -813,13 +813,13 @@
       "ambient_declaration_module"
     ],
     "arguments": [
-      "content"
+      "arguments"
     ],
     "array": [
-      "content"
+      "elements"
     ],
     "array_pattern": [
-      "content"
+      "elements"
     ],
     "array_type": [
       "primary_type"
@@ -1190,7 +1190,7 @@
       "close_tag"
     ],
     "jsx_expression": [
-      "content"
+      "expression"
     ],
     "jsx_namespace_name": [
       "jsx_identifier"
@@ -1277,14 +1277,14 @@
       "expression"
     ],
     "object": [
-      "content"
+      "properties"
     ],
     "object_assignment_pattern": [
       "left",
       "right"
     ],
     "object_pattern": [
-      "content"
+      "properties"
     ],
     "object_type": [
       "opening",
@@ -1393,7 +1393,7 @@
       "index"
     ],
     "switch_body": [
-      "content"
+      "cases"
     ],
     "switch_case": [
       "value",
@@ -2388,7 +2388,7 @@
       }
     },
     "arguments": {
-      "content": {
+      "arguments": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2397,7 +2397,7 @@
       }
     },
     "array": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2406,7 +2406,7 @@
       }
     },
     "array_pattern": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4041,7 +4041,7 @@
       }
     },
     "jsx_expression": {
-      "content": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4487,7 +4487,7 @@
       }
     },
     "object": {
-      "content": {
+      "properties": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4512,7 +4512,7 @@
       }
     },
     "object_pattern": {
-      "content": {
+      "properties": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -5014,7 +5014,7 @@
       }
     },
     "switch_body": {
-      "content": {
+      "cases": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
