@@ -186,13 +186,18 @@ async function main(argv: string[]): Promise<number> {
 	const wantFull = values.trace === true || values.full === true;
 	if (opts.kind && !wantFull) {
 		const trace = (await probeTrace(grammar, source, { ...opts, engine: 'native' })) as Record<string, unknown>;
-		const deep =
-			(trace.trace as { native?: { deep?: Record<string, unknown> } } | undefined)?.native?.deep ?? {};
+		const nativeTrace = (
+			trace.trace as { native?: { deep?: Record<string, unknown>; wrapError?: string } } | undefined
+		)?.native;
+		const deep = nativeTrace?.deep ?? {};
 		const focused = {
 			grammar,
 			source,
 			kind: opts.kind,
 			cst: trace.cst,
+			// wrap throws (e.g. a required slot the parser didn't route) surface
+			// here so the CST is still readable to diagnose what the parser emitted.
+			wrapError: nativeTrace?.wrapError,
 			raw: deep.rawNodeData,
 			wrapped: deep.nodeData,
 			legacyWrapped: deep.legacyDeepNodeData,
@@ -526,53 +531,34 @@ export async function probeTrace(
 		};
 	}
 	const cst = dumpCst(targetNode, null);
-	const tsRead = await readProbeNodeData(grammar, source, tree, targetNode, isRoot, 'typescript');
-	const nativeRead = await readProbeNodeData(grammar, source, tree, targetNode, isRoot, 'native');
+	// `wrap` (used by BOTH the native and TS flows) can throw — e.g. a required
+	// slot the parser didn't route into it, like `function_definition.block`.
+	// Catch per-engine so the CST (parser output) and the other engine still
+	// report instead of the whole probe aborting.
+	const buildEngineTrace = async (engine: 'typescript' | 'native') => {
+		let read: Awaited<ReturnType<typeof readProbeNodeData>>;
+		try {
+			read = await readProbeNodeData(grammar, source, tree, targetNode, isRoot, engine);
+		} catch (e) {
+			return { wrapError: String((e as Error)?.message ?? e) };
+		}
+		const shallow = await buildTraceLane(grammar, read.shallow, read.shallow, read.shallow, engine, 'shallow');
+		const deep =
+			engine === 'native'
+				? await buildTraceLane(grammar, read.shallow, read.deepReadTreeNodeRaw, read.deep, engine, 'deep', read.legacyDeepNodeData)
+				: await buildTraceLane(grammar, read.shallow, read.deepReadTreeNodeRaw ?? read.deep, read.deep, engine, 'deep');
+		return { shallow, deep };
+	};
 	return {
 		grammar,
 		source,
 		probeRange,
 		cst,
 		trace: {
-			typescript: {
-				shallow: await buildTraceLane(
-					grammar,
-					tsRead.shallow,
-					tsRead.shallow,
-					tsRead.shallow,
-					'typescript',
-					'shallow'
-				),
-				deep: await buildTraceLane(
-					grammar,
-					tsRead.shallow,
-					tsRead.deepReadTreeNodeRaw ?? tsRead.deep,
-					tsRead.deep,
-					'typescript',
-					'deep'
-				)
-			},
-			native: {
-				shallow: await buildTraceLane(
-					grammar,
-					nativeRead.shallow,
-					nativeRead.shallow,
-					nativeRead.shallow,
-					'native',
-					'shallow'
-				),
-				deep: await buildTraceLane(
-					grammar,
-					nativeRead.shallow,
-					nativeRead.deepReadTreeNodeRaw,
-					nativeRead.deep,
-					'native',
-					'deep',
-					nativeRead.legacyDeepNodeData
-				)
-			}
+			typescript: await buildEngineTrace('typescript'),
+			native: await buildEngineTrace('native')
 		}
-	};
+	} as unknown as ProbeTraceReport;
 }
 
 // ---------------------------------------------------------------------------
