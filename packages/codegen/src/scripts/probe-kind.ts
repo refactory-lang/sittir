@@ -142,7 +142,12 @@ async function main(argv: string[]): Promise<number> {
 			//                 block with rendered-equal verdict.
 			engine: { type: 'string' }
 			,
-			trace: { type: 'boolean', default: false }
+			trace: { type: 'boolean', default: false },
+			// --full: emit the complete multi-lane trace (typescript + native,
+			// shallow + deep). Default for `--kind` is the focused native-pipeline
+			// view (cst → raw → wrapped → transport → rendered). Use --full for
+			// cross-engine comparison.
+			full: { type: 'boolean', default: false }
 		}
 	});
 	if (!values.grammar) {
@@ -157,7 +162,9 @@ async function main(argv: string[]): Promise<number> {
 	}
 
 	const parsedRange = values.range ? parseRange(values.range as string) : undefined;
-	const engineRaw = (values.engine as string | undefined) ?? 'typescript';
+	// Native is the production path; the TS render engine is @deprecated. Default
+	// to native so an un-flagged probe reflects what actually ships.
+	const engineRaw = (values.engine as string | undefined) ?? 'native';
 	if (!['typescript', 'native', 'both'].includes(engineRaw)) {
 		process.stderr.write(`probe-kind: --engine must be 'typescript' | 'native' | 'both' (got '${engineRaw}')\n`);
 		return 2;
@@ -170,7 +177,33 @@ async function main(argv: string[]): Promise<number> {
 		reparse: values.reparse === true,
 		engine: (engineRaw === 'both' ? 'typescript' : engineRaw) as 'typescript' | 'native'
 	};
-	if (values.trace === true) {
+	// Focused native-pipeline view: default when `--kind` is given (unless
+	// --trace/--full). Shows the slot at EVERY native stage so the layer that
+	// drops it is obvious — cst (parse) → raw (raw read) → wrapped (materialized
+	// wrap, what render consumes) → transport (FromNapiValue payload) → rendered.
+	// `legacyWrapped` is the old recursive readNode walker — populated in it but
+	// empty in `wrapped` = a wrap-materialization gap.
+	const wantFull = values.trace === true || values.full === true;
+	if (opts.kind && !wantFull) {
+		const trace = (await probeTrace(grammar, source, { ...opts, engine: 'native' })) as Record<string, unknown>;
+		const deep =
+			(trace.trace as { native?: { deep?: Record<string, unknown> } } | undefined)?.native?.deep ?? {};
+		const focused = {
+			grammar,
+			source,
+			kind: opts.kind,
+			cst: trace.cst,
+			raw: deep.rawNodeData,
+			wrapped: deep.nodeData,
+			legacyWrapped: deep.legacyDeepNodeData,
+			transport: deep.nativeTransport,
+			rendered: deep.rendered,
+			renderError: deep.renderError
+		};
+		process.stdout.write(JSON.stringify(focused, null, values.pretty ? 2 : undefined) + '\n');
+		return 0;
+	}
+	if (wantFull) {
 		const trace = await probeTrace(grammar, source, opts);
 		process.stdout.write(JSON.stringify(trace, null, values.pretty ? 2 : undefined) + '\n');
 		return 0;

@@ -9,23 +9,25 @@ You diagnose sittir codegen/render bugs to a precise root cause + fix location. 
 
 ## The diagnostic toolkit (USE THESE — do not hand-trace rust or write one-off probes)
 
-- **`probe-kind`** — one `parse → read → render` cycle for ONE kind, structured JSON. **THE RECIPE** (to isolate a kind's *native* render — the only path that matters):
+- **`probe-kind`** — one native `parse → read → render` cycle for ONE kind. **THE RECIPE** (the default is now native + a focused native-pipeline view):
   ```sh
   pnpm exec tsx packages/codegen/src/scripts/probe-kind.ts \
       --grammar <rust|python|typescript> --source '<minimal code exercising the kind>' \
-      --kind <k> --trace --pretty > /tmp/pk.json 2>/dev/null
+      --kind <k> --pretty > /tmp/pk.json 2>/dev/null
   ```
-  Then READ `trace.native.deep` from the JSON (it's large — extract with python, don't dump it whole):
-  - `.nodeData` — the **recursively-materialized wrap the validator renders from** = GROUND TRUTH for what render receives.
-  - `.rendered` / `.renderError` — the native render output / error for the kind.
-  - `.legacyDeepNodeData` — the old recursive `readNode` walker's view (usually populated). **Compare it to `.nodeData`**: a slot populated in `legacyDeepNodeData` but EMPTY in `nodeData` = a wrap-materialization gap (the bug class behind several empty-render breaks).
-  - top-level `.cst` — raw tree-sitter parse; confirm the parser actually emits the expected `field`/kind (e.g. `('elements','identifier')`).
-  - Extract: `python3 - /tmp/pk.json <<'EOF'` … `d['trace']['native']['deep']` … `EOF`, or `rg '"rendered"|renderError' /tmp/pk.json` for a quick verdict.
-  - `--no-render` inspects `nodeData` (wrap) alone, skipping render.
+  The output is a flat object showing the slot at EVERY native stage — read them in order to localize WHICH stage drops it:
+  - `.cst` — raw tree-sitter parse (does the parser even emit the expected `field`/kind, e.g. `('elements','identifier')`?).
+  - `.raw` — raw native read (`rawNodeData`), pre-materialization.
+  - `.wrapped` — the materialized wrap (= what render consumes) = GROUND TRUTH.
+  - `.legacyWrapped` — old recursive `readNode` walker; **populated here but EMPTY in `.wrapped` = a wrap-materialization gap** (a common empty-render bug class).
+  - `.transport` — the `FromNapiValue` payload (empty here = transport-enum / accepted-kinds gap).
+  - `.rendered` / `.renderError` — native render. NOTE: `rendered` is whole-source best-effort, so it can carry an **outer-construct** error (`Missing field _expressions on ProgramTransport._statements`) even when the kind's own stages are fine — **read the stages, not just `rendered`**.
+  - Extract with `python3 - /tmp/pk.json <<'EOF' … json.load(...)['wrapped'] … EOF`, or `rg '"rendered"|renderError'` for a quick verdict.
+  - `--full` emits the complete multi-lane trace (typescript + native, shallow + deep) for the rare cross-engine compare. `--no-render` inspects the wrap alone.
 
   **What NOT to do / NOT look at:**
-  - **NEVER** plain `--engine native` (without `--trace`) to isolate an inner kind — it renders the WHOLE source and dies on the OUTER construct's transport (`Missing field _expressions on ProgramTransport._statements` / `_name on SourceFileTransport._statements`). That's a **probe-tool limitation, NOT the kind's bug** — draw no conclusions from it. Use `--trace` and read the `native.deep` lane instead.
-  - **NEVER** diagnose the JS/TS path. `packages/common/src/readNode.ts` (the JS one-level tree-walk reader) and `@sittir/core`'s TS/Nunjucks renderer are **`@deprecated`**. Production reads via the rust native **`read_node`** and renders via the native transport + Askama templates. The JS `readNode` ≠ the rust `read_node` — only the latter is ground truth. probe-kind's DEFAULT engine is the deprecated TS one (throws `No render template for '0'`), so ALWAYS pass `--trace` / `--engine native` / `--no-render` — never trust an un-flagged run or a `$type: 0` (shallow/unresolved) read.
+  - **NEVER** diagnose the JS/TS path. `packages/common/src/readNode.ts` (the JS one-level tree-walk reader) and `@sittir/core`'s TS/Nunjucks renderer are **`@deprecated`**. Production reads via the rust native **`read_node`** and renders via the native transport + Askama templates. The JS `readNode` ≠ the rust `read_node` — only the latter is ground truth. (probe-kind now defaults to native, but never hand-set `--engine typescript` for a verdict.)
+  - A `$type: 0` (shallow/unresolved) read or a `No render template for '0'` error means you're on a stale/TS path — re-run the recipe above.
 - **`dump-ast-mismatches`** — `pnpm exec tsx packages/tools/src/cli.ts dump-ast-mismatches --grammar <g> [--verbose]` — every read-render-parse AST mismatch with the rendered-vs-original child diff (`childCount 7 ≠ 3 [...] vs [...]`). This is how you see exactly which children a kind drops.
 - **`diff-failures`** — `pnpm exec tsx packages/tools/src/cli.ts diff-failures --grammar <g>` — per-kind validator failures; compare current failures vs a baseline (isolate regressions).
 - **`probe-stages`** — `pnpm exec tsx packages/tools/src/cli.ts probe-stages --grammar <g> --kind <k>` — dumps the rule's shape at EVERY compiler phase (`evaluate → link → optimize → simplify`). The single best tool for "where does this rule's shape change/diverge" — e.g. it revealed rust `parameters` desugaring to `_parameters_repeat1` (sittir/evaluate) vs `_parameters_optional1` (tree-sitter), the root of a body-pattern-group visibility bug. JSON to stdout (assemble warnings on stderr — capture `2>/dev/null`).
