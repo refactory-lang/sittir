@@ -1,7 +1,7 @@
 # Compiler Workflow Simplification — Design
 
 **Date:** 2026-05-22
-**Status:** 📋 SPEC RECONCILED — brainstorm (above) + code-grounded implementation spec §1–§7 (below); **5 decisions + DRY/simplify review + critical-review batch + method-convergence fold (2026-05-22)**. End-state is clean (no transitional aliases, no sunset PRs; old code removed within the superseding strangler step). Adds Principle #15 (provenance never drives behavior), the sanctioned `content` slot (§4c), identical-form collapse (§4d), the H2 helper-leak fix, and the refined #14 getter-vs-method line (every pipeline method is `(target, ctx)`; `ctx` absorbs `nodeMap`/etc; zero non-conforming methods, zero getter-with-arg shapes). **Ready for user review → `writing-plans`.** 13 PRs (PR3 prereq + PR-A..PR-L, incl. PR-D2). PR3 is a gating prerequisite (not yet landed — only its design doc is on this branch).
+**Status:** 📋 SPEC RECONCILED — brainstorm (above) + code-grounded implementation spec §1–§7 (below); **5 decisions + DRY/simplify review + critical-review batch + method-convergence fold (2026-05-22)**. End-state is clean (no transitional aliases, no sunset PRs; old code removed within the superseding strangler step). Adds Principle #15 (provenance never drives behavior), the sanctioned `content` slot (§4c), identical-form collapse (§4d), the H2 helper-leak fix, the refined #14 getter-vs-method line (every pipeline method is `(target, ctx)`; `ctx` absorbs `nodeMap`/etc; zero non-conforming methods, zero getter-with-arg shapes), and the `parameterless`-as-memoized-getter convergence (delete the fixpoint pass + stored field per #1 — graph-encoded recursion, cycle = not-parameterless). **Ready for user review → `writing-plans`.** 13 PRs (PR3 prereq + PR-A..PR-L, incl. PR-D2). PR3 is a gating prerequisite (not yet landed — only its design doc is on this branch).
 **Base:** branch `026-pr3-delete-legacy-render-walker` (off `master`, post-PR2 merge `bbadd99b`).
 
 ---
@@ -964,11 +964,11 @@ the legacy walker / wrapper types / ClauseRule are gone).
 | **PR-E** | transport + render read the class | Transport-projection / render-module read `slot.values`/`slot.kinds`/`slot.storageKey` getters; drop node-wide `meta.separators` fallback (per-slot stamping covers all kinds). **Depends on PR-D2** — values now hold inlined kinds. | counts; H2 leak probe still 0 | the slot's `values` hold inlined target kinds (guaranteed by PR-D2); getters identical |
 | **PR-F** | factory + from + types read the class | factories/from/types consume getters; `from.ts` storageKey param becomes `slot.storageKey`. **No `$other`** on these surfaces (Q4). | counts; from pass-rate | getters identical to today's stored fields; `$other` was never on these surfaces in the end-state |
 | **PR-G** | Diagnostics severity model + Assemble→Project gate | Add `compiler/diagnostics.ts` (`DiagnosticSink`, severity) + `compiler/emit-gate.ts` (`assertEmittable`); wire the gate into `generate.ts` after `assemble()`. Move the unnamed-choice warner global (`collect-slots.ts:61-68`) into the sink. Initially all current heuristics still fire (no `fail` yet) — gate is a no-op until PR-L flips severities. | counts unchanged; gate passes (no `fail` emitted yet) | additive infrastructure; no severity is `fail` until PR-L |
-| **PR-H** | Phase rename + shared `transforms.ts` + ctx | Rename `link.ts`→`classify.ts`, `optimize.ts`→`normalize.ts`. Extract shared idempotent ops to `transforms.ts`. Introduce `NormalizeCtx`/`SimplifyCtx`/`AssembleCtx` (carrying the sink from PR-G). Apply the §7.7 `<operation><ObjectType>(target, ctx)` signatures + node-behavior-to-class refactors. | counts; full test suite | pure rename + move + method relocations (node behavior → class getters); no logic change |
+| **PR-H** | Phase rename + shared `transforms.ts` + ctx + node-behavior-to-class | Rename `link.ts`→`classify.ts`, `optimize.ts`→`normalize.ts`. Extract shared idempotent ops to `transforms.ts`. Introduce `NormalizeCtx`/`SimplifyCtx`/`AssembleCtx` (carrying the sink from PR-G). Apply the §7.7 `<operation><ObjectType>(target, ctx)` signatures. **Node-behavior-to-class:** `markUserFacing`→`(node, ctx)` method; **DELETE the `markParameterlessKinds` fixpoint + stored field → memoized cycle-guarded `isParameterless`/`stampExpression` getters** on `AssembledNode` (§7.3 / §7.7), terminals override the base case. | counts; full test suite; the parameterless getter produces byte-identical factory auto-stamp output | pure rename + move + method relocations; the getter is the *same* recursion the fixpoint computed (cycle = not-parameterless matches the fixpoint's never-marks-a-cycle behavior), so factory output is unchanged |
 | **PR-I** | Deterministic polymorph resolver + identical-form collapse (H3 split — resolver) | Add the slot-presence+kind resolver (`project_polymorph_dispatcher_slot_probe`, generalized). **Prerequisite step:** collapse identical-signature forms (C2 / §4d) so dispatch is total; assert no polymorph retains a duplicate signature. Resolver is internal — no shipped-surface change yet. A non-resolution becomes `fail` (unreachable post-collapse). | counts; no compile-time "no variant matched"; collapse assertion holds | collapse removes the only un-disambiguable case; current corpus has 0 identical-form sets (verified §4d) so collapse is a no-op today |
 | **PR-J** | Remove `$variant` from shipped surfaces (H3 split — depends on PR-I) | Remove the stored `$variant` discriminant from `types.ts`/`factories.ts`/`from.ts`/`wrap.ts`/transports/templates (~95+ ts sites — see §4d blast-radius). Shipped runtime dispatches via the PR-I resolver. `$variant` survives ONLY in the serialized Model + validator dispatch map (#15, diagnostics/validate-only). | counts; validator still resolves every polymorph; no `$variant` in generated 1–6 | the PR-I resolver reproduces every dispatch decision the discriminant made; `$variant` is provenance, not behavior (#15) |
 | **PR-K** | `factory-map.json5` → `node-model.json5` (H3 split — orthogonal) | Make `node-model.json5` carry factory-map's subset (§6); point validator/`nodeToConfig` at it; delete `factory-map.json5` + emitter. | validator passes against the consolidated model; counts | factory-map is a strict subset (§6 proof); pure consolidation, independent of the resolver/`$variant` work |
-| **PR-L** | Flip heuristics to fail-diagnostics (author overrides first) | For each *guess* (`inferFieldNames`, `looksLikePolymorphCandidate`/`choiceNeedsVariantWrapping`, the choice distribute-vs-union guess `collect-slots.ts:520`, parameterless fixpoint): **first** author the overrides that clear its would-be `fail` diagnostics across all 3 grammars (counts must hold), **then** delete the heuristic and `fail` on the now-impossible non-deterministic case. **NOT in scope:** the sanctioned `content` slot (§4c) — it stays a `warn`, never converts to `fail`; PR-L need not field-name the 49 current `content` slots. | counts hold AT EACH heuristic removal; `overrides.suggested.ts` reviewed; gate (PR-G) now actively blocks | overrides authored before the guess is removed → deterministic path produces the same Model; `content` is sanctioned (§4c) so the fail-cliff is avoided |
+| **PR-L** | Flip heuristics to fail-diagnostics (author overrides first) | For each *guess* (`inferFieldNames`, `looksLikePolymorphCandidate`/`choiceNeedsVariantWrapping`, the choice distribute-vs-union guess `collect-slots.ts:520`): **first** author the overrides that clear its would-be `fail` diagnostics across all 3 grammars (counts must hold), **then** delete the heuristic and `fail` on the now-impossible non-deterministic case. **NOT in scope:** (a) the sanctioned `content` slot (§4c) — stays a `warn`, never `fail`; PR-L need not field-name the 49 current `content` slots; (b) the **parameterless derivation** — it is NOT a guess (it is a pure recursion the graph encodes), so it does not flip to `fail`; it becomes a memoized getter in PR-H (node-behavior-to-class) with the fixpoint pass deleted there. | counts hold AT EACH heuristic removal; `overrides.suggested.ts` reviewed; gate (PR-G) now actively blocks | overrides authored before the guess is removed → deterministic path produces the same Model; `content` + parameterless are deterministic, not guesses, so no fail-cliff |
 
 **Proposed PR count: 13** (PR3 prereq + PR-A..PR-L, where PR-D2 is the H2 fix).
 PR3, PR-A..PR-D are the load-bearing core (centralize naming + kill
@@ -1074,7 +1074,7 @@ classes (§7.3).
 | `compiler/normalize.ts` | RENAME of `optimize.ts` (+ folds `wrapper-deletion.ts`) | **Normalize (non-lossy)** | `normalizeGrammar(linked, ctx)` (was `optimize`), `fanOutSeqChoices`, `factorChoiceBranches`, `dedupeSeqMembers`, `inlineSingleUseHidden`, `collapseWrappers`, `pushdownWrappers` (was `applyWrapperDeletion`). Produces the **RenderRule** snapshot |
 | `compiler/simplify.ts` | UNCHANGED structure — see `simplify.ts:331` | **Simplify (lossy)** | `computeSimplifiedRules`, `simplifyRules`, `simplifyRule`, `fuseHeadRepeatLists`, `hoistSharedFieldAcrossChoiceBranches`, `mergeChoiceBranches`, the field-hoist helpers. Produces the **SimplifiedRule** snapshot |
 | `compiler/transforms.ts` | **NEW** (#13a) | shared idempotent ops invoked by BOTH Normalize & Simplify | `collapseSeq(rule, ctx)`, `canonicalizeSeqOfLeaves(rule, ctx)`, `inlineRefs(rule, ctx)`, `deleteWrapper(rule, ctx)`, `pushAttrsToLeaves(rule, …)`, `combineMultiplicity`, `extractRepeatShape`, `findRepeatFlag` (moved out of the deleted `template-walker.ts`) |
-| `compiler/assemble.ts` (+ slot walk) | REFINED — see `assemble.ts:407` | **Assemble** (sole Model-builder) | `assembleModel(normalized, ctx)`, `classifyNode(rule, ctx)`, `hydrateSlotRefs(nodeMap, ctx)`, `markUserFacing(node, ctx)` + `markVariantChildrenUserFacing(node, ctx)` (cross-node, `ctx.nodeMap`), `markParameterlessKinds(nodeMap, ctx)` (inter-node fixpoint), `resolveCollidingNames(nodeMap, ctx)`, `resolveIrKeys(nodeMap, ctx)`, `collectAnonymousNodes(nodeMap, ctx)`, `collectSlots(rule, ctx)` (slot-enum walk — naming logic MOVED to the class, §7.3). **DELETED:** `buildSlot` free function (→ `AssembledNonterminal` constructor). All signatures per the §7.7 exhaustive map (every pass conforms to `(target, ctx)`) |
+| `compiler/assemble.ts` (+ slot walk) | REFINED — see `assemble.ts:407` | **Assemble** (sole Model-builder) | `assembleModel(normalized, ctx)`, `classifyNode(rule, ctx)`, `hydrateSlotRefs(nodeMap, ctx)`, `markUserFacing(node, ctx)` + `markVariantChildrenUserFacing(node, ctx)` (cross-node, `ctx.nodeMap`), `resolveCollidingNames(nodeMap, ctx)`, `resolveIrKeys(nodeMap, ctx)`, `collectAnonymousNodes(nodeMap, ctx)`, `collectSlots(rule, ctx)` (slot-enum walk — naming logic MOVED to the class, §7.3). **DELETED:** `buildSlot` free function (→ `AssembledNonterminal` constructor); **`markParameterlessKinds` fixpoint + helpers (→ memoized `node.isParameterless`/`stampExpression` getters, §7.3 — graph-encoded, no pass).** All signatures per the §7.7 exhaustive map (every pass conforms to `(target, ctx)`) |
 | `compiler/rule.ts` | REFINED — see §7.4 | **shared rule helpers** (#13c) | Rule IR types + `RuleBase`; type guards (`isSeq`, …); `normalizeEnumMembers`, `literalTextOf`, `collectFieldNames`, `replaceAtPath`. **DELETED (PR3):** `OptionalRule`/`FieldRule`/`RepeatRule`/`Repeat1Rule`/`ClauseRule` |
 | `compiler/node-map.ts` | REFINED — see §7.3 | the `AssembledNode*` class hierarchy + `AssembledNonterminal` class + slot value types | (class defs only — no free-standing pipeline methods). **DELETED:** `inlineJinjaClauses`, `translateToJinja`, `renderTemplate()` methods (PR3) |
 | `compiler/slot-model.ts` | **DELETED** | — | `SlotModel`/`createSlotModel`/`createNamedSlotModel`/`createUnnamedKindSlotModel`/`createUnnamedChildrenSlotModel`/`slotStorageKey` all gone — replaced by class getters (§7.3) |
@@ -1150,7 +1150,7 @@ class hierarchy is **already class-based**; only the listed members change.
 
 | Class | Status | End-state note |
 |---|---|---|
-| `AssembledNodeBase<R>` | REFINED — see `node-map.ts:1281` | **DELETED method:** `renderTemplate()` (PR3). `protected rule: R` getters (`members`/`separator`/`isTextTemplate`) read `renderRule` after the RawRule snapshot is dropped (§4 FLAG). **Stored fields populated by the refactored `(target, ctx)` assemble passes (§7.7), read field-style by emitters:** `userFacing` (set by `markUserFacing(node, ctx)` — cross-node, NOT a getter), `isParameterless`/`stampExpression` (set by the `markParameterlessKinds` fixpoint; terminal classes self-init in their constructors). Otherwise unchanged (`kind`/`typeName`/`factoryName`/`irKey`/`source`/`hidden`) |
+| `AssembledNodeBase<R>` | REFINED — see `node-map.ts:1281` | **DELETED method:** `renderTemplate()` (PR3). `protected rule: R` getters (`members`/`separator`/`isTextTemplate`) read `renderRule` after the RawRule snapshot is dropped (§4 FLAG). **NEW memoized getters (replace the deleted fixpoint pass + stored fields, §7.7):** `isParameterless` + `stampExpression`/`stampChildExpression` — recursive over `slot.values[].node`, cycle-guarded (in-progress = not parameterless), memoized per node; terminal subclasses override the base case. **Stored field populated by a `(node, ctx)` pass, read field-style:** `userFacing` (set by `markUserFacing` — cross-node, NOT a getter). Otherwise unchanged (`kind`/`typeName`/`factoryName`/`irKey`/`source`/`hidden`) |
 | `AssembledNonterminal` | **REFINED → CLASS** (§2 full def) | the slot class; getters `storageName` (the ONE identity)/`storageKey`/`parseNames`/`configKey`/`propertyName`/`paramName`/`arity`/`isRequired`/`isMultiple`/`isNonEmpty`/`hasTrailing`/`hasLeading`/`kinds`. Stored: `fieldName`/`values`/`aliasSources`/`source` (provenance, incl. retained `'inferred'`)/`sourceRuleId`/`storageInfo`/`#refKindNames`. **DELETED:** the `name` field/alias (one identity: `storageName`); stored `storageName`/`propertyName`/`configKey`/`paramName`/`hasTrailing`/`hasLeading`/`origin`; the `_new` suffixed fields; `SlotSource` variant `'inlined'` only (`'inferred'` retained as provenance) |
 | `AssembledBranch` | REFINED — see `node-map.ts:2586` | `_slots` record now holds `AssembledNonterminal` instances; `slots`/`fields` getters unchanged. **DELETED:** `renderTemplate()`. `children` getter already retired (returns `[]`) |
 | `AssembledPolymorph` | REFINED — see `node-map.ts:3106` | keeps `forms`/`formRules`/`variantChildKinds` (the deterministic resolver reads them); **no emitted `$variant`** (§4d). **DELETED:** `renderTemplate()` |
@@ -1159,8 +1159,8 @@ class hierarchy is **already class-based**; only the listed members change.
 | `AssembledSupertype` | UNCHANGED — see `node-map.ts:3573` | `subtypes` getter |
 | `AssembledLeaf<R>` (abstract) | UNCHANGED — see `node-map.ts:3393` | base for the four leaf classes |
 | `AssembledPattern` | UNCHANGED — see `node-map.ts:3406` | `pattern` getter |
-| `AssembledKeyword` | UNCHANGED — see `node-map.ts:3419` | `text` getter; self-sets `stampExpression` |
-| `AssembledToken` | UNCHANGED — see `node-map.ts:3463` | `text` getter; `stampChildExpression` override |
+| `AssembledKeyword` | REFINED — see `node-map.ts:3419` | `text` getter; **overrides `isParameterless` → `true` and `stampExpression` → the text literal** (base case of the recursive getter; was a constructor field-set) |
+| `AssembledToken` | REFINED — see `node-map.ts:3463` | `text` getter; overrides `isParameterless`/`stampExpression` (base case) + `stampChildExpression` |
 | `AssembledEnum` | UNCHANGED — see `node-map.ts:3543` | `values` getter |
 
 Slot **value** types (on `AssembledNonterminal.values`): `NodeRef`
@@ -1255,8 +1255,10 @@ export interface SimplifyCtx extends TransformCtx {}
 export interface AssembleCtx {
   readonly kindEntries?: readonly GeneratedKindEntry[];
   readonly nodeMap: NodeMap;                 // cross-node access for the post-passes
-                                             //   (markUserFacing/markParameterless/resolveColliding/…)
-                                             // — this is how #14 keeps them `(target, ctx)`, not getters-with-arg
+                                             //   (markUserFacing/resolveColliding/resolveIrKeys/collectAnonymous/…)
+                                             // — this is how #14 keeps them `(target, ctx)`, not getters-with-arg.
+                                             // NOTE: isParameterless is NOT here — it is a memoized getter that
+                                             // follows resolved slot refs directly (no nodeMap lookup needed).
   readonly diagnostics: DiagnosticSink;      // slot diagnostics emit here (anonymous-content warn, unslotted-child fail, …)
 }
 ```
@@ -1328,7 +1330,7 @@ and neither becomes a getter-with-arg:
 | End-state | Was | Refactor (discovered responsibility) |
 |---|---|---|
 | `markUserFacing(node, ctx)` (`ctx.nodeMap`) — sets `node.userFacing` | `markUserFacing(nodes)` (`assemble.ts:1070`) | **Refactor to `(node, ctx)` method — NOT deprecated, NOT a getter.** Discovery: `userFacing` is a heavily-read live signal — `shared.ts:89/1250/1293`, `from.ts:1915`, `templates.ts:1696`, `types.ts:1340`, `factories.ts:376/830`, `render-module.ts:1521`, plus the validator (`rule-lookup.ts:62`) and `factory-map.ts:273`. It is computed from **cross-node** state (is this hidden kind an alias source in some *other* node's slots; `assemble.ts:1092`) → it needs `nodeMap`, so per #14 it is a `(node, ctx)` method, **not** a getter-with-arg. The `markVariantChildrenUserFacing` follow-on (`assemble.ts:1111`) folds in as a second `(node, ctx)` pass over variant children. Emitters keep reading the populated `node.userFacing` field (field-read, not getter-call). |
-| `markParameterlessKinds(nodeMap, ctx)` (fixpoint) — sets `node.isParameterless`/`stampExpression` | `markParameterlessKinds(nodes)` (`assemble.ts:713`) | **Refactor to a NodeMap-wide `(nodeMap, ctx)` fixpoint — NOT deprecated.** Discovery: `isParameterless`/`stampExpression` are live factory-emitter signals — `shared.ts:337/403/1092` (auto-stamp gating, `project_auto_stamp_parameterless_factories`) + `node-model.ts:213` (diagnostics). It is a genuine **inter-node fixpoint** (a compound is parameterless iff its required slots reference *other* parameterless kinds; `assemble.ts:713`), so it cannot be a pure node-self getter — it stays a whole-map `(nodeMap, ctx)` op. The per-node test helpers (`isAutoStampSlot`/`getSlotsForParameterless`/`_stampExpressionForSlot`) stay private to the pass. Terminal classes still self-set `isParameterless` in their constructors (`node-map.ts:3440/3479` — that IS a pure node-self fact, a legitimate constructor init). |
+| `node.isParameterless` / `node.stampExpression` — **memoized recursive getters** (no pass, no stored field) | `markParameterlessKinds(nodes)` fixpoint (`assemble.ts:713`) | **DELETE the fixpoint pass AND the stored field (Principle #1 — it re-derives what the node graph already encodes).** Discovery: the "pass" is pure re-derivation — *parameterless iff every required slot references a parameterless kind*, a recursion over the assembled graph. It becomes a **memoized, cycle-guarded getter** on `AssembledNode` (§7.3), computed on first access AFTER `hydrateSlotRefs` has resolved slot refs (so the getter can follow `value.node` → the referenced `AssembledNode` directly, without a `nodeMap` lookup → no `ctx` needed → a genuine getter, not a `(node, ctx)` method). **Cycle rule (replaces the fixpoint):** a node whose computation is *in progress* is treated as **NOT parameterless** — a required cyclic reference genuinely needs a parameter, which is correct and makes a memoized DFS terminate with no convergence iteration. The former helpers (`isAutoStampSlot`/`getSlotsForParameterless`/`_stampExpressionForSlot`) become private methods backing the getter. Consumers are **unchanged** — `shared.ts:337/403/1092` and `node-model.ts:213` already read `ref.isParameterless`/`ref.stampExpression` field-style off a node fetched from `nodeMap`; a getter is a drop-in (identical `node.isParameterless` access, now computed-on-read). Terminal classes (`AssembledKeyword`/`AssembledToken`) **override the getter base case** (return `true` + the literal stamp) instead of the old constructor field-set at `node-map.ts:3440/3479`. |
 | `resolveCollidingNames(nodeMap, ctx)` | `resolveCollidingNames(nodes)` (`assemble.ts:1121`) | **Keep as a NodeMap-wide op** (renaming requires seeing all kinds at once) — conforms once `nodes`→`nodeMap` + `ctx`. The per-pair helpers (`renameCollidingHiddenKinds`, …) stay private. |
 | `resolveIrKeys(nodeMap, ctx)` | `resolveIrKeys(nodes)` (`assemble.ts:600`) | **Keep as a NodeMap-wide op** (dedupe-aware short-name pass needs the whole map); conforms via `nodes`→`nodeMap` + `ctx`. |
 | `collectAnonymousNodes(nodeMap, ctx)` | `collectAnonymousNodes(rules, nodes, wordMatcher, kindEntries)` (`assemble.ts:208`) | **Re-target to NodeMap + ctx.** The `rules`/`wordMatcher`/`kindEntries` args fold into `AssembleCtx`; it remains a whole-map collection pass (creates `AssembledKeyword`/`AssembledToken` entries). |
@@ -1336,23 +1338,38 @@ and neither becomes a getter-with-arg:
 | `classifyNode(rule, ctx)` | `classifyNode(kind, rule, opts?)` (`assemble.ts:109`) | target=`rule`; `kind`/`opts` (variantParents) fold into `ctx`. |
 
 **Resolution of the prior `markUserFacing` / `markParameterlessKinds` open
-issue (discover-first):** both were probed for deprecation. **Neither is
-deprecable** — `userFacing` has 10+ live emitter/validator consumers and
-`isParameterless` gates factory auto-stamping. Both are **cross-node /
-inter-node fixpoint** computations, so per the refined #14 they are
-`(target, ctx)` methods (`ctx.nodeMap`), **not** getters — there is no
-getter-with-arg shape. They populate plain node fields (`node.userFacing`,
-`node.isParameterless`) that emitters read field-style; the *computation* is a
-conforming pipeline method, the *read* is a field access.
+issue (discover-first):** they resolve *differently* — the discovery showed they
+are not the same shape.
+- **`markParameterless` → REMOVED (pure re-derivation, Principle #1).** It is
+  *parameterless iff every required slot references a parameterless kind* — a
+  recursion the assembled node graph already encodes, so the separate fixpoint
+  pass + stored field should not exist. It becomes a **memoized, cycle-guarded
+  getter** on `AssembledNode` (cycle = not parameterless; terminates without
+  convergence iteration). Because slot refs are resolved by `hydrateSlotRefs`
+  before any emitter reads it, the getter follows `value.node` directly and needs
+  no `nodeMap`/`ctx` — a true pure getter (#13). Consumers
+  (`shared.ts:337/403/1092`, `node-model.ts:213`) are unchanged drop-ins.
+- **`markUserFacing` → STAYS a `(node, ctx)` method.** Its derivation is
+  genuinely *cross-node* (is this kind an alias source in some *other* node's
+  slots — not encoded on the node itself), so it is not a pure self-read; it is a
+  `(node, ctx)` method (`ctx.nodeMap`) populating `node.userFacing`. (Could also
+  be expressed as a memoized getter only if the alias-source index were attached
+  to each node; absent that, `(node, ctx)` is the conforming shape.)
 
-**Rule for whole-map operations:** a NodeMap-wide pass (`markUserFacing` —
-written per-node but driven over the map, `markParameterlessKinds`,
-`resolveCollidingNames`, `resolveIrKeys`, `collectAnonymousNodes`,
-`hydrateSlotRefs`) is a *legitimate* conforming shape — its `target` is the
-node (or `NodeMap`) and it takes a `ctx` that absorbs every other input. The
-only thing the convention forbids — a getter that takes an argument — **does
-not occur** in the end-state. **Zero pipeline methods are non-conforming and
-zero getters take arguments.**
+The asymmetry IS the point of Principle #1 + the #14 getter/method line:
+**a fact the graph already encodes (parameterless) is a memoized getter, never a
+pass**; a fact requiring a cross-node index (userFacing) is a `(node, ctx)`
+method. Neither is a getter-with-arg.
+
+**Rule for whole-map operations:** a genuinely whole-map pass
+(`resolveCollidingNames`, `resolveIrKeys`, `collectAnonymousNodes`,
+`hydrateSlotRefs`) is a *legitimate* conforming shape — `target` is the
+`NodeMap` and it takes a `ctx`. A per-node cross-node computation
+(`markUserFacing`) is `(node, ctx)`. A graph-encoded fact (`isParameterless`) is
+a memoized getter, no pass at all. The only thing the convention forbids — a
+getter that takes an argument — **does not occur**. **Zero pipeline methods are
+non-conforming, zero getters take arguments, and no derived fact is recomputed
+by a separate pass when the graph already encodes it.**
 
 ---
 
