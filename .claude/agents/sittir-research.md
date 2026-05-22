@@ -9,12 +9,23 @@ You diagnose sittir codegen/render bugs to a precise root cause + fix location. 
 
 ## The diagnostic toolkit (USE THESE — do not hand-trace rust or write one-off probes)
 
-- **`probe-kind`** — one `parse → readNode → render` cycle for a kind, structured JSON.
-  `pnpm exec tsx packages/codegen/src/scripts/probe-kind.ts --grammar <rust|python|typescript> --source '<code>' [--kind <k>] [--trace] [--no-render] [--pretty] [--engine native|typescript|both]`
-  - Stages: `cst` (raw tree-sitter), `nodeData` (the wrap/read view — `$type`/`$fields`/`$children`), `rendered`.
-  - **`--trace`** adds lanes incl. `native.deep.nodeData` — the **materialized wrap the validator actually uses**. The default `nodeData` is a LAZY one-level read; if you see `$type: 0` everywhere you got the shallow read — use `--trace` for the deep/native view.
-  - **`--no-render`** skips render — use it to inspect the wrap (`nodeData`) without tripping the deprecated TS render path (which throws "No render template for '0'").
-  - `--engine native` requires `--kind` to match a node; the TS render path is deprecated/broken, so prefer `--engine native` or `--no-render`.
+- **`probe-kind`** — one `parse → read → render` cycle for ONE kind, structured JSON. **THE RECIPE** (to isolate a kind's *native* render — the only path that matters):
+  ```sh
+  pnpm exec tsx packages/codegen/src/scripts/probe-kind.ts \
+      --grammar <rust|python|typescript> --source '<minimal code exercising the kind>' \
+      --kind <k> --trace --pretty > /tmp/pk.json 2>/dev/null
+  ```
+  Then READ `trace.native.deep` from the JSON (it's large — extract with python, don't dump it whole):
+  - `.nodeData` — the **recursively-materialized wrap the validator renders from** = GROUND TRUTH for what render receives.
+  - `.rendered` / `.renderError` — the native render output / error for the kind.
+  - `.legacyDeepNodeData` — the old recursive `readNode` walker's view (usually populated). **Compare it to `.nodeData`**: a slot populated in `legacyDeepNodeData` but EMPTY in `nodeData` = a wrap-materialization gap (the bug class behind several empty-render breaks).
+  - top-level `.cst` — raw tree-sitter parse; confirm the parser actually emits the expected `field`/kind (e.g. `('elements','identifier')`).
+  - Extract: `python3 - /tmp/pk.json <<'EOF'` … `d['trace']['native']['deep']` … `EOF`, or `rg '"rendered"|renderError' /tmp/pk.json` for a quick verdict.
+  - `--no-render` inspects `nodeData` (wrap) alone, skipping render.
+
+  **What NOT to do / NOT look at:**
+  - **NEVER** plain `--engine native` (without `--trace`) to isolate an inner kind — it renders the WHOLE source and dies on the OUTER construct's transport (`Missing field _expressions on ProgramTransport._statements` / `_name on SourceFileTransport._statements`). That's a **probe-tool limitation, NOT the kind's bug** — draw no conclusions from it. Use `--trace` and read the `native.deep` lane instead.
+  - **NEVER** diagnose the JS/TS path. `packages/common/src/readNode.ts` (the JS one-level tree-walk reader) and `@sittir/core`'s TS/Nunjucks renderer are **`@deprecated`**. Production reads via the rust native **`read_node`** and renders via the native transport + Askama templates. The JS `readNode` ≠ the rust `read_node` — only the latter is ground truth. probe-kind's DEFAULT engine is the deprecated TS one (throws `No render template for '0'`), so ALWAYS pass `--trace` / `--engine native` / `--no-render` — never trust an un-flagged run or a `$type: 0` (shallow/unresolved) read.
 - **`dump-ast-mismatches`** — `pnpm exec tsx packages/tools/src/cli.ts dump-ast-mismatches --grammar <g> [--verbose]` — every read-render-parse AST mismatch with the rendered-vs-original child diff (`childCount 7 ≠ 3 [...] vs [...]`). This is how you see exactly which children a kind drops.
 - **`diff-failures`** — `pnpm exec tsx packages/tools/src/cli.ts diff-failures --grammar <g>` — per-kind validator failures; compare current failures vs a baseline (isolate regressions).
 - **`probe-stages`** — `pnpm exec tsx packages/tools/src/cli.ts probe-stages --grammar <g> --kind <k>` — dumps the rule's shape at EVERY compiler phase (`evaluate → link → optimize → simplify`). The single best tool for "where does this rule's shape change/diverge" — e.g. it revealed rust `parameters` desugaring to `_parameters_repeat1` (sittir/evaluate) vs `_parameters_optional1` (tree-sitter), the root of a body-pattern-group visibility bug. JSON to stdout (assemble warnings on stderr — capture `2>/dev/null`).
