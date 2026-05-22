@@ -667,6 +667,7 @@ function wire(config, base2) {
       context,
       authoredSynthesisKinds
     );
+    applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
   }
   const conflicts = wrapConflictsCallback(config.conflicts, context);
   const inline = wrapInlineCallback(config.inline, context);

@@ -512,6 +512,98 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
+        373 => { // "_attributed_enum_variant" | "attributed_enum_variant"
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let children_renderables = children.renderable_items();
+            let template = AttributedEnumVariantTemplate {
+                attribute_item: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
+                enum_variant: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+            };
+            template.render_into(dest)
+        }
+        372 => { // "_attributed_field_declaration" | "attributed_field_declaration"
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let children_renderables = children.renderable_items();
+            let template = AttributedFieldDeclarationTemplate {
+                attribute_item: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
+                field_declaration: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+            };
+            template.render_into(dest)
+        }
+        374 => { // "_attributed_parameter" | "attributed_parameter"
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("parameter"), false)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("self_parameter"), false)?;
+            let field_2 = resolve_slot(node, SlotAccessor::Field("type"), false)?;
+            let field_3 = resolve_slot(node, SlotAccessor::Field("variadic_parameter"), false)?;
+            let children_renderables = children.renderable_items();
+            let field_1_renderables = field_1.renderable_items();
+            let field_2_renderables = field_2.renderable_items();
+            let field_3_renderables = field_3.renderable_items();
+            let template = AttributedParameterTemplate {
+                attribute_item: match children.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+                },
+                parameter: match field_0.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                },
+                self_parameter: ListNonterminalView {
+                    items: field_1_renderables.as_slice(),
+                    separator: field_1.separator,
+                    leading: field_1.leading_sep,
+                    trailing: field_1.trailing_sep,
+                },
+                type_: ListNonterminalView {
+                    items: field_2_renderables.as_slice(),
+                    separator: field_2.separator,
+                    leading: field_2.leading_sep,
+                    trailing: field_2.trailing_sep,
+                },
+                variadic_parameter: ListNonterminalView {
+                    items: field_3_renderables.as_slice(),
+                    separator: field_3.separator,
+                    leading: field_3.leading_sep,
+                    trailing: field_3.trailing_sep,
+                },
+            };
+            template.render_into(dest)
+        }
+        375 => { // "_attributed_type_parameter" | "attributed_type_parameter"
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("metavariable"), false)?;
+            let children_renderables = children.renderable_items();
+            let template = AttributedTypeParameterTemplate {
+                attribute_item: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
+                metavariable: match field_0.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                },
+            };
+            template.render_into(dest)
+        }
         323 => { // "_closure_expression_block" | "closure_expression_block"
             let field_0 = resolve_slot(node, SlotAccessor::Field("body"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("return_type"), false)?;

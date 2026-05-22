@@ -572,6 +572,13 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 			context,
 			authoredSynthesisKinds
 		);
+		// Re-run body-pattern replacement AFTER applyAutoGroups: the optional/
+		// repeat helpers it synthesizes (e.g. `_parameters_optional1`) are created
+		// after the first pass (above) wrapped the original rules, so the
+		// param-element they now carry (e.g. rust `attributed_parameter` inside
+		// `_parameters_optional1`) would otherwise never be matched and aliased
+		// to its visible kind. The pass is idempotent on already-aliased bodies.
+		applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
 	}
 
 	const conflicts = wrapConflictsCallback(config.conflicts, context);

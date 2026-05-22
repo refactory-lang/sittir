@@ -447,6 +447,22 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 321 => Ok(AnyTransport::ArrayExpressionSemi(
                     ArrayExpressionSemiTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _attributed_enum_variant (_ATTRIBUTED_ENUM_VARIANT)
+                373 => Ok(AnyTransport::AttributedEnumVariant(
+                    AttributedEnumVariantTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _attributed_field_declaration (_ATTRIBUTED_FIELD_DECLARATION)
+                372 => Ok(AnyTransport::AttributedFieldDeclaration(
+                    AttributedFieldDeclarationTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _attributed_parameter (_ATTRIBUTED_PARAMETER)
+                374 => Ok(AnyTransport::AttributedParameter(
+                    AttributedParameterTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _attributed_type_parameter (_ATTRIBUTED_TYPE_PARAMETER)
+                375 => Ok(AnyTransport::AttributedTypeParameter(
+                    AttributedTypeParameterTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _closure_expression_block (_CLOSURE_EXPRESSION_BLOCK)
                 323 => Ok(AnyTransport::ClosureExpressionBlock(
                     ClosureExpressionBlockTransport::from_napi_value(env, napi_val)?
@@ -476,7 +492,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     _ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _field_identifier (_FIELD_IDENTIFIER)
-                404 => Ok(AnyTransport::FieldIdentifier(
+                408 => Ok(AnyTransport::FieldIdentifier(
                     FieldIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _field_pattern_named (_FIELD_PATTERN_NAMED)
@@ -668,7 +684,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     _TokenTreePatternParenTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _type_identifier (_TYPE_IDENTIFIER)
-                407 => Ok(AnyTransport::TypeIdentifier(
+                411 => Ok(AnyTransport::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _visibility_modifier_crate (_VISIBILITY_MODIFIER_CRATE)
@@ -7115,7 +7131,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -7282,7 +7298,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -7726,7 +7742,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -7848,7 +7864,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -9853,7 +9869,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsRepeat1ContentTrans
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -9999,7 +10015,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsRepeat1ContentTrans
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -10533,7 +10549,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeLeftTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -10652,7 +10668,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeLeftTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -10881,7 +10897,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeRightTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -11000,7 +11016,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeRightTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -11225,7 +11241,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -11341,7 +11357,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -15075,7 +15091,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsBoundsTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -15194,7 +15210,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsBoundsTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -15877,7 +15893,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsContentTransportSlo
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -16023,7 +16039,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsContentTransportSlo
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                407 => Ok(Self::TypeIdentifier(
+                411 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -49759,7 +49775,7 @@ fn transport_to_node_attributed_enum_variant(transport: AttributedEnumVariantTra
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "_attributed_enum_variant" — no parser symbol */,
+        TransportKindId(373) /* "_attributed_enum_variant" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -49788,7 +49804,7 @@ fn transport_to_node_attributed_field_declaration(transport: AttributedFieldDecl
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "_attributed_field_declaration" — no parser symbol */,
+        TransportKindId(372) /* "_attributed_field_declaration" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -49817,7 +49833,7 @@ fn transport_to_node_attributed_parameter(transport: AttributedParameterTranspor
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "_attributed_parameter" — no parser symbol */,
+        TransportKindId(374) /* "_attributed_parameter" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -49846,7 +49862,7 @@ fn transport_to_node_attributed_type_parameter(transport: AttributedTypeParamete
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(0) /* "_attributed_type_parameter" — no parser symbol */,
+        TransportKindId(375) /* "_attributed_type_parameter" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -50186,7 +50202,7 @@ fn transport_to_node_extern_crate_declaration_optional1(transport: ExternCrateDe
 fn transport_to_node_field_identifier(transport: FieldIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(404) /* "_field_identifier" */,
+        TransportKindId(408) /* "_field_identifier" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -51829,7 +51845,7 @@ fn transport_to_node_type_arguments_repeat1(transport: TypeArgumentsRepeat1Trans
 fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(407) /* "_type_identifier" */,
+        TransportKindId(411) /* "_type_identifier" */,
         transport.transport_source,
         transport.transport_named,
         true,
