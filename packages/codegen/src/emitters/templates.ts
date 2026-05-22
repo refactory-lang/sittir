@@ -197,20 +197,15 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	}
 
 	#emitNode(node: AssembledNode): void {
-		// PR2 Task 3.B3: new emitter is authoritative — its output is written
-		// to disk. The legacy walker still runs for the skip-emit signal: when
-		// it returns null the kind doesn't get a template file (leaf / keyword
-		// / token / non-polymorph-form group / multi). PR3 deletes the legacy
-		// walker entirely.
-		const legacyBody = emitBodyForNode(
-			node,
-			this.#config.nodeMap.rules ?? {},
-			this.#wordMatcher,
-			this.#config.nodeMap.externals
-		);
-		// Legacy skip-emit gate: if legacy says "no template for this kind",
-		// honour it — the new emitter's output for such kinds is irrelevant.
-		if (legacyBody === null) return;
+		// PR3 step 0: skip-emit gate now uses classifyTemplateEmission (the
+		// new-side equivalent) instead of the legacy emitBodyForNode call.
+		// classifyTemplateEmission is now a strict superset of the legacy gate:
+		// it skips non-user-facing nodes, polymorph-form groups, and all
+		// leaf modelTypes (pattern/keyword/token/supertype/enum/multi) that
+		// emitBodyForNode returned null for unconditionally.
+		// emitBodyForNode is no longer called here; it will be deleted in the
+		// next step once no callers remain.
+		if (classifyTemplateEmission(node) !== 'emit') return;
 
 		this.#ctx.visitingHelpers.clear();
 		const newBody = emitOne(node, this.#ctx);

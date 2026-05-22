@@ -1287,10 +1287,27 @@ export function classifyWrapEmission(
 	return 'emit';
 }
 
-export type TemplateEmission = 'emit' | 'skip-non-user-facing' | 'skip-polymorph-form-group';
+export type TemplateEmission =
+	| 'emit'
+	| 'skip-non-user-facing'
+	| 'skip-polymorph-form-group'
+	| 'skip-leaf-model-type';
 
 export function classifyTemplateEmission(node: AssembledNode): TemplateEmission {
 	if (!node.userFacing) return 'skip-non-user-facing';
 	if (node.modelType === 'group' && node.parentKind) return 'skip-polymorph-form-group';
+	// These modelTypes never get a template file — emitBodyForNode returned null
+	// for all of them unconditionally (regardless of userFacing). Match that
+	// behaviour so classifyTemplateEmission is a strict superset of the legacy gate.
+	if (
+		node.modelType === 'pattern' ||
+		node.modelType === 'keyword' ||
+		node.modelType === 'token' ||
+		node.modelType === 'supertype' ||
+		node.modelType === 'enum' ||
+		node.modelType === 'multi'
+	) {
+		return 'skip-leaf-model-type';
+	}
 	return 'emit';
 }
