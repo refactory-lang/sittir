@@ -1,7 +1,7 @@
 # Compiler Workflow Simplification — Design
 
 **Date:** 2026-05-22
-**Status:** 📋 SPEC RECONCILED — brainstorm (above) + code-grounded implementation spec §1–§7 (below); **all 5 decisions resolved + DRY/simplify review folded (2026-05-22)**. End-state is clean (no transitional aliases, no sunset PRs; old code is removed within the superseding strangler step). **Ready for user review → `writing-plans`.** 10 PRs (PR3 prereq + PR-A..PR-J). PR3 is a gating prerequisite (not yet landed — only its design doc is on this branch).
+**Status:** 📋 SPEC RECONCILED — brainstorm (above) + code-grounded implementation spec §1–§7 (below); **5 decisions + DRY/simplify review + critical-review batch + method-convergence fold (2026-05-22)**. End-state is clean (no transitional aliases, no sunset PRs; old code removed within the superseding strangler step). Adds Principle #15 (provenance never drives behavior), the sanctioned `content` slot (§4c), identical-form collapse (§4d), the H2 helper-leak fix, and the refined #14 getter-vs-method line (every pipeline method is `(target, ctx)`; `ctx` absorbs `nodeMap`/etc; zero non-conforming methods, zero getter-with-arg shapes). **Ready for user review → `writing-plans`.** 13 PRs (PR3 prereq + PR-A..PR-L, incl. PR-D2). PR3 is a gating prerequisite (not yet landed — only its design doc is on this branch).
 **Base:** branch `026-pr3-delete-legacy-render-walker` (off `master`, post-PR2 merge `bbadd99b`).
 
 ---
@@ -45,9 +45,13 @@ canonical home). Do not restate them — reference that section.
     - (a) **transforms shared between Normalize & Simplify** → a shared transforms module (per #7);
     - (b) **per-artifact emitters** (`emitters/factory.ts`, `emitters/templates.ts`, …) dispatched from `emit.ts`;
     - (c) **shared rule helpers** → `rules.ts`.
-    **Shared *node* methods don't exist** — node behavior lives on the `AssembledNonterminal` class (#11), not a util module.
-14. **Uniform method signature & naming** — every pipeline method takes exactly two inputs: the **target** (a rule or node) and a **phase context** (`NormalizeCtx`, `SimplifyCtx`, …). It is named `<operation><ObjectType>` — the operation plus the type of object operated on (rule type / model type / slot class). E.g. `collapseSeq(rule: SeqRule, ctx: SimplifyCtx)`, `pushdownField(rule: FieldRule, ctx: NormalizeCtx)`. The context carries phase-shared state and the **diagnostics sink** (the home for #4's derive-or-diagnose) — methods never reach for globals.
+    **Shared *node* methods don't exist** — node behavior lives on the `AssembledNode`/`AssembledNonterminal` classes (#11), not a util module. *Pure node-self reads* (a value computed from the node alone) are class **getters**; computations that need cross-node or phase state are pipeline **methods** (#14), not getters.
+14. **Uniform method signature & naming** — every pipeline method takes exactly two inputs: the **target** (a rule or node) and a **phase context** (`NormalizeCtx`, `SimplifyCtx`, `AssembleCtx`, …). It is named `<operation><ObjectType>` — the operation plus the type of object operated on (rule type / model type / slot class). E.g. `collapseSeq(rule: SeqRule, ctx: SimplifyCtx)`, `pushdownField(rule: FieldRule, ctx: NormalizeCtx)`. The context **absorbs ALL extra inputs** (`nodeMap`, `kindEntries`, `wordMatcher`, the rule map, …) — so **there is no genuinely non-conforming pipeline method**: anything that "needs another argument" puts that argument in `ctx`. The context carries phase-shared state and the **diagnostics sink** (the home for #4's derive-or-diagnose) — methods never reach for globals.
+    - **Getter vs method — the explicit line.** A **pure node-self read** (needs nothing but the node itself) stays a class **getter** (`node.hidden`, `node.storageName`, `slot.arity`). **Anything needing cross-node or phase state** is a `(target, ctx)` **method** — e.g. `(node, ctx)` with `nodeMap` in `ctx` — **never a getter that takes an argument**. There are no `node.foo(nodeMap)` getter-with-arg shapes in the end-state; such a computation is `computeFoo(node, ctx)` (a method) whose result may be cached onto a plain node field that emitters then read field-style (`node.foo`).
     - *(Benefit, not a rule: the uniform shape means a single injected wrapper can provide trace-level probing across the whole pipeline — printing `methodName` + input per step — with no per-method instrumentation.)*
+
+**Provenance vs behavior (added by the DRY review)**
+15. **Metadata/provenance may be retained for diagnostics, but MUST NEVER drive compiler behavior.** Behavior derives *only* from structural facts — `fieldName`, `kinds`/`values`, `multiplicity`. Provenance fields (`SlotSource`, the serialized `$variant`, `node-model.json5` itself) are *observability*, read by tooling/diagnostics and never branched on by the pipeline or the emitters. This generalizes three already-decided cuts: the `origin` deletion (Finding 2 — route on `fieldName`), `$variant`-validate-only (§4d), and `node-model`-tooling-only (#10). The test: *"if I deleted this field, would any 1–6 projection change?"* — if yes, it is structural (keep + drive); if no, it is provenance (may keep for diagnostics, must not drive). The retained-but-inert `SlotSource['inferred']` (Finding 5 / C1) is the canonical example.
 
 ---
 
@@ -391,9 +395,10 @@ is to make the `_new` derivation *the* derivation (encapsulated as class
 getters) and delete both the legacy `name`/`storageName` fields AND the `_new`
 suffixed duplicates. See §2.
 
-**Finding 5 — `SlotSource` usage discovery + the `'inferred'` removal (CW2).**
-Discovery (every `file:line` traced; note `AssembledNonterminal.source` is the
-SLOT source — distinct from `RuleSource` on Rule objects):
+**Finding 5 — `SlotSource` usage discovery → RETAIN `'inferred'` as provenance,
+re-point only the behavior consumers (C1, per Principle #15).** Discovery (every
+`file:line` traced; note `AssembledNonterminal.source` is the SLOT source —
+distinct from `RuleSource` on Rule objects):
 
 *Producer (slot `source` is stamped in exactly one place):*
 `buildSlot` (`collect-slots.ts:305–358`):
@@ -407,56 +412,58 @@ So a slot is stamped `'inferred'` **iff it has no `fieldName`** (the positional 
 unnamed paths); `'grammar'` / `'override'` / `'enriched'` / `'inlined'` ride
 through from the originating rule's own `source` when a `fieldName` IS present.
 
-*Consumers of `slot.source === 'inferred'` (all read "this slot is unnamed/positional"):*
-- `shared.ts:1056` `resolveSingleFieldFactorySlot` — exclude unnamed single slot
-- `shared.ts:1138` factory-mode `'direct'` detection
-- `shared.ts:1173` factory-mode `'spread'` detection
-- `render-module.ts:585–586` partition slots into named vs unnamed
-- `render-module.ts:598` per-variant unnamed children
-- `render-module.ts:695,708` unnamed-slot multiplicity handling
-- `templates.ts:1203,1438,1449` skip unnamed/link/group-lift slots in coverage
-- `node-model.ts:318` serializes `field.source` (diagnostic only)
-- `suggested.ts` reads a DIFFERENT `f.source` (round-trip failure origin, not slot source — `suggested.ts:250/296`) — **not** a `SlotSource` consumer.
+*Consumers of `slot.source === 'inferred'` — classified BEHAVIOR vs DIAGNOSTIC:*
+- **BEHAVIOR (re-point to `fieldName === undefined`):**
+  - `shared.ts:1056` `resolveSingleFieldFactorySlot` — exclude unnamed single slot
+  - `shared.ts:1138` factory-mode `'direct'` detection
+  - `shared.ts:1173` factory-mode `'spread'` detection
+  - `render-module.ts:585–586` partition slots into named vs unnamed
+  - `render-module.ts:598` per-variant unnamed children
+  - `render-module.ts:695,708` unnamed-slot multiplicity handling
+  - `templates.ts:1203,1438,1449` skip unnamed/link/group-lift slots in coverage
+- **DIAGNOSTIC (keep reading `source`):**
+  - `node-model.ts:318` serializes `field.source` (tooling/diagnostics only)
+- **NOT a `SlotSource` consumer:** `suggested.ts:250/296` reads a different
+  `f.source` (round-trip failure origin), not the slot source.
 
-**Concrete removal of `'inferred'`** (folds into PR-C, the same `origin`
-elimination — both encode the identical "no `fieldName`" fact):
-- **Producer change:** `buildSlot`/the `AssembledNonterminal` constructor stops
-  computing a positional `source`; `source` carries only the rule's genuine
-  provenance (`'grammar'`/`'override'`/`'enriched'`/`'inlined'`).
-- **Consumer change:** every `slot.source === 'inferred'` test above becomes
-  `slot.fieldName === undefined` (the authoritative unnamed-slot signal — exactly
-  the dual `origin === 'kind'` also encoded, Finding 2). The two redundant
-  signals (`origin`, `source==='inferred'`) collapse into one read of
-  `fieldName`.
-- **Type change:** `'inferred'` removed (see concrete end-state below).
+**Resolution (C1 — reverses the earlier "remove `'inferred'`" decision):** by
+Principle #15, `'inferred'` is *provenance* — it is **retained** (serialized at
+`node-model.ts:318` for diagnostics) but **must not drive behavior**. So:
+- **Producer change:** NONE. `buildSlot`/the `AssembledNonterminal` constructor
+  KEEPS stamping `'inferred'` (it is honest provenance: "this slot's name was
+  inferred, not authored"). The diagnostic value is real.
+- **Consumer change:** re-point only the **behavior** consumers above to
+  `slot.fieldName === undefined` (the authoritative structural signal — the same
+  dual `origin === 'kind'` encoded, Finding 2). Diagnostic consumers keep reading
+  `source`. After this, `'inferred'` is inert-but-retained: deleting it would
+  change *no* 1–6 projection (the #15 test), confirming it is pure provenance.
 
-**Other variants — justified against a discovered producer + consumer:**
-- `'grammar'` — **KEEP.** The default provenance (`collect-slots.ts:305`);
-  serialized (`node-model.ts:318`); read by `suggested.ts`'s override-candidate
-  surfacing.
-- `'override'` — **KEEP.** Stamped from override directives
-  (`transform.ts:595/691/743`), carried onto the slot via `rule.source`
-  (`collect-slots.ts:305/358`); surfaced by `suggested.ts`.
-- `'enriched'` — **KEEP.** Stamped by enrich (`enrich.ts:262`), carried onto the
-  slot via `rule.source`; surfaced by `suggested.ts` as an override candidate.
-- `'inlined'` — **REMOVE (also dead).** Discovery: `'inlined'` is *declared* in
-  the slot `source` type (`node-map.ts:1554`), on `FieldRule.source`
-  (`rule.ts:207`), and in the IncludeFilter default (`link.ts:70`) /
-  `DerivedFieldSource` (`types.ts:394`) — but it is **never stamped onto a slot**:
-  the sole slot producer `buildSlot` (`collect-slots.ts:305–358`) only ever sets
-  `'inferred'`/`'grammar'` or passes `rule.source` through, and no rule reaching a
-  slot carries `source:'inlined'` (inlining rewrites the body, it does not tag the
-  surviving leaf `'inlined'`). So the SLOT-level `'inlined'` variant has no
-  producer → remove it from `SlotSource` too. (The Rule-level `'inlined'` /
-  `DerivedFieldSource` usage is a separate concern, out of scope here.)
+**Other variants:**
+- `'grammar'` / `'override'` / `'enriched'` — **KEEP** (genuine provenance;
+  `'grammar'` default `collect-slots.ts:305`; `'override'` from
+  `transform.ts:595/691/743`; `'enriched'` from `enrich.ts:262`; all serialized +
+  surfaced by `suggested.ts`).
+- `'inferred'` — **KEEP** (provenance, per above; behavior consumers re-pointed).
+- `'inlined'` — **REMOVE (genuinely dead — not even diagnostics data).**
+  Discovery: `'inlined'` is *declared* in the slot `source` type
+  (`node-map.ts:1554`), on `FieldRule.source` (`rule.ts:207`), and in the
+  IncludeFilter default (`link.ts:70`) / `DerivedFieldSource` (`types.ts:394`) —
+  but it is **never stamped onto a slot**: the sole slot producer `buildSlot`
+  (`collect-slots.ts:305–358`) only ever sets `'inferred'`/`'grammar'` or passes
+  `rule.source` through, and no rule reaching a slot carries `source:'inlined'`
+  (inlining rewrites the body, it does not tag the surviving leaf). With no
+  producer it is not even diagnostics data → remove it from `SlotSource`. (The
+  Rule-level `'inlined'` / `DerivedFieldSource` usage is a separate concern, out
+  of scope here.)
 
 **Concrete end-state type:**
 ```ts
-type SlotSource = 'grammar' | 'override' | 'enriched';   // 'inferred' + 'inlined' removed
+type SlotSource = 'grammar' | 'override' | 'enriched' | 'inferred';  // only 'inlined' removed
 ```
-Both removals fold into **PR-C** (the `origin`-elimination PR — all three signals,
-`origin`/`source==='inferred'`/the dead `'inlined'`, are resolved by routing on
-`fieldName === undefined` + carrying only genuine rule provenance).
+The behavior re-point folds into **PR-C** (the `origin`-elimination PR — both
+`origin` and the behavior reads of `source==='inferred'` resolve to
+`fieldName === undefined`); the `'inlined'` variant deletion rides along. The
+`'inferred'` variant itself **stays** as retained provenance (#15).
 
 ---
 
@@ -516,11 +523,11 @@ export class AssembledNonterminal {
   // ---------------------------------------------------------------
   // Naming — ONE derivation (the today-inert `_new` logic, promoted to
   // canonical). `fieldName` wins; else the single referenced kind name
-  // (incl. a supertype's own name); else a `content` fallback that ALSO
-  // emits a fail-level unnamed-slot diagnostic (§5 — a complete Model never
-  // ships a `content` slot). Replaces: legacy buildSlot baseName/origin
-  // (collect-slots.ts:304-370), the `_new` suffixed fields
-  // (node-map.ts:1571-1574), AND wrap.ts's SlotModel (slot-model.ts).
+  // (incl. a supertype's own name); else the SANCTIONED `content` fallback
+  // (§4c, C3 — a real named slot that renders `{{ content }}` and round-trips;
+  // it emits a non-blocking warn{anonymous-content}, NOT a fail). Replaces:
+  // legacy buildSlot baseName/origin (collect-slots.ts:304-370), the `_new`
+  // suffixed fields (node-map.ts:1571-1574), AND wrap.ts's SlotModel.
   //
   // The END-STATE has exactly ONE identity: `storageName` (snake_case). All
   // other names are derived projections of it.
@@ -528,7 +535,7 @@ export class AssembledNonterminal {
   get storageName(): string {                // snake_case — THE single identity (no `name` alias)
     if (this.fieldName !== undefined) return this.fieldName;
     if (this.#refKindNames.length === 1) return this.#refKindNames[0]!;
-    return 'content';                        // diagnosed at the Assemble→Project gate
+    return 'content';                        // sanctioned anonymous-content slot (§4c) — warn, not fail
   }
   get storageKey(): string { return `_${this.storageName}`; } // tree-sitter-facing key; no $children/$other catch-all
   get parseNames(): readonly string[] {      // parser routes by field, else by ref-kinds
@@ -557,20 +564,22 @@ export class AssembledNonterminal {
 }
 
 // Slot provenance (was AssembledNonterminal['source'], node-map.ts:1554).
-// Discovery (Finding 5): `'inferred'` is redundant with `fieldName === undefined`
-// (consumers route on that instead); `'inlined'` has no slot-level producer.
-// Both removed → only genuine rule provenance survives.
-export type SlotSource = 'grammar' | 'override' | 'enriched';
+// PROVENANCE, not behavior (#15): serialized for diagnostics (node-model.ts:318),
+// never branched on by the pipeline/emitters. `'inferred'` is RETAINED (Finding 5 /
+// C1) — behavior consumers route on `fieldName === undefined` instead, but the
+// honest "name was inferred" provenance is kept for tooling. Only `'inlined'` is
+// removed (no producer — not even diagnostics data).
+export type SlotSource = 'grammar' | 'override' | 'enriched' | 'inferred';
 ```
 
 **Deleted vs today:** `origin?` / `SlotOrigin` (Finding 2 — consumers route on
 `fieldName === undefined`); the `_new` suffixed fields (now the canonical
 getters); the stored `propertyName`/`configKey`/`paramName`/`storageName` (now
 getters, cannot drift); the `name` field/alias entirely (one identity:
-`storageName`); the `SlotSource` variants `'inferred'` + `'inlined'` (Finding 5);
-`compiler/slot-model.ts`'s `SlotModel` (`arity`/`storageKey` are getters here);
-the public `refKindNames` field (now private `#refKindNames`, surfaced only via
-`kinds`, CW4).
+`storageName`); the `SlotSource` variant `'inlined'` only (Finding 5 — `'inferred'`
+is RETAINED as provenance per #15); `compiler/slot-model.ts`'s `SlotModel`
+(`arity`/`storageKey` are getters here); the public `refKindNames` field (now
+private `#refKindNames`, surfaced only via `kinds`, CW4).
 
 ### What this encapsulation buys (enforces single-source, #1/#11)
 
@@ -746,7 +755,7 @@ export type DiagnosticSeverity = 'fail' | 'warn' | 'info';
 
 export interface Diagnostic {
   readonly severity: DiagnosticSeverity;
-  readonly code: string;          // stable machine code, e.g. 'unnamed-slot', 'no-variant-resolution'
+  readonly code: string;          // stable machine code, e.g. 'unslotted-child' (fail), 'anonymous-content' (warn), 'no-variant-resolution' (fail)
   readonly kind?: string;         // owning grammar kind, when known
   readonly ruleId?: RuleId;       // owning rule-tree position (provenance)
   readonly message: string;       // human text
@@ -793,10 +802,10 @@ realization of "Completeness ⇔ no blocking diagnostics" (#0.3).
 Every heuristic the brainstorm names converts to a *deterministic resolver +
 fail-on-unresolved*, never a guess:
 
-- **unnamed slot** — when a slot's `storageName` would fall back to `'content'`
-  (`AssembledNonterminal.storageName`, §2), emit `fail{code:'unnamed-slot'}` with
-  a suggested `field('<name>', …)` override. (Today this is a non-blocking warn
-  accumulated in `collect-slots.ts:355`; it becomes blocking.)
+- **`content` slot** — the `'content'` fallback is a **sanctioned, non-fail
+  path** for genuinely-anonymous structural content (NOT a blanket `fail`). See
+  §4c below — this is the C3 reconciliation; an earlier draft made it a blanket
+  `fail{unnamed-slot}`, which the discovery proved wrong.
 - **field-name inference** (`inferFieldNames`, `link.ts`) — drop the
   ≥5-refs/≥80%-agreement guess; emit a suggested `field()` override and `fail`
   if the name is needed and unsupplied.
@@ -807,13 +816,70 @@ fail-on-unresolved*, never a guess:
 - **choice distribute-vs-union** (`collect-slots.ts:520`) — replace the
   `isStructuralChoice` guess with the deterministic rule "a choice is one union
   slot, named by its enclosing field or shared-arm field; an unnamed structural
-  choice is a `fail`."
+  choice resolves to a sanctioned `content` slot (§4c), not a `fail`."
 - **unslotted child** (JC5) — a non-empty wrap-only `$other` bucket (a parsed
   child matching no named slot) emits `fail{code:'unslotted-child'}`. `$other`
   never renders; the defect surfaces here rather than silently round-tripping.
-- **polymorph dispatch** (Q5) — see §4c.
+  (Distinct from a `content` slot, which IS a real named slot that renders — see
+  §4c.)
+- **polymorph dispatch** (Q5) — see §4d.
 
-### §4c. Polymorph dispatch is deterministic + total; `$variant` is diagnostics-only (Q5 DECIDED)
+### §4c. The `content` slot is sanctioned, not a fail (C3 DECIDED)
+
+**Discovery (cited — current committed `node-model.json5`):** `content` slots
+exist today and **render + round-trip**: **rust 13, ts 20, python 16 (49 total)**.
+Examples (all `modelType: branch`/`group`, all rendered via `{{ content }}`):
+- rust: `bracketed_type`, `else_clause`, `generic_pattern`, `type_arguments`,
+  `string_literal`, `comment`, `reference_expression`, the
+  `_attributed_*`/`_type_*_repeat1` helpers, `_visibility_modifier_pub_parens`.
+- ts: `object_type`, `class_body`, `decorator`, `rest_pattern`, `literal_type`,
+  `template_string`/`template_literal_type`/`template_type`, `type_query`,
+  `asserts`, `for_in_statement`, `_for_header`, `_lhs_expression`, …
+- python: `parenthesized_expression`, `case_pattern`/`complex_pattern`/
+  `splat_pattern`/`list_splat_pattern`/`dictionary_splat_pattern`,
+  `except_clause`, `format_specifier`, `string`/`string_content`, `type`,
+  `typed_parameter`, `_match_block`, `_comprehension_clauses`, …
+
+**Assessment:** these split into two classes.
+1. **Genuinely-anonymous structural content** — a node whose body is an
+   unnamed union/sequence with no meaningful field name to assign
+   (`object_type`'s `{ … }` members, `parenthesized_expression`'s inner expr,
+   `bracketed_type`'s `[T]`, `class_body`'s members). Tree-sitter gives these no
+   field; the grammar author has no natural name; forcing a `field()` override
+   would invent a fiction. These are **irreducible** — answer (b) in the review's
+   framing is real.
+2. **Inference-gap content** — a node where a field name DOES exist conceptually
+   but the heuristic failed to assign it (a subset of the `inferFieldNames`
+   cases). These ARE field-nameable via override.
+
+**Reconciliation (the end-state rule):** the `'content'` storage name is a
+**sanctioned, deterministic outcome** — a choice/seq body with no `fieldName`
+and no shared-arm field name resolves to ONE slot named `content`. It is a real
+named slot: it renders (`{{ content }}`), stores at `_content`, and round-trips.
+It is **NOT** a `fail`. The `fail` is reserved for the *truly* unresolvable case:
+a slot whose `kinds`/`values` are empty or contradictory (nothing to render) —
+that is `fail{code:'empty-slot'}`, orthogonal to `content`.
+
+**Distinguishing it from the deleted heuristic:** what is removed is the
+*guess* — `inferFieldNames`'s "≥5 refs / ≥80% agreement → fabricate a name."
+What is kept is the *deterministic* `content` fallback (no guessing: an unnamed
+structural union deterministically yields a `content` slot). So `content` is
+fully consistent with Principle #3 (pure, no heuristics) — it is a fixed rule,
+not an inference.
+
+**Diagnostic, not fail:** each `content` slot emits `warn{code:'anonymous-content'}`
+(non-blocking) carrying a suggested `field('<name>', …)` override, so an author
+*may* name it for nicer DX — but absence of a name is not an error. This makes
+the **PR-L risk concrete**: PR-L does NOT need to field-name all 49 `content`
+slots (most are class-1 irreducible); it only converts the `inferFieldNames`
+*guess* to a suggestion. The pass-rate gate holds because `content` slots keep
+rendering exactly as today.
+
+> **No fail-cliff.** The earlier §4b draft's `fail{unnamed-slot}` on any
+> `'content'` fallback would have blocked emit for all 49 current slots — a hard
+> regression. C3 corrects this: `content` is sanctioned + warned, never failed.
+
+### §4d. Polymorph dispatch is deterministic + total; `$variant` is diagnostics-only (Q5 DECIDED)
 
 A compile-time "no variant matched" must **never** happen. Polymorph dispatch is
 a **deterministic resolver** over slot presence + concrete kind (the
@@ -821,6 +887,32 @@ a **deterministic resolver** over slot presence + concrete kind (the
 polymorph parent and a concrete parse, exactly one form resolves. If the
 resolver cannot resolve a form, that is a Model-completeness defect → **`fail`
 diagnostic, halt** (not a runtime warning).
+
+**Totality requires identical-signature forms to COLLAPSE first (C2).** Slot-
+presence+kind dispatch cannot disambiguate two forms with the *same* field/child
+signature (`project_ts_primary_type_nonsense_variants` cited 20 forms, 18
+identical). The resolution: **identical-signature forms collapse to one form** —
+they are redundant by construction (same observable shape), so there is nothing
+to disambiguate and nothing to `fail` on. Collapse rule: group a polymorph's
+forms by their structural signature (the sorted set of field `storageName`s plus
+the children count, the same key `factory-map.ts:170` already computes for the
+shape-collision warn); each group becomes ONE form. After collapse, every
+surviving form has a distinct signature ⇒ slot-presence dispatch is total.
+Collapsing is part of the **deterministic-dispatch PR** (PR-I), upstream of the
+resolver.
+
+> **Discovery (cited):** in the *current committed* `node-model.json5`, the
+> identical-signature count is **0 across all 3 grammars** (rust/ts/python: 0
+> polymorphs with a duplicate-signature form set; verified by grouping each
+> polymorph's `forms[].fields[].name` + `children.length`). The cited ts
+> `primary_type` is today a **`supertype`** (0 forms), not a 20-form polymorph —
+> the nonsense-variants were already eliminated upstream (likely the `variant()`
+> adoption / supertype reclassification on the 024/PR2 line). So the collapse is
+> **defensive/total-by-construction** for the current corpus (no forms to
+> collapse today) but remains a required invariant: the resolver MUST collapse-
+> then-dispatch so a future grammar that reintroduces identical forms cannot
+> produce a spurious `fail`. The PR adds the collapse + an assertion that no
+> polymorph retains a duplicate signature post-collapse.
 
 Consequence for the shipped artifacts: **no stored `$variant` discriminant
 ships in 1–6.** The runtime resolves polymorphs structurally — wrap knows the
@@ -830,19 +922,21 @@ scope discipline as `node-model.json5`, #10): it may appear in the serialized
 Model and the validator's dispatch map, never in generated `types.ts` /
 `factories.ts` / `from.ts` / `wrap.ts` / transports / templates.
 
-### ⚠ FLAG — `$variant` removal touches the polymorph-form Model surface
+### ⚠ FLAG — dispatch is total ONLY after identical-form collapse
 
 `AssembledPolymorph` (`node-map.ts:3106`) and `PolymorphRule` carry form
 metadata that today feeds a stored discriminant. The end-state keeps the form
 metadata (the resolver reads it) but removes `$variant` from the *emitted* code
-surfaces. This is sequenced in **PR-I** (§5) alongside the `polymorphVariants`
-consolidation, because both touch the same dispatch surface.
+surfaces. **Deterministic dispatch is total ONLY after identical-signature forms
+collapse** (C2 above) — the collapse is a prerequisite step inside the
+deterministic-dispatch PR (**PR-I**, the resolver), upstream of `$variant`
+removal (**PR-J**, which depends on PR-I). See §5.
 
 > **Blast-radius note (verified).** `$variant` ships *heavily* in current
 > generated code (e.g. typescript `types.ts` ~25 occurrences, `factories.ts`
 > ~70; also `from.ts` / `wrap.ts` across all 3 grammars). Removing it from the
-> shipped surfaces (PR-I) is a substantial, validate-gated change — the
-> structural resolver must reproduce every dispatch decision the stored
+> shipped surfaces (**PR-J**) is a substantial, validate-gated change — the
+> PR-I structural resolver must reproduce every dispatch decision the stored
 > discriminant currently makes, with `fail` (not silent fallthrough) on any
 > non-resolution.
 
@@ -862,31 +956,37 @@ the legacy walker / wrapper types / ClauseRule are gone).
 | PR | Name | Changes | Validates | Why it can't regress |
 |---|---|---|---|---|
 | **PR3** (prereq) | Delete legacy render walker + ClauseRule + wrapper types | Per `1ebe0407` design: delete `template-walker.ts`, `renderTemplate()` methods, `ClauseRule`/`detectClause`, the `'clause'` arm (`collect-slots.ts:474`), wrapper rule types, RawRule snapshot. | full regen + counts; the `TemplateEmitter` is already authoritative | the authoritative path already produces the output; legacy is dead-weight |
-| **PR-A** | Reconcile `_new` naming to legacy (diff → 0) | No emitter changes. Add a probe (`tools` CLI) counting `storageName !== storageNameNew` / `name vs nameNew` divergences per grammar. Fix `collect-slots.ts` / `simplify.ts` until the count is 0 across all 3. | the divergence probe = 0; counts unchanged | pure measurement + fixes that converge legacy and `_new`; no consumer reads `_new` yet |
-| **PR-B** | `AssembledNonterminal` → class | Swap the interface for the class (§2 getters). Construct via `new` in `collect-slots.ts`. Delete the `_new` suffixed fields (now getters). One slot identity: `storageName` (snake_case); migrate `slot.name` reads → `slot.storageName` here. `refKindNames` is private `#refKindNames`, public via `kinds` only (CW4). | counts unchanged (byte-identical, guaranteed by PR-A) | getters return PR-A-reconciled values = old stored values; `name`→`storageName` is value-identical |
-| **PR-C** | Eliminate `origin` + redundant `SlotSource` variants; route on `fieldName` | Replace every `slot.origin === 'kind'` test (wrap `collectConcreteStorageKeys` `wrap.ts:497`) AND every `slot.source === 'inferred'` test (`shared.ts:1056/1138/1173`, `render-module.ts:585/586/598/695/708`, `templates.ts:1203/1438/1449`) with `slot.fieldName === undefined`. Delete `origin` + `SlotOrigin`; drop `'inferred'` + `'inlined'` from `SlotSource` (Finding 5) — leaving `'grammar' | 'override' | 'enriched'`. | counts unchanged; wrap + render + factory-mode byte-diff | `fieldName === undefined` is the authoritative signal both `origin:'kind'` and `source:'inferred'` approximated; `'inlined'` had no slot producer |
-| **PR-D** | wrap reads the class; delete `SlotModel`; `$children`→`$other` | Delete `compiler/slot-model.ts`. wrap.ts reads `slot.arity` / `slot.storageKey` getters instead of `createNamedSlotModel(...)`. **Redesign** the `$children` catch-all to a wrap-only `$other` bucket (Finding 3 / Q4) — paired codegen + rust-reader change. | counts (esp. rust read-render-parse ast); wrap byte-diff | `arity`/`storageKey` getters are identical functions to `SlotModel`'s; `$other` is wrap-only so no other surface changes |
-| **PR-E** | transport + render read the class | Transport-projection / render-module read `slot.values` / `slot.kinds` / `slot.storageKey` getters; drop node-wide `meta.separators` fallback (per-slot stamping covers all kinds). | counts; no slot name leaking a synthesized-helper name into emitted artifacts | the slot's `values` already hold inlined target kinds (Normalize/Simplify, §1 Consumer 5); getters identical |
+| **PR-A** | Reconcile `_new` naming to legacy (diff → 0), WIDE probe | No emitter changes. Add a `tools`-CLI probe that, for every slot in all 3 grammars, asserts **each projected name equals its getter-computed value**: `storageName` vs `storageNameNew`, AND `name`→`storageName`, AND `configKey`/`propertyName`/`paramName`/`parseNames` vs the §2 getter formulas (`snakeToCamel`/`pluralize`/`safeParamName`/the parse-name rule). Fix `collect-slots.ts`/`simplify.ts` until **all** divergences = 0 (H1). | the WIDE divergence probe = 0 for every projected name; counts unchanged | no consumer reads `_new` yet; the probe guarantees every getter PR-B introduces is byte-identical — not just `name`/`storageName` |
+| **PR-B** | `AssembledNonterminal` → class | Swap the interface for the class (§2 getters). Construct via `new` in `collect-slots.ts`. Delete the `_new` suffixed fields (now getters). One slot identity: `storageName` (snake_case); migrate `slot.name` reads → `slot.storageName` here. `refKindNames` is private `#refKindNames`, public via `kinds` only (CW4). | counts unchanged (byte-identical, guaranteed by PR-A's WIDE probe) | every getter (`configKey`/`propertyName`/`paramName`/`parseNames` included) was proven value-identical in PR-A |
+| **PR-C** | Eliminate `origin`; re-point `'inferred'` behavior reads to `fieldName`; drop dead `'inlined'` | Replace every `slot.origin === 'kind'` test (wrap `collectConcreteStorageKeys` `wrap.ts:497`) AND every **behavior** read of `slot.source === 'inferred'` (`shared.ts:1056/1138/1173`, `render-module.ts:585/586/598/695/708`, `templates.ts:1203/1438/1449`) with `slot.fieldName === undefined`. Delete `origin` + `SlotOrigin`. **KEEP** the `'inferred'` producer + the diagnostic read (`node-model.ts:318`) — retained provenance (#15 / Finding 5 / C1). Drop only `'inlined'` from `SlotSource` — leaving `'grammar' | 'override' | 'enriched' | 'inferred'`. | counts unchanged; wrap + render + factory-mode byte-diff; `node-model.json5` still serializes `source` | `fieldName === undefined` is the structural signal both `origin:'kind'` and the behavior reads of `source:'inferred'` approximated; `'inferred'` stays diagnostics-live; `'inlined'` had no producer |
+| **PR-D** | wrap reads the class; delete `SlotModel`; `$children`→`$other` (paired codegen+rust) | Delete `compiler/slot-model.ts`. wrap.ts reads `slot.arity`/`slot.storageKey` getters instead of `createNamedSlotModel(...)`. **Redesign** the `$children` catch-all → wrap-only `$other` bucket (Finding 3 / Q4 / JC5). **Rust-reader twin (M2):** the napi reader's child-routing pass — which today routes unmatched children to a `$children`-keyed field — re-targets them to a `$other`-keyed accumulator; the reader emits `$other` ONLY for parsed children matching no named slot, and the codegen emits the matching rust struct field (a `Vec` of raw transports, NOT a typed slot). Both sides land together. | counts (esp. rust read-render-parse ast); wrap byte-diff; rust `cargo check` | `arity`/`storageKey` getters are identical functions to `SlotModel`'s; `$other` is wrap+reader-only so no typed/render surface changes |
+| **PR-D2** | Helper names must not leak into slot `values` (H2 — fixes a real OPEN bug) | **Discovery (cited):** today rust leaks 5 synthesized-helper names into slot values — `const_item.const_item_optional1 → _const_item_optional1`, `for_expression`, `function_signature_item`, `let_declaration` (`_..._optional3`), `loop_expression` (verified against `node-model.json5`); ts/python leak 0. Ensure the slot's `values` hold the **inlined target kinds**, not the `_<parent>_optionalN`/`_repeatN` helper name. Fix in Normalize/Simplify (`inlineRefs`/`reapplyInlinedLeafAttrs`, `simplify.ts:356/366`): when a helper ref is inlined, the surviving slot value must reference the helper's CONTENT kinds, not the helper symbol. | the H2 leak probe = 0 across all 3 grammars (rust 5→0); counts unchanged | makes PR-E's assumption TRUE before PR-E relies on it; the leaked names render to invalid kinds today, so fixing them only corrects |
+| **PR-E** | transport + render read the class | Transport-projection / render-module read `slot.values`/`slot.kinds`/`slot.storageKey` getters; drop node-wide `meta.separators` fallback (per-slot stamping covers all kinds). **Depends on PR-D2** — values now hold inlined kinds. | counts; H2 leak probe still 0 | the slot's `values` hold inlined target kinds (guaranteed by PR-D2); getters identical |
 | **PR-F** | factory + from + types read the class | factories/from/types consume getters; `from.ts` storageKey param becomes `slot.storageKey`. **No `$other`** on these surfaces (Q4). | counts; from pass-rate | getters identical to today's stored fields; `$other` was never on these surfaces in the end-state |
-| **PR-G** | Diagnostics severity model + Assemble→Project gate | Add `compiler/diagnostics.ts` (`DiagnosticSink`, severity) + `compiler/emit-gate.ts` (`assertEmittable`); wire the gate into `generate.ts` after `assemble()`. Move the unnamed-choice warner global (`collect-slots.ts:61-68`) into the sink. Initially all current heuristics still fire (no `fail` yet) — gate is a no-op until PR-J flips severities. | counts unchanged; gate passes (no `fail` emitted yet) | additive infrastructure; no severity is `fail` until PR-J |
-| **PR-H** | Phase rename + shared `transforms.ts` + ctx | Rename `link.ts`→`classify.ts`, `optimize.ts`→`normalize.ts`. Extract shared idempotent ops to `transforms.ts`. Introduce `NormalizeCtx`/`SimplifyCtx`/`AssembleCtx` (carrying the sink from PR-G). Apply `<operation><ObjectType>(target, ctx)` signatures. | counts; full test suite | pure rename + move; no logic change |
-| **PR-I** | `factory-map.json5`→`node-model.json5`; `$variant` off shipped surfaces; deterministic polymorph dispatch | Make `node-model.json5` carry factory-map's subset (§6); point validator/tooling at it; delete `factory-map.json5` + emitter. Make polymorph dispatch a deterministic resolver (Q5); a non-resolution becomes `fail`. Remove the stored `$variant` discriminant from `types.ts`/`factories.ts`/`from.ts`/`wrap.ts`/transports/templates; keep it in the serialized Model + validator dispatch map only. | validator passes against the consolidated model; counts; no compile-time "no variant matched" | factory-map is a strict subset (§6 proof); the resolver replaces the stored discriminant with structural dispatch (kind + slot presence) |
-| **PR-J** | Flip heuristics to fail-diagnostics (author overrides first) | For each heuristic (`inferFieldNames`, `looksLikePolymorphCandidate`/`choiceNeedsVariantWrapping`, choice distribute-vs-union `collect-slots.ts:520`, the `'content'`-fallback unnamed slot, parameterless fixpoint): **first** author the overrides that clear its would-be `fail` diagnostics across all 3 grammars (counts must hold), **then** delete the heuristic and emit `fail` on the now-impossible non-deterministic case. | counts hold AT EACH heuristic removal; `overrides.suggested.ts` reviewed; gate (PR-G) now actively blocks | overrides are authored before the guess is removed → the deterministic path produces the same Model; the `fail` is unreachable for the corpus |
+| **PR-G** | Diagnostics severity model + Assemble→Project gate | Add `compiler/diagnostics.ts` (`DiagnosticSink`, severity) + `compiler/emit-gate.ts` (`assertEmittable`); wire the gate into `generate.ts` after `assemble()`. Move the unnamed-choice warner global (`collect-slots.ts:61-68`) into the sink. Initially all current heuristics still fire (no `fail` yet) — gate is a no-op until PR-L flips severities. | counts unchanged; gate passes (no `fail` emitted yet) | additive infrastructure; no severity is `fail` until PR-L |
+| **PR-H** | Phase rename + shared `transforms.ts` + ctx | Rename `link.ts`→`classify.ts`, `optimize.ts`→`normalize.ts`. Extract shared idempotent ops to `transforms.ts`. Introduce `NormalizeCtx`/`SimplifyCtx`/`AssembleCtx` (carrying the sink from PR-G). Apply the §7.7 `<operation><ObjectType>(target, ctx)` signatures + node-behavior-to-class refactors. | counts; full test suite | pure rename + move + method relocations (node behavior → class getters); no logic change |
+| **PR-I** | Deterministic polymorph resolver + identical-form collapse (H3 split — resolver) | Add the slot-presence+kind resolver (`project_polymorph_dispatcher_slot_probe`, generalized). **Prerequisite step:** collapse identical-signature forms (C2 / §4d) so dispatch is total; assert no polymorph retains a duplicate signature. Resolver is internal — no shipped-surface change yet. A non-resolution becomes `fail` (unreachable post-collapse). | counts; no compile-time "no variant matched"; collapse assertion holds | collapse removes the only un-disambiguable case; current corpus has 0 identical-form sets (verified §4d) so collapse is a no-op today |
+| **PR-J** | Remove `$variant` from shipped surfaces (H3 split — depends on PR-I) | Remove the stored `$variant` discriminant from `types.ts`/`factories.ts`/`from.ts`/`wrap.ts`/transports/templates (~95+ ts sites — see §4d blast-radius). Shipped runtime dispatches via the PR-I resolver. `$variant` survives ONLY in the serialized Model + validator dispatch map (#15, diagnostics/validate-only). | counts; validator still resolves every polymorph; no `$variant` in generated 1–6 | the PR-I resolver reproduces every dispatch decision the discriminant made; `$variant` is provenance, not behavior (#15) |
+| **PR-K** | `factory-map.json5` → `node-model.json5` (H3 split — orthogonal) | Make `node-model.json5` carry factory-map's subset (§6); point validator/`nodeToConfig` at it; delete `factory-map.json5` + emitter. | validator passes against the consolidated model; counts | factory-map is a strict subset (§6 proof); pure consolidation, independent of the resolver/`$variant` work |
+| **PR-L** | Flip heuristics to fail-diagnostics (author overrides first) | For each *guess* (`inferFieldNames`, `looksLikePolymorphCandidate`/`choiceNeedsVariantWrapping`, the choice distribute-vs-union guess `collect-slots.ts:520`, parameterless fixpoint): **first** author the overrides that clear its would-be `fail` diagnostics across all 3 grammars (counts must hold), **then** delete the heuristic and `fail` on the now-impossible non-deterministic case. **NOT in scope:** the sanctioned `content` slot (§4c) — it stays a `warn`, never converts to `fail`; PR-L need not field-name the 49 current `content` slots. | counts hold AT EACH heuristic removal; `overrides.suggested.ts` reviewed; gate (PR-G) now actively blocks | overrides authored before the guess is removed → deterministic path produces the same Model; `content` is sanctioned (§4c) so the fail-cliff is avoided |
 
-**Proposed PR count: 10** (PR3 prereq + PR-A..PR-J). PR3, PR-A, PR-B, PR-C, PR-D
-are the load-bearing core (centralize naming + kill `SlotModel`/`origin`/`name`,
-narrow `$children`→`$other`); PR-E..PR-F migrate the remaining read sites;
-PR-G..PR-J are the diagnostics gate, phase reorg, build-artifact consolidation,
-and the heuristics-to-fail flip. Each PR is a strangler step that **removes the
-old code it supersedes within the same PR** — there are no dedicated "sunset"
-PRs; detailed removal sequencing is the implementation plan's concern.
+**Proposed PR count: 13** (PR3 prereq + PR-A..PR-L, where PR-D2 is the H2 fix).
+PR3, PR-A..PR-D are the load-bearing core (centralize naming + kill
+`SlotModel`/`origin`/`name`, narrow `$children`→`$other`); PR-D2 fixes the
+helper-name leak; PR-E..PR-F migrate the remaining read sites; PR-G is the
+diagnostics gate; PR-H is the phase reorg + method conformance; PR-I/PR-J/PR-K
+are the H3-split resolver / `$variant`-removal / factory-map consolidation;
+PR-L is the heuristics-to-fail flip. Each PR is a strangler step that **removes
+the old code it supersedes within the same PR** — no dedicated "sunset" PRs.
 
 **Gating discipline (#12, brainstorm validation gate).** Each PR ends with:
 `npx tsx packages/codegen/src/cli.ts --grammar <g> --all --output …` for all 3,
 then `counts --backend native <g>` for all 3, asserting no regression vs the
-baseline. PR-A and PR-B additionally gate on the divergence probe = 0. PR-J
-gates on counts holding *at each individual heuristic removal* (not just at PR
-end), because each removal is independently reversible only before the next.
+baseline. PR-A gates on the WIDE divergence probe = 0 (every projected name);
+PR-D2 gates on the H2 helper-leak probe = 0; PR-I gates on the collapse
+assertion; PR-L gates on counts holding *at each individual heuristic removal*
+(not just at PR end), because each removal is independently reversible only
+before the next.
 
 ---
 
@@ -910,7 +1010,7 @@ derivation already available from the assembled `NodeMap`:
 (`factoryShapes`, `factoryFields`). One (`polymorphVariants`) has its *inputs*
 serialized but not the dispatch-ready form.
 
-### Consolidation mechanism (PR-I)
+### Consolidation mechanism (PR-K)
 
 1. **Extend `buildNodeModel` (`node-model.ts:178`)** to also emit the
    dispatch-ready `polymorphVariants` (move `buildFactoryMap`'s `polymorphVariants`
@@ -924,11 +1024,14 @@ serialized but not the dispatch-ready form.
    `validate-factory-roundtrip`, `validate-from`, `nodeToConfig`).
 3. **Delete `factory-map.json5` + `emitters/factory-map.ts`.** One serialized
    source (#10).
-4. **`$variant` lands here as diagnostics/validate-only (Q5).** The
-   `polymorphVariants` dispatch map is consumed by the *validator* and serialized
-   into `node-model.json5` — never emitted into shipped code. The shipped runtime
-   uses the deterministic structural resolver (§4c). This consolidation is the
-   natural home for that scoping because both touch the same dispatch surface.
+4. **`$variant` is serialized here, but its REMOVAL from shipped code is PR-J
+   (H3 split).** The `polymorphVariants` dispatch map (carrying `$variant`) is
+   consumed by the *validator* and serialized into `node-model.json5` — this PR-K
+   consolidation provides that serialized home. The separate act of *removing*
+   `$variant` from generated `types.ts`/`factories.ts`/etc. is **PR-J**, gated on
+   the PR-I resolver. Keeping the two apart (consolidation orthogonal to dispatch)
+   is exactly why H3 split them: PR-K can land without touching the shipped
+   surfaces, and the validator keeps reading `$variant` from the Model regardless.
 
 **⚠ FLAG — schema bump + migration.** `node-model.json5`'s schema grows
 (new `polymorphVariants` / `factoryShapes` / `factoryFields` sections). Per
@@ -967,11 +1070,11 @@ classes (§7.3).
 | `dsl/enrich.ts` | UNCHANGED — see glossary Phase 0 | shared grammar layer (not a sittir phase) | `enrich`, `applyEnrichPasses`, `enrichFieldWrappers`, `enrichMultiplicityWrappers`, … |
 | `dsl/wire/*` + `dsl/runtime-shapes.ts` | UNCHANGED — see glossary Phase 1 | shared grammar layer | `wire`, `applyAutoGroups`, dual-case predicates, … |
 | `compiler/evaluate.ts` | UNCHANGED — see `evaluate.ts:200` | **Evaluate** | `evaluate(entryPath)`, DSL primitives, `synthesize*`, `liftCommaSep`, `grammarFn` |
-| `compiler/classify.ts` | RENAME of `link.ts` (+ folds `link-refine.ts`, `field-shape.ts`) | **Classify** | `classifyGrammar(raw, ctx)` (was `link`), `resolveRule`, `classifyHiddenRule`, `promotePolymorph`, `applyOverridePolymorphs`, `hoistIndentIntoRepeat`, `annotateBlockBearerFields`. **DELETED:** `detectClause` (ClauseRule gone, PR3); `inferFieldNames`, `looksLikePolymorphCandidate`, `choiceNeedsVariantWrapping` (→ diagnostics, PR-J) |
+| `compiler/classify.ts` | RENAME of `link.ts` (+ folds `link-refine.ts`, `field-shape.ts`) | **Classify** | `classifyGrammar(raw, ctx)` (was `link`), `resolveRule`, `classifyHiddenRule`, `promotePolymorph`, `applyOverridePolymorphs`, `hoistIndentIntoRepeat`, `annotateBlockBearerFields`. **DELETED:** `detectClause` (ClauseRule gone, PR3); `inferFieldNames`, `looksLikePolymorphCandidate`, `choiceNeedsVariantWrapping` (→ diagnostics, PR-L) |
 | `compiler/normalize.ts` | RENAME of `optimize.ts` (+ folds `wrapper-deletion.ts`) | **Normalize (non-lossy)** | `normalizeGrammar(linked, ctx)` (was `optimize`), `fanOutSeqChoices`, `factorChoiceBranches`, `dedupeSeqMembers`, `inlineSingleUseHidden`, `collapseWrappers`, `pushdownWrappers` (was `applyWrapperDeletion`). Produces the **RenderRule** snapshot |
 | `compiler/simplify.ts` | UNCHANGED structure — see `simplify.ts:331` | **Simplify (lossy)** | `computeSimplifiedRules`, `simplifyRules`, `simplifyRule`, `fuseHeadRepeatLists`, `hoistSharedFieldAcrossChoiceBranches`, `mergeChoiceBranches`, the field-hoist helpers. Produces the **SimplifiedRule** snapshot |
 | `compiler/transforms.ts` | **NEW** (#13a) | shared idempotent ops invoked by BOTH Normalize & Simplify | `collapseSeq(rule, ctx)`, `canonicalizeSeqOfLeaves(rule, ctx)`, `inlineRefs(rule, ctx)`, `deleteWrapper(rule, ctx)`, `pushAttrsToLeaves(rule, …)`, `combineMultiplicity`, `extractRepeatShape`, `findRepeatFlag` (moved out of the deleted `template-walker.ts`) |
-| `compiler/assemble.ts` (+ slot walk) | REFINED — see `assemble.ts:407` | **Assemble** (sole Model-builder) | `assemble(normalized, ctx)`, `classifyNode`, `hydrateSlotRefs`, `markUserFacing`, `markParameterlessKinds`, `resolveCollidingNames`, `resolveIrKeys`, `collectAnonymousNodes`, `collectSlots(rule, ctx)` (slot-enumeration walk — naming logic MOVED to the class, §7.3). **DELETED:** `buildSlot` free function (→ `AssembledNonterminal` constructor) |
+| `compiler/assemble.ts` (+ slot walk) | REFINED — see `assemble.ts:407` | **Assemble** (sole Model-builder) | `assembleModel(normalized, ctx)`, `classifyNode(rule, ctx)`, `hydrateSlotRefs(nodeMap, ctx)`, `markUserFacing(node, ctx)` + `markVariantChildrenUserFacing(node, ctx)` (cross-node, `ctx.nodeMap`), `markParameterlessKinds(nodeMap, ctx)` (inter-node fixpoint), `resolveCollidingNames(nodeMap, ctx)`, `resolveIrKeys(nodeMap, ctx)`, `collectAnonymousNodes(nodeMap, ctx)`, `collectSlots(rule, ctx)` (slot-enum walk — naming logic MOVED to the class, §7.3). **DELETED:** `buildSlot` free function (→ `AssembledNonterminal` constructor). All signatures per the §7.7 exhaustive map (every pass conforms to `(target, ctx)`) |
 | `compiler/rule.ts` | REFINED — see §7.4 | **shared rule helpers** (#13c) | Rule IR types + `RuleBase`; type guards (`isSeq`, …); `normalizeEnumMembers`, `literalTextOf`, `collectFieldNames`, `replaceAtPath`. **DELETED (PR3):** `OptionalRule`/`FieldRule`/`RepeatRule`/`Repeat1Rule`/`ClauseRule` |
 | `compiler/node-map.ts` | REFINED — see §7.3 | the `AssembledNode*` class hierarchy + `AssembledNonterminal` class + slot value types | (class defs only — no free-standing pipeline methods). **DELETED:** `inlineJinjaClauses`, `translateToJinja`, `renderTemplate()` methods (PR3) |
 | `compiler/slot-model.ts` | **DELETED** | — | `SlotModel`/`createSlotModel`/`createNamedSlotModel`/`createUnnamedKindSlotModel`/`createUnnamedChildrenSlotModel`/`slotStorageKey` all gone — replaced by class getters (§7.3) |
@@ -1047,10 +1150,10 @@ class hierarchy is **already class-based**; only the listed members change.
 
 | Class | Status | End-state note |
 |---|---|---|
-| `AssembledNodeBase<R>` | REFINED — see `node-map.ts:1281` | **DELETED method:** `renderTemplate()` (PR3). `protected rule: R` getters (`members`/`separator`/`isTextTemplate`) read `renderRule` after the RawRule snapshot is dropped (§4 FLAG). Otherwise unchanged (`kind`/`typeName`/`factoryName`/`irKey`/`source`/`isParameterless`/`stampExpression`/`userFacing`/`hidden`) |
-| `AssembledNonterminal` | **REFINED → CLASS** (§2 full def) | the slot class; getters `storageName` (the ONE identity)/`storageKey`/`parseNames`/`configKey`/`propertyName`/`paramName`/`arity`/`isRequired`/`isMultiple`/`isNonEmpty`/`hasTrailing`/`hasLeading`/`kinds`. **DELETED:** the `name` field/alias (one identity: `storageName`); stored `storageName`/`propertyName`/`configKey`/`paramName`/`hasTrailing`/`hasLeading`/`origin`; the `_new` suffixed fields; `SlotSource` variants `'inferred'`+`'inlined'` |
+| `AssembledNodeBase<R>` | REFINED — see `node-map.ts:1281` | **DELETED method:** `renderTemplate()` (PR3). `protected rule: R` getters (`members`/`separator`/`isTextTemplate`) read `renderRule` after the RawRule snapshot is dropped (§4 FLAG). **Stored fields populated by the refactored `(target, ctx)` assemble passes (§7.7), read field-style by emitters:** `userFacing` (set by `markUserFacing(node, ctx)` — cross-node, NOT a getter), `isParameterless`/`stampExpression` (set by the `markParameterlessKinds` fixpoint; terminal classes self-init in their constructors). Otherwise unchanged (`kind`/`typeName`/`factoryName`/`irKey`/`source`/`hidden`) |
+| `AssembledNonterminal` | **REFINED → CLASS** (§2 full def) | the slot class; getters `storageName` (the ONE identity)/`storageKey`/`parseNames`/`configKey`/`propertyName`/`paramName`/`arity`/`isRequired`/`isMultiple`/`isNonEmpty`/`hasTrailing`/`hasLeading`/`kinds`. Stored: `fieldName`/`values`/`aliasSources`/`source` (provenance, incl. retained `'inferred'`)/`sourceRuleId`/`storageInfo`/`#refKindNames`. **DELETED:** the `name` field/alias (one identity: `storageName`); stored `storageName`/`propertyName`/`configKey`/`paramName`/`hasTrailing`/`hasLeading`/`origin`; the `_new` suffixed fields; `SlotSource` variant `'inlined'` only (`'inferred'` retained as provenance) |
 | `AssembledBranch` | REFINED — see `node-map.ts:2586` | `_slots` record now holds `AssembledNonterminal` instances; `slots`/`fields` getters unchanged. **DELETED:** `renderTemplate()`. `children` getter already retired (returns `[]`) |
-| `AssembledPolymorph` | REFINED — see `node-map.ts:3106` | keeps `forms`/`formRules`/`variantChildKinds` (the deterministic resolver reads them); **no emitted `$variant`** (§4c). **DELETED:** `renderTemplate()` |
+| `AssembledPolymorph` | REFINED — see `node-map.ts:3106` | keeps `forms`/`formRules`/`variantChildKinds` (the deterministic resolver reads them); **no emitted `$variant`** (§4d). **DELETED:** `renderTemplate()` |
 | `AssembledGroup` | REFINED — see `node-map.ts:3659` | hidden synthesized-group; `fields`/`children` unchanged. **DELETED:** `renderTemplate()` |
 | `AssembledMulti` | REFINED — see `node-map.ts:3617` | `elementRule`/`separator`/`nonEmpty`/`trailing`/`leading` unchanged. **DELETED:** `renderTemplate()` |
 | `AssembledSupertype` | UNCHANGED — see `node-map.ts:3573` | `subtypes` getter |
@@ -1100,7 +1203,8 @@ export type Rule =
 
 ### §7.5 Diagnostic severity model + the gate (NEW)
 
-Full definitions in §4b/§4c. Inventory: `compiler/diagnostics.ts` exports
+Full definitions in §4b (severity model + gate), §4c (content slot), §4d
+(polymorph dispatch). Inventory: `compiler/diagnostics.ts` exports
 `DiagnosticSeverity` (`'fail'|'warn'|'info'`), `Diagnostic`, `DiagnosticSink`
 (class), `EmitHaltedError`; `compiler/emit-gate.ts` exports
 `assertEmittable(nodeMap, sink)`. The sink is constructed in `generate.ts` and
@@ -1150,7 +1254,10 @@ export interface SimplifyCtx extends TransformCtx {}
 // compiler/assemble.ts — Assemble needs only the kind table + the sink.
 export interface AssembleCtx {
   readonly kindEntries?: readonly GeneratedKindEntry[];
-  readonly diagnostics: DiagnosticSink;      // unnamed-slot fail-diagnostics emit here
+  readonly nodeMap: NodeMap;                 // cross-node access for the post-passes
+                                             //   (markUserFacing/markParameterless/resolveColliding/…)
+                                             // — this is how #14 keeps them `(target, ctx)`, not getters-with-arg
+  readonly diagnostics: DiagnosticSink;      // slot diagnostics emit here (anonymous-content warn, unslotted-child fail, …)
 }
 ```
 
@@ -1160,19 +1267,92 @@ The uniform `(target, ctx[, recursionState])` shape — with recursion state kep
 explicit and separate from `ctx` — enables the single trace wrapper (#14 note;
 `compiler/trace.ts` is the seed).
 
-Method-rename map (END-STATE names):
+**Scope of the convention.** `<operation><ObjectType>(target, ctx)` applies to
+**pipeline methods** — the phase-level operations that transform/classify/build a
+`Rule` / `AssembledNode` / `NodeMap`. It does NOT apply to **pure local helpers**
+(predicates, string utils, structural-equality, prefix/suffix finders) — those
+are leaf functions with no `target+ctx` semantics (`findCommonPrefix`, `isLeaf`,
+`needsSpace`, `rulesEqual`, `dedupeByJson`, `countReferences`, …). They stay
+private to their module. The forcing function bites only on *pipeline methods*;
+this section makes the pipeline-method set exhaustive and refactors every
+non-conformer.
 
-| End-state method | Was | Module |
+**Exhaustive pipeline-method map (END-STATE).**
+
+*Phase entry points:*
+
+| End-state | Was | Module |
 |---|---|---|
 | `classifyGrammar(raw, ctx)` | `link(raw, include?)` | `classify.ts` |
 | `normalizeGrammar(linked, ctx)` | `optimize(linked, inlineKinds?)` | `normalize.ts` |
-| `pushdownWrappers(rule, ctx)` | `applyWrapperDeletion` / `deleteWrapper` | `normalize.ts` |
-| `inlineRefs(rule, ctx)` | `inlineRefs(rule, rules, inlineKinds?, visited?)` | `transforms.ts` |
-| `collapseSeq(rule, ctx)` | `collapseSeq(rule, wordMatcher?, inField?)` | `transforms.ts` |
-| `canonicalizeSeqOfLeaves(rule, ctx)` | same, positional args | `transforms.ts` |
-| `simplifyRule(rule, ctx)` | `simplifyRule(rule, wordMatcher?, inField?)` | `simplify.ts` |
-| `collectSlots(rule, ctx)` | `collectSlots(rule, kindForName?, kindEntries?, inherited?, sep?)` | `assemble.ts` |
+| `computeSimplifiedRules(renderRules, ctx)` | `computeSimplifiedRules(renderRules, word, inlineKinds?)` | `simplify.ts` |
+| `assembleModel(normalized, ctx)` | `assemble(optimized)` | `assemble.ts` |
 | `assertEmittable(nodeMap, sink)` | (new) | `emit-gate.ts` |
+
+*Rule transforms (target=`Rule`, ctx=`TransformCtx`/`Normalize`/`Simplify`):*
+
+| End-state | Was | Module |
+|---|---|---|
+| `pushdownWrappers(rule, ctx)` | `applyWrapperDeletion` / `deleteWrapper` | `transforms.ts` |
+| `inlineRefs(rule, ctx)` | `inlineRefs(rule, rules, inlineKinds?, visited?)` | `transforms.ts` |
+| `collapseSeq(rule, ctx, inField?)` | `collapseSeq(rule, wordMatcher?, inField?)` | `transforms.ts` |
+| `canonicalizeSeqOfLeaves(rule, ctx)` | same (positional args → ctx) | `transforms.ts` |
+| `pushAttrsToLeaves(rule, ctx)` | `pushAttrsToLeaves(rule, mult, sep, fieldName)` | `transforms.ts` |
+| `simplifyRule(rule, ctx, inField?)` | `simplifyRule(rule, wordMatcher?, inField?)` | `simplify.ts` |
+| `fanOutSeqChoices(rule, ctx)` | same (positional) | `normalize.ts` |
+| `factorChoiceBranches(rule, ctx)` | same | `normalize.ts` |
+| `dedupeSeqMembers(rule, ctx)` | same | `normalize.ts` |
+| `collapseWrappers(rule, ctx)` | same | `normalize.ts` |
+| `resolveRule(rule, ctx)` | `resolveRule(rule, currentName, allRules, supertypes, externalRoles)` | `classify.ts` (extra args → ctx) |
+| `classifyHiddenRule(rule, ctx)` | `classifyHiddenRule(name, rule, supertypes, references)` | `classify.ts` |
+| `promotePolymorph(rule, ctx)` | same | `classify.ts` |
+| `applyOverridePolymorphs(rule, ctx)` | same | `classify.ts` |
+| `collectSlots(rule, ctx)` | `collectSlots(rule, kindForName?, kindEntries?, inherited?, sep?)` | `assemble.ts` |
+
+*RuleMap transforms (target=the rule map):*
+
+| End-state | Was | Module |
+|---|---|---|
+| `inlineSingleUseHidden(rules, ctx)` | same | `normalize.ts` |
+| `hoistIndentIntoRepeat(rules, ctx)` | `hoistIndentIntoRepeat(rules)` | `classify.ts` |
+| `annotateBlockBearerFields(rules, ctx)` | same | `classify.ts` |
+
+*Assemble post-passes — REFACTORED to fit (the forcing function):*
+
+`assemble.ts`'s post-passes (`assemble.ts:208–212`) today take the whole
+`Map<string, AssembledNode>` positionally. Each is re-shaped to `(target, ctx)`
+per its discovered responsibility — `ctx.nodeMap` absorbs the cross-node access,
+so a pass is either per-node `(node, ctx)` or genuinely whole-map `(nodeMap, ctx)`,
+and neither becomes a getter-with-arg:
+
+| End-state | Was | Refactor (discovered responsibility) |
+|---|---|---|
+| `markUserFacing(node, ctx)` (`ctx.nodeMap`) — sets `node.userFacing` | `markUserFacing(nodes)` (`assemble.ts:1070`) | **Refactor to `(node, ctx)` method — NOT deprecated, NOT a getter.** Discovery: `userFacing` is a heavily-read live signal — `shared.ts:89/1250/1293`, `from.ts:1915`, `templates.ts:1696`, `types.ts:1340`, `factories.ts:376/830`, `render-module.ts:1521`, plus the validator (`rule-lookup.ts:62`) and `factory-map.ts:273`. It is computed from **cross-node** state (is this hidden kind an alias source in some *other* node's slots; `assemble.ts:1092`) → it needs `nodeMap`, so per #14 it is a `(node, ctx)` method, **not** a getter-with-arg. The `markVariantChildrenUserFacing` follow-on (`assemble.ts:1111`) folds in as a second `(node, ctx)` pass over variant children. Emitters keep reading the populated `node.userFacing` field (field-read, not getter-call). |
+| `markParameterlessKinds(nodeMap, ctx)` (fixpoint) — sets `node.isParameterless`/`stampExpression` | `markParameterlessKinds(nodes)` (`assemble.ts:713`) | **Refactor to a NodeMap-wide `(nodeMap, ctx)` fixpoint — NOT deprecated.** Discovery: `isParameterless`/`stampExpression` are live factory-emitter signals — `shared.ts:337/403/1092` (auto-stamp gating, `project_auto_stamp_parameterless_factories`) + `node-model.ts:213` (diagnostics). It is a genuine **inter-node fixpoint** (a compound is parameterless iff its required slots reference *other* parameterless kinds; `assemble.ts:713`), so it cannot be a pure node-self getter — it stays a whole-map `(nodeMap, ctx)` op. The per-node test helpers (`isAutoStampSlot`/`getSlotsForParameterless`/`_stampExpressionForSlot`) stay private to the pass. Terminal classes still self-set `isParameterless` in their constructors (`node-map.ts:3440/3479` — that IS a pure node-self fact, a legitimate constructor init). |
+| `resolveCollidingNames(nodeMap, ctx)` | `resolveCollidingNames(nodes)` (`assemble.ts:1121`) | **Keep as a NodeMap-wide op** (renaming requires seeing all kinds at once) — conforms once `nodes`→`nodeMap` + `ctx`. The per-pair helpers (`renameCollidingHiddenKinds`, …) stay private. |
+| `resolveIrKeys(nodeMap, ctx)` | `resolveIrKeys(nodes)` (`assemble.ts:600`) | **Keep as a NodeMap-wide op** (dedupe-aware short-name pass needs the whole map); conforms via `nodes`→`nodeMap` + `ctx`. |
+| `collectAnonymousNodes(nodeMap, ctx)` | `collectAnonymousNodes(rules, nodes, wordMatcher, kindEntries)` (`assemble.ts:208`) | **Re-target to NodeMap + ctx.** The `rules`/`wordMatcher`/`kindEntries` args fold into `AssembleCtx`; it remains a whole-map collection pass (creates `AssembledKeyword`/`AssembledToken` entries). |
+| `hydrateSlotRefs(nodeMap, ctx)` | `hydrateSlotRefs(nodeMap)` (`assemble.ts:994`) | Already NodeMap-shaped; add `ctx` for the diagnostics sink (unresolvable-ref logging → `warn`). |
+| `classifyNode(rule, ctx)` | `classifyNode(kind, rule, opts?)` (`assemble.ts:109`) | target=`rule`; `kind`/`opts` (variantParents) fold into `ctx`. |
+
+**Resolution of the prior `markUserFacing` / `markParameterlessKinds` open
+issue (discover-first):** both were probed for deprecation. **Neither is
+deprecable** — `userFacing` has 10+ live emitter/validator consumers and
+`isParameterless` gates factory auto-stamping. Both are **cross-node /
+inter-node fixpoint** computations, so per the refined #14 they are
+`(target, ctx)` methods (`ctx.nodeMap`), **not** getters — there is no
+getter-with-arg shape. They populate plain node fields (`node.userFacing`,
+`node.isParameterless`) that emitters read field-style; the *computation* is a
+conforming pipeline method, the *read* is a field access.
+
+**Rule for whole-map operations:** a NodeMap-wide pass (`markUserFacing` —
+written per-node but driven over the map, `markParameterlessKinds`,
+`resolveCollidingNames`, `resolveIrKeys`, `collectAnonymousNodes`,
+`hydrateSlotRefs`) is a *legitimate* conforming shape — its `target` is the
+node (or `NodeMap`) and it takes a `ctx` that absorbs every other input. The
+only thing the convention forbids — a getter that takes an argument — **does
+not occur** in the end-state. **Zero pipeline methods are non-conforming and
+zero getters take arguments.**
 
 ---
 
