@@ -872,41 +872,41 @@ export const enum TSFieldId {
   FieldDefinition = 17,
   FieldDottedName = 18,
   FieldElseClause = 19,
-  FieldExceptClauses = 20,
-  FieldExpression = 21,
-  FieldFinallyClause = 24,
-  FieldFormatSpecifier = 25,
-  FieldFunction = 26,
-  FieldGuard = 27,
-  FieldIdentifier = 28,
-  FieldImaginary = 29,
-  FieldImportPrefix = 30,
-  FieldKey = 32,
-  FieldLeft = 33,
-  FieldModuleName = 34,
-  FieldName = 35,
-  FieldNewline = 36,
-  FieldObject = 37,
-  FieldOperator = 38,
-  FieldOperators = 39,
-  FieldParameters = 40,
-  FieldPrimaryExpression = 41,
-  FieldReturnType = 43,
-  FieldRight = 44,
-  FieldSimplePattern = 45,
-  FieldStep = 46,
-  FieldStringEnd = 47,
-  FieldStringStart = 48,
-  FieldSubject = 49,
-  FieldSubscript = 50,
-  FieldSuperclasses = 51,
-  FieldType = 52,
-  FieldTypeConversion = 53,
-  FieldTypeParameter = 54,
-  FieldTypeParameters = 55,
-  FieldValue = 56,
-  FieldWildcardImport = 57,
-  FieldWithClause = 58,
+  FieldEntries = 20,
+  FieldExceptClauses = 21,
+  FieldExpression = 22,
+  FieldFinallyClause = 25,
+  FieldFormatSpecifier = 26,
+  FieldFunction = 27,
+  FieldGuard = 28,
+  FieldIdentifier = 29,
+  FieldImaginary = 30,
+  FieldImportPrefix = 31,
+  FieldKey = 33,
+  FieldLeft = 34,
+  FieldModuleName = 35,
+  FieldName = 36,
+  FieldObject = 38,
+  FieldOperator = 39,
+  FieldOperators = 40,
+  FieldParameters = 41,
+  FieldPrimaryExpression = 42,
+  FieldReturnType = 44,
+  FieldRight = 45,
+  FieldSimplePattern = 46,
+  FieldStep = 47,
+  FieldStringEnd = 48,
+  FieldStringStart = 49,
+  FieldSubject = 50,
+  FieldSubscript = 51,
+  FieldSuperclasses = 52,
+  FieldType = 53,
+  FieldTypeConversion = 54,
+  FieldTypeParameter = 55,
+  FieldTypeParameters = 56,
+  FieldValue = 57,
+  FieldWildcardImport = 58,
+  FieldWithClause = 59,
 }
 
 export const TREE_SITTER_FIELD_ID_BY_NAME = {
@@ -928,6 +928,7 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
   "definition": TSFieldId.FieldDefinition,
   "dotted_name": TSFieldId.FieldDottedName,
   "else_clause": TSFieldId.FieldElseClause,
+  "entries": TSFieldId.FieldEntries,
   "except_clauses": TSFieldId.FieldExceptClauses,
   "expression": TSFieldId.FieldExpression,
   "finally_clause": TSFieldId.FieldFinallyClause,
@@ -941,7 +942,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
   "left": TSFieldId.FieldLeft,
   "module_name": TSFieldId.FieldModuleName,
   "name": TSFieldId.FieldName,
-  "newline": TSFieldId.FieldNewline,
   "object": TSFieldId.FieldObject,
   "operator": TSFieldId.FieldOperator,
   "operators": TSFieldId.FieldOperators,
@@ -984,6 +984,7 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
   [TSFieldId.FieldDefinition]: "definition",
   [TSFieldId.FieldDottedName]: "dotted_name",
   [TSFieldId.FieldElseClause]: "else_clause",
+  [TSFieldId.FieldEntries]: "entries",
   [TSFieldId.FieldExceptClauses]: "except_clauses",
   [TSFieldId.FieldExpression]: "expression",
   [TSFieldId.FieldFinallyClause]: "finally_clause",
@@ -997,7 +998,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
   [TSFieldId.FieldLeft]: "left",
   [TSFieldId.FieldModuleName]: "module_name",
   [TSFieldId.FieldName]: "name",
-  [TSFieldId.FieldNewline]: "newline",
   [TSFieldId.FieldObject]: "object",
   [TSFieldId.FieldOperator]: "operator",
   [TSFieldId.FieldOperators]: "operators",
@@ -1040,41 +1040,41 @@ export const TREE_SITTER_FIELD_ID_JSON = [
   { name: "definition", id: 17, enumName: "FieldDefinition", cName: "field_definition" },
   { name: "dotted_name", id: 18, enumName: "FieldDottedName", cName: "field_dotted_name" },
   { name: "else_clause", id: 19, enumName: "FieldElseClause", cName: "field_else_clause" },
-  { name: "except_clauses", id: 20, enumName: "FieldExceptClauses", cName: "field_except_clauses" },
-  { name: "expression", id: 21, enumName: "FieldExpression", cName: "field_expression" },
-  { name: "finally_clause", id: 24, enumName: "FieldFinallyClause", cName: "field_finally_clause" },
-  { name: "format_specifier", id: 25, enumName: "FieldFormatSpecifier", cName: "field_format_specifier" },
-  { name: "function", id: 26, enumName: "FieldFunction", cName: "field_function" },
-  { name: "guard", id: 27, enumName: "FieldGuard", cName: "field_guard" },
-  { name: "identifier", id: 28, enumName: "FieldIdentifier", cName: "field_identifier" },
-  { name: "imaginary", id: 29, enumName: "FieldImaginary", cName: "field_imaginary" },
-  { name: "import_prefix", id: 30, enumName: "FieldImportPrefix", cName: "field_import_prefix" },
-  { name: "key", id: 32, enumName: "FieldKey", cName: "field_key" },
-  { name: "left", id: 33, enumName: "FieldLeft", cName: "field_left" },
-  { name: "module_name", id: 34, enumName: "FieldModuleName", cName: "field_module_name" },
-  { name: "name", id: 35, enumName: "FieldName", cName: "field_name" },
-  { name: "newline", id: 36, enumName: "FieldNewline", cName: "field_newline" },
-  { name: "object", id: 37, enumName: "FieldObject", cName: "field_object" },
-  { name: "operator", id: 38, enumName: "FieldOperator", cName: "field_operator" },
-  { name: "operators", id: 39, enumName: "FieldOperators", cName: "field_operators" },
-  { name: "parameters", id: 40, enumName: "FieldParameters", cName: "field_parameters" },
-  { name: "primary_expression", id: 41, enumName: "FieldPrimaryExpression", cName: "field_primary_expression" },
-  { name: "return_type", id: 43, enumName: "FieldReturnType", cName: "field_return_type" },
-  { name: "right", id: 44, enumName: "FieldRight", cName: "field_right" },
-  { name: "simple_pattern", id: 45, enumName: "FieldSimplePattern", cName: "field_simple_pattern" },
-  { name: "step", id: 46, enumName: "FieldStep", cName: "field_step" },
-  { name: "string_end", id: 47, enumName: "FieldStringEnd", cName: "field_string_end" },
-  { name: "string_start", id: 48, enumName: "FieldStringStart", cName: "field_string_start" },
-  { name: "subject", id: 49, enumName: "FieldSubject", cName: "field_subject" },
-  { name: "subscript", id: 50, enumName: "FieldSubscript", cName: "field_subscript" },
-  { name: "superclasses", id: 51, enumName: "FieldSuperclasses", cName: "field_superclasses" },
-  { name: "type", id: 52, enumName: "FieldType", cName: "field_type" },
-  { name: "type_conversion", id: 53, enumName: "FieldTypeConversion", cName: "field_type_conversion" },
-  { name: "type_parameter", id: 54, enumName: "FieldTypeParameter", cName: "field_type_parameter" },
-  { name: "type_parameters", id: 55, enumName: "FieldTypeParameters", cName: "field_type_parameters" },
-  { name: "value", id: 56, enumName: "FieldValue", cName: "field_value" },
-  { name: "wildcard_import", id: 57, enumName: "FieldWildcardImport", cName: "field_wildcard_import" },
-  { name: "with_clause", id: 58, enumName: "FieldWithClause", cName: "field_with_clause" },
+  { name: "entries", id: 20, enumName: "FieldEntries", cName: "field_entries" },
+  { name: "except_clauses", id: 21, enumName: "FieldExceptClauses", cName: "field_except_clauses" },
+  { name: "expression", id: 22, enumName: "FieldExpression", cName: "field_expression" },
+  { name: "finally_clause", id: 25, enumName: "FieldFinallyClause", cName: "field_finally_clause" },
+  { name: "format_specifier", id: 26, enumName: "FieldFormatSpecifier", cName: "field_format_specifier" },
+  { name: "function", id: 27, enumName: "FieldFunction", cName: "field_function" },
+  { name: "guard", id: 28, enumName: "FieldGuard", cName: "field_guard" },
+  { name: "identifier", id: 29, enumName: "FieldIdentifier", cName: "field_identifier" },
+  { name: "imaginary", id: 30, enumName: "FieldImaginary", cName: "field_imaginary" },
+  { name: "import_prefix", id: 31, enumName: "FieldImportPrefix", cName: "field_import_prefix" },
+  { name: "key", id: 33, enumName: "FieldKey", cName: "field_key" },
+  { name: "left", id: 34, enumName: "FieldLeft", cName: "field_left" },
+  { name: "module_name", id: 35, enumName: "FieldModuleName", cName: "field_module_name" },
+  { name: "name", id: 36, enumName: "FieldName", cName: "field_name" },
+  { name: "object", id: 38, enumName: "FieldObject", cName: "field_object" },
+  { name: "operator", id: 39, enumName: "FieldOperator", cName: "field_operator" },
+  { name: "operators", id: 40, enumName: "FieldOperators", cName: "field_operators" },
+  { name: "parameters", id: 41, enumName: "FieldParameters", cName: "field_parameters" },
+  { name: "primary_expression", id: 42, enumName: "FieldPrimaryExpression", cName: "field_primary_expression" },
+  { name: "return_type", id: 44, enumName: "FieldReturnType", cName: "field_return_type" },
+  { name: "right", id: 45, enumName: "FieldRight", cName: "field_right" },
+  { name: "simple_pattern", id: 46, enumName: "FieldSimplePattern", cName: "field_simple_pattern" },
+  { name: "step", id: 47, enumName: "FieldStep", cName: "field_step" },
+  { name: "string_end", id: 48, enumName: "FieldStringEnd", cName: "field_string_end" },
+  { name: "string_start", id: 49, enumName: "FieldStringStart", cName: "field_string_start" },
+  { name: "subject", id: 50, enumName: "FieldSubject", cName: "field_subject" },
+  { name: "subscript", id: 51, enumName: "FieldSubscript", cName: "field_subscript" },
+  { name: "superclasses", id: 52, enumName: "FieldSuperclasses", cName: "field_superclasses" },
+  { name: "type", id: 53, enumName: "FieldType", cName: "field_type" },
+  { name: "type_conversion", id: 54, enumName: "FieldTypeConversion", cName: "field_type_conversion" },
+  { name: "type_parameter", id: 55, enumName: "FieldTypeParameter", cName: "field_type_parameter" },
+  { name: "type_parameters", id: 56, enumName: "FieldTypeParameters", cName: "field_type_parameters" },
+  { name: "value", id: 57, enumName: "FieldValue", cName: "field_value" },
+  { name: "wildcard_import", id: 58, enumName: "FieldWildcardImport", cName: "field_wildcard_import" },
+  { name: "with_clause", id: 59, enumName: "FieldWithClause", cName: "field_with_clause" },
 ] as const;
 
 /** Per-node-kind field metadata. */
@@ -1088,22 +1088,23 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'identifier', required: true, multiple: false },
   ],
   '_comprehension_clauses': [
-    { name: 'forInClause', required: false, multiple: true },
+    { name: 'forInClause', required: true, multiple: false },
+    { name: 'contents', required: false, multiple: true },
   ],
   '_list_pattern': [
     { name: 'casePatterns', required: false, multiple: true },
   ],
   '_match_block': [
-    { name: 'matchBlockBlock', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   '_simple_pattern_negative': [
-    { name: 'integer', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   '_simple_statements': [
     { name: 'simpleStatements', required: true, multiple: true },
   ],
   '_suite': [
-    { name: 'simpleStatements', required: true, multiple: false },
+    { name: 'block', required: true, multiple: false },
   ],
   '_tuple_pattern': [
     { name: 'casePatterns', required: false, multiple: true },
@@ -1116,7 +1117,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alias', required: true, multiple: false },
   ],
   'argument_list': [
-    { name: 'expression', required: false, multiple: true },
+    { name: 'arguments', required: false, multiple: true },
   ],
   'as_pattern': [
     { name: 'expression', required: true, multiple: false },
@@ -1166,7 +1167,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'consequence', required: true, multiple: false },
   ],
   'case_pattern': [
-    { name: 'asPattern', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'chevron': [
     { name: 'expression', required: true, multiple: false },
@@ -1183,15 +1184,15 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'comparison_operator': [
     { name: 'left', required: true, multiple: false },
-    { name: 'operators', required: true, multiple: false },
-    { name: 'primaryExpression', required: true, multiple: false },
+    { name: 'operators', required: false, multiple: true },
+    { name: 'primaryExpressions', required: false, multiple: true },
   ],
   'complex_pattern': [
     { name: 'imaginary', required: true, multiple: false },
-    { name: 'integer', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'concatenated_string': [
-    { name: 'string', required: true, multiple: true },
+    { name: 'strings', required: true, multiple: true },
   ],
   'conditional_expression': [
     { name: 'body', required: true, multiple: false },
@@ -1208,7 +1209,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'decorator': [
     { name: 'expression', required: true, multiple: false },
-    { name: 'newline', required: false, multiple: false },
   ],
   'default_parameter': [
     { name: 'name', required: true, multiple: false },
@@ -1221,7 +1221,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'dictPatternKvs', required: false, multiple: true },
   ],
   'dictionary': [
-    { name: 'pairs', required: false, multiple: true },
+    { name: 'entries', required: false, multiple: true },
   ],
   'dictionary_comprehension': [
     { name: 'body', required: true, multiple: false },
@@ -1231,7 +1231,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expression', required: true, multiple: false },
   ],
   'dictionary_splat_pattern': [
-    { name: 'identifier', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'dotted_name': [
     { name: 'identifiers', required: true, multiple: true },
@@ -1244,16 +1244,15 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'except_clause': [
-    { name: 'value', required: false, multiple: true },
-    { name: 'alias', required: false, multiple: false },
-    { name: 'suite', required: true, multiple: false },
+    { name: 'content', required: false, multiple: false },
+    { name: 'block', required: true, multiple: false },
   ],
   'exec_statement': [
     { name: 'code', required: true, multiple: false },
     { name: 'expressions', required: true, multiple: true },
   ],
   'expression_list': [
-    { name: 'expression', required: true, multiple: false },
+    { name: 'expressions', required: true, multiple: true },
   ],
   'expression_statement': [
     { name: 'expression', required: true, multiple: false },
@@ -1281,7 +1280,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'alternative', required: false, multiple: false },
   ],
   'format_specifier': [
-    { name: 'interpolations', required: false, multiple: true },
+    { name: 'contents', required: false, multiple: true },
   ],
   'function_definition': [
     { name: 'asyncMarker', required: false, multiple: false },
@@ -1315,7 +1314,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'import_from_statement': [
     { name: 'moduleName', required: true, multiple: false },
-    { name: 'wildcardImport', required: true, multiple: false },
+    { name: 'wildcardImports', required: true, multiple: true },
   ],
   'import_statement': [
     { name: 'names', required: true, multiple: true },
@@ -1361,7 +1360,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'expression', required: true, multiple: false },
   ],
   'list_splat_pattern': [
-    { name: 'identifier', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'match_statement': [
     { name: 'subjects', required: true, multiple: true },
@@ -1392,13 +1391,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'parameters', required: false, multiple: false },
   ],
   'parenthesized_expression': [
-    { name: 'expression', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'parenthesized_list_splat': [
-    { name: 'parenthesizedListSplat', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'pattern_list': [
-    { name: 'pattern', required: true, multiple: false },
+    { name: 'patterns', required: true, multiple: true },
   ],
   'print_statement': [
     { name: 'chevron', required: false, multiple: false },
@@ -1429,6 +1428,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'splat_pattern': [
     { name: 'identifier', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'splat_type': [
     { name: 'identifier', required: true, multiple: false },
@@ -1439,7 +1439,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'stringEnd', required: true, multiple: false },
   ],
   'string_content': [
-    { name: 'escapeInterpolations', required: true, multiple: true },
+    { name: 'contents', required: false, multiple: true },
   ],
   'subscript': [
     { name: 'value', required: true, multiple: false },
@@ -1458,7 +1458,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'patterns', required: false, multiple: false },
   ],
   'type': [
-    { name: 'expression', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
   ],
   'type_alias_statement': [
     { name: 'type', required: true, multiple: false },
@@ -1474,7 +1474,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: true, multiple: false },
   ],
   'typed_parameter': [
-    { name: 'identifier', required: true, multiple: false },
+    { name: 'content', required: true, multiple: false },
     { name: 'type', required: true, multiple: false },
   ],
   'unary_operator': [
@@ -1482,7 +1482,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'argument', required: true, multiple: false },
   ],
   'union_pattern': [
-    { name: 'simplePattern', required: true, multiple: true },
+    { name: 'simplePatterns', required: true, multiple: true },
   ],
   'union_type': [
     { name: 'left', required: true, multiple: false },
@@ -1512,9 +1512,27 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'yield': [
-    { name: 'expression', required: true, multiple: false },
+    { name: 'expression', required: false, multiple: false },
+    { name: 'expressions', required: false, multiple: false },
   ],
 };
+
+// Bitflag const enums — ordered-unique literal sets per bitflag field (ADR-0012)
+/** Bitflag set for `comparison_operator.operators`. */
+export const enum Operators {
+  None = 0,
+  Lt = 1 << 0,
+  Le = 1 << 1,
+  Eq = 1 << 2,
+  Ne = 1 << 3,
+  Ge = 1 << 4,
+  Gt = 1 << 5,
+  NeAlt = 1 << 6,
+  In = 1 << 7,
+  NotIn = 1 << 8,
+  Is = 1 << 9,
+  IsNot = 1 << 10,
+}
 
 /** Valid values for `_augmented_assignment_operator` nodes. */
 export const _AUGMENTED_ASSIGNMENT_OPERATORS = [

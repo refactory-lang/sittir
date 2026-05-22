@@ -197,21 +197,15 @@ export function _callSignature(config: T._CallSignature.Config) {
   }, methodsEngine);
 }
 
-export function classBodyMember(config: T.ClassBodyMember.Config) {
-  const _abstract_method_signature = config.abstractMethodSignature;
-  const _semicolon = config.semicolon;
+export function classBodyMember(child?: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId.ClassBodyMember as const,
     $source: 2 as const,
     $named: true as const,
-    _abstract_method_signature,
-    _semicolon,
-    abstractMethodSignature() { return _abstract_method_signature; },
-    semicolon() { return _semicolon; },
-    $with: {
-      abstractMethodSignature: (value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition) => classBodyMember({ ...config, abstractMethodSignature: value }),
-      semicolon: (value?: T.Semicolon | ",") => classBodyMember({ ...config, semicolon: value }),
-    },
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) => classBodyMember(v) },
   }, methodsEngine);
 }
 
@@ -338,18 +332,18 @@ export function _exportStatementDefaultDeclArmDefaultKwValue(config: T.ExportSta
 }
 
 export function exportStatementDefaultFromArm(config: T.ExportStatementDefaultFromArm.Config) {
-  const _export_statement_default_from_arm_star_from = config.exportStatementDefaultFromArmStarFrom;
+  const _content = config.content;
   const _semicolon = config.semicolon;
   return withMethods({
     $type: TSKindId.ExportStatementDefaultFromArm as const,
     $source: 2 as const,
     $named: true as const,
-    _export_statement_default_from_arm_star_from,
+    _content,
     _semicolon,
-    exportStatementDefaultFromArmStarFrom() { return _export_statement_default_from_arm_star_from; },
+    content() { return _content; },
     semicolon() { return _semicolon; },
     $with: {
-      exportStatementDefaultFromArmStarFrom: (value: T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause) => exportStatementDefaultFromArm({ ...config, exportStatementDefaultFromArmStarFrom: value }),
+      content: (value: T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause) => exportStatementDefaultFromArm({ ...config, content: value }),
       semicolon: (value?: T.Semicolon) => exportStatementDefaultFromArm({ ...config, semicolon: value }),
     },
   }, methodsEngine);
@@ -457,7 +451,7 @@ export function _exportStatementTypeExport(config: T._ExportStatementTypeExport.
     semicolon() { return _semicolon; },
     $with: {
       exportClause: (value: T.ExportClause) => _exportStatementTypeExport({ ...config, exportClause: value }),
-      source: (value: T.String) => _exportStatementTypeExport({ ...config, source: value }),
+      source: (value?: T.String) => _exportStatementTypeExport({ ...config, source: value }),
       semicolon: (value?: T.Semicolon) => _exportStatementTypeExport({ ...config, semicolon: value }),
     },
   }, methodsEngine);
@@ -482,21 +476,21 @@ export function _extendsClauseSingle(config: T.ExtendsClauseSingle.Config) {
 }
 
 export function _forHeader(config: T.ForHeader.Config) {
-  const _for_header_lhs = config.forHeaderLhs;
+  const _content = config.content;
   const _operator = coerceKindEnumStorage(config.operator, [["in", TSKindId.In] as const, ["of", TSKindId.Of] as const]);
   const _right = config.right;
   return withMethods({
     $type: TSKindId.ForHeader as const,
     $source: 2 as const,
     $named: true as const,
-    _for_header_lhs,
+    _content,
     _operator,
     _right,
-    forHeaderLhs() { return _for_header_lhs; },
+    content() { return _content; },
     operator() { return _operator; },
     right() { return _right; },
     $with: {
-      forHeaderLhs: (value: T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind) => _forHeader({ ...config, forHeaderLhs: value }),
+      content: (value: T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind) => _forHeader({ ...config, content: value }),
       operator: (value: NonNullable<Parameters<typeof _forHeader>[0]>['operator']) => _forHeader({ ...config, operator: value }),
       right: (value: T.Expressions) => _forHeader({ ...config, right: value }),
     },
@@ -530,7 +524,7 @@ export function forHeaderLhs(config: T.ForHeaderLhs.Config) {
     _left,
     left() { return _left; },
     $with: {
-      left: (value: T.LhsExpression | T.ParenthesizedExpression) => forHeaderLhs({ ...config, left: value }),
+      left: (value: T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression | T.ParenthesizedExpression) => forHeaderLhs({ ...config, left: value }),
     },
   }, methodsEngine);
 }
@@ -548,7 +542,7 @@ export function _forHeaderVarKind(config: T.ForHeaderVarKind.Config) {
     value() { return _value; },
     $with: {
       left: (value: T.Identifier | T.DestructuringPattern) => _forHeaderVarKind({ ...config, left: value }),
-      value: (value: T.Expression) => _forHeaderVarKind({ ...config, value: value }),
+      value: (value?: T.Expression) => _forHeaderVarKind({ ...config, value: value }),
     },
   }, methodsEngine);
 }
@@ -569,18 +563,18 @@ export function _fromClause(config: T.FromClause.Config) {
 
 export function _importClauseDefaultImport(config: T._ImportClauseDefaultImport.Config) {
   const _import_identifier = config.importIdentifier;
-  const _namespace_import = config.namespaceImport;
+  const _content = config.content;
   return withMethods({
     $type: TSKindId._ImportClauseDefaultImport as const,
     $source: 2 as const,
     $named: true as const,
     _import_identifier,
-    _namespace_import,
+    _content,
     importIdentifier() { return _import_identifier; },
-    namespaceImport() { return _namespace_import; },
+    content() { return _content; },
     $with: {
       importIdentifier: (value: T.ImportIdentifier) => _importClauseDefaultImport({ ...config, importIdentifier: value }),
-      namespaceImport: (value?: T.NamespaceImport | T.NamedImports) => _importClauseDefaultImport({ ...config, namespaceImport: value }),
+      content: (value?: T.NamespaceImport | T.NamedImports) => _importClauseDefaultImport({ ...config, content: value }),
     },
   }, methodsEngine);
 }
@@ -1051,7 +1045,7 @@ export function abstractClassDeclaration(config: T.AbstractClassDeclaration.Conf
     body() { return _body; },
     $with: {
       decorators: (...values: T.Decorator[]) => abstractClassDeclaration({ ...config, decorator: values }),
-      name: (value: T.TypeIdentifier) => abstractClassDeclaration({ ...config, name: value }),
+      name: (value: T.Identifier) => abstractClassDeclaration({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => abstractClassDeclaration({ ...config, typeParameters: value }),
       classHeritage: (value?: T.ClassHeritage) => abstractClassDeclaration({ ...config, classHeritage: value }),
       body: (value: T.ClassBody) => abstractClassDeclaration({ ...config, body: value }),
@@ -1190,39 +1184,45 @@ export function ambientDeclarationUFormModule(config: Omit<ConfigOf<T.AmbientDec
   }, methodsEngine);
 }
 
-export function arguments_(...children: (T.Expression | T.SpreadElement)[]) {
-  const _expression = children;
+export function arguments_(config: Partial<T.Arguments.Config> = {}) {
+  const _arguments = config.arguments;
   return withMethods({
     $type: TSKindId.Arguments as const,
     $source: 2 as const,
     $named: true as const,
-    _expression,
-    expressions() { return _expression; },
-    $with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => arguments_(...vs) },
+    _arguments,
+    arguments() { return _arguments; },
+    $with: {
+      arguments: (...values: (T.Expression | T.SpreadElement)[]) => arguments_({ ...config, arguments: values }),
+    },
   }, methodsEngine);
 }
 
-export function array(...children: (T.Expression | T.SpreadElement)[]) {
-  const _expression = children;
+export function array(config: Partial<T.Array.Config> = {}) {
+  const _elements = config.elements;
   return withMethods({
     $type: TSKindId.Array as const,
     $source: 2 as const,
     $named: true as const,
-    _expression,
-    expressions() { return _expression; },
-    $with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => array(...vs) },
+    _elements,
+    elements() { return _elements; },
+    $with: {
+      elements: (...values: (T.Expression | T.SpreadElement)[]) => array({ ...config, elements: values }),
+    },
   }, methodsEngine);
 }
 
-export function arrayPattern(...children: (T.Pattern | T.AssignmentPattern)[]) {
-  const _pattern = children;
+export function arrayPattern(config: Partial<T.ArrayPattern.Config> = {}) {
+  const _elements = config.elements;
   return withMethods({
     $type: TSKindId.ArrayPattern as const,
     $source: 2 as const,
     $named: true as const,
-    _pattern,
-    patterns() { return _pattern; },
-    $with: { $children: (...vs: (T.Pattern | T.AssignmentPattern)[]) => arrayPattern(...vs) },
+    _elements,
+    elements() { return _elements; },
+    $with: {
+      elements: (...values: (T.Pattern | T.AssignmentPattern)[]) => arrayPattern({ ...config, elements: values }),
+    },
   }, methodsEngine);
 }
 
@@ -1343,19 +1343,19 @@ export function asExpression(config: T.AsExpression.Config) {
     typeAnnotation() { return _type_annotation; },
     $with: {
       expression: (value: T.Expression) => asExpression({ ...config, expression: value }),
-      typeAnnotation: (value: T.Const | T.Type) => asExpression({ ...config, typeAnnotation: value }),
+      typeAnnotation: (value: "const" | T.Type) => asExpression({ ...config, typeAnnotation: value }),
     },
   }, methodsEngine);
 }
 
 export function asserts(child: (T.TypePredicate | T.Identifier | T.This)) {
-  const _type_predicate = child;
+  const _content = child;
   return withMethods({
     $type: TSKindId.Asserts as const,
     $source: 2 as const,
     $named: true as const,
-    _type_predicate,
-    typePredicate() { return _type_predicate; },
+    _content,
+    content() { return _content; },
     $with: { $child: (v: (T.TypePredicate | T.Identifier | T.This)) => asserts(v) },
   }, methodsEngine);
 }
@@ -1386,7 +1386,7 @@ export function assignmentExpression(config: T.AssignmentExpression.Config) {
     left() { return _left; },
     right() { return _right; },
     $with: {
-      left: (value: T.ParenthesizedExpression | T.LhsExpression) => assignmentExpression({ ...config, left: value }),
+      left: (value: T.ParenthesizedExpression | T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression) => assignmentExpression({ ...config, left: value }),
       right: (value: T.Expression) => assignmentExpression({ ...config, right: value }),
     },
   }, methodsEngine);
@@ -1448,7 +1448,7 @@ export function awaitExpression(expression: T.AwaitExpression.Config['expression
 
 export function binaryExpression(config: T.BinaryExpression.Config) {
   const _left = config.left;
-  const _operator = coerceKindEnumStorage(config.operator, []);
+  const _operator = coerceKindEnumStorage(config.operator, [["&&", TSKindId.AmpAmp] as const, ["||", TSKindId.PipePipe] as const, [">>", TSKindId.GtGt] as const, [">>>", TSKindId.GtGtGt] as const, ["<<", TSKindId.LtLt] as const, ["&", TSKindId.Amp2] as const, ["^", TSKindId.Caret] as const, ["|", TSKindId.Pipe2] as const, ["+", TSKindId.Plus] as const, ["-", TSKindId.Dash] as const, ["*", TSKindId.Star2] as const, ["/", TSKindId.Slash2] as const, ["%", TSKindId.Percent] as const, ["**", TSKindId.StarStar] as const, ["<", TSKindId.Lt2] as const, ["<=", TSKindId.LtEq] as const, ["==", TSKindId.EqEq] as const, ["===", TSKindId.EqEqEq] as const, ["!=", TSKindId.BangEq] as const, ["!==", TSKindId.BangEqEq] as const, [">=", TSKindId.GtEq] as const, [">", TSKindId.Gt2] as const, ["??", TSKindId.QmarkQmark] as const, ["instanceof", TSKindId.Instanceof] as const, ["in", TSKindId.In] as const]);
   const _right = config.right;
   return withMethods({
     $type: TSKindId.BinaryExpression as const,
@@ -1606,7 +1606,7 @@ export function class_(config: T.Class.Config) {
     body() { return _body; },
     $with: {
       decorators: (...values: T.Decorator[]) => class_({ ...config, decorator: values }),
-      name: (value?: T.TypeIdentifier) => class_({ ...config, name: value }),
+      name: (value?: T.Identifier) => class_({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => class_({ ...config, typeParameters: value }),
       classHeritage: (value?: T.ClassHeritage) => class_({ ...config, classHeritage: value }),
       body: (value: T.ClassBody) => class_({ ...config, body: value }),
@@ -1615,13 +1615,13 @@ export function class_(config: T.Class.Config) {
 }
 
 export function classBody(...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) {
-  const _class_body_method = children;
+  const _content = children;
   return withMethods({
     $type: TSKindId.ClassBody as const,
     $source: 2 as const,
     $named: true as const,
-    _class_body_method,
-    classBodyMethods() { return _class_body_method; },
+    _content,
+    contents() { return _content; },
     $with: { $children: (...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) => classBody(...vs) },
   }, methodsEngine);
 }
@@ -1632,7 +1632,6 @@ export function classDeclaration(config: T.ClassDeclaration.Config) {
   const _type_parameters = config.typeParameters;
   const _class_heritage = config.classHeritage;
   const _body = config.body;
-  const _automatic_semicolon = config.automaticSemicolon;
   return withMethods({
     $type: TSKindId.ClassDeclaration as const,
     $source: 2 as const,
@@ -1642,20 +1641,17 @@ export function classDeclaration(config: T.ClassDeclaration.Config) {
     _type_parameters,
     _class_heritage,
     _body,
-    _automatic_semicolon,
     decorators() { return _decorator; },
     name() { return _name; },
     typeParameters() { return _type_parameters; },
     classHeritage() { return _class_heritage; },
     body() { return _body; },
-    automaticSemicolon() { return _automatic_semicolon; },
     $with: {
       decorators: (...values: T.Decorator[]) => classDeclaration({ ...config, decorator: values }),
-      name: (value: T.TypeIdentifier) => classDeclaration({ ...config, name: value }),
+      name: (value: T.Identifier) => classDeclaration({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => classDeclaration({ ...config, typeParameters: value }),
       classHeritage: (value?: T.ClassHeritage) => classDeclaration({ ...config, classHeritage: value }),
       body: (value: T.ClassBody) => classDeclaration({ ...config, body: value }),
-      automaticSemicolon: (value?: string) => classDeclaration({ ...config, automaticSemicolon: value }),
     },
   }, methodsEngine);
 }
@@ -1891,13 +1887,13 @@ export function debuggerStatement(semicolon?: T.DebuggerStatement.Config['semico
 }
 
 export function decorator(child: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) {
-  const _identifier = child;
+  const _content = child;
   return withMethods({
     $type: TSKindId.Decorator as const,
     $source: 2 as const,
     $named: true as const,
-    _identifier,
-    identifier() { return _identifier; },
+    _content,
+    content() { return _content; },
     $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) => decorator(v) },
   }, methodsEngine);
 }
@@ -1943,13 +1939,13 @@ export function decoratorMemberExpression(config: T.DecoratorMemberExpression.Co
 }
 
 export function decoratorParenthesizedExpression(child: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) {
-  const _identifier = child;
+  const _content = child;
   return withMethods({
     $type: TSKindId.DecoratorParenthesizedExpression as const,
     $source: 2 as const,
     $named: true as const,
-    _identifier,
-    identifier() { return _identifier; },
+    _content,
+    content() { return _content; },
     $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) => decoratorParenthesizedExpression(v) },
   }, methodsEngine);
 }
@@ -2118,7 +2114,7 @@ export function exportStatementTypeExport(config: T.ExportStatementTypeExport.Co
     semicolon() { return _semicolon; },
     $with: {
       exportClause: (value: T.ExportClause) => exportStatementTypeExport({ ...config, exportClause: value }),
-      source: (value: T.String) => exportStatementTypeExport({ ...config, source: value }),
+      source: (value?: T.String) => exportStatementTypeExport({ ...config, source: value }),
       semicolon: (value?: T.Semicolon) => exportStatementTypeExport({ ...config, semicolon: value }),
     },
   }, methodsEngine);
@@ -2257,11 +2253,11 @@ export function extendsClause(config: T.ExtendsClause.Config) {
     $named: true as const,
     _value,
     _type_arguments,
-    value() { return _value; },
+    values() { return _value; },
     typeArguments() { return _type_arguments; },
     $with: {
-      value: (value: T.Expression) => extendsClause({ ...config, value: value }),
-      typeArguments: (value?: T.TypeArguments) => extendsClause({ ...config, typeArguments: value }),
+      values: (...values: NonEmptyArray<T.Expression>) => extendsClause({ ...config, value: values }),
+      typeArguments: (...values: T.TypeArguments[]) => extendsClause({ ...config, typeArguments: values }),
     },
   }, methodsEngine);
 }
@@ -2275,7 +2271,7 @@ export function extendsTypeClause(config: T.ExtendsTypeClause.Config) {
     _type,
     types() { return _type; },
     $with: {
-      types: (...values: NonEmptyArray<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>) => extendsTypeClause({ ...config, type: values }),
+      types: (...values: NonEmptyArray<T.Identifier | T.NestedTypeIdentifier | T.GenericType>) => extendsTypeClause({ ...config, type: values }),
     },
   }, methodsEngine);
 }
@@ -2318,7 +2314,7 @@ export function flowMaybeType(primaryType: T.FlowMaybeType.Config['primaryType']
 }
 
 export function forInStatement(config: T.ForInStatement.Config) {
-  const _for_header_lhs = config.forHeaderLhs;
+  const _content = config.content;
   const _operator = coerceKindEnumStorage(config.operator, [["in", TSKindId.In] as const, ["of", TSKindId.Of] as const]);
   const _right = config.right;
   const _body = config.body;
@@ -2326,16 +2322,16 @@ export function forInStatement(config: T.ForInStatement.Config) {
     $type: TSKindId.ForInStatement as const,
     $source: 2 as const,
     $named: true as const,
-    _for_header_lhs,
+    _content,
     _operator,
     _right,
     _body,
-    forHeaderLhs() { return _for_header_lhs; },
+    content() { return _content; },
     operator() { return _operator; },
     right() { return _right; },
     body() { return _body; },
     $with: {
-      forHeaderLhs: (value: T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind) => forInStatement({ ...config, forHeaderLhs: value }),
+      content: (value: T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind) => forInStatement({ ...config, content: value }),
       operator: (value: NonNullable<Parameters<typeof forInStatement>[0]>['operator']) => forInStatement({ ...config, operator: value }),
       right: (value: T.Expressions) => forInStatement({ ...config, right: value }),
       body: (value: T.Statement) => forInStatement({ ...config, body: value }),
@@ -2585,7 +2581,7 @@ export function genericType(config: T.GenericType.Config) {
     name() { return _name; },
     typeArguments() { return _type_arguments; },
     $with: {
-      name: (value: T.TypeIdentifier | T.NestedTypeIdentifier) => genericType({ ...config, name: value }),
+      name: (value: T.Identifier | T.NestedTypeIdentifier) => genericType({ ...config, name: value }),
       typeArguments: (value: T.TypeArguments) => genericType({ ...config, typeArguments: value }),
     },
   }, methodsEngine);
@@ -2717,18 +2713,18 @@ export function importClauseNamedImports(child: T.NamedImports) {
 
 export function importClauseDefaultImport(config: T.ImportClauseDefaultImport.Config) {
   const _import_identifier = config.importIdentifier;
-  const _namespace_import = config.namespaceImport;
+  const _content = config.content;
   return withMethods({
     $type: TSKindId._ImportClauseDefaultImport as const,
     $source: 2 as const,
     $named: true as const,
     _import_identifier,
-    _namespace_import,
+    _content,
     importIdentifier() { return _import_identifier; },
-    namespaceImport() { return _namespace_import; },
+    content() { return _content; },
     $with: {
       importIdentifier: (value: T.ImportIdentifier) => importClauseDefaultImport({ ...config, importIdentifier: value }),
-      namespaceImport: (value?: T.NamespaceImport | T.NamedImports) => importClauseDefaultImport({ ...config, namespaceImport: value }),
+      content: (value?: T.NamespaceImport | T.NamedImports) => importClauseDefaultImport({ ...config, content: value }),
     },
   }, methodsEngine);
 }
@@ -2879,12 +2875,12 @@ export function importStatement(config: T.ImportStatement.Config) {
     _import_attribute,
     _semicolon,
     importClause() { return _import_clause; },
-    fromClauses() { return _from_clause; },
+    fromClause() { return _from_clause; },
     importAttribute() { return _import_attribute; },
     semicolon() { return _semicolon; },
     $with: {
       importClause: (value?: NonNullable<Parameters<typeof importStatement>[0]>['importClause']) => importStatement({ ...config, importClause: value }),
-      fromClauses: (...values: NonEmptyArray<T.ImportClause | T.String | T.ImportRequireClause>) => importStatement({ ...config, fromClause: values }),
+      fromClause: (value: T.ImportClause | T.String | T.ImportRequireClause) => importStatement({ ...config, fromClause: value }),
       importAttribute: (value?: T.ImportAttribute) => importStatement({ ...config, importAttribute: value }),
       semicolon: (value?: T.Semicolon) => importStatement({ ...config, semicolon: value }),
     },
@@ -2973,18 +2969,18 @@ export function indexTypeQuery(primaryType: T.IndexTypeQuery.Config['primaryType
 
 export function inferType(config: T.InferType.Config) {
   const _type_identifier = config.typeIdentifier;
-  const _constraint = config.constraint;
+  const _type = config.type;
   return withMethods({
     $type: TSKindId.InferType as const,
     $source: 2 as const,
     $named: true as const,
     _type_identifier,
-    _constraint,
+    _type,
     typeIdentifier() { return _type_identifier; },
-    constraint() { return _constraint; },
+    type() { return _type; },
     $with: {
-      typeIdentifier: (value: T.TypeIdentifier) => inferType({ ...config, typeIdentifier: value }),
-      constraint: (value: T.Type) => inferType({ ...config, constraint: value }),
+      typeIdentifier: (value: T.Identifier) => inferType({ ...config, typeIdentifier: value }),
+      type: (value?: T.Type) => inferType({ ...config, type: value }),
     },
   }, methodsEngine);
 }
@@ -3025,7 +3021,7 @@ export function interfaceDeclaration(config: T.InterfaceDeclaration.Config) {
     extendsTypeClause() { return _extends_type_clause; },
     body() { return _body; },
     $with: {
-      name: (value: T.TypeIdentifier) => interfaceDeclaration({ ...config, name: value }),
+      name: (value: T.Identifier) => interfaceDeclaration({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => interfaceDeclaration({ ...config, typeParameters: value }),
       extendsTypeClause: (value?: T.ExtendsTypeClause) => interfaceDeclaration({ ...config, extendsTypeClause: value }),
       body: (value: T.ObjectType) => interfaceDeclaration({ ...config, body: value }),
@@ -3110,13 +3106,13 @@ export function lexicalDeclaration(config: T.LexicalDeclaration.Config) {
 }
 
 export function literalType(child: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) {
-  const _number = child;
+  const _content = child;
   return withMethods({
     $type: TSKindId.LiteralType as const,
     $source: 2 as const,
     $named: true as const,
-    _number,
-    number() { return _number; },
+    _content,
+    content() { return _content; },
     $with: { $child: (v: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) => literalType(v) },
   }, methodsEngine);
 }
@@ -3154,7 +3150,7 @@ export function mappedTypeClause(config: T.MappedTypeClause.Config) {
     type() { return _type; },
     alias() { return _alias; },
     $with: {
-      name: (value: T.TypeIdentifier) => mappedTypeClause({ ...config, name: value }),
+      name: (value: T.Identifier) => mappedTypeClause({ ...config, name: value }),
       type: (value: T.Type) => mappedTypeClause({ ...config, type: value }),
       alias: (value?: T.Type) => mappedTypeClause({ ...config, alias: value }),
     },
@@ -3392,7 +3388,7 @@ export function nestedTypeIdentifier(config: T.NestedTypeIdentifier.Config) {
     name() { return _name; },
     $with: {
       module: (value: T.Identifier | T.NestedIdentifier) => nestedTypeIdentifier({ ...config, module: value }),
-      name: (value: T.TypeIdentifier) => nestedTypeIdentifier({ ...config, name: value }),
+      name: (value: T.Identifier) => nestedTypeIdentifier({ ...config, name: value }),
     },
   }, methodsEngine);
 }
@@ -3452,15 +3448,17 @@ export function number(text: string) {
   }, methodsEngine);
 }
 
-export function object(...children: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) {
-  const _pair = children;
+export function object(config: Partial<T.Object.Config> = {}) {
+  const _properties = config.properties;
   return withMethods({
     $type: TSKindId.Object as const,
     $source: 2 as const,
     $named: true as const,
-    _pair,
-    pair() { return _pair; },
-    $with: { $children: (...vs: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) => object(...vs) },
+    _properties,
+    properties() { return _properties; },
+    $with: {
+      properties: (...values: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) => object({ ...config, properties: values }),
+    },
   }, methodsEngine);
 }
 
@@ -3482,88 +3480,78 @@ export function objectAssignmentPattern(config: T.ObjectAssignmentPattern.Config
   }, methodsEngine);
 }
 
-export function objectPattern(...children: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) {
-  const _pair_pattern = children;
+export function objectPattern(config: Partial<T.ObjectPattern.Config> = {}) {
+  const _properties = config.properties;
   return withMethods({
     $type: TSKindId.ObjectPattern as const,
     $source: 2 as const,
     $named: true as const,
-    _pair_pattern,
-    pairPattern() { return _pair_pattern; },
-    $with: { $children: (...vs: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) => objectPattern(...vs) },
+    _properties,
+    properties() { return _properties; },
+    $with: {
+      properties: (...values: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) => objectPattern({ ...config, properties: values }),
+    },
   }, methodsEngine);
 }
 
 export function objectType(config: ConfigOf<T.ObjectType>) {
   const _opening = coerceKindEnumStorage(config.opening, [["{", TSKindId.Lbrace] as const, ["{|", TSKindId.LbracePipe] as const]);
-  const _export_statement = config.exportStatement;
-  const _semicolon = config.semicolon;
+  const _content = config.content;
   const _closing = coerceKindEnumStorage(config.closing, [["}", TSKindId.Rbrace] as const, ["|}", TSKindId.PipeRbrace] as const]);
   return withMethods({
     $type: TSKindId.ObjectType as const,
     $source: 2 as const,
     $named: true as const,
     _opening,
-    _export_statement,
-    _semicolon,
+    _content,
     _closing,
     opening() { return _opening; },
-    exportStatements() { return _export_statement; },
-    semicolon() { return _semicolon; },
+    contents() { return _content; },
     closing() { return _closing; },
     $with: {
       opening: (value: NonNullable<Parameters<typeof objectType>[0]>['opening']) => objectType({ ...config, opening: value }),
-      exportStatements: (...values: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>) => objectType({ ...config, exportStatement: values }),
-      semicolon: (value?: "," | T.Semicolon) => objectType({ ...config, semicolon: value }),
+      contents: (...values: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | "," | T.Semicolon)[]) => objectType({ ...config, content: values }),
       closing: (value: NonNullable<Parameters<typeof objectType>[0]>['closing']) => objectType({ ...config, closing: value }),
     },
   }, methodsEngine);
 }
 
-export function objectTypeCurly(config: T.ObjectType.Curly.Config) {
+export function objectTypeCurly(config?: T.ObjectType.Curly.Config) {
   const _opening = coerceKindEnumStorage("{" as const, [["{", TSKindId.Lbrace] as const, ["{|", TSKindId.LbracePipe] as const]);
-  const _export_statement = config.exportStatement;
-  const _semicolon = config.semicolon;
+  const _content = config?.content;
   const _closing = coerceKindEnumStorage("}" as const, [["}", TSKindId.Rbrace] as const, ["|}", TSKindId.PipeRbrace] as const]);
   return withMethods({
     $type: TSKindId.ObjectType as const,
     $source: 2 as const,
     $named: true as const,
     _opening,
-    _export_statement,
-    _semicolon,
+    _content,
     _closing,
     opening() { return _opening; },
-    exportStatements() { return _export_statement; },
-    semicolon() { return _semicolon; },
+    contents() { return _content; },
     closing() { return _closing; },
     $with: {
-      exportStatements: (...values: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>) => objectTypeCurly({ ...config, exportStatement: values }),
-      semicolon: (value?: "," | T.Semicolon) => objectTypeCurly({ ...config, semicolon: value }),
+      contents: (...values: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | "," | T.Semicolon)[]) => objectTypeCurly({ ...config, content: values }),
     },
   }, methodsEngine);
 }
 
-export function objectTypeFlow(config: T.ObjectType.Flow.Config) {
+export function objectTypeFlow(config?: T.ObjectType.Flow.Config) {
   const _opening = coerceKindEnumStorage("{|" as const, [["{", TSKindId.Lbrace] as const, ["{|", TSKindId.LbracePipe] as const]);
-  const _export_statement = config.exportStatement;
-  const _semicolon = config.semicolon;
+  const _content = config?.content;
   const _closing = coerceKindEnumStorage("|}" as const, [["}", TSKindId.Rbrace] as const, ["|}", TSKindId.PipeRbrace] as const]);
   return withMethods({
     $type: TSKindId.ObjectType as const,
     $source: 2 as const,
     $named: true as const,
     _opening,
-    _export_statement,
-    _semicolon,
+    _content,
     _closing,
     opening() { return _opening; },
-    exportStatements() { return _export_statement; },
-    semicolon() { return _semicolon; },
+    contents() { return _content; },
     closing() { return _closing; },
     $with: {
-      exportStatements: (...values: NonEmptyArray<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature>) => objectTypeFlow({ ...config, exportStatement: values }),
-      semicolon: (value?: "," | T.Semicolon) => objectTypeFlow({ ...config, semicolon: value }),
+      contents: (...values: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | "," | T.Semicolon)[]) => objectTypeFlow({ ...config, content: values }),
     },
   }, methodsEngine);
 }
@@ -3629,7 +3617,7 @@ export function optionalParameter(config: T.OptionalParameter.Config) {
       readonlyMarker: (value?: NonNullable<Parameters<typeof optionalParameter>[0]>['readonlyMarker']) => optionalParameter({ ...config, readonlyMarker: value }),
       pattern: (value: T.Pattern | T.This) => optionalParameter({ ...config, pattern: value }),
       type: (value?: T.TypeAnnotation) => optionalParameter({ ...config, type: value }),
-      value: (value: T.Expression) => optionalParameter({ ...config, value: value }),
+      value: (value?: T.Expression) => optionalParameter({ ...config, value: value }),
     },
   }, methodsEngine);
 }
@@ -3853,8 +3841,7 @@ export function propertySignature(config: T.PropertySignature.Config) {
 
 export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
   const _decorator = config.decorator;
-  const _public_field_definition_declare_first = config.publicFieldDefinitionDeclareFirst;
-  const _public_field_definition_static_mods = config.publicFieldDefinitionStaticMods;
+  const _content = config.content;
   const _name = config.name;
   const _optionality_marker = coerceKindEnumStorage(config.optionalityMarker, [["?", TSKindId.Qmark] as const, ["!", TSKindId.Bang] as const]);
   const _type = config.type;
@@ -3864,27 +3851,24 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
     $source: 2 as const,
     $named: true as const,
     _decorator,
-    _public_field_definition_declare_first,
-    _public_field_definition_static_mods,
+    _content,
     _name,
     _optionality_marker,
     _type,
     _value,
     decorators() { return _decorator; },
-    publicFieldDefinitionDeclareFirst() { return _public_field_definition_declare_first; },
-    publicFieldDefinitionStaticMods() { return _public_field_definition_static_mods; },
+    content() { return _content; },
     name() { return _name; },
     optionalityMarker() { return _optionality_marker; },
     type() { return _type; },
     value() { return _value; },
     $with: {
       decorators: (...values: T.Decorator[]) => publicFieldDefinition({ ...config, decorator: values }),
-      publicFieldDefinitionDeclareFirst: (value?: T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst) => publicFieldDefinition({ ...config, publicFieldDefinitionDeclareFirst: value }),
-      publicFieldDefinitionStaticMods: (value: T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt) => publicFieldDefinition({ ...config, publicFieldDefinitionStaticMods: value }),
+      content: (value?: T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt) => publicFieldDefinition({ ...config, content: value }),
       name: (value: T.PropertyName) => publicFieldDefinition({ ...config, name: value }),
       optionalityMarker: (value?: NonNullable<Parameters<typeof publicFieldDefinition>[0]>['optionalityMarker']) => publicFieldDefinition({ ...config, optionalityMarker: value }),
       type: (value?: T.TypeAnnotation) => publicFieldDefinition({ ...config, type: value }),
-      value: (value: T.Expression) => publicFieldDefinition({ ...config, value: value }),
+      value: (value?: T.Expression) => publicFieldDefinition({ ...config, value: value }),
     },
   }, methodsEngine);
 }
@@ -3974,20 +3958,20 @@ export function requiredParameter(config: T.RequiredParameter.Config) {
       readonlyMarker: (value?: NonNullable<Parameters<typeof requiredParameter>[0]>['readonlyMarker']) => requiredParameter({ ...config, readonlyMarker: value }),
       pattern: (value: T.Pattern | T.This) => requiredParameter({ ...config, pattern: value }),
       type: (value?: T.TypeAnnotation) => requiredParameter({ ...config, type: value }),
-      value: (value: T.Expression) => requiredParameter({ ...config, value: value }),
+      value: (value?: T.Expression) => requiredParameter({ ...config, value: value }),
     },
   }, methodsEngine);
 }
 
-export function restPattern(child: T.LhsExpression) {
-  const _lhs_expression = child;
+export function restPattern(child: (T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression)) {
+  const _content = child;
   return withMethods({
     $type: TSKindId.RestPattern as const,
     $source: 2 as const,
     $named: true as const,
-    _lhs_expression,
-    lhsExpression() { return _lhs_expression; },
-    $with: { $child: (v: T.LhsExpression) => restPattern(v) },
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.MemberExpression | T.SubscriptExpression | T._Identifier | T.ReservedIdentifier | T.DestructuringPattern | T.NonNullExpression)) => restPattern(v) },
   }, methodsEngine);
 }
 
@@ -4070,18 +4054,14 @@ export function spreadElement(expression: T.SpreadElement.Config['expression']) 
 
 export function statementBlock(config: Partial<T.StatementBlock.Config> = {}) {
   const _statements = config.statements;
-  const _automatic_semicolon = config.automaticSemicolon;
   return withMethods({
     $type: TSKindId.StatementBlock as const,
     $source: 2 as const,
     $named: true as const,
     _statements,
-    _automatic_semicolon,
     statements() { return _statements; },
-    automaticSemicolon() { return _automatic_semicolon; },
     $with: {
       statements: (...values: T.Statement[]) => statementBlock({ ...config, statements: values }),
-      automaticSemicolon: (value?: string) => statementBlock({ ...config, automaticSemicolon: value }),
     },
   }, methodsEngine);
 }
@@ -4102,15 +4082,15 @@ export function string(config: ConfigOf<T.String>) {
     closing() { return _closing; },
     $with: {
       opening: (value: NonNullable<Parameters<typeof string>[0]>['opening']) => string({ ...config, opening: value }),
-      contents: (value: T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment) => string({ ...config, contents: value }),
+      contents: (...values: (T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment)[]) => string({ ...config, contents: values }),
       closing: (value: NonNullable<Parameters<typeof string>[0]>['closing']) => string({ ...config, closing: value }),
     },
   }, methodsEngine);
 }
 
-export function stringDouble(config: T.String.Double.Config) {
+export function stringDouble(config?: T.String.Double.Config) {
   const _opening = coerceKindEnumStorage("\"" as const, [["\"", TSKindId.Dquote] as const, ["'", TSKindId.Squote] as const]);
-  const _contents = config.contents;
+  const _contents = config?.contents;
   const _closing = coerceKindEnumStorage("\"" as const, [["\"", TSKindId.Dquote] as const, ["'", TSKindId.Squote] as const]);
   return withMethods({
     $type: TSKindId.String as const,
@@ -4123,14 +4103,14 @@ export function stringDouble(config: T.String.Double.Config) {
     contents() { return _contents; },
     closing() { return _closing; },
     $with: {
-      contents: (value: T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment) => stringDouble({ ...config, contents: value }),
+      contents: (...values: (T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment)[]) => stringDouble({ ...config, contents: values }),
     },
   }, methodsEngine);
 }
 
-export function stringSingle(config: T.String.Single.Config) {
+export function stringSingle(config?: T.String.Single.Config) {
   const _opening = coerceKindEnumStorage("'" as const, [["\"", TSKindId.Dquote] as const, ["'", TSKindId.Squote] as const]);
-  const _contents = config.contents;
+  const _contents = config?.contents;
   const _closing = coerceKindEnumStorage("'" as const, [["\"", TSKindId.Dquote] as const, ["'", TSKindId.Squote] as const]);
   return withMethods({
     $type: TSKindId.String as const,
@@ -4143,7 +4123,7 @@ export function stringSingle(config: T.String.Single.Config) {
     contents() { return _contents; },
     closing() { return _closing; },
     $with: {
-      contents: (value: T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment) => stringSingle({ ...config, contents: value }),
+      contents: (...values: (T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment)[]) => stringSingle({ ...config, contents: values }),
     },
   }, methodsEngine);
 }
@@ -4179,15 +4159,17 @@ export function super_() {
   }, methodsEngine);
 }
 
-export function switchBody(...children: (T.SwitchCase | T.SwitchDefault)[]) {
-  const _switch_case = children;
+export function switchBody(config: Partial<T.SwitchBody.Config> = {}) {
+  const _cases = config.cases;
   return withMethods({
     $type: TSKindId.SwitchBody as const,
     $source: 2 as const,
     $named: true as const,
-    _switch_case,
-    switchCases() { return _switch_case; },
-    $with: { $children: (...vs: (T.SwitchCase | T.SwitchDefault)[]) => switchBody(...vs) },
+    _cases,
+    cases() { return _cases; },
+    $with: {
+      cases: (...values: (T.SwitchCase | T.SwitchDefault)[]) => switchBody({ ...config, cases: values }),
+    },
   }, methodsEngine);
 }
 
@@ -4242,25 +4224,25 @@ export function switchStatement(config: T.SwitchStatement.Config) {
 }
 
 export function templateLiteralType(...children: (T.TemplateChars | T.TemplateType)[]) {
-  const _template_chars = children;
+  const _content = children;
   return withMethods({
     $type: TSKindId.TemplateLiteralType as const,
     $source: 2 as const,
     $named: true as const,
-    _template_chars,
-    templateChars() { return _template_chars; },
+    _content,
+    contents() { return _content; },
     $with: { $children: (...vs: (T.TemplateChars | T.TemplateType)[]) => templateLiteralType(...vs) },
   }, methodsEngine);
 }
 
 export function templateString(...children: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) {
-  const _template_chars = children;
+  const _content = children;
   return withMethods({
     $type: TSKindId.TemplateString as const,
     $source: 2 as const,
     $named: true as const,
-    _template_chars,
-    templateChars() { return _template_chars; },
+    _content,
+    contents() { return _content; },
     $with: { $children: (...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) => templateString(...vs) },
   }, methodsEngine);
 }
@@ -4278,13 +4260,13 @@ export function templateSubstitution(child: T.Expressions) {
 }
 
 export function templateType(child: (T.PrimaryType | T.InferType)) {
-  const _primary_type = child;
+  const _content = child;
   return withMethods({
     $type: TSKindId.TemplateType as const,
     $source: 2 as const,
     $named: true as const,
-    _primary_type,
-    primaryType() { return _primary_type; },
+    _content,
+    content() { return _content; },
     $with: { $child: (v: (T.PrimaryType | T.InferType)) => templateType(v) },
   }, methodsEngine);
 }
@@ -4417,7 +4399,7 @@ export function typeAliasDeclaration(config: T.TypeAliasDeclaration.Config) {
     value() { return _value; },
     semicolon() { return _semicolon; },
     $with: {
-      name: (value: T.TypeIdentifier) => typeAliasDeclaration({ ...config, name: value }),
+      name: (value: T.Identifier) => typeAliasDeclaration({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => typeAliasDeclaration({ ...config, typeParameters: value }),
       value: (value: T.Type) => typeAliasDeclaration({ ...config, value: value }),
       semicolon: (value?: T.Semicolon) => typeAliasDeclaration({ ...config, semicolon: value }),
@@ -4489,7 +4471,7 @@ export function typeParameter(config: T.TypeParameter.Config) {
     value() { return _value; },
     $with: {
       constMarker: (value?: NonNullable<Parameters<typeof typeParameter>[0]>['constMarker']) => typeParameter({ ...config, constMarker: value }),
-      name: (value: T.TypeIdentifier) => typeParameter({ ...config, name: value }),
+      name: (value: T.Identifier) => typeParameter({ ...config, name: value }),
       constraint: (value?: T.Constraint) => typeParameter({ ...config, constraint: value }),
       value: (value?: T.DefaultType) => typeParameter({ ...config, value: value }),
     },
@@ -4542,13 +4524,13 @@ export function typePredicateAnnotation(typePredicate: T.TypePredicateAnnotation
 }
 
 export function typeQuery(child: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) {
-  const _type_query_subscript_expression = child;
+  const _content = child;
   return withMethods({
     $type: TSKindId.TypeQuery as const,
     $source: 2 as const,
     $named: true as const,
-    _type_query_subscript_expression,
-    typeQuerySubscriptExpression() { return _type_query_subscript_expression; },
+    _content,
+    content() { return _content; },
     $with: { $child: (v: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) => typeQuery(v) },
   }, methodsEngine);
 }

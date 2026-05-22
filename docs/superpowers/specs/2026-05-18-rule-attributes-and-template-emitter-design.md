@@ -458,7 +458,36 @@ optimize() returns:                    │
   simplifiedRules (simplify(renderRules))─► node.simplifiedRule (SimplifiedRule shape)
 ```
 
-## PR2 — Canonicalization + new TemplateEmitter + deprecate derive\* (2026-05-19 THIRD REVISION)
+## PR2 — Canonicalization + new TemplateEmitter + inlineRefs + per-slot separator (SHIPPED 2026-05-20)
+
+**Status:** SHIPPED. Branch `025-pr2-canonicalize-template-emitter`. Final test counts: 30 file-fail / 61 file-pass, 127 test-fail / 886 test-pass. validate:native: rust covPass 158/184, RT-deep 101/136, RT-shallow 134/136. cargo green.
+
+### What shipped
+
+- `338f1313` — SimplifiedRule branded type
+- `c9361b0d` — `canonicalizeSeqOfLeaves` + Rule-based `assertUniversalShapeRule` wired into `computeSimplifiedRules` (gated on `SITTIR_ASSERT_UNIVERSAL_SHAPE=1`); `OptimizedGrammar.simplifiedRules` tightened to `Record<string, SimplifiedRule>`
+- `25e97415` — alias-body kinds threaded through `applyWrapperDeletion` + `computeSimplifiedRules`, merged into `renderRules` / `simplifiedRules` snapshots
+- `c7c45b82` — `unwrapGroupRuleAndSimplified` reads `renderRule.content` instead of per-call `deleteWrapper(groupRule)`
+- `5a3562c5` — `buildVisibleVariantChildGroups` uses non-null snapshot lookup (no per-call fallback)
+- `a37469f1` — polymorph form contents pre-computed in `optimize()` and merged into snapshots (disambiguation mirrors `buildAssembledFormGroups` exactly)
+- `f83343aa` — docs cleanup for `unwrapGroupRuleAndSimplified`
+- `a165ec4c` — `simplifyRules` wrapper-free invariant (deleteWrapper as final pass in `computeSimplifiedRules`)
+- `71d9e0f9` — 4 wrapper case arms deleted from `deriveSlotsRaw` (field / optional / repeat / repeat1); `clause` kept until PR3 deletes ClauseRule
+- `fb889165` — new modelType-dispatching `TemplateEmitter` authoritative, consumes `node.renderRule`; byte-equivalence diff gate deleted
+- `df0ca1e0` — `applyAutoGroups` re-enabled in `wire.ts`; auto-groups integration test un-skipped
+- `5e4b1b17` — slot-preservation gate in TemplateEmitter (replaces byte-equivalence diff gate; gated `SITTIR_SLOT_PRESERVATION=0`)
+- `b914df13` — polymorph templates use `variant` not `$variant` (Askama-compatible)
+- `f7ac7ed2` — render-module valid rust for Optional<Vec<X>> / Vec<X> scalar-view slot shapes
+- `<final>` — `inlineGroupRefs` → `inlineRefs` rename + widen to grammar.inline; per-slot separator on `EmittedField` (read from slot.values per-value `separator` stamp); JSDoc cleanup in simplify.ts referencing decomposeOptional/decomposeRepeat (those passes were removed in PR0)
+
+### What's deferred to PR3
+
+- Replace `deriveSlotsRaw` recursive walker with one-shot dispatch (the architectural goal — `clause` case still alive blocks final cleanup; ClauseRule deletion is PR3 scope)
+- Render-module separator: drop the node-wide `meta.separators` fallback once per-slot stamping covers all kinds
+- `assertUniversalShape` wiring as production fail-fast gate (currently `SITTIR_ASSERT_UNIVERSAL_SHAPE=1` gated)
+- Inlined-helper kinds in `types.ts` / `consts.ts` / `node-model.json5` / `transport.rs` — intentional surface for future factory-side construction; not "leakage"
+
+## PR2 (original design — for reference) — Canonicalization + new TemplateEmitter + deprecate derive\* (2026-05-19 THIRD REVISION)
 
 Goal: wire PR0's universal-shape helpers into production, build the new modelType-dispatching TemplateEmitter, **replace the recursive `deriveSlotsRaw` walker with a one-shot dispatch on canonical SimplifiedRule**, close the `validate:native` divergence blocker, and re-enable `applyAutoGroups`.
 

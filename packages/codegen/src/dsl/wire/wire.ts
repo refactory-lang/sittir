@@ -35,7 +35,7 @@
 
 import type { PolymorphVariant } from '../../compiler/types.ts';
 import type { RuntimeRule } from '../runtime-shapes.ts';
-import { typeEq } from '../runtime-shapes.ts';
+import { typeEq, isChoiceType, isBlankType } from '../runtime-shapes.ts';
 import { variant as variantPlaceholder } from '../primitives/variant.ts';
 import { transform as transformFn } from '../transform/transform.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
@@ -568,9 +568,17 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 		// via the standard inline-handling path.
 		applyAutoGroups(
 			base as Parameters<typeof applyAutoGroups>[0],
+			outRules,
 			context,
 			authoredSynthesisKinds
 		);
+		// Re-run body-pattern replacement AFTER applyAutoGroups: the optional/
+		// repeat helpers it synthesizes (e.g. `_parameters_optional1`) are created
+		// after the first pass (above) wrapped the original rules, so the
+		// param-element they now carry (e.g. rust `attributed_parameter` inside
+		// `_parameters_optional1`) would otherwise never be matched and aliased
+		// to its visible kind. The pass is idempotent on already-aliased bodies.
+		applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
 	}
 
 	const conflicts = wrapConflictsCallback(config.conflicts, context);
@@ -1132,7 +1140,31 @@ function isComplexBodyRt(rule: RuntimeRule): boolean {
  *   content but a different name is a different structural pattern.
  * - ALIAS: not handled — an alias is semantically distinct from its content.
  */
-function patternBodyEqual(a: unknown, b: unknown): boolean {
+/**
+ * Normalize tree-sitter's `choice(x, BLANK)` to `optional(x)` so body-pattern
+ * matching works on the wire/tree-sitter-CLI path, where the IR's later
+ * `choice(x,BLANK)→optional(x)` normalization hasn't run yet. Without this,
+ * an authored body fn that writes `optional($.x)` never matches the raw base
+ * grammar's `choice($.x, BLANK)` form, so the alias-to-visible-kind never
+ * fires (e.g. rust `attributed_parameter` stayed a phantom IR-only kind).
+ */
+function unwrapOptionalChoiceRt(node: unknown): unknown {
+	if (!node || typeof node !== 'object') return node;
+	const r = node as { type?: string; members?: unknown[] };
+	// Shared dual-case detection (same `isChoiceType`/`isBlankType` that
+	// auto-groups.ts uses for its `CHOICE[seq, BLANK]` → optional handling),
+	// so the two wire passes recognize the tree-sitter-lowered optional form
+	// identically.
+	if (isChoiceType(r.type) && Array.isArray(r.members) && r.members.length === 2) {
+		const blankIdx = r.members.findIndex((m) => isBlankType((m as { type?: string } | undefined)?.type));
+		if (blankIdx !== -1) return { type: 'optional', content: r.members[1 - blankIdx] };
+	}
+	return node;
+}
+
+function patternBodyEqual(aIn: unknown, bIn: unknown): boolean {
+	const a = unwrapOptionalChoiceRt(aIn);
+	const b = unwrapOptionalChoiceRt(bIn);
 	if (!a || typeof a !== 'object') return a === b;
 	if (!b || typeof b !== 'object') return false;
 	const ra = a as { type: string; members?: unknown[]; content?: unknown; name?: string; value?: string };

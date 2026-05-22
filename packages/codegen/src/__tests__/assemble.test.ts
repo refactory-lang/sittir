@@ -496,7 +496,15 @@ describe('Rule — deriveFields', () => {
 		expect(isMultiple(fields[0]!)).toBe(true);
 	});
 
-	it('preserves named fields across mixed field-or-child choices', () => {
+	it('structural field-or-child choice distributes into per-arm slots (nonterminal model)', () => {
+		// Nonterminal-driven model (2026-05-21): a STRUCTURAL choice (an arm is a
+		// multi-member seq or carries a named field) is NOT one opaque union slot.
+		// Each arm contributes its own slot; the same name across arms folds into
+		// one (mergeChoiceArms), and a slot absent from some arm is relaxed to
+		// optional. This is required so `variable_declarator`-shaped
+		// `choice(seq(field('name'),...), ...)` keeps its distinct `name`/`type`/
+		// `value` fields instead of collapsing to a single `content`. A choice of
+		// BARE kinds / literals (no fields, no seqs) is still ONE union slot.
 		const rule: Rule = {
 			type: 'seq',
 			members: [
@@ -516,16 +524,19 @@ describe('Rule — deriveFields', () => {
 		};
 
 		const slots = deriveSlots(deleteWrapper(rule));
-		const declaration = slots.find((slot) => slot.name === 'declaration');
-		const childSlot = slots.find((slot) => slot.source === 'inferred');
-
-		expect(declaration).toBeDefined();
-		expect(isRequired(declaration!)).toBe(false);
-		expect(childSlot).toBeDefined();
-		expect(isRequired(childSlot!)).toBe(false);
-		expect(childSlot!.values.map((value) => ('node' in value ? (value.node as { name?: string }).name : value.value))).toContain(
-			'_export_statement_default_decl_arm_default_kw_value'
+		// Two slots — one per arm. The field arm yields a named `declaration`
+		// slot; the bare-symbol arm yields its kind-named (inferred) slot. Neither
+		// collapses into a single opaque `content` union.
+		const slotNames = slots.map((s) => s.name).sort();
+		expect(slotNames).toEqual(
+			['declaration', 'export_statement_default_decl_arm_default_kw_value'].sort()
 		);
+		const declSlot = slots.find((s) => s.name === 'declaration')!;
+		expect(declSlot.source).toBe('grammar');
+		const declValueNames = declSlot.values.map((value) =>
+			'node' in value ? (value.node as { name?: string }).name : value.value
+		);
+		expect(declValueNames).toContain('declaration');
 	});
 });
 

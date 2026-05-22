@@ -52,6 +52,7 @@ import type { WalkSlotUse } from './template-walker.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { findGeneratedKindEntry } from './generated-metadata.ts';
 import { tokenToName } from './optimize.ts';
+import { collectSlots } from './collect-slots.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { fieldContentIsMultiSibling } from './field-shape.ts';
 import type { SlotOrigin } from './slot-model.ts';
@@ -414,7 +415,7 @@ const TS_RESERVED = new Set([
 	'public'
 ]);
 
-function safeParamName(name: string): string {
+export function safeParamName(name: string): string {
 	return TS_RESERVED.has(name) ? `${name}_` : name;
 }
 
@@ -565,8 +566,20 @@ function classifyTopLevelShape(rule: Rule): string {
 	//     missed it.
 	switch (rule.type) {
 		case 'seq': {
-			if (rule.members.some((m) => m.type === 'seq')) return 'seq-with-nested-seq';
 			for (const m of rule.members) {
+				if (m.type === 'seq') {
+					// A nested seq that carries its OWN cardinality
+					// (multiplicity / separator) is a canonical repeated /
+					// optional GROUP, not a flattening gap. simplify deliberately
+					// does NOT splice such a seq (splicing would lose the shared
+					// cardinality and hoist any inner choice to this seq's
+					// position). `deriveSlotsRaw` threads the group's multiplicity
+					// into its members and handles an inner choice via its own
+					// choice case, so we accept it here WITHOUT recursing.
+					const sm = m as { multiplicity?: unknown; separator?: unknown };
+					if (sm.multiplicity !== undefined || sm.separator !== undefined) continue;
+					return 'seq-with-nested-seq';
+				}
 				const inner = classifyTopLevelShape(m);
 				if (inner !== 'canonical') return `seq-member-${inner}`;
 			}
@@ -763,7 +776,13 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
 function _deriveSlotsInternal(rule: Rule, kindEntries?: readonly GeneratedKindEntry[]): AssembledNonterminal[] {
 	const canonical = deleteWrapper(rule) as Rule;
 	auditDerivationShape(canonical, 'fields');
-	return mergeSlotsByName(deriveSlotsRaw(canonical, 'single', kindEntries));
+	// Nonterminal-driven collection (2026-05-21 design): one slot per
+	// `nonterminal` node, choice = one union slot, seq distributes. Replaces
+	// the `deriveSlotsRaw` fold/merge/effectiveMultiplicity walker. Same-name
+	// slots that appear in multiple positions (e.g. python `if_statement`'s
+	// `alternative` in both a repeat and an optional) are still folded into one
+	// AssembledNonterminal by `mergeSlotsByName`.
+	return mergeSlotsByName(collectSlots(canonical, currentAuditKind, kindEntries));
 }
 
 /**
@@ -806,395 +825,35 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 	return Array.from(byName.values());
 }
 
-function mergeChoiceArmSlots(arms: readonly AssembledNonterminal[][]): AssembledNonterminal[] {
-	if (arms.length === 0) return [];
-	const merged = new Map<string, AssembledNonterminal>();
-	const presence = new Map<string, number>();
-	for (const arm of arms) {
-		const normalizedArm = mergeSlotsByName([...arm]);
-		for (const slot of normalizedArm) {
-			presence.set(slot.name, (presence.get(slot.name) ?? 0) + 1);
-			const existing = merged.get(slot.name);
-			if (!existing) {
-				merged.set(slot.name, slot);
-				continue;
-			}
-			merged.set(slot.name, {
-				...existing,
-				values: dedupeValues([...existing.values, ...slot.values]),
-				hasTrailing: existing.hasTrailing || slot.hasTrailing,
-				hasLeading: existing.hasLeading || slot.hasLeading,
-				aliasSources:
-					existing.aliasSources || slot.aliasSources
-						? {
-								...existing.aliasSources,
-								...slot.aliasSources
-							}
-						: undefined
-			});
-		}
+/**
+ * Extract a separator string from a Rule['separator'] value.
+ * Returns undefined when the separator is absent or empty.
+ * Handles string, Rule[], and the object form { rules, trailing?, leading? }.
+ */
+export function extractSeparatorString(sep: Rule['separator']): string | undefined {
+	if (sep === undefined) return undefined;
+	if (typeof sep === 'string') return sep || undefined;
+	if (Array.isArray(sep)) {
+		const str = sep.map((r) => ('value' in r ? (r as { value: string }).value : '')).join('');
+		return str || undefined;
 	}
-	return [...merged.values()].map((slot) =>
-		(presence.get(slot.name) ?? 0) < arms.length ? relaxSlotForCrossFormAbsence(slot) : slot
+	// Object form { rules: Rule[], trailing?, leading? }
+	const rules = (sep as { rules: readonly { value?: string }[] }).rules;
+	const str = rules.map((r) => r.value ?? '').join('');
+	return str || undefined;
+}
+
+/**
+ * Stamp separator onto array/nonEmptyArray multiplicity values.
+ * Single-value slots are left unchanged — separator is meaningless for them.
+ */
+export function stampSeparatorOnValues(values: NodeOrTerminal[], separatorStr: string | undefined): NodeOrTerminal[] {
+	if (!separatorStr) return values;
+	return values.map((v) =>
+		v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray' ? { ...v, separator: separatorStr } : v
 	);
 }
 
-/**
- * Build a field slot from a RenderRule leaf that carries `fieldName` as a
- * stamped attribute (set by `applyWrapperDeletion`). Mirrors the logic in
- * `deriveSlotsRaw`'s `case 'field':` handler but operates on the leaf
- * itself as the content (no `.content` unwrap needed since the wrapper is
- * gone).
- *
- * Called when `deriveSlotsRaw` detects `rule.fieldName !== undefined` on
- * any non-seq rule, and from the seq branch when the seq itself carries
- * `fieldName` (meaning the entire seq is the content of a field).
- */
-function deriveSlotsRawFromLeafAttr(
-	rule: Rule,
-	outerMultiplicity: Multiplicity,
-	kindEntries?: readonly GeneratedKindEntry[]
-): AssembledNonterminal[] {
-	const fieldName = rule.fieldName!;
-
-	// Synthetic-wrapper check: if the leaf IS a seq that contains inner
-	// fields (same condition as `isSyntheticFieldWrapper` in the old field
-	// handler), delegate into its members so phantom slots aren't emitted.
-	if (isSyntheticFieldWrapper(rule)) {
-		return deriveSlotsRaw(rule, outerMultiplicity, kindEntries);
-	}
-
-	const aliasSources = deriveAliasSources(rule);
-	const basePropertyName = snakeToCamel(fieldName);
-
-	// Effective multiplicity: prefer the stamped `rule.multiplicity` over
-	// `outerMultiplicity` since the wrapper push-down already encoded it.
-	// Fall back to `fieldContentMultiplicity` for any residual wrapping.
-	const innerMult: Multiplicity =
-		rule.multiplicity === 'optional' || rule.multiplicity === 'array' || rule.multiplicity === 'nonEmptyArray'
-			? rule.multiplicity
-			: fieldContentMultiplicity(rule, outerMultiplicity);
-
-	const rawValues = deriveValuesForRule(rule, innerMult, kindEntries);
-	const values = dedupeValues(rawValues);
-
-	const isMultiSlot = values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
-
-	// Trailing/leading flags: if `rule.separator` is the object form
-	// `{ rules, trailing, leading }`, extract from there. Otherwise use
-	// `findRepeatFlag` for the wrapped-rule path.
-	const sep = rule.separator;
-	const hasTrailing =
-		isMultiSlot &&
-		(typeof sep === 'object' && !Array.isArray(sep) && sep !== null
-			? (sep as { rules: unknown[]; trailing?: boolean }).trailing === true
-			: findRepeatFlag(rule, 'trailing'));
-	const hasLeading =
-		isMultiSlot &&
-		(typeof sep === 'object' && !Array.isArray(sep) && sep !== null
-			? (sep as { rules: unknown[]; leading?: boolean }).leading === true
-			: findRepeatFlag(rule, 'leading'));
-
-	const propertyName = isMultiSlot ? pluralize(basePropertyName) : basePropertyName;
-
-	return [
-		{
-			name: fieldName,
-			propertyName,
-			configKey: basePropertyName,
-			storageName: fieldName,
-			paramName: safeParamName(propertyName),
-			values,
-			hasTrailing,
-			hasLeading,
-			aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
-			source: (rule as { source?: RuleSource }).source ?? 'grammar',
-			sourceRuleId: rule.id
-		}
-	];
-}
-
-/**
- * Raw field derivation — produces one AssembledNonterminal per `field()` encounter.
- * Duplicates are merged by `deriveFields`. The `outerMultiplicity` threads
- * down from repeat/optional wrappers above the field.
- */
-function deriveSlotsRaw(
-	rule: Rule,
-	outerMultiplicity: Multiplicity,
-	kindEntries?: readonly GeneratedKindEntry[]
-): AssembledNonterminal[] {
-	// RenderRule leaf-attribute path: applyWrapperDeletion stamps `fieldName`
-	// (and optionally `multiplicity` / `separator`) onto the innermost non-
-	// wrapper rule when it peels off FieldRule / OptionalRule / RepeatRule /
-	// Repeat1Rule wrappers. The switch below still handles the RawRule
-	// wrapper-based shapes (e.g. 'field', 'optional') for call sites that
-	// supply raw rules (some test fixtures + polymorph form fallbacks).
-	//
-	// When `rule.fieldName` is set AND the rule is NOT a seq/choice that
-	// would be the *top-level content* dispatched from a `field` wrapper
-	// (those structural rules with fieldName mean "this whole structure IS
-	// the content of that field"), we route through the same field-slot
-	// construction logic as `case 'field':` but using `rule` directly as
-	// the content and `rule.fieldName` as the name.
-	//
-	// Exception: for `case 'seq':` WITHOUT fieldName we still recurse into
-	// members as before. The seq-level fieldName check at the top of
-	// `case 'seq':` below handles seq-with-fieldName correctly.
-	if (rule.fieldName !== undefined && rule.type !== 'seq') {
-		return deriveSlotsRawFromLeafAttr(rule, outerMultiplicity, kindEntries);
-	}
-
-	// Multiplicity-only attribute: the leaf had `optional(...)`, `repeat(...)`,
-	// or `repeat1(...)` stripped by applyWrapperDeletion and the effective
-	// multiplicity was stamped onto the leaf. There is NO field name — the rule
-	// is an inferred positional slot. Use the stamped multiplicity as the
-	// effective outer multiplicity for the downstream symbol/supertype/choice cases.
-	const effectiveMultiplicity: Multiplicity =
-		rule.fieldName === undefined && rule.multiplicity !== undefined && rule.multiplicity !== 'single'
-			? rule.multiplicity
-			: outerMultiplicity;
-
-	switch (rule.type) {
-		case 'seq':
-			// A seq with `fieldName` means the entire seq is the content of a
-			// field (e.g. `field('body', seq(a, b))` → after wrapper-deletion
-			// the seq carries `fieldName:'body'`). Route through the leaf-attr
-			// handler to build ONE slot for the whole seq.
-			if (rule.fieldName !== undefined) {
-				return deriveSlotsRawFromLeafAttr(rule, effectiveMultiplicity, kindEntries);
-			}
-			return rule.members.flatMap((m) => deriveSlotsRaw(m, effectiveMultiplicity, kindEntries));
-		case 'choice': {
-			const armSlots = rule.members.map((member) => deriveSlotsRaw(member, effectiveMultiplicity, kindEntries));
-			const hasDeclaredFieldArm = armSlots.some((slots) => slots.some((slot) => slot.source !== 'inferred'));
-			if (hasDeclaredFieldArm) return mergeChoiceArmSlots(armSlots);
-			// Choice at a position contributes ONE slot whose `values`
-			// array is the union of all arms (the field walker handles
-			// every position, so a positional choice no longer explodes
-			// into N separate slots like the old children walker did).
-			// Slot name takes the
-			// first node-ref arm's kind name for naming-continuity with
-			// the historical first-arm-named child entry; final remap to
-			// 'children' / 'child' keys lives in `buildSlotsRecord`
-			// per FR-T05 once the override migration enables strict
-			// enforcement.
-			const values = dedupeValues(deriveValuesForRule(rule, effectiveMultiplicity, kindEntries));
-			if (values.length === 0) return [];
-			const firstRef = values.find((v) => v.kind === 'node-ref') as NodeRef | undefined;
-			const isMultiSlot = values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
-			const refName = firstRef
-				? ((firstRef.node as UnresolvedRef).name ?? '').replace(/^_+/, '')
-				: '';
-			if (!refName) {
-				// No content kind to name the slot — should not produce a slot at all.
-				// An all-terminal choice with no node-ref is a keyword/operator presence
-				// field (e.g. binary_expression.operator after simplify strips fieldName).
-				// Return [] so it doesn't create a phantom inferred positional slot.
-				// Previously threw — now silently elides to avoid regression with
-				// RenderRule input where simplify may strip `fieldName` from choices.
-				return [];
-			}
-			const baseName = refName;
-			const basePropertyName = snakeToCamel(baseName);
-			const propertyName = isMultiSlot ? pluralize(basePropertyName) : basePropertyName;
-			// Capture alias mapping so wrap can probe the runtime CST kind
-			// (alias target) when looking up `data._<kind>`. For choice arms
-			// declared via `alias($.source, $.target)`, the CST emits children
-			// typed by the target — but slot value names use the source.
-			const aliasSources = deriveAliasSources(rule);
-			return [
-				{
-					name: baseName,
-					propertyName,
-					configKey: basePropertyName,
-					storageName: baseName,
-					paramName: safeParamName(propertyName),
-					values,
-					hasTrailing: false,
-					hasLeading: false,
-					aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
-					source: 'inferred',
-					origin: 'kind' as const,
-					sourceRuleId: rule.id
-				}
-			];
-		}
-		case 'variant':
-			// Rare — post-simplify most variant wrappers are either
-			// promoted to polymorph forms (variant() adoption) or
-			// stripped. A handful survive in rust's nested-variant
-			// choice arms; unwrap and continue so their inner fields
-			// still surface.
-			return deriveSlotsRaw(rule.content, effectiveMultiplicity, kindEntries);
-		case 'symbol': {
-			// Top-level positional symbol — drops the hidden-rule leading
-			// underscore (`_expression` → `expression`); resolves
-			// `aliasedFrom` so only source kinds appear in the values list.
-			const refName = rule.aliasedFrom ?? rule.name;
-			const cleanName = rule.name.replace(/^_+/, '') || rule.name;
-			const isMulti = effectiveMultiplicity === 'array' || effectiveMultiplicity === 'nonEmptyArray';
-			const basePropertyName = snakeToCamel(cleanName);
-			const propertyName = isMulti ? pluralize(basePropertyName) : basePropertyName;
-			return [
-				{
-					name: cleanName,
-					propertyName,
-					configKey: basePropertyName,
-					storageName: cleanName,
-					paramName: safeParamName(propertyName),
-					values: [
-						{
-							kind: 'node-ref',
-							node: { kind: 'unresolved-ref', name: refName },
-							multiplicity: relaxForOptionalBody(refName, effectiveMultiplicity)
-						}
-					],
-					hasTrailing: false,
-					hasLeading: false,
-					source: 'inferred',
-					origin: 'kind' as const,
-					sourceRuleId: rule.id
-				}
-			];
-		}
-		case 'supertype': {
-			// Top-level positional supertype reference — each subtype is
-			// a valid concrete kind the slot can hold;
-			// they share the slot, named after the supertype.
-			const cleanName = rule.name.replace(/^_+/, '') || rule.name;
-			const isMulti = effectiveMultiplicity === 'array' || effectiveMultiplicity === 'nonEmptyArray';
-			const basePropertyName = snakeToCamel(cleanName);
-			const propertyName = isMulti ? pluralize(basePropertyName) : basePropertyName;
-			return [
-				{
-					name: cleanName,
-					propertyName,
-					configKey: basePropertyName,
-					storageName: cleanName,
-					paramName: safeParamName(propertyName),
-					values: rule.subtypes.map((name) => ({
-						kind: 'node-ref' as const,
-						node: { kind: 'unresolved-ref' as const, name },
-						multiplicity: relaxForOptionalBody(name, effectiveMultiplicity)
-					})),
-					hasTrailing: false,
-					hasLeading: false,
-					source: 'inferred',
-					origin: 'kind' as const,
-					sourceRuleId: rule.id
-				}
-			];
-		}
-		case 'string':
-		case 'pattern':
-		case 'terminal':
-		case 'token':
-		case 'enum':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
-			// Leaves / token-literals at the top level — render as text,
-			// contribute no addressable slots. Explicit cases keep the
-			// switch exhaustive (Constitution XI corollary: every
-			// discriminated-union switch ends in either a complete
-			// per-variant arm or assertNever).
-			return [];
-		case 'clause':
-			// `clause` is a sittir DSL node that survives the full pipeline
-			// (deleteWrapper / computeSimplifiedRules preserve it); it acts
-			// like `optional` for slot-derivation purposes — its name provides
-			// the optional-field key in templates, and the body contributes the
-			// content slot. Unwrap to optional multiplicity.
-			return deriveSlotsRaw(rule.content, 'optional', kindEntries);
-		case 'field':
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'alias':
-		case 'group':
-		case 'polymorph':
-			// Wrapper rules (field / optional / repeat / repeat1) are eliminated
-			// by applyWrapperDeletion + canonicalizeSeqOfLeaves before deriveSlotsRaw
-			// is called; their multiplicity/fieldName attributes are promoted onto
-			// the inner leaf.  `group` / `alias` are simplify-stripped; `polymorph`
-			// has its own assemble path (classifyNode returns 'polymorph' and routes
-			// into AssembledPolymorph instead of Branch/Container getters).
-			// Reaching any of them here means a canonicalization gap — throw loudly
-			// so the next audit-clean session can investigate.
-			throw new Error(
-				`deriveSlotsRaw: unexpected '${rule.type}' in canonical input — ` +
-					`applyWrapperDeletion + canonicalizeSeqOfLeaves + assemble snapshot ` +
-					`should have eliminated / classified it before derivation. ` +
-					`currentAuditKind=${currentAuditKind ?? '(none)'}`
-			);
-	}
-}
-
-/**
- * Determine the effective multiplicity for a field's content rule, threading
- * any outer multiplicity through field-level wrappers (repeat/optional directly
- * inside the field).
- *
- * `field('items', repeat($._item))` → content is `repeat` → `'array'`
- * `field('items', repeat1($._item))` → content is `repeat1` → `'nonEmptyArray'`
- * `field('x', optional($.foo))` → content is `optional` → `'optional'`
- * `field('x', $.foo)` → content is `symbol`, outerMultiplicity is `single` → `'single'`
- */
-function fieldContentMultiplicity(content: Rule, outerMultiplicity: Multiplicity): Multiplicity {
-	switch (content.type) {
-		case 'repeat':
-			return 'array';
-		case 'repeat1':
-			return 'nonEmptyArray';
-		case 'optional': {
-			const inner = fieldContentMultiplicity(content.content, outerMultiplicity);
-			// optional(repeat1(...)) → repeat (the optional makes nonEmpty drop)
-			if (inner === 'nonEmptyArray') return 'array';
-			return 'optional';
-		}
-		case 'choice': {
-			// `choice(X, blank)` is functionally `optional(X)` — the blank arm
-			// makes the entire field content optional. Tree-sitter's grammar.json
-			// emits BLANK which sittir normalizes to an empty choice (`{type:
-			// 'choice', members: []}`). Recognizing this pattern downgrades the
-			// inner multiplicity the same way `optional(...)` would, fixing slot
-			// declarations like `object_type.members` (whose body is `choice(
-			// seq(member, repeat(seq(sep, member))), blank)` — valid syntax for
-			// empty `{}` types). Mirrors `collectOptionalBodyKinds` in
-			// assemble.ts but operates one level deeper: inside a field body
-			// rather than at top-level rule body.
-			const isBlank = (r: Rule): boolean =>
-				(r.type === 'choice' && r.members.length === 0) ||
-				(r.type === 'seq' && r.members.length === 0);
-			const nonBlank = content.members.filter((m) => !isBlank(m));
-			const hasBlank = nonBlank.length < content.members.length;
-			if (hasBlank && nonBlank.length === 1) {
-				const inner = fieldContentMultiplicity(nonBlank[0]!, outerMultiplicity);
-				if (inner === 'nonEmptyArray') return 'array';
-				if (inner === 'single') return 'optional';
-				return inner;
-			}
-			// Mixed choice (no blank, or blank + multiple non-blank arms) — fall
-			// through to the default treatment.
-			if (fieldContentIsMultiSibling(content)) {
-				if (outerMultiplicity === 'optional') return 'array';
-				return outerMultiplicity === 'array' || outerMultiplicity === 'nonEmptyArray'
-					? outerMultiplicity
-					: 'nonEmptyArray';
-			}
-			return outerMultiplicity;
-		}
-		default:
-			if (fieldContentIsMultiSibling(content)) {
-				if (outerMultiplicity === 'optional') return 'array';
-				return outerMultiplicity === 'array' || outerMultiplicity === 'nonEmptyArray'
-					? outerMultiplicity
-					: 'nonEmptyArray';
-			}
-			return outerMultiplicity;
-	}
-}
 
 /**
  * Derive child slots from a canonical rule tree.
@@ -1253,7 +912,7 @@ export function deriveSlots(rule: Rule, kindEntries?: readonly GeneratedKindEntr
  * wrap emitter consumes this to emit `drillAs(entry, tree, target, source)`
  * rewriting `$type` at drill-in for alias-target rewrites.
  */
-function deriveAliasSources(rule: Rule): Record<string, string> {
+export function deriveAliasSources(rule: Rule): Record<string, string> {
 	const out: Record<string, string> = {};
 	const walk = (r: Rule): void => {
 		switch (r.type) {
@@ -1322,13 +981,33 @@ export function isSyntheticFieldWrapper(content: Rule): boolean {
  *
  * A `choice` produces MULTIPLE entries — one per arm (with deduplication).
  */
-function deriveValuesForRule(
+export function deriveValuesForRule(
 	rule: Rule,
 	multiplicity: Multiplicity,
 	kindEntries?: readonly GeneratedKindEntry[]
 ): NodeOrTerminal[] {
 	switch (rule.type) {
 		case 'symbol': {
+			// Link-synthesized operator literal (Chunk D1): `canonicalizeRuleLiterals`
+			// rewrites a field-wrapped operator literal (`'<'`) into
+			// `symbol{ name: 'lt', source: 'link', literal: '<' }`. The `name` is
+			// the alias-target kind (the runtime `$type`) and `literal` is the
+			// original source string. Emit a TERMINAL of the source string —
+			// `value` is what the renderer emits (`<`), `resolvedKind` is the
+			// alias-target kindId read-time matching keys on (`lt`). Dropping
+			// `literal` (the old behavior) leaked a PHANTOM kind ref (`Lt`/`LtEq`)
+			// into the operator enum and left render emitting the bare literal
+			// while read could not populate the slot.
+			if (rule.source === 'link' && rule.literal !== undefined) {
+				return [
+					{
+						kind: 'terminal',
+						value: rule.literal,
+						resolvedKind: rule.name,
+						multiplicity
+					}
+				];
+			}
 			// Ref kind: resolve to SOURCE kind (`aliasedFrom`, when the
 			// symbol came from an alias). Only source kinds exist in
 			// rules post-synthesis-removal.
@@ -1451,7 +1130,7 @@ function deriveValuesForRule(
  * different multiplicities in different choice arms, keep BOTH entries — the
  * per-value shape is the point.
  */
-function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
+export function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
 	const seen = new Set<string>();
 	const result: NodeOrTerminal[] = [];
 	for (const v of values) {
@@ -1885,6 +1564,14 @@ export interface AssembledNonterminal {
 	 */
 	readonly sourceRuleId?: RuleId;
 	storageInfo?: FieldStorageInfo;
+	// --- _new centralized naming (DIAGNOSTIC, pre-switch-over) ---
+	// Single-source naming: `fieldName` wins; else the single referenced kind
+	// name; else a warn → 'content'. Compare against `name`/`storageName` to find
+	// where the legacy scattered derivation deviates before migrating.
+	readonly fieldName?: string;
+	readonly storageNameNew?: string;
+	readonly nameNew?: string;
+	readonly parseNamesNew?: readonly string[];
 }
 
 /**
@@ -2829,6 +2516,12 @@ function freezeSlotRecord(slots: readonly AssembledNonterminal[]): Readonly<Reco
 	return Object.freeze(out);
 }
 
+/**
+ * Relax a multiplicity so a slot that is ABSENT in some polymorph forms is
+ * not over-asserted as always-present: `single` → `optional`, `nonEmptyArray`
+ * → `array`. Used by polymorph cross-form slot merging
+ * (`structuralSlotRecordFromForms`).
+ */
 function relaxMultiplicityForCrossFormAbsence(multiplicity: Multiplicity): Multiplicity {
 	switch (multiplicity) {
 		case 'single':
@@ -3911,7 +3604,7 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
  *     render template for the helper itself.
  *   - Emits a TYPE ALIAS naming the element union:
  *       `export type CollectionElements = Expression | Yield | ListSplat | …`
- *   - Inlines the repeat at every referrer (`inlineGroupRefs` extends
+ *   - Inlines the repeat at every referrer (`inlineRefs` extends
  *     to cover `multi` alongside `group`), so the referrer's walker
  *     sees `repeat1(...)` directly and sets `multiple: true` on the
  *     child slot → rest-params factory.
@@ -3934,7 +3627,7 @@ export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> 
 
 	/** The repeat's inner content type — raw Rule, for downstream
 	 * consumers that need the element union (types emitter maps this
-	 * to a union of TypeNames, inlineGroupRefs hands the whole repeat
+	 * to a union of TypeNames, inlineRefs hands the whole repeat
 	 * back to referrers). */
 	get elementRule(): Rule {
 		return this.rule.content;

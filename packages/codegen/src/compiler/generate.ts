@@ -9,7 +9,7 @@ import { join } from 'node:path';
 import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
 import { optimize } from './optimize.ts';
-import { assemble, hydrateSlotRefs } from './assemble.ts';
+import { assemble, hydrateSlotRefs, classifyNode } from './assemble.ts';
 import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
@@ -144,8 +144,45 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	const linked = link(raw, cfg.include, generatedIdTables);
 	tracePhaseRules('link', linked.rules);
 
-	// Phase 3: Optimize
-	const optimized = optimize(linked);
+	// Authoritative inline list from the compiled grammar.json (if present).
+	// `raw.inline` only contains what the overrides callback explicitly
+	// returns — base-grammar string items in `previous` are silently dropped
+	// by evaluate's normalize() pass (which only handles symbol-ref objects).
+	// Reading grammar.json directly gives us the full merged inline list that
+	// tree-sitter itself used when compiling the parser.
+	// Loaded BEFORE optimize so inlineRefs in computeSimplifiedRules can inline
+	// auto-synthesized helpers (e.g., _type_arguments_repeat1) that tree-sitter
+	// expands at parse time.
+	const inlineKindsArray = loadGrammarJsonInlineList(cfg.grammar);
+	const inlineKinds = new Set(inlineKindsArray ?? []);
+
+	// Inline-DECISION set for the simplify pass: which grammar.inline kinds
+	// inlineRefs should substitute. The gate is "in grammar.inline AND
+	// modelType is NOT a supertype / keyword / token". Supertypes are typed
+	// unions referenced by name (inlining them explodes a clean union into its
+	// alternatives at a seq position → non-canonical choice-at-seq); keyword /
+	// token helpers are leaf lexemes that must stay as scalar slot refs. The
+	// remaining inline kinds — auto-synthesized group-lift helpers (`branch`)
+	// and the hidden structural helpers tree-sitter expands at parse time — ARE
+	// inlined so sittir's derivation matches the flat parser output.
+	//
+	// NOTE: this is a SEPARATE set from `inlineKinds` above, which the emitters
+	// use as the "skip emitting this inlined kind" list (emitters/shared.ts).
+	// Filtering that list would un-skip supertypes/keywords and emit phantom
+	// concrete kinds — so the decision set is kept distinct.
+	const NON_INLINABLE_MODEL_TYPES = new Set(['supertype', 'keyword', 'token', 'pattern', 'enum']);
+	const inlinableKinds = new Set(
+		[...inlineKinds].filter((k) => {
+			const rule = linked.rules[k];
+			if (!rule) return true; // un-classifiable (no IR rule) — leave inlinable
+			return !NON_INLINABLE_MODEL_TYPES.has(classifyNode(k, rule));
+		})
+	);
+
+	// Phase 3: Optimize — pass the inline-decision set so computeSimplifiedRules's
+	// inlineRefs inlines exactly the grammar.inline group-lift / structural
+	// helpers (excluding supertypes / keywords / tokens).
+	const optimized = optimize(linked, inlinableKinds);
 	tracePhaseRules('optimize', optimized.rules);
 	tracePhaseRules('simplify', optimized.simplifiedRules);
 
@@ -158,14 +195,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// The full GrammarRoles are passed to the ir emitter for `ir.from.*`.
 	const grammarRoles = extractGrammarRoles(cfg.grammar);
 	const triviaKinds = grammarRoles.get('trivia');
-
-	// Authoritative inline list from the compiled grammar.json (if present).
-	// `raw.inline` only contains what the overrides callback explicitly
-	// returns — base-grammar string items in `previous` are silently dropped
-	// by evaluate's normalize() pass (which only handles symbol-ref objects).
-	// Reading grammar.json directly gives us the full merged inline list that
-	// tree-sitter itself used when compiling the parser.
-	const inlineKinds = loadGrammarJsonInlineList(cfg.grammar);
 
 	// Kinds that were synthesized by evaluate's inline-alias-source pass
 	// (synthesizeInlineAliasSources). These have no parser symbol because
@@ -212,7 +241,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		grammar: cfg.grammar,
 		nodeMap,
 		generatedIdTables,
-		inlineKinds,
+		inlineKinds: [...inlineKinds],
 		synthesizedKinds: evaluateSynthesizedKinds,
 		strict: cfg.strict,
 		triviaKinds,

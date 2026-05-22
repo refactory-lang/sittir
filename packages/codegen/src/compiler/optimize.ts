@@ -63,10 +63,10 @@ function applyNormalizationPasses(
 	return rules;
 }
 
-export function optimize(linked: LinkedGrammar): OptimizedGrammar {
+export function optimize(linked: LinkedGrammar, inlineKinds: ReadonlySet<string> = new Set()): OptimizedGrammar {
 	const rules = applyNormalizationPasses(linked.rules, linked.patternReplacementKinds);
 	const renderRules = applyWrapperDeletion(rules);
-	const simplifiedRules = computeSimplifiedRules(renderRules, linked.word);
+	const simplifiedRules = computeSimplifiedRules(renderRules, linked.word, inlineKinds);
 
 	// Alias-body kinds: thread the alias-target bodies through the same pipeline
 	// so renderRules / simplifiedRules cover them too. Eliminates the
@@ -75,7 +75,7 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
 		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(linked.topLevelAliasBodies);
 		const aliasBodiesNormalized = applyNormalizationPasses(aliasBodiesRaw, linked.patternReplacementKinds);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesNormalized);
-		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, linked.word);
+		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, linked.word, inlineKinds);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			renderRules[kind] = rule;
 		}
@@ -114,7 +114,7 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
 	}
 	if (Object.keys(polyFormBodies).length > 0) {
 		const polyFormRender = applyWrapperDeletion(polyFormBodies);
-		const polyFormSimplified = computeSimplifiedRules(polyFormRender, linked.word);
+		const polyFormSimplified = computeSimplifiedRules(polyFormRender, linked.word, inlineKinds);
 		for (const [kind, rule] of Object.entries(polyFormRender)) {
 			renderRules[kind] = rule;
 		}

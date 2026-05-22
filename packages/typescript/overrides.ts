@@ -294,6 +294,29 @@ export default grammar(
 			}
 		},
 		transforms: {
+			// Naked-choice field names (was unresolvable `content` slots).
+			arguments: {
+				1: field('arguments')
+			},
+			array: {
+				1: field('elements')
+			},
+			array_pattern: {
+				1: field('elements')
+			},
+			object: {
+				1: field('properties')
+			},
+			object_pattern: {
+				1: field('properties')
+			},
+			switch_body: {
+				1: field('cases')
+			},
+			jsx_expression: {
+				1: field('expression')
+			},
+
 			// abstract_class_declaration: wrap pos 5 (class_heritage choice).
 			// pos 0 is REPEAT(field('decorator')) — don't touch it, it's a real
 			// base-grammar field and the original override clobbered it.

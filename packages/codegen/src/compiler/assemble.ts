@@ -53,7 +53,7 @@ import {
 	allSlotsOf,
 	setOptionalBodyKinds
 } from './node-map.ts';
-import { simplifyRule, inlineGroupRefs, extractRepeatShape, hoistInnerFieldsForTemplate } from './simplify.ts';
+import { simplifyRule, inlineRefs, extractRepeatShape, hoistInnerFieldsForTemplate } from './simplify.ts';
 import { compileWordMatcher } from './common.ts';
 
 // ---------------------------------------------------------------------------
@@ -90,7 +90,7 @@ export function assemble(
 
 	for (const [kind, rule] of Object.entries(optimized.rules)) {
 		const assemblyRule = optimized.topLevelAliasBodies?.get(kind) ?? rule;
-		// `inlinedRule` still uses inlineGroupRefs here because the
+		// `inlinedRule` still uses inlineRefs here because the
 		// RAW rule path (for template emission + classification) isn't
 		// run through simplify. Only `simplifiedRule` (derivation view)
 		// picks up inlining from the simplify fixpoint.
@@ -104,7 +104,7 @@ export function assemble(
 		// …) to surface as template text. See
 		// `project_simplify_template_walker_divergence.md`.
 		const inlinedRule = hoistInnerFieldsForTemplate(
-			inlineGroupRefs(assemblyRule, optimized.rules)
+			inlineRefs(assemblyRule, optimized.rules)
 		);
 		const modelType = classifyNode(kind, inlinedRule, { variantParents });
 		// `simplifiedRules[kind]` and `renderRules[kind]` are both pre-computed
@@ -476,7 +476,7 @@ function buildVisibleVariantChildGroups(
 		const hiddenKind = `_${visibleKind}`;
 		const sourceRule = optimized.rules[hiddenKind];
 		if (!sourceRule) continue;
-		const inlinedRule = hoistInnerFieldsForTemplate(inlineGroupRefs(sourceRule, optimized.rules));
+		const inlinedRule = hoistInnerFieldsForTemplate(inlineRefs(sourceRule, optimized.rules));
 		// hiddenKind exists in optimized.rules (guarded above) — renderRules and
 		// simplifiedRules always cover the same key set as rules (applyWrapperDeletion
 		// + computeSimplifiedRules iterate over the same map). The fallbacks are dead
@@ -1437,7 +1437,7 @@ function walkForStrings(rule: Rule, out: Map<string, string>): void {
 
 type ModelType = AssembledNode['modelType'];
 
-// `inlineGroupRefs` / `resolveGroupOrMultiInlineTarget` moved to
+// `inlineRefs` / `resolveGroupOrMultiInlineTarget` moved to
 // `simplify.ts` so the group-inlining happens inside the simplify
 // fixpoint (enables flatten + canonicalize to re-fire on inlined
 // content). Imported above; no longer defined here.

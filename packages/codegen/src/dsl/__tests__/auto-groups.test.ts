@@ -42,12 +42,23 @@ function applyToWrapped(
 	rules: Record<string, unknown>;
 } {
 	const ctx = makeContext();
+	// applyAutoGroups now emits synthesized helpers + rewritten parents into
+	// `outRules` (the rule-fn map tree-sitter actually reads), NOT the base
+	// seed. Resolve those fns back to their bodies and overlay them on the
+	// seed so the existing structural assertions (helper presence, rewritten
+	// body shape, untouched rules) still hold.
+	const outRules: Record<string, (this: unknown, $: unknown, previous?: unknown) => unknown> = {};
 	applyAutoGroups(
 		grammar as unknown as Parameters<typeof applyAutoGroups>[0],
+		outRules,
 		ctx,
 		authoredSynthesisKinds
 	);
-	return { ctx, rules: grammar.grammar.rules };
+	const resolved: Record<string, unknown> = { ...grammar.grammar.rules };
+	for (const [name, fn] of Object.entries(outRules)) {
+		resolved[name] = fn.call(null, null, grammar.grammar.rules[name]);
+	}
+	return { ctx, rules: resolved };
 }
 
 describe('applyAutoGroups — optional(seq(...))', () => {
@@ -539,7 +550,7 @@ describe('applyAutoGroups — regressions and invariants', () => {
 				}
 			}
 		};
-		applyAutoGroups(grammar as unknown as Parameters<typeof applyAutoGroups>[0], ctx);
+		applyAutoGroups(grammar as unknown as Parameters<typeof applyAutoGroups>[0], {}, ctx);
 		const preserved = grammar.grammar.rules._root_optional1 as {
 			type: string;
 			value?: string;
@@ -636,19 +647,17 @@ describe('applyAutoGroups — wire() integration', () => {
 			$: unknown
 		) => unknown;
 
-		// Path-mode `groups:` entry for xKind. Object-valued (not a function),
-		// so it counts toward authoredSynthesisKinds and auto-groups skips
-		// xKind. The presence of the other rule fns is required by wire's
-		// own config shape; their bodies are immaterial to this assertion.
+		// `xKind` is authored (path-mode `groups:` lift + a `rules:` entry), so
+		// auto-groups must skip it. `yKind` is a *base-only* rule (NOT in
+		// `config.rules`) — exactly the production shape where the triggered
+		// rules (`type_arguments`, `function_item`, …) are un-overridden base
+		// rules. Auto-groups synthesizes `_yKind_optional1` for it. Output
+		// lands in `outRules` (= `wired.rules`), NOT the base seed.
 		const wired = wire(
 			{
 				name: 'test',
 				rules: {
-					xKind: noopFn,
-					yKind: noopFn,
-					A: noopFn,
-					X: noopFn,
-					Y: noopFn
+					xKind: noopFn
 				},
 				groups: {
 					xKind: { '0/1': 'authoredX' }
@@ -668,14 +677,17 @@ describe('applyAutoGroups — wire() integration', () => {
 		// a hidden helper and registered it for inlining.
 		expect(ctx.syntheticInline.has('_yKind_optional1')).toBe(true);
 
-		// And the base grammar's yKind body should now reference the
-		// synthesized helper via a SYMBOL ref, while xKind is untouched.
-		const rulesBag = base.grammar.rules as unknown as Record<string, unknown>;
-		const yKindRule = rulesBag.yKind as { type: string; content: { type: string; name?: string } };
+		// The synthesized helper + rewritten parent live in `wired.rules`
+		// (outRules) — the rule-fn map tree-sitter reads. Resolve the fns.
+		const outRules = (wired as unknown as { rules: Record<string, () => unknown> }).rules;
+		expect(typeof outRules._yKind_optional1).toBe('function');
+		const yKindRule = outRules.yKind() as { type: string; content: { type: string; name?: string } };
 		expect(yKindRule.type).toBe('optional');
 		expect(yKindRule.content.type).toBe('symbol');
 		expect(yKindRule.content.name).toBe('_yKind_optional1');
 
+		// The base seed is left untouched — the rewrite no longer mutates it.
+		const rulesBag = base.grammar.rules as unknown as Record<string, unknown>;
 		const xKindRule = rulesBag.xKind as { type: string; content: { type: string } };
 		expect(xKindRule.type).toBe('optional');
 		// xKind's content remains a seq — auto-groups skipped it.

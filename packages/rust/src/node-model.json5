@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 392,
+  "nodeCount": 393,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -485,13 +485,13 @@
           "name": "elements",
           "propertyName": "elements",
           "paramName": "elements",
-          "required": true,
-          "multiple": false,
+          "required": false,
+          "multiple": true,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "_expression",
               "unresolved": true
             }
@@ -613,6 +613,63 @@
             }
           ],
           "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_expression"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_attributed_argument",
+      "modelType": "branch",
+      "typeName": "AttributedArgument",
+      "factoryName": "attributedArgument",
+      "irKey": "attributedArgument",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "attribute_item",
+          "propertyName": "attributeItems",
+          "paramName": "attributeItems",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "attribute_item",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "attribute_item"
+            ]
+          }
+        },
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_expression",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -769,9 +826,9 @@
           }
         },
         {
-          "name": "parameter",
-          "propertyName": "parameter",
-          "paramName": "parameter",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -852,9 +909,9 @@
           }
         },
         {
-          "name": "metavariable",
-          "propertyName": "metavariable",
-          "paramName": "metavariable",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -990,18 +1047,16 @@
               "unresolved": true
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_",
-              "unresolved": true
+              "value": "_"
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expression",
-              "_"
+              "_expression"
             ]
           }
         }
@@ -1649,7 +1704,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_field_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -1657,8 +1712,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_field_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "field_identifier": "identifier"
           }
         },
         {
@@ -1926,7 +1984,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -1940,9 +1998,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
+              "identifier",
               "scoped_type_identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -2141,25 +2202,59 @@
           "name": "let_chain",
           "propertyName": "letChain",
           "paramName": "letChain",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_let_chain",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_let_chain"
+            ]
+          }
+        },
+        {
+          "name": "let_condition",
+          "propertyName": "letCondition",
+          "paramName": "letCondition",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "let_condition",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "let_condition"
+            ]
+          }
+        },
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_expression",
               "unresolved": true
             }
@@ -2168,8 +2263,6 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_let_chain",
-              "let_condition",
               "_expression"
             ]
           }
@@ -2784,418 +2877,418 @@
       "hidden": false,
       "fields": [
         {
-          "name": "literal",
-          "propertyName": "literal",
-          "paramName": "literal",
-          "required": true,
-          "multiple": false,
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
+          "required": false,
+          "multiple": true,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "_literal",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "mutable_specifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "self",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "super",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "crate",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "_primitive_type",
               "unresolved": true
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "+"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "-"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "*"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "/"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "%"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "^"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "!"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "&"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "|"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "&&"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "||"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "<<"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": ">>"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "+="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "-="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "*="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "/="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "%="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "^="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "&="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "|="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "<<="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": ">>="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "=="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "!="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": ">"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "<"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": ">="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "<="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "@"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "_"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "."
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": ".."
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "..."
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "..="
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": ","
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": ";"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": ":"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "::"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "->"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "=>"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "#"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "?"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "'"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "as"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "async"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "await"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "break"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "const"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "continue"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "default"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "enum"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "fn"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "for"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "gen"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "if"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "impl"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "let"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "loop"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "match"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "mod"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "pub"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "return"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "static"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "struct"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "trait"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "type"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "union"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "unsafe"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "use"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "where"
             },
             {
               "kind": "terminal",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "value": "while"
             }
           ],
@@ -4373,9 +4466,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4525,9 +4618,9 @@
           }
         },
         {
-          "name": "metavariable",
-          "propertyName": "metavariable",
-          "paramName": "metavariable",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4773,9 +4866,9 @@
       "name": "_visibility_modifier_pub_parens",
       "fields": [
         {
-          "name": "self",
-          "propertyName": "self",
-          "paramName": "self",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4910,7 +5003,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -4954,7 +5047,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
+              "identifier",
               "scoped_type_identifier",
               "removed_trait_bound",
               "generic_type",
@@ -4962,6 +5055,9 @@
               "tuple_type",
               "bounded_type"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -4996,9 +5092,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItems",
-          "paramName": "attributeItems",
+          "name": "attributed_argument",
+          "propertyName": "attributedArguments",
+          "paramName": "attributedArguments",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -5006,7 +5102,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "attribute_item",
+              "name": "_attributed_argument",
               "unresolved": true
             }
           ],
@@ -5014,31 +5110,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "attribute_item"
+              "_attributed_argument"
             ]
-          }
-        },
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression"
-            ]
+          },
+          "aliasSources": {
+            "attributed_argument": "_attributed_argument"
           }
         }
       ],
@@ -5087,6 +5163,9 @@
                 "kinds": [
                   "_array_expression_semi"
                 ]
+              },
+              "aliasSources": {
+                "array_expression_semi": "_array_expression_semi"
               }
             }
           ],
@@ -5121,6 +5200,9 @@
                 "kinds": [
                   "_array_expression_list"
                 ]
+              },
+              "aliasSources": {
+                "array_expression_list": "_array_expression_list"
               }
             }
           ],
@@ -5160,9 +5242,9 @@
           }
         },
         {
-          "name": "array_type_optional1",
-          "propertyName": "arrayTypeOptional1",
-          "paramName": "arrayTypeOptional1",
+          "name": "length",
+          "propertyName": "length",
+          "paramName": "length",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -5170,15 +5252,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_array_type_optional1",
+              "name": "_expression",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_array_type_optional1"
+              "_expression"
             ]
           }
         }
@@ -5271,7 +5353,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -5279,8 +5361,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -5657,34 +5742,29 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "amp_amp",
-              "unresolved": true
+              "value": "&&"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "pipe_pipe",
-              "unresolved": true
+              "value": "||"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "amp",
-              "unresolved": true
+              "value": "&"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "pipe",
-              "unresolved": true
+              "value": "|"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "caret",
-              "unresolved": true
+              "value": "^"
             },
             {
               "kind": "terminal",
@@ -5752,16 +5832,10 @@
               "value": "%"
             }
           ],
-          "source": "link",
+          "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "amp_amp",
-              "pipe_pipe",
-              "amp",
-              "pipe",
-              "caret"
-            ]
+            "kinds": []
           }
         },
         {
@@ -6065,9 +6139,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6431,6 +6505,9 @@
                 "kinds": [
                   "_closure_expression_block"
                 ]
+              },
+              "aliasSources": {
+                "closure_expression_block": "_closure_expression_block"
               }
             }
           ],
@@ -6557,6 +6634,9 @@
                 "kinds": [
                   "_closure_expression_expr"
                 ]
+              },
+              "aliasSources": {
+                "closure_expression_expr": "_closure_expression_expr"
               }
             }
           ],
@@ -6587,18 +6667,16 @@
               "unresolved": true
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_",
-              "unresolved": true
+              "value": "_"
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expression",
-              "_"
+              "_expression"
             ]
           }
         }
@@ -6614,9 +6692,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "pattern",
-          "propertyName": "patterns",
-          "paramName": "patterns",
+          "name": "parameters",
+          "propertyName": "parameters",
+          "paramName": "parameters",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -6634,7 +6712,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -6655,9 +6733,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "line_comment",
-          "propertyName": "lineComment",
-          "paramName": "lineComment",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6969,9 +7047,9 @@
           }
         },
         {
-          "name": "const_parameter_optional1",
-          "propertyName": "constParameterOptional1",
-          "paramName": "constParameterOptional1",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6979,15 +7057,36 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_const_parameter_optional1",
+              "name": "block",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_literal",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "negative_literal",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_const_parameter_optional1"
+              "block",
+              "identifier",
+              "_literal",
+              "negative_literal"
             ]
           }
         }
@@ -7137,6 +7236,9 @@
                 "kinds": [
                   "_delim_token_tree_paren"
                 ]
+              },
+              "aliasSources": {
+                "delim_token_tree_paren": "_delim_token_tree_paren"
               }
             }
           ],
@@ -7171,6 +7273,9 @@
                 "kinds": [
                   "_delim_token_tree_bracket"
                 ]
+              },
+              "aliasSources": {
+                "delim_token_tree_bracket": "_delim_token_tree_bracket"
               }
             }
           ],
@@ -7205,6 +7310,9 @@
                 "kinds": [
                   "_delim_token_tree_brace"
                 ]
+              },
+              "aliasSources": {
+                "delim_token_tree_brace": "_delim_token_tree_brace"
               }
             }
           ],
@@ -7349,7 +7457,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -7382,12 +7490,15 @@
             "typeName": "",
             "kinds": [
               "higher_ranked_trait_bound",
-              "_type_identifier",
+              "identifier",
               "scoped_type_identifier",
               "generic_type",
               "function_type",
               "tuple_type"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -7412,9 +7523,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -7506,7 +7617,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -7514,8 +7625,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -7675,9 +7789,9 @@
           }
         },
         {
-          "name": "enum_variant_optional1",
-          "propertyName": "enumVariantOptional1",
-          "paramName": "enumVariantOptional1",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7685,15 +7799,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_enum_variant_optional1",
+              "name": "_expression",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_enum_variant_optional1"
+              "_expression"
             ]
           }
         }
@@ -7729,6 +7843,9 @@
             "kinds": [
               "_attributed_enum_variant"
             ]
+          },
+          "aliasSources": {
+            "attributed_enum_variant": "_attributed_enum_variant"
           }
         }
       ],
@@ -7785,6 +7902,9 @@
                 "kinds": [
                   "_expression_statement_with_semi"
                 ]
+              },
+              "aliasSources": {
+                "expression_statement_with_semi": "_expression_statement_with_semi"
               }
             }
           ],
@@ -7819,6 +7939,9 @@
                 "kinds": [
                   "_expression_statement_block_ending"
                 ]
+              },
+              "aliasSources": {
+                "expression_statement_block_ending": "_expression_statement_block_ending"
               }
             }
           ],
@@ -7979,9 +8102,9 @@
           }
         },
         {
-          "name": "extern_crate_declaration_optional1",
-          "propertyName": "externCrateDeclarationOptional1",
-          "paramName": "externCrateDeclarationOptional1",
+          "name": "alias",
+          "propertyName": "alias",
+          "paramName": "alias",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -7989,15 +8112,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_extern_crate_declaration_optional1",
+              "name": "identifier",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_extern_crate_declaration_optional1"
+              "identifier"
             ]
           }
         }
@@ -8080,7 +8203,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_field_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -8088,8 +8211,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_field_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "field_identifier": "identifier"
           }
         },
         {
@@ -8147,6 +8273,9 @@
             "kinds": [
               "_attributed_field_declaration"
             ]
+          },
+          "aliasSources": {
+            "attributed_field_declaration": "_attributed_field_declaration"
           }
         }
       ],
@@ -8194,7 +8323,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_field_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -8208,9 +8337,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_field_identifier",
+              "identifier",
               "integer_literal"
             ]
+          },
+          "aliasSources": {
+            "field_identifier": "identifier"
           }
         }
       ],
@@ -8258,7 +8390,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_field_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -8272,9 +8404,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_field_identifier",
+              "identifier",
               "integer_literal"
             ]
+          },
+          "aliasSources": {
+            "field_identifier": "identifier"
           }
         },
         {
@@ -8312,9 +8447,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "shorthand_field_initializer",
-          "propertyName": "shorthandFieldInitializers",
-          "paramName": "shorthandFieldInitializers",
+          "name": "initializers",
+          "propertyName": "initializers",
+          "paramName": "initializers",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -8338,7 +8473,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -8440,6 +8575,9 @@
                 "kinds": [
                   "_field_pattern_shorthand"
                 ]
+              },
+              "aliasSources": {
+                "field_pattern_shorthand": "_field_pattern_shorthand"
               }
             }
           ],
@@ -8520,6 +8658,9 @@
                 "kinds": [
                   "_field_pattern_named"
                 ]
+              },
+              "aliasSources": {
+                "field_pattern_named": "_field_pattern_named"
               }
             }
           ],
@@ -8818,6 +8959,9 @@
                 "kinds": [
                   "_foreign_mod_item_semi"
                 ]
+              },
+              "aliasSources": {
+                "foreign_mod_item_semi": "_foreign_mod_item_semi"
               }
             }
           ],
@@ -8898,6 +9042,9 @@
                 "kinds": [
                   "_foreign_mod_item_body"
                 ]
+              },
+              "aliasSources": {
+                "foreign_mod_item_body": "_foreign_mod_item_body"
               }
             }
           ],
@@ -9095,9 +9242,9 @@
           }
         },
         {
-          "name": "function_item_optional1",
-          "propertyName": "functionItemOptional1",
-          "paramName": "functionItemOptional1",
+          "name": "return_type",
+          "propertyName": "returnType",
+          "paramName": "returnType",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9105,15 +9252,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_function_item_optional1",
+              "name": "_type",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_function_item_optional1"
+              "_type"
             ]
           }
         },
@@ -9183,28 +9330,24 @@
           "nonEmpty": true,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "nonEmptyArray",
-              "name": "async",
-              "unresolved": true
+              "value": "async"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "nonEmptyArray",
-              "name": "default",
-              "unresolved": true
+              "value": "default"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "nonEmptyArray",
-              "name": "const",
-              "unresolved": true
+              "value": "const"
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "nonEmptyArray",
-              "name": "unsafe",
-              "unresolved": true
+              "value": "unsafe"
             },
             {
               "kind": "node-ref",
@@ -9217,10 +9360,6 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "async",
-              "default",
-              "const",
-              "unsafe",
               "extern_modifier"
             ]
           }
@@ -9459,6 +9598,9 @@
             "kinds": [
               "_function_type_trait_form"
             ]
+          },
+          "aliasSources": {
+            "function_type_trait_form": "_function_type_trait_form"
           }
         },
         {
@@ -9505,6 +9647,9 @@
             "kinds": [
               "_function_type_fn_form"
             ]
+          },
+          "aliasSources": {
+            "function_type_fn_form": "_function_type_fn_form"
           }
         },
         {
@@ -9680,9 +9825,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -9754,13 +9899,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_reserved_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -9774,10 +9913,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
-              "_reserved_identifier",
+              "identifier",
               "scoped_type_identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -9825,7 +9966,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -9839,9 +9980,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
+              "identifier",
               "scoped_identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -10231,6 +10375,9 @@
                 "kinds": [
                   "_impl_item_body"
                 ]
+              },
+              "aliasSources": {
+                "impl_item_body": "_impl_item_body"
               }
             }
           ],
@@ -10417,6 +10564,9 @@
                 "kinds": [
                   "_impl_item_semi"
                 ]
+              },
+              "aliasSources": {
+                "impl_item_semi": "_impl_item_semi"
               }
             }
           ],
@@ -10610,9 +10760,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItems",
-          "paramName": "attributeItems",
+          "name": "attributes",
+          "propertyName": "attributes",
+          "paramName": "attributes",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -10630,7 +10780,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -10810,9 +10960,9 @@
           }
         },
         {
-          "name": "let_declaration_optional1",
-          "propertyName": "letDeclarationOptional1",
-          "paramName": "letDeclarationOptional1",
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10820,22 +10970,22 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_let_declaration_optional1",
+              "name": "_type",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_let_declaration_optional1"
+              "_type"
             ]
           }
         },
         {
-          "name": "let_declaration_optional2",
-          "propertyName": "letDeclarationOptional2",
-          "paramName": "letDeclarationOptional2",
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10843,15 +10993,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_let_declaration_optional2",
+              "name": "_expression",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_let_declaration_optional2"
+              "_expression"
             ]
           }
         },
@@ -11016,6 +11166,9 @@
                 "kinds": [
                   "_line_comment_regular_dslash"
                 ]
+              },
+              "aliasSources": {
+                "line_comment_regular_dslash": "_line_comment_regular_dslash"
               }
             }
           ],
@@ -11050,6 +11203,9 @@
                 "kinds": [
                   "_line_comment_doc"
                 ]
+              },
+              "aliasSources": {
+                "line_comment_doc": "_line_comment_doc"
               }
             }
           ],
@@ -11084,6 +11240,9 @@
                 "kinds": [
                   "_line_comment_content"
                 ]
+              },
+              "aliasSources": {
+                "line_comment_content": "_line_comment_content"
               }
             }
           ],
@@ -11232,6 +11391,9 @@
                 "kinds": [
                   "_macro_definition_paren"
                 ]
+              },
+              "aliasSources": {
+                "macro_definition_paren": "_macro_definition_paren"
               }
             }
           ],
@@ -11296,6 +11458,9 @@
                 "kinds": [
                   "_macro_definition_bracket"
                 ]
+              },
+              "aliasSources": {
+                "macro_definition_bracket": "_macro_definition_bracket"
               }
             }
           ],
@@ -11360,6 +11525,9 @@
                 "kinds": [
                   "_macro_definition_brace"
                 ]
+              },
+              "aliasSources": {
+                "macro_definition_brace": "_macro_definition_brace"
               }
             }
           ],
@@ -11514,12 +11682,6 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_reserved_identifier",
-              "unresolved": true
             }
           ],
           "source": "grammar",
@@ -11527,8 +11689,7 @@
             "typeName": "",
             "kinds": [
               "scoped_identifier",
-              "identifier",
-              "_reserved_identifier"
+              "identifier"
             ]
           }
         },
@@ -11724,6 +11885,9 @@
                 "kinds": [
                   "_match_arm_with_comma"
                 ]
+              },
+              "aliasSources": {
+                "match_arm_with_comma": "_match_arm_with_comma"
               }
             }
           ],
@@ -11811,6 +11975,9 @@
                 "kinds": [
                   "_match_arm_block_ending"
                 ]
+              },
+              "aliasSources": {
+                "match_arm_block_ending": "_match_arm_block_ending"
               }
             }
           ],
@@ -11876,7 +12043,7 @@
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "last_match_arm",
               "unresolved": true
             }
@@ -11888,6 +12055,9 @@
               "match_arm",
               "last_match_arm"
             ]
+          },
+          "aliasSources": {
+            "match_arm": "last_match_arm"
           }
         }
       ],
@@ -11982,9 +12152,9 @@
           }
         },
         {
-          "name": "match_pattern_optional1",
-          "propertyName": "matchPatternOptional1",
-          "paramName": "matchPatternOptional1",
+          "name": "condition",
+          "propertyName": "condition",
+          "paramName": "condition",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -11992,15 +12162,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_match_pattern_optional1",
+              "name": "_condition",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_match_pattern_optional1"
+              "_condition"
             ]
           }
         }
@@ -12115,6 +12285,9 @@
                 "kinds": [
                   "_mod_item_external"
                 ]
+              },
+              "aliasSources": {
+                "mod_item_external": "_mod_item_external"
               }
             }
           ],
@@ -12195,6 +12368,9 @@
                 "kinds": [
                   "_mod_item_inline"
                 ]
+              },
+              "aliasSources": {
+                "mod_item_inline": "_mod_item_inline"
               }
             }
           ],
@@ -12418,6 +12594,9 @@
                 "kinds": [
                   "_or_pattern_binary"
                 ]
+              },
+              "aliasSources": {
+                "or_pattern_binary": "_or_pattern_binary"
               }
             }
           ],
@@ -12452,6 +12631,9 @@
                 "kinds": [
                   "_or_pattern_prefix"
                 ]
+              },
+              "aliasSources": {
+                "or_pattern_prefix": "_or_pattern_prefix"
               }
             }
           ],
@@ -12515,15 +12697,15 @@
         },
         {
           "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
-          "required": true,
-          "multiple": false,
+          "propertyName": "types",
+          "paramName": "types",
+          "required": false,
+          "multiple": true,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "array",
               "name": "_type",
               "unresolved": true
             }
@@ -12655,6 +12837,9 @@
             "kinds": [
               "_attributed_parameter"
             ]
+          },
+          "aliasSources": {
+            "attributed_parameter": "_attributed_parameter"
           }
         }
       ],
@@ -12757,6 +12942,9 @@
                 "kinds": [
                   "_pointer_type_const"
                 ]
+              },
+              "aliasSources": {
+                "pointer_type_const": "_pointer_type_const"
               }
             },
             {
@@ -12814,6 +13002,9 @@
                 "kinds": [
                   "_pointer_type_mut"
                 ]
+              },
+              "aliasSources": {
+                "pointer_type_mut": "_pointer_type_mut"
               }
             },
             {
@@ -13002,6 +13193,9 @@
                 "kinds": [
                   "_range_expression_binary"
                 ]
+              },
+              "aliasSources": {
+                "range_expression_binary": "_range_expression_binary"
               }
             }
           ],
@@ -13036,6 +13230,9 @@
                 "kinds": [
                   "_range_expression_postfix"
                 ]
+              },
+              "aliasSources": {
+                "range_expression_postfix": "_range_expression_postfix"
               }
             }
           ],
@@ -13070,6 +13267,9 @@
                 "kinds": [
                   "_range_expression_prefix"
                 ]
+              },
+              "aliasSources": {
+                "range_expression_prefix": "_range_expression_prefix"
               }
             }
           ],
@@ -13104,6 +13304,9 @@
                 "kinds": [
                   "_range_expression_bare"
                 ]
+              },
+              "aliasSources": {
+                "range_expression_bare": "_range_expression_bare"
               }
             }
           ],
@@ -13191,6 +13394,9 @@
                 "kinds": [
                   "_range_pattern_prefix"
                 ]
+              },
+              "aliasSources": {
+                "range_pattern_prefix": "_range_pattern_prefix"
               }
             }
           ],
@@ -13255,6 +13461,9 @@
                 "kinds": [
                   "_range_pattern_left_with_right"
                 ]
+              },
+              "aliasSources": {
+                "range_pattern_left_with_right": "_range_pattern_left_with_right"
               }
             }
           ],
@@ -13319,6 +13528,9 @@
                 "kinds": [
                   "_range_pattern_left_bare"
                 ]
+              },
+              "aliasSources": {
+                "range_pattern_left_bare": "_range_pattern_left_bare"
               }
             }
           ],
@@ -13434,28 +13646,28 @@
       "hidden": false,
       "fields": [
         {
-          "name": "reference_expression_raw_const",
-          "propertyName": "referenceExpressionRawConst",
-          "paramName": "referenceExpressionRawConst",
-          "required": true,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_reference_expression_raw_const",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_reference_expression_raw_mut",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "mutable_specifier",
               "unresolved": true
             }
@@ -13872,7 +14084,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -13880,8 +14092,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -13939,7 +14154,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -13947,8 +14162,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -14418,9 +14636,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "escape_sequence",
-          "propertyName": "escapeSequences",
-          "paramName": "escapeSequences",
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -14479,7 +14697,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -14499,12 +14717,13 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
+              "identifier",
               "scoped_type_identifier_in_expression_position",
               "generic_type_with_turbofish"
             ]
           },
           "aliasSources": {
+            "type_identifier": "identifier",
             "scoped_type_identifier": "scoped_type_identifier_in_expression_position"
           }
         },
@@ -14647,6 +14866,9 @@
                 "kinds": [
                   "_struct_item_brace"
                 ]
+              },
+              "aliasSources": {
+                "struct_item_brace": "_struct_item_brace"
               }
             }
           ],
@@ -14750,6 +14972,9 @@
                 "kinds": [
                   "_struct_item_tuple"
                 ]
+              },
+              "aliasSources": {
+                "struct_item_tuple": "_struct_item_tuple"
               }
             }
           ],
@@ -14853,6 +15078,9 @@
                 "kinds": [
                   "_struct_item_unit"
                 ]
+              },
+              "aliasSources": {
+                "struct_item_unit": "_struct_item_unit"
               }
             }
           ],
@@ -14879,7 +15107,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -14893,15 +15121,18 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier",
+              "identifier",
               "scoped_type_identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
-          "name": "field_pattern",
-          "propertyName": "fieldPatterns",
-          "paramName": "fieldPatterns",
+          "name": "fields",
+          "propertyName": "fields",
+          "paramName": "fields",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -14919,7 +15150,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15111,6 +15342,9 @@
                 "kinds": [
                   "_token_tree_paren"
                 ]
+              },
+              "aliasSources": {
+                "token_tree_paren": "_token_tree_paren"
               }
             }
           ],
@@ -15145,6 +15379,9 @@
                 "kinds": [
                   "_token_tree_bracket"
                 ]
+              },
+              "aliasSources": {
+                "token_tree_bracket": "_token_tree_bracket"
               }
             }
           ],
@@ -15179,6 +15416,9 @@
                 "kinds": [
                   "_token_tree_brace"
                 ]
+              },
+              "aliasSources": {
+                "token_tree_brace": "_token_tree_brace"
               }
             }
           ],
@@ -15332,6 +15572,9 @@
                 "kinds": [
                   "_token_tree_pattern_paren"
                 ]
+              },
+              "aliasSources": {
+                "token_tree_pattern_paren": "_token_tree_pattern_paren"
               }
             }
           ],
@@ -15366,6 +15609,9 @@
                 "kinds": [
                   "_token_tree_pattern_bracket"
                 ]
+              },
+              "aliasSources": {
+                "token_tree_pattern_bracket": "_token_tree_pattern_bracket"
               }
             }
           ],
@@ -15400,6 +15646,9 @@
                 "kinds": [
                   "_token_tree_pattern_brace"
                 ]
+              },
+              "aliasSources": {
+                "token_tree_pattern_brace": "_token_tree_pattern_brace"
               }
             }
           ],
@@ -15528,9 +15777,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type",
-          "propertyName": "types",
-          "paramName": "types",
+          "name": "bounds",
+          "propertyName": "bounds",
+          "paramName": "bounds",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -15554,7 +15803,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15632,7 +15881,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -15640,8 +15889,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -15858,12 +16110,6 @@
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
               "multiplicity": "array",
               "name": "_expression",
               "unresolved": true
@@ -15895,9 +16141,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "pattern",
-          "propertyName": "patterns",
-          "paramName": "patterns",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -15915,7 +16161,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16054,17 +16300,41 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type_arguments_repeat1",
-          "propertyName": "typeArgumentsRepeat1s",
-          "paramName": "typeArgumentsRepeat1s",
-          "required": true,
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
+          "required": false,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_type_arguments_repeat1",
+              "multiplicity": "array",
+              "name": "_type",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "type_binding",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "lifetime",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_literal",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "block",
               "unresolved": true
             }
           ],
@@ -16072,7 +16342,34 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_arguments_repeat1"
+              "_type",
+              "type_binding",
+              "lifetime",
+              "_literal",
+              "block"
+            ]
+          }
+        },
+        {
+          "name": "trait_bounds",
+          "propertyName": "traitBounds",
+          "paramName": "traitBounds",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "trait_bounds",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "trait_bounds"
             ]
           }
         }
@@ -16098,7 +16395,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -16106,8 +16403,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -16258,7 +16558,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -16266,8 +16566,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -16384,7 +16687,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -16392,8 +16695,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -16420,9 +16726,9 @@
           }
         },
         {
-          "name": "type_parameter_optional1",
-          "propertyName": "typeParameterOptional1",
-          "paramName": "typeParameterOptional1",
+          "name": "default_type",
+          "propertyName": "defaultType",
+          "paramName": "defaultType",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -16430,15 +16736,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_type_parameter_optional1",
+              "name": "_type",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_parameter_optional1"
+              "_type"
             ]
           }
         }
@@ -16454,9 +16760,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "type_parameters_repeat1",
-          "propertyName": "typeParametersRepeat1s",
-          "paramName": "typeParametersRepeat1s",
+          "name": "attributed_type_parameter",
+          "propertyName": "attributedTypeParameters",
+          "paramName": "attributedTypeParameters",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -16464,7 +16770,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
-              "name": "_type_parameters_repeat1",
+              "name": "_attributed_type_parameter",
               "unresolved": true
             }
           ],
@@ -16472,8 +16778,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_parameters_repeat1"
+              "_attributed_type_parameter"
             ]
+          },
+          "aliasSources": {
+            "attributed_type_parameter": "_attributed_type_parameter"
           }
         }
       ],
@@ -16588,7 +16897,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
@@ -16596,8 +16905,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         },
         {
@@ -16808,9 +17120,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "lifetime",
-          "propertyName": "lifetimes",
-          "paramName": "lifetimes",
+          "name": "bounds",
+          "propertyName": "bounds",
+          "paramName": "bounds",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -16824,17 +17136,20 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
               "lifetime",
-              "_type_identifier"
+              "identifier"
             ]
+          },
+          "aliasSources": {
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -17066,6 +17381,9 @@
                 "kinds": [
                   "_visibility_modifier_crate"
                 ]
+              },
+              "aliasSources": {
+                "visibility_modifier_crate": "_visibility_modifier_crate"
               }
             }
           ],
@@ -17100,6 +17418,9 @@
                 "kinds": [
                   "_visibility_modifier_pub"
                 ]
+              },
+              "aliasSources": {
+                "visibility_modifier_pub": "_visibility_modifier_pub"
               }
             }
           ],
@@ -17134,6 +17455,9 @@
                 "kinds": [
                   "_visibility_modifier_in_path"
                 ]
+              },
+              "aliasSources": {
+                "visibility_modifier_in_path": "_visibility_modifier_in_path"
               }
             }
           ],
@@ -17246,7 +17570,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_type_identifier",
+              "name": "identifier",
               "unresolved": true
             },
             {
@@ -17303,7 +17627,7 @@
             "typeName": "",
             "kinds": [
               "lifetime",
-              "_type_identifier",
+              "identifier",
               "scoped_type_identifier",
               "generic_type",
               "reference_type",
@@ -17315,6 +17639,7 @@
             ]
           },
           "aliasSources": {
+            "type_identifier": "identifier",
             "primitive_type": "_primitive_type"
           }
         },
@@ -17363,9 +17688,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "while_expression_optional1",
-          "propertyName": "whileExpressionOptional1",
-          "paramName": "whileExpressionOptional1",
+          "name": "label",
+          "propertyName": "label",
+          "paramName": "label",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17373,15 +17698,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_while_expression_optional1",
+              "name": "label",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_while_expression_optional1"
+              "label"
             ]
           }
         },

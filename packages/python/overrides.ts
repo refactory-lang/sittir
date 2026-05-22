@@ -42,7 +42,17 @@ export default grammar(
 			// rule, tree-sitter needs an explicit GLR fork group to decide
 			// between the bare expression and the tuple form on the `,`
 			// suffix that only the tuple accepts.
-			[$.expression_statement, $._expression_statement_tuple]
+			[$.expression_statement, $._expression_statement_tuple],
+			// except_clause variant split: the `as` form (`except E as e:`)
+			// and the comma-list form (`except E1, E2:`) both begin with
+			// `field('value', expression) • …` and only diverge on the `as` /
+			// `,` continuation. Lifting each arm into its own hidden rule
+			// (`_except_clause_as` / `_except_clause_list`) requires an explicit
+			// GLR fork to decide between them after the shared prefix.
+			[$._except_clause_as, $._except_clause_list],
+			// The `as` form (`except E as e:`) overlaps with `as_pattern`
+			// (`E as e`) after the shared `expression 'as'` prefix — fork.
+			[$.as_pattern, $._except_clause_as]
 		],
 		polymorphs: {
 			assignment: { '1/0': 'eq', '1/1': 'type', '1/2': 'typed' },
@@ -126,9 +136,34 @@ export default grammar(
 			// Note: `_simple_pattern` is a hidden rule, so no conflicts entry
 			// is needed — tree-sitter inlines it into parent rules directly.
 			// The visible variant kind is `simple_pattern_negative`.
-			_simple_pattern: { '11': 'negative' }
+			_simple_pattern: { '11': 'negative' },
+
+			// except_clause: base rule is
+			//   seq('except', optional('*'), optional(choice(
+			//     seq(field('value', expr), optional(seq('as', field('alias', expr)))),  ← arm 0 "as" form
+			//     commaSep1(field('value', expr)),                                        ← arm 1 comma-list form
+			//   )), ':', _suite)
+			// The two arms have DIFFERENT field sets (arm 0: value + optional
+			// alias; arm 1: repeated value), so the cross-branch field merge
+			// (hoistSharedFieldAcrossChoiceBranches) can't fuse them — the
+			// choice reaches derivation as the non-canonical
+			// `seq-member-choice-needs-variant-or-merge` shape (hard error).
+			// Split per variant so each form owns its template. Path: seq pos 2
+			// = the optional, `/0` = its choice content, `/0`,`/1` = the arms.
+			// `except_clause` is visible, but the arms share the `expression`
+			// prefix; if tree-sitter reports an unresolved conflict between the
+			// aliased forms, add `[$.except_clause_as, $.except_clause_list]` to
+			// `conflicts`.
+			except_clause: { '2/0/0': 'as', '2/0/1': 'list' }
 		},
 		transforms: {
+			// argument_list: name the naked args choice (was an unresolvable
+			// `content` slot). expression | list_splat | dictionary_splat |
+			// parenthesized_expression | keyword_argument
+			argument_list: {
+				1: field('arguments')
+			},
+
 			// as_pattern: 1 field(s)
 			as_pattern: {},
 
@@ -171,6 +206,11 @@ export default grammar(
 			// decorator: 2 field(s)
 			decorator: {
 				2: field('newline') //  [struct=1]
+			},
+
+			// dictionary: name the naked entries choice (pair | dictionary_splat)
+			dictionary: {
+				1: field('entries')
 			},
 
 			// dictionary_splat: 1 field(s)

@@ -142,7 +142,12 @@ async function main(argv: string[]): Promise<number> {
 			//                 block with rendered-equal verdict.
 			engine: { type: 'string' }
 			,
-			trace: { type: 'boolean', default: false }
+			trace: { type: 'boolean', default: false },
+			// --full: emit the complete multi-lane trace (typescript + native,
+			// shallow + deep). Default for `--kind` is the focused native-pipeline
+			// view (cst → raw → wrapped → transport → rendered). Use --full for
+			// cross-engine comparison.
+			full: { type: 'boolean', default: false }
 		}
 	});
 	if (!values.grammar) {
@@ -157,7 +162,9 @@ async function main(argv: string[]): Promise<number> {
 	}
 
 	const parsedRange = values.range ? parseRange(values.range as string) : undefined;
-	const engineRaw = (values.engine as string | undefined) ?? 'typescript';
+	// Native is the production path; the TS render engine is @deprecated. Default
+	// to native so an un-flagged probe reflects what actually ships.
+	const engineRaw = (values.engine as string | undefined) ?? 'native';
 	if (!['typescript', 'native', 'both'].includes(engineRaw)) {
 		process.stderr.write(`probe-kind: --engine must be 'typescript' | 'native' | 'both' (got '${engineRaw}')\n`);
 		return 2;
@@ -170,7 +177,38 @@ async function main(argv: string[]): Promise<number> {
 		reparse: values.reparse === true,
 		engine: (engineRaw === 'both' ? 'typescript' : engineRaw) as 'typescript' | 'native'
 	};
-	if (values.trace === true) {
+	// Focused native-pipeline view: default when `--kind` is given (unless
+	// --trace/--full). Shows the slot at EVERY native stage so the layer that
+	// drops it is obvious — cst (parse) → raw (raw read) → wrapped (materialized
+	// wrap, what render consumes) → transport (FromNapiValue payload) → rendered.
+	// `legacyWrapped` is the old recursive readNode walker — populated in it but
+	// empty in `wrapped` = a wrap-materialization gap.
+	const wantFull = values.trace === true || values.full === true;
+	if (opts.kind && !wantFull) {
+		const trace = (await probeTrace(grammar, source, { ...opts, engine: 'native' })) as Record<string, unknown>;
+		const nativeTrace = (
+			trace.trace as { native?: { deep?: Record<string, unknown>; wrapError?: string } } | undefined
+		)?.native;
+		const deep = nativeTrace?.deep ?? {};
+		const focused = {
+			grammar,
+			source,
+			kind: opts.kind,
+			cst: trace.cst,
+			// wrap throws (e.g. a required slot the parser didn't route) surface
+			// here so the CST is still readable to diagnose what the parser emitted.
+			wrapError: nativeTrace?.wrapError,
+			raw: deep.rawNodeData,
+			wrapped: deep.nodeData,
+			legacyWrapped: deep.legacyDeepNodeData,
+			transport: deep.nativeTransport,
+			rendered: deep.rendered,
+			renderError: deep.renderError
+		};
+		process.stdout.write(JSON.stringify(focused, null, values.pretty ? 2 : undefined) + '\n');
+		return 0;
+	}
+	if (wantFull) {
 		const trace = await probeTrace(grammar, source, opts);
 		process.stdout.write(JSON.stringify(trace, null, values.pretty ? 2 : undefined) + '\n');
 		return 0;
@@ -493,53 +531,34 @@ export async function probeTrace(
 		};
 	}
 	const cst = dumpCst(targetNode, null);
-	const tsRead = await readProbeNodeData(grammar, source, tree, targetNode, isRoot, 'typescript');
-	const nativeRead = await readProbeNodeData(grammar, source, tree, targetNode, isRoot, 'native');
+	// `wrap` (used by BOTH the native and TS flows) can throw — e.g. a required
+	// slot the parser didn't route into it, like `function_definition.block`.
+	// Catch per-engine so the CST (parser output) and the other engine still
+	// report instead of the whole probe aborting.
+	const buildEngineTrace = async (engine: 'typescript' | 'native') => {
+		let read: Awaited<ReturnType<typeof readProbeNodeData>>;
+		try {
+			read = await readProbeNodeData(grammar, source, tree, targetNode, isRoot, engine);
+		} catch (e) {
+			return { wrapError: String((e as Error)?.message ?? e) };
+		}
+		const shallow = await buildTraceLane(grammar, read.shallow, read.shallow, read.shallow, engine, 'shallow');
+		const deep =
+			engine === 'native'
+				? await buildTraceLane(grammar, read.shallow, read.deepReadTreeNodeRaw, read.deep, engine, 'deep', read.legacyDeepNodeData)
+				: await buildTraceLane(grammar, read.shallow, read.deepReadTreeNodeRaw ?? read.deep, read.deep, engine, 'deep');
+		return { shallow, deep };
+	};
 	return {
 		grammar,
 		source,
 		probeRange,
 		cst,
 		trace: {
-			typescript: {
-				shallow: await buildTraceLane(
-					grammar,
-					tsRead.shallow,
-					tsRead.shallow,
-					tsRead.shallow,
-					'typescript',
-					'shallow'
-				),
-				deep: await buildTraceLane(
-					grammar,
-					tsRead.shallow,
-					tsRead.deepReadTreeNodeRaw ?? tsRead.deep,
-					tsRead.deep,
-					'typescript',
-					'deep'
-				)
-			},
-			native: {
-				shallow: await buildTraceLane(
-					grammar,
-					nativeRead.shallow,
-					nativeRead.shallow,
-					nativeRead.shallow,
-					'native',
-					'shallow'
-				),
-				deep: await buildTraceLane(
-					grammar,
-					nativeRead.shallow,
-					nativeRead.deepReadTreeNodeRaw,
-					nativeRead.deep,
-					'native',
-					'deep',
-					nativeRead.legacyDeepNodeData
-				)
-			}
+			typescript: await buildEngineTrace('typescript'),
+			native: await buildEngineTrace('native')
 		}
-	};
+	} as unknown as ProbeTraceReport;
 }
 
 // ---------------------------------------------------------------------------

@@ -35,6 +35,7 @@ import type { Rule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule, 
 import type { AssembledNode } from './node-map.ts';
 import { compileWordMatcher } from './common.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
+import { fuseHeadRepeatLists } from './list-fusion.ts';
 
 /** Does this string lex as a "word" under the grammar's `word` rule? */
 /**
@@ -74,8 +75,7 @@ function isKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean
  * win (non-overriding).
  */
 function withAttrsFrom(original: Rule, result: Rule): Rule {
-	const { fieldName, multiplicity, separator } = original;
-	if (fieldName === undefined && multiplicity === undefined && separator === undefined) return result;
+	const { fieldName, multiplicity, separator, id } = original;
 	const patch: Record<string, unknown> = {};
 	if (fieldName !== undefined && !Object.prototype.hasOwnProperty.call(result, 'fieldName'))
 		patch['fieldName'] = fieldName;
@@ -83,26 +83,22 @@ function withAttrsFrom(original: Rule, result: Rule): Rule {
 		patch['multiplicity'] = multiplicity;
 	if (separator !== undefined && !Object.prototype.hasOwnProperty.call(result, 'separator'))
 		patch['separator'] = separator;
+	// Preserve the rule's identity through simplify: renderRule.id === simplifiedRule.id
+	// so the emitter (walks renderRule) and collectSlots (reads simplifiedRule) agree
+	// on the slot's `sourceRuleId`, making `slotByRuleId` (the canonical, primary slot
+	// lookup) resolve instead of degrading to the fragile fieldName/symbol-name
+	// fallbacks. The `hasOwnProperty` guard keeps a passed-through inner node's own id
+	// on collapse (e.g. `seq(field) → field`), only stamping the source id onto a
+	// freshly-rebuilt structural node (`{ type:'choice', members }`).
+	if (id !== undefined && !Object.prototype.hasOwnProperty.call(result, 'id')) patch['id'] = id;
 	if (Object.keys(patch).length === 0) return result;
 	return { ...result, ...patch };
 }
 
 export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean = false): Rule {
 	switch (rule.type) {
-		case 'seq': {
-			// Strip non-keyword strings, remove empty-seq sentinels, flatten nested seqs.
-			const members = rule.members
-				.map((m) => simplifyRule(m, wordMatcher, inField))
-				.filter((m) => {
-					if (m.type === 'string' && !isKeywordShape(m.value, wordMatcher)) return false;
-					if (m.type === 'seq' && m.members.length === 0) return false;
-					return true;
-				})
-				.flatMap((m) => (m.type === 'seq' ? m.members : [m]));
-			if (members.length === 0) return withAttrsFrom(rule, { type: 'seq', members: [] });
-			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
-			return withAttrsFrom(rule, { type: 'seq', members });
-		}
+		case 'seq':
+			return collapseSeq(rule, wordMatcher, inField);
 		case 'choice': {
 			// Variant wrappers preserved for polymorph surface detection.
 			const members = rule.members.map((m) => simplifyRule(m, wordMatcher, inField));
@@ -202,10 +198,14 @@ export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean 
  *      derivation walked an uncanonical tree and silently dropped
  *      duplicate-named field occurrences across choice branches.
  */
-export function simplifyRules(rules: Record<string, Rule>, wordMatcher?: RegExp): Record<string, Rule> {
+export function simplifyRules(
+	rules: Record<string, Rule>,
+	wordMatcher?: RegExp,
+	inlineKinds: ReadonlySet<string> = new Set()
+): Record<string, Rule> {
 	const out: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
-		out[name] = normalizeToFixpoint(rule, wordMatcher, rules);
+		out[name] = normalizeToFixpoint(rule, wordMatcher, rules, inlineKinds);
 	}
 	return out;
 }
@@ -223,10 +223,11 @@ export function simplifyRules(rules: Record<string, Rule>, wordMatcher?: RegExp)
  */
 export function computeSimplifiedRules(
 	renderRules: Record<string, RenderRule>,
-	word: string | null
+	word: string | null,
+	inlineKinds: ReadonlySet<string> = new Set()
 ): Record<string, SimplifiedRule> {
 	const wordMatcher = compileWordMatcher(word, renderRules as Record<string, Rule>);
-	const simplified = simplifyRules(renderRules as Record<string, Rule>, wordMatcher);
+	const simplified = simplifyRules(renderRules as Record<string, Rule>, wordMatcher, inlineKinds);
 	const canonicalized: Record<string, SimplifiedRule> = {};
 	for (const [kind, rule] of Object.entries(simplified)) {
 		// simplifyRules can re-introduce wrapper nodes (optional / field /
@@ -235,7 +236,14 @@ export function computeSimplifiedRules(
 		// deleteWrapper as a final pass to push any surviving wrapper attributes
 		// back down to leaf attributes, satisfying the SimplifiedRule = RenderRule
 		// (wrapper-free) invariant. deleteWrapper is idempotent on wrapper-free input.
-		const wrapperFree = deleteWrapper(canonicalizeSeqOfLeaves(rule) as Rule) as SimplifiedRule;
+		// Re-fuse separated-list head+repeat pairs here too: inlineRefs can
+		// splice a hidden helper's body into a parent and re-expose a head
+		// single + tail array of the same element that wasn't adjacent in the
+		// renderRule. Running the same fusion keeps the deriver's
+		// simplifiedRule view in agreement with the emitter's renderRule.
+		const wrapperFree = fuseHeadRepeatLists(
+			deleteWrapper(canonicalizeSeqOfLeaves(rule) as Rule) as Rule
+		) as SimplifiedRule;
 		canonicalized[kind] = wrapperFree;
 	}
 	// Gate universal-shape assertion behind an env var so we can ramp
@@ -251,12 +259,12 @@ export function computeSimplifiedRules(
 }
 
 /**
- * Run `inlineGroupRefs` + `simplifyRule` + `canonicalize` to fixpoint.
+ * Run `inlineRefs` + `simplifyRule` + `canonicalize` to fixpoint.
  * Each individual transformation is non-increasing on rule nesting
  * and designed to be idempotent on its own, but the three passes can
  * enable each other:
  *
- *   - `inlineGroupRefs` substitutes a hidden group/multi's body for
+ *   - `inlineRefs` substitutes a hidden group/multi's body for
  *     its symbol reference. When the body is a seq and the ref sat
  *     inside another seq, the substitution creates a nested-seq
  *     shape `simplifyRule` can flatten.
@@ -273,11 +281,16 @@ export function computeSimplifiedRules(
  * of those metrics. Safety cap at 16 iterations — a real grammar
  * converges in 2-3.
  */
-function normalizeToFixpoint(rule: Rule, wordMatcher: RegExp | undefined, rules: Readonly<Record<string, Rule>>): Rule {
+function normalizeToFixpoint(
+	rule: Rule,
+	wordMatcher: RegExp | undefined,
+	rules: Readonly<Record<string, Rule>>,
+	inlineKinds: ReadonlySet<string> = new Set()
+): Rule {
 	const MAX_ITERS = 16;
 	let current = rule;
 	for (let i = 0; i < MAX_ITERS; i++) {
-		const next = simplifyRule(inlineGroupRefs(current, rules), wordMatcher);
+		const next = simplifyRule(inlineRefs(current, rules, inlineKinds), wordMatcher);
 		if (rulesStructurallyEqual(current, next)) return next;
 		current = next;
 	}
@@ -741,31 +754,95 @@ export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
 // ---------------------------------------------------------------------------
 
 /**
- * Inline hidden GROUP and MULTI symbol references by substituting
- * their content. Matches tree-sitter's parse-time inlining of hidden
- * seq-with-fields helpers. Cycle-safe via visited set.
+ * Inline hidden symbol references by substituting their content. Two inlining
+ * paths are applied in priority order:
+ *
+ *  1. GROUP / MULTI path (existing): hidden group rules (seq-with-fields) and
+ *     hidden multi helpers (repeat / repeat1 wrappers) are always inlined so
+ *     the referrer's field walker sees the fields / multi-slot directly.
+ *
+ *  2. grammar.inline path (new): hidden symbol refs whose target appears in the
+ *     grammar's `inline:` array are inlined unconditionally — these are
+ *     helpers tree-sitter itself expands at parse time (e.g., auto-synthesized
+ *     `_type_arguments_repeat1` from applyAutoGroups). Sittir's derivation
+ *     view must match what tree-sitter produces: if the parser inlines a helper,
+ *     the simplified rule must too. References with `source === 'group-lift'` are
+ *     still inlined when `inlineKinds` contains the target — the group-lift guard
+ *     only applies to the group/multi path (where the assemble-side AssembledGroup
+ *     should materialise as its own node rather than being collapsed away).
+ *
+ * Cycle-safe via visited set.
  */
-export function inlineGroupRefs(
+export function inlineRefs(
 	rule: Rule,
 	rules: Readonly<Record<string, Rule>>,
+	inlineKinds: ReadonlySet<string> = new Set(),
 	visited: ReadonlySet<string> = new Set()
 ): Rule {
-	const recurse = (r: Rule, v: ReadonlySet<string>): Rule => inlineGroupRefs(r, rules, v);
+	const recurse = (r: Rule, v: ReadonlySet<string>): Rule => inlineRefs(r, rules, inlineKinds, v);
 	switch (rule.type) {
 		case 'symbol': {
+			// grammar.inline is the single source of truth for inlining. Any
+			// symbol ref whose target is listed in `grammar.inline` is inlined
+			// here — REGARDLESS of `source` (group-lift or not) or `hidden` —
+			// because tree-sitter inlines exactly those kinds at parse time. If
+			// sittir's derivation view doesn't match (i.e. it keeps a ref to a
+			// kind the parser expands away), `deriveSlots` mints a slot for a
+			// node that never materialises at runtime → singular-vs-multi and
+			// non-canonical-shape mismatches. Matching the parser's inlining is
+			// a correctness invariant.
+			//
+			// Resolution: group/multi targets inline their CONTENT (the seq /
+			// repeat wrapper) so the referrer's walker sees the fields / multi
+			// slot directly and no bare `group` rule leaks into simplified
+			// output; every other target inlines its body verbatim.
+			// `inlineKinds` here is the pre-filtered inline-DECISION set (built in
+			// generate.ts): grammar.inline membership minus supertype / keyword /
+			// token / pattern / enum modelTypes. So a plain membership test is the
+			// gate — supertypes and lexeme leaves were already excluded upstream.
+			if (inlineKinds.has(rule.name)) {
+				if (visited.has(rule.name)) return rule;
+				const target = rules[rule.name];
+				if (!target) return rule;
+				const next = new Set(visited);
+				next.add(rule.name);
+				const inlineTarget = resolveGroupOrMultiInlineTarget(target);
+				const inlined = inlineRefs(inlineTarget ?? target, rules, inlineKinds, next);
+				// Preserve the referring symbol's pushed-down leaf attributes
+				// (multiplicity / separator / fieldName) onto the inlined body.
+				// wrapper-deletion stamped e.g. `repeat1(SYMBOL(_x_repeat1))` down
+				// to `SYMBOL{multiplicity:nonEmptyArray, separator}`; replacing the
+				// symbol with the target body would otherwise DROP that
+				// multiplicity, collapsing a multi slot to singular. Re-wrap the
+				// inlined body in the equivalent modifier and re-run the
+				// (idempotent) deleteWrapper to re-push the attributes onto the
+				// inlined leaves.
+				return reapplyInlinedLeafAttrs(rule, inlined);
+			}
+
+			// Not inline-listed. Visible symbols are never inlined.
 			if (!rule.hidden) return rule;
-			// Don't inline group-lift synthesized symbol refs — those are
-			// deliberate structural boundaries: the referenced kind should
-			// materialize as its own AssembledGroup, not be inlined away.
-			if ((rule as { source?: string }).source === 'group-lift') return rule;
 			if (visited.has(rule.name)) return rule;
 			const target = rules[rule.name];
 			if (!target) return rule;
+
+			// Don't inline group-lift synthesized symbol refs via the group/multi
+			// path — those are deliberate structural boundaries: the referenced kind
+			// should materialise as its own AssembledGroup, not be inlined away.
+			if ((rule as { source?: string }).source === 'group-lift') return rule;
+
+			// GROUP / MULTI path: inline hidden group and multi helpers.
 			const inlineTarget = resolveGroupOrMultiInlineTarget(target);
 			if (!inlineTarget) return rule;
 			const next = new Set(visited);
 			next.add(rule.name);
-			return inlineGroupRefs(inlineTarget, rules, next);
+			// Combine the referring symbol's pushed-down attributes (multiplicity /
+			// separator / fieldName) with the inlined target — same as the
+			// inline-listed path above. wrapper-deletion stamps e.g.
+			// `optional(SYMBOL(_initializer))` to `SYMBOL{multiplicity:'optional'}`;
+			// without this the optional is dropped on inline and the spliced leaf
+			// (e.g. required_parameter's `value`) collapses to a required single.
+			return reapplyInlinedLeafAttrs(rule, inlineRefs(inlineTarget, rules, inlineKinds, next));
 		}
 		case 'seq':
 			return { ...rule, members: rule.members.map((m) => recurse(m, visited)) };
@@ -808,6 +885,197 @@ function resolveGroupOrMultiInlineTarget(target: Rule): Rule | null {
 }
 
 /**
+ * Re-apply a referring symbol's pushed-down leaf attributes onto the body
+ * that replaced it during inlining.
+ *
+ * wrapper-deletion collapses modifier wrappers onto the innermost leaf
+ * (e.g. `repeat1(SYMBOL(_x_repeat1))` → `SYMBOL{multiplicity:'nonEmptyArray',
+ * separator}`). When `inlineRefs` substitutes that symbol with its target
+ * body, the attributes on the symbol would be lost — collapsing a
+ * multi-valued slot to singular and dropping the separator. We reconstruct
+ * the equivalent modifier wrapper around the inlined body and re-run the
+ * idempotent `deleteWrapper`, which re-pushes the attributes onto the
+ * inlined body's leaves using the same "outer wins" rule wrapper-deletion
+ * applied originally.
+ *
+ * The attributes are pushed onto the inlined body's *leaves* (symbols /
+ * fields / terminals), not onto an enclosing seq node. A seq-level
+ * multiplicity would be lost when `canonicalizeSeqOfLeaves` flattens the
+ * inlined seq into its parent; leaf-level multiplicity survives flattening
+ * and is what `deriveSlots` reads. Stamping descends through structural
+ * nodes (seq / choice / group / variant / clause / token / alias) and stops
+ * at leaves, where it sets the multiplicity (a leaf that is already
+ * multi-valued keeps its stronger array/nonEmptyArray) and separator.
+ *
+ * No-op when the referring symbol carries no non-default leaf attributes.
+ */
+function reapplyInlinedLeafAttrs(ref: Rule, inlined: Rule): Rule {
+	const r = ref as {
+		multiplicity?: 'optional' | 'array' | 'nonEmptyArray';
+		separator?: unknown;
+		fieldName?: string;
+	};
+	if (r.multiplicity === undefined && r.separator === undefined && r.fieldName === undefined) {
+		return inlined;
+	}
+	return pushAttrsToLeaves(inlined, r.multiplicity, r.separator, r.fieldName);
+}
+
+// `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
+// missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
+type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
+
+/**
+ * Combine an OUTER multiplicity (pushed down from an enclosing wrapper) with
+ * a leaf's own INNER multiplicity into the effective slot multiplicity.
+ *
+ * `undefined` means "single / exactly one". The lattice:
+ *   - nothing pushed (`outer === undefined`) → keep `inner`.
+ *   - either side is a collection (array / nonEmptyArray) → the result is a
+ *     collection. It is `nonEmptyArray` only when BOTH sides guarantee ≥1
+ *     element (a side guarantees ≥1 iff it is single (`undefined`) or
+ *     `nonEmptyArray`); otherwise `array` (allows empty).
+ *   - neither is a collection → `optional` if either is optional, else single.
+ *
+ * Examples (the cases this fixes):
+ *   combine('nonEmptyArray', undefined)  → 'nonEmptyArray'  (type_arguments union: ≥1)
+ *   combine('nonEmptyArray', 'optional') → 'array'          (trait_bounds: 0-or-more)
+ *   combine('array', 'optional')         → 'array'
+ *   combine('optional', 'optional')      → 'optional'
+ *
+ * This replaces the prior "outer wins unless inner is already an array" rule,
+ * which clobbered an inner `optional` with the outer `nonEmptyArray` and
+ * produced `NonEmptyArray<T>` where the runtime slot is 0-or-more.
+ */
+function combineMultiplicity(outerIn: LeafMultiplicity, innerIn: LeafMultiplicity): LeafMultiplicity {
+	// `'single'` is the canonical required-one value (rule.ts `Multiplicity`);
+	// a missing multiplicity defaults to it (null-coalesce). The lattice then
+	// operates in `'single'` terms: `optional` trumps single
+	// (`combine(optional, single) → optional`), and `guaranteesOne('single')`
+	// is true (`combine(nonEmptyArray, single) → nonEmptyArray`, not `array`).
+	const outer = outerIn ?? 'single';
+	const inner = innerIn ?? 'single';
+	if (outer === 'single') return inner;
+	const isCollection = (m: LeafMultiplicity): boolean => m === 'array' || m === 'nonEmptyArray';
+	const guaranteesOne = (m: LeafMultiplicity): boolean => m === 'single' || m === 'nonEmptyArray';
+	if (isCollection(outer) || isCollection(inner)) {
+		return guaranteesOne(outer) && guaranteesOne(inner) ? 'nonEmptyArray' : 'array';
+	}
+	return outer === 'optional' || inner === 'optional' ? 'optional' : 'single';
+}
+
+/**
+ * Collapse a `seq` during simplification, carrying the seq's slot attributes
+ * onto the survivor when the seq NODE is discarded. `seq(x) → x` and the
+ * multi-member flatten both drop the seq node, so its `multiplicity` /
+ * `separator` / `fieldName` must move to the survivor or they're lost (the
+ * Path-A/B multiplicity drop). `separator`/`fieldName`/`id` ride along
+ * absent-only (`withAttrsFrom`); `multiplicity` COMBINES via the lattice so a
+ * survivor's own inner multiplicity (e.g. `optional`) merges with the seq's
+ * (e.g. `array`) → `array`, rather than the survivor silently keeping its
+ * narrower own.
+ */
+function collapseSeq(rule: SeqRule, wordMatcher?: RegExp, inField: boolean = false): Rule {
+	const members = rule.members
+		.map((m) => simplifyRule(m, wordMatcher, inField))
+		.filter((m) => {
+			// Strip non-keyword strings + empty-seq sentinels.
+			if (m.type === 'string' && !isKeywordShape(m.value, wordMatcher)) return false;
+			if (m.type === 'seq' && m.members.length === 0) return false;
+			return true;
+		})
+		.flatMap((m) => {
+			if (m.type !== 'seq') return [m];
+			// Keep a nested seq that carries its OWN cardinality as one member:
+			// splicing would lose that cardinality and hoist an inner choice to
+			// the parent's seq position (a non-canonical choice-at-seq). A bare
+			// seq (no own attrs) is spliced/flattened.
+			const sm = m as SeqRule & { multiplicity?: LeafMultiplicity; separator?: unknown; fieldName?: string };
+			if (sm.multiplicity !== undefined || sm.separator !== undefined || sm.fieldName !== undefined) {
+				return [m];
+			}
+			return sm.members;
+		});
+	if (members.length === 0) return withAttrsFrom(rule, { type: 'seq', members: [] });
+	if (members.length === 1) {
+		const survivor = members[0]!;
+		const carried = withAttrsFrom(rule, survivor);
+		const combined = combineMultiplicity(
+			(rule as { multiplicity?: LeafMultiplicity }).multiplicity,
+			(survivor as { multiplicity?: LeafMultiplicity }).multiplicity
+		);
+		return { ...carried, multiplicity: combined } as Rule;
+	}
+	return withAttrsFrom(rule, { type: 'seq', members });
+}
+
+/**
+ * Stamp `multiplicity` / `separator` / `fieldName` onto the slot-bearing
+ * leaves of a (wrapper-free) rule body. Structural nodes are descended;
+ * leaves are stamped. An existing array / nonEmptyArray multiplicity on a
+ * leaf is preserved (it is already at least as multi as the pushed value).
+ * `fieldName` is only applied to a leaf that has no field name yet.
+ */
+function pushAttrsToLeaves(
+	rule: Rule,
+	multiplicity: 'optional' | 'array' | 'nonEmptyArray' | undefined,
+	separator: unknown,
+	fieldName: string | undefined
+): Rule {
+	const recurse = (r: Rule): Rule => pushAttrsToLeaves(r, multiplicity, separator, fieldName);
+	switch (rule.type) {
+		case 'seq':
+			// A seq is flattened into its parent by `canonicalizeSeqOfLeaves`, so
+			// a seq-level multiplicity would be lost. Push into members instead.
+			return { ...rule, members: (rule as { members: Rule[] }).members.map(recurse) } as Rule;
+		case 'choice': {
+			// A choice at a seq position is a SINGLE slot boundary (the field
+			// walker unions its arms into one slot). `deriveSlotsRaw`'s choice
+			// case reads multiplicity from the choice NODE (effectiveMultiplicity),
+			// then overrides each arm value with it — so stamp the node itself.
+			// The node survives flattening (only seqs flatten), so leaf-level
+			// stamping of the arms is unnecessary here.
+			const cur = (rule as { multiplicity?: 'optional' | 'array' | 'nonEmptyArray' }).multiplicity;
+			const nextMult = combineMultiplicity(multiplicity, cur);
+			const patch: Record<string, unknown> = {};
+			if (nextMult !== undefined) patch['multiplicity'] = nextMult;
+			if (separator !== undefined) patch['separator'] = separator;
+			// Propagate the pushed-down fieldName onto the choice NODE too (the
+			// leaf case does this; the choice case forgot). A choice is the slot
+			// boundary, so without this an inlined `field('body', _suite)` whose
+			// `_suite` is a choice loses the `body` name → buildSlot falls back to
+			// an arbitrary arm kind (`block`). See python `function_definition.body`.
+			if (fieldName !== undefined && (rule as { fieldName?: string }).fieldName === undefined) {
+				patch['fieldName'] = fieldName;
+			}
+			return { ...rule, ...patch } as Rule;
+		}
+		case 'group':
+		case 'variant':
+		case 'clause':
+		case 'token':
+		case 'alias':
+		case 'optional':
+		case 'repeat':
+		case 'repeat1':
+		case 'field':
+			return { ...rule, content: recurse((rule as { content: Rule }).content) } as Rule;
+		default: {
+			// Leaf: symbol / string / pattern / terminal / enum / supertype / etc.
+			const cur = (rule as { multiplicity?: 'optional' | 'array' | 'nonEmptyArray' }).multiplicity;
+			const nextMult = combineMultiplicity(multiplicity, cur);
+			const patch: Record<string, unknown> = {};
+			if (nextMult !== undefined) patch['multiplicity'] = nextMult;
+			if (separator !== undefined) patch['separator'] = separator;
+			if (fieldName !== undefined && (rule as { fieldName?: string }).fieldName === undefined) {
+				patch['fieldName'] = fieldName;
+			}
+			return { ...rule, ...patch } as Rule;
+		}
+	}
+}
+
+/**
  * Unwrap structural wrappers around a repeat / repeat1 so the caller
  * can detect `optional(repeat(...))`, `group(repeat1(...))`, etc.
  * Returns `null` for anything that isn't ultimately a repeat shape.
@@ -840,27 +1108,22 @@ export function extractRepeatShape(rule: Rule): { repeat: RepeatRule | Repeat1Ru
 // repeat / repeat1 / field / variant / group / polymorph / clause) with
 // slot content.
 //
-// After PR0 Tasks 1.4-1.8 land, this invariant should hold by
-// construction:
-//   - enrich pushes modifiers (multiplicity, fieldName, separators) onto
-//     leaf symbols / strings.
-//   - decomposeOptional / decomposeRepeat synthesize hidden groups for
-//     non-leaf wrapper content.
+// Post-PR2 the invariant is established by:
+//   - applyWrapperDeletion (optimize.ts) pushes modifier wrappers
+//     (optional / field / repeat / repeat1) down to leaf RuleBase
+//     attributes (multiplicity, fieldName, separator). Output: RenderRule.
+//   - applyAutoGroups (dsl/wire/auto-groups.ts) synthesizes hidden helpers
+//     for optional(seq(...)) / repeat(seq(...)) at wire time and registers
+//     them in grammar.inline.
+//   - inlineRefs (this file) inlines GROUP / MULTI hidden refs AND any
+//     group-lift-sourced ref whose target is in grammar.inline, matching
+//     tree-sitter's parse-time inlining.
+//   - simplifyRules + canonicalizeSeqOfLeaves run to fixpoint and a final
+//     deleteWrapper pass enforces wrapper-free output (SimplifiedRule).
 //
-// Task 1.9 adds:
-//   - canonicalizeSeqOfLeaves(rule): final structural cleanup. Flattens
-//     degenerate single-member seqs. Recurses through children. Does NOT
-//     push down attributes (enrich did that) or synthesize groups
-//     (decomposeOptional / decomposeRepeat did that).
-//   - assertUniversalShape(node): post-condition check. Throws with kind
-//     name + offending sub-rule when the invariant doesn't hold.
-//
-// NOTE: assertUniversalShape is exported but NOT yet wired into the
-// production pipeline. Enabling it at assembly's exit would be a
-// behavior-change that could break existing kinds where enrich /
-// decomposeOptional / decomposeRepeat hasn't caught every case yet.
-// Wire it ONLY in tests for now — once PR0 lands and we can verify on
-// real grammars, decide whether to enable it in production (PR1).
+// assertUniversalShape(node) remains test-only. The above sequence holds
+// the invariant on real grammars, but wiring as a production fail-fast
+// gate is deferred — flagged as a follow-up post-PR2.
 
 /**
  * Generic post-order child recursion for the `Rule` IR. Mirrors
@@ -918,9 +1181,9 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
  *   - Recursively canonicalize children.
  *   - Flatten degenerate single-member seqs (`seq([X])` → `X`).
  *
- * Does NOT perform attribute push-down — enrich already did that.
- * Does NOT synthesize groups — decomposeOptional / decomposeRepeat already
- * did that.
+ * Does NOT perform attribute push-down — applyWrapperDeletion in optimize
+ * already did that. Does NOT synthesize groups — applyAutoGroups (wire
+ * phase) already did that.
  *
  * This is the final structural cleanup pass that absorbs the trivial
  * `seq([X])` → `X` shapes left behind by upstream transformations.

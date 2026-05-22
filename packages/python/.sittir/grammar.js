@@ -436,15 +436,17 @@ function isAliasPlaceholder(v) {
 }
 
 // packages/codegen/src/dsl/wire/auto-groups.ts
-function applyAutoGroups(base2, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
+function applyAutoGroups(base2, outRules, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
   if (!base2) return;
   const hasWrapper = "grammar" in base2 && base2.grammar !== void 0;
   const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
   if (!rulesBag) return;
   const dedupe = {};
   const synthRules = {};
+  const rewrites = {};
   for (const name of Object.keys(rulesBag)) {
     if (authoredSynthesisKinds.has(name)) continue;
+    if (context.authoredRuleNames.has(name)) continue;
     const rule = rulesBag[name];
     if (!rule) continue;
     const state = { opt: 0, rep: 0 };
@@ -452,35 +454,60 @@ function applyAutoGroups(base2, context, authoredSynthesisKinds = /* @__PURE__ *
     next = synthesizeOptionalGroups(next, synthRules, name, state, dedupe);
     next = synthesizeRepeatGroups(next, synthRules, name, state, dedupe);
     if (next !== rule) {
-      rulesBag[name] = next;
+      rewrites[name] = next;
     }
   }
   for (const synName of Object.keys(synthRules)) {
-    if (synName in rulesBag) continue;
-    rulesBag[synName] = synthRules[synName];
+    if (synName in outRules || synName in rulesBag) continue;
+    outRules[synName] = makeStaticRuleFn(synthRules[synName]);
     context.syntheticInline.add(synName);
   }
+  for (const parentName of Object.keys(rewrites)) {
+    outRules[parentName] = makeStaticRuleFn(rewrites[parentName]);
+  }
+}
+function makeStaticRuleFn(body) {
+  return function staticAutoGroupRule() {
+    return body;
+  };
 }
 function synthesizeOptionalGroups(rule, synthRules, parentKind, state, dedupe) {
   const recursed = recurseChildren(
     rule,
     (r) => synthesizeOptionalGroups(r, synthRules, parentKind, state, dedupe)
   );
-  if (!isOptionalType(recursed.type)) return recursed;
-  const content = recursed.content;
-  if (!content || typeof content !== "object") return recursed;
-  const t = content.type;
-  if (!isSeqType(t)) return recursed;
-  const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
-  if (!(synName in synthRules)) {
-    synthRules[synName] = content;
+  if (isOptionalType(recursed.type)) {
+    const content = recursed.content;
+    if (!content || typeof content !== "object") return recursed;
+    if (!isSeqType(content.type)) return recursed;
+    const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
+    if (!(synName in synthRules)) synthRules[synName] = content;
+    const symbolRef = {
+      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
+      name: synName,
+      source: "group-lift"
+    };
+    return { ...recursed, content: symbolRef };
   }
-  const symbolRef = {
-    type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
-    name: synName,
-    source: "group-lift"
-  };
-  return { ...recursed, content: symbolRef };
+  if (isChoiceType(recursed.type)) {
+    const members = recursed.members;
+    if (!Array.isArray(members) || members.length !== 2) return recursed;
+    const blankIdx = members.findIndex((m) => isBlankType(m?.type));
+    const seqIdx = members.findIndex((m) => isSeqType(m.type));
+    if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return recursed;
+    const seqMember = members[seqIdx];
+    const synName = synthesizeGroupName(seqMember, parentKind, "optional", state, dedupe);
+    if (!(synName in synthRules)) synthRules[synName] = seqMember;
+    const symbolRef = {
+      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
+      name: synName,
+      source: "group-lift"
+    };
+    const newMembers = members.slice();
+    newMembers[seqIdx] = symbolRef;
+    return { ...recursed, members: newMembers };
+  }
+  return recursed;
 }
 function synthesizeRepeatGroups(rule, synthRules, parentKind, state, dedupe) {
   const recursed = recurseChildren(
@@ -643,9 +670,11 @@ function wire(config, base2) {
     );
     applyAutoGroups(
       base2,
+      outRules,
       context,
       authoredSynthesisKinds
     );
+    applyWirePatternReplacement(outRules, context.authoredRuleNames, config.groups, context);
   }
   const conflicts = wrapConflictsCallback(config.conflicts, context);
   const inline = wrapInlineCallback(config.inline, context);
@@ -861,7 +890,18 @@ function isComplexBodyRt(rule) {
   }
   return false;
 }
-function patternBodyEqual(a, b) {
+function unwrapOptionalChoiceRt(node) {
+  if (!node || typeof node !== "object") return node;
+  const r = node;
+  if (isChoiceType(r.type) && Array.isArray(r.members) && r.members.length === 2) {
+    const blankIdx = r.members.findIndex((m) => isBlankType(m?.type));
+    if (blankIdx !== -1) return { type: "optional", content: r.members[1 - blankIdx] };
+  }
+  return node;
+}
+function patternBodyEqual(aIn, bIn) {
+  const a = unwrapOptionalChoiceRt(aIn);
+  const b = unwrapOptionalChoiceRt(bIn);
   if (!a || typeof a !== "object") return a === b;
   if (!b || typeof b !== "object") return false;
   const ra = a;
@@ -2108,7 +2148,17 @@ var overrides_default = grammar(
       // rule, tree-sitter needs an explicit GLR fork group to decide
       // between the bare expression and the tuple form on the `,`
       // suffix that only the tuple accepts.
-      [$.expression_statement, $._expression_statement_tuple]
+      [$.expression_statement, $._expression_statement_tuple],
+      // except_clause variant split: the `as` form (`except E as e:`)
+      // and the comma-list form (`except E1, E2:`) both begin with
+      // `field('value', expression) • …` and only diverge on the `as` /
+      // `,` continuation. Lifting each arm into its own hidden rule
+      // (`_except_clause_as` / `_except_clause_list`) requires an explicit
+      // GLR fork to decide between them after the shared prefix.
+      [$._except_clause_as, $._except_clause_list],
+      // The `as` form (`except E as e:`) overlaps with `as_pattern`
+      // (`E as e`) after the shared `expression 'as'` prefix — fork.
+      [$.as_pattern, $._except_clause_as]
     ],
     polymorphs: {
       assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
@@ -2187,9 +2237,32 @@ var overrides_default = grammar(
       // Note: `_simple_pattern` is a hidden rule, so no conflicts entry
       // is needed — tree-sitter inlines it into parent rules directly.
       // The visible variant kind is `simple_pattern_negative`.
-      _simple_pattern: { "11": "negative" }
+      _simple_pattern: { "11": "negative" },
+      // except_clause: base rule is
+      //   seq('except', optional('*'), optional(choice(
+      //     seq(field('value', expr), optional(seq('as', field('alias', expr)))),  ← arm 0 "as" form
+      //     commaSep1(field('value', expr)),                                        ← arm 1 comma-list form
+      //   )), ':', _suite)
+      // The two arms have DIFFERENT field sets (arm 0: value + optional
+      // alias; arm 1: repeated value), so the cross-branch field merge
+      // (hoistSharedFieldAcrossChoiceBranches) can't fuse them — the
+      // choice reaches derivation as the non-canonical
+      // `seq-member-choice-needs-variant-or-merge` shape (hard error).
+      // Split per variant so each form owns its template. Path: seq pos 2
+      // = the optional, `/0` = its choice content, `/0`,`/1` = the arms.
+      // `except_clause` is visible, but the arms share the `expression`
+      // prefix; if tree-sitter reports an unresolved conflict between the
+      // aliased forms, add `[$.except_clause_as, $.except_clause_list]` to
+      // `conflicts`.
+      except_clause: { "2/0/0": "as", "2/0/1": "list" }
     },
     transforms: {
+      // argument_list: name the naked args choice (was an unresolvable
+      // `content` slot). expression | list_splat | dictionary_splat |
+      // parenthesized_expression | keyword_argument
+      argument_list: {
+        1: field("arguments")
+      },
       // as_pattern: 1 field(s)
       as_pattern: {},
       // await: 1 field(s)
@@ -2235,6 +2308,10 @@ var overrides_default = grammar(
       decorator: {
         2: field("newline")
         //  [struct=1]
+      },
+      // dictionary: name the naked entries choice (pair | dictionary_splat)
+      dictionary: {
+        1: field("entries")
       },
       // dictionary_splat: 1 field(s)
       dictionary_splat: {},

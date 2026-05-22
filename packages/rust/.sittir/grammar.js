@@ -438,15 +438,17 @@ function alias(rule, value) {
 }
 
 // packages/codegen/src/dsl/wire/auto-groups.ts
-function applyAutoGroups(base2, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
+function applyAutoGroups(base2, outRules, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
   if (!base2) return;
   const hasWrapper = "grammar" in base2 && base2.grammar !== void 0;
   const rulesBag = hasWrapper ? base2.grammar?.rules : base2.rules;
   if (!rulesBag) return;
   const dedupe = {};
   const synthRules = {};
+  const rewrites = {};
   for (const name of Object.keys(rulesBag)) {
     if (authoredSynthesisKinds.has(name)) continue;
+    if (context.authoredRuleNames.has(name)) continue;
     const rule = rulesBag[name];
     if (!rule) continue;
     const state = { opt: 0, rep: 0 };
@@ -454,35 +456,60 @@ function applyAutoGroups(base2, context, authoredSynthesisKinds = /* @__PURE__ *
     next = synthesizeOptionalGroups(next, synthRules, name, state, dedupe);
     next = synthesizeRepeatGroups(next, synthRules, name, state, dedupe);
     if (next !== rule) {
-      rulesBag[name] = next;
+      rewrites[name] = next;
     }
   }
   for (const synName of Object.keys(synthRules)) {
-    if (synName in rulesBag) continue;
-    rulesBag[synName] = synthRules[synName];
+    if (synName in outRules || synName in rulesBag) continue;
+    outRules[synName] = makeStaticRuleFn(synthRules[synName]);
     context.syntheticInline.add(synName);
   }
+  for (const parentName of Object.keys(rewrites)) {
+    outRules[parentName] = makeStaticRuleFn(rewrites[parentName]);
+  }
+}
+function makeStaticRuleFn(body) {
+  return function staticAutoGroupRule() {
+    return body;
+  };
 }
 function synthesizeOptionalGroups(rule, synthRules, parentKind, state, dedupe) {
   const recursed = recurseChildren(
     rule,
     (r) => synthesizeOptionalGroups(r, synthRules, parentKind, state, dedupe)
   );
-  if (!isOptionalType(recursed.type)) return recursed;
-  const content = recursed.content;
-  if (!content || typeof content !== "object") return recursed;
-  const t = content.type;
-  if (!isSeqType(t)) return recursed;
-  const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
-  if (!(synName in synthRules)) {
-    synthRules[synName] = content;
+  if (isOptionalType(recursed.type)) {
+    const content = recursed.content;
+    if (!content || typeof content !== "object") return recursed;
+    if (!isSeqType(content.type)) return recursed;
+    const synName = synthesizeGroupName(content, parentKind, "optional", state, dedupe);
+    if (!(synName in synthRules)) synthRules[synName] = content;
+    const symbolRef = {
+      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
+      name: synName,
+      source: "group-lift"
+    };
+    return { ...recursed, content: symbolRef };
   }
-  const symbolRef = {
-    type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
-    name: synName,
-    source: "group-lift"
-  };
-  return { ...recursed, content: symbolRef };
+  if (isChoiceType(recursed.type)) {
+    const members = recursed.members;
+    if (!Array.isArray(members) || members.length !== 2) return recursed;
+    const blankIdx = members.findIndex((m) => isBlankType(m?.type));
+    const seqIdx = members.findIndex((m) => isSeqType(m.type));
+    if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return recursed;
+    const seqMember = members[seqIdx];
+    const synName = synthesizeGroupName(seqMember, parentKind, "optional", state, dedupe);
+    if (!(synName in synthRules)) synthRules[synName] = seqMember;
+    const symbolRef = {
+      type: detectCase(recursed) === "upper" ? "SYMBOL" : "symbol",
+      name: synName,
+      source: "group-lift"
+    };
+    const newMembers = members.slice();
+    newMembers[seqIdx] = symbolRef;
+    return { ...recursed, members: newMembers };
+  }
+  return recursed;
 }
 function synthesizeRepeatGroups(rule, synthRules, parentKind, state, dedupe) {
   const recursed = recurseChildren(
@@ -645,9 +672,11 @@ function wire(config2, base2) {
     );
     applyAutoGroups(
       base2,
+      outRules,
       context,
       authoredSynthesisKinds
     );
+    applyWirePatternReplacement(outRules, context.authoredRuleNames, config2.groups, context);
   }
   const conflicts = wrapConflictsCallback(config2.conflicts, context);
   const inline = wrapInlineCallback(config2.inline, context);
@@ -863,7 +892,18 @@ function isComplexBodyRt(rule) {
   }
   return false;
 }
-function patternBodyEqual(a, b) {
+function unwrapOptionalChoiceRt(node) {
+  if (!node || typeof node !== "object") return node;
+  const r = node;
+  if (isChoiceType(r.type) && Array.isArray(r.members) && r.members.length === 2) {
+    const blankIdx = r.members.findIndex((m) => isBlankType(m?.type));
+    if (blankIdx !== -1) return { type: "optional", content: r.members[1 - blankIdx] };
+  }
+  return node;
+}
+function patternBodyEqual(aIn, bIn) {
+  const a = unwrapOptionalChoiceRt(aIn);
+  const b = unwrapOptionalChoiceRt(bIn);
   if (!a || typeof a !== "object") return a === b;
   if (!b || typeof b !== "object") return false;
   const ra = a;
@@ -2183,11 +2223,44 @@ var config = {
     attributed_type_parameter: ($) => seq(
       repeat($.attribute_item),
       choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)
-    )
+    ),
+    // arguments: each call arg is seq(repeat(attribute_item), _expression).
+    // Synthesize a visible `attributed_argument` kind (mirrors
+    // attributed_parameter / attributed_type_parameter) so the arg list
+    // renders `attributed_argument` items. Replaces the transforms:
+    // field('attributes') collision-patch, which named the attribute but
+    // left `_expression` (the actual args) as an empty `$children` slot.
+    attributed_argument: ($) => seq(repeat($.attribute_item), $._expression)
   },
   transforms: {
     // abstract_type: 1 field(s)
     abstract_type: {},
+    // field_initializer_list: name the naked initializers choice (was an
+    // unresolvable `content` slot).
+    field_initializer_list: {
+      1: field("initializers")
+    },
+    // tuple_pattern: name the naked elements choice (was an unresolvable
+    // `content` slot).
+    tuple_pattern: {
+      1: field("elements")
+    },
+    // Naked-choice field names (was unresolvable `content` slots).
+    closure_parameters: {
+      1: field("parameters")
+    },
+    struct_pattern: {
+      2: field("fields")
+    },
+    trait_bounds: {
+      1: field("bounds")
+    },
+    use_bounds: {
+      2: field("bounds")
+    },
+    last_match_arm: {
+      0: field("attributes")
+    },
     // async_block: seq('async', optional('move'), $.block).
     // Field-promotion wave 1 (016 task #23): label the standalone
     // optional `move` punct as `move_marker` so render preserves it
@@ -2205,14 +2278,9 @@ var config = {
     // aliasing — composition-order inversion in wire() lets this
     // flow declaratively instead of inline in rules:.
     array_expression: [{ 1: field("attributes") }, { "2/(_expression)": field("elements") }],
-    // arguments: seq('(', repeat(seq(repeat(attribute_item), _expression,
-    // optional(','))), ')').
-    // storageName collision: repeat(attribute_item) at inner-seq pos 0
-    // and _expression at inner-seq pos 1 both infer storageName='children'.
-    // Promote attribute_item to named field; expression stays as $children.
-    arguments: {
-      "1/0": field("attributes")
-    },
+    // arguments: handled by the `attributed_argument` body-pattern group
+    // (see groups: above) — each call arg is synthesized as a visible
+    // `attributed_argument` kind, like `attributed_parameter`.
     // attribute: seq(_path, optional(choice(seq('=', field('value',
     // _expression)), field('arguments', delim_token_tree)))).
     // storageName collision: _path (pos 0) and the optional choice

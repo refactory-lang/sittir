@@ -32,7 +32,7 @@ import type {
 	TokenRule,
 	VariantRule
 } from '../../compiler/rule.ts';
-import type { AssembledNonterminal } from '../../compiler/node-map.ts';
+import type { AssembledNonterminal, NodeOrTerminal } from '../../compiler/node-map.ts';
 import { emitRule, type EmitCtx } from '../templates.ts';
 
 function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
@@ -50,13 +50,25 @@ function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 	};
 }
 
+/**
+ * A minimal terminal value with `multiplicity: 'single'` so `isRequired`
+ * returns `true` for test slots that represent required scalar fields.
+ * Without this, `isRequired` conservatively returns `false` for empty
+ * `values` arrays and the emitter wraps the slot in an `isPresent` guard.
+ */
+const SINGLE_REQUIRED_VALUE: NodeOrTerminal = {
+	kind: 'terminal',
+	value: 'x',
+	multiplicity: 'single'
+};
+
 function makeSlot(overrides: Partial<AssembledNonterminal>): AssembledNonterminal {
 	return {
 		name: 'value',
 		propertyName: 'value',
 		configKey: 'value',
 		storageName: 'value',
-		values: [],
+		values: [SINGLE_REQUIRED_VALUE],
 		paramName: 'value',
 		hasTrailing: false,
 		hasLeading: false,

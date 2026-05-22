@@ -30,7 +30,7 @@ import { optimize } from '../compiler/optimize.ts';
 import { assemble } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables, deriveGeneratedIdTablesFromParserCSource } from '../compiler/generated-metadata.ts';
-import { emitJinjaTemplates } from '../emitters/templates.ts';
+import { runTemplateEmitter } from '../emitters/templates.ts';
 import type { TemplateFile } from '../emitters/template-hash.ts';
 import type { NodeMap } from '../compiler/types.ts';
 
@@ -156,7 +156,7 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const nodeMap = assemble(optimized);
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 
-	const jinjaTemplates = emitJinjaTemplates({ grammar, nodeMap });
+	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap });
 	const templateFiles: TemplateFile[] = [];
 	for (const [kind, body] of jinjaTemplates.bodies) {
 		templateFiles.push({ filename: `${kind}.jinja`, content: body });
@@ -309,7 +309,7 @@ async function buildRustFixtureForParity() {
 			)
 		: await loadGeneratedIdTables(grammar);
 
-	const jinjaTemplates = emitJinjaTemplates({ grammar, nodeMap });
+	const jinjaTemplates = runTemplateEmitter({ grammar, nodeMap });
 	return { grammar, nodeMap, generatedIdTables, jinjaTemplates };
 }
 

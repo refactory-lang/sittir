@@ -583,7 +583,14 @@ function dereferenceTopLevelAliasBody(
  */
 function extractAliasedFromName(content: Rule, supertypes: Set<string>): string | undefined {
 	if (content.type === 'symbol') {
-		if (supertypes.has(content.name)) return undefined;
+		// Record the alias SOURCE as provenance even when it is a supertype.
+		// `alias($.expression, $.as_pattern_target)` aliases the `expression`
+		// supertype: the slot must be typed by that source (the expression
+		// union, which IS in the node map), NOT by the bare target label
+		// `as_pattern_target` — the target has no rule body, so leaving
+		// aliasedFrom unset makes `refName = aliasedFrom ?? name` fall back to
+		// the target and emit a phantom unresolved ref. The target still
+		// survives as the symbol `name` (the CST `$type` the reader matches).
 		return content.name;
 	}
 	if (
@@ -607,7 +614,7 @@ function extractAliasedFromName(content: Rule, supertypes: Set<string>): string 
 /**
  * Would a reference to `kindName` be inlined at assemble time?
  *
- * Assemble's `inlineGroupRefs` inlines symbol refs to hidden rules
+ * Assemble's `inlineRefs` inlines symbol refs to hidden rules
  * whose body is a `group` (hidden seq-with-fields helper) or a pure
  * `repeat` / `repeat1` (multi helper). Those splice into the parent
  * rule's structure. Everything else — visible kinds, supertypes,
@@ -1375,7 +1382,7 @@ function choiceNeedsVariantWrapping(choice: ChoiceRule): boolean {
 		// symbols that inline become their inner content's tokens
 		// (which would need variant ONLY if the inner content is itself
 		// anonymous — handled when Assemble classifies the hidden rule
-		// as a group and inlineGroupRefs expands it).
+		// as a group and inlineRefs expands it).
 		if (c.type === 'symbol' || c.type === 'supertype') return false;
 		// Transparent wrappers — look inside. `field(name, content)` is
 		// included: if content is a symbol/supertype, render dispatches

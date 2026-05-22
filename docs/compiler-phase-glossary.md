@@ -5,14 +5,30 @@ compiler pipeline. Each entry covers pattern (when it fires), action
 (what it does), and output (what changes). Phases run in order:
 Enrich -> Evaluate -> Link -> Optimize -> Simplify -> Assemble.
 
-> **Updated 2026-05-19 to reflect the planned rule-attribute / template-emitter
-> refactor.** Sections marked **(PR0 / PR1 / PR2 / PR3 — planned)** describe the
-> target state after the 4-PR refactor lands. See
-> [`docs/superpowers/specs/2026-05-18-rule-attributes-and-template-emitter-design.md`](./superpowers/specs/2026-05-18-rule-attributes-and-template-emitter-design.md)
-> for the source-of-truth design. Items marked **(legacy — to be removed in PRn)**
-> describe pre-refactor behavior that remains in effect on `master` until the
-> referenced PR lands. Trust the spec when it differs from the
-> [implementation plan](./superpowers/plans/2026-05-19-rule-attributes-and-template-emitter.md).
+> **Updated 2026-05-20 — PR0 + PR1 + PR2 SHIPPED.** Glossary still references
+> the planned shape from the 2026-05-19 spec; this note summarises what
+> actually landed. See sections inline for per-function deltas. Source of
+> truth: [`docs/superpowers/specs/2026-05-18-rule-attributes-and-template-emitter-design.md`](./superpowers/specs/2026-05-18-rule-attributes-and-template-emitter-design.md).
+>
+> **What's shipped (PR0 + PR1 + PR2):**
+> - **RuleBase attributes** (PR0): `fieldName` / `multiplicity` / `nonterminal` / `separator` on every Rule via shared `RuleBase` interface.
+> - **applyWrapperDeletion** (PR1, `compiler/wrapper-deletion.ts`): new pass at the end of `optimize()`; pushes modifier wrappers (optional / field / repeat / repeat1) down to leaf RuleBase attributes. Output: `RenderRule` (wrapper-free).
+> - **RenderRule + SimplifiedRule branded types** (PR1/PR2, `compiler/rule.ts`): `RenderRule = Exclude<Rule, OptionalRule | FieldRule | RepeatRule | Repeat1Rule>` + brand; `SimplifiedRule = RenderRule` + universal-shape brand.
+> - **computeSimplifiedRules** (PR1, relocated to `compiler/simplify.ts`): takes RenderRule input, runs `inlineRefs` + `simplifyRules` + `canonicalizeSeqOfLeaves` + `deleteWrapper` (post-fixpoint guard). Output: `Record<string, SimplifiedRule>`.
+> - **Alias-body + polymorph-form + group-inner snapshots** (PR2): `optimize()` threads alias-bodies and polymorph-form contents through `applyWrapperDeletion` + `computeSimplifiedRules` and merges them into `renderRules` / `simplifiedRules`. `assemble.ts` reads snapshots directly; per-call `simplifyRule(...)` / `deleteWrapper(...)` fallbacks deleted.
+> - **applyAutoGroups re-enabled** (PR2): `dsl/wire/wire.ts` invokes `applyAutoGroups`; synthesized helpers (e.g. `_type_arguments_repeat1`) are registered in `grammar.inline`.
+> - **inlineRefs renamed + widened** (PR2, formerly `inlineGroupRefs`): inlines (a) hidden GROUP / MULTI refs as before, and (b) any group-lift-sourced ref whose target is in `grammar.inline`. Matches tree-sitter's parse-time inlining so simplified rules don't carry symbol refs to inlined helpers.
+> - **deriveSlotsRaw wrapper-case deletion** (PR2): 4 wrapper case arms (field / optional / repeat / repeat1) deleted; `clause` kept until PR3 deletes ClauseRule.
+> - **New TemplateEmitter** (PR2, `emitters/templates.ts`): authoritative, modelType-dispatching, consumes `node.renderRule`. Slot-preservation gate replaced the byte-equivalence diff gate.
+> - **Per-slot separator on EmittedField** (PR2, `emitters/render-module.ts`): rust render emission reads separator from the slot's NodeRef/TerminalValue stamp, falling back to the node-wide `meta.separators` for slots not yet stamped.
+>
+> **What's still ahead (PR3):**
+> - Delete `template-walker.ts` (~1758 lines) + translation pipeline + `AssembledXxx.renderTemplate()` methods.
+> - Delete `ClauseRule` + sweep `'clause'` case sites.
+> - Delete wrapper rule types (`OptionalRule` / `FieldRule` / `RepeatRule` / `Repeat1Rule`).
+> - Delete RawRule snapshot from `optimize()` return.
+> - Migrate per-slot separator stamping to all kinds; drop the `meta.separators` node-wide fallback in render-module.
+> - Wire `assertUniversalShape` as production fail-fast gate (currently test-only).
 
 ---
 
@@ -462,10 +478,16 @@ derivation.
 **Action:** Merges into a flat seq with per-position unioned field contents.
 **Output:** `seq(field('op', choice('&&','||','+')), ...)`.
 
-### inlineGroupRefs(rule, rules, visited?)
-**Pattern:** Hidden symbol references to GROUP or MULTI helper rules.
-**Action:** Substitutes the symbol ref with the group's content (or the whole multi rule). Prevents cycles via visited set.
-**Output:** Rule with group/multi refs expanded inline.
+### inlineRefs(rule, rules, inlineKinds, visited?)
+**Pattern:** Hidden symbol references to inlinable targets.
+**Action:** Two inlining paths in priority order:
+  1. **GROUP / MULTI path:** hidden refs to group/multi rules are substituted with the group's content (or the whole multi rule). `source === 'group-lift'` refs skip this path (they materialise as their own AssembledGroup).
+  2. **grammar.inline path:** hidden, group-lift-sourced refs whose target is in `inlineKinds` are substituted with the target body (or its group/multi content if applicable). Matches tree-sitter's parse-time inlining of auto-synthesized helpers (e.g. `_type_arguments_repeat1`).
+
+  Cycle-safe via visited set.
+**Output:** Rule with inline targets expanded inline.
+
+> **(PR2 SHIPPED)** Renamed from `inlineGroupRefs`. Widened to inline auto-synthesized helpers registered in `grammar.inline` by `applyAutoGroups`. Threaded through `normalizeToFixpoint` → `simplifyRules` → `computeSimplifiedRules` from `optimize()`.
 
 ### extractRepeatShape(rule)
 **Pattern:** Rule that unwraps to `repeat` / `repeat1`.

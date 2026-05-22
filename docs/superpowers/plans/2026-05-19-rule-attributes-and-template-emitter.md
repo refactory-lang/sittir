@@ -1556,7 +1556,13 @@ After PR opens, dispatch reviewer subagents per the subagent-driven-development 
 
 ---
 
-## Chunk 3: PR2 — Canonicalization + new TemplateEmitter + deprecate `derive*` (2026-05-19 THIRD REVISION)
+## Chunk 3: PR2 ~~(SHIPPED 2026-05-20)~~
+
+> **Status:** SHIPPED. Branch `025-pr2-canonicalize-template-emitter`. See spec ["PR2 — SHIPPED"](../specs/2026-05-18-rule-attributes-and-template-emitter-design.md#pr2--canonicalization--new-templateemitter--inlinerefs--per-slot-separator-shipped-2026-05-20) for the commit-by-commit landing record and deferred items. Final counts: 30 file-fail / 61 file-pass, 127 test-fail / 886 pass. Rust validate:native covPass 158/184, RT-deep 101/136, shallow 134/136. cargo green.
+>
+> The remainder of this chunk is preserved for reference. Items not in the shipped record (deriveSlotsRaw rewrite, assertUniversalShape production gate, render-module separator full migration) deferred to PR3.
+
+## Chunk 3 (historical — for reference): PR2 — Canonicalization + new TemplateEmitter + deprecate `derive*` (2026-05-19 THIRD REVISION)
 
 ### Overview
 

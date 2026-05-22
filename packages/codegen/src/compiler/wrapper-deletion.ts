@@ -24,6 +24,8 @@
  */
 
 import type { Rule, RenderRule, PolymorphRule } from './rule.ts';
+import { fuseHeadRepeatLists } from './list-fusion.ts';
+import { isNonterminalRuleType } from './rule-catalog.ts';
 
 // ---------------------------------------------------------------------------
 // Accumulated modifier attributes from unwrapped wrappers
@@ -33,6 +35,9 @@ interface WrapperAttrs {
 	fieldName?: string;
 	multiplicity?: 'optional' | 'array' | 'nonEmptyArray';
 	separator?: Rule['separator'];
+	aliasedFrom?: string;
+	aliasNamed?: boolean;
+	nonterminal?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -60,6 +65,10 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 			const next: WrapperAttrs = {
 				...attrs,
 				multiplicity: attrs.multiplicity ?? (innerIsRepeatVariant ? 'array' : 'optional'),
+				// optional stays recursive: it forces a slot only when its
+				// content is intrinsically nonterminal (Table 2). optional(',')
+				// → no slot; optional(symbol)/optional(repeat) → slot.
+				nonterminal: attrs.nonterminal ?? (isNonterminalRuleType(rule.content) || undefined),
 			};
 			return deleteWrapperWith(rule.content, next);
 		}
@@ -69,6 +78,8 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 			const next: WrapperAttrs = {
 				...attrs,
 				fieldName: attrs.fieldName ?? rule.name,
+				// field forces a slot on its content (Table 2), incl. terminal.
+				nonterminal: true,
 			};
 			return deleteWrapperWith(rule.content, next);
 		}
@@ -89,7 +100,8 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 					sep = rule.separator;
 				}
 			}
-			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep };
+			// repeat forces an array slot (Table 2), incl. terminal content.
+			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep, nonterminal: true };
 			return deleteWrapperWith(rule.content, next);
 		}
 
@@ -108,7 +120,8 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 					sep = rule.separator;
 				}
 			}
-			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep };
+			// repeat1 forces a nonEmptyArray slot (Table 2), incl. terminal content.
+			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep, nonterminal: true };
 			return deleteWrapperWith(rule.content, next);
 		}
 
@@ -151,9 +164,21 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 		}
 
 		case 'alias': {
-			// alias.content is structural — recurse
-			const content = deleteWrapperWith(rule.content, {});
-			return stampAttrs({ ...rule, content }, attrs);
+			// Push the alias down to the leaf, exactly like field/optional/
+			// repeat: `alias(content, value)` stamps `aliasedFrom = value`
+			// (the target name tree-sitter emits) + `aliasNamed` onto the
+			// innermost rule, and the `alias` wrapper node disappears. The
+			// wrapper-free RenderRule/SimplifiedRule then carries alias
+			// provenance as a leaf attribute — consumers no longer match a
+			// mid-tree `alias` node. Outer alias wins if already set.
+			const next: WrapperAttrs = {
+				...attrs,
+				aliasedFrom: attrs.aliasedFrom ?? rule.value,
+				aliasNamed: attrs.aliasNamed ?? rule.named,
+				// A named alias forces a slot on its content (Table 2).
+				nonterminal: attrs.nonterminal ?? (rule.named || undefined),
+			};
+			return deleteWrapperWith(rule.content, next);
 		}
 
 		case 'polymorph': {
@@ -181,13 +206,23 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
  * with `undefined`-valued fields.
  */
 function stampAttrs(rule: Rule, attrs: WrapperAttrs): RenderRule {
-	if (attrs.fieldName === undefined && attrs.multiplicity === undefined && attrs.separator === undefined) {
+	if (
+		attrs.fieldName === undefined &&
+		attrs.multiplicity === undefined &&
+		attrs.separator === undefined &&
+		attrs.aliasedFrom === undefined &&
+		attrs.aliasNamed === undefined &&
+		attrs.nonterminal === undefined
+	) {
 		return rule as RenderRule;
 	}
 	const patch: Record<string, unknown> = {};
 	if (attrs.fieldName !== undefined) patch['fieldName'] = attrs.fieldName;
 	if (attrs.multiplicity !== undefined) patch['multiplicity'] = attrs.multiplicity;
 	if (attrs.separator !== undefined) patch['separator'] = attrs.separator;
+	if (attrs.aliasedFrom !== undefined) patch['aliasedFrom'] = attrs.aliasedFrom;
+	if (attrs.aliasNamed !== undefined) patch['aliasNamed'] = attrs.aliasNamed;
+	if (attrs.nonterminal !== undefined) patch['nonterminal'] = attrs.nonterminal;
 	return { ...rule, ...patch } as RenderRule;
 }
 
@@ -216,7 +251,11 @@ export function deleteWrapper(rule: Rule): RenderRule {
 export function applyWrapperDeletion(rules: Record<string, Rule>): Record<string, RenderRule> {
 	const result: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
-		result[name] = deleteWrapper(rule);
+		// Fuse separated-list head+repeat pairs into one multi slot AFTER
+		// wrapper-deletion has pushed multiplicity/separator to leaves, so the
+		// renderRule the emitter consumes already has the canonical single
+		// multi slot (no head single + tail array split).
+		result[name] = fuseHeadRepeatLists(deleteWrapper(rule)) as RenderRule;
 	}
 	return result;
 }
