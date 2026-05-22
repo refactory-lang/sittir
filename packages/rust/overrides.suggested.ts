@@ -14,7 +14,7 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  5  (0 applied, 5 held)
+// Field inferences:  4  (0 applied, 4 held)
 // Rule promotions:   100  (91 applied, 9 held)
 // Repeated shapes:   4  (advisory — suggested supertypes/groups)
 
@@ -76,9 +76,6 @@ export const suggestedTransforms = {
 
   // slice_pattern: 1 inferred field(s)
   // [held] slice_pattern field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // tuple_pattern: 1 inferred field(s)
-  // [held] tuple_pattern field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // tuple_struct_pattern: 1 inferred field(s)
   // [held] tuple_struct_pattern field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
@@ -398,7 +395,6 @@ export interface InferredField {
 export const inferredFields: readonly InferredField[] = [
   { kind: "closure_parameters", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "slice_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
-  { kind: "tuple_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "tuple_struct_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "_type_arguments_repeat1", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },
 ];

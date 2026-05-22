@@ -815,7 +815,7 @@ export interface FieldInitializerListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<FieldInitializerListContentTransportSlot>
+  _initializers?: Array<FieldInitializerListInitializersTransportSlot>
 }
 
 export interface FieldInitializerTransport {
@@ -2419,7 +2419,7 @@ export interface TuplePatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<TuplePatternContentTransportSlot>
+  _elements?: Array<TuplePatternElementsTransportSlot>
 }
 
 export interface TupleStructPatternTransport {

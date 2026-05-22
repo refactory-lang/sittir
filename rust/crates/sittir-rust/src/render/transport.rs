@@ -12857,14 +12857,14 @@ impl RenderableTransport for EnumVariantBodyTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum FieldInitializerListContentTransportSlot {
+pub enum FieldInitializerListInitializersTransportSlot {
     ShorthandFieldInitializer(ShorthandFieldInitializerTransport),
     FieldInitializer(FieldInitializerTransport),
     BaseFieldInitializer(BaseFieldInitializerTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FieldInitializerListContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for FieldInitializerListInitializersTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -12881,14 +12881,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldInitializerListContentTrans
                     BaseFieldInitializerTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in FieldInitializerListContentTransportSlot",
+                    "unknown kind id {other} in FieldInitializerListInitializersTransportSlot",
                 ))),
             };
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
-            .map_err(|_| ::napi::Error::from_reason("FieldInitializerListContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+            .map_err(|_| ::napi::Error::from_reason("FieldInitializerListInitializersTransportSlot: expected u16 kind_id, string, or object with $type"))?;
         let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-            ::napi::Error::from_reason("$type property missing in FieldInitializerListContentTransportSlot")
+            ::napi::Error::from_reason("$type property missing in FieldInitializerListInitializersTransportSlot")
         )?;
         match kind_id {
                 264 => Ok(Self::ShorthandFieldInitializer(
@@ -12901,59 +12901,59 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldInitializerListContentTrans
                     BaseFieldInitializerTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in FieldInitializerListContentTransportSlot",
+                    "unknown kind id {other} in FieldInitializerListInitializersTransportSlot",
                 ))),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FieldInitializerListContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for FieldInitializerListInitializersTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FieldInitializerListContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("FieldInitializerListInitializersTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FieldInitializerListContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FieldInitializerListInitializersTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FieldInitializerListContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        FieldInitializerListInitializersTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldInitializerListContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldInitializerListInitializersTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FieldInitializerListContentTransportSlot::to_napi_value(env, *val)
+        FieldInitializerListInitializersTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn field_initializer_list_content_transport_slot_to_any(t: FieldInitializerListContentTransportSlot) -> AnyTransport {
+fn field_initializer_list_initializers_transport_slot_to_any(t: FieldInitializerListInitializersTransportSlot) -> AnyTransport {
     match t {
-        FieldInitializerListContentTransportSlot::ShorthandFieldInitializer(inner) => AnyTransport::ShorthandFieldInitializer(inner),
-        FieldInitializerListContentTransportSlot::FieldInitializer(inner) => AnyTransport::FieldInitializer(inner),
-        FieldInitializerListContentTransportSlot::BaseFieldInitializer(inner) => AnyTransport::BaseFieldInitializer(inner),
+        FieldInitializerListInitializersTransportSlot::ShorthandFieldInitializer(inner) => AnyTransport::ShorthandFieldInitializer(inner),
+        FieldInitializerListInitializersTransportSlot::FieldInitializer(inner) => AnyTransport::FieldInitializer(inner),
+        FieldInitializerListInitializersTransportSlot::BaseFieldInitializer(inner) => AnyTransport::BaseFieldInitializer(inner),
     }
 }
 
-impl RenderableTransport for FieldInitializerListContentTransportSlot {
+impl RenderableTransport for FieldInitializerListInitializersTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            FieldInitializerListContentTransportSlot::ShorthandFieldInitializer(inner) => render_shorthand_field_initializer(inner, dest),
-            FieldInitializerListContentTransportSlot::FieldInitializer(inner) => render_field_initializer(inner, dest),
-            FieldInitializerListContentTransportSlot::BaseFieldInitializer(inner) => render_base_field_initializer(inner, dest),
+            FieldInitializerListInitializersTransportSlot::ShorthandFieldInitializer(inner) => render_shorthand_field_initializer(inner, dest),
+            FieldInitializerListInitializersTransportSlot::FieldInitializer(inner) => render_field_initializer(inner, dest),
+            FieldInitializerListInitializersTransportSlot::BaseFieldInitializer(inner) => render_base_field_initializer(inner, dest),
         }
     }
 }
@@ -15362,7 +15362,7 @@ impl RenderableTransport for TraitBoundsContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum TuplePatternContentTransportSlot {
+pub enum TuplePatternElementsTransportSlot {
     StringLiteral(StringLiteralTransport),
     RawStringLiteral(RawStringLiteralTransport),
     CharLiteral(CharLiteralTransport),
@@ -15393,7 +15393,7 @@ pub enum TuplePatternContentTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternElementsTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -15491,7 +15491,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternContentTransportSlot
                     ClosureExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in TuplePatternContentTransportSlot",
+                    "unknown kind id {other} in TuplePatternElementsTransportSlot",
                 ))),
             };
         }
@@ -15499,9 +15499,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternContentTransportSlot
             return Ok(Self::Verbatim(VerbatimTransport { text }));
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
-            .map_err(|_| ::napi::Error::from_reason("TuplePatternContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+            .map_err(|_| ::napi::Error::from_reason("TuplePatternElementsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
         let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-            ::napi::Error::from_reason("$type property missing in TuplePatternContentTransportSlot")
+            ::napi::Error::from_reason("$type property missing in TuplePatternElementsTransportSlot")
         )?;
         match kind_id {
                 311 => Ok(Self::StringLiteral(
@@ -15595,107 +15595,107 @@ impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternContentTransportSlot
                     ClosureExpressionTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in TuplePatternContentTransportSlot",
+                    "unknown kind id {other} in TuplePatternElementsTransportSlot",
                 ))),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TuplePatternContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for TuplePatternElementsTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TuplePatternContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("TuplePatternElementsTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TuplePatternContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TuplePatternElementsTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TuplePatternContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        TuplePatternElementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TuplePatternContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TuplePatternElementsTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TuplePatternContentTransportSlot::to_napi_value(env, *val)
+        TuplePatternElementsTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn tuple_pattern_content_transport_slot_to_any(t: TuplePatternContentTransportSlot) -> AnyTransport {
+fn tuple_pattern_elements_transport_slot_to_any(t: TuplePatternElementsTransportSlot) -> AnyTransport {
     match t {
-        TuplePatternContentTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
-        TuplePatternContentTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
-        TuplePatternContentTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
-        TuplePatternContentTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
-        TuplePatternContentTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
-        TuplePatternContentTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
-        TuplePatternContentTransportSlot::NegativeLiteral(inner) => AnyTransport::NegativeLiteral(inner),
-        TuplePatternContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        TuplePatternContentTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
-        TuplePatternContentTransportSlot::GenericPattern(inner) => AnyTransport::GenericPattern(inner),
-        TuplePatternContentTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
-        TuplePatternContentTransportSlot::TupleStructPattern(inner) => AnyTransport::TupleStructPattern(inner),
-        TuplePatternContentTransportSlot::StructPattern(inner) => AnyTransport::StructPattern(inner),
-        TuplePatternContentTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
-        TuplePatternContentTransportSlot::RefPattern(inner) => AnyTransport::RefPattern(inner),
-        TuplePatternContentTransportSlot::SlicePattern(inner) => AnyTransport::SlicePattern(inner),
-        TuplePatternContentTransportSlot::CapturedPattern(inner) => AnyTransport::CapturedPattern(inner),
-        TuplePatternContentTransportSlot::ReferencePattern(inner) => AnyTransport::ReferencePattern(inner),
-        TuplePatternContentTransportSlot::RemainingFieldPattern(inner) => AnyTransport::RemainingFieldPattern(inner),
-        TuplePatternContentTransportSlot::MutPattern(inner) => AnyTransport::MutPattern(inner),
-        TuplePatternContentTransportSlot::RangePattern(inner) => AnyTransport::RangePattern(inner),
-        TuplePatternContentTransportSlot::OrPattern(inner) => AnyTransport::OrPattern(inner),
-        TuplePatternContentTransportSlot::ConstBlock(inner) => AnyTransport::ConstBlock(inner),
-        TuplePatternContentTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
-        TuplePatternContentTransportSlot::WildcardPattern(inner) => AnyTransport::WildcardPattern(inner),
-        TuplePatternContentTransportSlot::ClosureExpression(inner) => AnyTransport::ClosureExpression(inner),
-        TuplePatternContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        TuplePatternElementsTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
+        TuplePatternElementsTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
+        TuplePatternElementsTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
+        TuplePatternElementsTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
+        TuplePatternElementsTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
+        TuplePatternElementsTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
+        TuplePatternElementsTransportSlot::NegativeLiteral(inner) => AnyTransport::NegativeLiteral(inner),
+        TuplePatternElementsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        TuplePatternElementsTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
+        TuplePatternElementsTransportSlot::GenericPattern(inner) => AnyTransport::GenericPattern(inner),
+        TuplePatternElementsTransportSlot::TuplePattern(inner) => AnyTransport::TuplePattern(inner),
+        TuplePatternElementsTransportSlot::TupleStructPattern(inner) => AnyTransport::TupleStructPattern(inner),
+        TuplePatternElementsTransportSlot::StructPattern(inner) => AnyTransport::StructPattern(inner),
+        TuplePatternElementsTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        TuplePatternElementsTransportSlot::RefPattern(inner) => AnyTransport::RefPattern(inner),
+        TuplePatternElementsTransportSlot::SlicePattern(inner) => AnyTransport::SlicePattern(inner),
+        TuplePatternElementsTransportSlot::CapturedPattern(inner) => AnyTransport::CapturedPattern(inner),
+        TuplePatternElementsTransportSlot::ReferencePattern(inner) => AnyTransport::ReferencePattern(inner),
+        TuplePatternElementsTransportSlot::RemainingFieldPattern(inner) => AnyTransport::RemainingFieldPattern(inner),
+        TuplePatternElementsTransportSlot::MutPattern(inner) => AnyTransport::MutPattern(inner),
+        TuplePatternElementsTransportSlot::RangePattern(inner) => AnyTransport::RangePattern(inner),
+        TuplePatternElementsTransportSlot::OrPattern(inner) => AnyTransport::OrPattern(inner),
+        TuplePatternElementsTransportSlot::ConstBlock(inner) => AnyTransport::ConstBlock(inner),
+        TuplePatternElementsTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
+        TuplePatternElementsTransportSlot::WildcardPattern(inner) => AnyTransport::WildcardPattern(inner),
+        TuplePatternElementsTransportSlot::ClosureExpression(inner) => AnyTransport::ClosureExpression(inner),
+        TuplePatternElementsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for TuplePatternContentTransportSlot {
+impl RenderableTransport for TuplePatternElementsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TuplePatternContentTransportSlot::StringLiteral(inner) => render_string_literal(inner, dest),
-            TuplePatternContentTransportSlot::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
-            TuplePatternContentTransportSlot::CharLiteral(inner) => render_char_literal(inner, dest),
-            TuplePatternContentTransportSlot::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
-            TuplePatternContentTransportSlot::IntegerLiteral(inner) => render_integer_literal(inner, dest),
-            TuplePatternContentTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
-            TuplePatternContentTransportSlot::NegativeLiteral(inner) => render_negative_literal(inner, dest),
-            TuplePatternContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            TuplePatternContentTransportSlot::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
-            TuplePatternContentTransportSlot::GenericPattern(inner) => render_generic_pattern(inner, dest),
-            TuplePatternContentTransportSlot::TuplePattern(inner) => render_tuple_pattern(inner, dest),
-            TuplePatternContentTransportSlot::TupleStructPattern(inner) => render_tuple_struct_pattern(inner, dest),
-            TuplePatternContentTransportSlot::StructPattern(inner) => render_struct_pattern(inner, dest),
-            TuplePatternContentTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-            TuplePatternContentTransportSlot::RefPattern(inner) => render_ref_pattern(inner, dest),
-            TuplePatternContentTransportSlot::SlicePattern(inner) => render_slice_pattern(inner, dest),
-            TuplePatternContentTransportSlot::CapturedPattern(inner) => render_captured_pattern(inner, dest),
-            TuplePatternContentTransportSlot::ReferencePattern(inner) => render_reference_pattern(inner, dest),
-            TuplePatternContentTransportSlot::RemainingFieldPattern(inner) => render_remaining_field_pattern(inner, dest),
-            TuplePatternContentTransportSlot::MutPattern(inner) => render_mut_pattern(inner, dest),
-            TuplePatternContentTransportSlot::RangePattern(inner) => render_range_pattern(inner, dest),
-            TuplePatternContentTransportSlot::OrPattern(inner) => render_or_pattern(inner, dest),
-            TuplePatternContentTransportSlot::ConstBlock(inner) => render_const_block(inner, dest),
-            TuplePatternContentTransportSlot::MacroInvocation(inner) => render_macro_invocation(inner, dest),
-            TuplePatternContentTransportSlot::WildcardPattern(inner) => render_wildcard_pattern(inner, dest),
-            TuplePatternContentTransportSlot::ClosureExpression(inner) => render_closure_expression(inner, dest),
-            TuplePatternContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            TuplePatternElementsTransportSlot::StringLiteral(inner) => render_string_literal(inner, dest),
+            TuplePatternElementsTransportSlot::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
+            TuplePatternElementsTransportSlot::CharLiteral(inner) => render_char_literal(inner, dest),
+            TuplePatternElementsTransportSlot::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
+            TuplePatternElementsTransportSlot::IntegerLiteral(inner) => render_integer_literal(inner, dest),
+            TuplePatternElementsTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
+            TuplePatternElementsTransportSlot::NegativeLiteral(inner) => render_negative_literal(inner, dest),
+            TuplePatternElementsTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            TuplePatternElementsTransportSlot::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
+            TuplePatternElementsTransportSlot::GenericPattern(inner) => render_generic_pattern(inner, dest),
+            TuplePatternElementsTransportSlot::TuplePattern(inner) => render_tuple_pattern(inner, dest),
+            TuplePatternElementsTransportSlot::TupleStructPattern(inner) => render_tuple_struct_pattern(inner, dest),
+            TuplePatternElementsTransportSlot::StructPattern(inner) => render_struct_pattern(inner, dest),
+            TuplePatternElementsTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+            TuplePatternElementsTransportSlot::RefPattern(inner) => render_ref_pattern(inner, dest),
+            TuplePatternElementsTransportSlot::SlicePattern(inner) => render_slice_pattern(inner, dest),
+            TuplePatternElementsTransportSlot::CapturedPattern(inner) => render_captured_pattern(inner, dest),
+            TuplePatternElementsTransportSlot::ReferencePattern(inner) => render_reference_pattern(inner, dest),
+            TuplePatternElementsTransportSlot::RemainingFieldPattern(inner) => render_remaining_field_pattern(inner, dest),
+            TuplePatternElementsTransportSlot::MutPattern(inner) => render_mut_pattern(inner, dest),
+            TuplePatternElementsTransportSlot::RangePattern(inner) => render_range_pattern(inner, dest),
+            TuplePatternElementsTransportSlot::OrPattern(inner) => render_or_pattern(inner, dest),
+            TuplePatternElementsTransportSlot::ConstBlock(inner) => render_const_block(inner, dest),
+            TuplePatternElementsTransportSlot::MacroInvocation(inner) => render_macro_invocation(inner, dest),
+            TuplePatternElementsTransportSlot::WildcardPattern(inner) => render_wildcard_pattern(inner, dest),
+            TuplePatternElementsTransportSlot::ClosureExpression(inner) => render_closure_expression(inner, dest),
+            TuplePatternElementsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -28166,8 +28166,8 @@ pub struct FieldInitializerListTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Vec<FieldInitializerListContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_initializers"))]
+    pub initializers: Option<Vec<FieldInitializerListInitializersTransportSlot>>,
 }
 
 impl RenderableTransport for FieldInitializerListTransport {
@@ -34090,8 +34090,8 @@ pub struct TuplePatternTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Vec<TuplePatternContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<Vec<TuplePatternElementsTransportSlot>>,
 }
 
 impl RenderableTransport for TuplePatternTransport {
@@ -45879,24 +45879,18 @@ fn render_field_initializer(node: &FieldInitializerTransport, dest: &mut dyn ::s
 }
 
 fn render_field_initializer_list(node: &FieldInitializerListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.initializers.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let content_owned = node.content.as_deref().unwrap_or(&[]);
-    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
+    let initializers_owned = node.initializers.as_deref().unwrap_or(&[]);
+    let initializers_buf: Vec<::sittir_core::filters::Renderable<'_>> = initializers_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = FieldInitializerListTemplate {
-        content: ListNonterminalView {
-            items: content_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        shorthand_field_initializer: ListNonterminalView {
-            items: content_buf.as_slice(),
+        initializers: ListNonterminalView {
+            items: initializers_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -47295,24 +47289,18 @@ fn render_tuple_expression(node: &TupleExpressionTransport, dest: &mut dyn ::std
 }
 
 fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.elements.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let content_owned = node.content.as_deref().unwrap_or(&[]);
-    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
+    let elements_owned = node.elements.as_deref().unwrap_or(&[]);
+    let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = elements_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TuplePatternTemplate {
-        content: ListNonterminalView {
-            items: content_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        pattern: ListNonterminalView {
-            items: content_buf.as_slice(),
+        elements: ListNonterminalView {
+            items: elements_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -53408,16 +53396,11 @@ fn transport_to_node_field_initializer(transport: FieldInitializerTransport) -> 
 
 fn transport_to_node_field_initializer_list(transport: FieldInitializerListTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.content {
-        children_buf.extend(value.into_iter().map(|v| field_initializer_list_content_transport_slot_to_any(v)).collect::<Vec<_>>());
+    if let Some(value) = transport.initializers {
+        fields.insert("initializers".to_string(), transport_field_values(value.into_iter().map(|v| field_initializer_list_initializers_transport_slot_to_any(v)).collect::<Vec<_>>())?);
     }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(263) /* "field_initializer_list" */,
@@ -56011,16 +55994,11 @@ fn transport_to_node_tuple_expression(transport: TupleExpressionTransport) -> Re
 
 fn transport_to_node_tuple_pattern(transport: TuplePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.content {
-        children_buf.extend(value.into_iter().map(|v| tuple_pattern_content_transport_slot_to_any(v)).collect::<Vec<_>>());
+    if let Some(value) = transport.elements {
+        fields.insert("elements".to_string(), transport_field_values(value.into_iter().map(|v| tuple_pattern_elements_transport_slot_to_any(v)).collect::<Vec<_>>())?);
     }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(296) /* "tuple_pattern" */,

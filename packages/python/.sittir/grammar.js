@@ -2249,6 +2249,12 @@ var overrides_default = grammar(
       except_clause: { "2/0/0": "as", "2/0/1": "list" }
     },
     transforms: {
+      // argument_list: name the naked args choice (was an unresolvable
+      // `content` slot). expression | list_splat | dictionary_splat |
+      // parenthesized_expression | keyword_argument
+      argument_list: {
+        1: field("arguments")
+      },
       // as_pattern: 1 field(s)
       as_pattern: {},
       // await: 1 field(s)
@@ -2294,6 +2300,10 @@ var overrides_default = grammar(
       decorator: {
         2: field("newline")
         //  [struct=1]
+      },
+      // dictionary: name the naked entries choice (pair | dictionary_splat)
+      dictionary: {
+        1: field("entries")
       },
       // dictionary_splat: 1 field(s)
       dictionary_splat: {},

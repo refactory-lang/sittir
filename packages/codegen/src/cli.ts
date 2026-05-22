@@ -33,6 +33,7 @@ function runFrom(grammar: string, backend: 'native' | 'typescript' = 'native') {
 }
 import { join, dirname, resolve } from 'node:path';
 import { generate } from './compiler/generate.ts';
+import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { emitSuggested } from './emitters/suggested.ts';
 import type { RoundTripDiagnostic } from './emitters/suggested.ts';
 import { compileParser } from './transpile/compile-parser.ts';
@@ -450,6 +451,17 @@ writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 const renderable = validateRenderableFromNodeMap(config.grammar, result.nodeMap);
 console.log('');
 console.log(formatRenderableReport(renderable));
+
+// Collected diagnostic: kinds whose CHOICE slot has no grammar field name.
+// A naked choice falls back to an unresolvable `content` slot; the author must
+// give it an explicit `field('<name>', ...)` in `packages/<lang>/overrides.ts`.
+const unnamedChoiceKinds = drainUnnamedChoiceSlots();
+if (unnamedChoiceKinds.length > 0) {
+	console.warn(
+		`\n⚠ ${unnamedChoiceKinds.length} unnamed choice slot(s) in ${config.grammar} — give each choice an explicit field name in packages/${config.grammar}/overrides.ts:\n  ` +
+			unnamedChoiceKinds.join('\n  ')
+	);
+}
 if (renderable.missing.length > 0) {
 	// Warning-only: these are typically anonymous / alias-target kinds that
 	// never get rendered as top-level nodes (e.g. `empty_statement`,

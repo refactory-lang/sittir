@@ -20,7 +20,7 @@
     "_unary_operator_operator": "text",
     "_with_clause_paren": "spread",
     "aliased_import": "config",
-    "argument_list": "spread",
+    "argument_list": "config",
     "as_pattern": "config",
     "assert_statement": "spread",
     "assignment": "config",
@@ -49,7 +49,7 @@
     "default_parameter": "config",
     "delete_statement": "direct",
     "dict_pattern": "spread",
-    "dictionary": "spread",
+    "dictionary": "config",
     "dictionary_comprehension": "config",
     "dictionary_splat": "direct",
     "dictionary_splat_pattern": "direct",
@@ -189,7 +189,7 @@
     "_suite.block": {
       "block": "_newline"
     },
-    "argument_list.content": {
+    "argument_list.arguments": {
       "parenthesized_expression": "parenthesized_list_splat"
     },
     "as_pattern.alias": {
@@ -312,7 +312,7 @@
       "alias"
     ],
     "argument_list": [
-      "content"
+      "arguments"
     ],
     "as_pattern": [
       "expression",
@@ -415,7 +415,7 @@
       "dict_pattern_kv"
     ],
     "dictionary": [
-      "content"
+      "entries"
     ],
     "dictionary_comprehension": [
       "body",
@@ -850,7 +850,7 @@
       }
     },
     "argument_list": {
-      "content": {
+      "arguments": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1266,7 +1266,7 @@
       }
     },
     "dictionary": {
-      "content": {
+      "entries": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,

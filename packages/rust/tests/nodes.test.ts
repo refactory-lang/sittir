@@ -557,9 +557,13 @@ describe('field_initializer', () => {
 
 describe('field_initializer_list', () => {
   it('factory produces correct type', () => {
-    const node = ir.fieldInitializerList();
+    const node = ir.fieldInitializerList({});
     expect(node.$type).toBe(TSKindId.FieldInitializerList);
     expect(node.$source).toBe(2);
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.fieldInitializerList({});
+    expect(() => node.$render!()).not.toThrow();
   });
 });
 
@@ -1701,9 +1705,13 @@ describe('tuple_expression', () => {
 
 describe('tuple_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.tuplePattern();
+    const node = ir.tuplePattern({});
     expect(node.$type).toBe(TSKindId.TuplePattern);
     expect(node.$source).toBe(2);
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.tuplePattern({});
+    expect(() => node.$render!()).not.toThrow();
   });
 });
 

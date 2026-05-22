@@ -61,7 +61,7 @@ export interface ArgumentListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<ArgumentListContentTransportSlot>
+  _arguments?: Array<ArgumentListArgumentsTransportSlot>
 }
 
 export interface AsPatternTransport {
@@ -454,7 +454,7 @@ export interface DictionaryTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<DictionaryContentTransportSlot>
+  _entries?: Array<DictionaryEntriesTransportSlot>
 }
 
 export interface DictPatternTransport {

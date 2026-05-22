@@ -1702,15 +1702,17 @@ export function fieldInitializer(config: T.FieldInitializer.Config) {
   }, methodsEngine);
 }
 
-export function fieldInitializerList(...children: (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]) {
-  const _content = children;
+export function fieldInitializerList(config: Partial<T.FieldInitializerList.Config> = {}) {
+  const _initializers = config.initializers;
   return withMethods({
     $type: TSKindId.FieldInitializerList as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]) => fieldInitializerList(...vs) },
+    _initializers,
+    initializers() { return _initializers; },
+    $with: {
+      initializers: (...values: (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]) => fieldInitializerList({ ...config, initializers: values }),
+    },
   }, methodsEngine);
 }
 
@@ -3953,15 +3955,17 @@ export function tupleExpression(config: Partial<T.TupleExpression.Config> = {}) 
   }, methodsEngine);
 }
 
-export function tuplePattern(...children: (T.Pattern | T.ClosureExpression)[]) {
-  const _content = children;
+export function tuplePattern(config: Partial<T.TuplePattern.Config> = {}) {
+  const _elements = config.elements;
   return withMethods({
     $type: TSKindId.TuplePattern as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.Pattern | T.ClosureExpression)[]) => tuplePattern(...vs) },
+    _elements,
+    elements() { return _elements; },
+    $with: {
+      elements: (...values: (T.Pattern | T.ClosureExpression)[]) => tuplePattern({ ...config, elements: values }),
+    },
   }, methodsEngine);
 }
 

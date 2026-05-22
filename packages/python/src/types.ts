@@ -1467,8 +1467,8 @@ export interface AliasedImport {
 
 export interface ArgumentList {
   readonly $type: TSKindId.ArgumentList;
-  readonly _content?: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
-  contents(): readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
+  readonly _arguments?: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
+  arguments(): readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
 }
 
 export interface AsPattern {
@@ -1703,8 +1703,8 @@ export interface DictPattern {
 
 export interface Dictionary {
   readonly $type: TSKindId.Dictionary;
-  readonly _content?: readonly (Pair | DictionarySplat)[];
-  contents(): readonly (Pair | DictionarySplat)[];
+  readonly _entries?: readonly (Pair | DictionarySplat)[];
+  entries(): readonly (Pair | DictionarySplat)[];
 }
 
 export interface DictionaryComprehension {

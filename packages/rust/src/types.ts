@@ -785,21 +785,21 @@ export const enum TSKindId {
   TypeArgumentsRepeat1 = 384,
   ArgumentsRepeat1 = 385,
   TupleExpressionRepeat1 = 386,
-  MatchArmRepeat1 = 387,
-  StringLiteralRepeat1 = 388,
-  _ArrayExpressionListRepeat1 = 389,
-  _MacroDefinitionParenRepeat1 = 390,
-  _DelimTokenTreeParenRepeat1 = 391,
-  _EnumVariantListOptional1Repeat1 = 392,
-  _FieldDeclarationListOptional1Repeat1 = 393,
-  _WhereClauseOptional1Repeat1 = 394,
-  _UseListOptional1Repeat1 = 395,
-  _ParametersOptional1Repeat1 = 396,
-  _UseBoundsOptional1Repeat1 = 397,
-  _FieldInitializerListOptional1Repeat1 = 398,
-  _MatchBlockOptional1Repeat1 = 399,
-  _ClosureParametersOptional1Repeat1 = 400,
-  _TuplePatternOptional1Repeat1 = 401,
+  FieldInitializerListRepeat1 = 387,
+  MatchArmRepeat1 = 388,
+  TuplePatternRepeat1 = 389,
+  StringLiteralRepeat1 = 390,
+  _ArrayExpressionListRepeat1 = 391,
+  _MacroDefinitionParenRepeat1 = 392,
+  _DelimTokenTreeParenRepeat1 = 393,
+  _EnumVariantListOptional1Repeat1 = 394,
+  _FieldDeclarationListOptional1Repeat1 = 395,
+  _WhereClauseOptional1Repeat1 = 396,
+  _UseListOptional1Repeat1 = 397,
+  _ParametersOptional1Repeat1 = 398,
+  _UseBoundsOptional1Repeat1 = 399,
+  _MatchBlockOptional1Repeat1 = 400,
+  _ClosureParametersOptional1Repeat1 = 401,
   _SlicePatternOptional1Repeat1 = 402,
   _StructPatternOptional1Repeat1 = 403,
   FieldIdentifier = 404,
@@ -1194,21 +1194,21 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [384, "type_arguments_repeat1"],
   [385, "arguments_repeat1"],
   [386, "tuple_expression_repeat1"],
-  [387, "match_arm_repeat1"],
-  [388, "string_literal_repeat1"],
-  [389, "_array_expression_list_repeat1"],
-  [390, "_macro_definition_paren_repeat1"],
-  [391, "_delim_token_tree_paren_repeat1"],
-  [392, "_enum_variant_list_optional1_repeat1"],
-  [393, "_field_declaration_list_optional1_repeat1"],
-  [394, "_where_clause_optional1_repeat1"],
-  [395, "_use_list_optional1_repeat1"],
-  [396, "_parameters_optional1_repeat1"],
-  [397, "_use_bounds_optional1_repeat1"],
-  [398, "_field_initializer_list_optional1_repeat1"],
-  [399, "_match_block_optional1_repeat1"],
-  [400, "_closure_parameters_optional1_repeat1"],
-  [401, "_tuple_pattern_optional1_repeat1"],
+  [387, "field_initializer_list_repeat1"],
+  [388, "match_arm_repeat1"],
+  [389, "tuple_pattern_repeat1"],
+  [390, "string_literal_repeat1"],
+  [391, "_array_expression_list_repeat1"],
+  [392, "_macro_definition_paren_repeat1"],
+  [393, "_delim_token_tree_paren_repeat1"],
+  [394, "_enum_variant_list_optional1_repeat1"],
+  [395, "_field_declaration_list_optional1_repeat1"],
+  [396, "_where_clause_optional1_repeat1"],
+  [397, "_use_list_optional1_repeat1"],
+  [398, "_parameters_optional1_repeat1"],
+  [399, "_use_bounds_optional1_repeat1"],
+  [400, "_match_block_optional1_repeat1"],
+  [401, "_closure_parameters_optional1_repeat1"],
   [402, "_slice_pattern_optional1_repeat1"],
   [403, "_struct_pattern_optional1_repeat1"],
   [404, "_field_identifier"],
@@ -1604,7 +1604,9 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "type_arguments_repeat1": return TSKindId.TypeArgumentsRepeat1;
     case "arguments_repeat1": return TSKindId.ArgumentsRepeat1;
     case "tuple_expression_repeat1": return TSKindId.TupleExpressionRepeat1;
+    case "field_initializer_list_repeat1": return TSKindId.FieldInitializerListRepeat1;
     case "match_arm_repeat1": return TSKindId.MatchArmRepeat1;
+    case "tuple_pattern_repeat1": return TSKindId.TuplePatternRepeat1;
     case "string_literal_repeat1": return TSKindId.StringLiteralRepeat1;
     case "_array_expression_list_repeat1": return TSKindId._ArrayExpressionListRepeat1;
     case "_macro_definition_paren_repeat1": return TSKindId._MacroDefinitionParenRepeat1;
@@ -1615,10 +1617,8 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_use_list_optional1_repeat1": return TSKindId._UseListOptional1Repeat1;
     case "_parameters_optional1_repeat1": return TSKindId._ParametersOptional1Repeat1;
     case "_use_bounds_optional1_repeat1": return TSKindId._UseBoundsOptional1Repeat1;
-    case "_field_initializer_list_optional1_repeat1": return TSKindId._FieldInitializerListOptional1Repeat1;
     case "_match_block_optional1_repeat1": return TSKindId._MatchBlockOptional1Repeat1;
     case "_closure_parameters_optional1_repeat1": return TSKindId._ClosureParametersOptional1Repeat1;
-    case "_tuple_pattern_optional1_repeat1": return TSKindId._TuplePatternOptional1Repeat1;
     case "_slice_pattern_optional1_repeat1": return TSKindId._SlicePatternOptional1Repeat1;
     case "_struct_pattern_optional1_repeat1": return TSKindId._StructPatternOptional1Repeat1;
     case "_field_identifier": return TSKindId.FieldIdentifier;
@@ -3047,8 +3047,8 @@ export interface FieldInitializer {
 
 export interface FieldInitializerList {
   readonly $type: TSKindId.FieldInitializerList;
-  readonly _content?: readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
-  contents(): readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
+  readonly _initializers?: readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
+  initializers(): readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
 }
 
 export interface FieldPatternShorthand {
@@ -4077,8 +4077,8 @@ export interface TupleExpression {
 
 export interface TuplePattern {
   readonly $type: TSKindId.TuplePattern;
-  readonly _content?: readonly (Pattern | ClosureExpression)[];
-  contents(): readonly (Pattern | ClosureExpression)[];
+  readonly _elements?: readonly (Pattern | ClosureExpression)[];
+  elements(): readonly (Pattern | ClosureExpression)[];
 }
 
 export interface TupleStructPattern {

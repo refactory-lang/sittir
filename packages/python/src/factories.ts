@@ -281,15 +281,17 @@ export function aliasedImport(config: T.AliasedImport.Config) {
   }, methodsEngine);
 }
 
-export function argumentList(...children: (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[]) {
-  const _content = children;
+export function argumentList(config: Partial<T.ArgumentList.Config> = {}) {
+  const _arguments = config.arguments;
   return withMethods({
     $type: TSKindId.ArgumentList as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[]) => argumentList(...vs) },
+    _arguments,
+    arguments() { return _arguments; },
+    $with: {
+      arguments: (...values: (T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument)[]) => argumentList({ ...config, arguments: values }),
+    },
   }, methodsEngine);
 }
 
@@ -805,15 +807,17 @@ export function dictPattern(...children: T.DictPatternKv[]) {
   }, methodsEngine);
 }
 
-export function dictionary(...children: (T.Pair | T.DictionarySplat)[]) {
-  const _content = children;
+export function dictionary(config: Partial<T.Dictionary.Config> = {}) {
+  const _entries = config.entries;
   return withMethods({
     $type: TSKindId.Dictionary as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    contents() { return _content; },
-    $with: { $children: (...vs: (T.Pair | T.DictionarySplat)[]) => dictionary(...vs) },
+    _entries,
+    entries() { return _entries; },
+    $with: {
+      entries: (...values: (T.Pair | T.DictionarySplat)[]) => dictionary({ ...config, entries: values }),
+    },
   }, methodsEngine);
 }
 

@@ -171,6 +171,18 @@ const config: WireConfig<RustGrammar> = {
 		// abstract_type: 1 field(s)
 		abstract_type: {},
 
+		// field_initializer_list: name the naked initializers choice (was an
+		// unresolvable `content` slot).
+		field_initializer_list: {
+			1: field('initializers')
+		},
+
+		// tuple_pattern: name the naked elements choice (was an unresolvable
+		// `content` slot).
+		tuple_pattern: {
+			1: field('elements')
+		},
+
 		// async_block: seq('async', optional('move'), $.block).
 		// Field-promotion wave 1 (016 task #23): label the standalone
 		// optional `move` punct as `move_marker` so render preserves it

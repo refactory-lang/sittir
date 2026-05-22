@@ -17,9 +17,13 @@ describe('aliased_import', () => {
 
 describe('argument_list', () => {
   it('factory produces correct type', () => {
-    const node = ir.argumentList();
+    const node = ir.argumentList({});
     expect(node.$type).toBe(TSKindId.ArgumentList);
     expect(node.$source).toBe(2);
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.argumentList({});
+    expect(() => node.$render!()).not.toThrow();
   });
 });
 
@@ -334,9 +338,13 @@ describe('dict_pattern', () => {
 
 describe('dictionary', () => {
   it('factory produces correct type', () => {
-    const node = ir.dictionary();
+    const node = ir.dictionary({});
     expect(node.$type).toBe(TSKindId.Dictionary);
     expect(node.$source).toBe(2);
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.dictionary({});
+    expect(() => node.$render!()).not.toThrow();
   });
 });
 

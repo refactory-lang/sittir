@@ -548,10 +548,12 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ArgumentList as const,
-    _content: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind((data._comparison_operator ?? data._not_operator ?? data._boolean_operator ?? data._lambda ?? data._await ?? data._binary_operator ?? data._identifier ?? data._keyword_identifier ?? data._string ?? data._concatenated_string ?? data._integer ?? data._float ?? data._true ?? data._false ?? data._none ?? data._unary_operator ?? data._attribute ?? data._subscript ?? data._call ?? data._list ?? data._list_comprehension ?? data._dictionary ?? data._dictionary_comprehension ?? data._set ?? data._set_comprehension ?? data._tuple ?? data._parenthesized_expression ?? data._generator_expression ?? data._ellipsis ?? data._list_splat_pattern ?? data._conditional_expression ?? data._named_expression ?? data._as_pattern ?? data._list_splat ?? data._dictionary_splat ?? data._keyword_argument ?? data._content), ["expression","comparison_operator","not_operator","boolean_operator","lambda","primary_expression","await","binary_operator","identifier","keyword_identifier","string","concatenated_string","integer","float","true","false","none","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","ellipsis","list_splat_pattern","conditional_expression","named_expression","as_pattern","list_splat","dictionary_splat","parenthesized_list_splat","keyword_argument"]), false, "content"),
+    _arguments: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._arguments, ["expression","comparison_operator","not_operator","boolean_operator","lambda","primary_expression","await","binary_operator","identifier","keyword_identifier","string","concatenated_string","integer","float","true","false","none","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","ellipsis","list_splat_pattern","conditional_expression","named_expression","as_pattern","list_splat","dictionary_splat","parenthesized_list_splat","keyword_argument"]), false, "arguments"),
 
-    contents() { return drillAsAll<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(this._content, tree, "parenthesized_expression", "parenthesized_list_splat"); },
-    $with: { $children: (...vs: readonly [never]) => wrapArgumentList({ ...data, $children: vs }, tree) },
+    arguments() { return drillAsAll<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(this._arguments, tree, "parenthesized_expression", "parenthesized_list_splat"); },
+    $with: {
+      arguments: (...v: NonNullable<T.ArgumentList['_arguments']>[number][]) => wrapArgumentList({ ...data, _arguments: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -976,10 +978,12 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Dictionary as const,
-    _content: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind((data._pair ?? data._dictionary_splat ?? data._content), ["pair","dictionary_splat"]), false, "content"),
+    _entries: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._entries, ["pair","dictionary_splat"]), false, "entries"),
 
-    contents() { return drillInAll<T.Pair | T.DictionarySplat>(this._content as readonly (T.Pair | T.DictionarySplat)[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapDictionary({ ...data, $children: vs }, tree) },
+    entries() { return drillInAll<T.Pair | T.DictionarySplat>(this._entries as readonly (T.Pair | T.DictionarySplat)[] | undefined, tree); },
+    $with: {
+      entries: (...v: NonNullable<T.Dictionary['_entries']>[number][]) => wrapDictionary({ ...data, _entries: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }

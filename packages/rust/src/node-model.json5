@@ -8410,9 +8410,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "initializers",
+          "propertyName": "initializers",
+          "paramName": "initializers",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -8436,7 +8436,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -16104,9 +16104,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -16124,7 +16124,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [

@@ -5121,7 +5121,7 @@ impl RenderableTransport for SuiteBlockTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ArgumentListContentTransportSlot {
+pub enum ArgumentListArgumentsTransportSlot {
     ComparisonOperator(ComparisonOperatorTransport),
     NotOperator(NotOperatorTransport),
     BooleanOperator(BooleanOperatorTransport),
@@ -5163,7 +5163,7 @@ pub enum ArgumentListContentTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListArgumentsTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -5279,7 +5279,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListContentTransportSlot
                     KeywordArgumentTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in ArgumentListContentTransportSlot",
+                    "unknown kind id {other} in ArgumentListArgumentsTransportSlot",
                 ))),
             };
         }
@@ -5287,9 +5287,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListContentTransportSlot
             return Ok(Self::Verbatim(VerbatimTransport { text }));
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
-            .map_err(|_| ::napi::Error::from_reason("ArgumentListContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+            .map_err(|_| ::napi::Error::from_reason("ArgumentListArgumentsTransportSlot: expected u16 kind_id, string, or object with $type"))?;
         let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-            ::napi::Error::from_reason("$type property missing in ArgumentListContentTransportSlot")
+            ::napi::Error::from_reason("$type property missing in ArgumentListArgumentsTransportSlot")
         )?;
         match kind_id {
                 195 => Ok(Self::ComparisonOperator(
@@ -5401,129 +5401,129 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListContentTransportSlot
                     KeywordArgumentTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in ArgumentListContentTransportSlot",
+                    "unknown kind id {other} in ArgumentListArgumentsTransportSlot",
                 ))),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentListContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ArgumentListArgumentsTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ArgumentListContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ArgumentListArgumentsTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ArgumentListContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ArgumentListArgumentsTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ArgumentListContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ArgumentListArgumentsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ArgumentListContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ArgumentListArgumentsTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ArgumentListContentTransportSlot::to_napi_value(env, *val)
+        ArgumentListArgumentsTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn argument_list_content_transport_slot_to_any(t: ArgumentListContentTransportSlot) -> AnyTransport {
+fn argument_list_arguments_transport_slot_to_any(t: ArgumentListArgumentsTransportSlot) -> AnyTransport {
     match t {
-        ArgumentListContentTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
-        ArgumentListContentTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
-        ArgumentListContentTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
-        ArgumentListContentTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
-        ArgumentListContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
-        ArgumentListContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
-        ArgumentListContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ArgumentListContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
-        ArgumentListContentTransportSlot::String(inner) => AnyTransport::String(inner),
-        ArgumentListContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
-        ArgumentListContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
-        ArgumentListContentTransportSlot::Float(inner) => AnyTransport::Float(inner),
-        ArgumentListContentTransportSlot::True(inner) => AnyTransport::True(inner),
-        ArgumentListContentTransportSlot::False(inner) => AnyTransport::False(inner),
-        ArgumentListContentTransportSlot::None(inner) => AnyTransport::None(inner),
-        ArgumentListContentTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
-        ArgumentListContentTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
-        ArgumentListContentTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
-        ArgumentListContentTransportSlot::Call(inner) => AnyTransport::Call(inner),
-        ArgumentListContentTransportSlot::List(inner) => AnyTransport::List(inner),
-        ArgumentListContentTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
-        ArgumentListContentTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
-        ArgumentListContentTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
-        ArgumentListContentTransportSlot::Set(inner) => AnyTransport::Set(inner),
-        ArgumentListContentTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
-        ArgumentListContentTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
-        ArgumentListContentTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
-        ArgumentListContentTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
-        ArgumentListContentTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
-        ArgumentListContentTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
-        ArgumentListContentTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
-        ArgumentListContentTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
-        ArgumentListContentTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
-        ArgumentListContentTransportSlot::ListSplat(inner) => AnyTransport::ListSplat(inner),
-        ArgumentListContentTransportSlot::DictionarySplat(inner) => AnyTransport::DictionarySplat(inner),
-        ArgumentListContentTransportSlot::ParenthesizedListSplat(inner) => AnyTransport::ParenthesizedListSplat(inner),
-        ArgumentListContentTransportSlot::KeywordArgument(inner) => AnyTransport::KeywordArgument(inner),
-        ArgumentListContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        ArgumentListArgumentsTransportSlot::ComparisonOperator(inner) => AnyTransport::ComparisonOperator(inner),
+        ArgumentListArgumentsTransportSlot::NotOperator(inner) => AnyTransport::NotOperator(inner),
+        ArgumentListArgumentsTransportSlot::BooleanOperator(inner) => AnyTransport::BooleanOperator(inner),
+        ArgumentListArgumentsTransportSlot::Lambda(inner) => AnyTransport::Lambda(inner),
+        ArgumentListArgumentsTransportSlot::Await(inner) => AnyTransport::Await(inner),
+        ArgumentListArgumentsTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
+        ArgumentListArgumentsTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        ArgumentListArgumentsTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
+        ArgumentListArgumentsTransportSlot::String(inner) => AnyTransport::String(inner),
+        ArgumentListArgumentsTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
+        ArgumentListArgumentsTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
+        ArgumentListArgumentsTransportSlot::Float(inner) => AnyTransport::Float(inner),
+        ArgumentListArgumentsTransportSlot::True(inner) => AnyTransport::True(inner),
+        ArgumentListArgumentsTransportSlot::False(inner) => AnyTransport::False(inner),
+        ArgumentListArgumentsTransportSlot::None(inner) => AnyTransport::None(inner),
+        ArgumentListArgumentsTransportSlot::UnaryOperator(inner) => AnyTransport::UnaryOperator(inner),
+        ArgumentListArgumentsTransportSlot::Attribute(inner) => AnyTransport::Attribute(inner),
+        ArgumentListArgumentsTransportSlot::Subscript(inner) => AnyTransport::Subscript(inner),
+        ArgumentListArgumentsTransportSlot::Call(inner) => AnyTransport::Call(inner),
+        ArgumentListArgumentsTransportSlot::List(inner) => AnyTransport::List(inner),
+        ArgumentListArgumentsTransportSlot::ListComprehension(inner) => AnyTransport::ListComprehension(inner),
+        ArgumentListArgumentsTransportSlot::Dictionary(inner) => AnyTransport::Dictionary(inner),
+        ArgumentListArgumentsTransportSlot::DictionaryComprehension(inner) => AnyTransport::DictionaryComprehension(inner),
+        ArgumentListArgumentsTransportSlot::Set(inner) => AnyTransport::Set(inner),
+        ArgumentListArgumentsTransportSlot::SetComprehension(inner) => AnyTransport::SetComprehension(inner),
+        ArgumentListArgumentsTransportSlot::Tuple(inner) => AnyTransport::Tuple(inner),
+        ArgumentListArgumentsTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
+        ArgumentListArgumentsTransportSlot::GeneratorExpression(inner) => AnyTransport::GeneratorExpression(inner),
+        ArgumentListArgumentsTransportSlot::Ellipsis2(inner) => AnyTransport::Ellipsis2(inner),
+        ArgumentListArgumentsTransportSlot::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
+        ArgumentListArgumentsTransportSlot::ConditionalExpression(inner) => AnyTransport::ConditionalExpression(inner),
+        ArgumentListArgumentsTransportSlot::NamedExpression(inner) => AnyTransport::NamedExpression(inner),
+        ArgumentListArgumentsTransportSlot::AsPattern(inner) => AnyTransport::AsPattern(inner),
+        ArgumentListArgumentsTransportSlot::ListSplat(inner) => AnyTransport::ListSplat(inner),
+        ArgumentListArgumentsTransportSlot::DictionarySplat(inner) => AnyTransport::DictionarySplat(inner),
+        ArgumentListArgumentsTransportSlot::ParenthesizedListSplat(inner) => AnyTransport::ParenthesizedListSplat(inner),
+        ArgumentListArgumentsTransportSlot::KeywordArgument(inner) => AnyTransport::KeywordArgument(inner),
+        ArgumentListArgumentsTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for ArgumentListContentTransportSlot {
+impl RenderableTransport for ArgumentListArgumentsTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ArgumentListContentTransportSlot::ComparisonOperator(inner) => render_comparison_operator(inner, dest),
-            ArgumentListContentTransportSlot::NotOperator(inner) => render_not_operator(inner, dest),
-            ArgumentListContentTransportSlot::BooleanOperator(inner) => render_boolean_operator(inner, dest),
-            ArgumentListContentTransportSlot::Lambda(inner) => render_lambda(inner, dest),
-            ArgumentListContentTransportSlot::Await(inner) => render_await(inner, dest),
-            ArgumentListContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
-            ArgumentListContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ArgumentListContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
-            ArgumentListContentTransportSlot::String(inner) => render_string(inner, dest),
-            ArgumentListContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
-            ArgumentListContentTransportSlot::Integer(inner) => render_integer(inner, dest),
-            ArgumentListContentTransportSlot::Float(inner) => render_float(inner, dest),
-            ArgumentListContentTransportSlot::True(inner) => render_true(inner, dest),
-            ArgumentListContentTransportSlot::False(inner) => render_false(inner, dest),
-            ArgumentListContentTransportSlot::None(inner) => render_none(inner, dest),
-            ArgumentListContentTransportSlot::UnaryOperator(inner) => render_unary_operator(inner, dest),
-            ArgumentListContentTransportSlot::Attribute(inner) => render_attribute(inner, dest),
-            ArgumentListContentTransportSlot::Subscript(inner) => render_subscript(inner, dest),
-            ArgumentListContentTransportSlot::Call(inner) => render_call(inner, dest),
-            ArgumentListContentTransportSlot::List(inner) => render_list(inner, dest),
-            ArgumentListContentTransportSlot::ListComprehension(inner) => render_list_comprehension(inner, dest),
-            ArgumentListContentTransportSlot::Dictionary(inner) => render_dictionary(inner, dest),
-            ArgumentListContentTransportSlot::DictionaryComprehension(inner) => render_dictionary_comprehension(inner, dest),
-            ArgumentListContentTransportSlot::Set(inner) => render_set(inner, dest),
-            ArgumentListContentTransportSlot::SetComprehension(inner) => render_set_comprehension(inner, dest),
-            ArgumentListContentTransportSlot::Tuple(inner) => render_tuple(inner, dest),
-            ArgumentListContentTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
-            ArgumentListContentTransportSlot::GeneratorExpression(inner) => render_generator_expression(inner, dest),
-            ArgumentListContentTransportSlot::Ellipsis2(inner) => render_ellipsis2(inner, dest),
-            ArgumentListContentTransportSlot::ListSplatPattern(inner) => render_list_splat_pattern(inner, dest),
-            ArgumentListContentTransportSlot::ConditionalExpression(inner) => render_conditional_expression(inner, dest),
-            ArgumentListContentTransportSlot::NamedExpression(inner) => render_named_expression(inner, dest),
-            ArgumentListContentTransportSlot::AsPattern(inner) => render_as_pattern(inner, dest),
-            ArgumentListContentTransportSlot::ListSplat(inner) => render_list_splat(inner, dest),
-            ArgumentListContentTransportSlot::DictionarySplat(inner) => render_dictionary_splat(inner, dest),
-            ArgumentListContentTransportSlot::ParenthesizedListSplat(inner) => render_parenthesized_list_splat(inner, dest),
-            ArgumentListContentTransportSlot::KeywordArgument(inner) => render_keyword_argument(inner, dest),
-            ArgumentListContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            ArgumentListArgumentsTransportSlot::ComparisonOperator(inner) => render_comparison_operator(inner, dest),
+            ArgumentListArgumentsTransportSlot::NotOperator(inner) => render_not_operator(inner, dest),
+            ArgumentListArgumentsTransportSlot::BooleanOperator(inner) => render_boolean_operator(inner, dest),
+            ArgumentListArgumentsTransportSlot::Lambda(inner) => render_lambda(inner, dest),
+            ArgumentListArgumentsTransportSlot::Await(inner) => render_await(inner, dest),
+            ArgumentListArgumentsTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
+            ArgumentListArgumentsTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            ArgumentListArgumentsTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
+            ArgumentListArgumentsTransportSlot::String(inner) => render_string(inner, dest),
+            ArgumentListArgumentsTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
+            ArgumentListArgumentsTransportSlot::Integer(inner) => render_integer(inner, dest),
+            ArgumentListArgumentsTransportSlot::Float(inner) => render_float(inner, dest),
+            ArgumentListArgumentsTransportSlot::True(inner) => render_true(inner, dest),
+            ArgumentListArgumentsTransportSlot::False(inner) => render_false(inner, dest),
+            ArgumentListArgumentsTransportSlot::None(inner) => render_none(inner, dest),
+            ArgumentListArgumentsTransportSlot::UnaryOperator(inner) => render_unary_operator(inner, dest),
+            ArgumentListArgumentsTransportSlot::Attribute(inner) => render_attribute(inner, dest),
+            ArgumentListArgumentsTransportSlot::Subscript(inner) => render_subscript(inner, dest),
+            ArgumentListArgumentsTransportSlot::Call(inner) => render_call(inner, dest),
+            ArgumentListArgumentsTransportSlot::List(inner) => render_list(inner, dest),
+            ArgumentListArgumentsTransportSlot::ListComprehension(inner) => render_list_comprehension(inner, dest),
+            ArgumentListArgumentsTransportSlot::Dictionary(inner) => render_dictionary(inner, dest),
+            ArgumentListArgumentsTransportSlot::DictionaryComprehension(inner) => render_dictionary_comprehension(inner, dest),
+            ArgumentListArgumentsTransportSlot::Set(inner) => render_set(inner, dest),
+            ArgumentListArgumentsTransportSlot::SetComprehension(inner) => render_set_comprehension(inner, dest),
+            ArgumentListArgumentsTransportSlot::Tuple(inner) => render_tuple(inner, dest),
+            ArgumentListArgumentsTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
+            ArgumentListArgumentsTransportSlot::GeneratorExpression(inner) => render_generator_expression(inner, dest),
+            ArgumentListArgumentsTransportSlot::Ellipsis2(inner) => render_ellipsis2(inner, dest),
+            ArgumentListArgumentsTransportSlot::ListSplatPattern(inner) => render_list_splat_pattern(inner, dest),
+            ArgumentListArgumentsTransportSlot::ConditionalExpression(inner) => render_conditional_expression(inner, dest),
+            ArgumentListArgumentsTransportSlot::NamedExpression(inner) => render_named_expression(inner, dest),
+            ArgumentListArgumentsTransportSlot::AsPattern(inner) => render_as_pattern(inner, dest),
+            ArgumentListArgumentsTransportSlot::ListSplat(inner) => render_list_splat(inner, dest),
+            ArgumentListArgumentsTransportSlot::DictionarySplat(inner) => render_dictionary_splat(inner, dest),
+            ArgumentListArgumentsTransportSlot::ParenthesizedListSplat(inner) => render_parenthesized_list_splat(inner, dest),
+            ArgumentListArgumentsTransportSlot::KeywordArgument(inner) => render_keyword_argument(inner, dest),
+            ArgumentListArgumentsTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -6057,13 +6057,13 @@ impl RenderableTransport for ClassDefinitionBlockTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum DictionaryContentTransportSlot {
+pub enum DictionaryEntriesTransportSlot {
     Pair(PairTransport),
     DictionarySplat(DictionarySplatTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for DictionaryContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for DictionaryEntriesTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -6077,14 +6077,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictionaryContentTransportSlot {
                     DictionarySplatTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in DictionaryContentTransportSlot",
+                    "unknown kind id {other} in DictionaryEntriesTransportSlot",
                 ))),
             };
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
-            .map_err(|_| ::napi::Error::from_reason("DictionaryContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+            .map_err(|_| ::napi::Error::from_reason("DictionaryEntriesTransportSlot: expected u16 kind_id, string, or object with $type"))?;
         let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-            ::napi::Error::from_reason("$type property missing in DictionaryContentTransportSlot")
+            ::napi::Error::from_reason("$type property missing in DictionaryEntriesTransportSlot")
         )?;
         match kind_id {
                 219 => Ok(Self::Pair(
@@ -6094,57 +6094,57 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictionaryContentTransportSlot {
                     DictionarySplatTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in DictionaryContentTransportSlot",
+                    "unknown kind id {other} in DictionaryEntriesTransportSlot",
                 ))),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DictionaryContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for DictionaryEntriesTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("DictionaryContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("DictionaryEntriesTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DictionaryContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DictionaryEntriesTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        DictionaryContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        DictionaryEntriesTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DictionaryContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DictionaryEntriesTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        DictionaryContentTransportSlot::to_napi_value(env, *val)
+        DictionaryEntriesTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn dictionary_content_transport_slot_to_any(t: DictionaryContentTransportSlot) -> AnyTransport {
+fn dictionary_entries_transport_slot_to_any(t: DictionaryEntriesTransportSlot) -> AnyTransport {
     match t {
-        DictionaryContentTransportSlot::Pair(inner) => AnyTransport::Pair(inner),
-        DictionaryContentTransportSlot::DictionarySplat(inner) => AnyTransport::DictionarySplat(inner),
+        DictionaryEntriesTransportSlot::Pair(inner) => AnyTransport::Pair(inner),
+        DictionaryEntriesTransportSlot::DictionarySplat(inner) => AnyTransport::DictionarySplat(inner),
     }
 }
 
-impl RenderableTransport for DictionaryContentTransportSlot {
+impl RenderableTransport for DictionaryEntriesTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            DictionaryContentTransportSlot::Pair(inner) => render_pair(inner, dest),
-            DictionaryContentTransportSlot::DictionarySplat(inner) => render_dictionary_splat(inner, dest),
+            DictionaryEntriesTransportSlot::Pair(inner) => render_pair(inner, dest),
+            DictionaryEntriesTransportSlot::DictionarySplat(inner) => render_dictionary_splat(inner, dest),
         }
     }
 }
@@ -10922,8 +10922,8 @@ pub struct ArgumentListTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Vec<ArgumentListContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
+    pub arguments: Option<Vec<ArgumentListArgumentsTransportSlot>>,
 }
 
 impl RenderableTransport for ArgumentListTransport {
@@ -12578,8 +12578,8 @@ pub struct DictionaryTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Vec<DictionaryContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_entries"))]
+    pub entries: Option<Vec<DictionaryEntriesTransportSlot>>,
 }
 
 impl RenderableTransport for DictionaryTransport {
@@ -26315,30 +26315,18 @@ fn render_aliased_import(node: &AliasedImportTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_argument_list(node: &ArgumentListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.arguments.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let content_owned = node.content.as_deref().unwrap_or(&[]);
-    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
+    let arguments_owned = node.arguments.as_deref().unwrap_or(&[]);
+    let arguments_buf: Vec<::sittir_core::filters::Renderable<'_>> = arguments_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ArgumentListTemplate {
-        content: ListNonterminalView {
-            items: content_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        expression: ListNonterminalView {
-            items: content_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        list_splat: ListNonterminalView {
-            items: content_buf.as_slice(),
+        arguments: ListNonterminalView {
+            items: arguments_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -26682,24 +26670,18 @@ fn render_dict_pattern(node: &DictPatternTransport, dest: &mut dyn ::std::fmt::W
 }
 
 fn render_dictionary(node: &DictionaryTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.content.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.entries.as_deref().is_none_or(<[_]>::is_empty) {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let content_owned = node.content.as_deref().unwrap_or(&[]);
-    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
+    let entries_owned = node.entries.as_deref().unwrap_or(&[]);
+    let entries_buf: Vec<::sittir_core::filters::Renderable<'_>> = entries_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = DictionaryTemplate {
-        content: ListNonterminalView {
-            items: content_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        pair: ListNonterminalView {
-            items: content_buf.as_slice(),
+        entries: ListNonterminalView {
+            items: entries_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -29770,16 +29752,11 @@ fn transport_to_node_aliased_import(transport: AliasedImportTransport) -> Result
 
 fn transport_to_node_argument_list(transport: ArgumentListTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.content {
-        children_buf.extend(value.into_iter().map(|v| argument_list_content_transport_slot_to_any(v)).collect::<Vec<_>>());
+    if let Some(value) = transport.arguments {
+        fields.insert("arguments".to_string(), transport_field_values(value.into_iter().map(|v| argument_list_arguments_transport_slot_to_any(v)).collect::<Vec<_>>())?);
     }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(157) /* "argument_list" */,
@@ -30476,16 +30453,11 @@ fn transport_to_node_dict_pattern(transport: DictPatternTransport) -> Result<Tra
 
 fn transport_to_node_dictionary(transport: DictionaryTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.content {
-        children_buf.extend(value.into_iter().map(|v| dictionary_content_transport_slot_to_any(v)).collect::<Vec<_>>());
+    if let Some(value) = transport.entries {
+        fields.insert("entries".to_string(), transport_field_values(value.into_iter().map(|v| dictionary_entries_transport_slot_to_any(v)).collect::<Vec<_>>())?);
     }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(218) /* "dictionary" */,

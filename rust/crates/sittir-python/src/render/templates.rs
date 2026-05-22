@@ -173,9 +173,7 @@ pub struct AliasedImportTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "argument_list.jinja", escape = "none")]
 pub struct ArgumentListTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
-    pub expression: ListNonterminalView<'a>,
-    pub list_splat: ListNonterminalView<'a>,
+    pub arguments: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -383,8 +381,7 @@ pub struct DictionarySplatTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "dictionary.jinja", escape = "none")]
 pub struct DictionaryTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
-    pub pair: ListNonterminalView<'a>,
+    pub entries: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

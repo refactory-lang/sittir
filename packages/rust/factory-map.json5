@@ -125,7 +125,7 @@
     "field_declaration_list": "spread",
     "field_expression": "config",
     "field_initializer": "config",
-    "field_initializer_list": "spread",
+    "field_initializer_list": "config",
     "field_pattern_shorthand": "direct",
     "field_pattern": "config",
     "for_expression": "config",
@@ -225,7 +225,7 @@
     "try_block": "direct",
     "try_expression": "direct",
     "tuple_expression": "config",
-    "tuple_pattern": "spread",
+    "tuple_pattern": "config",
     "tuple_struct_pattern": "config",
     "tuple_type": "spread",
     "type_arguments": "config",
@@ -936,7 +936,7 @@
       "value"
     ],
     "field_initializer_list": [
-      "content"
+      "initializers"
     ],
     "field_pattern_shorthand": [
       "name"
@@ -1302,7 +1302,7 @@
       "elements"
     ],
     "tuple_pattern": [
-      "content"
+      "elements"
     ],
     "tuple_struct_pattern": [
       "type",
@@ -2818,7 +2818,7 @@
       }
     },
     "field_initializer_list": {
-      "content": {
+      "initializers": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4458,7 +4458,7 @@
       }
     },
     "tuple_pattern": {
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,

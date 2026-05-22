@@ -49,15 +49,32 @@ import {
 import { findRepeatFlag } from './template-walker.ts';
 
 /**
- * Sink for "unnamed choice slot found in branch '<kind>'" warnings (Task C2).
- * Tests install a spy via {@link setUnnamedChoiceWarner}; production uses the
- * default `console.warn`. Kept module-local so collection stays pure-ish.
+ * Sink for unnamed-choice-slot occurrences (Task C2). A naked choice (no
+ * `fieldName`, not a polymorph) has no grammar-given name, so it falls back to
+ * an unresolvable `content` slot — the grammar author must field-name it in
+ * `packages/<lang>/overrides.ts`. Rather than emit a scattered per-occurrence
+ * warning, the default sink ACCUMULATES the owning kinds so the codegen run can
+ * report them as one collected diagnostic (drain via {@link drainUnnamedChoiceSlots}).
+ * Tests install a spy via {@link setUnnamedChoiceWarner}.
  */
-let unnamedChoiceWarner: (kind: string | undefined) => void = (kind) =>
-	console.warn(`unnamed choice slot found in branch '${kind ?? '(unknown)'}'`);
+const collectedUnnamedChoiceKinds = new Set<string>();
+let unnamedChoiceWarner: (kind: string | undefined) => void = (kind) => {
+	collectedUnnamedChoiceKinds.add(kind ?? '(unknown)');
+};
 
 export function setUnnamedChoiceWarner(fn: (kind: string | undefined) => void): void {
 	unnamedChoiceWarner = fn;
+}
+
+/**
+ * Return + clear the kinds that produced an unnamed choice slot during
+ * collection. The codegen CLI calls this after a run to emit one diagnostic
+ * listing the kinds whose choice needs an explicit grammar field name.
+ */
+export function drainUnnamedChoiceSlots(): string[] {
+	const out = [...collectedUnnamedChoiceKinds].sort();
+	collectedUnnamedChoiceKinds.clear();
+	return out;
 }
 
 /**
@@ -332,7 +349,9 @@ function buildSlot(
 				// registered polymorph (polymorph metadata drives the TYPE
 				// surface only; render just renders `content`).
 				if (rule.type === 'choice') {
-					unnamedChoiceWarner(kindForName);
+					// Collect by rule.id — it encodes provenance (owning kind +
+					// rule-tree path), unlike `kindForName` which is undefined here.
+					unnamedChoiceWarner(rule.id);
 				}
 				baseName = 'content';
 				source = (rule as { source?: RuleSource }).source ?? 'inferred';

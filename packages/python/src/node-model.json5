@@ -1453,9 +1453,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "arguments",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -1491,7 +1491,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -3408,9 +3408,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "entries",
+          "propertyName": "entries",
+          "paramName": "entries",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -3428,7 +3428,7 @@
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [

@@ -782,8 +782,7 @@ pub struct FieldExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "field_initializer_list.jinja", escape = "none")]
 pub struct FieldInitializerListTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
-    pub shorthand_field_initializer: ListNonterminalView<'a>,
+    pub initializers: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1489,8 +1488,7 @@ pub struct TupleExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "tuple_pattern.jinja", escape = "none")]
 pub struct TuplePatternTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
-    pub pattern: ListNonterminalView<'a>,
+    pub elements: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

@@ -13533,7 +13533,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "fn f1([x, y]: [u32; 2]) {} fn f2(&x: &Y) {} fn f3((x, y): (T, U)) {}",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameter pattern: (slice_pattern (identifier) (identifier)) type: (array_type element: (primitive_type) length: (integer_literal)))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameter pattern: (reference_pattern pattern: (identifier)) type: (reference_type type: (type_identifier)))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameter pattern: (tuple_pattern (identifier) (identifier)) type: (tuple_type (type_identifier) (type_identifier)))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameter pattern: (slice_pattern (identifier) (identifier)) type: (array_type element: (primitive_type) length: (integer_literal)))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameter pattern: (reference_pattern pattern: (identifier)) type: (reference_type type: (type_identifier)))) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameter pattern: (tuple_pattern elements: (identifier) elements: (identifier)) type: (tuple_type (type_identifier) (type_identifier)))) body: (block)))",
     "wrappedText": "fn f1([x, y]: [u32; 2]) {} fn f2(&x: &Y) {} fn f3((x, y): (T, U)) {}",
     "wrappedOffset": 0
   },
@@ -13719,7 +13719,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "(x, y):(T, U)",
-    "expectedReparseTree": "(parameter pattern: (tuple_pattern (identifier) (identifier)) type: (tuple_type (type_identifier) (type_identifier)))",
+    "expectedReparseTree": "(parameter pattern: (tuple_pattern elements: (identifier) elements: (identifier)) type: (tuple_type (type_identifier) (type_identifier)))",
     "wrappedText": "fn _f((x, y):(T, U)) {}",
     "wrappedOffset": 6
   },
@@ -14058,6 +14058,94 @@
     "expectedReparseTree": "(reference_type type: (type_identifier))",
     "wrappedText": "type _X = & Y;",
     "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 296,
+      "$source": 0,
+      "$span": {
+        "start": 50,
+        "end": 56
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 50,
+          "end": 51
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_elements": [
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "x",
+          "$span": {
+            "start": 51,
+            "end": 52
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 79,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 52,
+            "end": 53
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": false
+        },
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "y",
+          "$span": {
+            "start": 54,
+            "end": 55
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        }
+      ],
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 55,
+          "end": 56
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(x,y)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(x, y)",
+    "pattern": "tuple_pattern",
+    "edits": [],
+    "expectedSourceOut": "(x,y)",
+    "expectedReparseTree": "(tuple_pattern elements: (identifier) elements: (identifier))",
+    "wrappedText": "fn _f() { let (x,y) = (); }",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
@@ -32473,7 +32561,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "(); (0,); let (x, y, z) = (1, 2, 3);",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi (unit_expression))) statements: (expression_statement (expression_statement_with_semi (tuple_expression elements: (integer_literal)))) statements: (let_declaration pattern: (tuple_pattern (identifier) (identifier) (identifier)) value: (tuple_expression elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi (unit_expression))) statements: (expression_statement (expression_statement_with_semi (tuple_expression elements: (integer_literal)))) statements: (let_declaration pattern: (tuple_pattern elements: (identifier) elements: (identifier) elements: (identifier)) value: (tuple_expression elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))",
     "wrappedText": "(); (0,); let (x, y, z) = (1, 2, 3);",
     "wrappedOffset": 0
   },
@@ -32559,9 +32647,121 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let (x, y, z) =(1, 2, 3);",
-    "expectedReparseTree": "(let_declaration pattern: (tuple_pattern (identifier) (identifier) (identifier)) value: (tuple_expression elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))",
+    "expectedReparseTree": "(let_declaration pattern: (tuple_pattern elements: (identifier) elements: (identifier) elements: (identifier)) value: (tuple_expression elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))",
     "wrappedText": "let (x, y, z) =(1, 2, 3);",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 296,
+      "$source": 0,
+      "$span": {
+        "start": 14,
+        "end": 23
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 14,
+          "end": 15
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_elements": [
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "x",
+          "$span": {
+            "start": 15,
+            "end": 16
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 79,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 16,
+            "end": 17
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": false
+        },
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "y",
+          "$span": {
+            "start": 18,
+            "end": 19
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        },
+        {
+          "$type": 79,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 19,
+            "end": 20
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 4,
+          "$named": false
+        },
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "z",
+          "$span": {
+            "start": 21,
+            "end": 22
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 5,
+          "$named": true
+        }
+      ],
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 22,
+          "end": 23
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 6,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(x,y,z)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(x, y, z)",
+    "pattern": "tuple_pattern",
+    "edits": [],
+    "expectedSourceOut": "(x,y,z)",
+    "expectedReparseTree": "(tuple_pattern elements: (identifier) elements: (identifier) elements: (identifier))",
+    "wrappedText": "fn _f() { let (x,y,z) = (); }",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
@@ -32647,7 +32847,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "NothingInMe {}; Point {x: 10.0, y: 20.0}; let a = SomeStruct { field1, field2: expression, field3, }; let u = game::User {name: \"Joe\", age: 35, score: 100_000}; let i = Instant { 0: Duration::from_millis(0) };",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi (struct_expression name: (type_identifier) body: (field_initializer_list)))) statements: (expression_statement (expression_statement_with_semi (struct_expression name: (type_identifier) body: (field_initializer_list (field_initializer field: (field_identifier) value: (float_literal)) (field_initializer field: (field_identifier) value: (float_literal)))))) statements: (let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list (shorthand_field_initializer identifier: (identifier)) (field_initializer field: (field_identifier) value: (identifier)) (shorthand_field_initializer identifier: (identifier))))) statements: (let_declaration pattern: (identifier) value: (struct_expression name: (scoped_type_identifier path: (identifier) name: (type_identifier)) body: (field_initializer_list (field_initializer field: (field_identifier) value: (string_literal (string_content))) (field_initializer field: (field_identifier) value: (integer_literal)) (field_initializer field: (field_identifier) value: (integer_literal))))) statements: (let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list (field_initializer field: (integer_literal) value: (call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments attributes: (integer_literal))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi (struct_expression name: (type_identifier) body: (field_initializer_list)))) statements: (expression_statement (expression_statement_with_semi (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (field_initializer field: (field_identifier) value: (float_literal)) initializers: (field_initializer field: (field_identifier) value: (float_literal)))))) statements: (let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (shorthand_field_initializer identifier: (identifier)) initializers: (field_initializer field: (field_identifier) value: (identifier)) initializers: (shorthand_field_initializer identifier: (identifier))))) statements: (let_declaration pattern: (identifier) value: (struct_expression name: (scoped_type_identifier path: (identifier) name: (type_identifier)) body: (field_initializer_list initializers: (field_initializer field: (field_identifier) value: (string_literal (string_content))) initializers: (field_initializer field: (field_identifier) value: (integer_literal)) initializers: (field_initializer field: (field_identifier) value: (integer_literal))))) statements: (let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (field_initializer field: (integer_literal) value: (call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments attributes: (integer_literal))))))))",
     "wrappedText": "NothingInMe {}; Point {x: 10.0, y: 20.0}; let a = SomeStruct { field1, field2: expression, field3, }; let u = game::User {name: \"Joe\", age: 35, score: 100_000}; let i = Instant { 0: Duration::from_millis(0) };",
     "wrappedOffset": 0
   },
@@ -32697,7 +32897,7 @@
     "pattern": "struct_expression",
     "edits": [],
     "expectedSourceOut": "SomeStruct { field1, field2: expression, field3, }",
-    "expectedReparseTree": "(struct_expression name: (type_identifier) body: (field_initializer_list (shorthand_field_initializer identifier: (identifier)) (field_initializer field: (field_identifier) value: (identifier)) (shorthand_field_initializer identifier: (identifier))))",
+    "expectedReparseTree": "(struct_expression name: (type_identifier) body: (field_initializer_list initializers: (shorthand_field_initializer identifier: (identifier)) initializers: (field_initializer field: (field_identifier) value: (identifier)) initializers: (shorthand_field_initializer identifier: (identifier))))",
     "wrappedText": "fn _f() { let _ = SomeStruct { field1, field2: expression, field3, }; }",
     "wrappedOffset": 18
   },
@@ -32747,7 +32947,7 @@
     "pattern": "struct_expression",
     "edits": [],
     "expectedSourceOut": "game::User {name: \"Joe\", age: 35, score: 100_000}",
-    "expectedReparseTree": "(struct_expression name: (scoped_type_identifier path: (identifier) name: (type_identifier)) body: (field_initializer_list (field_initializer field: (field_identifier) value: (string_literal (string_content))) (field_initializer field: (field_identifier) value: (integer_literal)) (field_initializer field: (field_identifier) value: (integer_literal))))",
+    "expectedReparseTree": "(struct_expression name: (scoped_type_identifier path: (identifier) name: (type_identifier)) body: (field_initializer_list initializers: (field_initializer field: (field_identifier) value: (string_literal (string_content))) initializers: (field_initializer field: (field_identifier) value: (integer_literal)) initializers: (field_initializer field: (field_identifier) value: (integer_literal))))",
     "wrappedText": "fn _f() { let _ = game::User {name: \"Joe\", age: 35, score: 100_000}; }",
     "wrappedOffset": 18
   },
@@ -32797,7 +32997,7 @@
     "pattern": "struct_expression",
     "edits": [],
     "expectedSourceOut": "Instant { 0: Duration::from_millis(0) }",
-    "expectedReparseTree": "(struct_expression name: (type_identifier) body: (field_initializer_list (field_initializer field: (integer_literal) value: (call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments attributes: (integer_literal))))))",
+    "expectedReparseTree": "(struct_expression name: (type_identifier) body: (field_initializer_list initializers: (field_initializer field: (integer_literal) value: (call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments attributes: (integer_literal))))))",
     "wrappedText": "fn _f() { let _ = Instant { 0: Duration::from_millis(0) }; }",
     "wrappedOffset": 18
   },
@@ -32897,7 +33097,7 @@
     "pattern": "struct_expression",
     "edits": [],
     "expectedSourceOut": "Point {x: 10.0, y: 20.0}",
-    "expectedReparseTree": "(struct_expression name: (type_identifier) body: (field_initializer_list (field_initializer field: (field_identifier) value: (float_literal)) (field_initializer field: (field_identifier) value: (float_literal))))",
+    "expectedReparseTree": "(struct_expression name: (type_identifier) body: (field_initializer_list initializers: (field_initializer field: (field_identifier) value: (float_literal)) initializers: (field_initializer field: (field_identifier) value: (float_literal))))",
     "wrappedText": "fn _f() { let _ = Point {x: 10.0, y: 20.0}; }",
     "wrappedOffset": 18
   },
@@ -32983,7 +33183,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let a =SomeStruct { field1, field2: expression, field3, };",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list (shorthand_field_initializer identifier: (identifier)) (field_initializer field: (field_identifier) value: (identifier)) (shorthand_field_initializer identifier: (identifier)))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (shorthand_field_initializer identifier: (identifier)) initializers: (field_initializer field: (field_identifier) value: (identifier)) initializers: (shorthand_field_initializer identifier: (identifier)))))",
     "wrappedText": "let a =SomeStruct { field1, field2: expression, field3, };",
     "wrappedOffset": 0
   },
@@ -33069,7 +33269,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let u =game::User {name: \"Joe\", age: 35, score: 100_000};",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (scoped_type_identifier path: (identifier) name: (type_identifier)) body: (field_initializer_list (field_initializer field: (field_identifier) value: (string_literal (string_content))) (field_initializer field: (field_identifier) value: (integer_literal)) (field_initializer field: (field_identifier) value: (integer_literal)))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (scoped_type_identifier path: (identifier) name: (type_identifier)) body: (field_initializer_list initializers: (field_initializer field: (field_identifier) value: (string_literal (string_content))) initializers: (field_initializer field: (field_identifier) value: (integer_literal)) initializers: (field_initializer field: (field_identifier) value: (integer_literal)))))",
     "wrappedText": "let u =game::User {name: \"Joe\", age: 35, score: 100_000};",
     "wrappedOffset": 0
   },
@@ -33155,7 +33355,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let i =Instant { 0: Duration::from_millis(0) };",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list (field_initializer field: (integer_literal) value: (call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments attributes: (integer_literal)))))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (field_initializer field: (integer_literal) value: (call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments attributes: (integer_literal)))))))",
     "wrappedText": "let i =Instant { 0: Duration::from_millis(0) };",
     "wrappedOffset": 0
   },
@@ -33367,7 +33567,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "let u = User{name, ..current_user()};",
-    "expectedReparseTree": "(source_file statements: (let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list (shorthand_field_initializer identifier: (identifier)) (base_field_initializer expression: (call_expression function: (identifier) arguments: (arguments)))))))",
+    "expectedReparseTree": "(source_file statements: (let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (shorthand_field_initializer identifier: (identifier)) initializers: (base_field_initializer expression: (call_expression function: (identifier) arguments: (arguments)))))))",
     "wrappedText": "let u = User{name, ..current_user()};",
     "wrappedOffset": 0
   },
@@ -33453,7 +33653,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "let u =User{name, ..current_user()};",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list (shorthand_field_initializer identifier: (identifier)) (base_field_initializer expression: (call_expression function: (identifier) arguments: (arguments))))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (shorthand_field_initializer identifier: (identifier)) initializers: (base_field_initializer expression: (call_expression function: (identifier) arguments: (arguments))))))",
     "wrappedText": "let u =User{name, ..current_user()};",
     "wrappedOffset": 0
   },
@@ -33503,7 +33703,7 @@
     "pattern": "struct_expression",
     "edits": [],
     "expectedSourceOut": "User {name, ..current_user()}",
-    "expectedReparseTree": "(struct_expression name: (type_identifier) body: (field_initializer_list (shorthand_field_initializer identifier: (identifier)) (base_field_initializer expression: (call_expression function: (identifier) arguments: (arguments)))))",
+    "expectedReparseTree": "(struct_expression name: (type_identifier) body: (field_initializer_list initializers: (shorthand_field_initializer identifier: (identifier)) initializers: (base_field_initializer expression: (call_expression function: (identifier) arguments: (arguments)))))",
     "wrappedText": "fn _f() { let _ = User {name, ..current_user()}; }",
     "wrappedOffset": 18
   },
@@ -34911,9 +35111,185 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "if let (\"Bacon\", b) = dish {\n} if let Some(\"chained\") = a && b && let (C, D) = e {\n} if foo && let bar = || baz && quux {} if a && let b = || c || d && e {}",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_block_ending (if_expression condition: (let_condition pattern: (tuple_pattern (string_literal (string_content)) (identifier)) value: (identifier)) consequence: (block)))) statements: (expression_statement (expression_statement_block_ending (if_expression condition: (let_chain (let_condition pattern: (tuple_struct_pattern type: (identifier) (string_literal (string_content))) value: (identifier)) (identifier) (let_condition pattern: (tuple_pattern (identifier) (identifier)) value: (identifier))) consequence: (block)))) statements: (expression_statement (expression_statement_block_ending (if_expression condition: (let_chain (identifier) (let_condition pattern: (identifier) value: (closure_expression parameters: (closure_parameters) (closure_expression_expr body: (binary_expression left: (identifier) right: (identifier)))))) consequence: (block)))) statements: (expression_statement (expression_statement_block_ending (if_expression condition: (let_chain (identifier) (let_condition pattern: (identifier) value: (closure_expression parameters: (closure_parameters) (closure_expression_expr body: (binary_expression left: (identifier) right: (binary_expression left: (identifier) right: (identifier))))))) consequence: (block)))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_block_ending (if_expression condition: (let_condition pattern: (tuple_pattern elements: (string_literal (string_content)) elements: (identifier)) value: (identifier)) consequence: (block)))) statements: (expression_statement (expression_statement_block_ending (if_expression condition: (let_chain (let_condition pattern: (tuple_struct_pattern type: (identifier) (string_literal (string_content))) value: (identifier)) (identifier) (let_condition pattern: (tuple_pattern elements: (identifier) elements: (identifier)) value: (identifier))) consequence: (block)))) statements: (expression_statement (expression_statement_block_ending (if_expression condition: (let_chain (identifier) (let_condition pattern: (identifier) value: (closure_expression parameters: (closure_parameters) (closure_expression_expr body: (binary_expression left: (identifier) right: (identifier)))))) consequence: (block)))) statements: (expression_statement (expression_statement_block_ending (if_expression condition: (let_chain (identifier) (let_condition pattern: (identifier) value: (closure_expression parameters: (closure_parameters) (closure_expression_expr body: (binary_expression left: (identifier) right: (binary_expression left: (identifier) right: (identifier))))))) consequence: (block)))))",
     "wrappedText": "if let (\"Bacon\", b) = dish {\n} if let Some(\"chained\") = a && b && let (C, D) = e {\n} if foo && let bar = || baz && quux {} if a && let b = || c || d && e {}",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 296,
+      "$source": 0,
+      "$span": {
+        "start": 7,
+        "end": 19
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 7,
+          "end": 8
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_elements": [
+        {
+          "$type": 311,
+          "$source": 0,
+          "$text": "\"Bacon\"",
+          "$span": {
+            "start": 8,
+            "end": 15
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 79,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 15,
+            "end": 16
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": false
+        },
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "b",
+          "$span": {
+            "start": 17,
+            "end": 18
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        }
+      ],
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 18,
+          "end": 19
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(\"Bacon\",b)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"Bacon\", b)",
+    "pattern": "tuple_pattern",
+    "edits": [],
+    "expectedSourceOut": "(\"Bacon\",b)",
+    "expectedReparseTree": "(tuple_pattern elements: (string_literal (string_content)) elements: (identifier))",
+    "wrappedText": "fn _f() { let (\"Bacon\",b) = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 296,
+      "$source": 0,
+      "$span": {
+        "start": 71,
+        "end": 77
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 71,
+          "end": 72
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_elements": [
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "C",
+          "$span": {
+            "start": 72,
+            "end": 73
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 79,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 73,
+            "end": 74
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 2,
+          "$named": false
+        },
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "D",
+          "$span": {
+            "start": 75,
+            "end": 76
+          },
+          "$nodeHandle": 1,
+          "$childIndex": 3,
+          "$named": true
+        }
+      ],
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 76,
+          "end": 77
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 4,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(C,D)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(C, D)",
+    "pattern": "tuple_pattern",
+    "edits": [],
+    "expectedSourceOut": "(C,D)",
+    "expectedReparseTree": "(tuple_pattern elements: (identifier) elements: (identifier))",
+    "wrappedText": "fn _f() { let (C,D) = (); }",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
@@ -35335,9 +35711,97 @@
     "pattern": "_expression_statement_block_ending",
     "edits": [],
     "expectedSourceOut": "while let (\"Bacon\", b) = dish {\n}",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_block_ending (while_expression condition: (let_condition pattern: (tuple_pattern (string_literal (string_content)) (identifier)) value: (identifier)) body: (block)))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_block_ending (while_expression condition: (let_condition pattern: (tuple_pattern elements: (string_literal (string_content)) elements: (identifier)) value: (identifier)) body: (block)))))",
     "wrappedText": "while let (\"Bacon\", b) = dish {\n}",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 296,
+      "$source": 0,
+      "$span": {
+        "start": 10,
+        "end": 22
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 10,
+          "end": 11
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_elements": [
+        {
+          "$type": 311,
+          "$source": 0,
+          "$text": "\"Bacon\"",
+          "$span": {
+            "start": 11,
+            "end": 18
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 79,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 18,
+            "end": 19
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": false
+        },
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "b",
+          "$span": {
+            "start": 20,
+            "end": 21
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        }
+      ],
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 21,
+          "end": 22
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(\"Bacon\",b)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"Bacon\", b)",
+    "pattern": "tuple_pattern",
+    "edits": [],
+    "expectedSourceOut": "(\"Bacon\",b)",
+    "expectedReparseTree": "(tuple_pattern elements: (string_literal (string_content)) elements: (identifier))",
+    "wrappedText": "fn _f() { let (\"Bacon\",b) = (); }",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
@@ -35423,7 +35887,7 @@
     "pattern": "_expression_statement_block_ending",
     "edits": [],
     "expectedSourceOut": "while let (\"Bacon\", b) = dish {\n}",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_block_ending (while_expression condition: (let_condition pattern: (tuple_pattern (string_literal (string_content)) (identifier)) value: (identifier)) body: (block)))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_block_ending (while_expression condition: (let_condition pattern: (tuple_pattern elements: (string_literal (string_content)) elements: (identifier)) value: (identifier)) body: (block)))))",
     "wrappedText": "while let (\"Bacon\", b) = dish {\n}",
     "wrappedOffset": 0
   },
@@ -40639,7 +41103,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "a.map(|(b, c)| b.push(c)); d.map(move |mut e| {\n    f(e);\n    g(e)\n}); h(|| -> i { j });",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (closure_expression parameters: (closure_parameters (tuple_pattern (identifier) (identifier))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (identifier))))))))) statements: (expression_statement (expression_statement_with_semi (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (closure_expression parameters: (closure_parameters (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier))) (closure_expression_expr body: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))) trailing_expression: (call_expression function: (identifier) arguments: (arguments attributes: (identifier)))))))))) statements: (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (closure_expression parameters: (closure_parameters) (closure_expression_block return_type: (type_identifier) body: (block trailing_expression: (identifier)))))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_with_semi (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (closure_expression parameters: (closure_parameters (tuple_pattern elements: (identifier) elements: (identifier))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (identifier))))))))) statements: (expression_statement (expression_statement_with_semi (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (closure_expression parameters: (closure_parameters (mut_pattern mutable_specifier: (mutable_specifier) pattern: (identifier))) (closure_expression_expr body: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))) trailing_expression: (call_expression function: (identifier) arguments: (arguments attributes: (identifier)))))))))) statements: (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (closure_expression parameters: (closure_parameters) (closure_expression_block return_type: (type_identifier) body: (block trailing_expression: (identifier)))))))))",
     "wrappedText": "a.map(|(b, c)| b.push(c)); d.map(move |mut e| {\n    f(e);\n    g(e)\n}); h(|| -> i { j });",
     "wrappedOffset": 0
   },
@@ -40689,7 +41153,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "a.map (|(b, c)| b.push(c))",
-    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (closure_expression parameters: (closure_parameters (tuple_pattern (identifier) (identifier))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (identifier)))))))",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (closure_expression parameters: (closure_parameters (tuple_pattern elements: (identifier) elements: (identifier))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (identifier)))))))",
     "wrappedText": "fn _f() { let _ = a.map (|(b, c)| b.push(c)); }",
     "wrappedOffset": 18
   },
@@ -41128,6 +41592,94 @@
     "expectedReparseTree": "(field_expression value: (identifier) field: (field_identifier))",
     "wrappedText": "fn _f() { let _ = b.push; }",
     "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 296,
+      "$source": 0,
+      "$span": {
+        "start": 7,
+        "end": 13
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 7,
+          "end": 8
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_elements": [
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "b",
+          "$span": {
+            "start": 8,
+            "end": 9
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 79,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 9,
+            "end": 10
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": false
+        },
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "c",
+          "$span": {
+            "start": 11,
+            "end": 12
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        }
+      ],
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 12,
+          "end": 13
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(b,c)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(b, c)",
+    "pattern": "tuple_pattern",
+    "edits": [],
+    "expectedSourceOut": "(b,c)",
+    "expectedReparseTree": "(tuple_pattern elements: (identifier) elements: (identifier))",
+    "wrappedText": "fn _f() { let (b,c) = (); }",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
@@ -47073,9 +47625,97 @@
     "pattern": "_expression_statement_block_ending",
     "edits": [],
     "expectedSourceOut": "match x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern pattern: (tuple_pattern (identifier) (remaining_field_pattern))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (remaining_field_pattern))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) (field_pattern (field_pattern_named name: (field_identifier) pattern: (identifier))) (remaining_field_pattern))) value: (identifier)))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern pattern: (tuple_pattern elements: (identifier) elements: (remaining_field_pattern))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (remaining_field_pattern))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) (field_pattern (field_pattern_named name: (field_identifier) pattern: (identifier))) (remaining_field_pattern))) value: (identifier)))))))",
     "wrappedText": "match x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 296,
+      "$source": 0,
+      "$span": {
+        "start": 12,
+        "end": 19
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 12,
+          "end": 13
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_elements": [
+        {
+          "$type": 1,
+          "$source": 0,
+          "$text": "a",
+          "$span": {
+            "start": 13,
+            "end": 14
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 79,
+          "$source": 0,
+          "$text": ",",
+          "$span": {
+            "start": 14,
+            "end": 15
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": false
+        },
+        {
+          "$type": 301,
+          "$source": 0,
+          "$text": "..",
+          "$span": {
+            "start": 16,
+            "end": 18
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        }
+      ],
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 18,
+          "end": 19
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(a,..)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(a, ..)",
+    "pattern": "tuple_pattern",
+    "edits": [],
+    "expectedSourceOut": "(a,..)",
+    "expectedReparseTree": "(tuple_pattern elements: (identifier) elements: (remaining_field_pattern))",
+    "wrappedText": "fn _f() { let (a,..) = (); }",
+    "wrappedOffset": 14
   },
   {
     "kind": "render",
@@ -47173,7 +47813,7 @@
     "pattern": "_expression_statement_block_ending",
     "edits": [],
     "expectedSourceOut": "match x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern pattern: (tuple_pattern (identifier) (remaining_field_pattern))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (remaining_field_pattern))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) (field_pattern (field_pattern_named name: (field_identifier) pattern: (identifier))) (remaining_field_pattern))) value: (identifier)))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern pattern: (tuple_pattern elements: (identifier) elements: (remaining_field_pattern))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (remaining_field_pattern))) (match_arm_with_comma value: (identifier))) (match_arm pattern: (match_pattern pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) (field_pattern (field_pattern_named name: (field_identifier) pattern: (identifier))) (remaining_field_pattern))) value: (identifier)))))))",
     "wrappedText": "match x {\n  (a, ..) => a,\n  B(..) => c,\n  D::E{f: g, ..} => g\n}",
     "wrappedOffset": 0
   },
@@ -47745,7 +48385,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n} while let A(x) | B(x) = expr {\n    do_stuff_with(x);\n} let Ok(index) | Err(index) = slice.binary_search(&x); for ref a | b in c {} let Ok(x) | Err(x) = binary_search(x); for A | B | C in c {} |(Ok(x) | Err(x))| expr(); let ref mut x @ (A | B | C); fn foo((1 | 2 | 3): u8) {} if let x!() | y!() = () {}",
-    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_block_ending (if_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))) value: (identifier)) consequence: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))))))) statements: (expression_statement (expression_statement_block_ending (while_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))) value: (identifier)) body: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))))))) statements: (let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))) value: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (reference_expression value: (identifier))))) statements: (expression_statement (expression_statement_block_ending (for_expression pattern: (or_pattern (or_pattern_binary left: (ref_pattern pattern: (identifier)) right: (identifier))) value: (identifier) body: (block)))) statements: (let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))) value: (call_expression function: (identifier) arguments: (arguments attributes: (identifier)))) statements: (expression_statement (expression_statement_block_ending (for_expression pattern: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier))) value: (identifier) body: (block)))) statements: (expression_statement (expression_statement_with_semi (closure_expression parameters: (closure_parameters (tuple_pattern (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))))) (closure_expression_expr body: (call_expression function: (identifier) arguments: (arguments)))))) statements: (let_declaration pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (captured_pattern identifier: (identifier) pattern: (tuple_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier)))))))) statements: (function_item name: (identifier) parameters: (parameters (parameter pattern: (tuple_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) type: (primitive_type))) body: (block)) statements: (expression_statement (expression_statement_block_ending (if_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren))) right: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren))))) value: (unit_expression)) consequence: (block)))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (expression_statement_block_ending (if_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))) value: (identifier)) consequence: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))))))) statements: (expression_statement (expression_statement_block_ending (while_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))) value: (identifier)) body: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))))))) statements: (let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))) value: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (reference_expression value: (identifier))))) statements: (expression_statement (expression_statement_block_ending (for_expression pattern: (or_pattern (or_pattern_binary left: (ref_pattern pattern: (identifier)) right: (identifier))) value: (identifier) body: (block)))) statements: (let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))) value: (call_expression function: (identifier) arguments: (arguments attributes: (identifier)))) statements: (expression_statement (expression_statement_block_ending (for_expression pattern: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier))) value: (identifier) body: (block)))) statements: (expression_statement (expression_statement_with_semi (closure_expression parameters: (closure_parameters (tuple_pattern elements: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))))) (closure_expression_expr body: (call_expression function: (identifier) arguments: (arguments)))))) statements: (let_declaration pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (captured_pattern identifier: (identifier) pattern: (tuple_pattern elements: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier)))))))) statements: (function_item name: (identifier) parameters: (parameters (parameter pattern: (tuple_pattern elements: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) type: (primitive_type))) body: (block)) statements: (expression_statement (expression_statement_block_ending (if_expression condition: (let_condition pattern: (or_pattern (or_pattern_binary left: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren))) right: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren))))) value: (unit_expression)) consequence: (block)))))",
     "wrappedText": "if let A(x) | B(x) = expr {\n    do_stuff_with(x);\n} while let A(x) | B(x) = expr {\n    do_stuff_with(x);\n} let Ok(index) | Err(index) = slice.binary_search(&x); for ref a | b in c {} let Ok(x) | Err(x) = binary_search(x); for A | B | C in c {} |(Ok(x) | Err(x))| expr(); let ref mut x @ (A | B | C); fn foo((1 | 2 | 3): u8) {} if let x!() | y!() = () {}",
     "wrappedOffset": 0
   },
@@ -48479,7 +49119,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let ref mut x @ (A | B | C);",
-    "expectedReparseTree": "(let_declaration pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (captured_pattern identifier: (identifier) pattern: (tuple_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier))))))))",
+    "expectedReparseTree": "(let_declaration pattern: (ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (captured_pattern identifier: (identifier) pattern: (tuple_pattern elements: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier))))))))",
     "wrappedText": "let ref mut x @ (A | B | C);",
     "wrappedOffset": 0
   },
@@ -48641,7 +49281,7 @@
     "pattern": "ref_pattern",
     "edits": [],
     "expectedSourceOut": "ref mut x @ (A | B | C)",
-    "expectedReparseTree": "(ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (captured_pattern identifier: (identifier) pattern: (tuple_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier)))))))",
+    "expectedReparseTree": "(ref_pattern pattern: (mut_pattern mutable_specifier: (mutable_specifier) pattern: (captured_pattern identifier: (identifier) pattern: (tuple_pattern elements: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier)))))))",
     "wrappedText": "fn _f() { let ref mut x @ (A | B | C) = (); }",
     "wrappedOffset": 14
   },
@@ -48699,6 +49339,192 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 296,
+      "$source": 0,
+      "$span": {
+        "start": 294,
+        "end": 305
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 294,
+          "end": 295
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_elements": {
+        "$type": 307,
+        "$source": 0,
+        "$text": "A | B | C",
+        "$span": {
+          "start": 295,
+          "end": 304
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 304,
+          "end": 305
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(A | B | C)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(A | B | C)",
+    "pattern": "tuple_pattern",
+    "edits": [],
+    "expectedSourceOut": "(A | B | C)",
+    "expectedReparseTree": "(tuple_pattern elements: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier))))",
+    "wrappedText": "fn _f() { let (A | B | C) = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 296,
+      "$source": 0,
+      "$span": {
+        "start": 315,
+        "end": 326
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 315,
+          "end": 316
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_elements": {
+        "$type": 307,
+        "$source": 0,
+        "$text": "1 | 2 | 3",
+        "$span": {
+          "start": 316,
+          "end": 325
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 325,
+          "end": 326
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 2,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(1 | 2 | 3)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(1 | 2 | 3)",
+    "pattern": "tuple_pattern",
+    "edits": [],
+    "expectedSourceOut": "(1 | 2 | 3)",
+    "expectedReparseTree": "(tuple_pattern elements: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal))))",
+    "wrappedText": "fn _f() { let (1 | 2 | 3) = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 296,
+      "$source": 0,
+      "$span": {
+        "start": 251,
+        "end": 267
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_(": {
+        "$type": 7,
+        "$source": 0,
+        "$text": "(",
+        "$span": {
+          "start": 251,
+          "end": 252
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_elements": {
+        "$type": 307,
+        "$source": 0,
+        "$text": "Ok(x) | Err(x)",
+        "$span": {
+          "start": 252,
+          "end": 266
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_)": {
+        "$type": 8,
+        "$source": 0,
+        "$text": ")",
+        "$span": {
+          "start": 266,
+          "end": 267
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 2,
+        "$named": false
+      }
+    },
+    "expectedOutput": "(Ok(x) | Err(x))"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(Ok(x) | Err(x))",
+    "pattern": "tuple_pattern",
+    "edits": [],
+    "expectedSourceOut": "(Ok(x) | Err(x))",
+    "expectedReparseTree": "(tuple_pattern elements: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))))",
+    "wrappedText": "fn _f() { let (Ok(x) | Err(x)) = (); }",
+    "wrappedOffset": 14
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 302,
       "$source": 0,
       "$span": {
@@ -48741,7 +49567,7 @@
     "pattern": "mut_pattern",
     "edits": [],
     "expectedSourceOut": "mut x @ (A | B | C)",
-    "expectedReparseTree": "(mut_pattern mutable_specifier: (mutable_specifier) pattern: (captured_pattern identifier: (identifier) pattern: (tuple_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier))))))",
+    "expectedReparseTree": "(mut_pattern mutable_specifier: (mutable_specifier) pattern: (captured_pattern identifier: (identifier) pattern: (tuple_pattern elements: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier))))))",
     "wrappedText": "fn _f(x: i32) { match x { mut x @ (A | B | C) => () } }",
     "wrappedOffset": 26
   },
@@ -48803,7 +49629,7 @@
     "pattern": "captured_pattern",
     "edits": [],
     "expectedSourceOut": "x@(A | B | C)",
-    "expectedReparseTree": "(captured_pattern identifier: (identifier) pattern: (tuple_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier)))))",
+    "expectedReparseTree": "(captured_pattern identifier: (identifier) pattern: (tuple_pattern elements: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (identifier) right: (identifier))) right: (identifier)))))",
     "wrappedText": "fn _f() { let x@(A | B | C) = (); }",
     "wrappedOffset": 14
   },
@@ -48865,7 +49691,7 @@
     "pattern": "parameter",
     "edits": [],
     "expectedSourceOut": "(1 | 2 | 3):u8",
-    "expectedReparseTree": "(parameter pattern: (tuple_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) type: (primitive_type))",
+    "expectedReparseTree": "(parameter pattern: (tuple_pattern elements: (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) type: (primitive_type))",
     "wrappedText": "fn _f((1 | 2 | 3):u8) {}",
     "wrappedOffset": 6
   },

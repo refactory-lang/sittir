@@ -1837,10 +1837,12 @@ export function wrapFieldInitializerList(data: T.FieldInitializerList, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.FieldInitializerList as const,
-    _content: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind((data._shorthand_field_initializer ?? data._field_initializer ?? data._base_field_initializer ?? data._content), ["shorthand_field_initializer","field_initializer","base_field_initializer"]), false, "content"),
+    _initializers: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._initializers, ["shorthand_field_initializer","field_initializer","base_field_initializer"]), false, "initializers"),
 
-    contents() { return drillInAll<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>(this._content as readonly (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapFieldInitializerList({ ...data, $children: vs }, tree) },
+    initializers() { return drillInAll<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>(this._initializers as readonly (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[] | undefined, tree); },
+    $with: {
+      initializers: (...v: NonNullable<T.FieldInitializerList['_initializers']>[number][]) => wrapFieldInitializerList({ ...data, _initializers: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -3419,10 +3421,12 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TuplePattern as const,
-    _content: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind((data._string_literal ?? data._raw_string_literal ?? data._char_literal ?? data._boolean_literal ?? data._integer_literal ?? data._float_literal ?? data._negative_literal ?? data._identifier ?? data._scoped_identifier ?? data._generic_pattern ?? data._tuple_pattern ?? data._tuple_struct_pattern ?? data._struct_pattern ?? data._reserved_identifier ?? data._ref_pattern ?? data._slice_pattern ?? data._captured_pattern ?? data._reference_pattern ?? data._remaining_field_pattern ?? data._mut_pattern ?? data._range_pattern ?? data._or_pattern ?? data._const_block ?? data._macro_invocation ?? data._wildcard_pattern ?? data._closure_expression ?? data._content), ["_pattern","_literal_pattern","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","negative_literal","identifier","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","_reserved_identifier","ref_pattern","slice_pattern","captured_pattern","reference_pattern","remaining_field_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation","_wildcard_pattern","closure_expression"]), false, "content"),
+    _elements: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._elements, ["_pattern","_literal_pattern","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","negative_literal","identifier","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","_reserved_identifier","ref_pattern","slice_pattern","captured_pattern","reference_pattern","remaining_field_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation","_wildcard_pattern","closure_expression"]), false, "elements"),
 
-    contents() { return drillInAll<T.Pattern | T.ClosureExpression>(this._content as readonly (T.Pattern | T.ClosureExpression)[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapTuplePattern({ ...data, $children: vs }, tree) },
+    elements() { return drillInAll<T.Pattern | T.ClosureExpression>(this._elements as readonly (T.Pattern | T.ClosureExpression)[] | undefined, tree); },
+    $with: {
+      elements: (...v: NonNullable<T.TuplePattern['_elements']>[number][]) => wrapTuplePattern({ ...data, _elements: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
