@@ -97,36 +97,8 @@ function withAttrsFrom(original: Rule, result: Rule): Rule {
 
 export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean = false): Rule {
 	switch (rule.type) {
-		case 'seq': {
-			// Strip non-keyword strings, remove empty-seq sentinels, flatten nested seqs.
-			const members = rule.members
-				.map((m) => simplifyRule(m, wordMatcher, inField))
-				.filter((m) => {
-					if (m.type === 'string' && !isKeywordShape(m.value, wordMatcher)) return false;
-					if (m.type === 'seq' && m.members.length === 0) return false;
-					return true;
-				})
-				.flatMap((m) => {
-					if (m.type !== 'seq') return [m];
-					// Splicing a nested seq into the parent drops the seq NODE.
-					// That is only safe when the seq carries no cardinality of its
-					// own. A seq with a pushed-down `multiplicity` / `separator` /
-					// `fieldName` (e.g. a `repeat(seq(...))` whose wrapper-deletion
-					// stamped the seq) is a distinct repeated/optional GROUP whose
-					// members share a cardinality that differs from the surrounding
-					// seq — splicing would both lose that cardinality and hoist any
-					// inner choice to the parent's seq position (creating a
-					// non-canonical choice-at-seq). Keep such a seq as one member.
-					const sm = m as SeqRule & { multiplicity?: LeafMultiplicity; separator?: unknown; fieldName?: string };
-					if (sm.multiplicity !== undefined || sm.separator !== undefined || sm.fieldName !== undefined) {
-						return [m];
-					}
-					return sm.members;
-				});
-			if (members.length === 0) return withAttrsFrom(rule, { type: 'seq', members: [] });
-			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
-			return withAttrsFrom(rule, { type: 'seq', members });
-		}
+		case 'seq':
+			return collapseSeq(rule, wordMatcher, inField);
 		case 'choice': {
 			// Variant wrappers preserved for polymorph surface detection.
 			const members = rule.members.map((m) => simplifyRule(m, wordMatcher, inField));
@@ -864,7 +836,13 @@ export function inlineRefs(
 			if (!inlineTarget) return rule;
 			const next = new Set(visited);
 			next.add(rule.name);
-			return inlineRefs(inlineTarget, rules, inlineKinds, next);
+			// Combine the referring symbol's pushed-down attributes (multiplicity /
+			// separator / fieldName) with the inlined target — same as the
+			// inline-listed path above. wrapper-deletion stamps e.g.
+			// `optional(SYMBOL(_initializer))` to `SYMBOL{multiplicity:'optional'}`;
+			// without this the optional is dropped on inline and the spliced leaf
+			// (e.g. required_parameter's `value`) collapses to a required single.
+			return reapplyInlinedLeafAttrs(rule, inlineRefs(inlineTarget, rules, inlineKinds, next));
 		}
 		case 'seq':
 			return { ...rule, members: rule.members.map((m) => recurse(m, visited)) };
@@ -943,7 +921,9 @@ function reapplyInlinedLeafAttrs(ref: Rule, inlined: Rule): Rule {
 	return pushAttrsToLeaves(inlined, r.multiplicity, r.separator, r.fieldName);
 }
 
-type LeafMultiplicity = 'optional' | 'array' | 'nonEmptyArray' | undefined;
+// `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
+// missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
+type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
 
 /**
  * Combine an OUTER multiplicity (pushed down from an enclosing wrapper) with
@@ -967,14 +947,66 @@ type LeafMultiplicity = 'optional' | 'array' | 'nonEmptyArray' | undefined;
  * which clobbered an inner `optional` with the outer `nonEmptyArray` and
  * produced `NonEmptyArray<T>` where the runtime slot is 0-or-more.
  */
-function combineMultiplicity(outer: LeafMultiplicity, inner: LeafMultiplicity): LeafMultiplicity {
-	if (outer === undefined) return inner;
+function combineMultiplicity(outerIn: LeafMultiplicity, innerIn: LeafMultiplicity): LeafMultiplicity {
+	// `'single'` is the canonical required-one value (rule.ts `Multiplicity`);
+	// a missing multiplicity defaults to it (null-coalesce). The lattice then
+	// operates in `'single'` terms: `optional` trumps single
+	// (`combine(optional, single) → optional`), and `guaranteesOne('single')`
+	// is true (`combine(nonEmptyArray, single) → nonEmptyArray`, not `array`).
+	const outer = outerIn ?? 'single';
+	const inner = innerIn ?? 'single';
+	if (outer === 'single') return inner;
 	const isCollection = (m: LeafMultiplicity): boolean => m === 'array' || m === 'nonEmptyArray';
-	const guaranteesOne = (m: LeafMultiplicity): boolean => m === undefined || m === 'nonEmptyArray';
+	const guaranteesOne = (m: LeafMultiplicity): boolean => m === 'single' || m === 'nonEmptyArray';
 	if (isCollection(outer) || isCollection(inner)) {
 		return guaranteesOne(outer) && guaranteesOne(inner) ? 'nonEmptyArray' : 'array';
 	}
-	return outer === 'optional' || inner === 'optional' ? 'optional' : undefined;
+	return outer === 'optional' || inner === 'optional' ? 'optional' : 'single';
+}
+
+/**
+ * Collapse a `seq` during simplification, carrying the seq's slot attributes
+ * onto the survivor when the seq NODE is discarded. `seq(x) → x` and the
+ * multi-member flatten both drop the seq node, so its `multiplicity` /
+ * `separator` / `fieldName` must move to the survivor or they're lost (the
+ * Path-A/B multiplicity drop). `separator`/`fieldName`/`id` ride along
+ * absent-only (`withAttrsFrom`); `multiplicity` COMBINES via the lattice so a
+ * survivor's own inner multiplicity (e.g. `optional`) merges with the seq's
+ * (e.g. `array`) → `array`, rather than the survivor silently keeping its
+ * narrower own.
+ */
+function collapseSeq(rule: SeqRule, wordMatcher?: RegExp, inField: boolean = false): Rule {
+	const members = rule.members
+		.map((m) => simplifyRule(m, wordMatcher, inField))
+		.filter((m) => {
+			// Strip non-keyword strings + empty-seq sentinels.
+			if (m.type === 'string' && !isKeywordShape(m.value, wordMatcher)) return false;
+			if (m.type === 'seq' && m.members.length === 0) return false;
+			return true;
+		})
+		.flatMap((m) => {
+			if (m.type !== 'seq') return [m];
+			// Keep a nested seq that carries its OWN cardinality as one member:
+			// splicing would lose that cardinality and hoist an inner choice to
+			// the parent's seq position (a non-canonical choice-at-seq). A bare
+			// seq (no own attrs) is spliced/flattened.
+			const sm = m as SeqRule & { multiplicity?: LeafMultiplicity; separator?: unknown; fieldName?: string };
+			if (sm.multiplicity !== undefined || sm.separator !== undefined || sm.fieldName !== undefined) {
+				return [m];
+			}
+			return sm.members;
+		});
+	if (members.length === 0) return withAttrsFrom(rule, { type: 'seq', members: [] });
+	if (members.length === 1) {
+		const survivor = members[0]!;
+		const carried = withAttrsFrom(rule, survivor);
+		const combined = combineMultiplicity(
+			(rule as { multiplicity?: LeafMultiplicity }).multiplicity,
+			(survivor as { multiplicity?: LeafMultiplicity }).multiplicity
+		);
+		return { ...carried, multiplicity: combined } as Rule;
+	}
+	return withAttrsFrom(rule, { type: 'seq', members });
 }
 
 /**

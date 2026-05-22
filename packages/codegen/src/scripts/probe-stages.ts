@@ -99,6 +99,13 @@ async function main(argv: string[]): Promise<number> {
 		entryPath: relFromRoot(entryPath, repoRoot)
 	};
 
+	// Phase passes log diagnostics (enrich/transform/[assemble]) via
+	// console.log/warn; route them to stderr so stdout carries only the JSON.
+	const origLog = console.log;
+	const origWarn = console.warn;
+	console.log = (...a: unknown[]) => void process.stderr.write(a.map(String).join(' ') + '\n');
+	console.warn = (...a: unknown[]) => void process.stderr.write(a.map(String).join(' ') + '\n');
+
 	// Phase 1: evaluate.
 	const raw = await evaluate(entryPath);
 	stages.evaluate = raw.rules[kind] ?? null;
@@ -140,13 +147,14 @@ async function main(argv: string[]): Promise<number> {
 		}
 	}
 
+	console.log = origLog;
+	console.warn = origWarn;
+
 	const indent = values.compact ? undefined : 2;
-	if (values.brief) {
-		const brief = { grammar: stages.grammar, kind: stages.kind, simplify: stages.simplify };
-		process.stdout.write(JSON.stringify(brief, null, indent) + '\n');
-	} else {
-		process.stdout.write(JSON.stringify(stages, null, indent) + '\n');
-	}
+	const payload = values.brief
+		? { grammar: stages.grammar, kind: stages.kind, simplify: stages.simplify }
+		: stages;
+	process.stdout.write(JSON.stringify(decycle(payload), null, indent) + '\n');
 	return 0;
 }
 
@@ -249,6 +257,32 @@ function summarizeValues(v: unknown): unknown {
 		}
 		return x;
 	});
+}
+
+/**
+ * Deep-clone `value`, replacing back-pointer CYCLES with a marker so the result
+ * is JSON-safe. Tracks ancestors (add on descent, remove on ascent), so only
+ * true cycles are pruned — shared (non-cyclic) refs are preserved. Linked rules
+ * + AssembledNode instances carry such cycles (e.g. `AssembledBranch._slots →
+ * … → node`), which crashed `JSON.stringify` outright.
+ */
+function decycle(value: unknown, ancestors: Set<object> = new Set()): unknown {
+	if (value === null || typeof value !== 'object') return value;
+	const obj = value as object;
+	if (ancestors.has(obj)) return '[Circular]';
+	ancestors.add(obj);
+	let out: unknown;
+	if (Array.isArray(value)) {
+		out = value.map((v) => decycle(v, ancestors));
+	} else {
+		const rec: Record<string, unknown> = {};
+		for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+			rec[k] = decycle(v, ancestors);
+		}
+		out = rec;
+	}
+	ancestors.delete(obj);
+	return out;
 }
 
 const _isMain = import.meta.url === `file://${process.argv[1]}`;

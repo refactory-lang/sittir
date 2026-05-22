@@ -2293,10 +2293,10 @@ export interface _ExportStatementNamespaceExport {
 export interface _ExportStatementTypeExport {
   readonly $type: TSKindId._ExportStatementTypeExport;
   readonly _export_clause: ExportClause;
-  readonly _source: String;
+  readonly _source?: String;
   readonly _semicolon?: Semicolon;
   exportClause(): ExportClause;
-  source(): String;
+  source(): String | undefined;
   semicolon(): Semicolon | undefined;
 }
 
@@ -2341,9 +2341,9 @@ export interface ForHeaderLhs {
 export interface ForHeaderVarKind {
   readonly $type: TSKindId.ForHeaderVarKind;
   readonly _left: Identifier | DestructuringPattern;
-  readonly _value: Expression;
+  readonly _value?: Expression;
   left(): Identifier | DestructuringPattern;
-  value(): Expression;
+  value(): Expression | undefined;
 }
 
 export interface FromClause {
@@ -3117,10 +3117,10 @@ export interface ExportSpecifier {
 export interface ExportStatementTypeExport {
   readonly $type: "export_statement_type_export";
   readonly _export_clause: ExportClause;
-  readonly _source: String;
+  readonly _source?: String;
   readonly _semicolon?: Semicolon;
   exportClause(): ExportClause;
-  source(): String;
+  source(): String | undefined;
   semicolon(): Semicolon | undefined;
 }
 
@@ -3179,10 +3179,10 @@ export interface ExpressionStatement {
 
 export interface ExtendsClause {
   readonly $type: TSKindId.ExtendsClause;
-  readonly _value: Expression;
-  readonly _type_arguments?: TypeArguments;
-  value(): Expression;
-  typeArguments(): TypeArguments | undefined;
+  readonly _value: NonEmptyArray<Expression>;
+  readonly _type_arguments?: readonly (TypeArguments)[];
+  values(): NonEmptyArray<Expression>;
+  typeArguments(): readonly (TypeArguments)[];
 }
 
 export interface ExtendsTypeClause {
@@ -3196,14 +3196,14 @@ export interface FieldDefinition {
   readonly _decorator?: readonly (Decorator)[];
   readonly _static_marker?: boolean;
   readonly _property: PropertyName;
-  readonly _value: Expression;
+  readonly _value?: Expression;
   readonly __inputHints__?: {
     readonly static_marker?: BooleanKeyword<"static">;
   };
   decorators(): readonly (Decorator)[];
   staticMarker(): boolean | undefined;
   property(): PropertyName;
-  value(): Expression;
+  value(): Expression | undefined;
 }
 
 export interface FinallyClause {
@@ -3874,7 +3874,7 @@ export interface OptionalParameter {
   readonly _readonly_marker?: boolean;
   readonly _pattern: Pattern | This;
   readonly _type?: TypeAnnotation;
-  readonly _value: Expression;
+  readonly _value?: Expression;
   readonly __inputHints__?: {
     readonly accessibility_modifier?: KindEnum<"public" | "private" | "protected", TSKindId.Public | TSKindId.Private | TSKindId.Protected>;
     readonly override_modifier?: BooleanKeyword<"override">;
@@ -3886,7 +3886,7 @@ export interface OptionalParameter {
   readonlyMarker(): boolean | undefined;
   pattern(): Pattern | This;
   type(): TypeAnnotation | undefined;
-  value(): Expression;
+  value(): Expression | undefined;
 }
 
 export interface OptionalTupleParameter {
@@ -3986,7 +3986,7 @@ export interface PublicFieldDefinition {
   readonly _name: PropertyName;
   readonly _optionality_marker?: number;
   readonly _type?: TypeAnnotation;
-  readonly _value: Expression;
+  readonly _value?: Expression;
   readonly __inputHints__?: {
     readonly optionality_marker?: KindEnum<"?" | "!", TSKindId.Qmark | TSKindId.Bang>;
   };
@@ -3995,7 +3995,7 @@ export interface PublicFieldDefinition {
   name(): PropertyName;
   optionalityMarker(): number | undefined;
   type(): TypeAnnotation | undefined;
-  value(): Expression;
+  value(): Expression | undefined;
 }
 
 export interface ReadonlyType {
@@ -4020,7 +4020,7 @@ export interface RequiredParameter {
   readonly _readonly_marker?: boolean;
   readonly _pattern: Pattern | This;
   readonly _type?: TypeAnnotation;
-  readonly _value: Expression;
+  readonly _value?: Expression;
   readonly __inputHints__?: {
     readonly accessibility_modifier?: KindEnum<"public" | "private" | "protected", TSKindId.Public | TSKindId.Private | TSKindId.Protected>;
     readonly override_modifier?: BooleanKeyword<"override">;
@@ -4032,7 +4032,7 @@ export interface RequiredParameter {
   readonlyMarker(): boolean | undefined;
   pattern(): Pattern | This;
   type(): TypeAnnotation | undefined;
-  value(): Expression;
+  value(): Expression | undefined;
 }
 
 export interface RestPattern {
@@ -4345,8 +4345,8 @@ export interface WithStatement {
 
 export interface YieldExpression {
   readonly $type: TSKindId.YieldExpression;
-  readonly _expression?: Expression;
-  expression(): Expression | undefined;
+  readonly _expression: Expression;
+  expression(): Expression;
 }
 
 

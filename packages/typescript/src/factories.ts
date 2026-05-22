@@ -451,7 +451,7 @@ export function _exportStatementTypeExport(config: T._ExportStatementTypeExport.
     semicolon() { return _semicolon; },
     $with: {
       exportClause: (value: T.ExportClause) => _exportStatementTypeExport({ ...config, exportClause: value }),
-      source: (value: T.String) => _exportStatementTypeExport({ ...config, source: value }),
+      source: (value?: T.String) => _exportStatementTypeExport({ ...config, source: value }),
       semicolon: (value?: T.Semicolon) => _exportStatementTypeExport({ ...config, semicolon: value }),
     },
   }, methodsEngine);
@@ -542,7 +542,7 @@ export function _forHeaderVarKind(config: T.ForHeaderVarKind.Config) {
     value() { return _value; },
     $with: {
       left: (value: T.Identifier | T.DestructuringPattern) => _forHeaderVarKind({ ...config, left: value }),
-      value: (value: T.Expression) => _forHeaderVarKind({ ...config, value: value }),
+      value: (value?: T.Expression) => _forHeaderVarKind({ ...config, value: value }),
     },
   }, methodsEngine);
 }
@@ -2118,7 +2118,7 @@ export function exportStatementTypeExport(config: T.ExportStatementTypeExport.Co
     semicolon() { return _semicolon; },
     $with: {
       exportClause: (value: T.ExportClause) => exportStatementTypeExport({ ...config, exportClause: value }),
-      source: (value: T.String) => exportStatementTypeExport({ ...config, source: value }),
+      source: (value?: T.String) => exportStatementTypeExport({ ...config, source: value }),
       semicolon: (value?: T.Semicolon) => exportStatementTypeExport({ ...config, semicolon: value }),
     },
   }, methodsEngine);
@@ -2257,11 +2257,11 @@ export function extendsClause(config: T.ExtendsClause.Config) {
     $named: true as const,
     _value,
     _type_arguments,
-    value() { return _value; },
+    values() { return _value; },
     typeArguments() { return _type_arguments; },
     $with: {
-      value: (value: T.Expression) => extendsClause({ ...config, value: value }),
-      typeArguments: (value?: T.TypeArguments) => extendsClause({ ...config, typeArguments: value }),
+      values: (...values: NonEmptyArray<T.Expression>) => extendsClause({ ...config, value: values }),
+      typeArguments: (...values: T.TypeArguments[]) => extendsClause({ ...config, typeArguments: values }),
     },
   }, methodsEngine);
 }
@@ -3625,7 +3625,7 @@ export function optionalParameter(config: T.OptionalParameter.Config) {
       readonlyMarker: (value?: NonNullable<Parameters<typeof optionalParameter>[0]>['readonlyMarker']) => optionalParameter({ ...config, readonlyMarker: value }),
       pattern: (value: T.Pattern | T.This) => optionalParameter({ ...config, pattern: value }),
       type: (value?: T.TypeAnnotation) => optionalParameter({ ...config, type: value }),
-      value: (value: T.Expression) => optionalParameter({ ...config, value: value }),
+      value: (value?: T.Expression) => optionalParameter({ ...config, value: value }),
     },
   }, methodsEngine);
 }
@@ -3876,7 +3876,7 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
       name: (value: T.PropertyName) => publicFieldDefinition({ ...config, name: value }),
       optionalityMarker: (value?: NonNullable<Parameters<typeof publicFieldDefinition>[0]>['optionalityMarker']) => publicFieldDefinition({ ...config, optionalityMarker: value }),
       type: (value?: T.TypeAnnotation) => publicFieldDefinition({ ...config, type: value }),
-      value: (value: T.Expression) => publicFieldDefinition({ ...config, value: value }),
+      value: (value?: T.Expression) => publicFieldDefinition({ ...config, value: value }),
     },
   }, methodsEngine);
 }
@@ -3966,7 +3966,7 @@ export function requiredParameter(config: T.RequiredParameter.Config) {
       readonlyMarker: (value?: NonNullable<Parameters<typeof requiredParameter>[0]>['readonlyMarker']) => requiredParameter({ ...config, readonlyMarker: value }),
       pattern: (value: T.Pattern | T.This) => requiredParameter({ ...config, pattern: value }),
       type: (value?: T.TypeAnnotation) => requiredParameter({ ...config, type: value }),
-      value: (value: T.Expression) => requiredParameter({ ...config, value: value }),
+      value: (value?: T.Expression) => requiredParameter({ ...config, value: value }),
     },
   }, methodsEngine);
 }
@@ -4722,7 +4722,7 @@ export function withStatement(config: T.WithStatement.Config) {
   }, methodsEngine);
 }
 
-export function yieldExpression(expression?: T.YieldExpression.Config['expression']) {
+export function yieldExpression(expression: T.YieldExpression.Config['expression']) {
   const _expression = expression;
   return withMethods({
     $type: TSKindId.YieldExpression as const,
@@ -4731,7 +4731,7 @@ export function yieldExpression(expression?: T.YieldExpression.Config['expressio
     _expression,
     expression() { return _expression; },
     $with: {
-      expression: (value?: T.YieldExpression.Config['expression']) => yieldExpression(value),
+      expression: (value: T.YieldExpression.Config['expression']) => yieldExpression(value),
     },
   }, methodsEngine);
 }

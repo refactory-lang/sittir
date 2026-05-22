@@ -1987,13 +1987,13 @@
           "name": "source",
           "propertyName": "source",
           "paramName": "source",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "string",
               "unresolved": true
             }
@@ -2388,13 +2388,13 @@
           "name": "value",
           "propertyName": "value",
           "paramName": "value",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "expression",
               "unresolved": true
             }
@@ -9316,13 +9316,13 @@
           "name": "source",
           "propertyName": "source",
           "paramName": "source",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "string",
               "unresolved": true
             }
@@ -9462,15 +9462,15 @@
       "fields": [
         {
           "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
+          "propertyName": "values",
+          "paramName": "values",
           "required": true,
-          "multiple": false,
-          "nonEmpty": false,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "nonEmptyArray",
               "name": "expression",
               "unresolved": true
             }
@@ -9488,12 +9488,12 @@
           "propertyName": "typeArguments",
           "paramName": "typeArguments",
           "required": false,
-          "multiple": false,
+          "multiple": true,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "array",
               "name": "type_arguments",
               "unresolved": true
             }
@@ -9652,13 +9652,13 @@
           "name": "value",
           "propertyName": "value",
           "paramName": "value",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "expression",
               "unresolved": true
             }
@@ -15299,13 +15299,13 @@
           "name": "value",
           "propertyName": "value",
           "paramName": "value",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "expression",
               "unresolved": true
             }
@@ -16246,13 +16246,13 @@
           "name": "value",
           "propertyName": "value",
           "paramName": "value",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "expression",
               "unresolved": true
             }
@@ -16563,13 +16563,13 @@
           "name": "value",
           "propertyName": "value",
           "paramName": "value",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "expression",
               "unresolved": true
             }
@@ -19081,13 +19081,13 @@
           "name": "expression",
           "propertyName": "expression",
           "paramName": "expression",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "expression",
               "unresolved": true
             }

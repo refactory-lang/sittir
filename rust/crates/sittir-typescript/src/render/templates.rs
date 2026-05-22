@@ -249,7 +249,7 @@ pub struct _ExportStatementNamespaceExportTemplate<'a> {
 pub struct _ExportStatementTypeExportTemplate<'a> {
     pub export_clause: SingleNonterminalView<'a>,
     pub semicolon: OptionalNonterminalView<'a>,
-    pub source: SingleNonterminalView<'a>,
+    pub source: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -270,7 +270,7 @@ pub struct ForHeaderLhsTemplate<'a> {
 pub struct ForHeaderVarKindTemplate<'a> {
     pub kind: OptionalNonterminalView<'a>,
     pub left: SingleNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
+    pub value: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -827,7 +827,7 @@ pub struct ExportStatementNamespaceExportTemplate<'a> {
 pub struct ExportStatementTypeExportTemplate<'a> {
     pub export_clause: SingleNonterminalView<'a>,
     pub semicolon: OptionalNonterminalView<'a>,
-    pub source: SingleNonterminalView<'a>,
+    pub source: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -850,8 +850,8 @@ pub struct ExpressionStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "extends_clause.jinja", escape = "none")]
 pub struct ExtendsClauseTemplate<'a> {
-    pub type_arguments: OptionalNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
+    pub type_arguments: ListNonterminalView<'a>,
+    pub value: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -866,7 +866,7 @@ pub struct FieldDefinitionTemplate<'a> {
     pub decorator: ListNonterminalView<'a>,
     pub property: SingleNonterminalView<'a>,
     pub static_marker: OptionalNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
+    pub value: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1351,7 +1351,7 @@ pub struct OptionalParameterTemplate<'a> {
     pub pattern: SingleNonterminalView<'a>,
     pub readonly_marker: OptionalNonterminalView<'a>,
     pub type_: OptionalNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
+    pub value: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1429,7 +1429,7 @@ pub struct PublicFieldDefinitionTemplate<'a> {
     pub public_field_definition_declare_first: OptionalNonterminalView<'a>,
     pub public_field_definition_static_mods: OptionalNonterminalView<'a>,
     pub type_: OptionalNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
+    pub value: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1454,7 +1454,7 @@ pub struct RequiredParameterTemplate<'a> {
     pub pattern: SingleNonterminalView<'a>,
     pub readonly_marker: OptionalNonterminalView<'a>,
     pub type_: OptionalNonterminalView<'a>,
-    pub value: SingleNonterminalView<'a>,
+    pub value: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1727,6 +1727,6 @@ pub struct WithStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "yield_expression.jinja", escape = "none")]
 pub struct YieldExpressionTemplate<'a> {
-    pub expression: OptionalNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
 }
 

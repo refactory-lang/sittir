@@ -1665,7 +1665,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   '_export_statement_type_export': [
     { name: 'exportClause', required: true, multiple: false },
-    { name: 'source', required: true, multiple: false },
+    { name: 'source', required: false, multiple: false },
     { name: 'semicolon', required: false, multiple: false },
   ],
   '_for_header_lhs': [
@@ -1931,7 +1931,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'export_statement_type_export': [
     { name: 'exportClause', required: true, multiple: false },
-    { name: 'source', required: true, multiple: false },
+    { name: 'source', required: false, multiple: false },
     { name: 'semicolon', required: false, multiple: false },
   ],
   'expression_statement': [
@@ -1939,8 +1939,8 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'semicolon', required: false, multiple: false },
   ],
   'extends_clause': [
-    { name: 'value', required: true, multiple: false },
-    { name: 'typeArguments', required: false, multiple: false },
+    { name: 'values', required: true, multiple: true },
+    { name: 'typeArguments', required: false, multiple: true },
   ],
   'extends_type_clause': [
     { name: 'types', required: true, multiple: true },
@@ -1949,7 +1949,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'decorators', required: false, multiple: true },
     { name: 'staticMarker', required: false, multiple: false },
     { name: 'property', required: true, multiple: false },
-    { name: 'value', required: true, multiple: false },
+    { name: 'value', required: false, multiple: false },
   ],
   'finally_clause': [
     { name: 'body', required: true, multiple: false },
@@ -2243,7 +2243,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'readonlyMarker', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
-    { name: 'value', required: true, multiple: false },
+    { name: 'value', required: false, multiple: false },
   ],
   'optional_tuple_parameter': [
     { name: 'name', required: true, multiple: false },
@@ -2289,7 +2289,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'name', required: true, multiple: false },
     { name: 'optionalityMarker', required: false, multiple: false },
     { name: 'type', required: false, multiple: false },
-    { name: 'value', required: true, multiple: false },
+    { name: 'value', required: false, multiple: false },
   ],
   'readonly_type': [
     { name: 'type', required: true, multiple: false },
@@ -2305,7 +2305,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'readonlyMarker', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
-    { name: 'value', required: true, multiple: false },
+    { name: 'value', required: false, multiple: false },
   ],
   'rest_pattern': [
     { name: 'content', required: true, multiple: false },
@@ -2452,7 +2452,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'yield_expression': [
-    { name: 'expression', required: false, multiple: false },
+    { name: 'expression', required: true, multiple: false },
   ],
 };
 

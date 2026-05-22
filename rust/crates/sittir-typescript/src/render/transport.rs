@@ -4341,11 +4341,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     if let Ok(value) = NewExpressionTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::NewExpression(value));
                     }
-                    if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::PrimaryExpression(value));
-                    }
                     if let Ok(value) = YieldExpressionTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::YieldExpression(value));
+                    }
+                    if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
+                        return Ok(Self::PrimaryExpression(value));
                     }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionTransport"))
                 },
@@ -4514,11 +4514,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     if let Ok(value) = NewExpressionTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::NewExpression(value));
                     }
-                    if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::PrimaryExpression(value));
-                    }
                     if let Ok(value) = YieldExpressionTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::YieldExpression(value));
+                    }
+                    if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
+                        return Ok(Self::PrimaryExpression(value));
                     }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionTransport"))
                 },
@@ -20062,7 +20062,7 @@ pub struct _ClassHeritageExtendsClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_extends_clause"))]
-    pub extends_clause: Box<ExtendsClauseTransport>,
+    pub extends_clause: ExtendsClauseTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_implements_clause"))]
     pub implements_clause: Option<ImplementsClauseTransport>,
 }
@@ -20842,7 +20842,7 @@ pub struct _ExportStatementTypeExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
-    pub source: StringTransport,
+    pub source: Option<StringTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
     pub export_clause: ExportClauseTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
@@ -21106,7 +21106,7 @@ pub struct ForHeaderVarKindTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ForHeaderVarKindLeftTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    pub value: Option<ExpressionTransport>,
 }
 
 impl RenderableTransport for ForHeaderVarKindTransport {
@@ -26958,7 +26958,7 @@ pub struct ClassTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
     pub type_parameters: Option<TypeParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_heritage"))]
-    pub class_heritage: Option<Box<ClassHeritageTransport>>,
+    pub class_heritage: Option<ClassHeritageTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ClassBodyTransport,
 }
@@ -27220,7 +27220,7 @@ pub struct ClassHeritageTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_heritage_extends_clause"))]
-    pub class_heritage_extends_clause: Box<_ClassHeritageExtendsClauseTransport>,
+    pub class_heritage_extends_clause: _ClassHeritageExtendsClauseTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_class_heritage_implements_clause"))]
     pub class_heritage_implements_clause: _ClassHeritageImplementsClauseTransport,
 }
@@ -28718,7 +28718,7 @@ pub struct ExportStatementTypeExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
-    pub source: StringTransport,
+    pub source: Option<StringTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
     pub export_clause: ExportClauseTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
@@ -28984,9 +28984,9 @@ pub struct ExtendsClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: Box<ExpressionTransport>,
+    pub value: Vec<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: Option<TypeArgumentsTransport>,
+    pub type_arguments: Option<Vec<TypeArgumentsTransport>>,
 }
 
 impl RenderableTransport for ExtendsClauseTransport {
@@ -29194,7 +29194,7 @@ pub struct FieldDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
     pub property: PropertyNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    pub value: Option<ExpressionTransport>,
 }
 
 impl RenderableTransport for FieldDefinitionTransport {
@@ -33310,7 +33310,7 @@ pub struct OptionalParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<TypeAnnotationTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    pub value: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: Option<AccessibilityModifierEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
@@ -34176,7 +34176,7 @@ pub struct PublicFieldDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<TypeAnnotationTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    pub value: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<PublicFieldDefinitionContentTransportSlot>,
 }
@@ -34538,7 +34538,7 @@ pub struct RequiredParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: Option<TypeAnnotationTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    pub value: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: Option<AccessibilityModifierEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_override_modifier"))]
@@ -37360,7 +37360,7 @@ pub struct YieldExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: Option<Box<ExpressionTransport>>,
+    pub expression: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for YieldExpressionTransport {
@@ -48845,7 +48845,10 @@ fn render__export_statement_type_export(node: &_ExportStatementTypeExportTranspo
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        source: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.source)),
+        source: match &node.source {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }
@@ -48884,7 +48887,10 @@ fn render_for_header_var_kind(node: &ForHeaderVarKindTransport, dest: &mut dyn :
     let template = ForHeaderVarKindTemplate {
         kind: OptionalNonterminalView::Missing,
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+        value: match &node.value {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }
@@ -49985,7 +49991,10 @@ fn render_export_statement_type_export(node: &ExportStatementTypeExportTransport
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        source: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.source)),
+        source: match &node.source {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }
@@ -50035,12 +50044,31 @@ fn render_expression_statement(node: &ExpressionStatementTransport, dest: &mut d
 }
 
 fn render_extends_clause(node: &ExtendsClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.value.is_empty() && node.type_arguments.as_deref().is_none_or(<[_]>::is_empty) {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
+    let type_arguments_owned = node.type_arguments.as_deref().unwrap_or(&[]);
+    let type_arguments_buf: Vec<::sittir_core::filters::Renderable<'_>> = type_arguments_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let value_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.value.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = ExtendsClauseTemplate {
-        type_arguments: match &node.type_arguments {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
+        type_arguments: ListNonterminalView {
+            items: type_arguments_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
         },
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+        value: ListNonterminalView {
+            items: value_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
     };
     template.render_into(dest)
 }
@@ -50086,7 +50114,10 @@ fn render_field_definition(node: &FieldDefinitionTransport, dest: &mut dyn ::std
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+        value: match &node.value {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }
@@ -51022,7 +51053,10 @@ fn render_optional_parameter(node: &OptionalParameterTransport, dest: &mut dyn :
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+        value: match &node.value {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }
@@ -51172,7 +51206,10 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, dest: &
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+        value: match &node.value {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }
@@ -51232,7 +51269,10 @@ fn render_required_parameter(node: &RequiredParameterTransport, dest: &mut dyn :
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+        value: match &node.value {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }
@@ -51809,16 +51849,8 @@ fn render_with_statement(node: &WithStatementTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_yield_expression(node: &YieldExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.expression.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let template = YieldExpressionTemplate {
-        expression: match &node.expression {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
     template.render_into(dest)
 }
@@ -54307,7 +54339,7 @@ fn transport_to_node__class_heritage_extends_clause(transport: _ClassHeritageExt
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(AnyTransport::ExtendsClause(*transport.extends_clause));
+    children_buf.push(AnyTransport::ExtendsClause(transport.extends_clause));
     if let Some(value) = transport.implements_clause {
         children_buf.push(AnyTransport::ImplementsClause(value));
     }
@@ -54649,7 +54681,9 @@ fn transport_to_node__export_statement_namespace_export(transport: _ExportStatem
 
 fn transport_to_node__export_statement_type_export(transport: _ExportStatementTypeExportTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("source".to_string(), transport_field_value(AnyTransport::String(transport.source))?);
+    if let Some(value) = transport.source {
+        fields.insert("source".to_string(), transport_field_value(AnyTransport::String(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     children_buf.push(AnyTransport::ExportClause(transport.export_clause));
@@ -54775,7 +54809,9 @@ fn transport_to_node_for_header_lhs(transport: ForHeaderLhsTransport) -> Result<
 fn transport_to_node_for_header_var_kind(transport: ForHeaderVarKindTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("left".to_string(), transport_field_value(for_header_var_kind_left_transport_slot_to_any(transport.left))?);
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
+    if let Some(value) = transport.value {
+        fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -56660,7 +56696,7 @@ fn transport_to_node_class(transport: ClassTransport) -> Result<TransportNodeDat
         fields.insert("type_parameters".to_string(), transport_field_value(AnyTransport::TypeParameters(value))?);
     }
     if let Some(value) = transport.class_heritage {
-        fields.insert("class_heritage".to_string(), transport_field_value(AnyTransport::ClassHeritage(*value))?);
+        fields.insert("class_heritage".to_string(), transport_field_value(AnyTransport::ClassHeritage(value))?);
     }
     fields.insert("body".to_string(), transport_field_value(AnyTransport::ClassBody(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
@@ -56799,7 +56835,7 @@ fn transport_to_node_class_heritage(transport: ClassHeritageTransport) -> Result
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(AnyTransport::_ClassHeritageExtendsClause(*transport.class_heritage_extends_clause));
+    children_buf.push(AnyTransport::_ClassHeritageExtendsClause(transport.class_heritage_extends_clause));
     children_buf.push(AnyTransport::_ClassHeritageImplementsClause(transport.class_heritage_implements_clause));
     let children = if children_buf.is_empty() {
         None
@@ -57385,7 +57421,9 @@ fn transport_to_node_export_specifier(transport: ExportSpecifierTransport) -> Re
 
 fn transport_to_node_export_statement_type_export(transport: ExportStatementTypeExportTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("source".to_string(), transport_field_value(AnyTransport::String(transport.source))?);
+    if let Some(value) = transport.source {
+        fields.insert("source".to_string(), transport_field_value(AnyTransport::String(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     children_buf.push(AnyTransport::ExportClause(transport.export_clause));
@@ -57531,9 +57569,9 @@ fn transport_to_node_expression_statement(transport: ExpressionStatementTranspor
 
 fn transport_to_node_extends_clause(transport: ExtendsClauseTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(*transport.value))?);
+    fields.insert("value".to_string(), transport_field_values(transport.value.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
     if let Some(value) = transport.type_arguments {
-        fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(value))?);
+        fields.insert("type_arguments".to_string(), transport_field_values(value.into_iter().map(|v| AnyTransport::TypeArguments(v)).collect::<Vec<_>>())?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -57600,7 +57638,9 @@ fn transport_to_node_field_definition(transport: FieldDefinitionTransport) -> Re
         fields.insert("static_marker".to_string(), transport_field_value(AnyTransport::StaticMarker(value))?);
     }
     fields.insert("property".to_string(), transport_field_value(property_name_transport_to_any(transport.property))?);
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
+    if let Some(value) = transport.value {
+        fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -59393,7 +59433,9 @@ fn transport_to_node_optional_parameter(transport: OptionalParameterTransport) -
     if let Some(value) = transport.type_ {
         fields.insert("type".to_string(), transport_field_value(AnyTransport::TypeAnnotation(value))?);
     }
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
+    if let Some(value) = transport.value {
+        fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     if let Some(value) = transport.accessibility_modifier {
@@ -59712,7 +59754,9 @@ fn transport_to_node_public_field_definition(transport: PublicFieldDefinitionTra
     if let Some(value) = transport.type_ {
         fields.insert("type".to_string(), transport_field_value(AnyTransport::TypeAnnotation(value))?);
     }
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
+    if let Some(value) = transport.value {
+        fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     if let Some(value) = transport.content {
@@ -59830,7 +59874,9 @@ fn transport_to_node_required_parameter(transport: RequiredParameterTransport) -
     if let Some(value) = transport.type_ {
         fields.insert("type".to_string(), transport_field_value(AnyTransport::TypeAnnotation(value))?);
     }
-    fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
+    if let Some(value) = transport.value {
+        fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     if let Some(value) = transport.accessibility_modifier {
@@ -60937,9 +60983,7 @@ fn transport_to_node_with_statement(transport: WithStatementTransport) -> Result
 
 fn transport_to_node_yield_expression(transport: YieldExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.expression {
-        fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(*value))?);
-    }
+    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(*transport.expression))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
