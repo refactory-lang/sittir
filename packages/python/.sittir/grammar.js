@@ -492,11 +492,7 @@ function synthesizeOptionalGroups(rule, synthRules, parentKind, state, dedupe) {
   if (isChoiceType(recursed.type)) {
     const members = recursed.members;
     if (!Array.isArray(members) || members.length !== 2) return recursed;
-    const isBlank = (m) => {
-      const mt = m?.type;
-      return mt === "BLANK" || mt === "blank";
-    };
-    const blankIdx = members.findIndex(isBlank);
+    const blankIdx = members.findIndex((m) => isBlankType(m?.type));
     const seqIdx = members.findIndex((m) => isSeqType(m.type));
     if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return recursed;
     const seqMember = members[seqIdx];
@@ -897,10 +893,8 @@ function isComplexBodyRt(rule) {
 function unwrapOptionalChoiceRt(node) {
   if (!node || typeof node !== "object") return node;
   const r = node;
-  if (r.type && r.type.toLowerCase() === "choice" && Array.isArray(r.members) && r.members.length === 2) {
-    const blankIdx = r.members.findIndex(
-      (m) => !!m && typeof m === "object" && m.type?.toLowerCase() === "blank"
-    );
+  if (isChoiceType(r.type) && Array.isArray(r.members) && r.members.length === 2) {
+    const blankIdx = r.members.findIndex((m) => isBlankType(m?.type));
     if (blankIdx !== -1) return { type: "optional", content: r.members[1 - blankIdx] };
   }
   return node;

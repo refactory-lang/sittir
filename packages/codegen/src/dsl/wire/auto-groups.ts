@@ -50,6 +50,7 @@ import {
 	isOptionalType,
 	isChoiceType,
 	isRepeatType,
+	isBlankType,
 	isPrecWrapper
 } from '../runtime-shapes.ts';
 import type { WireContext } from './wire.ts';
@@ -218,11 +219,7 @@ function synthesizeOptionalGroups(
 	if (isChoiceType(recursed.type)) {
 		const members = (recursed as unknown as { members?: Rule[] }).members;
 		if (!Array.isArray(members) || members.length !== 2) return recursed;
-		const isBlank = (m: Rule | undefined): boolean => {
-			const mt = (m as { type?: string } | undefined)?.type;
-			return mt === 'BLANK' || mt === 'blank';
-		};
-		const blankIdx = members.findIndex(isBlank);
+		const blankIdx = members.findIndex((m) => isBlankType((m as { type?: string } | undefined)?.type));
 		const seqIdx = members.findIndex((m) => isSeqType((m as { type?: string }).type));
 		if (blankIdx === -1 || seqIdx === -1 || blankIdx === seqIdx) return recursed;
 		const seqMember = members[seqIdx]!;

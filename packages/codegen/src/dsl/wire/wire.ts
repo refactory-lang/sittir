@@ -35,7 +35,7 @@
 
 import type { PolymorphVariant } from '../../compiler/types.ts';
 import type { RuntimeRule } from '../runtime-shapes.ts';
-import { typeEq } from '../runtime-shapes.ts';
+import { typeEq, isChoiceType, isBlankType } from '../runtime-shapes.ts';
 import { variant as variantPlaceholder } from '../primitives/variant.ts';
 import { transform as transformFn } from '../transform/transform.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
@@ -1151,10 +1151,12 @@ function isComplexBodyRt(rule: RuntimeRule): boolean {
 function unwrapOptionalChoiceRt(node: unknown): unknown {
 	if (!node || typeof node !== 'object') return node;
 	const r = node as { type?: string; members?: unknown[] };
-	if (r.type && r.type.toLowerCase() === 'choice' && Array.isArray(r.members) && r.members.length === 2) {
-		const blankIdx = r.members.findIndex(
-			(m) => !!m && typeof m === 'object' && (m as { type?: string }).type?.toLowerCase() === 'blank'
-		);
+	// Shared dual-case detection (same `isChoiceType`/`isBlankType` that
+	// auto-groups.ts uses for its `CHOICE[seq, BLANK]` → optional handling),
+	// so the two wire passes recognize the tree-sitter-lowered optional form
+	// identically.
+	if (isChoiceType(r.type) && Array.isArray(r.members) && r.members.length === 2) {
+		const blankIdx = r.members.findIndex((m) => isBlankType((m as { type?: string } | undefined)?.type));
 		if (blankIdx !== -1) return { type: 'optional', content: r.members[1 - blankIdx] };
 	}
 	return node;
