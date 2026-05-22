@@ -1085,7 +1085,7 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ExceptClause as const,
     _content: normalizeSingularWrapSlot((data._except_clause_as ?? data._except_clause_list ?? data._content), "content", false, data.$type),
-    _block: normalizeSingularWrapSlot((data._simple_statements ?? data._block ?? data._newline), "block", true, data.$type),
+    _block: normalizeSingularWrapSlot((data._simple_statements ?? data._block), "block", true, data.$type),
 
     content() { return drillAs<T.ExceptClauseAs | T.ExceptClauseList | undefined>(this._content, tree, "except_clause_as", "_except_clause_as"); },
     block() { return drillAs<T.SimpleStatements | T.Newline>(this._block, tree, "block", "_newline"); },
@@ -1231,7 +1231,7 @@ export function wrapFormatSpecifier(data: T.FormatSpecifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FormatSpecifier as const,
-    _content: normalizeRepeatedWrapSlot((data._format_expression ?? data._content), false, "content"),
+    _content: normalizeRepeatedWrapSlot((data._interpolation ?? data._format_expression ?? data._content), false, "content"),
 
     contents() { return drillAsAll<T.Interpolation>(this._content, tree, "format_expression", "interpolation"); },
     $with: { $children: (...vs: readonly [never]) => wrapFormatSpecifier({ ...data, $children: vs }, tree) },
@@ -1698,7 +1698,7 @@ export function wrapParenthesizedListSplat(data: T.ParenthesizedListSplat, tree:
   const _node = withMethods({
     ...data,
     $type: TSKindId.ParenthesizedListSplat as const,
-    _content: normalizeSingularWrapSlot((data._parenthesized_expression ?? data._list_splat ?? data._content), "content", true, data.$type),
+    _content: normalizeSingularWrapSlot((data._parenthesized_list_splat ?? data._list_splat ?? data._parenthesized_expression ?? data._content), "content", true, data.$type),
 
     content() { return drillAs<T.ParenthesizedListSplat | T.ListSplat>(this._content, tree, "parenthesized_expression", "parenthesized_list_splat"); },
     $with: { $children: (...vs: readonly [never]) => wrapParenthesizedListSplat({ ...data, $children: vs }, tree) },

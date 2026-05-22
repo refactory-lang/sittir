@@ -440,7 +440,13 @@ function buildSlot(
 	// `parseNames` = [fieldName] (parser routes by field) or the ref-kind names.
 	const refKindNames = kindsOf(slot);
 	const fieldName = rule.fieldName;
-	const parseNamesNew = fieldName !== undefined ? [fieldName] : [...refKindNames];
+	// parseNames = the kinds the parser can actually emit for this slot: the
+	// ref-kind names PLUS the alias TARGETS. Real tree-sitter aliases
+	// (alias($.source, $.target)) emit the target; validation-only polymorph
+	// variants emit the base. Including both lets the wrap route either without
+	// the base→variant rewrite (which mis-routed the validation-only case).
+	const parseNamesNew =
+		fieldName !== undefined ? [fieldName] : [...new Set([...refKindNames, ...Object.keys(aliasSources)])];
 	const storageNameNew = fieldName ?? (refKindNames.length === 1 ? refKindNames[0]! : 'content');
 	return { ...slot, fieldName, storageNameNew, nameNew: snakeToCamel(storageNameNew), parseNamesNew };
 }

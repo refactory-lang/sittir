@@ -472,29 +472,28 @@ function collectConcreteStorageKeys(
 	nodeMap: NodeMap
 ): readonly string[] | undefined {
 	if (slot.origin !== 'kind') return undefined;
-	const refKinds: string[] = [];
-	for (const v of slot.values) {
-		if (!isNodeRef(v)) continue;
-		const name = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind;
-		refKinds.push(name);
+	// Route by the slot's parse-names — the kinds the parser can actually emit:
+	// ref-kinds PLUS alias targets (collect-slots now folds the targets into
+	// parseNamesNew). Expand supertypes. No base→variant rewrite: parseNames
+	// already carries both the base kind (validation-only polymorph variants,
+	// which the parser emits as the base — e.g. type_query's
+	// instantiation_expression) AND the alias target (real tree-sitter aliases
+	// like decorator, which the parser emits as the target). The old rewrite
+	// REPLACED base with target, mis-routing the validation-only case.
+	let refKinds: string[];
+	if (slot.parseNamesNew && slot.parseNamesNew.length > 0) {
+		refKinds = [...slot.parseNamesNew];
+	} else {
+		refKinds = [];
+		for (const v of slot.values) {
+			if (!isNodeRef(v)) continue;
+			refKinds.push(isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind);
+		}
 	}
 	if (refKinds.length === 0) return undefined;
 	const concrete = expandRuntimeDiscriminatorKinds(refKinds, nodeMap);
 	if (concrete.length === 0) return undefined;
-	// Map source-kind names to the runtime CST kind (alias target) where the
-	// data actually lands. The slot's `aliasSources` is keyed `{target: source}`;
-	// invert it so we can rewrite source → target. When no alias applies the
-	// source name IS the runtime kind and the lookup is identity. See
-	// project-alias-target-routing for the bug class this fixes (decorator,
-	// required_parameter.pattern, rest_pattern, type_query — places where
-	// `alias($.source, $.target)` shifts the visible CST kind to the target).
-	const sourceToTarget: Record<string, string> = {};
-	if (slot.aliasSources) {
-		for (const [target, source] of Object.entries(slot.aliasSources)) {
-			sourceToTarget[source] = target;
-		}
-	}
-	const storageKeys = [...new Set(concrete.map((k) => `_${sourceToTarget[k] ?? k}`))];
+	const storageKeys = [...new Set(concrete.map((k) => `_${k}`))];
 	const legacyKey = `_${slot.name}`;
 	if (storageKeys.length === 1 && storageKeys[0] === legacyKey) {
 		return undefined;
