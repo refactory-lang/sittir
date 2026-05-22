@@ -882,7 +882,20 @@ function isComplexBodyRt(rule) {
   }
   return false;
 }
-function patternBodyEqual(a, b) {
+function unwrapOptionalChoiceRt(node) {
+  if (!node || typeof node !== "object") return node;
+  const r = node;
+  if (r.type && r.type.toLowerCase() === "choice" && Array.isArray(r.members) && r.members.length === 2) {
+    const blankIdx = r.members.findIndex(
+      (m) => !!m && typeof m === "object" && m.type?.toLowerCase() === "blank"
+    );
+    if (blankIdx !== -1) return { type: "optional", content: r.members[1 - blankIdx] };
+  }
+  return node;
+}
+function patternBodyEqual(aIn, bIn) {
+  const a = unwrapOptionalChoiceRt(aIn);
+  const b = unwrapOptionalChoiceRt(bIn);
   if (!a || typeof a !== "object") return a === b;
   if (!b || typeof b !== "object") return false;
   const ra = a;

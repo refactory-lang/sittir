@@ -1133,7 +1133,29 @@ function isComplexBodyRt(rule: RuntimeRule): boolean {
  *   content but a different name is a different structural pattern.
  * - ALIAS: not handled — an alias is semantically distinct from its content.
  */
-function patternBodyEqual(a: unknown, b: unknown): boolean {
+/**
+ * Normalize tree-sitter's `choice(x, BLANK)` to `optional(x)` so body-pattern
+ * matching works on the wire/tree-sitter-CLI path, where the IR's later
+ * `choice(x,BLANK)→optional(x)` normalization hasn't run yet. Without this,
+ * an authored body fn that writes `optional($.x)` never matches the raw base
+ * grammar's `choice($.x, BLANK)` form, so the alias-to-visible-kind never
+ * fires (e.g. rust `attributed_parameter` stayed a phantom IR-only kind).
+ */
+function unwrapOptionalChoiceRt(node: unknown): unknown {
+	if (!node || typeof node !== 'object') return node;
+	const r = node as { type?: string; members?: unknown[] };
+	if (r.type && r.type.toLowerCase() === 'choice' && Array.isArray(r.members) && r.members.length === 2) {
+		const blankIdx = r.members.findIndex(
+			(m) => !!m && typeof m === 'object' && (m as { type?: string }).type?.toLowerCase() === 'blank'
+		);
+		if (blankIdx !== -1) return { type: 'optional', content: r.members[1 - blankIdx] };
+	}
+	return node;
+}
+
+function patternBodyEqual(aIn: unknown, bIn: unknown): boolean {
+	const a = unwrapOptionalChoiceRt(aIn);
+	const b = unwrapOptionalChoiceRt(bIn);
 	if (!a || typeof a !== 'object') return a === b;
 	if (!b || typeof b !== 'object') return false;
 	const ra = a as { type: string; members?: unknown[]; content?: unknown; name?: string; value?: string };
