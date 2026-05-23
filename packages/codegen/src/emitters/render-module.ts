@@ -35,7 +35,8 @@ import {
 	isUnresolvedRef,
 	kindsOf,
 	structuralFieldsOf,
-	allFormFieldsOf
+	allFormFieldsOf,
+	allSlotsOf
 } from '../compiler/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { TemplateFile } from './template-hash.ts';
@@ -491,6 +492,18 @@ interface EmittedField {
 	 *  Used by ListNonterminalView emission so each list-multiplicity slot
 	 *  gets its own separator (rather than a node-wide first-match). */
 	separator?: string;
+	/**
+	 * When this surface slot was produced by inlining a group-lift helper
+	 * (e.g. template inlined `_const_item_optional1` and exposed its inner
+	 * field `value`), this field names the HELPER's transport struct field
+	 * (e.g. `const_item_optional1`) that must be matched at render time.
+	 *
+	 * When set, the render fn emits:
+	 *   `match &node.<backingTransportField> { Some(v) => Present(v), None => Missing }`
+	 * instead of the unconditional hard `Missing` that fires when
+	 * `hasTransportField` is false.
+	 */
+	backingTransportField?: string;
 }
 
 interface EmittedStruct {
@@ -611,7 +624,7 @@ function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
 	};
 }
 
-function emitStruct(kind: string, node: AssembledNode | undefined, surface: RenderTemplateSurface): EmittedStruct {
+function emitStruct(kind: string, node: AssembledNode | undefined, surface: RenderTemplateSurface, nodeMap?: NodeMap): EmittedStruct {
 	const name = structNameFor(kind, node);
 	const slotModel = renderSlotModelOf(node);
 	// Build name→multiple and name→required lookups from the assembled node's
@@ -693,6 +706,31 @@ function emitStruct(kind: string, node: AssembledNode | undefined, surface: Rend
 		separator: separatorByName.get(slot.name)
 	}));
 	fields.sort((a, b) => a.name.localeCompare(b.name));
+	// Resolve group-lift backing transport fields for surface slots that have
+	// no direct transport field but are produced by inlining a hidden group-lift
+	// helper (e.g. `_const_item_optional1`). The template emitter inlined the
+	// helper and surfaced its inner field (e.g. `value`) directly — but the
+	// transport struct still carries the helper as a struct field under
+	// `const_item_optional1`. Detect this by looking for unnamed assembled slots
+	// whose helper node (`_<slotName>`) has a slot matching the surface slot name.
+	if (nodeMap !== undefined) {
+		for (const f of fields) {
+			if (f.hasTransportField || f.required || f.multiple) continue;
+			// Look for a helper backing this optional surface slot.
+			for (const helperSlot of slotModel.unnamed) {
+				// Helper nodes are hidden (leading `_`); the slot name has the `_` stripped.
+				const helperNodeName = `_${helperSlot.name}`;
+				const helperNode = nodeMap.nodes.get(helperNodeName);
+				if (helperNode === undefined) continue;
+				// Check if the helper node exposes the surface slot name.
+				const helperSlots = allSlotsOf(helperNode);
+				if (helperSlots.some((s) => s.name === f.name)) {
+					f.backingTransportField = helperSlot.storageName;
+					break;
+				}
+			}
+		}
+	}
 	return {
 		name,
 		kind,
@@ -2234,7 +2272,24 @@ function buildTypedTemplateBody(
 			}
 		} else {
 			// Optional single-value slot.
-			if (!f.hasTransportField) {
+			if (f.backingTransportField) {
+				// Group-lift inlining: the template emitter inlined a hidden helper
+				// (e.g. `_const_item_optional1`) and exposed its inner field as this
+				// surface slot (e.g. `value`). The transport struct carries the helper
+				// as `Option<HelperTransport>` under the helper's storage name.
+				//
+				// The helper template (` = {{ value }}`) is inlined into the PARENT
+				// template as `{% if value | isPresent %} = {{ value }}{% endif %}`.
+				// The `{{ value }}` slot in the parent MUST resolve to the INNER
+				// expression (e.g. `v.value`) — not the whole helper struct. Binding
+				// the whole helper struct would double-render the separator literal
+				// (` =  = expr` instead of ` = expr`).
+				const backingRIdent = rustFieldIdent(f.backingTransportField);
+				lines.push(`        ${templateIdent}: match &node.${backingRIdent} {`);
+				lines.push(`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(&v.${templateIdent})),`);
+				lines.push(`            None => OptionalNonterminalView::Missing,`);
+				lines.push(`        },`);
+			} else if (!f.hasTransportField) {
 				lines.push(`        ${templateIdent}: OptionalNonterminalView::Missing,`);
 			} else if (isBoxed) {
 				// Heterogeneous fallback — type is Option<Box<AnyTransport>>.
@@ -2344,7 +2399,7 @@ export function emitRenderModule(
 		// Only user-facing nodes get templates emitted (see templates.ts
 		// emitJinjaTemplates); if the jinja file exists, the node exists
 		// and is userFacing.
-		structs.push(emitStruct(kind, node, mergeTemplateSurfaceFromBody(f.content, buildSlotModelSurface(node))));
+		structs.push(emitStruct(kind, node, mergeTemplateSurfaceFromBody(f.content, buildSlotModelSurface(node)), nodeMap));
 	}
 	const meta = collectMetaData(nodeMap);
 	const hasNumericDispatch = generatedIdTables !== undefined;
