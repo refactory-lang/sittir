@@ -17,6 +17,7 @@ import { isChoice } from './rule.ts';
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
 import { computeSimplifiedRules } from './simplify.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
+import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
 
 /**
  * Run the full ordered pipeline of non-lossy normalization passes over the
@@ -635,12 +636,27 @@ export function collapseWrappers(rule: Rule): Rule {
 		}
 		case 'seq': {
 			const members = rule.members.map(collapseWrappers);
-			if (members.length === 1) return members[0]!;
+			if (members.length === 1) {
+				const survivor = members[0]!;
+				const carried = withAttrsFrom(rule, survivor);
+				const outerMult = (rule as { multiplicity?: LeafMultiplicity }).multiplicity;
+				// Only combine multiplicities when the seq itself carries an explicit one;
+				// otherwise withAttrsFrom already transferred it (absent-only) and we
+				// must not stamp 'single' onto nodes that had no explicit multiplicity.
+				if (outerMult !== undefined) {
+					const combined = combineMultiplicity(
+						outerMult,
+						(survivor as { multiplicity?: LeafMultiplicity }).multiplicity,
+					);
+					return { ...carried, multiplicity: combined } as Rule;
+				}
+				return carried;
+			}
 			return { ...rule, members };
 		}
 		case 'choice': {
 			const members = rule.members.map(collapseWrappers);
-			if (members.length === 1) return members[0]!;
+			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
 			return { ...rule, members };
 		}
 		case 'field':
