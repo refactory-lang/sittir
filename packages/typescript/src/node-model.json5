@@ -4293,7 +4293,8 @@
       "typeName": "Semicolon",
       "factoryName": "semicolon",
       "irKey": "semicolon",
-      "hidden": false
+      "hidden": false,
+      "text": ";"
     },
     {
       "kind": "_shorthand_property_identifier",

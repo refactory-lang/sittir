@@ -2751,6 +2751,80 @@ export class AssembledPattern extends AssembledLeaf<PatternRule | TerminalRule> 
 	get pattern(): string | undefined {
 		return this.rule.type === 'pattern' ? this.rule.value || undefined : undefined;
 	}
+
+	/**
+	 * When this pattern's sole realisation is a single fixed anonymous literal
+	 * (e.g. `_semicolon` = `terminal(choice(_automatic_semicolon, ";"))` where
+	 * every non-blank, non-symbol leaf collapses to the same string), returns
+	 * that string so callers can treat this like a keyword/token for transport
+	 * deserialisation. Returns `undefined` for content-bearing patterns
+	 * (`identifier`, `number`, external scanner symbols, etc.).
+	 *
+	 * Used by the node-model emitter to attach a `text` field to the
+	 * serialized pattern entry, which `leafDefaultTextLiteral` (render-module)
+	 * then picks up to enable the existing u16 acceptance branch in the
+	 * generated `FromNapiValue` impls.
+	 */
+	get fixedLiteralText(): string | undefined {
+		if (this.rule.type === 'pattern') return undefined; // regex — always content-bearing
+		// TerminalRule: walk the content tree collecting all non-blank string leaves.
+		return collectFixedLiteral(this.rule.content);
+	}
+}
+
+/**
+ * Walk a rule subtree collecting leaf `string` values.
+ * Returns the single distinct string if every non-blank reachable leaf is
+ * the same fixed literal, or `undefined` the moment any content-bearing
+ * external (symbol) or multi-value divergence is encountered.
+ *
+ * Blanks (empty `choice` / `seq`) are skipped — they contribute no text and
+ * represent the "omit" arm of an `optional`.
+ */
+function collectFixedLiteral(rule: Rule): string | undefined {
+	switch (rule.type) {
+		case 'string':
+			return rule.value || undefined;
+		case 'optional':
+			// optional(X): the blank arm contributes nothing; X may yield a fixed literal
+			return collectFixedLiteral(rule.content);
+		case 'choice': {
+			if (rule.members.length === 0) return undefined; // blank sentinel
+			let found: string | undefined;
+			for (const m of rule.members) {
+				const isBlank =
+					(m.type === 'choice' && m.members.length === 0) ||
+					(m.type === 'seq' && m.members.length === 0);
+				if (isBlank) continue; // blank arm — ignore
+				const v = collectFixedLiteral(m);
+				if (v === undefined) return undefined; // non-literal or divergent branch
+				if (found === undefined) found = v;
+				else if (found !== v) return undefined; // two different literals
+			}
+			return found;
+		}
+		case 'seq': {
+			if (rule.members.length === 0) return undefined; // blank sentinel
+			// A seq of a single non-blank member is safe; multi-member seqs are not
+			// fixed single literals (they'd produce concatenated output).
+			const nonBlanks = rule.members.filter(
+				m =>
+					!((m.type === 'choice' && m.members.length === 0) ||
+					  (m.type === 'seq' && m.members.length === 0))
+			);
+			if (nonBlanks.length !== 1) return undefined;
+			return collectFixedLiteral(nonBlanks[0]);
+		}
+		case 'token':
+			// token(X) wrapper — recurse into content
+			return collectFixedLiteral((rule as { content: Rule }).content);
+		case 'terminal':
+			// nested terminal — recurse
+			return collectFixedLiteral((rule as TerminalRule).content);
+		default:
+			// symbol, alias, pattern, field, repeat, etc. — content-bearing or structural
+			return undefined;
+	}
 }
 
 export class AssembledKeyword extends AssembledLeaf<StringRule> {

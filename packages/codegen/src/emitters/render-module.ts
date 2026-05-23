@@ -4719,8 +4719,16 @@ function renderLeafTransportNapiImpls(
 }
 
 function leafDefaultTextLiteral(node: AssembledNode): string | undefined {
-	if (node.modelType !== 'keyword' && node.modelType !== 'token') return undefined;
-	return node.text || undefined;
+	if (node.modelType === 'keyword' || node.modelType === 'token') return node.text || undefined;
+	// Patterns whose sole realisation is a single fixed anonymous literal
+	// (e.g. `_semicolon` → ";", `||` → "||") arrive over NAPI as a bare u16
+	// kind-id rather than a string, because scalar_leaf_value in sittir-core
+	// serialises anonymous single-leaf fields that way.  Accept the u16 branch
+	// only for patterns that carry a known fixed literal (`fixedLiteralText`);
+	// content-bearing patterns (identifier, number, …) must never collapse to a
+	// constant — they come in on the String path and must stay on that path.
+	if (node.modelType === 'pattern') return node.fixedLiteralText || undefined;
+	return undefined;
 }
 
 /**
