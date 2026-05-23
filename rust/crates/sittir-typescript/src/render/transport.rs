@@ -20474,6 +20474,8 @@ pub struct ExportStatementDefaultDeclArmDefaultKwTransport {
     pub declaration: Option<DeclarationTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_decl_arm_default_kw_value"))]
     pub export_statement_default_decl_arm_default_kw_value: Option<ExportStatementDefaultDeclArmDefaultKwValueTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    pub value: ExpressionTransport,
 }
 
 impl RenderableTransport for ExportStatementDefaultDeclArmDefaultKwTransport {
@@ -20738,6 +20740,8 @@ pub struct ExportStatementDefaultFromArmTransport {
     pub export_statement_default_from_arm_clause_from: _ExportStatementDefaultFromArmClauseFromTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
     pub export_clause: ExportClauseTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
+    pub source: StringTransport,
 }
 
 impl RenderableTransport for ExportStatementDefaultFromArmTransport {
@@ -26118,6 +26122,14 @@ pub struct AmbientDeclarationTransport {
     pub ambient_declaration_global: AmbientDeclarationGlobalTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_module"))]
     pub ambient_declaration_module: AmbientDeclarationModuleTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    pub body: StatementBlockTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: IdentifierTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    pub type_: TypeTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
+    pub semicolon: Option<SemicolonTransport>,
 }
 
 impl RenderableTransport for AmbientDeclarationTransport {
@@ -26478,6 +26490,14 @@ pub struct ArrowFunctionTransport {
     pub arrow_function_parameter: _ArrowFunctionParameterTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arrow_function__call_signature"))]
     pub arrow_function__call_signature: Box<_ArrowFunctionUCallSignatureTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter"))]
+    pub parameter: PropertyIdentifierTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
+    pub type_parameters: Option<TypeParametersTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
+    pub parameters: FormalParametersTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    pub return_type: Option<Box<_ArrowFunctionUCallSignatureReturnTypeTransportSlot>>,
 }
 
 impl RenderableTransport for ArrowFunctionTransport {
@@ -26998,6 +27018,12 @@ pub struct CallExpressionTransport {
     pub call_expression_template_call: Box<CallExpressionTemplateCallTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_expression_member"))]
     pub call_expression_member: Box<CallExpressionMemberTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
+    pub function: Box<CallExpressionCallFunctionTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
+    pub type_arguments: Option<TypeArgumentsTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
+    pub arguments: ArgumentsTransport,
 }
 
 impl RenderableTransport for CallExpressionTransport {
@@ -29084,6 +29110,8 @@ pub struct ExportStatementTransport {
     pub export_statement_equals_export: _ExportStatementEqualsExportTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_namespace_export"))]
     pub export_statement_namespace_export: _ExportStatementNamespaceExportTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
+    pub source: Option<StringTransport>,
 }
 
 impl RenderableTransport for ExportStatementTransport {
@@ -31036,6 +31064,10 @@ pub struct ImportSpecifierTransport {
     pub import_specifier_name: _ImportSpecifierNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_as"))]
     pub import_specifier_as: ImportSpecifierAsTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: ImportIdentifierTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
+    pub alias: ImportIdentifierTransport,
 }
 
 impl RenderableTransport for ImportSpecifierTransport {
@@ -31198,6 +31230,10 @@ pub struct IndexSignatureTransport {
     pub index_signature_colon: IndexSignatureColonTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_signature_mapped_type_clause"))]
     pub index_signature_mapped_type_clause: _IndexSignatureMappedTypeClauseTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: PropertyIdentifierTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_type"))]
+    pub index_type: TypeTransport,
 }
 
 impl RenderableTransport for IndexSignatureTransport {
@@ -33954,6 +33990,8 @@ pub struct ParenthesizedExpressionTransport {
     pub parenthesized_expression_typed: Box<ParenthesizedExpressionTypedTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parenthesized_expression_sequence"))]
     pub parenthesized_expression_sequence: _ParenthesizedExpressionSequenceTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    pub type_: Option<Box<TypeAnnotationTransport>>,
 }
 
 impl RenderableTransport for ParenthesizedExpressionTransport {
@@ -37300,6 +37338,10 @@ pub struct UpdateExpressionTransport {
     pub update_expression_postfix: Box<UpdateExpressionPostfixTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_update_expression_prefix"))]
     pub update_expression_prefix: Box<UpdateExpressionPrefixTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
+    pub argument: Box<ExpressionTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    pub operator: OperatorEnum,
 }
 
 impl RenderableTransport for UpdateExpressionTransport {

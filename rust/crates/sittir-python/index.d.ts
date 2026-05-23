@@ -122,6 +122,8 @@ export interface AssignmentTransport {
   _assignment_eq: Box<AssignmentEqTransport>
   _assignment_type: AssignmentTypeTransport
   _assignment_typed: Box<AssignmentTypedTransport>
+  _right: Box<RightHandSideTransport>
+  _type: TypeTransport
 }
 
 export interface AssignmentTypedTransport {
@@ -931,6 +933,7 @@ export interface MatchBlockTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _match_block_block: MatchBlockBlockTransport
+  _alternative?: Array<CaseClauseTransport>
 }
 
 export interface MatchStatementTransport {

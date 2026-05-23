@@ -10243,6 +10243,8 @@ pub struct MatchBlockTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_block_block"))]
     pub match_block_block: MatchBlockBlockTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
+    pub alternative: Option<Vec<CaseClauseTransport>>,
 }
 
 impl RenderableTransport for MatchBlockTransport {
@@ -11091,6 +11093,10 @@ pub struct AssignmentTransport {
     pub assignment_type: AssignmentTypeTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assignment_typed"))]
     pub assignment_typed: Box<AssignmentTypedTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    pub right: Box<RightHandSideTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
+    pub type_: TypeTransport,
 }
 
 impl RenderableTransport for AssignmentTransport {

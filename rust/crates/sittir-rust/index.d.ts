@@ -100,6 +100,9 @@ export interface ArrayExpressionTransport {
   '$triviaData'?: TransportTrivia
   _array_expression_semi: Box<ArrayExpressionSemiTransport>
   _array_expression_list: ArrayExpressionListTransport
+  _attributes?: Array<AttributeItemTransport>
+  _elements: Box<ExpressionTransport>
+  _length: Box<ExpressionTransport>
 }
 
 export interface ArrayTypeOptional1Transport {
@@ -415,6 +418,8 @@ export interface ClosureExpressionTransport {
   _parameters: ClosureParametersTransport
   _closure_expression_block: Box<ClosureExpressionBlockTransport>
   _closure_expression_expr: Box<ClosureExpressionExprTransport>
+  _return_type?: Box<_TypeTransport>
+  _body: Box<BlockTransport>
 }
 
 export interface ClosureParametersTransport {
@@ -486,6 +491,7 @@ export interface ConstItemTransport {
   _name: IdentifierTransport
   _type: _TypeTransport
   _const_item_optional1?: ConstItemOptional1Transport
+  _value?: ExpressionTransport
 }
 
 export interface ConstParameterOptional1Transport {
@@ -888,6 +894,8 @@ export interface FieldPatternTransport {
   _mutable_specifier?: _MutableSpecifierTransport
   _field_pattern_shorthand: FieldPatternShorthandTransport
   _field_pattern_named: FieldPatternNamedTransport
+  _name: IdentifierTransport
+  _pattern: PatternTransport
 }
 
 export interface ForeignModItemBodyTransport {
@@ -924,6 +932,7 @@ export interface ForeignModItemTransport {
   _extern_modifier: ExternModifierTransport
   _foreign_mod_item_semi: ForeignModItemSemiTransport
   _foreign_mod_item_body: ForeignModItemBodyTransport
+  _body: DeclarationListTransport
 }
 
 export interface ForExpressionOptional1Transport {
@@ -949,6 +958,7 @@ export interface ForExpressionTransport {
   _value: Box<ExpressionTransport>
   _body: Box<BlockTransport>
   _for_expression_optional1?: ForExpressionOptional1Transport
+  _label?: LabelTransport
 }
 
 export interface ForLifetimesTransport {
@@ -1028,6 +1038,7 @@ export interface FunctionSignatureItemTransport {
   _parameters: ParametersTransport
   _where_clause?: WhereClauseTransport
   _function_signature_item_optional1?: FunctionSignatureItemOptional1Transport
+  _return_type?: _TypeTransport
 }
 
 export interface FunctionTypeFnFormTransport {
@@ -1087,6 +1098,7 @@ export interface FunctionTypeTransport {
   _return_type?: Box<_TypeTransport>
   _function_type_trait_form: Box<FunctionTypeTraitFormTransport>
   _function_type_fn_form: FunctionTypeFnFormTransport
+  _trait: Box<_FunctionTypeTraitFormTraitTransportSlot>
 }
 
 export interface GenBlockTransport {
@@ -1212,6 +1224,7 @@ export interface ImplItemTransport {
   _where_clause?: WhereClauseTransport
   _impl_item_body: ImplItemBodyTransport
   _impl_item_semi: ImplItemSemiTransport
+  _body: DeclarationListTransport
 }
 
 export interface IndexExpressionTransport {
@@ -1332,6 +1345,7 @@ export interface LetDeclarationTransport {
   _type?: _TypeTransport
   _value?: ExpressionTransport
   _let_declaration_optional3?: LetDeclarationOptional3Transport
+  _alternative?: BlockTransport
 }
 
 export interface LifetimeParameterTransport {
@@ -1381,6 +1395,9 @@ export interface LineCommentTransport {
   _line_comment_regular_dslash: LineCommentRegularDslashTransport
   _line_comment_doc: LineCommentDocTransport
   _line_comment_content: LineCommentContentTransport
+  _outer?: OuterLineDocCommentMarkerTransport
+  _inner?: InnerLineDocCommentMarkerTransport
+  _doc: LineDocContentTransport
 }
 
 export interface LoopExpressionOptional1Transport {
@@ -1404,6 +1421,7 @@ export interface LoopExpressionTransport {
   '$triviaData'?: TransportTrivia
   _body: Box<BlockTransport>
   _loop_expression_optional1?: LoopExpressionOptional1Transport
+  _label?: LabelTransport
 }
 
 export interface MacroDefinitionBraceTransport {
@@ -1544,6 +1562,7 @@ export interface MatchArmTransport {
   _pattern: MatchPatternTransport
   _match_arm_with_comma: MatchArmWithCommaTransport
   _match_arm_block_ending: MatchArmBlockEndingTransport
+  _value: ExpressionTransport
 }
 
 export interface MatchArmWithCommaTransport {
@@ -1637,6 +1656,7 @@ export interface ModItemTransport {
   _name: IdentifierTransport
   _mod_item_external: ModItemExternalTransport
   _mod_item_inline: ModItemInlineTransport
+  _body: DeclarationListTransport
 }
 
 export interface MutPatternTransport {
@@ -1719,6 +1739,8 @@ export interface OrPatternTransport {
   '$triviaData'?: TransportTrivia
   _or_pattern_binary: Box<OrPatternBinaryTransport>
   _or_pattern_prefix: Box<OrPatternPrefixTransport>
+  _left: Box<PatternTransport>
+  _right: Box<PatternTransport>
 }
 
 export interface ParametersTransport {
@@ -1874,6 +1896,9 @@ export interface RangeExpressionTransport {
   _range_expression_postfix: Box<RangeExpressionPostfixTransport>
   _range_expression_prefix: Box<RangeExpressionPrefixTransport>
   _range_expression_bare: RangeExpressionBareTransport
+  _start: Box<ExpressionTransport>
+  _operator: RangeExpressionBinaryOperatorEnum
+  _end: Box<ExpressionTransport>
 }
 
 export interface RangePatternLeftWithRightTransport {
@@ -1910,6 +1935,7 @@ export interface RangePatternTransport {
   _range_pattern_prefix: Box<RangePatternPrefixTransport>
   _range_pattern_left_with_right: Box<RangePatternLeftWithRightTransport>
   _range_pattern_left_bare: RangePatternLeftBareTransport
+  _right: Box<RangePatternPrefixRightTransportSlot>
 }
 
 export interface RawStringLiteralTransport {
@@ -2176,6 +2202,7 @@ export interface StructItemTransport {
   _struct_item_brace: StructItemBraceTransport
   _struct_item_tuple: StructItemTupleTransport
   _struct_item_unit: StructItemUnitTransport
+  _body: FieldDeclarationListTransport
 }
 
 export interface StructItemTupleTransport {
@@ -2777,6 +2804,8 @@ export interface VisibilityModifierTransport {
   _visibility_modifier_crate: VisibilityModifierCrateTransport
   _visibility_modifier_pub: VisibilityModifierPubTransport
   _visibility_modifier_in_path: VisibilityModifierInPathTransport
+  _pub: Box<AnyTransport>
+  _in: Box<AnyTransport>
 }
 
 export interface WhereClauseTransport {

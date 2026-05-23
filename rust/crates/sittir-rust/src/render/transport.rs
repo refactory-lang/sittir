@@ -25432,6 +25432,12 @@ pub struct ArrayExpressionTransport {
     pub array_expression_semi: Box<ArrayExpressionSemiTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_array_expression_list"))]
     pub array_expression_list: ArrayExpressionListTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
+    pub attributes: Option<Vec<AttributeItemTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Box<ExpressionTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_length"))]
+    pub length: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for ArrayExpressionTransport {
@@ -26556,6 +26562,10 @@ pub struct ClosureExpressionTransport {
     pub closure_expression_block: Box<ClosureExpressionBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_closure_expression_expr"))]
     pub closure_expression_expr: Box<_ClosureExpressionExprTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    pub return_type: Option<Box<_TypeTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    pub body: Box<BlockTransport>,
 }
 
 impl RenderableTransport for ClosureExpressionTransport {
@@ -26816,6 +26826,8 @@ pub struct ConstItemTransport {
     pub type_: _TypeTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_const_item_optional1"))]
     pub const_item_optional1: Option<ConstItemOptional1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    pub value: Option<ExpressionTransport>,
 }
 
 impl RenderableTransport for ConstItemTransport {
@@ -28366,6 +28378,10 @@ pub struct FieldPatternTransport {
     pub field_pattern_shorthand: _FieldPatternShorthandTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_field_pattern_named"))]
     pub field_pattern_named: FieldPatternNamedTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: IdentifierTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
+    pub pattern: PatternTransport,
 }
 
 impl RenderableTransport for FieldPatternTransport {
@@ -28422,6 +28438,8 @@ pub struct ForExpressionTransport {
     pub body: Box<BlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_for_expression_optional1"))]
     pub for_expression_optional1: Option<ForExpressionOptional1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
+    pub label: Option<LabelTransport>,
 }
 
 impl RenderableTransport for ForExpressionTransport {
@@ -28578,6 +28596,8 @@ pub struct ForeignModItemTransport {
     pub foreign_mod_item_semi: ForeignModItemSemiTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_foreign_mod_item_body"))]
     pub foreign_mod_item_body: _ForeignModItemBodyTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    pub body: DeclarationListTransport,
 }
 
 impl RenderableTransport for ForeignModItemTransport {
@@ -28936,6 +28956,8 @@ pub struct FunctionSignatureItemTransport {
     pub where_clause: Option<WhereClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_signature_item_optional1"))]
     pub function_signature_item_optional1: Option<FunctionSignatureItemOptional1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
+    pub return_type: Option<_TypeTransport>,
 }
 
 impl RenderableTransport for FunctionSignatureItemTransport {
@@ -29094,6 +29116,8 @@ pub struct FunctionTypeTransport {
     pub function_type_trait_form: Box<_FunctionTypeTraitFormTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_type_fn_form"))]
     pub function_type_fn_form: _FunctionTypeFnFormTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trait"))]
+    pub trait_: Box<_FunctionTypeTraitFormTraitTransportSlot>,
 }
 
 impl RenderableTransport for FunctionTypeTransport {
@@ -29674,6 +29698,8 @@ pub struct ImplItemTransport {
     pub impl_item_body: _ImplItemBodyTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_impl_item_semi"))]
     pub impl_item_semi: ImplItemSemiTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    pub body: DeclarationListTransport,
 }
 
 impl RenderableTransport for ImplItemTransport {
@@ -30090,6 +30116,8 @@ pub struct LetDeclarationTransport {
     pub value: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_let_declaration_optional3"))]
     pub let_declaration_optional3: Option<LetDeclarationOptional3Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
+    pub alternative: Option<BlockTransport>,
 }
 
 impl RenderableTransport for LetDeclarationTransport {
@@ -30246,6 +30274,12 @@ pub struct LineCommentTransport {
     pub line_comment_doc: LineCommentDocTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_line_comment_content"))]
     pub line_comment_content: LineCommentContentTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_outer"))]
+    pub outer: Option<OuterLineDocCommentMarkerTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_inner"))]
+    pub inner: Option<InnerLineDocCommentMarkerTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_doc"))]
+    pub doc: LineDocContentTransport,
 }
 
 impl RenderableTransport for LineCommentTransport {
@@ -30298,6 +30332,8 @@ pub struct LoopExpressionTransport {
     pub body: Box<BlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_loop_expression_optional1"))]
     pub loop_expression_optional1: Option<LoopExpressionOptional1Transport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
+    pub label: Option<LabelTransport>,
 }
 
 impl RenderableTransport for LoopExpressionTransport {
@@ -30714,6 +30750,8 @@ pub struct MatchArmTransport {
     pub match_arm_with_comma: MatchArmWithCommaTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_arm_block_ending"))]
     pub match_arm_block_ending: _MatchArmBlockEndingTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
+    pub value: ExpressionTransport,
 }
 
 impl RenderableTransport for MatchArmTransport {
@@ -31074,6 +31112,8 @@ pub struct ModItemTransport {
     pub mod_item_external: ModItemExternalTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mod_item_inline"))]
     pub mod_item_inline: _ModItemInlineTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    pub body: DeclarationListTransport,
 }
 
 impl RenderableTransport for ModItemTransport {
@@ -31432,6 +31472,10 @@ pub struct OrPatternTransport {
     pub or_pattern_binary: Box<OrPatternBinaryTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_or_pattern_prefix"))]
     pub or_pattern_prefix: Box<OrPatternPrefixTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    pub left: Box<PatternTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    pub right: Box<PatternTransport>,
 }
 
 impl RenderableTransport for OrPatternTransport {
@@ -31902,6 +31946,12 @@ pub struct RangeExpressionTransport {
     pub range_expression_prefix: Box<RangeExpressionPrefixTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_expression_bare"))]
     pub range_expression_bare: _RangeExpressionBareTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_start"))]
+    pub start: Box<ExpressionTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    pub operator: RangeExpressionBinaryOperatorEnum,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_end"))]
+    pub end: Box<ExpressionTransport>,
 }
 
 impl RenderableTransport for RangeExpressionTransport {
@@ -31958,6 +32008,8 @@ pub struct RangePatternTransport {
     pub range_pattern_left_with_right: Box<RangePatternLeftWithRightTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_pattern_left_bare"))]
     pub range_pattern_left_bare: RangePatternLeftBareTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    pub right: Box<RangePatternPrefixRightTransportSlot>,
 }
 
 impl RenderableTransport for RangePatternTransport {
@@ -33308,6 +33360,8 @@ pub struct StructItemTransport {
     pub struct_item_tuple: StructItemTupleTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_struct_item_unit"))]
     pub struct_item_unit: StructItemUnitTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
+    pub body: FieldDeclarationListTransport,
 }
 
 impl RenderableTransport for StructItemTransport {
@@ -35530,6 +35584,10 @@ pub struct VisibilityModifierTransport {
     pub visibility_modifier_pub: VisibilityModifierPubTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier_in_path"))]
     pub visibility_modifier_in_path: VisibilityModifierInPathTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pub"))]
+    pub pub_: Box<AnyTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in"))]
+    pub in_: Box<AnyTransport>,
 }
 
 impl RenderableTransport for VisibilityModifierTransport {
@@ -45624,10 +45682,11 @@ fn render_const_item(node: &ConstItemTransport, dest: &mut dyn ::std::fmt::Write
     let template = ConstItemTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
-        value: match &node.const_item_optional1 {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(&v.value)),
-            None => OptionalNonterminalView::Missing,
-        },
+        value: node.value.as_ref().or_else(|| {
+            node.const_item_optional1.as_ref().and_then(|h| h.value.as_ref())
+        }).map_or(OptionalNonterminalView::Missing, |inner| {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(inner))
+        }),
         visibility_modifier: match &node.visibility_modifier {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -46004,10 +46063,11 @@ fn render_field_pattern(node: &FieldPatternTransport, dest: &mut dyn ::std::fmt:
 fn render_for_expression(node: &ForExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ForExpressionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        label: match &node.for_expression_optional1 {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(&v.label)),
-            None => OptionalNonterminalView::Missing,
-        },
+        label: node.label.as_ref().or_else(|| {
+            node.for_expression_optional1.as_ref().and_then(|h| h.label.as_ref())
+        }).map_or(OptionalNonterminalView::Missing, |inner| {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(inner))
+        }),
         pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
@@ -46116,10 +46176,11 @@ fn render_function_signature_item(node: &FunctionSignatureItemTransport, dest: &
         },
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
-        return_type: match &node.function_signature_item_optional1 {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(&v.return_type)),
-            None => OptionalNonterminalView::Missing,
-        },
+        return_type: node.return_type.as_ref().or_else(|| {
+            node.function_signature_item_optional1.as_ref().and_then(|h| h.return_type.as_ref())
+        }).map_or(OptionalNonterminalView::Missing, |inner| {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(inner))
+        }),
         type_parameters: match &node.type_parameters {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -46335,10 +46396,11 @@ fn render_let_condition(node: &LetConditionTransport, dest: &mut dyn ::std::fmt:
 
 fn render_let_declaration(node: &LetDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LetDeclarationTemplate {
-        alternative: match &node.let_declaration_optional3 {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(&v.alternative)),
-            None => OptionalNonterminalView::Missing,
-        },
+        alternative: node.alternative.as_ref().or_else(|| {
+            node.let_declaration_optional3.as_ref().and_then(|h| h.alternative.as_ref())
+        }).map_or(OptionalNonterminalView::Missing, |inner| {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(inner))
+        }),
         mutable_specifier: match &node.mutable_specifier {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -46387,10 +46449,11 @@ fn render_line_comment(node: &LineCommentTransport, dest: &mut dyn ::std::fmt::W
 fn render_loop_expression(node: &LoopExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LoopExpressionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        label: match &node.loop_expression_optional1 {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(&v.label)),
-            None => OptionalNonterminalView::Missing,
-        },
+        label: node.label.as_ref().or_else(|| {
+            node.loop_expression_optional1.as_ref().and_then(|h| h.label.as_ref())
+        }).map_or(OptionalNonterminalView::Missing, |inner| {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(inner))
+        }),
     };
     template.render_into(dest)
 }
