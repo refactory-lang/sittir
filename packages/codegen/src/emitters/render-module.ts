@@ -38,7 +38,6 @@ import {
 	allFormFieldsOf
 } from '../compiler/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { compileWordMatcher } from '../compiler/common.ts';
 import type { TemplateFile } from './template-hash.ts';
 import { computeTemplateBundleHash } from './template-hash.ts';
 import { renderModuleSrcDir, renderModuleTemplatesDir } from './render-module-paths.ts';
@@ -752,9 +751,34 @@ function mergeTemplateSurfaceFromBody(body: string, surface: RenderTemplateSurfa
 	}
 	return {
 		slots: [...byName.values()],
-		usesChildren: surface?.usesChildren ?? /\bchildren\b/.test(body),
-		usesVariant: surface?.usesVariant ?? /\bvariant\b/.test(body),
-		usesText: surface?.usesText ?? /\btext\b/.test(body)
+		usesChildren: (surface?.usesChildren ?? false) || /\bchildren\b/.test(body),
+		usesVariant: (surface?.usesVariant ?? false) || /\bvariant\b/.test(body),
+		usesText: (surface?.usesText ?? false) || /\btext\b/.test(body)
+	};
+}
+
+/**
+ * Build a RenderTemplateSurface from the assembled slot model, without
+ * invoking the legacy template walker. Named slots drive the surface:
+ * a multiple named slot maps to `'field'` view, a singular named slot
+ * maps to `'scalar'`. `hasLeading`/`hasTrailing` are forwarded from the
+ * slot. `usesChildren`/`usesVariant`/`usesText` are all false here —
+ * mergeTemplateSurfaceFromBody fills those in via body-regex fallback.
+ */
+function buildSlotModelSurface(node: AssembledNode | undefined): RenderTemplateSurface {
+	const slotModel = renderSlotModelOf(node);
+	const slots = slotModel.named.map((slot) => ({
+		name: slot.name,
+		view: (isMultiple(slot) ? 'field' : 'scalar') as 'scalar' | 'list' | 'field',
+		required: isRequired(slot),
+		hasLeading: slot.hasLeading,
+		hasTrailing: slot.hasTrailing
+	}));
+	return {
+		slots,
+		usesChildren: false,
+		usesVariant: false,
+		usesText: false
 	};
 }
 
@@ -2311,7 +2335,6 @@ export function emitRenderModule(
 ): RustRenderModuleEmit {
 	const { hashRs, hashTs } = emitHashFiles(lang, files);
 	const structs: EmittedStruct[] = [];
-	const wordMatcher = compileWordMatcher(nodeMap.word, nodeMap.rules ?? {});
 	// Same order the hash function sorts under — deterministic output.
 	const sortedFiles = [...files].sort((a, b) => a.filename.localeCompare(b.filename));
 	for (const f of sortedFiles) {
@@ -2321,8 +2344,7 @@ export function emitRenderModule(
 		// Only user-facing nodes get templates emitted (see templates.ts
 		// emitJinjaTemplates); if the jinja file exists, the node exists
 		// and is userFacing.
-		const rendered = node?.renderTemplate(nodeMap.rules ?? {}, wordMatcher ?? /\w/, nodeMap.externals);
-		structs.push(emitStruct(kind, node, mergeTemplateSurfaceFromBody(f.content, rendered?.surface)));
+		structs.push(emitStruct(kind, node, mergeTemplateSurfaceFromBody(f.content, buildSlotModelSurface(node))));
 	}
 	const meta = collectMetaData(nodeMap);
 	const hasNumericDispatch = generatedIdTables !== undefined;

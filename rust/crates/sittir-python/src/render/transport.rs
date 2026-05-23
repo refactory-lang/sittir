@@ -26122,12 +26122,6 @@ fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut
             trailing: false,
         },
         for_in_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.for_in_clause)),
-        if_clause: ListNonterminalView {
-            items: content_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -26183,7 +26177,7 @@ fn render__list_pattern(node: &_ListPatternTransport, dest: &mut dyn ::std::fmt:
 
 fn render_match_block(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = MatchBlockTemplate {
-        match_block_block: OptionalNonterminalView::Missing,
+        match_block_block: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -26219,7 +26213,6 @@ fn render_not_in(t: &NotInTransport, dest: &mut dyn ::std::fmt::Write) -> Result
 
 fn render_simple_pattern_negative(node: &SimplePatternNegativeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = SimplePatternNegativeTemplate {
-        text: node.transport_text.as_deref().unwrap_or(""),
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
     template.render_into(dest)
@@ -26448,12 +26441,6 @@ fn render_case_clause(node: &CaseClauseTransport, dest: &mut dyn ::std::fmt::Wri
 
 fn render_case_pattern(node: &CasePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = CasePatternTemplate {
-        as_pattern: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
     };
     template.render_into(dest)
@@ -26533,20 +26520,8 @@ fn render_comparison_operator(node: &ComparisonOperatorTransport, dest: &mut dyn
 fn render_complex_pattern(node: &ComplexPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ComplexPatternTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        float: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         imaginary: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.imaginary)),
-        integer: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        real: OptionalNonterminalView::Missing,
+        real: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -26611,7 +26586,6 @@ fn render_decorated_definition(node: &DecoratedDefinitionTransport, dest: &mut d
 fn render_decorator(node: &DecoratorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = DecoratorTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
-        newline: OptionalNonterminalView::Missing,
     };
     template.render_into(dest)
 }
@@ -26677,18 +26651,6 @@ fn render_dictionary_comprehension(node: &DictionaryComprehensionTransport, dest
     let template = DictionaryComprehensionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         comprehension_clauses: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.comprehension_clauses)),
-        for_in_clause: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        if_clause: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -26703,12 +26665,6 @@ fn render_dictionary_splat(node: &DictionarySplatTransport, dest: &mut dyn ::std
 fn render_dictionary_splat_pattern(node: &DictionarySplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = DictionarySplatPatternTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        identifier: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -26758,17 +26714,10 @@ fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt
 
 fn render_except_clause(node: &ExceptClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExceptClauseTemplate {
-        block: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.block)),
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
         content: match &node.content {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
-        },
-        except_clause_as: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
         },
     };
     template.render_into(dest)
@@ -26782,12 +26731,6 @@ fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fm
         code: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.code)),
         expression: ListNonterminalView {
             items: expression_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        in_clause: ListNonterminalView {
-            items: &[],
             separator: ",",
             leading: false,
             trailing: false,
@@ -26917,12 +26860,6 @@ fn render_format_specifier(node: &FormatSpecifierTransport, dest: &mut dyn ::std
             leading: false,
             trailing: false,
         },
-        format_expression: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -26972,18 +26909,6 @@ fn render_generator_expression(node: &GeneratorExpressionTransport, dest: &mut d
     let template = GeneratorExpressionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         comprehension_clauses: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.comprehension_clauses)),
-        for_in_clause: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        if_clause: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -27051,12 +26976,6 @@ fn render_import_from_statement(node: &ImportFromStatementTransport, dest: &mut 
         .collect();
     let template = ImportFromStatementTemplate {
         module_name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.module_name)),
-        name: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         wildcard_import: ListNonterminalView {
             items: wildcard_import_buf.as_slice(),
             separator: "",
@@ -27150,12 +27069,6 @@ fn render_lambda(node: &LambdaTransport, dest: &mut dyn ::std::fmt::Write) -> Re
 
 fn render_lambda_parameters(node: &LambdaParametersTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LambdaParametersTemplate {
-        parameter: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.parameters.as_ref())),
     };
     template.render_into(dest)
@@ -27187,12 +27100,6 @@ fn render_list(node: &ListTransport, dest: &mut dyn ::std::fmt::Write) -> Result
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
             None => OptionalNonterminalView::Missing,
         },
-        expression: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -27201,18 +27108,6 @@ fn render_list_comprehension(node: &ListComprehensionTransport, dest: &mut dyn :
     let template = ListComprehensionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         comprehension_clauses: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.comprehension_clauses)),
-        for_in_clause: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        if_clause: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -27224,12 +27119,6 @@ fn render_list_pattern(node: &ListPatternTransport, dest: &mut dyn ::std::fmt::W
         }
     }
     let template = ListPatternTemplate {
-        pattern: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         patterns: match &node.patterns {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
             None => OptionalNonterminalView::Missing,
@@ -27248,12 +27137,6 @@ fn render_list_splat(node: &ListSplatTransport, dest: &mut dyn ::std::fmt::Write
 fn render_list_splat_pattern(node: &ListSplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ListSplatPatternTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        identifier: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -27357,12 +27240,6 @@ fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Writ
         }
     }
     let template = ParametersTemplate {
-        parameter: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         parameters: match &node.parameters {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
             None => OptionalNonterminalView::Missing,
@@ -27374,12 +27251,6 @@ fn render_parameters(node: &ParametersTransport, dest: &mut dyn ::std::fmt::Writ
 fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ParenthesizedExpressionTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        expression: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -27387,12 +27258,6 @@ fn render_parenthesized_expression(node: &ParenthesizedExpressionTransport, dest
 fn render_parenthesized_list_splat(node: &ParenthesizedListSplatTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ParenthesizedListSplatTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        parenthesized_expression: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -27498,12 +27363,6 @@ fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std
 fn render_set(node: &SetTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = SetTemplate {
         collection_elements: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.collection_elements.as_ref())),
-        expression: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -27512,18 +27371,6 @@ fn render_set_comprehension(node: &SetComprehensionTransport, dest: &mut dyn ::s
     let template = SetComprehensionTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         comprehension_clauses: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.comprehension_clauses)),
-        for_in_clause: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        if_clause: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -27535,8 +27382,6 @@ fn render_slice(node: &SliceTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
         }
     }
     let template = SliceTemplate {
-        expression1: OptionalNonterminalView::Missing,
-        expression2: OptionalNonterminalView::Missing,
         start: match &node.start {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -27574,7 +27419,6 @@ fn render_string(node: &StringTransport, dest: &mut dyn ::std::fmt::Write) -> Re
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = StringTemplate {
-        text: node.transport_text.as_deref().unwrap_or(""),
         content: ListNonterminalView {
             items: content_buf.as_slice(),
             separator: "",
@@ -27599,12 +27443,6 @@ fn render_string_content(node: &StringContentTransport, dest: &mut dyn ::std::fm
         .collect();
     let template = StringContentTemplate {
         content: ListNonterminalView {
-            items: content_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        escape_interpolation: ListNonterminalView {
             items: content_buf.as_slice(),
             separator: "",
             leading: false,
@@ -27670,12 +27508,6 @@ fn render_tuple(node: &TupleTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
             None => OptionalNonterminalView::Missing,
         },
-        expression: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -27687,12 +27519,6 @@ fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt:
         }
     }
     let template = TuplePatternTemplate {
-        pattern: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         patterns: match &node.patterns {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
             None => OptionalNonterminalView::Missing,
@@ -27704,12 +27530,6 @@ fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt:
 fn render_type(node: &TypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TypeTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        expression: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
     };
     template.render_into(dest)
 }
@@ -27759,12 +27579,6 @@ fn render_typed_default_parameter(node: &TypedDefaultParameterTransport, dest: &
 fn render_typed_parameter(node: &TypedParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TypedParameterTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        identifier: ListNonterminalView {
-            items: &[],
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
     template.render_into(dest)
