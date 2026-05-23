@@ -10241,8 +10241,8 @@ pub struct MatchBlockTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: MatchBlockBlockTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_block_block"))]
+    pub match_block_block: MatchBlockBlockTransport,
 }
 
 impl RenderableTransport for MatchBlockTransport {
@@ -26177,7 +26177,8 @@ fn render__list_pattern(node: &_ListPatternTransport, dest: &mut dyn ::std::fmt:
 
 fn render_match_block(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = MatchBlockTemplate {
-        match_block_block: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+        variant: "",
+        match_block_block: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.match_block_block)),
     };
     template.render_into(dest)
 }
@@ -28506,7 +28507,6 @@ impl AnyTransport {
             Self::KwAsyncMarker(t) => t.transport_named,
             Self::KwType(t) => t.transport_named,
             Self::_ListPattern(t) => t.transport_named,
-            Self::MatchBlock(t) => t.transport_named,
             Self::MatchBlockBlock(t) => t.transport_named,
             Self::NotEscapeSequence(t) => t.transport_named,
             Self::NotIn(t) => t.transport_named,
@@ -29341,7 +29341,7 @@ fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<Trans
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(AnyTransport::MatchBlockBlock(transport.content));
+    children_buf.push(AnyTransport::MatchBlockBlock(transport.match_block_block));
     let children = if children_buf.is_empty() {
         None
     } else {

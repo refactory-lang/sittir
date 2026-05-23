@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 393,
+  "nodeCount": 395,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -46,6 +46,8 @@
     "field_pattern__form_shorthand",
     "foreign_mod_item__form_body",
     "foreign_mod_item__form_semi",
+    "function_type__form_fn_form",
+    "function_type__form_trait_form",
     "impl_item__form_body",
     "impl_item__form_semi",
     "line_comment__form_content",
@@ -69,6 +71,8 @@
     "range_pattern__form_left_bare",
     "range_pattern__form_left_with_right",
     "range_pattern__form_prefix",
+    "reference_expression__form_raw_const",
+    "reference_expression__form_raw_mut",
     "struct_item__form_brace",
     "struct_item__form_tuple",
     "struct_item__form_unit",
@@ -1934,9 +1938,9 @@
     {
       "kind": "_function_type_fn_form",
       "modelType": "branch",
-      "typeName": "FunctionTypeFnForm",
-      "factoryName": "functionTypeFnForm",
-      "irKey": "functionTypeFnForm",
+      "typeName": "_FunctionTypeFnForm",
+      "factoryName": "_functionTypeFnForm",
+      "irKey": "_functionTypeFnForm",
       "hidden": false,
       "fields": [
         {
@@ -1968,9 +1972,9 @@
     {
       "kind": "_function_type_trait_form",
       "modelType": "branch",
-      "typeName": "FunctionTypeTraitForm",
-      "factoryName": "functionTypeTraitForm",
-      "irKey": "functionTypeTraitForm",
+      "typeName": "_FunctionTypeTraitForm",
+      "factoryName": "_functionTypeTraitForm",
+      "irKey": "_functionTypeTraitForm",
       "hidden": false,
       "fields": [
         {
@@ -3940,21 +3944,24 @@
     },
     {
       "kind": "_reference_expression_raw_const",
-      "modelType": "pattern",
+      "modelType": "keyword",
       "typeName": "ReferenceExpressionRawConst",
       "factoryName": "referenceExpressionRawConst",
       "irKey": "referenceExpressionRawConst",
-      "hidden": false
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"const\" as const",
+      "text": "const"
     },
     {
       "kind": "_reference_expression_raw_mut",
       "modelType": "branch",
-      "typeName": "ReferenceExpressionRawMut",
-      "factoryName": "referenceExpressionRawMut",
-      "irKey": "referenceExpressionRawMut",
+      "typeName": "_ReferenceExpressionRawMut",
+      "factoryName": "_referenceExpressionRawMut",
+      "irKey": "_referenceExpressionRawMut",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "referenceExpressionRawMut()",
+      "stampExpression": "_referenceExpressionRawMut()",
       "fields": [
         {
           "name": "mutable_specifier",
@@ -9548,39 +9555,244 @@
     },
     {
       "kind": "function_type",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "FunctionType",
       "factoryName": "functionType",
       "irKey": "functionType",
       "hidden": false,
-      "fields": [
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "function_type_trait_form",
+        "function_type_fn_form"
+      ],
+      "forms": [
         {
-          "name": "for_lifetimes",
-          "propertyName": "forLifetimes",
-          "paramName": "forLifetimes",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+          "kind": "function_type__form_trait_form",
+          "name": "trait_form",
+          "typeName": "FunctionTypeUFormTraitForm",
+          "factoryName": "functionTypeUFormTraitForm",
+          "irKey": "functionTypeUFormTraitForm",
+          "parentKind": "function_type",
+          "fields": [
             {
-              "kind": "node-ref",
-              "multiplicity": "optional",
               "name": "for_lifetimes",
-              "unresolved": true
+              "propertyName": "forLifetimes",
+              "paramName": "forLifetimes",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "optional",
+                  "name": "for_lifetimes",
+                  "unresolved": true
+                }
+              ],
+              "source": "grammar",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "for_lifetimes"
+                ]
+              }
+            },
+            {
+              "name": "function_type_trait_form",
+              "propertyName": "functionTypeTraitForm",
+              "paramName": "functionTypeTraitForm",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_function_type_trait_form",
+                  "unresolved": true
+                }
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_function_type_trait_form"
+                ]
+              },
+              "aliasSources": {
+                "function_type_trait_form": "_function_type_trait_form"
+              }
+            },
+            {
+              "name": "parameters",
+              "propertyName": "parameters",
+              "paramName": "parameters",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "parameters",
+                  "unresolved": true
+                }
+              ],
+              "source": "grammar",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "parameters"
+                ]
+              }
+            },
+            {
+              "name": "return_type",
+              "propertyName": "returnType",
+              "paramName": "returnType",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "optional",
+                  "name": "_type",
+                  "unresolved": true
+                }
+              ],
+              "source": "grammar",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_type"
+                ]
+              }
             }
           ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "for_lifetimes"
-            ]
-          }
+          "children": []
         },
         {
-          "name": "function_type_trait_form",
-          "propertyName": "functionTypeTraitForm",
-          "paramName": "functionTypeTraitForm",
+          "kind": "function_type__form_fn_form",
+          "name": "fn_form",
+          "typeName": "FunctionTypeUFormFnForm",
+          "factoryName": "functionTypeUFormFnForm",
+          "irKey": "functionTypeUFormFnForm",
+          "parentKind": "function_type",
+          "fields": [
+            {
+              "name": "for_lifetimes",
+              "propertyName": "forLifetimes",
+              "paramName": "forLifetimes",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "optional",
+                  "name": "for_lifetimes",
+                  "unresolved": true
+                }
+              ],
+              "source": "grammar",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "for_lifetimes"
+                ]
+              }
+            },
+            {
+              "name": "function_type_fn_form",
+              "propertyName": "functionTypeFnForm",
+              "paramName": "functionTypeFnForm",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_function_type_fn_form",
+                  "unresolved": true
+                }
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_function_type_fn_form"
+                ]
+              },
+              "aliasSources": {
+                "function_type_fn_form": "_function_type_fn_form"
+              }
+            },
+            {
+              "name": "parameters",
+              "propertyName": "parameters",
+              "paramName": "parameters",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "parameters",
+                  "unresolved": true
+                }
+              ],
+              "source": "grammar",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "parameters"
+                ]
+              }
+            },
+            {
+              "name": "return_type",
+              "propertyName": "returnType",
+              "paramName": "returnType",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "optional",
+                  "name": "_type",
+                  "unresolved": true
+                }
+              ],
+              "source": "grammar",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_type"
+                ]
+              }
+            }
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "kind": "function_type_fn_form",
+      "modelType": "branch",
+      "typeName": "FunctionTypeFnForm",
+      "factoryName": "functionTypeFnForm",
+      "irKey": "functionTypeFnForm",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "function_modifiers",
+          "propertyName": "functionModifiers",
+          "paramName": "functionModifiers",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9588,7 +9800,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_function_type_trait_form",
+              "name": "function_modifiers",
               "unresolved": true
             }
           ],
@@ -9596,17 +9808,25 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_function_type_trait_form"
+              "function_modifiers"
             ]
-          },
-          "aliasSources": {
-            "function_type_trait_form": "_function_type_trait_form"
           }
-        },
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "function_type_trait_form",
+      "modelType": "branch",
+      "typeName": "FunctionTypeTraitForm",
+      "factoryName": "functionTypeTraitForm",
+      "irKey": "functionTypeTraitForm",
+      "hidden": false,
+      "fields": [
         {
-          "name": "parameters",
-          "propertyName": "parameters",
-          "paramName": "parameters",
+          "name": "trait",
+          "propertyName": "trait",
+          "paramName": "trait",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -9614,7 +9834,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "parameters",
+              "name": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "scoped_type_identifier",
               "unresolved": true
             }
           ],
@@ -9622,57 +9848,12 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "parameters"
-            ]
-          }
-        },
-        {
-          "name": "function_type_fn_form",
-          "propertyName": "functionTypeFnForm",
-          "paramName": "functionTypeFnForm",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_function_type_fn_form",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_function_type_fn_form"
+              "identifier",
+              "scoped_type_identifier"
             ]
           },
           "aliasSources": {
-            "function_type_fn_form": "_function_type_fn_form"
-          }
-        },
-        {
-          "name": "return_type",
-          "propertyName": "returnType",
-          "paramName": "returnType",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_type",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_type"
-            ]
+            "type_identifier": "identifier"
           }
         }
       ],
@@ -13539,16 +13720,6 @@
       ]
     },
     {
-      "kind": "raw",
-      "modelType": "keyword",
-      "typeName": "Raw",
-      "irKey": "raw",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"raw\" as const",
-      "text": "raw"
-    },
-    {
       "kind": "raw_string_literal",
       "modelType": "branch",
       "typeName": "RawStringLiteral",
@@ -13639,35 +13810,161 @@
     },
     {
       "kind": "reference_expression",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ReferenceExpression",
       "factoryName": "referenceExpression",
       "irKey": "referenceExpression",
       "hidden": false,
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "reference_expression_raw_const",
+        "reference_expression_raw_mut"
+      ],
+      "forms": [
+        {
+          "kind": "reference_expression__form_raw_const",
+          "name": "raw_const",
+          "typeName": "ReferenceExpressionUFormRawConst",
+          "factoryName": "referenceExpressionUFormRawConst",
+          "irKey": "referenceExpressionUFormRawConst",
+          "parentKind": "reference_expression",
+          "fields": [
+            {
+              "name": "reference_expression_raw_const",
+              "propertyName": "referenceExpressionRawConst",
+              "paramName": "referenceExpressionRawConst",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_reference_expression_raw_const",
+                  "unresolved": true
+                }
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_reference_expression_raw_const"
+                ]
+              },
+              "aliasSources": {
+                "reference_expression_raw_const": "_reference_expression_raw_const"
+              }
+            },
+            {
+              "name": "value",
+              "propertyName": "value",
+              "paramName": "value",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_expression",
+                  "unresolved": true
+                }
+              ],
+              "source": "grammar",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_expression"
+                ]
+              }
+            }
+          ],
+          "children": []
+        },
+        {
+          "kind": "reference_expression__form_raw_mut",
+          "name": "raw_mut",
+          "typeName": "ReferenceExpressionUFormRawMut",
+          "factoryName": "referenceExpressionUFormRawMut",
+          "irKey": "referenceExpressionUFormRawMut",
+          "parentKind": "reference_expression",
+          "fields": [
+            {
+              "name": "reference_expression_raw_mut",
+              "propertyName": "referenceExpressionRawMut",
+              "paramName": "referenceExpressionRawMut",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_reference_expression_raw_mut",
+                  "unresolved": true
+                }
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_reference_expression_raw_mut"
+                ]
+              },
+              "aliasSources": {
+                "reference_expression_raw_mut": "_reference_expression_raw_mut"
+              }
+            },
+            {
+              "name": "value",
+              "propertyName": "value",
+              "paramName": "value",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_expression",
+                  "unresolved": true
+                }
+              ],
+              "source": "grammar",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_expression"
+                ]
+              }
+            }
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "kind": "reference_expression_raw_mut",
+      "modelType": "branch",
+      "typeName": "ReferenceExpressionRawMut",
+      "factoryName": "referenceExpressionRawMut",
+      "irKey": "referenceExpressionRawMut",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "referenceExpressionRawMut()",
       "fields": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": false,
+          "name": "mutable_specifier",
+          "propertyName": "mutableSpecifier",
+          "paramName": "mutableSpecifier",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_reference_expression_raw_const",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_reference_expression_raw_mut",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "mutable_specifier",
               "unresolved": true
             }
@@ -13676,36 +13973,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_reference_expression_raw_const",
-              "_reference_expression_raw_mut",
               "mutable_specifier"
-            ]
-          },
-          "aliasSources": {
-            "reference_expression_raw_const": "_reference_expression_raw_const",
-            "reference_expression_raw_mut": "_reference_expression_raw_mut"
-          }
-        },
-        {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_expression",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression"
             ]
           }
         }

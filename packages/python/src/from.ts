@@ -261,7 +261,6 @@ function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
 }
 
 const _wrapKindIds: { readonly [kind: string]: number } = {
-  "_match_block": TSKindId.MatchBlock,
   "_simple_pattern_negative": TSKindId.SimplePatternNegative,
   "_simple_statements": TSKindId.SimpleStatements,
   "_with_clause_paren": TSKindId._WithClauseParen,
@@ -301,7 +300,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
   switch (kind) {
-    case "_match_block": return F.matchBlock(...(children as Parameters<typeof F.matchBlock>));
     case "_simple_pattern_negative": return F.simplePatternNegative(...(children as Parameters<typeof F.simplePatternNegative>));
     case "_simple_statements": return F.simpleStatements(...(children as Parameters<typeof F.simpleStatements>));
     case "_with_clause_paren": return F._withClauseParen(...(children as Parameters<typeof F._withClauseParen>));
@@ -1092,7 +1090,7 @@ export function matchStatementFrom(input: T.MatchStatement.Loose): ReturnType<ty
   _assertNonEmpty(_ne_subjects, 'match_statement.subjects');
   return F.matchStatement({
     subject: _ne_subjects,
-    body: _resolveOneBranch<T.MatchBlock>(input.body, "_match_block") ?? F.matchBlock(),
+    body: _resolveOneBranch<T.MatchBlock>(input.body, "_match_block"),
   });
 }
 

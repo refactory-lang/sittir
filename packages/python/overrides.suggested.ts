@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   40  (33 applied, 7 held)
+// Rule promotions:   41  (34 applied, 7 held)
 // Repeated shapes:   0  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -237,6 +237,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "import_prefix", classification: "terminal", applied: true },
   { kind: "integer", classification: "terminal", applied: true },
   { kind: "line_continuation", classification: "terminal", applied: true },
+  { kind: "_match_block", classification: "polymorph", applied: true },
   { kind: "_match_block_block", classification: "polymorph", applied: true },
   { kind: "_suite", classification: "polymorph", applied: false },
   { kind: "assignment", classification: "polymorph", applied: true },

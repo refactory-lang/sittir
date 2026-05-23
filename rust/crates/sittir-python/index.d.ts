@@ -930,7 +930,7 @@ export interface MatchBlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: MatchBlockBlockTransport
+  _match_block_block: MatchBlockBlockTransport
 }
 
 export interface MatchStatementTransport {

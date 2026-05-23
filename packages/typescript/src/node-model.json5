@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 434,
+  "nodeCount": 437,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -44,6 +44,10 @@
     "||"
   ],
   "polymorphFormKinds": [
+    "_export_statement_default_from_arm__form_clause_from",
+    "_export_statement_default_from_arm__form_export_clause",
+    "_export_statement_default_from_arm__form_ns_from",
+    "_export_statement_default_from_arm__form_star_from",
     "ambient_declaration__form_declaration",
     "ambient_declaration__form_global",
     "ambient_declaration__form_module",
@@ -1609,93 +1613,265 @@
     },
     {
       "kind": "_export_statement_default_from_arm",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "ExportStatementDefaultFromArm",
       "factoryName": "exportStatementDefaultFromArm",
       "irKey": "exportStatementDefaultFromArm",
       "hidden": false,
-      "fields": [
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "export_statement_default_from_arm_star_from",
+        "export_statement_default_from_arm_ns_from",
+        "export_statement_default_from_arm_clause_from",
+        "export_clause"
+      ],
+      "forms": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+          "kind": "_export_statement_default_from_arm__form_star_from",
+          "name": "star_from",
+          "typeName": "ExportStatementDefaultFromArmUFormStarFrom",
+          "factoryName": "exportStatementDefaultFromArmUFormStarFrom",
+          "irKey": "exportStatementDefaultFromArmUFormStarFrom",
+          "parentKind": "_export_statement_default_from_arm",
+          "fields": [
             {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_export_statement_default_from_arm_star_from",
-              "unresolved": true
+              "name": "export_statement_default_from_arm_star_from",
+              "propertyName": "exportStatementDefaultFromArmStarFrom",
+              "paramName": "exportStatementDefaultFromArmStarFrom",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_export_statement_default_from_arm_star_from",
+                  "unresolved": true
+                }
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_export_statement_default_from_arm_star_from"
+                ]
+              },
+              "aliasSources": {
+                "export_statement_default_from_arm_star_from": "_export_statement_default_from_arm_star_from"
+              }
             },
             {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_export_statement_default_from_arm_ns_from",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_export_statement_default_from_arm_clause_from",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "export_clause",
-              "unresolved": true
+              "name": "semicolon",
+              "propertyName": "semicolon",
+              "paramName": "semicolon",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "optional",
+                  "name": "_semicolon",
+                  "unresolved": true
+                }
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_semicolon"
+                ]
+              }
             }
           ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_export_statement_default_from_arm_star_from",
-              "_export_statement_default_from_arm_ns_from",
-              "_export_statement_default_from_arm_clause_from",
-              "export_clause"
-            ]
-          },
-          "aliasSources": {
-            "export_statement_default_from_arm_star_from": "_export_statement_default_from_arm_star_from",
-            "export_statement_default_from_arm_ns_from": "_export_statement_default_from_arm_ns_from",
-            "export_statement_default_from_arm_clause_from": "_export_statement_default_from_arm_clause_from"
-          }
+          "children": []
         },
         {
-          "name": "semicolon",
-          "propertyName": "semicolon",
-          "paramName": "semicolon",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+          "kind": "_export_statement_default_from_arm__form_ns_from",
+          "name": "ns_from",
+          "typeName": "ExportStatementDefaultFromArmUFormNsFrom",
+          "factoryName": "exportStatementDefaultFromArmUFormNsFrom",
+          "irKey": "exportStatementDefaultFromArmUFormNsFrom",
+          "parentKind": "_export_statement_default_from_arm",
+          "fields": [
             {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_semicolon",
-              "unresolved": true
+              "name": "export_statement_default_from_arm_ns_from",
+              "propertyName": "exportStatementDefaultFromArmNsFrom",
+              "paramName": "exportStatementDefaultFromArmNsFrom",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_export_statement_default_from_arm_ns_from",
+                  "unresolved": true
+                }
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_export_statement_default_from_arm_ns_from"
+                ]
+              },
+              "aliasSources": {
+                "export_statement_default_from_arm_ns_from": "_export_statement_default_from_arm_ns_from"
+              }
+            },
+            {
+              "name": "semicolon",
+              "propertyName": "semicolon",
+              "paramName": "semicolon",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "optional",
+                  "name": "_semicolon",
+                  "unresolved": true
+                }
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_semicolon"
+                ]
+              }
             }
           ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_semicolon"
-            ]
-          }
+          "children": []
+        },
+        {
+          "kind": "_export_statement_default_from_arm__form_clause_from",
+          "name": "clause_from",
+          "typeName": "ExportStatementDefaultFromArmUFormClauseFrom",
+          "factoryName": "exportStatementDefaultFromArmUFormClauseFrom",
+          "irKey": "exportStatementDefaultFromArmUFormClauseFrom",
+          "parentKind": "_export_statement_default_from_arm",
+          "fields": [
+            {
+              "name": "export_statement_default_from_arm_clause_from",
+              "propertyName": "exportStatementDefaultFromArmClauseFrom",
+              "paramName": "exportStatementDefaultFromArmClauseFrom",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_export_statement_default_from_arm_clause_from",
+                  "unresolved": true
+                }
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_export_statement_default_from_arm_clause_from"
+                ]
+              },
+              "aliasSources": {
+                "export_statement_default_from_arm_clause_from": "_export_statement_default_from_arm_clause_from"
+              }
+            },
+            {
+              "name": "semicolon",
+              "propertyName": "semicolon",
+              "paramName": "semicolon",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "optional",
+                  "name": "_semicolon",
+                  "unresolved": true
+                }
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_semicolon"
+                ]
+              }
+            }
+          ],
+          "children": []
+        },
+        {
+          "kind": "_export_statement_default_from_arm__form_export_clause",
+          "name": "export_clause",
+          "typeName": "ExportStatementDefaultFromArmUFormExportClause",
+          "factoryName": "exportStatementDefaultFromArmUFormExportClause",
+          "irKey": "exportStatementDefaultFromArmUFormExportClause",
+          "parentKind": "_export_statement_default_from_arm",
+          "fields": [
+            {
+              "name": "export_clause",
+              "propertyName": "exportClause",
+              "paramName": "exportClause",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "export_clause",
+                  "unresolved": true
+                }
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "export_clause"
+                ]
+              }
+            },
+            {
+              "name": "semicolon",
+              "propertyName": "semicolon",
+              "paramName": "semicolon",
+              "required": false,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "optional",
+                  "name": "_semicolon",
+                  "unresolved": true
+                }
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_semicolon"
+                ]
+              }
+            }
+          ],
+          "children": []
         }
-      ],
-      "children": []
+      ]
     },
     {
       "kind": "_export_statement_default_from_arm_clause_from",
       "modelType": "branch",
-      "typeName": "ExportStatementDefaultFromArmClauseFrom",
-      "factoryName": "exportStatementDefaultFromArmClauseFrom",
-      "irKey": "exportStatementDefaultFromArmClauseFrom",
+      "typeName": "_ExportStatementDefaultFromArmClauseFrom",
+      "factoryName": "_exportStatementDefaultFromArmClauseFrom",
+      "irKey": "_exportStatementDefaultFromArmClauseFrom",
       "hidden": false,
       "fields": [
         {
@@ -1750,9 +1926,9 @@
     {
       "kind": "_export_statement_default_from_arm_ns_from",
       "modelType": "branch",
-      "typeName": "ExportStatementDefaultFromArmNsFrom",
-      "factoryName": "exportStatementDefaultFromArmNsFrom",
-      "irKey": "exportStatementDefaultFromArmNsFrom",
+      "typeName": "_ExportStatementDefaultFromArmNsFrom",
+      "factoryName": "_exportStatementDefaultFromArmNsFrom",
+      "irKey": "_exportStatementDefaultFromArmNsFrom",
       "hidden": false,
       "fields": [
         {
@@ -1807,9 +1983,9 @@
     {
       "kind": "_export_statement_default_from_arm_star_from",
       "modelType": "branch",
-      "typeName": "ExportStatementDefaultFromArmStarFrom",
-      "factoryName": "exportStatementDefaultFromArmStarFrom",
-      "irKey": "exportStatementDefaultFromArmStarFrom",
+      "typeName": "_ExportStatementDefaultFromArmStarFrom",
+      "factoryName": "_exportStatementDefaultFromArmStarFrom",
+      "irKey": "_exportStatementDefaultFromArmStarFrom",
       "hidden": false,
       "fields": [
         {
@@ -9150,6 +9326,154 @@
           "children": []
         }
       ]
+    },
+    {
+      "kind": "export_statement_default_from_arm_clause_from",
+      "modelType": "branch",
+      "typeName": "ExportStatementDefaultFromArmClauseFrom",
+      "factoryName": "exportStatementDefaultFromArmClauseFrom",
+      "irKey": "exportStatementDefaultFromArmClauseFrom",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "export_clause",
+          "propertyName": "exportClause",
+          "paramName": "exportClause",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "export_clause",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "export_clause"
+            ]
+          }
+        },
+        {
+          "name": "source",
+          "propertyName": "source",
+          "paramName": "source",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "string"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "export_statement_default_from_arm_ns_from",
+      "modelType": "branch",
+      "typeName": "ExportStatementDefaultFromArmNsFrom",
+      "factoryName": "exportStatementDefaultFromArmNsFrom",
+      "irKey": "exportStatementDefaultFromArmNsFrom",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "namespace_export",
+          "propertyName": "namespaceExport",
+          "paramName": "namespaceExport",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "namespace_export",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "namespace_export"
+            ]
+          }
+        },
+        {
+          "name": "source",
+          "propertyName": "source",
+          "paramName": "source",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "string"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "export_statement_default_from_arm_star_from",
+      "modelType": "branch",
+      "typeName": "ExportStatementDefaultFromArmStarFrom",
+      "factoryName": "exportStatementDefaultFromArmStarFrom",
+      "irKey": "exportStatementDefaultFromArmStarFrom",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "source",
+          "propertyName": "source",
+          "paramName": "source",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "string"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "export_statement_equals_export",

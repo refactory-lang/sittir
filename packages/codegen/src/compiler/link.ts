@@ -49,6 +49,7 @@ import { isHiddenKind } from './evaluate.ts';
 import type { PolymorphVariant } from './types.ts';
 import { validateRefineForms } from './link-refine.ts';
 import { applyGroupOverrides, stampStaticRenderAs } from './group-synthesis.ts';
+import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 
 // ---------------------------------------------------------------------------
 // link() — main entry point
@@ -887,11 +888,23 @@ export function applyOverridePolymorphs(
 		// Deep choice: push ambient scaffold into variant children instead.
 		emitVariantChildDerivations(parentKind, children, derivations);
 
-		const variantChildSymbolNames = new Set(children.map((c) => `${parentKind}_${c}`));
-		const anyChildMemberInFoundChoice = found.choice.members.some((m) => {
-			const inner = m.type === 'variant' ? m.content : m;
+		const variantChildSymbolNames = new Set(children.map((c) => polymorphVisibleName(parentKind, c)));
+		// Check whether any variant-child symbol appears in the found choice — either
+		// as a direct member or nested inside choice/seq arms at any shallow depth,
+		// matching the depth that the form builder (buildOverridePolymorphForms /
+		// findVariantSymbolInSeqArm) already handles.
+		const symbolInNames = (r: Rule): boolean => {
+			const inner = r.type === 'variant' ? r.content : r;
 			return inner.type === 'symbol' && variantChildSymbolNames.has(inner.name);
-		});
+		};
+		const symbolInRule = (r: Rule): boolean => {
+			if (symbolInNames(r)) return true;
+			const inner = r.type === 'variant' ? r.content : r;
+			if (inner.type === 'choice') return inner.members.some(symbolInNames);
+			if (inner.type === 'seq') return inner.members.some((m) => symbolInNames(m) || (m.type === 'choice' && m.members.some(symbolInNames)));
+			return false;
+		};
+		const anyChildMemberInFoundChoice = found.choice.members.some(symbolInRule);
 		if (!anyChildMemberInFoundChoice) {
 			pushAmbientScaffoldIntoVariantChildren(rules, parentKind, children);
 			continue;
@@ -919,10 +932,10 @@ function buildOverridePolymorphForms(
 	found: VariantChoiceLocation,
 	rules: Record<string, Rule>
 ): PolymorphForm[] {
-	const variantChildSymbolNames = new Set(children.map((child) => `${parentKind}_${child}`));
+	const variantChildSymbolNames = new Set(children.map((child) => polymorphVisibleName(parentKind, child)));
 	const explicitVariantForms = new Map<string, PolymorphForm>();
 	for (const child of children) {
-		const visibleChildKind = `${parentKind}_${child}`;
+		const visibleChildKind = polymorphVisibleName(parentKind, child);
 		const directMember = found.choice.members.find((member) => matchesOverrideChoiceMember(member, visibleChildKind));
 		const content =
 			directMember?.type === 'variant'
@@ -964,7 +977,7 @@ function buildOverridePolymorphForms(
 	}
 
 	for (const child of children) {
-		const visibleChildKind = `${parentKind}_${child}`;
+		const visibleChildKind = polymorphVisibleName(parentKind, child);
 		const form = explicitVariantForms.get(visibleChildKind);
 		if (form && !seenExplicit.has(visibleChildKind)) orderedForms.push(form);
 	}
@@ -1208,14 +1221,45 @@ export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
 	}
 	if (rule.type === 'seq') {
 		const choiceIdx = rule.members.findIndex((m) => m.type === 'choice');
-		if (choiceIdx === -1) return null;
-		// More than one choice in the seq is ambiguous — bail.
-		const more = rule.members.findIndex((m, i) => i !== choiceIdx && m.type === 'choice');
-		if (more !== -1) return null;
+		if (choiceIdx !== -1) {
+			// More than one choice in the seq is ambiguous — bail.
+			const more = rule.members.findIndex((m, i) => i !== choiceIdx && m.type === 'choice');
+			if (more !== -1) return null;
+			return {
+				choice: rule.members[choiceIdx] as ChoiceRule,
+				prefix: rule.members.slice(0, choiceIdx),
+				suffix: rule.members.slice(choiceIdx + 1)
+			};
+		}
+
+		// No direct choice — check if exactly one member is a seq that contains
+		// exactly one choice (the variant choice nested in an inner seq, e.g. function_type).
+		// Guard: there must be zero choices at the outer level AND exactly one in the
+		// inner seq; if more than one choice total, bail (ambiguous).
+		const innerSeqIdx = rule.members.findIndex((m) => m.type === 'seq');
+		if (innerSeqIdx === -1) return null;
+		// Make sure there is no other member that is also a seq with a choice in it,
+		// and no choices at all elsewhere in the outer seq.
+		const outerChoiceCount = rule.members.filter((m) => m.type === 'choice').length;
+		if (outerChoiceCount > 0) return null; // would have been caught above, defensive
+		const innerSeq = rule.members[innerSeqIdx] as SeqRule;
+		const innerChoiceIdx = innerSeq.members.findIndex((m) => m.type === 'choice');
+		if (innerChoiceIdx === -1) return null;
+		// Ensure there is only ONE choice total across outer + inner levels.
+		const innerChoiceCount = innerSeq.members.filter((m) => m.type === 'choice').length;
+		const otherSeqChoiceCount = rule.members
+			.filter((m, i) => i !== innerSeqIdx && m.type === 'seq')
+			.reduce((acc, m) => acc + (m as SeqRule).members.filter((mm) => mm.type === 'choice').length, 0);
+		if (innerChoiceCount !== 1 || otherSeqChoiceCount > 0) return null;
+		// Merge outer prefix/suffix with the inner seq's non-choice members.
+		const outerPrefix = rule.members.slice(0, innerSeqIdx);
+		const outerSuffix = rule.members.slice(innerSeqIdx + 1);
+		const innerPrefix = innerSeq.members.slice(0, innerChoiceIdx);
+		const innerSuffix = innerSeq.members.slice(innerChoiceIdx + 1);
 		return {
-			choice: rule.members[choiceIdx] as ChoiceRule,
-			prefix: rule.members.slice(0, choiceIdx),
-			suffix: rule.members.slice(choiceIdx + 1)
+			choice: innerSeq.members[innerChoiceIdx] as ChoiceRule,
+			prefix: [...outerPrefix, ...innerPrefix],
+			suffix: [...innerSuffix, ...outerSuffix]
 		};
 	}
 	return null;

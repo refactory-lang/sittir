@@ -119,10 +119,13 @@ export const enum SyntaxKind {
   ExportStatementDefaultDeclArm = "_export_statement_default_decl_arm",
   ExportStatementDefaultDeclArmDefaultKw = "_export_statement_default_decl_arm_default_kw",
   ExportStatementDefaultDeclArmDefaultKwValue = "_export_statement_default_decl_arm_default_kw_value",
+  ExportStatementDefaultFromArmStarFrom = "export_statement_default_from_arm_star_from",
+  ExportStatementDefaultFromArmNsFrom = "export_statement_default_from_arm_ns_from",
+  ExportStatementDefaultFromArmClauseFrom = "export_statement_default_from_arm_clause_from",
   ExportStatementDefaultFromArm = "_export_statement_default_from_arm",
-  ExportStatementDefaultFromArmClauseFrom = "_export_statement_default_from_arm_clause_from",
-  ExportStatementDefaultFromArmNsFrom = "_export_statement_default_from_arm_ns_from",
-  ExportStatementDefaultFromArmStarFrom = "_export_statement_default_from_arm_star_from",
+  _ExportStatementDefaultFromArmClauseFrom = "_export_statement_default_from_arm_clause_from",
+  _ExportStatementDefaultFromArmNsFrom = "_export_statement_default_from_arm_ns_from",
+  _ExportStatementDefaultFromArmStarFrom = "_export_statement_default_from_arm_star_from",
   _ExportStatementEqualsExport = "_export_statement_equals_export",
   _ExportStatementNamespaceExport = "_export_statement_namespace_export",
   _ExportStatementTypeExport = "_export_statement_type_export",
@@ -817,9 +820,9 @@ export const enum TSKindId {
   IndexSignatureColon = 367,
   _IndexSignatureMappedTypeClause = 368,
   _AmbientDeclarationDeclaration = 369,
-  ExportStatementDefaultFromArmStarFrom = 370,
-  ExportStatementDefaultFromArmNsFrom = 371,
-  ExportStatementDefaultFromArmClauseFrom = 372,
+  _ExportStatementDefaultFromArmStarFrom = 370,
+  _ExportStatementDefaultFromArmNsFrom = 371,
+  _ExportStatementDefaultFromArmClauseFrom = 372,
   ExportStatementDefaultDeclArmDefaultKwValue = 373,
   ClassBodyMethod = 374,
   ClassBodyMethodSig = 375,
@@ -1676,9 +1679,9 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_index_signature_colon": return TSKindId.IndexSignatureColon;
     case "_index_signature_mapped_type_clause": return TSKindId._IndexSignatureMappedTypeClause;
     case "_ambient_declaration_declaration": return TSKindId._AmbientDeclarationDeclaration;
-    case "_export_statement_default_from_arm_star_from": return TSKindId.ExportStatementDefaultFromArmStarFrom;
-    case "_export_statement_default_from_arm_ns_from": return TSKindId.ExportStatementDefaultFromArmNsFrom;
-    case "_export_statement_default_from_arm_clause_from": return TSKindId.ExportStatementDefaultFromArmClauseFrom;
+    case "_export_statement_default_from_arm_star_from": return TSKindId._ExportStatementDefaultFromArmStarFrom;
+    case "_export_statement_default_from_arm_ns_from": return TSKindId._ExportStatementDefaultFromArmNsFrom;
+    case "_export_statement_default_from_arm_clause_from": return TSKindId._ExportStatementDefaultFromArmClauseFrom;
     case "_export_statement_default_decl_arm_default_kw_value": return TSKindId.ExportStatementDefaultDeclArmDefaultKwValue;
     case "_class_body_method": return TSKindId.ClassBodyMethod;
     case "_class_body_method_sig": return TSKindId.ClassBodyMethodSig;
@@ -1820,9 +1823,9 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "index_signature_colon": return TSKindId.IndexSignatureColon;
     case "index_signature_mapped_type_clause": return TSKindId._IndexSignatureMappedTypeClause;
     case "ambient_declaration_declaration": return TSKindId._AmbientDeclarationDeclaration;
-    case "export_statement_default_from_arm_star_from": return TSKindId.ExportStatementDefaultFromArmStarFrom;
-    case "export_statement_default_from_arm_ns_from": return TSKindId.ExportStatementDefaultFromArmNsFrom;
-    case "export_statement_default_from_arm_clause_from": return TSKindId.ExportStatementDefaultFromArmClauseFrom;
+    case "export_statement_default_from_arm_star_from": return TSKindId._ExportStatementDefaultFromArmStarFrom;
+    case "export_statement_default_from_arm_ns_from": return TSKindId._ExportStatementDefaultFromArmNsFrom;
+    case "export_statement_default_from_arm_clause_from": return TSKindId._ExportStatementDefaultFromArmClauseFrom;
     case "export_statement_default_decl_arm_default_kw_value": return TSKindId.ExportStatementDefaultDeclArmDefaultKwValue;
     case "class_body_method": return TSKindId.ClassBodyMethod;
     case "class_body_method_sig": return TSKindId.ClassBodyMethodSig;
@@ -2244,32 +2247,83 @@ export interface ExportStatementDefaultDeclArmDefaultKwValue {
   semicolon(): Semicolon | undefined;
 }
 
-export interface ExportStatementDefaultFromArm {
-  readonly $type: TSKindId.ExportStatementDefaultFromArm;
-  readonly _content: ExportStatementDefaultFromArmStarFrom | ExportStatementDefaultFromArmNsFrom | ExportStatementDefaultFromArmClauseFrom | ExportClause;
-  readonly _semicolon?: Semicolon;
-  content(): ExportStatementDefaultFromArmStarFrom | ExportStatementDefaultFromArmNsFrom | ExportStatementDefaultFromArmClauseFrom | ExportClause;
-  semicolon(): Semicolon | undefined;
-}
-
-export interface ExportStatementDefaultFromArmClauseFrom {
-  readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom;
-  readonly _export_clause: ExportClause;
+export interface ExportStatementDefaultFromArmStarFrom {
+  readonly $type: "export_statement_default_from_arm_star_from";
   readonly _source: String;
-  exportClause(): ExportClause;
   source(): String;
 }
 
 export interface ExportStatementDefaultFromArmNsFrom {
-  readonly $type: TSKindId.ExportStatementDefaultFromArmNsFrom;
+  readonly $type: "export_statement_default_from_arm_ns_from";
   readonly _namespace_export: NamespaceExport;
   readonly _source: String;
   namespaceExport(): NamespaceExport;
   source(): String;
 }
 
-export interface ExportStatementDefaultFromArmStarFrom {
-  readonly $type: TSKindId.ExportStatementDefaultFromArmStarFrom;
+export interface ExportStatementDefaultFromArmClauseFrom {
+  readonly $type: "export_statement_default_from_arm_clause_from";
+  readonly _export_clause: ExportClause;
+  readonly _source: String;
+  exportClause(): ExportClause;
+  source(): String;
+}
+
+export interface ExportStatementDefaultFromArmUFormStarFrom {
+  readonly $type: TSKindId.ExportStatementDefaultFromArm;
+  readonly $variant: 'star_from';
+  readonly _export_statement_default_from_arm_star_from: _ExportStatementDefaultFromArmStarFrom;
+  readonly _semicolon?: Semicolon;
+  exportStatementDefaultFromArmStarFrom(): _ExportStatementDefaultFromArmStarFrom;
+  semicolon(): Semicolon | undefined;
+}
+
+export interface ExportStatementDefaultFromArmUFormNsFrom {
+  readonly $type: TSKindId.ExportStatementDefaultFromArm;
+  readonly $variant: 'ns_from';
+  readonly _export_statement_default_from_arm_ns_from: _ExportStatementDefaultFromArmNsFrom;
+  readonly _semicolon?: Semicolon;
+  exportStatementDefaultFromArmNsFrom(): _ExportStatementDefaultFromArmNsFrom;
+  semicolon(): Semicolon | undefined;
+}
+
+export interface ExportStatementDefaultFromArmUFormClauseFrom {
+  readonly $type: TSKindId.ExportStatementDefaultFromArm;
+  readonly $variant: 'clause_from';
+  readonly _export_statement_default_from_arm_clause_from: _ExportStatementDefaultFromArmClauseFrom;
+  readonly _semicolon?: Semicolon;
+  exportStatementDefaultFromArmClauseFrom(): _ExportStatementDefaultFromArmClauseFrom;
+  semicolon(): Semicolon | undefined;
+}
+
+export interface ExportStatementDefaultFromArmUFormExportClause {
+  readonly $type: TSKindId.ExportStatementDefaultFromArm;
+  readonly $variant: 'export_clause';
+  readonly _export_clause: ExportClause;
+  readonly _semicolon?: Semicolon;
+  exportClause(): ExportClause;
+  semicolon(): Semicolon | undefined;
+}
+
+export type ExportStatementDefaultFromArm = ExportStatementDefaultFromArmUFormStarFrom | ExportStatementDefaultFromArmUFormNsFrom | ExportStatementDefaultFromArmUFormClauseFrom | ExportStatementDefaultFromArmUFormExportClause;
+export interface _ExportStatementDefaultFromArmClauseFrom {
+  readonly $type: TSKindId._ExportStatementDefaultFromArmClauseFrom;
+  readonly _export_clause: ExportClause;
+  readonly _source: String;
+  exportClause(): ExportClause;
+  source(): String;
+}
+
+export interface _ExportStatementDefaultFromArmNsFrom {
+  readonly $type: TSKindId._ExportStatementDefaultFromArmNsFrom;
+  readonly _namespace_export: NamespaceExport;
+  readonly _source: String;
+  namespaceExport(): NamespaceExport;
+  source(): String;
+}
+
+export interface _ExportStatementDefaultFromArmStarFrom {
+  readonly $type: TSKindId._ExportStatementDefaultFromArmStarFrom;
   readonly _source: String;
   source(): String;
 }
@@ -4417,10 +4471,17 @@ export interface _ClassHeritageImplementsClauseTree extends AnyTreeNode { readon
 export interface ExportStatementDefaultDeclArmTree extends AnyTreeNode { readonly type: "_export_statement_default_decl_arm"; }
 export interface ExportStatementDefaultDeclArmDefaultKwTree extends AnyTreeNode { readonly type: "_export_statement_default_decl_arm_default_kw"; }
 export interface ExportStatementDefaultDeclArmDefaultKwValueTree extends AnyTreeNode { readonly type: "_export_statement_default_decl_arm_default_kw_value"; }
+export interface ExportStatementDefaultFromArmStarFromTree extends TreeNode<'export_statement_default_from_arm_star_from'> {}
+export interface ExportStatementDefaultFromArmNsFromTree extends TreeNode<'export_statement_default_from_arm_ns_from'> {}
+export interface ExportStatementDefaultFromArmClauseFromTree extends TreeNode<'export_statement_default_from_arm_clause_from'> {}
 export interface ExportStatementDefaultFromArmTree extends AnyTreeNode { readonly type: "_export_statement_default_from_arm"; }
-export interface ExportStatementDefaultFromArmClauseFromTree extends AnyTreeNode { readonly type: "_export_statement_default_from_arm_clause_from"; }
-export interface ExportStatementDefaultFromArmNsFromTree extends AnyTreeNode { readonly type: "_export_statement_default_from_arm_ns_from"; }
-export interface ExportStatementDefaultFromArmStarFromTree extends AnyTreeNode { readonly type: "_export_statement_default_from_arm_star_from"; }
+export interface ExportStatementDefaultFromArmUFormStarFromTree extends AnyTreeNode {}
+export interface ExportStatementDefaultFromArmUFormNsFromTree extends AnyTreeNode {}
+export interface ExportStatementDefaultFromArmUFormClauseFromTree extends AnyTreeNode {}
+export interface ExportStatementDefaultFromArmUFormExportClauseTree extends AnyTreeNode {}
+export interface _ExportStatementDefaultFromArmClauseFromTree extends AnyTreeNode { readonly type: "_export_statement_default_from_arm_clause_from"; }
+export interface _ExportStatementDefaultFromArmNsFromTree extends AnyTreeNode { readonly type: "_export_statement_default_from_arm_ns_from"; }
+export interface _ExportStatementDefaultFromArmStarFromTree extends AnyTreeNode { readonly type: "_export_statement_default_from_arm_star_from"; }
 export interface _ExportStatementEqualsExportTree extends AnyTreeNode { readonly type: "_export_statement_equals_export"; }
 export interface _ExportStatementNamespaceExportTree extends AnyTreeNode { readonly type: "_export_statement_namespace_export"; }
 export interface _ExportStatementTypeExportTree extends AnyTreeNode { readonly type: "_export_statement_type_export"; }
@@ -5079,10 +5140,13 @@ export type TypescriptNode =
   | ExportStatementDefaultDeclArm
   | ExportStatementDefaultDeclArmDefaultKw
   | ExportStatementDefaultDeclArmDefaultKwValue
-  | ExportStatementDefaultFromArm
-  | ExportStatementDefaultFromArmClauseFrom
-  | ExportStatementDefaultFromArmNsFrom
   | ExportStatementDefaultFromArmStarFrom
+  | ExportStatementDefaultFromArmNsFrom
+  | ExportStatementDefaultFromArmClauseFrom
+  | ExportStatementDefaultFromArm
+  | _ExportStatementDefaultFromArmClauseFrom
+  | _ExportStatementDefaultFromArmNsFrom
+  | _ExportStatementDefaultFromArmStarFrom
   | _ExportStatementEqualsExport
   | _ExportStatementNamespaceExport
   | _ExportStatementTypeExport
@@ -5314,10 +5378,13 @@ export interface KindMap {
   '_export_statement_default_decl_arm': ExportStatementDefaultDeclArm;
   '_export_statement_default_decl_arm_default_kw': ExportStatementDefaultDeclArmDefaultKw;
   '_export_statement_default_decl_arm_default_kw_value': ExportStatementDefaultDeclArmDefaultKwValue;
+  'export_statement_default_from_arm_star_from': ExportStatementDefaultFromArmStarFrom;
+  'export_statement_default_from_arm_ns_from': ExportStatementDefaultFromArmNsFrom;
+  'export_statement_default_from_arm_clause_from': ExportStatementDefaultFromArmClauseFrom;
   '_export_statement_default_from_arm': ExportStatementDefaultFromArm;
-  '_export_statement_default_from_arm_clause_from': ExportStatementDefaultFromArmClauseFrom;
-  '_export_statement_default_from_arm_ns_from': ExportStatementDefaultFromArmNsFrom;
-  '_export_statement_default_from_arm_star_from': ExportStatementDefaultFromArmStarFrom;
+  '_export_statement_default_from_arm_clause_from': _ExportStatementDefaultFromArmClauseFrom;
+  '_export_statement_default_from_arm_ns_from': _ExportStatementDefaultFromArmNsFrom;
+  '_export_statement_default_from_arm_star_from': _ExportStatementDefaultFromArmStarFrom;
   '_export_statement_equals_export': _ExportStatementEqualsExport;
   '_export_statement_namespace_export': _ExportStatementNamespaceExport;
   '_export_statement_type_export': _ExportStatementTypeExport;
@@ -5580,6 +5647,7 @@ export interface KindMap {
 }
 
 export interface VariantMap {
+  '_export_statement_default_from_arm': { star_from: ExportStatementDefaultFromArmUFormStarFrom; ns_from: ExportStatementDefaultFromArmUFormNsFrom; clause_from: ExportStatementDefaultFromArmUFormClauseFrom; export_clause: ExportStatementDefaultFromArmUFormExportClause };
   'ambient_declaration': { declaration: AmbientDeclarationUFormDeclaration; global: AmbientDeclarationUFormGlobal; module: AmbientDeclarationUFormModule };
   'arrow_function': { parameter: ArrowFunctionUFormParameter; _call_signature: ArrowFunctionUFormUCallSignature };
   'call_expression': { call: CallExpressionUFormCall; template_call: CallExpressionUFormTemplateCall; member: CallExpressionUFormMember };
@@ -5610,10 +5678,13 @@ export interface _ClassHeritageImplementsClauseNs extends NodeNs<_ClassHeritageI
 export interface ExportStatementDefaultDeclArmNs extends NodeNs<ExportStatementDefaultDeclArm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExportStatementDefaultDeclArmDefaultKwNs extends NodeNs<ExportStatementDefaultDeclArmDefaultKw, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExportStatementDefaultDeclArmDefaultKwValueNs extends NodeNs<ExportStatementDefaultDeclArmDefaultKwValue, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExportStatementDefaultFromArmNs extends NodeNs<ExportStatementDefaultFromArm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExportStatementDefaultFromArmClauseFromNs extends NodeNs<ExportStatementDefaultFromArmClauseFrom, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExportStatementDefaultFromArmNsFromNs extends NodeNs<ExportStatementDefaultFromArmNsFrom, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExportStatementDefaultFromArmStarFromNs extends NodeNs<ExportStatementDefaultFromArmStarFrom, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExportStatementDefaultFromArmNsFromNs extends NodeNs<ExportStatementDefaultFromArmNsFrom, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExportStatementDefaultFromArmClauseFromNs extends NodeNs<ExportStatementDefaultFromArmClauseFrom, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExportStatementDefaultFromArmNs extends NodeNs<ExportStatementDefaultFromArm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _ExportStatementDefaultFromArmClauseFromNs extends NodeNs<_ExportStatementDefaultFromArmClauseFrom, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _ExportStatementDefaultFromArmNsFromNs extends NodeNs<_ExportStatementDefaultFromArmNsFrom, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _ExportStatementDefaultFromArmStarFromNs extends NodeNs<_ExportStatementDefaultFromArmStarFrom, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ExportStatementEqualsExportNs extends NodeNs<_ExportStatementEqualsExport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ExportStatementNamespaceExportNs extends NodeNs<_ExportStatementNamespaceExport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _ExportStatementTypeExportNs extends NodeNs<_ExportStatementTypeExport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5844,10 +5915,13 @@ export interface NamespaceMap {
   '_export_statement_default_decl_arm': ExportStatementDefaultDeclArmNs;
   '_export_statement_default_decl_arm_default_kw': ExportStatementDefaultDeclArmDefaultKwNs;
   '_export_statement_default_decl_arm_default_kw_value': ExportStatementDefaultDeclArmDefaultKwValueNs;
+  'export_statement_default_from_arm_star_from': ExportStatementDefaultFromArmStarFromNs;
+  'export_statement_default_from_arm_ns_from': ExportStatementDefaultFromArmNsFromNs;
+  'export_statement_default_from_arm_clause_from': ExportStatementDefaultFromArmClauseFromNs;
   '_export_statement_default_from_arm': ExportStatementDefaultFromArmNs;
-  '_export_statement_default_from_arm_clause_from': ExportStatementDefaultFromArmClauseFromNs;
-  '_export_statement_default_from_arm_ns_from': ExportStatementDefaultFromArmNsFromNs;
-  '_export_statement_default_from_arm_star_from': ExportStatementDefaultFromArmStarFromNs;
+  '_export_statement_default_from_arm_clause_from': _ExportStatementDefaultFromArmClauseFromNs;
+  '_export_statement_default_from_arm_ns_from': _ExportStatementDefaultFromArmNsFromNs;
+  '_export_statement_default_from_arm_star_from': _ExportStatementDefaultFromArmStarFromNs;
   '_export_statement_equals_export': _ExportStatementEqualsExportNs;
   '_export_statement_namespace_export': _ExportStatementNamespaceExportNs;
   '_export_statement_type_export': _ExportStatementTypeExportNs;
@@ -6187,6 +6261,27 @@ export namespace ExportStatementDefaultDeclArmDefaultKwValue {
   export type Tree = TreeFor<'_export_statement_default_decl_arm_default_kw_value'>;
   export type Kind = '_export_statement_default_decl_arm_default_kw_value';
 }
+export namespace ExportStatementDefaultFromArmStarFrom {
+  export type Config = ConfigFor<'export_statement_default_from_arm_star_from'>;
+  export type Fluent = FluentFor<'export_statement_default_from_arm_star_from'>;
+  export type Loose = LooseFor<'export_statement_default_from_arm_star_from'>;
+  export type Tree = TreeFor<'export_statement_default_from_arm_star_from'>;
+  export type Kind = 'export_statement_default_from_arm_star_from';
+}
+export namespace ExportStatementDefaultFromArmNsFrom {
+  export type Config = ConfigFor<'export_statement_default_from_arm_ns_from'>;
+  export type Fluent = FluentFor<'export_statement_default_from_arm_ns_from'>;
+  export type Loose = LooseFor<'export_statement_default_from_arm_ns_from'>;
+  export type Tree = TreeFor<'export_statement_default_from_arm_ns_from'>;
+  export type Kind = 'export_statement_default_from_arm_ns_from';
+}
+export namespace ExportStatementDefaultFromArmClauseFrom {
+  export type Config = ConfigFor<'export_statement_default_from_arm_clause_from'>;
+  export type Fluent = FluentFor<'export_statement_default_from_arm_clause_from'>;
+  export type Loose = LooseFor<'export_statement_default_from_arm_clause_from'>;
+  export type Tree = TreeFor<'export_statement_default_from_arm_clause_from'>;
+  export type Kind = 'export_statement_default_from_arm_clause_from';
+}
 export namespace ExportStatementDefaultFromArm {
   export type Config = ConfigFor<'_export_statement_default_from_arm'>;
   export type Fluent = FluentFor<'_export_statement_default_from_arm'>;
@@ -6194,21 +6289,21 @@ export namespace ExportStatementDefaultFromArm {
   export type Tree = TreeFor<'_export_statement_default_from_arm'>;
   export type Kind = '_export_statement_default_from_arm';
 }
-export namespace ExportStatementDefaultFromArmClauseFrom {
+export namespace _ExportStatementDefaultFromArmClauseFrom {
   export type Config = ConfigFor<'_export_statement_default_from_arm_clause_from'>;
   export type Fluent = FluentFor<'_export_statement_default_from_arm_clause_from'>;
   export type Loose = LooseFor<'_export_statement_default_from_arm_clause_from'>;
   export type Tree = TreeFor<'_export_statement_default_from_arm_clause_from'>;
   export type Kind = '_export_statement_default_from_arm_clause_from';
 }
-export namespace ExportStatementDefaultFromArmNsFrom {
+export namespace _ExportStatementDefaultFromArmNsFrom {
   export type Config = ConfigFor<'_export_statement_default_from_arm_ns_from'>;
   export type Fluent = FluentFor<'_export_statement_default_from_arm_ns_from'>;
   export type Loose = LooseFor<'_export_statement_default_from_arm_ns_from'>;
   export type Tree = TreeFor<'_export_statement_default_from_arm_ns_from'>;
   export type Kind = '_export_statement_default_from_arm_ns_from';
 }
-export namespace ExportStatementDefaultFromArmStarFrom {
+export namespace _ExportStatementDefaultFromArmStarFrom {
   export type Config = ConfigFor<'_export_statement_default_from_arm_star_from'>;
   export type Fluent = FluentFor<'_export_statement_default_from_arm_star_from'>;
   export type Loose = LooseFor<'_export_statement_default_from_arm_star_from'>;

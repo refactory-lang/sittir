@@ -78,6 +78,9 @@ export const NODE_KINDS = [
   'export_clause',
   'export_specifier',
   'export_statement',
+  'export_statement_default_from_arm_clause_from',
+  'export_statement_default_from_arm_ns_from',
+  'export_statement_default_from_arm_star_from',
   'export_statement_equals_export',
   'export_statement_namespace_export',
   'export_statement_type_export',
@@ -1645,8 +1648,11 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'implementsClause', required: true, multiple: false },
   ],
   '_export_statement_default_from_arm': [
-    { name: 'content', required: true, multiple: false },
+    { name: 'exportStatementDefaultFromArmStarFrom', required: true, multiple: false },
     { name: 'semicolon', required: false, multiple: false },
+    { name: 'exportStatementDefaultFromArmNsFrom', required: true, multiple: false },
+    { name: 'exportStatementDefaultFromArmClauseFrom', required: true, multiple: false },
+    { name: 'exportClause', required: true, multiple: false },
   ],
   '_export_statement_default_from_arm_clause_from': [
     { name: 'exportClause', required: true, multiple: false },
@@ -1923,6 +1929,17 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'exportStatementTypeExport', required: true, multiple: false },
     { name: 'exportStatementEqualsExport', required: true, multiple: false },
     { name: 'exportStatementNamespaceExport', required: true, multiple: false },
+  ],
+  'export_statement_default_from_arm_clause_from': [
+    { name: 'exportClause', required: true, multiple: false },
+    { name: 'source', required: true, multiple: false },
+  ],
+  'export_statement_default_from_arm_ns_from': [
+    { name: 'namespaceExport', required: true, multiple: false },
+    { name: 'source', required: true, multiple: false },
+  ],
+  'export_statement_default_from_arm_star_from': [
+    { name: 'source', required: true, multiple: false },
   ],
   'export_statement_equals_export': [
     { name: 'expression', required: true, multiple: false },

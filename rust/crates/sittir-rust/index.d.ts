@@ -1041,6 +1041,17 @@ export interface FunctionTypeFnFormTransport {
   _function_modifiers?: FunctionModifiersTransport
 }
 
+export interface FunctionTypeFnFormTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _function_modifiers?: FunctionModifiersTransport
+}
+
 export interface FunctionTypeTraitFormTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1049,7 +1060,18 @@ export interface FunctionTypeTraitFormTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _trait: Box<FunctionTypeTraitFormTraitTransportSlot>
+  _trait: Box<_FunctionTypeTraitFormTraitTransportSlot>
+}
+
+export interface FunctionTypeTraitFormTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _trait: FunctionTypeTraitFormTraitTransportSlot
 }
 
 export interface FunctionTypeTransport {
@@ -1063,8 +1085,8 @@ export interface FunctionTypeTransport {
   _for_lifetimes?: ForLifetimesTransport
   _parameters: ParametersTransport
   _return_type?: Box<_TypeTransport>
-  _function_type_trait_form?: Box<FunctionTypeTraitFormTransport>
-  _function_type_fn_form?: FunctionTypeFnFormTransport
+  _function_type_trait_form: Box<FunctionTypeTraitFormTransport>
+  _function_type_fn_form: FunctionTypeFnFormTransport
 }
 
 export interface GenBlockTransport {
@@ -1912,6 +1934,17 @@ export interface ReferenceExpressionRawMutTransport {
   _mutable_specifier: MutableSpecifierTransport
 }
 
+export interface ReferenceExpressionRawMutTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _mutable_specifier: MutableSpecifierTransport
+}
+
 export interface ReferenceExpressionTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1921,7 +1954,8 @@ export interface ReferenceExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _value: Box<ExpressionTransport>
-  _content?: ReferenceExpressionContentTransportSlot
+  _reference_expression_raw_const: ReferenceExpressionRawConstTransport
+  _reference_expression_raw_mut: ReferenceExpressionRawMutTransport
 }
 
 export interface ReferencePatternTransport {

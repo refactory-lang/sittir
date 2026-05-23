@@ -10,6 +10,9 @@ import { coerceKindEnumStorage, hasKind, isNodeData } from './utils.js';
 type _FromFieldInput = unknown;
 
 export const _fromMap = {
+  "export_statement_default_from_arm_star_from": exportStatementDefaultFromArmStarFromFrom,
+  "export_statement_default_from_arm_ns_from": exportStatementDefaultFromArmNsFromFrom,
+  "export_statement_default_from_arm_clause_from": exportStatementDefaultFromArmClauseFromFrom,
   "abstract_class_declaration": abstractClassDeclarationFrom,
   "abstract_method_signature": abstractMethodSignatureFrom,
   "accessibility_modifier": accessibilityModifierFrom,
@@ -538,6 +541,27 @@ const _K43: readonly string[] = ["unescaped_double_string_fragment","escape_sequ
 const _K44: readonly string[] = ["switch_case","switch_default"];
 const _K45: readonly string[] = ["rest_pattern"];
 const _K46: readonly string[] = ["identifier","this","predefined_type"];
+
+export function exportStatementDefaultFromArmStarFromFrom(input: T.ExportStatementDefaultFromArmStarFrom.Loose): ReturnType<typeof F.exportStatementDefaultFromArmStarFrom> {
+  if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("export_statement_default_from_arm_star_from")) return input as unknown as ReturnType<typeof F.exportStatementDefaultFromArmStarFrom>;
+  return F.exportStatementDefaultFromArmStarFrom(_resolveOneBranch<T.String>((input !== null && typeof input === 'object' && !isNodeData(input) && "source" in input ? input.source : input), "string"));
+}
+
+export function exportStatementDefaultFromArmNsFromFrom(input: T.ExportStatementDefaultFromArmNsFrom.Loose): ReturnType<typeof F.exportStatementDefaultFromArmNsFrom> {
+  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.exportStatementDefaultFromArmNsFrom>;
+  return F.exportStatementDefaultFromArmNsFrom({
+    namespaceExport: _resolveOneBranch<T.NamespaceExport>(input.namespaceExport, "namespace_export") ?? F.namespaceExport(),
+    source: _resolveOneBranch<T.String>(input.source, "string"),
+  });
+}
+
+export function exportStatementDefaultFromArmClauseFromFrom(input: T.ExportStatementDefaultFromArmClauseFrom.Loose): ReturnType<typeof F.exportStatementDefaultFromArmClauseFrom> {
+  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.exportStatementDefaultFromArmClauseFrom>;
+  return F.exportStatementDefaultFromArmClauseFrom({
+    exportClause: _resolveOneBranch<T.ExportClause>(input.exportClause, "export_clause") ?? F.exportClause(),
+    source: _resolveOneBranch<T.String>(input.source, "string"),
+  });
+}
 
 export function abstractClassDeclarationFrom(input: T.AbstractClassDeclaration.Loose): ReturnType<typeof F.abstractClassDeclaration> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.abstractClassDeclaration>;

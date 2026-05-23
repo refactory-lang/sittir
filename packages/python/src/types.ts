@@ -1415,12 +1415,14 @@ export interface _ListPattern {
   casePatterns(): readonly (CasePattern)[];
 }
 
-export interface MatchBlock {
+export interface MatchBlockUFormBlock {
   readonly $type: TSKindId.MatchBlock;
-  readonly _content: MatchBlockBlock;
-  content(): MatchBlockBlock;
+  readonly $variant: 'block';
+  readonly _match_block_block: MatchBlockBlock;
+  matchBlockBlock(): MatchBlockBlock;
 }
 
+export type MatchBlock = MatchBlockUFormBlock;
 export interface MatchBlockBlock {
   readonly $type: TSKindId.MatchBlockBlock;
   readonly _alternative?: readonly (CaseClause)[];
@@ -2385,6 +2387,7 @@ export interface ImportListTree extends AnyTreeNode { readonly type: "_import_li
 export interface KeyValuePatternTree extends AnyTreeNode { readonly type: "_key_value_pattern"; }
 export interface _ListPatternTree extends AnyTreeNode { readonly type: "_list_pattern"; }
 export interface MatchBlockTree extends AnyTreeNode { readonly type: "_match_block"; }
+export interface MatchBlockUFormBlockTree extends AnyTreeNode {}
 export interface MatchBlockBlockTree extends AnyTreeNode { readonly type: "_match_block_block"; }
 export interface SimplePatternNegativeTree extends AnyTreeNode { readonly type: "_simple_pattern_negative"; }
 export interface SimpleStatementsTree extends AnyTreeNode { readonly type: "_simple_statements"; }
@@ -3047,6 +3050,7 @@ export interface KindMap {
 }
 
 export interface VariantMap {
+  '_match_block': { block: MatchBlockUFormBlock };
   'assignment': { eq: AssignmentUFormEq; type: AssignmentUFormType; typed: AssignmentUFormTyped };
   'expression_statement': { expression: ExpressionStatementUFormExpression; tuple: ExpressionStatementUFormTuple; assignment: ExpressionStatementUFormAssignment; augmented_assignment: ExpressionStatementUFormAugmentedAssignment; yield: ExpressionStatementUFormYield };
   'with_clause': { bare: WithClauseUFormBare; paren: WithClauseUFormParen };

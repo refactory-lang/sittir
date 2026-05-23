@@ -52,10 +52,13 @@ pub enum AnyTransport {
     ExportStatementDefaultDeclArm(ExportStatementDefaultDeclArmTransport),
     ExportStatementDefaultDeclArmDefaultKw(ExportStatementDefaultDeclArmDefaultKwTransport),
     ExportStatementDefaultDeclArmDefaultKwValue(ExportStatementDefaultDeclArmDefaultKwValueTransport),
-    ExportStatementDefaultFromArm(ExportStatementDefaultFromArmTransport),
-    ExportStatementDefaultFromArmClauseFrom(ExportStatementDefaultFromArmClauseFromTransport),
-    ExportStatementDefaultFromArmNsFrom(ExportStatementDefaultFromArmNsFromTransport),
     ExportStatementDefaultFromArmStarFrom(ExportStatementDefaultFromArmStarFromTransport),
+    ExportStatementDefaultFromArmNsFrom(ExportStatementDefaultFromArmNsFromTransport),
+    ExportStatementDefaultFromArmClauseFrom(ExportStatementDefaultFromArmClauseFromTransport),
+    ExportStatementDefaultFromArm(ExportStatementDefaultFromArmTransport),
+    _ExportStatementDefaultFromArmClauseFrom(_ExportStatementDefaultFromArmClauseFromTransport),
+    _ExportStatementDefaultFromArmNsFrom(_ExportStatementDefaultFromArmNsFromTransport),
+    _ExportStatementDefaultFromArmStarFrom(_ExportStatementDefaultFromArmStarFromTransport),
     _ExportStatementEqualsExport(_ExportStatementEqualsExportTransport),
     _ExportStatementNamespaceExport(_ExportStatementNamespaceExportTransport),
     _ExportStatementTypeExport(_ExportStatementTypeExportTransport),
@@ -534,21 +537,21 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 373 => Ok(AnyTransport::ExportStatementDefaultDeclArmDefaultKwValue(
                     ExportStatementDefaultDeclArmDefaultKwValueTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _export_statement_default_from_arm (_EXPORT_STATEMENT_DEFAULT_FROM_ARM)
-                355 => Ok(AnyTransport::ExportStatementDefaultFromArm(
-                    ExportStatementDefaultFromArmTransport::from_napi_value(env, napi_val)?
+                // kind: export_statement_default_from_arm_star_from (EXPORT_STATEMENT_DEFAULT_FROM_ARM_STAR_FROM)
+                370 => Ok(AnyTransport::ExportStatementDefaultFromArmStarFrom(
+                    ExportStatementDefaultFromArmStarFromTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _export_statement_default_from_arm_clause_from (_EXPORT_STATEMENT_DEFAULT_FROM_ARM_CLAUSE_FROM)
-                372 => Ok(AnyTransport::ExportStatementDefaultFromArmClauseFrom(
-                    ExportStatementDefaultFromArmClauseFromTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _export_statement_default_from_arm_ns_from (_EXPORT_STATEMENT_DEFAULT_FROM_ARM_NS_FROM)
+                // kind: export_statement_default_from_arm_ns_from (EXPORT_STATEMENT_DEFAULT_FROM_ARM_NS_FROM)
                 371 => Ok(AnyTransport::ExportStatementDefaultFromArmNsFrom(
                     ExportStatementDefaultFromArmNsFromTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _export_statement_default_from_arm_star_from (_EXPORT_STATEMENT_DEFAULT_FROM_ARM_STAR_FROM)
-                370 => Ok(AnyTransport::ExportStatementDefaultFromArmStarFrom(
-                    ExportStatementDefaultFromArmStarFromTransport::from_napi_value(env, napi_val)?
+                // kind: export_statement_default_from_arm_clause_from (EXPORT_STATEMENT_DEFAULT_FROM_ARM_CLAUSE_FROM)
+                372 => Ok(AnyTransport::ExportStatementDefaultFromArmClauseFrom(
+                    ExportStatementDefaultFromArmClauseFromTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _export_statement_default_from_arm (_EXPORT_STATEMENT_DEFAULT_FROM_ARM)
+                355 => Ok(AnyTransport::ExportStatementDefaultFromArm(
+                    ExportStatementDefaultFromArmTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _export_statement_equals_export (_EXPORT_STATEMENT_EQUALS_EXPORT)
                 383 => Ok(AnyTransport::_ExportStatementEqualsExport(
@@ -7156,117 +7159,6 @@ impl RenderableTransport for ClassBodyMemberContentTransportSlot {
             ClassBodyMemberContentTransportSlot::PublicFieldDefinition(inner) => render_public_field_definition(inner, dest),
             ClassBodyMemberContentTransportSlot::Semicolon(inner) => render_semicolon(inner, dest),
             ClassBodyMemberContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ExportStatementDefaultFromArmContentTransportSlot {
-    ExportStatementDefaultFromArmStarFrom(ExportStatementDefaultFromArmStarFromTransport),
-    ExportStatementDefaultFromArmNsFrom(ExportStatementDefaultFromArmNsFromTransport),
-    ExportStatementDefaultFromArmClauseFrom(ExportStatementDefaultFromArmClauseFromTransport),
-    ExportClause(ExportClauseTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultFromArmContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-            return match kind_id {
-                370 => Ok(Self::ExportStatementDefaultFromArmStarFrom(
-                    ExportStatementDefaultFromArmStarFromTransport::from_napi_value(env, napi_val)?
-                )),
-                371 => Ok(Self::ExportStatementDefaultFromArmNsFrom(
-                    ExportStatementDefaultFromArmNsFromTransport::from_napi_value(env, napi_val)?
-                )),
-                372 => Ok(Self::ExportStatementDefaultFromArmClauseFrom(
-                    ExportStatementDefaultFromArmClauseFromTransport::from_napi_value(env, napi_val)?
-                )),
-                169 => Ok(Self::ExportClause(
-                    ExportClauseTransport::from_napi_value(env, napi_val)?
-                )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in ExportStatementDefaultFromArmContentTransportSlot",
-                ))),
-            };
-        }
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
-            .map_err(|_| ::napi::Error::from_reason("ExportStatementDefaultFromArmContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
-        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-            ::napi::Error::from_reason("$type property missing in ExportStatementDefaultFromArmContentTransportSlot")
-        )?;
-        match kind_id {
-                370 => Ok(Self::ExportStatementDefaultFromArmStarFrom(
-                    ExportStatementDefaultFromArmStarFromTransport::from_napi_value(env, napi_val)?
-                )),
-                371 => Ok(Self::ExportStatementDefaultFromArmNsFrom(
-                    ExportStatementDefaultFromArmNsFromTransport::from_napi_value(env, napi_val)?
-                )),
-                372 => Ok(Self::ExportStatementDefaultFromArmClauseFrom(
-                    ExportStatementDefaultFromArmClauseFromTransport::from_napi_value(env, napi_val)?
-                )),
-                169 => Ok(Self::ExportClause(
-                    ExportClauseTransport::from_napi_value(env, napi_val)?
-                )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in ExportStatementDefaultFromArmContentTransportSlot",
-                ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementDefaultFromArmContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExportStatementDefaultFromArmContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultFromArmContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExportStatementDefaultFromArmContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromArmContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementDefaultFromArmContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn export_statement_default_from_arm_content_transport_slot_to_any(t: ExportStatementDefaultFromArmContentTransportSlot) -> AnyTransport {
-    match t {
-        ExportStatementDefaultFromArmContentTransportSlot::ExportStatementDefaultFromArmStarFrom(inner) => AnyTransport::ExportStatementDefaultFromArmStarFrom(inner),
-        ExportStatementDefaultFromArmContentTransportSlot::ExportStatementDefaultFromArmNsFrom(inner) => AnyTransport::ExportStatementDefaultFromArmNsFrom(inner),
-        ExportStatementDefaultFromArmContentTransportSlot::ExportStatementDefaultFromArmClauseFrom(inner) => AnyTransport::ExportStatementDefaultFromArmClauseFrom(inner),
-        ExportStatementDefaultFromArmContentTransportSlot::ExportClause(inner) => AnyTransport::ExportClause(inner),
-    }
-}
-
-impl RenderableTransport for ExportStatementDefaultFromArmContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            ExportStatementDefaultFromArmContentTransportSlot::ExportStatementDefaultFromArmStarFrom(inner) => render_export_statement_default_from_arm_star_from(inner, dest),
-            ExportStatementDefaultFromArmContentTransportSlot::ExportStatementDefaultFromArmNsFrom(inner) => render_export_statement_default_from_arm_ns_from(inner, dest),
-            ExportStatementDefaultFromArmContentTransportSlot::ExportStatementDefaultFromArmClauseFrom(inner) => render_export_statement_default_from_arm_clause_from(inner, dest),
-            ExportStatementDefaultFromArmContentTransportSlot::ExportClause(inner) => render_export_clause(inner, dest),
         }
     }
 }
@@ -20667,59 +20559,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultDeclArmD
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct ExportStatementDefaultFromArmTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ExportStatementDefaultFromArmContentTransportSlot,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
-}
-
-impl RenderableTransport for ExportStatementDefaultFromArmTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_export_statement_default_from_arm(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultFromArmTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExportStatementDefaultFromArmTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromArmTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementDefaultFromArmTransport::to_napi_value(env, *val)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct ExportStatementDefaultFromArmClauseFromTransport {
+pub struct ExportStatementDefaultFromArmStarFromTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -20736,36 +20576,34 @@ pub struct ExportStatementDefaultFromArmClauseFromTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
     pub source: StringTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
-    pub export_clause: ExportClauseTransport,
 }
 
-impl RenderableTransport for ExportStatementDefaultFromArmClauseFromTransport {
+impl RenderableTransport for ExportStatementDefaultFromArmStarFromTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_export_statement_default_from_arm_clause_from(self, dest))
+        render_with_trivia!(self, dest, render_export_statement_default_from_arm_star_from(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultFromArmClauseFromTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultFromArmStarFromTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExportStatementDefaultFromArmClauseFromTransport::from_napi_value(env, napi_val).map(Box::new)
+        ExportStatementDefaultFromArmStarFromTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromArmClauseFromTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromArmStarFromTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementDefaultFromArmClauseFromTransport::to_napi_value(env, *val)
+        ExportStatementDefaultFromArmStarFromTransport::to_napi_value(env, *val)
     }
 }
 
@@ -20823,7 +20661,221 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromArmN
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct ExportStatementDefaultFromArmStarFromTransport {
+pub struct ExportStatementDefaultFromArmClauseFromTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
+    pub source: StringTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
+    pub export_clause: ExportClauseTransport,
+}
+
+impl RenderableTransport for ExportStatementDefaultFromArmClauseFromTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_export_statement_default_from_arm_clause_from(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultFromArmClauseFromTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExportStatementDefaultFromArmClauseFromTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromArmClauseFromTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExportStatementDefaultFromArmClauseFromTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct ExportStatementDefaultFromArmTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_arm_star_from"))]
+    pub export_statement_default_from_arm_star_from: _ExportStatementDefaultFromArmStarFromTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
+    pub semicolon: Option<SemicolonTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_arm_ns_from"))]
+    pub export_statement_default_from_arm_ns_from: _ExportStatementDefaultFromArmNsFromTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_from_arm_clause_from"))]
+    pub export_statement_default_from_arm_clause_from: _ExportStatementDefaultFromArmClauseFromTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
+    pub export_clause: ExportClauseTransport,
+}
+
+impl RenderableTransport for ExportStatementDefaultFromArmTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_export_statement_default_from_arm(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultFromArmTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExportStatementDefaultFromArmTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromArmTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExportStatementDefaultFromArmTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct _ExportStatementDefaultFromArmClauseFromTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
+    pub source: StringTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
+    pub export_clause: ExportClauseTransport,
+}
+
+impl RenderableTransport for _ExportStatementDefaultFromArmClauseFromTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render__export_statement_default_from_arm_clause_from(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_ExportStatementDefaultFromArmClauseFromTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _ExportStatementDefaultFromArmClauseFromTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_ExportStatementDefaultFromArmClauseFromTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _ExportStatementDefaultFromArmClauseFromTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct _ExportStatementDefaultFromArmNsFromTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
+    pub source: StringTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace_export"))]
+    pub namespace_export: NamespaceExportTransport,
+}
+
+impl RenderableTransport for _ExportStatementDefaultFromArmNsFromTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render__export_statement_default_from_arm_ns_from(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_ExportStatementDefaultFromArmNsFromTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        _ExportStatementDefaultFromArmNsFromTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_ExportStatementDefaultFromArmNsFromTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        _ExportStatementDefaultFromArmNsFromTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct _ExportStatementDefaultFromArmStarFromTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -20842,32 +20894,32 @@ pub struct ExportStatementDefaultFromArmStarFromTransport {
     pub source: StringTransport,
 }
 
-impl RenderableTransport for ExportStatementDefaultFromArmStarFromTransport {
+impl RenderableTransport for _ExportStatementDefaultFromArmStarFromTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_export_statement_default_from_arm_star_from(self, dest))
+        render_with_trivia!(self, dest, render__export_statement_default_from_arm_star_from(self, dest))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExportStatementDefaultFromArmStarFromTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_ExportStatementDefaultFromArmStarFromTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExportStatementDefaultFromArmStarFromTransport::from_napi_value(env, napi_val).map(Box::new)
+        _ExportStatementDefaultFromArmStarFromTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExportStatementDefaultFromArmStarFromTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_ExportStatementDefaultFromArmStarFromTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExportStatementDefaultFromArmStarFromTransport::to_napi_value(env, *val)
+        _ExportStatementDefaultFromArmStarFromTransport::to_napi_value(env, *val)
     }
 }
 
@@ -48917,20 +48969,8 @@ fn render_export_statement_default_decl_arm_default_kw_value(node: &ExportStatem
     template.render_into(dest)
 }
 
-fn render_export_statement_default_from_arm(node: &ExportStatementDefaultFromArmTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = ExportStatementDefaultFromArmTemplate {
-        export_statement_default_from_arm_star_from: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-    };
-    template.render_into(dest)
-}
-
-fn render_export_statement_default_from_arm_clause_from(node: &ExportStatementDefaultFromArmClauseFromTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = ExportStatementDefaultFromArmClauseFromTemplate {
-        export_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.export_clause)),
+fn render_export_statement_default_from_arm_star_from(node: &ExportStatementDefaultFromArmStarFromTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = ExportStatementDefaultFromArmStarFromTemplate {
         source: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.source)),
     };
     template.render_into(dest)
@@ -48944,8 +48984,47 @@ fn render_export_statement_default_from_arm_ns_from(node: &ExportStatementDefaul
     template.render_into(dest)
 }
 
-fn render_export_statement_default_from_arm_star_from(node: &ExportStatementDefaultFromArmStarFromTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = ExportStatementDefaultFromArmStarFromTemplate {
+fn render_export_statement_default_from_arm_clause_from(node: &ExportStatementDefaultFromArmClauseFromTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = ExportStatementDefaultFromArmClauseFromTemplate {
+        export_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.export_clause)),
+        source: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.source)),
+    };
+    template.render_into(dest)
+}
+
+fn render_export_statement_default_from_arm(node: &ExportStatementDefaultFromArmTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = ExportStatementDefaultFromArmTemplate {
+        variant: "",
+        export_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.export_clause)),
+        export_statement_default_from_arm_clause_from: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.export_statement_default_from_arm_clause_from)),
+        export_statement_default_from_arm_ns_from: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.export_statement_default_from_arm_ns_from)),
+        export_statement_default_from_arm_star_from: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.export_statement_default_from_arm_star_from)),
+        semicolon: match &node.semicolon {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+    };
+    template.render_into(dest)
+}
+
+fn render__export_statement_default_from_arm_clause_from(node: &_ExportStatementDefaultFromArmClauseFromTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = _ExportStatementDefaultFromArmClauseFromTemplate {
+        export_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.export_clause)),
+        source: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.source)),
+    };
+    template.render_into(dest)
+}
+
+fn render__export_statement_default_from_arm_ns_from(node: &_ExportStatementDefaultFromArmNsFromTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = _ExportStatementDefaultFromArmNsFromTemplate {
+        namespace_export: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.namespace_export)),
+        source: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.source)),
+    };
+    template.render_into(dest)
+}
+
+fn render__export_statement_default_from_arm_star_from(node: &_ExportStatementDefaultFromArmStarFromTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = _ExportStatementDefaultFromArmStarFromTemplate {
         source: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.source)),
     };
     template.render_into(dest)
@@ -52681,10 +52760,13 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::ExportStatementDefaultDeclArm(t) => render_export_statement_default_decl_arm(t, dest),
             AnyTransport::ExportStatementDefaultDeclArmDefaultKw(t) => render_export_statement_default_decl_arm_default_kw(t, dest),
             AnyTransport::ExportStatementDefaultDeclArmDefaultKwValue(t) => render_export_statement_default_decl_arm_default_kw_value(t, dest),
-            AnyTransport::ExportStatementDefaultFromArm(t) => render_export_statement_default_from_arm(t, dest),
-            AnyTransport::ExportStatementDefaultFromArmClauseFrom(t) => render_export_statement_default_from_arm_clause_from(t, dest),
-            AnyTransport::ExportStatementDefaultFromArmNsFrom(t) => render_export_statement_default_from_arm_ns_from(t, dest),
             AnyTransport::ExportStatementDefaultFromArmStarFrom(t) => render_export_statement_default_from_arm_star_from(t, dest),
+            AnyTransport::ExportStatementDefaultFromArmNsFrom(t) => render_export_statement_default_from_arm_ns_from(t, dest),
+            AnyTransport::ExportStatementDefaultFromArmClauseFrom(t) => render_export_statement_default_from_arm_clause_from(t, dest),
+            AnyTransport::ExportStatementDefaultFromArm(t) => render_export_statement_default_from_arm(t, dest),
+            AnyTransport::_ExportStatementDefaultFromArmClauseFrom(t) => render__export_statement_default_from_arm_clause_from(t, dest),
+            AnyTransport::_ExportStatementDefaultFromArmNsFrom(t) => render__export_statement_default_from_arm_ns_from(t, dest),
+            AnyTransport::_ExportStatementDefaultFromArmStarFrom(t) => render__export_statement_default_from_arm_star_from(t, dest),
             AnyTransport::_ExportStatementEqualsExport(t) => render__export_statement_equals_export(t, dest),
             AnyTransport::_ExportStatementNamespaceExport(t) => render__export_statement_namespace_export(t, dest),
             AnyTransport::_ExportStatementTypeExport(t) => render__export_statement_type_export(t, dest),
@@ -53107,10 +53189,12 @@ impl AnyTransport {
             Self::ExportStatementDefaultDeclArm(t) => t.transport_named,
             Self::ExportStatementDefaultDeclArmDefaultKw(t) => t.transport_named,
             Self::ExportStatementDefaultDeclArmDefaultKwValue(t) => t.transport_named,
-            Self::ExportStatementDefaultFromArm(t) => t.transport_named,
-            Self::ExportStatementDefaultFromArmClauseFrom(t) => t.transport_named,
-            Self::ExportStatementDefaultFromArmNsFrom(t) => t.transport_named,
             Self::ExportStatementDefaultFromArmStarFrom(t) => t.transport_named,
+            Self::ExportStatementDefaultFromArmNsFrom(t) => t.transport_named,
+            Self::ExportStatementDefaultFromArmClauseFrom(t) => t.transport_named,
+            Self::_ExportStatementDefaultFromArmClauseFrom(t) => t.transport_named,
+            Self::_ExportStatementDefaultFromArmNsFrom(t) => t.transport_named,
+            Self::_ExportStatementDefaultFromArmStarFrom(t) => t.transport_named,
             Self::_ExportStatementEqualsExport(t) => t.transport_named,
             Self::_ExportStatementNamespaceExport(t) => t.transport_named,
             Self::_ExportStatementTypeExport(t) => t.transport_named,
@@ -53557,10 +53641,13 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::ExportStatementDefaultDeclArm(data) => transport_to_node_export_statement_default_decl_arm(data),
         AnyTransport::ExportStatementDefaultDeclArmDefaultKw(data) => transport_to_node_export_statement_default_decl_arm_default_kw(data),
         AnyTransport::ExportStatementDefaultDeclArmDefaultKwValue(data) => transport_to_node_export_statement_default_decl_arm_default_kw_value(data),
-        AnyTransport::ExportStatementDefaultFromArm(data) => transport_to_node_export_statement_default_from_arm(data),
-        AnyTransport::ExportStatementDefaultFromArmClauseFrom(data) => transport_to_node_export_statement_default_from_arm_clause_from(data),
-        AnyTransport::ExportStatementDefaultFromArmNsFrom(data) => transport_to_node_export_statement_default_from_arm_ns_from(data),
         AnyTransport::ExportStatementDefaultFromArmStarFrom(data) => transport_to_node_export_statement_default_from_arm_star_from(data),
+        AnyTransport::ExportStatementDefaultFromArmNsFrom(data) => transport_to_node_export_statement_default_from_arm_ns_from(data),
+        AnyTransport::ExportStatementDefaultFromArmClauseFrom(data) => transport_to_node_export_statement_default_from_arm_clause_from(data),
+        AnyTransport::ExportStatementDefaultFromArm(data) => transport_to_node_export_statement_default_from_arm(data),
+        AnyTransport::_ExportStatementDefaultFromArmClauseFrom(data) => transport_to_node__export_statement_default_from_arm_clause_from(data),
+        AnyTransport::_ExportStatementDefaultFromArmNsFrom(data) => transport_to_node__export_statement_default_from_arm_ns_from(data),
+        AnyTransport::_ExportStatementDefaultFromArmStarFrom(data) => transport_to_node__export_statement_default_from_arm_star_from(data),
         AnyTransport::_ExportStatementEqualsExport(data) => transport_to_node__export_statement_equals_export(data),
         AnyTransport::_ExportStatementNamespaceExport(data) => transport_to_node__export_statement_namespace_export(data),
         AnyTransport::_ExportStatementTypeExport(data) => transport_to_node__export_statement_type_export(data),
@@ -54575,49 +54662,14 @@ fn transport_to_node_export_statement_default_decl_arm_default_kw_value(transpor
     ))
 }
 
-fn transport_to_node_export_statement_default_from_arm(transport: ExportStatementDefaultFromArmTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(export_statement_default_from_arm_content_transport_slot_to_any(transport.content));
-    if let Some(value) = transport.semicolon {
-        children_buf.push(AnyTransport::Semicolon(value));
-    }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
-    Ok(transport_node_data(
-        TransportKindId(355) /* "_export_statement_default_from_arm" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        transport.transport_text,
-        transport.transport_span,
-        transport.transport_node_handle.map(|v| v as u32),
-        transport.transport_child_index.map(|v| v as u16),
-        fields,
-        children,
-        trivia_data,
-    ))
-}
-
-fn transport_to_node_export_statement_default_from_arm_clause_from(transport: ExportStatementDefaultFromArmClauseFromTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node_export_statement_default_from_arm_star_from(transport: ExportStatementDefaultFromArmStarFromTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("source".to_string(), transport_field_value(AnyTransport::String(transport.source))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(AnyTransport::ExportClause(transport.export_clause));
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(372) /* "_export_statement_default_from_arm_clause_from" */,
+        TransportKindId(370) /* "export_statement_default_from_arm_star_from" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -54644,6 +54696,119 @@ fn transport_to_node_export_statement_default_from_arm_ns_from(transport: Export
     };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
+        TransportKindId(371) /* "export_statement_default_from_arm_ns_from" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_export_statement_default_from_arm_clause_from(transport: ExportStatementDefaultFromArmClauseFromTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("source".to_string(), transport_field_value(AnyTransport::String(transport.source))?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(AnyTransport::ExportClause(transport.export_clause));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(372) /* "export_statement_default_from_arm_clause_from" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_export_statement_default_from_arm(transport: ExportStatementDefaultFromArmTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(AnyTransport::_ExportStatementDefaultFromArmStarFrom(transport.export_statement_default_from_arm_star_from));
+    if let Some(value) = transport.semicolon {
+        children_buf.push(AnyTransport::Semicolon(value));
+    }
+    children_buf.push(AnyTransport::_ExportStatementDefaultFromArmNsFrom(transport.export_statement_default_from_arm_ns_from));
+    children_buf.push(AnyTransport::_ExportStatementDefaultFromArmClauseFrom(transport.export_statement_default_from_arm_clause_from));
+    children_buf.push(AnyTransport::ExportClause(transport.export_clause));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(355) /* "_export_statement_default_from_arm" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node__export_statement_default_from_arm_clause_from(transport: _ExportStatementDefaultFromArmClauseFromTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("source".to_string(), transport_field_value(AnyTransport::String(transport.source))?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(AnyTransport::ExportClause(transport.export_clause));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(372) /* "_export_statement_default_from_arm_clause_from" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node__export_statement_default_from_arm_ns_from(transport: _ExportStatementDefaultFromArmNsFromTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    fields.insert("source".to_string(), transport_field_value(AnyTransport::String(transport.source))?);
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(AnyTransport::NamespaceExport(transport.namespace_export));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
         TransportKindId(371) /* "_export_statement_default_from_arm_ns_from" */,
         transport.transport_source,
         transport.transport_named,
@@ -54658,7 +54823,7 @@ fn transport_to_node_export_statement_default_from_arm_ns_from(transport: Export
     ))
 }
 
-fn transport_to_node_export_statement_default_from_arm_star_from(transport: ExportStatementDefaultFromArmStarFromTransport) -> Result<TransportNodeData, ::askama::Error> {
+fn transport_to_node__export_statement_default_from_arm_star_from(transport: _ExportStatementDefaultFromArmStarFromTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("source".to_string(), transport_field_value(AnyTransport::String(transport.source))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };

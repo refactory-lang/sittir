@@ -328,6 +328,9 @@ pub(crate) fn separator_for(kind_id: u16) -> &'static str {
 
 pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {
     match (parent_id, child_id) {
+        (355, 372) => Some("clause_from"), // ("_export_statement_default_from_arm", "export_statement_default_from_arm_clause_from")
+        (355, 371) => Some("ns_from"), // ("_export_statement_default_from_arm", "export_statement_default_from_arm_ns_from")
+        (355, 370) => Some("star_from"), // ("_export_statement_default_from_arm", "export_statement_default_from_arm_star_from")
         (281, 369) => Some("declaration"), // ("ambient_declaration", "ambient_declaration_declaration")
         (281, 352) => Some("global"), // ("ambient_declaration", "ambient_declaration_global")
         (281, 353) => Some("module"), // ("ambient_declaration", "ambient_declaration_module")
@@ -641,7 +644,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         372 => { // "_export_statement_default_from_arm_clause_from" | "export_statement_default_from_arm_clause_from"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("source"), true)?;
-            let template = ExportStatementDefaultFromArmClauseFromTemplate {
+            let template = _ExportStatementDefaultFromArmClauseFromTemplate {
                 export_clause: match children.kind {
                 ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
                 ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
@@ -653,7 +656,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         371 => { // "_export_statement_default_from_arm_ns_from" | "export_statement_default_from_arm_ns_from"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("source"), true)?;
-            let template = ExportStatementDefaultFromArmNsFromTemplate {
+            let template = _ExportStatementDefaultFromArmNsFromTemplate {
                 namespace_export: match children.kind {
                 ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
                 ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
@@ -664,21 +667,37 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         370 => { // "_export_statement_default_from_arm_star_from" | "export_statement_default_from_arm_star_from"
             let field_0 = resolve_slot(node, SlotAccessor::Field("source"), true)?;
-            let template = ExportStatementDefaultFromArmStarFromTemplate {
+            let template = _ExportStatementDefaultFromArmStarFromTemplate {
                 source: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
         }
         355 => { // "_export_statement_default_from_arm" | "export_statement_default_from_arm"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
-            let field_0 = resolve_slot(node, SlotAccessor::Field("export_statement_default_from_arm_star_from"), true)?;
+            let variant = resolve_variant(node);
             let children_renderables = children.renderable_items();
             let template = ExportStatementDefaultFromArmTemplate {
+                export_clause: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                export_statement_default_from_arm_clause_from: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                export_statement_default_from_arm_ns_from: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                export_statement_default_from_arm_star_from: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
                 semicolon: match children.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
                     ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),
                 },
-                export_statement_default_from_arm_star_from: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                variant,
             };
             template.render_into(dest)
         }

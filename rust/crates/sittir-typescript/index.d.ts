@@ -874,6 +874,30 @@ export interface ExportStatementDefaultFromArmClauseFromTransport {
   _export_clause: ExportClauseTransport
 }
 
+export interface ExportStatementDefaultFromArmClauseFromTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _source: StringTransport
+  _export_clause: ExportClauseTransport
+}
+
+export interface ExportStatementDefaultFromArmNsFromTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _source: StringTransport
+  _namespace_export: NamespaceExportTransport
+}
+
 export interface ExportStatementDefaultFromArmNsFromTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -897,6 +921,17 @@ export interface ExportStatementDefaultFromArmStarFromTransport {
   _source: StringTransport
 }
 
+export interface ExportStatementDefaultFromArmStarFromTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _source: StringTransport
+}
+
 export interface ExportStatementDefaultFromArmTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -905,8 +940,11 @@ export interface ExportStatementDefaultFromArmTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: ExportStatementDefaultFromArmContentTransportSlot
+  _export_statement_default_from_arm_star_from: _ExportStatementDefaultFromArmStarFromTransport
   _semicolon?: SemicolonTransport
+  _export_statement_default_from_arm_ns_from: _ExportStatementDefaultFromArmNsFromTransport
+  _export_statement_default_from_arm_clause_from: _ExportStatementDefaultFromArmClauseFromTransport
+  _export_clause: ExportClauseTransport
 }
 
 export interface ExportStatementEqualsExportTransport {

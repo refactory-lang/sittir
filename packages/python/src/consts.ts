@@ -1095,7 +1095,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'casePatterns', required: false, multiple: true },
   ],
   '_match_block': [
-    { name: 'content', required: true, multiple: false },
+    { name: 'matchBlockBlock', required: true, multiple: false },
   ],
   '_simple_pattern_negative': [
     { name: 'content', required: true, multiple: false },

@@ -249,6 +249,9 @@ export const from = {
 
 export const ir = {
   // Node factories
+  exportStatementDefaultFromArmStarFrom: _attach(FR.exportStatementDefaultFromArmStarFromFrom, { from: FR.exportStatementDefaultFromArmStarFromFrom, strict: F.exportStatementDefaultFromArmStarFrom }),
+  exportStatementDefaultFromArmNsFrom: _attach(FR.exportStatementDefaultFromArmNsFromFrom, { from: FR.exportStatementDefaultFromArmNsFromFrom, strict: F.exportStatementDefaultFromArmNsFrom }),
+  exportStatementDefaultFromArmClauseFrom: _attach(FR.exportStatementDefaultFromArmClauseFromFrom, { from: FR.exportStatementDefaultFromArmClauseFromFrom, strict: F.exportStatementDefaultFromArmClauseFrom }),
   abstractClassDeclaration: _attach(FR.abstractClassDeclarationFrom, { from: FR.abstractClassDeclarationFrom, strict: F.abstractClassDeclaration }),
   abstractMethodSignature: _attach(FR.abstractMethodSignatureFrom, { from: FR.abstractMethodSignatureFrom, strict: F.abstractMethodSignature }),
   addingTypeAnnotation: _attach(FR.addingTypeAnnotationFrom, { from: FR.addingTypeAnnotationFrom, strict: F.addingTypeAnnotation }),

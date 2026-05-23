@@ -3,6 +3,42 @@ import { describe, it, expect } from 'vitest';
 import { ir } from '../src/ir.js';
 import { TSKindId } from '../src/types.js';
 
+describe('export_statement_default_from_arm_star_from', () => {
+  it('factory produces correct type', () => {
+    const node = ir.exportStatementDefaultFromArmStarFrom({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
+    expect(node.$type).toBe(TSKindId._ExportStatementDefaultFromArmStarFrom);
+    expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.exportStatementDefaultFromArmStarFrom({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
+});
+
+describe('export_statement_default_from_arm_ns_from', () => {
+  it('factory produces correct type', () => {
+    const node = ir.exportStatementDefaultFromArmNsFrom({ namespaceExport: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, source: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$type).toBe(TSKindId._ExportStatementDefaultFromArmNsFrom);
+    expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.exportStatementDefaultFromArmNsFrom({ namespaceExport: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, source: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
+});
+
+describe('export_statement_default_from_arm_clause_from', () => {
+  it('factory produces correct type', () => {
+    const node = ir.exportStatementDefaultFromArmClauseFrom({ exportClause: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, source: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$type).toBe(TSKindId._ExportStatementDefaultFromArmClauseFrom);
+    expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.exportStatementDefaultFromArmClauseFrom({ exportClause: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, source: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
+});
+
 describe('abstract_class_declaration', () => {
   it('factory produces correct type', () => {
     const node = ir.abstractClassDeclaration({ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, body: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });

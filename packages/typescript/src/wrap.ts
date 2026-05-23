@@ -193,6 +193,15 @@ type _WrapVariantDescriptor =
   | { source: "override"; childKind: Record<string, string> }
   | { source: "promoted"; slots: Record<string, readonly string[]> };
 const _variantTable: Record<string, _WrapVariantDescriptor> = {
+  "_export_statement_default_from_arm": {
+    "source": "override",
+    "childKind": {
+      "export_statement_default_from_arm_star_from": "star_from",
+      "export_statement_default_from_arm_ns_from": "ns_from",
+      "export_statement_default_from_arm_clause_from": "clause_from",
+      "export_clause": "export_clause"
+    }
+  },
   "ambient_declaration": {
     "source": "override",
     "childKind": {
@@ -614,35 +623,14 @@ export function wrapExportStatementDefaultDeclArmDefaultKwValue(data: T.ExportSt
   return _node;
 }
 
-export function wrapExportStatementDefaultFromArm(data: T.ExportStatementDefaultFromArm, tree: TreeHandle) {
+export function wrapExportStatementDefaultFromArmStarFrom(data: T.ExportStatementDefaultFromArmStarFrom, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $type: TSKindId.ExportStatementDefaultFromArm as const,
-    _content: normalizeSingularWrapSlot((data._export_statement_default_from_arm_star_from ?? data._export_statement_default_from_arm_ns_from ?? data._export_statement_default_from_arm_clause_from ?? data._export_clause ?? data._content), "content", true, data.$type),
-    _semicolon: normalizeSingularWrapSlot(data._semicolon, "semicolon", false, data.$type),
-
-    content() { return drillAs<T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause>(this._content, tree, "export_statement_default_from_arm_star_from", "_export_statement_default_from_arm_star_from"); },
-    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
-    $with: {
-      content: (v: NonNullable<T.ExportStatementDefaultFromArm['_content']>) => wrapExportStatementDefaultFromArm({ ...data, _content: v }, tree),
-      semicolon: (v: NonNullable<T.ExportStatementDefaultFromArm['_semicolon']>) => wrapExportStatementDefaultFromArm({ ...data, _semicolon: v }, tree),
-    },
-  }, methodsEngine);
-  return _node;
-}
-
-export function wrapExportStatementDefaultFromArmClauseFrom(data: T.ExportStatementDefaultFromArmClauseFrom, tree: TreeHandle) {
-  const _node = withMethods({
-    ...data,
-    $type: TSKindId.ExportStatementDefaultFromArmClauseFrom as const,
-    _export_clause: normalizeSingularWrapSlot(data._export_clause, "export_clause", true, data.$type),
     _source: normalizeSingularWrapSlot(data._source, "source", true, data.$type),
 
-    exportClause() { return drillIn<T.ExportClause>(this._export_clause, tree); },
     source() { return drillIn<T.String>(this._source, tree); },
     $with: {
-      exportClause: (v: NonNullable<T.ExportStatementDefaultFromArmClauseFrom['_export_clause']>) => wrapExportStatementDefaultFromArmClauseFrom({ ...data, _export_clause: v }, tree),
-      source: (v: NonNullable<T.ExportStatementDefaultFromArmClauseFrom['_source']>) => wrapExportStatementDefaultFromArmClauseFrom({ ...data, _source: v }, tree),
+      source: (v: NonNullable<T.ExportStatementDefaultFromArmStarFrom['_source']>) => wrapExportStatementDefaultFromArmStarFrom({ ...data, _source: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -651,7 +639,6 @@ export function wrapExportStatementDefaultFromArmClauseFrom(data: T.ExportStatem
 export function wrapExportStatementDefaultFromArmNsFrom(data: T.ExportStatementDefaultFromArmNsFrom, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $type: TSKindId.ExportStatementDefaultFromArmNsFrom as const,
     _namespace_export: normalizeSingularWrapSlot(data._namespace_export, "namespace_export", true, data.$type),
     _source: normalizeSingularWrapSlot(data._source, "source", true, data.$type),
 
@@ -665,15 +652,91 @@ export function wrapExportStatementDefaultFromArmNsFrom(data: T.ExportStatementD
   return _node;
 }
 
-export function wrapExportStatementDefaultFromArmStarFrom(data: T.ExportStatementDefaultFromArmStarFrom, tree: TreeHandle) {
+export function wrapExportStatementDefaultFromArmClauseFrom(data: T.ExportStatementDefaultFromArmClauseFrom, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $type: TSKindId.ExportStatementDefaultFromArmStarFrom as const,
+    _export_clause: normalizeSingularWrapSlot(data._export_clause, "export_clause", true, data.$type),
+    _source: normalizeSingularWrapSlot(data._source, "source", true, data.$type),
+
+    exportClause() { return drillIn<T.ExportClause>(this._export_clause, tree); },
+    source() { return drillIn<T.String>(this._source, tree); },
+    $with: {
+      exportClause: (v: NonNullable<T.ExportStatementDefaultFromArmClauseFrom['_export_clause']>) => wrapExportStatementDefaultFromArmClauseFrom({ ...data, _export_clause: v }, tree),
+      source: (v: NonNullable<T.ExportStatementDefaultFromArmClauseFrom['_source']>) => wrapExportStatementDefaultFromArmClauseFrom({ ...data, _source: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapExportStatementDefaultFromArm(data: T.ExportStatementDefaultFromArm, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ExportStatementDefaultFromArm as const,
+    _export_statement_default_from_arm_star_from: normalizeSingularWrapSlot((data as any)._export_statement_default_from_arm_star_from, "export_statement_default_from_arm_star_from", false, (data as any).$type),
+    _semicolon: normalizeSingularWrapSlot((data as any)._semicolon, "semicolon", false, (data as any).$type),
+    _export_statement_default_from_arm_ns_from: normalizeSingularWrapSlot((data as any)._export_statement_default_from_arm_ns_from, "export_statement_default_from_arm_ns_from", false, (data as any).$type),
+    _export_statement_default_from_arm_clause_from: normalizeSingularWrapSlot((data as any)._export_statement_default_from_arm_clause_from, "export_statement_default_from_arm_clause_from", false, (data as any).$type),
+    _export_clause: normalizeSingularWrapSlot((data as any)._export_clause, "export_clause", false, (data as any).$type),
+
+    exportStatementDefaultFromArmStarFrom() { return drillAs<T._ExportStatementDefaultFromArmStarFrom | undefined>(this._export_statement_default_from_arm_star_from, tree, "export_statement_default_from_arm_star_from", "_export_statement_default_from_arm_star_from"); },
+    semicolon() { return drillIn<T.Semicolon | undefined>(this._semicolon, tree); },
+    exportStatementDefaultFromArmNsFrom() { return drillAs<T._ExportStatementDefaultFromArmNsFrom | undefined>(this._export_statement_default_from_arm_ns_from, tree, "export_statement_default_from_arm_ns_from", "_export_statement_default_from_arm_ns_from"); },
+    exportStatementDefaultFromArmClauseFrom() { return drillAs<T._ExportStatementDefaultFromArmClauseFrom | undefined>(this._export_statement_default_from_arm_clause_from, tree, "export_statement_default_from_arm_clause_from", "_export_statement_default_from_arm_clause_from"); },
+    exportClause() { return drillIn<T.ExportClause | undefined>(this._export_clause, tree); },
+    $with: {
+      exportStatementDefaultFromArmStarFrom: (v: T._ExportStatementDefaultFromArmStarFrom) => wrapExportStatementDefaultFromArm({ ...(data as any), _export_statement_default_from_arm_star_from: v }, tree),
+      semicolon: (v: T.Semicolon) => wrapExportStatementDefaultFromArm({ ...(data as any), _semicolon: v }, tree),
+      exportStatementDefaultFromArmNsFrom: (v: T._ExportStatementDefaultFromArmNsFrom) => wrapExportStatementDefaultFromArm({ ...(data as any), _export_statement_default_from_arm_ns_from: v }, tree),
+      exportStatementDefaultFromArmClauseFrom: (v: T._ExportStatementDefaultFromArmClauseFrom) => wrapExportStatementDefaultFromArm({ ...(data as any), _export_statement_default_from_arm_clause_from: v }, tree),
+      exportClause: (v: T.ExportClause) => wrapExportStatementDefaultFromArm({ ...(data as any), _export_clause: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrap_ExportStatementDefaultFromArmClauseFrom(data: T._ExportStatementDefaultFromArmClauseFrom, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId._ExportStatementDefaultFromArmClauseFrom as const,
+    _export_clause: normalizeSingularWrapSlot(data._export_clause, "export_clause", true, data.$type),
+    _source: normalizeSingularWrapSlot(data._source, "source", true, data.$type),
+
+    exportClause() { return drillIn<T.ExportClause>(this._export_clause, tree); },
+    source() { return drillIn<T.String>(this._source, tree); },
+    $with: {
+      exportClause: (v: NonNullable<T._ExportStatementDefaultFromArmClauseFrom['_export_clause']>) => wrap_ExportStatementDefaultFromArmClauseFrom({ ...data, _export_clause: v }, tree),
+      source: (v: NonNullable<T._ExportStatementDefaultFromArmClauseFrom['_source']>) => wrap_ExportStatementDefaultFromArmClauseFrom({ ...data, _source: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrap_ExportStatementDefaultFromArmNsFrom(data: T._ExportStatementDefaultFromArmNsFrom, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId._ExportStatementDefaultFromArmNsFrom as const,
+    _namespace_export: normalizeSingularWrapSlot(data._namespace_export, "namespace_export", true, data.$type),
+    _source: normalizeSingularWrapSlot(data._source, "source", true, data.$type),
+
+    namespaceExport() { return drillIn<T.NamespaceExport>(this._namespace_export, tree); },
+    source() { return drillIn<T.String>(this._source, tree); },
+    $with: {
+      namespaceExport: (v: NonNullable<T._ExportStatementDefaultFromArmNsFrom['_namespace_export']>) => wrap_ExportStatementDefaultFromArmNsFrom({ ...data, _namespace_export: v }, tree),
+      source: (v: NonNullable<T._ExportStatementDefaultFromArmNsFrom['_source']>) => wrap_ExportStatementDefaultFromArmNsFrom({ ...data, _source: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrap_ExportStatementDefaultFromArmStarFrom(data: T._ExportStatementDefaultFromArmStarFrom, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId._ExportStatementDefaultFromArmStarFrom as const,
     _source: normalizeSingularWrapSlot(data._source, "source", true, data.$type),
 
     source() { return drillIn<T.String>(this._source, tree); },
     $with: {
-      source: (v: NonNullable<T.ExportStatementDefaultFromArmStarFrom['_source']>) => wrapExportStatementDefaultFromArmStarFrom({ ...data, _source: v }, tree),
+      source: (v: NonNullable<T._ExportStatementDefaultFromArmStarFrom['_source']>) => wrap_ExportStatementDefaultFromArmStarFrom({ ...data, _source: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -4252,10 +4315,13 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_export_statement_default_decl_arm': (d, t) => wrapExportStatementDefaultDeclArm(d as unknown as T.ExportStatementDefaultDeclArm, t),
   '_export_statement_default_decl_arm_default_kw': (d, t) => wrapExportStatementDefaultDeclArmDefaultKw(d as unknown as T.ExportStatementDefaultDeclArmDefaultKw, t),
   '_export_statement_default_decl_arm_default_kw_value': (d, t) => wrapExportStatementDefaultDeclArmDefaultKwValue(d as unknown as T.ExportStatementDefaultDeclArmDefaultKwValue, t),
+  'export_statement_default_from_arm_star_from': (d, t) => wrapExportStatementDefaultFromArmStarFrom(d as unknown as T.ExportStatementDefaultFromArmStarFrom, t),
+  'export_statement_default_from_arm_ns_from': (d, t) => wrapExportStatementDefaultFromArmNsFrom(d as unknown as T.ExportStatementDefaultFromArmNsFrom, t),
+  'export_statement_default_from_arm_clause_from': (d, t) => wrapExportStatementDefaultFromArmClauseFrom(d as unknown as T.ExportStatementDefaultFromArmClauseFrom, t),
   '_export_statement_default_from_arm': (d, t) => wrapExportStatementDefaultFromArm(d as unknown as T.ExportStatementDefaultFromArm, t),
-  '_export_statement_default_from_arm_clause_from': (d, t) => wrapExportStatementDefaultFromArmClauseFrom(d as unknown as T.ExportStatementDefaultFromArmClauseFrom, t),
-  '_export_statement_default_from_arm_ns_from': (d, t) => wrapExportStatementDefaultFromArmNsFrom(d as unknown as T.ExportStatementDefaultFromArmNsFrom, t),
-  '_export_statement_default_from_arm_star_from': (d, t) => wrapExportStatementDefaultFromArmStarFrom(d as unknown as T.ExportStatementDefaultFromArmStarFrom, t),
+  '_export_statement_default_from_arm_clause_from': (d, t) => wrap_ExportStatementDefaultFromArmClauseFrom(d as unknown as T._ExportStatementDefaultFromArmClauseFrom, t),
+  '_export_statement_default_from_arm_ns_from': (d, t) => wrap_ExportStatementDefaultFromArmNsFrom(d as unknown as T._ExportStatementDefaultFromArmNsFrom, t),
+  '_export_statement_default_from_arm_star_from': (d, t) => wrap_ExportStatementDefaultFromArmStarFrom(d as unknown as T._ExportStatementDefaultFromArmStarFrom, t),
   '_export_statement_equals_export': (d, t) => wrap_ExportStatementEqualsExport(d as unknown as T._ExportStatementEqualsExport, t),
   '_export_statement_namespace_export': (d, t) => wrap_ExportStatementNamespaceExport(d as unknown as T._ExportStatementNamespaceExport, t),
   '_export_statement_type_export': (d, t) => wrap_ExportStatementTypeExport(d as unknown as T._ExportStatementTypeExport, t),
@@ -4523,9 +4589,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'export_statement_default_decl_arm_default_kw': '_export_statement_default_decl_arm_default_kw',
   'export_statement_default_decl_arm_default_kw_value': '_export_statement_default_decl_arm_default_kw_value',
   'export_statement_default_from_arm': '_export_statement_default_from_arm',
-  'export_statement_default_from_arm_clause_from': '_export_statement_default_from_arm_clause_from',
-  'export_statement_default_from_arm_ns_from': '_export_statement_default_from_arm_ns_from',
-  'export_statement_default_from_arm_star_from': '_export_statement_default_from_arm_star_from',
   'expressions': '_expressions',
   'for_header_let_const_kind': '_for_header_let_const_kind',
   'for_header_lhs': '_for_header_lhs',

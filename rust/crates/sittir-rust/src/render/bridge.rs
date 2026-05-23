@@ -346,6 +346,8 @@ pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str>
         (300, 325) => Some("shorthand"), // ("field_pattern", "field_pattern_shorthand")
         (174, 358) => Some("body"), // ("foreign_mod_item", "foreign_mod_item_body")
         (174, 357) => Some("semi"), // ("foreign_mod_item", "foreign_mod_item_semi")
+        (222, 328) => Some("fn_form"), // ("function_type", "function_type_fn_form")
+        (222, 327) => Some("trait_form"), // ("function_type", "function_type_trait_form")
         (193, 329) => Some("body"), // ("impl_item", "impl_item_body")
         (193, 330) => Some("semi"), // ("impl_item", "impl_item_semi")
         (314, 146) => Some("content"), // ("line_comment", "line_comment_content")
@@ -369,6 +371,8 @@ pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str>
         (303, 344) => Some("left_bare"), // ("range_pattern", "range_pattern_left_bare")
         (303, 343) => Some("left_with_right"), // ("range_pattern", "range_pattern_left_with_right")
         (303, 342) => Some("prefix"), // ("range_pattern", "range_pattern_prefix")
+        (249, 353) => Some("raw_const"), // ("reference_expression", "reference_expression_raw_const")
+        (249, 354) => Some("raw_mut"), // ("reference_expression", "reference_expression_raw_mut")
         (176, 345) => Some("brace"), // ("struct_item", "struct_item_brace")
         (176, 346) => Some("tuple"), // ("struct_item", "struct_item_tuple")
         (176, 347) => Some("unit"), // ("struct_item", "struct_item_unit")
@@ -698,7 +702,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         328 => { // "_function_type_fn_form" | "function_type_fn_form"
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
-            let template = FunctionTypeFnFormTemplate {
+            let template = _FunctionTypeFnFormTemplate {
                 function_modifiers: match children.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
                     ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),
@@ -708,7 +712,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         327 => { // "_function_type_trait_form" | "function_type_trait_form"
             let field_0 = resolve_slot(node, SlotAccessor::Field("trait"), true)?;
-            let template = FunctionTypeTraitFormTemplate {
+            let template = _FunctionTypeTraitFormTemplate {
                 trait_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
@@ -890,7 +894,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         354 => { // "_reference_expression_raw_mut" | "reference_expression_raw_mut"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
-            let template = ReferenceExpressionRawMutTemplate {
+            let template = _ReferenceExpressionRawMutTemplate {
                 mutable_specifier: match children.kind {
                 ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
                 ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
@@ -1765,16 +1769,21 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         222 => { // "function_type"
-            let children = resolve_slot(node, SlotAccessor::Children, false)?;
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("for_lifetimes"), false)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("parameters"), true)?;
             let field_2 = resolve_slot(node, SlotAccessor::Field("return_type"), false)?;
-            let children_renderables = children.renderable_items();
+            let variant = resolve_variant(node);
             let template = FunctionTypeTemplate {
+                function_type_fn_form: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
                 function_type_trait_form: match children.kind {
-                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),
-                },
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                variant,
                 for_lifetimes: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
                     ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
@@ -2335,11 +2344,20 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         249 => { // "reference_expression"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("reference_expression_raw_const"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("value"), true)?;
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("value"), true)?;
+            let variant = resolve_variant(node);
             let template = ReferenceExpressionTemplate {
-                reference_expression_raw_const: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                reference_expression_raw_const: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                reference_expression_raw_mut: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                variant,
+                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
         }

@@ -224,13 +224,13 @@ pub struct FunctionSignatureItemOptional1Template<'a> {
 
 #[derive(::askama::Template)]
 #[template(path = "_function_type_fn_form.jinja", escape = "none")]
-pub struct FunctionTypeFnFormTemplate<'a> {
+pub struct _FunctionTypeFnFormTemplate<'a> {
     pub function_modifiers: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_function_type_trait_form.jinja", escape = "none")]
-pub struct FunctionTypeTraitFormTemplate<'a> {
+pub struct _FunctionTypeTraitFormTemplate<'a> {
     pub trait_: SingleNonterminalView<'a>,
 }
 
@@ -364,7 +364,7 @@ pub struct RangePatternPrefixTemplate<'a> {
 
 #[derive(::askama::Template)]
 #[template(path = "_reference_expression_raw_mut.jinja", escape = "none")]
-pub struct ReferenceExpressionRawMutTemplate<'a> {
+pub struct _ReferenceExpressionRawMutTemplate<'a> {
     pub mutable_specifier: SingleNonterminalView<'a>,
 }
 
@@ -866,10 +866,24 @@ pub struct FunctionSignatureItemTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "function_type_fn_form.jinja", escape = "none")]
+pub struct FunctionTypeFnFormTemplate<'a> {
+    pub function_modifiers: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "function_type_trait_form.jinja", escape = "none")]
+pub struct FunctionTypeTraitFormTemplate<'a> {
+    pub trait_: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "function_type.jinja", escape = "none")]
 pub struct FunctionTypeTemplate<'a> {
+    pub variant: &'a str,
     pub for_lifetimes: OptionalNonterminalView<'a>,
-    pub function_type_trait_form: OptionalNonterminalView<'a>,
+    pub function_type_fn_form: SingleNonterminalView<'a>,
+    pub function_type_trait_form: SingleNonterminalView<'a>,
     pub parameters: SingleNonterminalView<'a>,
     pub return_type: OptionalNonterminalView<'a>,
 }
@@ -1222,9 +1236,17 @@ pub struct RefPatternTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "reference_expression_raw_mut.jinja", escape = "none")]
+pub struct ReferenceExpressionRawMutTemplate<'a> {
+    pub mutable_specifier: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "reference_expression.jinja", escape = "none")]
 pub struct ReferenceExpressionTemplate<'a> {
+    pub variant: &'a str,
     pub reference_expression_raw_const: SingleNonterminalView<'a>,
+    pub reference_expression_raw_mut: SingleNonterminalView<'a>,
     pub value: SingleNonterminalView<'a>,
 }
 

@@ -181,6 +181,12 @@ type _WrapVariantDescriptor =
   | { source: "override"; childKind: Record<string, string> }
   | { source: "promoted"; slots: Record<string, readonly string[]> };
 const _variantTable: Record<string, _WrapVariantDescriptor> = {
+  "_match_block": {
+    "source": "override",
+    "childKind": {
+      "match_block_block": "block"
+    }
+  },
   "assignment": {
     "source": "override",
     "childKind": {
@@ -447,10 +453,12 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.MatchBlock as const,
-    _content: normalizeSingularWrapSlot((data._match_block_block ?? data._content), "content", true, data.$type),
+    _match_block_block: normalizeSingularWrapSlot((data as any)._match_block_block, "match_block_block", true, (data as any).$type),
 
-    content() { return drillAs<T.MatchBlockBlock>(this._content, tree, "match_block_block", "_match_block_block"); },
-    $with: { $children: (...vs: readonly [never]) => wrapMatchBlock({ ...data, $children: vs }, tree) },
+    matchBlockBlock() { return drillAs<T.MatchBlockBlock>(this._match_block_block, tree, "match_block_block", "_match_block_block"); },
+    $with: {
+      matchBlockBlock: (v: T.MatchBlockBlock) => wrapMatchBlock({ ...(data as any), _match_block_block: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }

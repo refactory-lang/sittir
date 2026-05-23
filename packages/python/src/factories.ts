@@ -177,15 +177,21 @@ export function _listPattern(...children: T.CasePattern[]) {
   }, methodsEngine);
 }
 
-export function matchBlock(child: T.MatchBlockBlock) {
-  const _content = child;
+export function matchBlock(config: Omit<ConfigOf<T.MatchBlockUFormBlock>, '$variant'>) {
+  return matchBlockUFormBlock(config as Parameters<typeof matchBlockUFormBlock>[0]);
+}
+export function matchBlockUFormBlock(config: Omit<ConfigOf<T.MatchBlockUFormBlock>, '$variant'>) {
+  const _match_block_block = config.matchBlockBlock;
   return withMethods({
     $type: TSKindId.MatchBlock as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    content() { return _content; },
-    $with: { $child: (v: T.MatchBlockBlock) => matchBlock(v) },
+    $variant: 'block' as const,
+    _match_block_block,
+    matchBlockBlock() { return _match_block_block; },
+    $with: {
+      matchBlockBlock: (value: T.MatchBlockBlock) => matchBlockUFormBlock({ ...config, matchBlockBlock: value }),
+    },
   }, methodsEngine);
 }
 

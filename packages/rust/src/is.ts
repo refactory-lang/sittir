@@ -39,8 +39,8 @@ export interface IsGuards {
     ExpressionStatementWithSemi<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ExpressionStatementWithSemi };
     FieldPatternShorthand<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._FieldPatternShorthand };
     ForeignModItemBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ForeignModItemBody };
-    FunctionTypeFnForm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionTypeFnForm };
-    FunctionTypeTraitForm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionTypeTraitForm };
+    FunctionTypeFnForm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._FunctionTypeFnForm };
+    FunctionTypeTraitForm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._FunctionTypeTraitForm };
     ImplItemBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ImplItemBody };
     LetChain<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LetChain };
     MacroDefinitionBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._MacroDefinitionBrace };
@@ -50,7 +50,7 @@ export interface IsGuards {
     ModItemInline<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ModItemInline };
     PointerTypeMut<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._PointerTypeMut };
     RangeExpressionBare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._RangeExpressionBare };
-    ReferenceExpressionRawMut<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReferenceExpressionRawMut };
+    ReferenceExpressionRawMut<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ReferenceExpressionRawMut };
     TokenTreeBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreeBrace };
     TokenTreeBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreeBracket };
     TokenTreeParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreeParen };
@@ -231,8 +231,8 @@ export interface AssertGuards {
     ExpressionStatementWithSemi(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExpressionStatementWithSemi };
     FieldPatternShorthand(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._FieldPatternShorthand };
     ForeignModItemBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ForeignModItemBody };
-    FunctionTypeFnForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionTypeFnForm };
-    FunctionTypeTraitForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionTypeTraitForm };
+    FunctionTypeFnForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._FunctionTypeFnForm };
+    FunctionTypeTraitForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._FunctionTypeTraitForm };
     ImplItemBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImplItemBody };
     LetChain(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LetChain };
     MacroDefinitionBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._MacroDefinitionBrace };
@@ -242,7 +242,7 @@ export interface AssertGuards {
     ModItemInline(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ModItemInline };
     PointerTypeMut(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._PointerTypeMut };
     RangeExpressionBare(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._RangeExpressionBare };
-    ReferenceExpressionRawMut(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
+    ReferenceExpressionRawMut(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ReferenceExpressionRawMut };
     TokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreeBrace };
     TokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreeBracket };
     TokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreeParen };
@@ -467,7 +467,6 @@ const _kindIdByKind = new Map<string, number>([
     ["extern", TSKindId.Extern],
     ["dyn", TSKindId.Dyn],
     ["mutable_specifier", TSKindId.MutableSpecifier],
-    ["raw", TSKindId.Raw],
     ["yield", TSKindId.Yield],
     ["else", TSKindId.Else],
     ["in", TSKindId.In],
@@ -639,8 +638,8 @@ const _kindIdByKind = new Map<string, number>([
     ["_closure_expression_expr", TSKindId._ClosureExpressionExpr],
     ["_field_pattern_shorthand", TSKindId._FieldPatternShorthand],
     ["_field_pattern_named", TSKindId.FieldPatternNamed],
-    ["_function_type_trait_form", TSKindId.FunctionTypeTraitForm],
-    ["_function_type_fn_form", TSKindId.FunctionTypeFnForm],
+    ["_function_type_trait_form", TSKindId._FunctionTypeTraitForm],
+    ["_function_type_fn_form", TSKindId._FunctionTypeFnForm],
     ["_impl_item_body", TSKindId._ImplItemBody],
     ["_macro_definition_paren", TSKindId._MacroDefinitionParen],
     ["_macro_definition_bracket", TSKindId._MacroDefinitionBracket],
@@ -662,7 +661,7 @@ const _kindIdByKind = new Map<string, number>([
     ["_pointer_type_const", TSKindId.PointerTypeConst],
     ["_pointer_type_mut", TSKindId._PointerTypeMut],
     ["_reference_expression_raw_const", TSKindId.ReferenceExpressionRawConst],
-    ["_reference_expression_raw_mut", TSKindId.ReferenceExpressionRawMut],
+    ["_reference_expression_raw_mut", TSKindId._ReferenceExpressionRawMut],
     ["_expression_statement_with_semi", TSKindId._ExpressionStatementWithSemi],
     ["_expression_statement_block_ending", TSKindId._ExpressionStatementBlockEnding],
     ["_foreign_mod_item_body", TSKindId._ForeignModItemBody],
@@ -702,8 +701,8 @@ export const is = {
     ExpressionStatementWithSemi: _g(TSKindId._ExpressionStatementWithSemi),
     FieldPatternShorthand: _g(TSKindId._FieldPatternShorthand),
     ForeignModItemBody: _g(TSKindId._ForeignModItemBody),
-    FunctionTypeFnForm: _g(TSKindId.FunctionTypeFnForm),
-    FunctionTypeTraitForm: _g(TSKindId.FunctionTypeTraitForm),
+    FunctionTypeFnForm: _g(TSKindId._FunctionTypeFnForm),
+    FunctionTypeTraitForm: _g(TSKindId._FunctionTypeTraitForm),
     ImplItemBody: _g(TSKindId._ImplItemBody),
     LetChain: _g(TSKindId.LetChain),
     MacroDefinitionBrace: _g(TSKindId._MacroDefinitionBrace),
@@ -713,7 +712,7 @@ export const is = {
     ModItemInline: _g(TSKindId._ModItemInline),
     PointerTypeMut: _g(TSKindId._PointerTypeMut),
     RangeExpressionBare: _g(TSKindId._RangeExpressionBare),
-    ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
+    ReferenceExpressionRawMut: _g(TSKindId._ReferenceExpressionRawMut),
     TokenTreeBrace: _g(TSKindId._TokenTreeBrace),
     TokenTreeBracket: _g(TSKindId._TokenTreeBracket),
     TokenTreeParen: _g(TSKindId._TokenTreeParen),

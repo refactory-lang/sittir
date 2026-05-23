@@ -225,6 +225,13 @@ const _variantTable: Record<string, _WrapVariantDescriptor> = {
       "foreign_mod_item_body": "body"
     }
   },
+  "function_type": {
+    "source": "override",
+    "childKind": {
+      "function_type_trait_form": "trait_form",
+      "function_type_fn_form": "fn_form"
+    }
+  },
   "impl_item": {
     "source": "override",
     "childKind": {
@@ -291,6 +298,13 @@ const _variantTable: Record<string, _WrapVariantDescriptor> = {
       "range_pattern_prefix": "prefix",
       "range_pattern_left_with_right": "left_with_right",
       "range_pattern_left_bare": "left_bare"
+    }
+  },
+  "reference_expression": {
+    "source": "override",
+    "childKind": {
+      "reference_expression_raw_const": "raw_const",
+      "reference_expression_raw_mut": "raw_mut"
     }
   },
   "struct_item": {
@@ -656,27 +670,27 @@ export function wrap_ForeignModItemBody(data: T._ForeignModItemBody, tree: TreeH
   return _node;
 }
 
-export function wrapFunctionTypeFnForm(data: T.FunctionTypeFnForm, tree: TreeHandle) {
+export function wrap_FunctionTypeFnForm(data: T._FunctionTypeFnForm, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $type: TSKindId.FunctionTypeFnForm as const,
+    $type: TSKindId._FunctionTypeFnForm as const,
     _function_modifiers: normalizeSingularWrapSlot(data._function_modifiers, "function_modifiers", false, data.$type),
 
     functionModifiers() { return drillIn<T.FunctionModifiers | undefined>(this._function_modifiers, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapFunctionTypeFnForm({ ...data, $children: vs }, tree) },
+    $with: { $children: (...vs: readonly [never]) => wrap_FunctionTypeFnForm({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
 
-export function wrapFunctionTypeTraitForm(data: T.FunctionTypeTraitForm, tree: TreeHandle) {
+export function wrap_FunctionTypeTraitForm(data: T._FunctionTypeTraitForm, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $type: TSKindId.FunctionTypeTraitForm as const,
+    $type: TSKindId._FunctionTypeTraitForm as const,
     _trait: normalizeSingularWrapSlot(data._trait, "trait", true, data.$type),
 
     trait() { return drillAs<T.Identifier | T.ScopedTypeIdentifier>(this._trait, tree, "type_identifier", "identifier"); },
     $with: {
-      trait: (v: NonNullable<T.FunctionTypeTraitForm['_trait']>) => wrapFunctionTypeTraitForm({ ...data, _trait: v }, tree),
+      trait: (v: NonNullable<T._FunctionTypeTraitForm['_trait']>) => wrap_FunctionTypeTraitForm({ ...data, _trait: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -971,15 +985,15 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
   return _node;
 }
 
-export function wrapReferenceExpressionRawMut(data: T.ReferenceExpressionRawMut, tree: TreeHandle) {
+export function wrap_ReferenceExpressionRawMut(data: T._ReferenceExpressionRawMut, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    $type: TSKindId.ReferenceExpressionRawMut as const,
+    $type: TSKindId._ReferenceExpressionRawMut as const,
     _mutable_specifier: normalizeSingularWrapSlot(data._mutable_specifier, "mutable_specifier", true, data.$type),
 
     mutableSpecifier() { return drillIn<T.MutableSpecifier>(this._mutable_specifier, tree); },
     $with: {
-      mutableSpecifier: (v: NonNullable<T.ReferenceExpressionRawMut['_mutable_specifier']>) => wrapReferenceExpressionRawMut({ ...data, _mutable_specifier: v }, tree),
+      mutableSpecifier: (v: NonNullable<T._ReferenceExpressionRawMut['_mutable_specifier']>) => wrap_ReferenceExpressionRawMut({ ...data, _mutable_specifier: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2123,27 +2137,51 @@ export function wrapFunctionSignatureItem(data: T.FunctionSignatureItem, tree: T
   return _node;
 }
 
+export function wrapFunctionTypeTraitForm(data: T.FunctionTypeTraitForm, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    _trait: normalizeSingularWrapSlot(data._trait, "trait", true, data.$type),
+
+    trait() { return drillAs<T.Identifier | T.ScopedTypeIdentifier>(this._trait, tree, "type_identifier", "identifier"); },
+    $with: {
+      trait: (v: NonNullable<T.FunctionTypeTraitForm['_trait']>) => wrapFunctionTypeTraitForm({ ...data, _trait: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapFunctionTypeFnForm(data: T.FunctionTypeFnForm, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    _function_modifiers: normalizeSingularWrapSlot(data._function_modifiers, "function_modifiers", false, data.$type),
+
+    functionModifiers() { return drillIn<T.FunctionModifiers | undefined>(this._function_modifiers, tree); },
+    $with: { $children: (...vs: readonly [never]) => wrapFunctionTypeFnForm({ ...data, $children: vs }, tree) },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FunctionType as const,
-    _for_lifetimes: normalizeSingularWrapSlot(data._for_lifetimes, "for_lifetimes", false, data.$type),
-    _function_type_trait_form: normalizeSingularWrapSlot(data._function_type_trait_form, "function_type_trait_form", false, data.$type),
-    _parameters: normalizeSingularWrapSlot(data._parameters, "parameters", true, data.$type),
-    _function_type_fn_form: normalizeSingularWrapSlot(data._function_type_fn_form, "function_type_fn_form", false, data.$type),
-    _return_type: normalizeSingularWrapSlot(data._return_type, "return_type", false, data.$type),
+    _for_lifetimes: normalizeSingularWrapSlot((data as any)._for_lifetimes, "for_lifetimes", false, (data as any).$type),
+    _function_type_trait_form: normalizeSingularWrapSlot((data as any)._function_type_trait_form, "function_type_trait_form", false, (data as any).$type),
+    _parameters: normalizeSingularWrapSlot((data as any)._parameters, "parameters", true, (data as any).$type),
+    _return_type: normalizeSingularWrapSlot((data as any)._return_type, "return_type", false, (data as any).$type),
+    _function_type_fn_form: normalizeSingularWrapSlot((data as any)._function_type_fn_form, "function_type_fn_form", false, (data as any).$type),
 
     forLifetimes() { return drillIn<T.ForLifetimes | undefined>(this._for_lifetimes, tree); },
-    functionTypeTraitForm() { return drillAs<T.FunctionTypeTraitForm | undefined>(this._function_type_trait_form, tree, "function_type_trait_form", "_function_type_trait_form"); },
+    functionTypeTraitForm() { return drillAs<T._FunctionTypeTraitForm | undefined>(this._function_type_trait_form, tree, "function_type_trait_form", "_function_type_trait_form"); },
     parameters() { return drillIn<T.Parameters>(this._parameters, tree); },
-    functionTypeFnForm() { return drillAs<T.FunctionTypeFnForm | undefined>(this._function_type_fn_form, tree, "function_type_fn_form", "_function_type_fn_form"); },
     returnType() { return drillIn<T._Type | undefined>(this._return_type, tree); },
+    functionTypeFnForm() { return drillAs<T._FunctionTypeFnForm | undefined>(this._function_type_fn_form, tree, "function_type_fn_form", "_function_type_fn_form"); },
     $with: {
-      forLifetimes: (v: NonNullable<T.FunctionType['_for_lifetimes']>) => wrapFunctionType({ ...data, _for_lifetimes: v }, tree),
-      functionTypeTraitForm: (v: NonNullable<T.FunctionType['_function_type_trait_form']>) => wrapFunctionType({ ...data, _function_type_trait_form: v }, tree),
-      parameters: (v: NonNullable<T.FunctionType['_parameters']>) => wrapFunctionType({ ...data, _parameters: v }, tree),
-      functionTypeFnForm: (v: NonNullable<T.FunctionType['_function_type_fn_form']>) => wrapFunctionType({ ...data, _function_type_fn_form: v }, tree),
-      returnType: (v: NonNullable<T.FunctionType['_return_type']>) => wrapFunctionType({ ...data, _return_type: v }, tree),
+      forLifetimes: (v: T.ForLifetimes) => wrapFunctionType({ ...(data as any), _for_lifetimes: v }, tree),
+      functionTypeTraitForm: (v: T._FunctionTypeTraitForm) => wrapFunctionType({ ...(data as any), _function_type_trait_form: v }, tree),
+      parameters: (v: T.Parameters) => wrapFunctionType({ ...(data as any), _parameters: v }, tree),
+      returnType: (v: T._Type) => wrapFunctionType({ ...(data as any), _return_type: v }, tree),
+      functionTypeFnForm: (v: T._FunctionTypeFnForm) => wrapFunctionType({ ...(data as any), _function_type_fn_form: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2954,18 +2992,34 @@ export function wrapRefPattern(data: T.RefPattern, tree: TreeHandle) {
   return _node;
 }
 
+export function wrapReferenceExpressionRawMut(data: T.ReferenceExpressionRawMut, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    _mutable_specifier: normalizeSingularWrapSlot(data._mutable_specifier, "mutable_specifier", true, data.$type),
+
+    mutableSpecifier() { return drillIn<T.MutableSpecifier>(this._mutable_specifier, tree); },
+    $with: {
+      mutableSpecifier: (v: NonNullable<T.ReferenceExpressionRawMut['_mutable_specifier']>) => wrapReferenceExpressionRawMut({ ...data, _mutable_specifier: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrapReferenceExpression(data: T.ReferenceExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ReferenceExpression as const,
-    _content: normalizeSingularWrapSlot((data._reference_expression_raw_const ?? data._reference_expression_raw_mut ?? data._mutable_specifier ?? data._content), "content", false, data.$type),
-    _value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),
+    _reference_expression_raw_const: coerceBooleanKeywordStorage(normalizeSingularWrapSlot((data as any)._reference_expression_raw_const, "reference_expression_raw_const", false, (data as any).$type)),
+    _value: normalizeSingularWrapSlot((data as any)._value, "value", true, (data as any).$type),
+    _reference_expression_raw_mut: normalizeSingularWrapSlot((data as any)._reference_expression_raw_mut, "reference_expression_raw_mut", false, (data as any).$type),
 
-    content() { return drillAs<T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier | undefined>(this._content, tree, "reference_expression_raw_const", "_reference_expression_raw_const"); },
+    referenceExpressionRawConst() { return this._reference_expression_raw_const; },
     value() { return drillIn<T.Expression>(this._value, tree); },
+    referenceExpressionRawMut() { return drillAs<T._ReferenceExpressionRawMut | undefined>(this._reference_expression_raw_mut, tree, "reference_expression_raw_mut", "_reference_expression_raw_mut"); },
     $with: {
-      content: (v: NonNullable<T.ReferenceExpression['_content']>) => wrapReferenceExpression({ ...data, _content: v }, tree),
-      value: (v: NonNullable<T.ReferenceExpression['_value']>) => wrapReferenceExpression({ ...data, _value: v }, tree),
+      referenceExpressionRawConst: (v: boolean) => wrapReferenceExpression({ ...(data as any), _reference_expression_raw_const: v }, tree),
+      value: (v: T.Expression) => wrapReferenceExpression({ ...(data as any), _value: v }, tree),
+      referenceExpressionRawMut: (v: T._ReferenceExpressionRawMut) => wrapReferenceExpression({ ...(data as any), _reference_expression_raw_mut: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -3930,8 +3984,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_field_pattern_named': (d, t) => wrapFieldPatternNamed(d as unknown as T.FieldPatternNamed, t),
   '_field_pattern_shorthand': (d, t) => wrap_FieldPatternShorthand(d as unknown as T._FieldPatternShorthand, t),
   '_foreign_mod_item_body': (d, t) => wrap_ForeignModItemBody(d as unknown as T._ForeignModItemBody, t),
-  '_function_type_fn_form': (d, t) => wrapFunctionTypeFnForm(d as unknown as T.FunctionTypeFnForm, t),
-  '_function_type_trait_form': (d, t) => wrapFunctionTypeTraitForm(d as unknown as T.FunctionTypeTraitForm, t),
+  '_function_type_fn_form': (d, t) => wrap_FunctionTypeFnForm(d as unknown as T._FunctionTypeFnForm, t),
+  '_function_type_trait_form': (d, t) => wrap_FunctionTypeTraitForm(d as unknown as T._FunctionTypeTraitForm, t),
   '_impl_item_body': (d, t) => wrap_ImplItemBody(d as unknown as T._ImplItemBody, t),
   '_let_chain': (d, t) => wrapLetChain(d as unknown as T.LetChain, t),
   '_line_comment_content': (d) => ({ ...d, $type: TSKindId.LineCommentContent as const }),
@@ -3958,7 +4012,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_range_pattern_left_with_right': (d, t) => wrapRangePatternLeftWithRight(d as unknown as T.RangePatternLeftWithRight, t),
   '_range_pattern_prefix': (d, t) => wrapRangePatternPrefix(d as unknown as T.RangePatternPrefix, t),
   '_reference_expression_raw_const': (d) => ({ ...d, $type: TSKindId.ReferenceExpressionRawConst as const }),
-  '_reference_expression_raw_mut': (d, t) => wrapReferenceExpressionRawMut(d as unknown as T.ReferenceExpressionRawMut, t),
+  '_reference_expression_raw_mut': (d, t) => wrap_ReferenceExpressionRawMut(d as unknown as T._ReferenceExpressionRawMut, t),
   '_statement': (d, t) => wrapStatement(d as unknown as T.Statement, t),
   '_struct_item_brace': (d, t) => wrapStructItemBrace(d as unknown as T.StructItemBrace, t),
   '_struct_item_tuple': (d, t) => wrapStructItemTuple(d as unknown as T.StructItemTuple, t),
@@ -4037,6 +4091,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'function_item': (d, t) => wrapFunctionItem(d as unknown as T.FunctionItem, t),
   'function_modifiers': (d, t) => wrapFunctionModifiers(d as unknown as T.FunctionModifiers, t),
   'function_signature_item': (d, t) => wrapFunctionSignatureItem(d as unknown as T.FunctionSignatureItem, t),
+  'function_type_trait_form': (d, t) => wrapFunctionTypeTraitForm(d as unknown as T.FunctionTypeTraitForm, t),
+  'function_type_fn_form': (d, t) => wrapFunctionTypeFnForm(d as unknown as T.FunctionTypeFnForm, t),
   'function_type': (d, t) => wrapFunctionType(d as unknown as T.FunctionType, t),
   'gen_block': (d, t) => wrapGenBlock(d as unknown as T.GenBlock, t),
   'generic_function': (d, t) => wrapGenericFunction(d as unknown as T.GenericFunction, t),
@@ -4089,6 +4145,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   'range_pattern': (d, t) => wrapRangePattern(d as unknown as T.RangePattern, t),
   'raw_string_literal': (d, t) => wrapRawStringLiteral(d as unknown as T.RawStringLiteral, t),
   'ref_pattern': (d, t) => wrapRefPattern(d as unknown as T.RefPattern, t),
+  'reference_expression_raw_mut': (d, t) => wrapReferenceExpressionRawMut(d as unknown as T.ReferenceExpressionRawMut, t),
   'reference_expression': (d, t) => wrapReferenceExpression(d as unknown as T.ReferenceExpression, t),
   'reference_pattern': (d, t) => wrapReferencePattern(d as unknown as T.ReferencePattern, t),
   'reference_type': (d, t) => wrapReferenceType(d as unknown as T.ReferenceType, t),
@@ -4181,8 +4238,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'field_pattern_named': '_field_pattern_named',
   'for_expression_optional1': '_for_expression_optional1',
   'function_signature_item_optional1': '_function_signature_item_optional1',
-  'function_type_fn_form': '_function_type_fn_form',
-  'function_type_trait_form': '_function_type_trait_form',
   'let_chain': '_let_chain',
   'let_declaration_optional3': '_let_declaration_optional3',
   'line_comment_content': '_line_comment_content',
@@ -4208,7 +4263,6 @@ const _aliasTargetToSource: Record<string, string> = {
   'range_pattern_prefix': '_range_pattern_prefix',
   'ref_marker': '_ref_marker',
   'reference_expression_raw_const': '_reference_expression_raw_const',
-  'reference_expression_raw_mut': '_reference_expression_raw_mut',
   'reserved_identifier': '_reserved_identifier',
   'statement': '_statement',
   'struct_item_brace': '_struct_item_brace',

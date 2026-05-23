@@ -336,6 +336,7 @@ pub(crate) fn separator_for(kind_id: u16) -> &'static str {
 
 pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {
     match (parent_id, child_id) {
+        (135, 246) => Some("block"), // ("_match_block", "match_block_block")
         (198, 240) => Some("eq"), // ("assignment", "assignment_eq")
         (198, 241) => Some("type"), // ("assignment", "assignment_type")
         (198, 242) => Some("typed"), // ("assignment", "assignment_typed")
@@ -508,9 +509,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         135 => { // "_match_block"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("match_block_block"), true)?;
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let variant = resolve_variant(node);
             let template = MatchBlockTemplate {
-                match_block_block: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                match_block_block: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                variant,
             };
             template.render_into(dest)
         }

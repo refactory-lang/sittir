@@ -140,6 +140,7 @@ pub struct MatchBlockBlockTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_match_block.jinja", escape = "none")]
 pub struct MatchBlockTemplate<'a> {
+    pub variant: &'a str,
     pub match_block_block: SingleNonterminalView<'a>,
 }
 

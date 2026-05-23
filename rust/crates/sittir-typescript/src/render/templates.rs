@@ -203,27 +203,31 @@ pub struct ExportStatementDefaultDeclArmTemplate<'a> {
 
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_default_from_arm_clause_from.jinja", escape = "none")]
-pub struct ExportStatementDefaultFromArmClauseFromTemplate<'a> {
+pub struct _ExportStatementDefaultFromArmClauseFromTemplate<'a> {
     pub export_clause: SingleNonterminalView<'a>,
     pub source: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_default_from_arm_ns_from.jinja", escape = "none")]
-pub struct ExportStatementDefaultFromArmNsFromTemplate<'a> {
+pub struct _ExportStatementDefaultFromArmNsFromTemplate<'a> {
     pub namespace_export: SingleNonterminalView<'a>,
     pub source: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_default_from_arm_star_from.jinja", escape = "none")]
-pub struct ExportStatementDefaultFromArmStarFromTemplate<'a> {
+pub struct _ExportStatementDefaultFromArmStarFromTemplate<'a> {
     pub source: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_default_from_arm.jinja", escape = "none")]
 pub struct ExportStatementDefaultFromArmTemplate<'a> {
+    pub variant: &'a str,
+    pub export_clause: SingleNonterminalView<'a>,
+    pub export_statement_default_from_arm_clause_from: SingleNonterminalView<'a>,
+    pub export_statement_default_from_arm_ns_from: SingleNonterminalView<'a>,
     pub export_statement_default_from_arm_star_from: SingleNonterminalView<'a>,
     pub semicolon: OptionalNonterminalView<'a>,
 }
@@ -799,6 +803,26 @@ pub struct ExportSpecifierTemplate<'a> {
     pub alias: OptionalNonterminalView<'a>,
     pub export_kind: OptionalNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "export_statement_default_from_arm_clause_from.jinja", escape = "none")]
+pub struct ExportStatementDefaultFromArmClauseFromTemplate<'a> {
+    pub export_clause: SingleNonterminalView<'a>,
+    pub source: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "export_statement_default_from_arm_ns_from.jinja", escape = "none")]
+pub struct ExportStatementDefaultFromArmNsFromTemplate<'a> {
+    pub namespace_export: SingleNonterminalView<'a>,
+    pub source: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "export_statement_default_from_arm_star_from.jinja", escape = "none")]
+pub struct ExportStatementDefaultFromArmStarFromTemplate<'a> {
+    pub source: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
