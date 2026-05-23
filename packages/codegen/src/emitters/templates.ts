@@ -1604,59 +1604,6 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 }
 
 /**
- * Legacy emitJinjaTemplates — walks the nodeMap's legacy walker
- * (emitBodyForNode) to emit templates. Called by test fixtures that
- * create minimal AssembledNodes without full rule setup.
- *
- * Emit templates for each node in the NodeMap. Returns a map keyed
- * by kind, where each value is a Jinja template body.
- *
- * Skips:
- * - Pattern, keyword, token, supertype, enum, multi (leaves)
- * - Hidden non-userFacing groups
- * - Nodes where classifyTemplateEmission returns 'skip' or 'no-file'
- *
- * The returned bodies are prepended with the @generated header.
- *
- * @param config Grammar, NodeMap, and optional grammar SHA
- * @returns EmittedTemplates with bodies keyed by kind
- */
-export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplates {
-	const { nodeMap } = config;
-	const wordMatcher = compileWordMatcher(nodeMap.word, nodeMap.rules ?? {});
-	const bodies = new Map<string, string>();
-	for (const node of nodeMap.nodes.values()) {
-		const emission = classifyTemplateEmission(node);
-		if (emission !== 'emit') continue;
-		let body: string | null;
-		try {
-			body = emitBodyForNode(node, nodeMap.rules ?? {}, wordMatcher ?? /\w/, nodeMap.externals);
-		} catch (err) {
-			// Re-throw with grammar + kind context so the emitter caller
-			// gets an actionable error message. `{ cause }` preserves
-			// the original stack for Error.cause-aware debuggers (Node
-			// 16.9+), matching the renderNunjucks wrap in core/render.ts.
-			const detail = err instanceof Error ? err.message : String(err);
-			throw new Error(`emitJinjaTemplates: failed on ${config.grammar}/${node.kind}: ${detail}`, {
-				cause: err
-			});
-		}
-		if (body === null) continue;
-		// Canonical-hidden architecture (Option Y): templates are emitted
-		// at the kind's actual name. Hidden alias-source kinds (`_x`) get
-		// `_x.jinja`; visible kinds (`x`) get `x.jinja`. The runtime
-		// canonicalizes parser-output `$type` (visible alias target →
-		// hidden alias source) inside `wrapNode` BEFORE template lookup,
-		// and `render.ts` falls back to `_${$type}.jinja` when called
-		// with a visible $type that has no own template. So both producer
-		// paths (factory output stamping `_x` directly + parser output
-		// remapped by wrap) converge on the single hidden template file.
-		bodies.set(node.kind, `${GENERATED_HEADER}\n${body}`);
-	}
-	return { bodies };
-}
-
-/**
  * Write per-kind `.jinja` files to `outputDir`. Creates the directory
  * if it does not exist. After writing, scans the directory for any
  * `.jinja` files whose kind is not in `emitted` and removes them —
@@ -1665,57 +1612,6 @@ export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplate
  *
  * Preserves `.gitkeep` and non-`.jinja` files (README.md, etc.).
  */
-/**
- * Ask the node for its Jinja body. Returns `null` for node kinds that
- * don't own a template file (leaves, keywords, tokens, supertypes,
- * enums, multis, non-polymorph-form groups). The class-hierarchy base
- * `renderTemplate()` returns `undefined` for those — we translate that
- * signal to the emitter's `null`.
- */
-function emitBodyForNode(
-	node: AssembledNode,
-	rules: Record<string, Rule>,
-	wordMatcher: RegExp,
-	externals: ReadonlySet<string> | undefined
-): string | null {
-	if (
-		node.modelType === 'pattern' ||
-		node.modelType === 'keyword' ||
-		node.modelType === 'token' ||
-		node.modelType === 'supertype' ||
-		node.modelType === 'enum' ||
-		node.modelType === 'multi'
-	) {
-		return null;
-	}
-	if (node instanceof AssembledGroup && !node.parentKind && !node.userFacing) {
-		// Non-polymorph-form groups without an alias-source reference
-		// are hidden helpers inlined at their referrers; no file emitted.
-		//
-		// Groups that ARE userFacing (populated by `markUserFacing` when
-		// the hidden kind shows up as an alias source in some other
-		// rule's child/field slots) get their own template — tree-sitter
-		// emits them via `alias($._kind, $.visible)` and the render
-		// pipeline dispatches to the hidden rule's body. Covers
-		// variant() adoption on rules with field-bearing branches
-		// (`_update_expression_postfix` etc.), where the hoisted hidden
-		// rule gets wrapped as a GroupRule by classifyHiddenSeqRule even
-		// though it's an alias source — the group classification fits
-		// the shape but the inlining assumption doesn't.
-		return null;
-	}
-	const entry = node.renderTemplate(rules, wordMatcher, externals);
-	if (!entry) return null;
-	const template = entry.template;
-	if (typeof template !== 'string') {
-		throw new Error(
-			`emitBodyForNode: rule '${node.kind}' (${node.modelType}) produced no template string — ` +
-				`renderTemplate() returned ${JSON.stringify(entry)}`
-		);
-	}
-	return template;
-}
-
 export function writeJinjaTemplates(emitted: EmittedTemplates, outputDir: string): void {
 	fs.mkdirSync(outputDir, { recursive: true });
 	for (const [kind, body] of emitted.bodies) {
