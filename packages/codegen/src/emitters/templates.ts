@@ -35,6 +35,7 @@ import type {
 	AssembledNode,
 	AssembledNonterminal,
 	AssembledPolymorph,
+	NodeOrTerminal,
 	TerminalValue
 } from '../compiler/node-map.ts';
 import type { Rule } from '../compiler/rule.ts';
@@ -1072,8 +1073,14 @@ function separatorToString(rule: Rule): string | undefined {
  * Pick the join-filter name based on a rule's flank metadata. Matches
  * the legacy `filterForFlanks` decision tree but reads attributes off
  * the rule directly (no `JinjaTranslateMeta` indirection).
+ *
+ * When the rule itself carries no trailing/leading flags (e.g. the outer
+ * choice in `fanOutSeqChoices`/`factorChoiceBranches` rebuilds), falls back
+ * to the slot values' per-value trailing/leading flags — stamped by
+ * `stampSeparatorOnValues` when the separator flowed from a repeat wrapper
+ * through wrapper-deletion onto the slot entries.
  */
-function selectJoinFilter(rule: Rule): 'join' | 'joinWithTrailing' | 'joinWithLeading' | 'joinWithFlanks' {
+function selectJoinFilter(rule: Rule, slot?: AssembledNonterminal): 'join' | 'joinWithTrailing' | 'joinWithLeading' | 'joinWithFlanks' {
 	const repeatLike = rule as { trailing?: boolean; leading?: boolean };
 	const trailing = repeatLike.trailing === true;
 	const leading = repeatLike.leading === true;
@@ -1090,6 +1097,26 @@ function selectJoinFilter(rule: Rule): 'join' | 'joinWithTrailing' | 'joinWithLe
 		if (t && l) return 'joinWithFlanks';
 		if (t) return 'joinWithTrailing';
 		if (l) return 'joinWithLeading';
+	}
+	// Fallback: read trailing/leading from the slot's per-value entries.
+	// This handles the case where the separator was stamped onto slot values
+	// by `stampSeparatorOnValues` but the rule itself (a rebuilt choice from
+	// `fanOutSeqChoices`/`factorChoiceBranches`) carries no flank flags.
+	if (slot !== undefined) {
+		const multiVal = slot.values.find(
+			(v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray'
+		);
+		if (multiVal) {
+			const t = (multiVal as { trailing?: boolean }).trailing === true;
+			const l = (multiVal as { leading?: boolean }).leading === true;
+			if (t && l) return 'joinWithFlanks';
+			if (t) return 'joinWithTrailing';
+			if (l) return 'joinWithLeading';
+		}
+		// Also check the AssembledNonterminal's own hasTrailing/hasLeading flags.
+		if (slot.hasTrailing && slot.hasLeading) return 'joinWithFlanks';
+		if (slot.hasTrailing) return 'joinWithTrailing';
+		if (slot.hasLeading) return 'joinWithLeading';
 	}
 	return 'join';
 }
@@ -1121,7 +1148,7 @@ const DEFAULT_JOIN_SEPARATOR = ' ';
  * `interpolation`) must concatenate without separator.
  */
 function emitListSlot(slotName: string, rule: Rule, slot?: AssembledNonterminal): string {
-	const filter = selectJoinFilter(rule);
+	const filter = selectJoinFilter(rule, slot);
 	// Immediate-terminal check: when ALL slot values are terminal entries
 	// stamped with `immediate: true` (produced by `token.immediate(…)` in
 	// the grammar), the correct separator is the empty string — the tokens
@@ -1130,7 +1157,22 @@ function emitListSlot(slotName: string, rule: Rule, slot?: AssembledNonterminal)
 		slot !== undefined &&
 		slot.values.length > 0 &&
 		slot.values.every((v) => v.kind === 'terminal' && (v as TerminalValue).immediate === true);
-	const sep = allImmediate ? '' : (separatorToString(rule) ?? DEFAULT_JOIN_SEPARATOR);
+	// Separator resolution: prefer the rule's own separator (directly carried),
+	// then fall back to the slot values' per-entry separator (stamped by
+	// `stampSeparatorOnValues` when the separator flowed from a repeat wrapper
+	// through wrapper-deletion). This handles the case where `fanOutSeqChoices`/
+	// `factorChoiceBranches` rebuilt a choice carrying only the rule id (not the
+	// separator), so the outer choice has no separator but the slot values do.
+	const ruleSep = separatorToString(rule);
+	const slotValueSep: string | undefined =
+		ruleSep === undefined && slot !== undefined
+			? slot.values.find(
+					(v): v is NodeOrTerminal & { separator: string } =>
+						(v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray') &&
+						typeof (v as { separator?: string }).separator === 'string'
+				)?.separator
+			: undefined;
+	const sep = allImmediate ? '' : (ruleSep ?? slotValueSep ?? DEFAULT_JOIN_SEPARATOR);
 	return `{{ ${slotName} | ${filter}("${escapeJinjaString(sep)}") }}`;
 }
 

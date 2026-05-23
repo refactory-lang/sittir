@@ -50,6 +50,37 @@ import {
 import { findRepeatFlag } from './template-walker.ts';
 
 /**
+ * Walk a rule tree to find the first separator string nested inside it.
+ * Mirrors `findRepeatFlag`'s descent through seq/choice members, but looks
+ * for a separator string rather than a boolean flag. Used when the enclosing
+ * slot-rule itself has no separator (e.g. an outer choice rebuilt by
+ * `fanOutSeqChoices`/`factorChoiceBranches` carries only the rule id, not the
+ * separator), but an inner arm carries the structured separator object set by
+ * `applyWrapperDeletion`.
+ */
+function findNestedSeparator(rule: Rule): Rule['separator'] {
+	const sep = rule.separator;
+	if (sep !== undefined) return sep;
+	switch (rule.type) {
+		case 'seq':
+		case 'choice':
+			for (const m of rule.members) {
+				const found = findNestedSeparator(m);
+				if (found !== undefined) return found;
+			}
+			return undefined;
+		case 'optional':
+		case 'variant':
+		case 'clause':
+		case 'group':
+		case 'field':
+			return findNestedSeparator(rule.content);
+		default:
+			return undefined;
+	}
+}
+
+/**
  * Sink for unnamed-choice-slot occurrences (Task C2). A naked choice (no
  * `fieldName`, not a polymorph) has no grammar-given name, so it falls back to
  * an unresolvable `content` slot — the grammar author must field-name it in
@@ -399,7 +430,11 @@ function buildSlot(
 	// --- Separator + trailing/leading flags (array slots only) ---
 	// A member that inherits its array multiplicity from an enclosing seq also
 	// inherits that seq's separator (the member itself carries none).
-	const sep = rule.separator ?? inheritedSeparator;
+	// When sep is still undefined, fall back to a nested-arm scan so that outer
+	// choices rebuilt by `fanOutSeqChoices`/`factorChoiceBranches` (which carry
+	// only the rule id, not the separator) still inherit the separator from the
+	// arm that has it (e.g. the inlined `_import_list` arm with `sep=",trailing"`).
+	const sep = rule.separator ?? inheritedSeparator ?? (isMultiSlot ? findNestedSeparator(rule) : undefined);
 	const sepIsObject = typeof sep === 'object' && !Array.isArray(sep) && sep !== null;
 	const hasTrailing =
 		isMultiSlot &&

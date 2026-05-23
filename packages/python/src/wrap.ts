@@ -1272,7 +1272,7 @@ export function wrapFutureImportStatement(data: T.FutureImportStatement, tree: T
   const _node = withMethods({
     ...data,
     $type: TSKindId.FutureImportStatement as const,
-    _name: normalizeRepeatedWrapSlot(data._name, true, "name"),
+    _name: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._name, ["dotted_name","aliased_import"]), true, "name"),
 
     names() { return drillInAll<T.DottedName | T.AliasedImport>(this._name as readonly (T.DottedName | T.AliasedImport)[] | undefined, tree); },
     $with: {
@@ -1367,7 +1367,7 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
     ...data,
     $type: TSKindId.ImportFromStatement as const,
     _module_name: normalizeSingularWrapSlot(data._module_name, "module_name", true, data.$type),
-    _wildcard_import: normalizeRepeatedWrapSlot(data._wildcard_import, true, "wildcard_import"),
+    _wildcard_import: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._wildcard_import, ["wildcard_import","dotted_name","aliased_import"]), true, "wildcard_import"),
 
     moduleName() { return drillIn<T.RelativeImport | T.DottedName>(this._module_name, tree); },
     wildcardImports() { return drillInAll<T.WildcardImport | T.DottedName | T.AliasedImport>(this._wildcard_import as readonly (T.WildcardImport | T.DottedName | T.AliasedImport)[] | undefined, tree); },

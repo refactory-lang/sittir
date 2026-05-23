@@ -204,11 +204,14 @@ export function fanOutSeqChoices(rule: Rule): Rule {
 				const flat: Rule = { type: 'seq', members: seqMembers };
 				return branch.type === 'variant' ? { type: 'variant', name: branch.name, content: flat } : flat;
 			});
-			// The fanned choice replaces this seq 1:1 — carry the seq's rule id
-			// so downstream slot resolution (slotByRuleId) still finds it. A
-			// fresh `{ type: 'choice', ... }` here drops the id (the source of
-			// the UNRESOLVED slotByRuleId misses).
-			return { ...(rule.id !== undefined ? { id: rule.id } : {}), type: 'choice', members: branches };
+			// The fanned choice replaces this seq 1:1 — carry the inner choice's
+			// separator/multiplicity/etc. attrs (so comma-separated lists keep
+			// their separator), then override id with the seq's id so downstream
+			// slot resolution (slotByRuleId) still finds it. A fresh
+			// `{ type: 'choice', ... }` here drops both the id and the separator
+			// (the source of the UNRESOLVED slotByRuleId misses AND the
+			// space-join regression on type_arguments / future_import_statement).
+			return { ...choice, type: 'choice', members: branches, ...(rule.id !== undefined ? { id: rule.id } : {}) };
 		}
 		case 'choice': {
 			const members = rule.members.map(fanOutSeqChoices);
@@ -331,12 +334,13 @@ export function factorChoiceBranches(rule: Rule): Rule {
 				// Every branch was empty → prefix/suffix already cover it.
 				return outerFromParts(prefix, suffix);
 			}
-			// Carry the factored choice's id onto the re-factored inner choice —
-			// it's the same data slot (a fresh `{ type: 'choice' }` drops the id).
+			// Spread `rule` (the factored choice) to preserve separator/multiplicity/
+			// etc., then override only `members`. When there's exactly one branch,
+			// skip the choice wrapper (shape is already correct).
 			const core: Rule =
 				nonEmpty.length === 1
 					? nonEmpty[0]!
-					: { ...(rule.id !== undefined ? { id: rule.id } : {}), type: 'choice', members: nonEmpty };
+					: { ...rule, type: 'choice', members: nonEmpty };
 			const inner: Rule = hasEmpty ? { type: 'optional', content: core } : core;
 			const outerMembers: Rule[] = [...prefix, inner, ...suffix];
 			return outerMembers.length === 1 ? outerMembers[0]! : { type: 'seq', members: outerMembers };

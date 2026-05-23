@@ -26897,7 +26897,7 @@ fn render_future_import_statement(node: &FutureImportStatementTransport, dest: &
     let template = FutureImportStatementTemplate {
         name: ListNonterminalView {
             items: name_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -26978,7 +26978,7 @@ fn render_import_from_statement(node: &ImportFromStatementTransport, dest: &mut 
         module_name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.module_name)),
         wildcard_import: ListNonterminalView {
             items: wildcard_import_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },

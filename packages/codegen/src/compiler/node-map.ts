@@ -47,7 +47,6 @@ import type {
 	RuleId
 } from './rule.ts';
 import { isSeq, isField } from './rule.ts';
-import { findRepeatSeparator, findRepeatFlag } from './template-walker.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { findGeneratedKindEntry } from './generated-metadata.ts';
 import { tokenToName } from './optimize.ts';
