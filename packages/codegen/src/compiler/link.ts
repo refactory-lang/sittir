@@ -1236,7 +1236,9 @@ export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
 		// exactly one choice (the variant choice nested in an inner seq, e.g. function_type).
 		// Guard: there must be zero choices at the outer level AND exactly one in the
 		// inner seq; if more than one choice total, bail (ambiguous).
-		const innerSeqIdx = rule.members.findIndex((m) => m.type === 'seq');
+		const innerSeqIdx = rule.members.findIndex(
+			(m) => m.type === 'seq' && (m as SeqRule).members.some((mm) => mm.type === 'choice')
+		);
 		if (innerSeqIdx === -1) return null;
 		// Make sure there is no other member that is also a seq with a choice in it,
 		// and no choices at all elsewhere in the outer seq.
