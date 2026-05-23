@@ -1,7 +1,7 @@
 # Compiler Workflow Simplification — Design
 
 **Date:** 2026-05-22
-**Status:** 📋 SPEC RECONCILED — brainstorm (above) + code-grounded implementation spec §1–§7 (below); **5 decisions + DRY/simplify review + critical-review batch + method-convergence fold + synthesis-discipline batch + losslessness audit + emit-DRY fold + choice-slot-submethods fold (2026-05-23)**. End-state is clean (no transitional aliases, no sunset PRs; old code removed within the superseding strangler step). **Losslessness audit verdict: Simplify lossless-modulo-literal-removal HOLDS; `token.immediate` drop CONFIRMED FIXED; Normalize had ONE real violation (`collapseWrappers` dropped `id`/`separator` on single-member collapse) — closed by PR-A0 → Normalize is now genuinely lossless, #2 enforced not just asserted.** Adds **Principle #16 (synthesis only if deterministic AND grammar-visible; sittir-only inventions forbidden)**; cuts **ALL sittir-invented + content-classification Rule types** — `PolymorphRule`/`VariantRule`/`ClauseRule` + the opaque Group classifier (→ Model-only `PolymorphSpec` / plain structure / wire helper, §B/§C/§D) AND `EnumRule`/`TerminalRule` (→ `isEnumShaped`/`isTerminalShaped` predicates + the `AssembledEnum`/`AssembledPattern` Model nodes, §G-cut); the `propose-*` diagnostic class (§E); enrich-widening (§F); plus the earlier Principle #15, the sanctioned `content` slot (§4c), identical-form collapse (§4d), the H2 helper-leak fix, the #14 getter-vs-method line, the `parameterless`-as-memoized-getter convergence, and the M1/MO2/M3/P1 structural de-dups. The end-state `Rule` union is now purely structural (`seq`/`choice`/`group`/`supertype`/`string`/`pattern`/whitespace/`symbol`/`token`). The **emit-DRY fold** adds 5 small getter/delete tightenings (`slot.kinds` replaces `slotKindNames`; keyword-presence reads cached `slot.storageInfo.kind`; `discriminatorKindsOrDefault` + `isUnnamed` getters; dead `snakeToCamel` copy deleted) + the KEEP-clarification (`classifyFactoryShape` stays a per-consumer shared function, not a getter). The **choice-slot-submethods fold (§4f / §H, Principle #17)** is the largest: emission keys on a STRUCTURAL fact — an `AssembledBranch` with a discriminating choice slot (`slot.values.length > 1`) emits per-arm factory submethods (kind-arm delegates; literal-arm pins, e.g. `binary_operator.plus()`) — NOT on "is-polymorph"; **`AssembledPolymorph` is DELETED** (collapsed into `AssembledBranch.discriminatingSlot`), the polymorph-specific emitter functions collapse into ONE general path, and the model generalizes from the 32 registered polymorphs to **168 discriminating-slot branches** (the API expansion is intended; submethods are additive). The discriminating-slot default (single required choice slot) + `propose-discriminator` (0-or->1) keep it deterministic. **Ready for user review → `writing-plans`.** **18 PRs** (PR3 prereq + PR-A0 + PR-A..PR-Q + PR-L; old PR-J `$variant`-removal merged into PR-I, the general choice-slot path). PR3 is a gating prerequisite (not yet landed — only its design doc is on this branch).
+**Status:** 📋 SPEC RECONCILED — brainstorm (above) + code-grounded implementation spec §1–§7 (below); **5 decisions + DRY/simplify review + critical-review batch + method-convergence fold + synthesis-discipline batch + losslessness audit + emit-DRY fold + choice-slot-submethods fold + naming/enum/registration unification (2026-05-23)**. End-state is clean (no transitional aliases, no sunset PRs; old code removed within the superseding strangler step). **Losslessness audit verdict: Simplify lossless-modulo-literal-removal HOLDS; `token.immediate` drop CONFIRMED FIXED; Normalize had ONE real violation (`collapseWrappers` dropped `id`/`separator` on single-member collapse) — closed by PR-A0 → Normalize is now genuinely lossless, #2 enforced not just asserted.** Adds **Principle #16 (synthesis only if deterministic AND grammar-visible; sittir-only inventions forbidden)**; cuts **ALL sittir-invented + content-classification Rule types** — `PolymorphRule`/`VariantRule`/`ClauseRule` + the opaque Group classifier (→ Model-only `PolymorphSpec` / plain structure / wire helper, §B/§C/§D) AND `EnumRule`/`TerminalRule` (→ `isEnumShaped`/`isTerminalShaped` predicates + the `AssembledEnum`/`AssembledPattern` Model nodes, §G-cut); the `propose-*` diagnostic class (§E); enrich-widening (§F); plus the earlier Principle #15, the sanctioned `content` slot (§4c), identical-form collapse (§4d), the H2 helper-leak fix, the #14 getter-vs-method line, the `parameterless`-as-memoized-getter convergence, and the M1/MO2/M3/P1 structural de-dups. The end-state `Rule` union is now purely structural (`seq`/`choice`/`group`/`supertype`/`string`/`pattern`/whitespace/`symbol`/`token`). The **emit-DRY fold** adds 5 small getter/delete tightenings (`slot.kinds` replaces `slotKindNames`; keyword-presence reads cached `slot.storageInfo.kind`; `discriminatorKindsOrDefault` + `isUnnamed` getters; dead `snakeToCamel` copy deleted) + the KEEP-clarification (`classifyFactoryShape` stays a per-consumer shared function, not a getter). The **choice-slot-submethods fold (§4f / §H, Principle #17)** is the largest: emission keys on a STRUCTURAL fact — an `AssembledBranch` with a discriminating choice slot (`slot.values.length > 1`) emits per-arm factory submethods (kind-arm delegates; literal-arm pins) — NOT on "is-polymorph"; **`AssembledPolymorph` is DELETED** (collapsed into `AssembledBranch.discriminatingSlot`), the polymorph-specific emitter functions collapse into ONE general path, generalizing from 32 registered polymorphs to **168 discriminating-slot branches** (additive). The **naming/enum/registration unification (§4e/§4f/§4g/§4h, Principle #18)** completes it: **all literals are kinds** (`TerminalValue.resolvedKind`, §4g) named by **tree-sitter** (`parser.c` `anon_sym_*` / grammar `alias_sym_<name>`) — so **arm name = the arm's KIND NAME** (`snakeToCamel(armKind(v))`), and the hand-maintained `TOKEN_NAMES`/`charFallback`/`tokenToName` map + the `form_<index>` fallback + `info{propose-arm-name}` are all **DELETED** (`fail{arm-name-collision}` kept as the safety net, 0 today). **Registration = two orthogonal primitives** — **ELEVATE** (`groups:`) ⊕ **RELABEL** (`alias()`/`variant()`), both existing grammar-visible passes (#16); `polymorphs:`/`enums:` are sugar; registered enums replace the per-slot sidecar (unregistered keep the predicate path). **Ready for user review → `writing-plans`.** **18 PRs** (PR3 prereq + PR-A0 + PR-A..PR-Q + PR-L; old PR-J `$variant`-removal merged into PR-I, the general choice-slot path). PR3 is a gating prerequisite (not yet landed — only its design doc is on this branch).
 **Base:** branch `026-pr3-delete-legacy-render-walker` (off `master`, post-PR2 merge `bbadd99b`).
 
 ---
@@ -58,6 +58,9 @@ canonical home). Do not restate them — reference that section.
 
 **Emission keys on structure, not classification (added by the choice-slot-submethods fold)**
 17. **Emission keys on a structural fact, never on a classification tag.** The factory/types/from/wrap surface for a branch is driven by whether it has a **discriminating choice-typed slot** (`slot.values.length > 1`) — a structural property of the slot model — NOT by whether a kind was *classified* "polymorph." Polymorph forms are subsumed: a form IS an arm of a discriminating choice slot. "Polymorph" registration (`variant()` / `polymorphs:`) is **demoted to metadata** that only (a) supplies arm names, (b) marks WHICH slot discriminates when a branch has 0-or->1 candidates, and (c) carries `$variant` validation metadata (validate-only, serialized to node-model) — it **never gates emission**. This is #15 (a classification is provenance, doesn't drive code) + #16 (a structural property does) applied to the emit surface: ~168 branches with a discriminating choice slot get per-arm submethods, not just the 32 registered polymorphs. *Test:* "would deleting the polymorph registration change which branches emit submethods?" → must be **no** (it changes arm *names*, never *whether* submethods emit).
+
+**Names come from tree-sitter; registration is composition (added by the naming/enum/registration unification)**
+18. **Token names are tree-sitter's; semantic names are grammar aliases; registration is the composition of existing grammar-visible passes — no new naming map, no new mechanism.** A literal's identifier is its `parser.c` symbol (`anon_sym_*`), or `alias_sym_<name>` when the grammar relabels it — **read, never invented** (so the hand-maintained `TOKEN_NAMES` / `charFallback` / `tokenToName` map is DELETED, §4g; a hardcoded operator table is exactly the opaque assumption #3 forbids). Every literal is therefore a **kind** with a `kindId` (§4g) — `TerminalValue` unifies with `NodeRef` at the naming/dispatch layer. "Registration" is not a monolithic primitive: it is **ELEVATE** (`groups:`/`auto-groups` — synthesize a named kind for a slot, #16) ⊕ **RELABEL** (`alias()`/`variant()` — name the arms, #16), two orthogonal grammar-visible passes (§4h); `polymorphs:`/`enums:` are author sugar that desugar to them. *Test:* "does naming/registration introduce a sittir-only table or a one-off pass?" → must be **no** (it reads parser.c + composes `groups:`/`alias`).
 
 ---
 
@@ -813,7 +816,9 @@ export interface Diagnostic {
   readonly code: string;          // stable machine code. The propose-* class (§E): 'propose-top-level-rule' (info/warn),
                                   //   'propose-discriminator' (info/warn — §H-fold),
                                   //   'propose-field' (fail when ambiguous+needed, else warn), 'propose-polymorph' (fail).
-                                  //   Plus: 'unslotted-child' (fail), 'anonymous-content' (warn), 'no-variant-resolution' (fail).
+                                  //   Plus: 'arm-name-collision' (fail — §4f), 'unslotted-child' (fail),
+                                  //   'anonymous-content' (warn), 'no-variant-resolution' (fail).
+                                  //   ('propose-arm-name' DELETED — parser.c names every token cleanly, §4g.)
   readonly kind?: string;         // owning grammar kind, when known
   readonly ruleId?: RuleId;       // owning rule-tree position (provenance)
   readonly message: string;       // human text
@@ -861,7 +866,7 @@ Every guessing heuristic converts to a `propose-*` diagnostic carrying a
 ready-to-paste override snippet (`Diagnostic.suggestion`), never a silent guess.
 The vocabulary has **no `source:'synthesized'`** (forbidden by #16); `'inferred'`
 stays serialized for diagnostics only (#15), correlating with where
-`propose-field` fires but never driving behavior. The four codes:
+`propose-field` fires but never driving behavior. The `propose-*` codes:
 
 - **`propose-top-level-rule`** (info/warn) — a wire-synthesized auto-group
   (`_<parent>_optionalN` / `_repeatN`) has no author-meaningful name. Non-blocking:
@@ -883,6 +888,21 @@ stays serialized for diagnostics only (#15), correlating with where
   the author marks WHICH slot discriminates (`variant()` / `polymorphs:` selects
   it). Deterministic, no guess — the diagnostic suggests the marker. A branch with
   exactly one required choice slot needs no diagnostic (the default fires).
+
+> **`propose-arm-name` DELETED (§4g/§4f rewrite).** The earlier draft surfaced
+> `tok_*` `charFallback` operator names as an optional DX nudge. With arm names now
+> read from tree-sitter (`parser.c` `anon_sym_*` / grammar `alias_sym_<name>`,
+> §4g), every token already has a clean name — there is nothing ugly to propose
+> against. The code is removed.
+
+And one new `fail` (a hard error only on a true collision):
+- **`arm-name-collision`** → `fail{arm-name-collision}` (§4f) — two **distinct**
+  arms (POST logical-identity dedup) resolve to the same identifier. Suggests a
+  `variant()` / `polymorphs:` override to disambiguate. **Replaces the deleted
+  `form_<index>` positional fallback** (`link.ts:684`) — the one non-deterministic
+  naming path; instead of silently numbering, a real collision halts with a
+  fixable suggestion. (Grounded: **0 today** — dedup-first makes apparent dupes
+  fold to one arm.)
 
 Plus the two non-`propose` slot diagnostics already specced:
 - **`content` slot** → `warn{anonymous-content}`, a **sanctioned non-fail** path
@@ -1068,30 +1088,49 @@ the 3 grammars (rust 54 / ts 73 / python 41 — measured), vs the 32 registered
 polymorphs (rust 19 / ts 10 / python 3) today. The intended API expansion to all
 168 is confirmed.
 
-**Arm kinds (from the slot's `values`):**
+**Arm kinds (from the slot's `values`) — both are KINDS (§4g):**
 - **kind-arm** (a `NodeRef`) — the submethod delegates to the arm-kind's factory.
-- **enum-literal-arm** (a `TerminalValue`) — the submethod pins the literal value.
-  This is a **new surface**, e.g. `binary_operator.plus()` pinning `'+'`.
+- **literal-arm** (a `TerminalValue`) — ALSO a kind-ref (its `resolvedKind`, §4g);
+  the submethod pins the literal value (render text survives on `TerminalValue.value`,
+  #0.4). New surface, e.g. `binary_expression.equal()` pinning `==` (kind name
+  from parser.c / a grammar alias).
 
 **Discriminating-slot mechanism (deterministic, no guess).** Default: the
 **single required choice slot** on a branch is the discriminating slot and gets
 submethods. If a branch has **0 or >1** candidate required choice slots → emit a
 **`propose-discriminator`** diagnostic (info/warn, §4b) and keep plain union slots
-until the author marks one — `variant()` / `polymorphs:` selects WHICH slot
-discriminates (registration's residual job, not a guess).
+until the author marks one — registration (§4-registration) selects WHICH slot
+discriminates (the ELEVATE primitive), not a guess.
 
-**Arm-naming (one rule, deterministic):** `<armName>` =
-1. the **registered variant-name** (from `variant()` / `polymorphs:`), else
-2. for a `TerminalValue` arm, the **enum-literal-name** (`'+'`→`plus`, the
-   baked-in deterministic transform #2), else
-3. for a `NodeRef` arm, the **kind-name**.
-Any residual ambiguity → a `propose-*` diagnostic, **never a silent number**.
+**Arm-naming — the ONE rule (REWRITTEN): arm name = the arm's KIND NAME.** Since
+every arm is a kind (§4g — literals included), the submethod name is simply
+`snakeToCamel(armKind(v))`, where `armKind(v) = isNodeRef(v) ? v.node.kind :
+v.resolvedKind` (the unified kind-ref). The arm's kind name is **tree-sitter's**:
+the `anon_sym_*` parser.c symbol for a bare literal, or `alias_sym_<name>` when the
+grammar relabels it (§4-registration RELABEL). **DELETED** vs the prior rule:
+- the priority cascade (no more "registered → literal → kind" — kind name is the
+  one source),
+- the parent-prefix-strip (`k.startsWith(P + '_')`) — **replaced by aliasing**: a
+  variant-synthesized arm kind gets a clean name via the RELABEL alias the
+  registration performs (so `arm-name = kind-name` yields `eq` / `addition`, not
+  `assignmentEq`),
+- the `form_<index>` positional fallback (`link.ts:684`) — the one
+  non-deterministic path; a true collision → `fail{arm-name-collision}` (§4b).
+- `armNameOf` is still a **derived** property (not stored), now trivially =
+  `snakeToCamel(armKind(v))`.
 
-**Registration's residual role (never gates emission, #17):** it supplies (a) arm
-names, (b) the discriminating-slot marker (the 0-or->1 case), and (c) `$variant`
-validation metadata (serialized to node-model, validate-only, #15). Emission keys
-on the structural fact; deleting the registration changes arm *names*, never
-*whether* submethods emit.
+**Dedup BEFORE collision-check (load-bearing order, retained).** First fold arms
+that are the *same logical arm*: alias-pairs (via `slot.aliasSources`) and
+multiplicity-merges (via `mergeSlotValues` `node-map.ts:272`) collapse to one arm.
+*Then* collision-check. Genuine collisions are 0 today.
+
+**Registration's residual role (never gates emission, #17):** registration is the
+two orthogonal primitives (§4-registration) — ELEVATE marks the discriminating
+slot / makes a named kind, RELABEL sets arm kind names via grammar aliases. It
+supplies (a) the discriminating-slot marker (the 0-or->1 case), (b) semantic arm
+kind names (via RELABEL), and (c) `$variant` validation metadata (validate-only,
+#15). Emission keys on the structural fact; deleting registration changes arm
+*names* (they fall back to parser.c `anon_sym_*`), never *whether* submethods emit.
 
 **The ONE general emit path (replaces all polymorph-specific functions).** For
 EVERY branch with a discriminating choice slot, ONE path drives
@@ -1114,6 +1153,93 @@ while their existing factory/type output is unchanged. So the count gate **accep
 the new surface** (new methods + new literal-arm submethods) and asserts the
 *existing* output is byte-identical. The 32 already-polymorph branches re-route
 through the general path with identical output (a form = an arm).
+
+**Arm-naming scope (measured, cited).** Across the 3 grammars: **180
+discriminating slots; 157 literal arms / ~500 kind arms; 0 unmapped, 0 genuine
+collisions** (post-logical-identity-dedup) today. So the model **ships with ZERO
+forced overrides** — `armKind`/`snakeToCamel` resolves every arm deterministically
+from tree-sitter's names. Because parser.c names every token cleanly
+(`anon_sym_*`), the prior `tok_*` `charFallback` ugliness **disappears** — so
+`info{propose-arm-name}` is **DELETED** (no longer needed; tree-sitter's name is
+the name). A multi-char operator now reads e.g. `binary_expression.equalEqual()`
+(or whatever parser.c / a grammar alias yields) — clean by construction, no map to
+maintain.
+
+### §4g. All literals are kinds (token naming is tree-sitter's, not sittir's)
+
+**Every grammar literal already HAS a kindId + a canonical name** — its tree-sitter
+symbol from `parser.c`: `anon_sym_*` for a bare literal, or `alias_sym_<name>`
+when the grammar relabels it (§4h RELABEL). tree-sitter already implements this; we
+read it, we do not invent it (#3/#16 — token naming is tree-sitter's). The
+machinery exists: `generated-metadata.ts` parses `parser.c` (`:64`), captures
+`cSymbol: entry.cName` (`:371`) with an `anon` flag (`:374`) and lowercasing
+(`:398-406`); `TerminalValue.resolvedKind` (`node-map.ts:196`) is already set from
+`findGeneratedKindEntry` (`:1029`). **The ONE new plumbing:** surface `cSymbol` on
+`GeneratedKindEntry` (`generated-metadata.ts:47`, already captured at `:371`) so
+naming can read the tree-sitter symbol name.
+
+**`TerminalValue` survives but unifies with `NodeRef` at the naming/dispatch
+layer:** it keeps `value` (render text, #0.4) but is a **kind-ref** via
+`resolvedKind`. The unified accessor:
+```ts
+armKind(v) = isNodeRef(v) ? v.node.kind : v.resolvedKind   // a literal IS a kind
+```
+So §4f arm-naming + §4d dispatch treat literal-arm and kind-arm identically — both
+are arm kinds.
+
+**Deletions (superseded by reading parser.c):** `TOKEN_NAMES` (`link.ts:1491`) +
+`charFallback` (`link.ts:1561`) + `tokenToName` (`link.ts:1602`) — the sittir-side
+literal→identifier map is **DELETED**; `nameVariant` (`link.ts:675`) / `nameNode`
+(`node-map.ts:1254`) re-point to the kind entry's tree-sitter name. (This is the
+#3 "no hardcoded maps" cut: a hand-maintained operator table is exactly the
+"opaque assumption" the principle forbids when tree-sitter already names them.)
+
+### §4h. Registration = two orthogonal primitives (no monolithic `registerChoice`)
+
+Registration is NOT one opaque "register a polymorph" call — it is **two
+orthogonal, grammar-visible primitives** at different layers, each = an EXISTING
+pass (#16, no new mechanism):
+
+- **ELEVATE** `(parent, slot|path, name?)` — synthesize a named kind for a slot's
+  choice content + rewrite the slot to ref it. **Mechanism = the existing
+  `groups:` / `auto-groups.ts` synthesis into `outRules`** (#16, grammar-visible,
+  gets a `kindId`). Default name `<parent>_<slot>` (e.g.
+  `binary_expression_operator`). Zero new machinery. *Rewrites the PARENT body.*
+- **RELABEL** `(choice, {arm: name})` — `alias(arm, name)` each arm →
+  `alias_sym_<name>` kinds. **Mechanism = the existing `alias()` primitive
+  (`dsl/primitives/alias.ts:35`) / `variant()` hoist (`transform.ts:422`)**
+  (#16). Relabel is what sets the arm kind names *semantically*. *Wraps the ARMS.*
+
+**Composition (orthogonal — different layers):**
+
+| Case | ELEVATE | RELABEL | Result |
+|---|---|---|---|
+| registered enum | ✓ | ✓ (literals) | named kind, semantic literal-arm names |
+| top-level-choice polymorph (`assignment`) | — | ✓ (kinds) | relabel-only; the choice is already the kind's body |
+| deep / inline polymorph slot | ✓ | ✓ (kinds) | elevate the slot to a kind, relabel its arms |
+| elevate-only | ✓ | — | named kind; arm names = parser.c `anon_sym_*` |
+| relabel-only | — | ✓ | inline choice; arms get semantic names, no new parent kind |
+
+**Sugar (kept as author-facing intent + validation metadata):**
+- `enums:` ≡ **elevate + relabel(literal-arms)**.
+- `polymorphs:` / `variant()` ≡ **relabel(kind-arms) + elevate-iff-deep**.
+The spec exposes `elevate` / `relabel` as the primitives these desugar to;
+`polymorphs:` / `enums:` remain the ergonomic surface (carrying intent + the
+`$variant` validation metadata).
+
+**Enum-registration replaces the per-slot enum sidecar — for REGISTERED enums
+only.** An ELEVATE'd enum is a real grammar kind, so it **replaces
+`collectPerSlotChildEnums` (`render-module.ts:2480/3198`)** for registered enums.
+The sidecar **remains** for *unregistered* enum-shaped slots (the zero-config
+predicate path, §G-cut — `predicate = classifier, always on; elevate = kind-maker,
+opt-in; relabel = namer, opt-in`).
+
+**Reconcile with prior decisions (they LAYER, no conflict):** unregistered
+choice-of-literals → the enum-shaped **predicate** (§G-cut, parser.c names) — the
+always-on zero-config classifier. `AssembledEnum` (§7.3) is retained for standalone
+leaf choice-of-literals (which ELEVATE *produces* as a kind). A choice slot inside
+a branch = the unified choice-slot (§4f). §4d dispatch is unchanged (structural on
+`armKind(v)`).
 
 ---
 
@@ -1144,8 +1270,8 @@ rule-IR cuts.
 | **PR-G** | Diagnostics severity model + Assemble→Project gate | Add `compiler/diagnostics.ts` (`DiagnosticSink`, severity) + `compiler/emit-gate.ts` (`assertEmittable`); wire the gate into `generate.ts` after `assemble()`. Move the unnamed-choice warner global (`collect-slots.ts:61-68`) into the sink. Initially all current heuristics still fire (no `fail` yet) — gate is a no-op until PR-L flips severities. | counts unchanged; gate passes (no `fail` emitted yet) | additive infrastructure; no severity is `fail` until PR-L |
 | **PR-H** | Phase rename + shared `transforms.ts` + ctx + node-behavior-to-class | Rename `link.ts`→`classify.ts`, `optimize.ts`→`normalize.ts`. Extract shared idempotent ops to `transforms.ts`. Introduce `NormalizeCtx`/`SimplifyCtx`/`AssembleCtx` (carrying the sink from PR-G). Apply the §7.7 `<operation><ObjectType>(target, ctx)` signatures. **Node-behavior-to-class:** `markUserFacing`→`(node, ctx)` method; **DELETE the `markParameterlessKinds` fixpoint + stored field → memoized cycle-guarded `isParameterless`/`stampExpression` getters** on `AssembledNode` (§7.3 / §7.7), terminals override the base case. | counts; full test suite; the parameterless getter produces byte-identical factory auto-stamp output | pure rename + move + method relocations; the getter is the *same* recursion the fixpoint computed (cycle = not-parameterless matches the fixpoint's never-marks-a-cycle behavior), so factory output is unchanged |
 | **PR-M** | Sittir-invention rule-IR cut + `AssembledPolymorph` collapse (§B/§C/§D + §H-fold, #16) | **§B + §H-fold:** delete `PolymorphRule`/`VariantRule` from the `Rule` union; **DELETE `AssembledPolymorph` + `modelType:'polymorph'` (`node-map.ts:2599/3087`)** — a polymorph becomes an `AssembledBranch` with `discriminatingSlot?` (the former `structuralSlotRecordFromForms` `:2131` cross-arm union generalizes into the branch slot merge; `variantChildKinds` derived = `discriminatingSlot.kinds`); reframe `promotePolymorph`/`applyOverridePolymorphs` to RECORD a thin `DiscriminatingSlotMarker` (which-slot + arm-names, NOT per-form `FormSpec`); delete the 6 `mapPolymorphForms` arms; delete the `evaluate.ts:330-339` variant-retype. **§C:** delete `ClauseRule` + `detectClause` (`link.ts:2292`) + the `'clause'` arms (closes `project_clause_multifield_gap`). **§D:** delete Link's `classifyHiddenSeqRule` GroupRule path (`link.ts:1963/1975`); Assemble builds `AssembledGroup` from the wire helper. | counts unchanged; `AssembledPolymorph` gone; `PolymorphRule` import reach 7→marker-only; the secondary-field gap closes | a branch + its discriminating-slot `values` reconstruct the identical Model the per-form `AssembledPolymorph` held (a form = an arm); clause fields were already in the seq (restoring them only adds); the wire group helper is the kind Link's classifier shadowed |
-| **PR-I** | General choice-slot → factory submethods + structural arm-dispatch + `$variant` removal (§4f / §H-fold — replaces the old polymorph-specific PR-I + PR-J) | Add the **general resolver** keyed on a discriminating choice slot's `values` arms (kind-arm → `$type`; literal-arm → literal) — generalizes `project_polymorph_dispatcher_slot_probe` to all 168 branches. **Identical-arm collapse** first (C2 / §4d), assert no duplicate-signature arm. ONE general emit path replaces the polymorph-specific functions (`emitPolymorphFactory` `factories.ts:1401`, per-form loop `:1426/1435`, `emitPolymorphDispatcher` `factories.ts:1713`+`from.ts:1110/1293`, `emitFormInterface` `types.ts:1231`, wrap polymorph path `wrap.ts:158-197`/dispatch maps `:305-322`, `emitPolymorphTemplate`): types emit union + per-arm narrowed views; factory emits dispatcher + per-arm submethods (kind-arm delegates, literal-arm pins, e.g. `binary_operator.plus()`); from/wrap dispatch on the concrete arm. **Discriminating-slot default** = single required choice slot; 0-or->1 → `propose-discriminator` (keep plain unions). **Arm-naming** per §4f. **Remove the stored `$variant`** from all shipped surfaces (~95+ ts sites); validate-only in node-model. | counts: **existing output byte-identical**; the new per-arm submethods (incl. literal-arm) are ADDITIVE for the ~136 non-polymorph discriminating-slot branches → gate ACCEPTS the new surface; no compile-time "no arm matched"; collapse assertion holds; no `$variant` in generated 1–6 | the general path reproduces every dispatch decision the 32 polymorphs + the stored discriminant made (a form = an arm); the other 136 branches only GAIN methods; `$variant` is provenance, not behavior (#15/#17) |
-| **PR-K** | `factory-map.json5` → `node-model.json5` (orthogonal) | Make `node-model.json5` carry factory-map's subset (§6); **`polymorphVariants` rebuilt per-branch from the discriminating slot's `values` arms** (§6 / §H-fold), not stored form fields; point validator/`nodeToConfig` at it; delete `factory-map.json5` + emitter. | validator passes against the consolidated model; counts | factory-map is a strict subset (§6 proof); pure consolidation, independent of PR-I |
+| **PR-I** | General choice-slot → factory submethods + structural arm-dispatch + `$variant` removal (§4f / §H-fold — replaces the old polymorph-specific PR-I + PR-J) | Add the **general resolver** keyed on a discriminating choice slot's `values` arms (kind-arm → `$type`; literal-arm → literal) — generalizes `project_polymorph_dispatcher_slot_probe` to all 168 branches. **Identical-arm collapse** first (C2 / §4d), assert no duplicate-signature arm. ONE general emit path replaces the polymorph-specific functions (`emitPolymorphFactory` `factories.ts:1401`, per-form loop `:1426/1435`, `emitPolymorphDispatcher` `factories.ts:1713`+`from.ts:1110/1293`, `emitFormInterface` `types.ts:1231`, wrap polymorph path `wrap.ts:158-197`/dispatch maps `:305-322`, `emitPolymorphTemplate`): types emit union + per-arm narrowed views; factory emits dispatcher + per-arm submethods (kind-arm delegates, literal-arm pins, e.g. `binary_operator.plus()`); from/wrap dispatch on the concrete arm. **Discriminating-slot default** = single required choice slot; 0-or->1 → `propose-discriminator` (keep plain unions). **Arm-naming = the arm's KIND NAME (§4f rewrite + §4g)**: `snakeToCamel(armKind(v))` where `armKind = isNodeRef ? node.kind : resolvedKind` — read from tree-sitter (`parser.c` `anon_sym_*` / grammar `alias_sym_<name>`). Dedup-by-logical-identity FIRST (alias-pairs + `mergeSlotValues`), then collision-check. **DELETE `TOKEN_NAMES`/`charFallback`/`tokenToName` (`link.ts:1491/1561/1602`)** + the priority cascade + the parent-prefix-strip + the `form_<index>` fallback (`link.ts:684`) + `propose-arm-name`; re-point `nameVariant`/`nameNode` to the kind entry's tree-sitter name (surface `cSymbol` on `GeneratedKindEntry`, §4g); a true post-dedup collision → `fail{arm-name-collision}`. **Remove the stored `$variant`** from all shipped surfaces (~95+ ts sites); validate-only in node-model. | counts: **existing output byte-identical**; new per-arm submethods ADDITIVE for the ~136 non-polymorph branches → gate ACCEPTS new surface; no compile-time "no arm matched"; collapse assertion holds; **0 `arm-name-collision` today**; no `$variant` in generated 1–6 | a kind's name is tree-sitter's (already in parser.c) — reading it can't regress; the general path reproduces every dispatch decision (a form = an arm); the other 136 branches only GAIN methods |
+| **PR-K** | `factory-map.json5` → `node-model.json5` + registration-primitive surfacing + enum-sidecar retirement (orthogonal) | Make `node-model.json5` carry factory-map's subset (§6); **`polymorphVariants` rebuilt per-branch from the discriminating slot's `values` arms** (§6 / §H-fold). **§4h:** expose `elevate`/`relabel` as the two primitives `polymorphs:`/`enums:` desugar to (ELEVATE = existing `groups:`/`auto-groups`; RELABEL = existing `alias()`/`variant()` — no new machinery); **replace `collectPerSlotChildEnums` (`render-module.ts:2480/3198`) with the ELEVATE'd grammar kind FOR REGISTERED enums only** (the sidecar remains for unregistered enum-shaped slots, §G-cut). Point validator/`nodeToConfig` at node-model; delete `factory-map.json5` + emitter. | validator passes; counts; registered-enum slots render via the elevated kind (sidecar output unchanged for unregistered) | factory-map is a strict subset (§6 proof); elevate/relabel are existing passes surfaced (#16); the sidecar→kind swap is per-registered-enum, gated on counts |
 | **PR-N** | enrich-widening — name the easy positional symbols (§F) | Widen enrich symbol-to-field promotion to ALL unambiguous single-occurrence positional symbols (LR-safe via the landed `syntheticInline` `_kw_*` auto-inline). Shrinks the 243 `inferred` slots; pure-direct duplicates → deterministic positional numbering. | counts; the `inferred` slot count drops; no LR regression (override-parser errors unchanged) | promotion is deterministic + grammar-visible (#16); the `_kw_*` auto-inline keeps the parse table stable; naming a slot doesn't change its values/cardinality |
 | **PR-O** | Structural de-dup (M1/MO2/P1 — non-behavioral) | **MO2:** extract `SlotValueBase` (`NodeRef`+`TerminalValue` share 5 fields). **P1:** extract `BaseEmitConfig` (`grammar`/`nodeMap`/`generatedIdTables?` on every emit Config). **M1:** relocate the shared transforms into `transforms.ts` (de-scatter — already single-bodied, no merge). | counts unchanged; type-check passes | pure type/interface refactors + a file move; zero runtime behavior change |
 | **PR-P** | Content-classification cut: Terminal + Enum (flat) → predicates (§G-cut, #16/#1) | **Terminal (clean):** delete `TerminalRule` + `isTerminal`; delete `promoteAndLogTerminalRules` (`link.ts:388`); delete the transparent `case 'terminal'` arms (`wrapper-deletion.ts:155`, `simplify.ts:404/734/1159/1222`, `optimize.ts:484/546/718`, `rule.ts:485/556/925`, `templates.ts:605`); add `isTerminalShaped` (reconcile `link.ts:1617` + `assemble.ts:1561`); `classifyTerminalFallback` becomes primary, the `assemble.ts:1549` throw becomes the normal path; `AssembledPattern` narrows to `PatternRule` + natural subtree. **Enum (FLAT, shape-identical):** delete `EnumRule` + `isEnum`; `normalizeEnumMembers` keeps only single-literal→`StringRule`; `evaluate.ts:268` stops emitting `EnumRule`; delete the enum branch of `classifyHiddenChoiceRule` (`link.ts:1937`) + the `case 'enum'` arms; classify enums at Assemble via **`choice && members.every(isEnumLeaf)` (FLAT, no recursion)** → `AssembledEnum`. | counts unchanged; **the classified enum set + pattern set are byte-identical to today** (flat predicate matches the old flat `EnumRule`/`isAllTextShape` exactly); transport enums (read `AssembledEnum`) unchanged | both predicates reproduce the exact shape the rule-type wrappers classified; the wrappers were transparent (terminal) / a flat all-string test (enum) — no nested widening yet |
@@ -1248,6 +1374,12 @@ serialized but not the dispatch-ready form.
    (consolidation orthogonal to dispatch) is why they are separate PRs: PR-K can
    land without touching the shipped surfaces, and the validator keeps reading
    `$variant` from the Model regardless.
+
+**Elevated enum kinds are ordinary node-model kinds (§4h).** A REGISTERED enum
+(ELEVATE'd, §4h) is a real grammar kind, so it appears in `node-model.json5` as an
+**ordinary kind** — replacing its per-slot sidecar entry (`collectPerSlotChildEnums`)
+for registered enums. The sidecar representation **remains** in node-model for
+*unregistered* enum-shaped slots (the zero-config predicate path).
 
 **⚠ FLAG — schema bump + migration.** `node-model.json5`'s schema grows
 (new `polymorphVariants` / `factoryShapes` / `factoryFields` sections). Per
@@ -1419,7 +1551,7 @@ class hierarchy is **already class-based**; only the listed members change.
 |---|---|---|
 | `AssembledNodeBase<R>` | REFINED — see `node-map.ts:1281` | **DELETED method:** `renderTemplate()` (PR3). `protected rule: R` getters (`members`/`separator`/`isTextTemplate`) read `renderRule` after the RawRule snapshot is dropped (§4 FLAG). **NEW memoized getters (replace the deleted fixpoint pass + stored fields, §7.7):** `isParameterless` + `stampExpression`/`stampChildExpression` — recursive over `slot.values[].node`, cycle-guarded (in-progress = not parameterless), memoized per node; terminal subclasses override the base case. **Stored field populated by a `(node, ctx)` pass, read field-style:** `userFacing` (set by `markUserFacing` — cross-node, NOT a getter). Otherwise unchanged (`kind`/`typeName`/`factoryName`/`irKey`/`source`/`hidden`) |
 | `AssembledNonterminal` | **REFINED → CLASS** (§2 full def) | the slot class; getters `storageName` (the ONE identity)/`storageKey`/`parseNames`/`configKey`/`propertyName`/`paramName`/`arity`/`isRequired`/`isMultiple`/`isNonEmpty`/`hasTrailing`/`hasLeading`/`kinds`. Stored: `fieldName`/`values`/`aliasSources`/`source` (provenance, incl. retained `'inferred'`)/`sourceRuleId`/`storageInfo`/`#refKindNames`. **DELETED:** the `name` field/alias (one identity: `storageName`); stored `storageName`/`propertyName`/`configKey`/`paramName`/`hasTrailing`/`hasLeading`/`origin`; the `_new` suffixed fields; `SlotSource` variant `'inlined'` only (`'inferred'` retained as provenance) |
-| `AssembledBranch` | REFINED — see `node-map.ts:2586` | `_slots` record now holds `AssembledNonterminal` instances; `slots`/`fields` getters unchanged. **ABSORBS `AssembledPolymorph` (§H-fold):** a branch with a **discriminating choice slot** (`slot.values.length > 1`) carries `discriminatingSlot?: string` (the slot's `storageName`) + `variantChildKinds` (now derived = `discriminatingSlot.kinds`, not stored from forms). The former `structuralSlotRecordFromForms` (`node-map.ts:2131`) cross-arm union + optionality-relax generalizes into the branch slot merge. **DELETED:** `renderTemplate()`; `children` getter already retired (returns `[]`) |
+| `AssembledBranch` | REFINED — see `node-map.ts:2586` | `_slots` record now holds `AssembledNonterminal` instances; `slots`/`fields` getters unchanged. **ABSORBS `AssembledPolymorph` (§H-fold):** a branch with a **discriminating choice slot** (`slot.values.length > 1`) carries `discriminatingSlot?: string` (the slot's `storageName`) + `variantChildKinds` (now derived = `discriminatingSlot.kinds`, not stored from forms). The former `structuralSlotRecordFromForms` (`node-map.ts:2131`) cross-arm union + optionality-relax generalizes into the branch slot merge. **Arm name is a DERIVED property `armNameOf(slot, value, parentKind)` (§4f)** — registration provides only the priority-1 override name + the discriminating-slot marker + `$variant` validation, NOT a stored per-arm name. **DELETED:** `renderTemplate()`; `children` getter already retired (returns `[]`) |
 | `AssembledPolymorph` | **DELETED (§H-fold)** — see `node-map.ts:2599-2710` | Removed entirely; `modelType:'polymorph'` removed from the `AssembledNode` union (`node-map.ts:3087`). A polymorph kind is now an `AssembledBranch` with a `discriminatingSlot`; each form = one arm of that slot. The per-form `AssembledGroup` (the prior `PolymorphSpec`/`FormSpec` dissolution, §B) is gone — arms are `ChoiceRule` members fully modeled by the slot's `values` (kind-arm = `NodeRef`, literal-arm = `TerminalValue`) |
 | `AssembledGroup` | REFINED — see `node-map.ts:3659` | hidden synthesized-group; `fields`/`children` unchanged, but **built from the wire-synthesized helper kind** (grammar-visible, `kindId`, §D), not Link's deleted opaque GroupRule classifier. **NEW getter `discriminatorKindsOrDefault` (EmitDRY-3)** `= discriminatorKinds ?? [\`${parentKind}_${name}\`]` — the byte-identical fallback duplicated at `factory-map.ts:146` + `wrap.ts:310`; both consumers read the getter (a polymorph form IS an `AssembledGroup`). **DELETED:** `renderTemplate()` |
 | `AssembledMulti` | REFINED — see `node-map.ts:3617` | `elementRule`/`separator`/`nonEmpty`/`trailing`/`leading` unchanged. **DELETED:** `renderTemplate()` |
@@ -1553,6 +1685,16 @@ as Rule types** — Assemble *already* recomputes both as a fallback predicate
 member. Both leave the `Rule` union; the Model nodes `AssembledEnum` /
 `AssembledPattern` stay. (This reverses the prior "deferred" note now that the
 dig is complete.)
+
+> **§7.4 layer unification (§4g).** At the **slot layer** a literal-arm
+> (`TerminalValue`) and a kind-arm (`NodeRef`) are **one concept — both are arm
+> KINDS** (`armKind(v) = isNodeRef(v) ? v.node.kind : v.resolvedKind`, §4g). There
+> are **no enum/polymorph rule types** (consistent with the `EnumRule`/`PolymorphRule`
+> deletions): a choice slot's arms are uniformly kinds, named by tree-sitter,
+> dispatched structurally (§4d). `AssembledEnum` is retained only as the
+> *standalone leaf* choice-of-literals kind (which ELEVATE produces, §4h);
+> `TerminalValue` is retained only for its render `value` (#0.4) — neither is a
+> Rule member.
 
 **Shared predicates (composition order; live in `rule.ts` or a `predicates.ts`):**
 ```ts
