@@ -19,16 +19,22 @@ Thumbs.db
 *.tsbuildinfo
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
-# `.sittir/` is the per-grammar generated-output staging area. The directory
-# is ignored by default, but a few well-known generated artifacts are
-# explicitly tracked via `git add -f`:
+# `.sittir/` is the per-grammar generated-output staging area. Its CONTENTS
+# are ignored, EXCEPT the well-known tracked artifacts un-ignored below — so
+# they're first-class tracked (no more `git add -f`, no "ignored" warnings,
+# `git status`/`git add` just work):
 #   - grammar.js (tree-sitter grammar entry)
 #   - package.json (codegen-emitted package manifest)
 #   - tree-sitter.json (tree-sitter metadata)
 #   - generated.manifest.json (codegen output fingerprint — see
 #     packages/codegen/src/scripts/generated-manifest.ts)
-# When adding new entries to this list, force-add them and document here.
-packages/*/.sittir/
+# To track a new .sittir artifact, add a `!` negation below (must ignore the
+# dir CONTENTS via `/*`, not the dir, or negations inside can't take effect).
+packages/*/.sittir/*
+!packages/*/.sittir/grammar.js
+!packages/*/.sittir/package.json
+!packages/*/.sittir/tree-sitter.json
+!packages/*/.sittir/generated.manifest.json
 
 
 # Stray tree-sitter build artifacts (parser.wasm should be in .sittir/)
