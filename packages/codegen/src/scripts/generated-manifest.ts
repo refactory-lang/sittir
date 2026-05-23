@@ -128,7 +128,6 @@ function collectFiles(grammar: Grammar): string[] {
 
 interface Manifest {
 	grammar: Grammar;
-	generated_at: string;
 	/**
 	 * SHA256 of the source inputs that drove this generation —
 	 * `packages/<grammar>/overrides.ts` (hand-edited adjuster) +
@@ -216,7 +215,6 @@ export function writeManifestForGrammar(grammar: Grammar): void {
 
 	const manifest: Manifest = {
 		grammar,
-		generated_at: new Date().toISOString(),
 		source_hash: computeSourceHash(grammar),
 		files,
 		...(Object.keys(host_files).length > 0 ? { host_files } : {})
