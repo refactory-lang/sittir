@@ -1,7 +1,7 @@
 # Compiler Workflow Simplification — Design
 
 **Date:** 2026-05-22
-**Status:** 📋 SPEC RECONCILED — brainstorm (above) + code-grounded implementation spec §1–§7 (below); **5 decisions + DRY/simplify review + critical-review batch + method-convergence fold + synthesis-discipline batch (2026-05-22)**. End-state is clean (no transitional aliases, no sunset PRs; old code removed within the superseding strangler step). Adds **Principle #16 (synthesis only if deterministic AND grammar-visible; sittir-only inventions forbidden)**; cuts `PolymorphRule`/`VariantRule`/`ClauseRule` + the opaque Group classifier from the Rule IR (→ Model-only `PolymorphSpec` / plain structure / wire helper, §B/§C/§D); the `propose-*` diagnostic class (§E); enrich-widening (§F); plus the earlier Principle #15, the sanctioned `content` slot (§4c), identical-form collapse (§4d), the H2 helper-leak fix, the #14 getter-vs-method line, the `parameterless`-as-memoized-getter convergence, and the M1/MO2/M3/P1 structural de-dups. **Ready for user review → `writing-plans`.** 16 PRs (PR3 prereq + PR-A..PR-O + PR-L, incl. PR-D2/PR-M/PR-N/PR-O). PR3 is a gating prerequisite (not yet landed — only its design doc is on this branch).
+**Status:** 📋 SPEC RECONCILED — brainstorm (above) + code-grounded implementation spec §1–§7 (below); **5 decisions + DRY/simplify review + critical-review batch + method-convergence fold + synthesis-discipline batch (2026-05-22)**. End-state is clean (no transitional aliases, no sunset PRs; old code removed within the superseding strangler step). Adds **Principle #16 (synthesis only if deterministic AND grammar-visible; sittir-only inventions forbidden)**; cuts **ALL sittir-invented + content-classification Rule types** — `PolymorphRule`/`VariantRule`/`ClauseRule` + the opaque Group classifier (→ Model-only `PolymorphSpec` / plain structure / wire helper, §B/§C/§D) AND `EnumRule`/`TerminalRule` (→ `isEnumShaped`/`isTerminalShaped` predicates + the `AssembledEnum`/`AssembledPattern` Model nodes, §G-cut); the `propose-*` diagnostic class (§E); enrich-widening (§F); plus the earlier Principle #15, the sanctioned `content` slot (§4c), identical-form collapse (§4d), the H2 helper-leak fix, the #14 getter-vs-method line, the `parameterless`-as-memoized-getter convergence, and the M1/MO2/M3/P1 structural de-dups. The end-state `Rule` union is now purely structural (`seq`/`choice`/`group`/`supertype`/`string`/`pattern`/whitespace/`symbol`/`token`). **Ready for user review → `writing-plans`.** 18 PRs (PR3 prereq + PR-A..PR-Q + PR-L). PR3 is a gating prerequisite (not yet landed — only its design doc is on this branch).
 **Base:** branch `026-pr3-delete-legacy-render-walker` (off `master`, post-PR2 merge `bbadd99b`).
 
 ---
@@ -1025,9 +1025,11 @@ rule-IR cuts.
 | **PR-M** | Sittir-invention rule-IR cut: Polymorph/Variant → Model-only + ClauseRule removal + opaque Group classifier delete (§B/§C/§D, #16) | **§B:** delete `PolymorphRule`/`VariantRule` from the `Rule` union; add the `PolymorphSpec`/`FormSpec` side-channel on the linked grammar; reframe `promotePolymorph`/`applyOverridePolymorphs` to RECORD a spec; delete the 6 `mapPolymorphForms` arms + the form-snapshot block in `normalize.ts` (per-form snapshot → Assemble's `buildAssembledFormGroups`); delete the `evaluate.ts:330-339` variant-retype. **§C:** delete `ClauseRule` + `detectClause` (`link.ts:2292`) + the `'clause'` arms — `optional(seq(fields))` is plain structure (closes `project_clause_multifield_gap`). **§D:** delete Link's `classifyHiddenSeqRule` GroupRule path (`link.ts:1963/1975`); Assemble builds `AssembledGroup` from the wire helper. `AssembledPolymorph`/`AssembledGroup` SHAPES unchanged. | counts; `PolymorphRule` import reach 7→spec-only; the secondary-field gap closes (a `clause` multi-field kind now keeps all fields) | the spec + structural `choice` reconstruct the identical `AssembledPolymorph`; clause fields were already in the seq (just dropped at naming) — restoring them only adds, never removes; the wire group helper is the same kind Link's classifier shadowed |
 | **PR-N** | enrich-widening — name the easy positional symbols (§F) | Widen enrich symbol-to-field promotion to ALL unambiguous single-occurrence positional symbols (LR-safe via the landed `syntheticInline` `_kw_*` auto-inline). Shrinks the 243 `inferred` slots; pure-direct duplicates → deterministic positional numbering. | counts; the `inferred` slot count drops; no LR regression (override-parser errors unchanged) | promotion is deterministic + grammar-visible (#16); the `_kw_*` auto-inline keeps the parse table stable; naming a slot doesn't change its values/cardinality |
 | **PR-O** | Structural de-dup (M1/MO2/P1 — non-behavioral) | **MO2:** extract `SlotValueBase` (`NodeRef`+`TerminalValue` share 5 fields). **P1:** extract `BaseEmitConfig` (`grammar`/`nodeMap`/`generatedIdTables?` on every emit Config). **M1:** relocate the shared transforms into `transforms.ts` (de-scatter — already single-bodied, no merge). | counts unchanged; type-check passes | pure type/interface refactors + a file move; zero runtime behavior change |
+| **PR-P** | Content-classification cut: Terminal + Enum (flat) → predicates (§G-cut, #16/#1) | **Terminal (clean):** delete `TerminalRule` + `isTerminal`; delete `promoteAndLogTerminalRules` (`link.ts:388`); delete the transparent `case 'terminal'` arms (`wrapper-deletion.ts:155`, `simplify.ts:404/734/1159/1222`, `optimize.ts:484/546/718`, `rule.ts:485/556/925`, `templates.ts:605`); add `isTerminalShaped` (reconcile `link.ts:1617` + `assemble.ts:1561`); `classifyTerminalFallback` becomes primary, the `assemble.ts:1549` throw becomes the normal path; `AssembledPattern` narrows to `PatternRule` + natural subtree. **Enum (FLAT, shape-identical):** delete `EnumRule` + `isEnum`; `normalizeEnumMembers` keeps only single-literal→`StringRule`; `evaluate.ts:268` stops emitting `EnumRule`; delete the enum branch of `classifyHiddenChoiceRule` (`link.ts:1937`) + the `case 'enum'` arms; classify enums at Assemble via **`choice && members.every(isEnumLeaf)` (FLAT, no recursion)** → `AssembledEnum`. | counts unchanged; **the classified enum set + pattern set are byte-identical to today** (flat predicate matches the old flat `EnumRule`/`isAllTextShape` exactly); transport enums (read `AssembledEnum`) unchanged | both predicates reproduce the exact shape the rule-type wrappers classified; the wrappers were transparent (terminal) / a flat all-string test (enum) — no nested widening yet |
+| **PR-Q** | Enum recursive-widening (count-gated, §G-cut staging step 2) | Switch the enum predicate from flat to **recursive `isEnumShaped`** (`choice && members.every(isEnumShaped)`) so nested literal-choices classify as `AssembledEnum`; `AssembledEnum.values` flattens nested leaves. **Count-gated:** the newly-classified nested choices are reviewed + all 3 grammars regen'd; pass-rate must hold. | counts hold; the newly-`enum` kinds are reviewed; **measured widening delta = rust 0 / ts 1 / python 0** (so a near-no-op) | the widening only re-classifies choices whose members are all literal sets (recursively) — semantically already enums; the measured delta is ≤ a handful, each regen-verified |
 | **PR-L** | Flip remaining heuristics to `propose-*` fail-diagnostics (author overrides first) | For each *guess* still present after PR-M/PR-N (`inferFieldNames` residue → `propose-field`; any leftover polymorph candidacy → `propose-polymorph`; the choice distribute-vs-union guess `collect-slots.ts:520`): **first** instrument the **pre-merge** slot stream (before `mergeSlotsByName`, §F) to count the direct+repeat-mix `propose-field` FAIL residue per grammar; author the `field()`/`polymorphs:` overrides that clear it (counts must hold); **then** delete the heuristic and `fail`. **NOT in scope:** (a) the sanctioned `content` slot (§4c) — stays `warn`, never `fail`; (b) `propose-top-level-rule` — info/warn, never `fail` (auto-groups render fine); (c) the **parameterless derivation** — not a guess, became a getter in PR-H. | counts hold AT EACH heuristic removal; the pre-merge `propose-field` residue → 0 via overrides; `overrides.suggested.ts` reviewed; gate (PR-G) actively blocks | overrides authored before each guess is removed → deterministic path produces the same Model; `content`/`propose-top-level-rule`/parameterless are not fails, so no surprise cliff |
 
-**Proposed PR count: 16** (PR3 prereq + PR-A..PR-O + PR-L, incl. PR-D2/PR-M/PR-N/PR-O).
+**Proposed PR count: 18** (PR3 prereq + PR-A..PR-Q + PR-L, incl. PR-D2/PR-M/PR-N/PR-O/PR-P/PR-Q).
 PR3, PR-A..PR-D are the load-bearing core (centralize naming + kill
 `SlotModel`/`origin`/`name`, narrow `$children`→`$other`); PR-D2 fixes the
 helper-name leak; PR-E..PR-F migrate the remaining read sites; PR-G is the
@@ -1035,11 +1037,13 @@ diagnostics gate; PR-H is the phase reorg + method conformance + the
 parameterless getter; PR-I/PR-J/PR-K are the H3-split resolver / `$variant`-removal
 / factory-map consolidation; **PR-M cuts the sittir-invention rule types
 (Polymorph/Variant/Clause/opaque-Group) per #16; PR-N widens enrich;
-PR-O is non-behavioral structural de-dup;** PR-L is the final `propose-*`
-heuristics-to-fail flip (it runs LAST — it depends on PR-M removing the retype,
-PR-N shrinking the residue, and PR-G providing the gate). Each PR is a strangler
-step that **removes the old code it supersedes within the same PR** — no
-dedicated "sunset" PRs.
+PR-O is non-behavioral structural de-dup; PR-P cuts the content-classification
+rule types (Terminal + flat Enum) to predicates; PR-Q is the count-gated
+recursive-enum widening;** PR-L is the final `propose-*` heuristics-to-fail flip
+(it runs LAST — it depends on PR-M removing the retype, PR-N shrinking the
+residue, and PR-G providing the gate). Each PR is a strangler step that
+**removes the old code it supersedes within the same PR** — no dedicated
+"sunset" PRs.
 
 **Gating discipline (#12, brainstorm validation gate).** Each PR ends with:
 `npx tsx packages/codegen/src/cli.ts --grammar <g> --all --output …` for all 3,
@@ -1048,8 +1052,11 @@ baseline. PR-A gates on the WIDE divergence probe = 0 (every projected name);
 PR-D2 gates on the H2 helper-leak probe = 0; PR-I gates on the collapse
 assertion; PR-M gates on the clause-multifield gap closing (no field lost) +
 `PolymorphRule` leaving the Rule union; PR-N gates on the `inferred` count
-dropping with no LR regression; PR-L gates on the pre-merge `propose-field`
-residue → 0 and counts holding *at each individual heuristic removal*.
+dropping with no LR regression; **PR-P gates on the enum + pattern classified
+sets being byte-identical to today (flat predicate ≡ old wrappers); PR-Q gates
+on the recursive-widening delta (rust 0 / ts 1 / python 0) being regen-verified
+with pass-rate held;** PR-L gates on the pre-merge `propose-field` residue → 0
+and counts holding *at each individual heuristic removal*.
 
 ---
 
@@ -1132,13 +1139,13 @@ classes (§7.3).
 |---|---|---|---|
 | `dsl/enrich.ts` | UNCHANGED — see glossary Phase 0 | shared grammar layer (not a sittir phase) | `enrich`, `applyEnrichPasses`, `enrichFieldWrappers`, `enrichMultiplicityWrappers`, … |
 | `dsl/wire/*` + `dsl/runtime-shapes.ts` | UNCHANGED — see glossary Phase 1 | shared grammar layer | `wire`, `applyAutoGroups`, dual-case predicates, … |
-| `compiler/evaluate.ts` | REFINED — see `evaluate.ts:200` | **Evaluate** | `evaluate(entryPath)`, DSL primitives, `synthesize*`, `liftCommaSep`, `grammarFn`. **DELETED (§B):** the heterogeneous-field-choice → `variant`-retype block (`evaluate.ts:330-339`) — the choice stays a plain `choice`; the polymorph candidacy is recorded as a `PolymorphSpec` in classify (or a `propose-polymorph` diagnostic), never a retyped rule node |
-| `compiler/classify.ts` | RENAME of `link.ts` (+ folds `link-refine.ts`, `field-shape.ts`) | **Classify** | `classifyGrammar(raw, ctx)` (was `link`), `resolveRule`, `classifyHiddenRule`, `hoistIndentIntoRepeat`, `annotateBlockBearerFields`. **`promotePolymorph`/`applyOverridePolymorphs` REFRAMED** — they RECORD a `PolymorphSpec` (§B side-channel) instead of rewriting a `choice` into a `PolymorphRule`. **DELETED:** `detectClause` (§C — ClauseRule gone, THIS spec); `classifyHiddenSeqRule`'s opaque GroupRule path (`link.ts:1963/1975`, §D — Assemble reads the wire helper instead); `inferFieldNames`, `looksLikePolymorphCandidate`, `choiceNeedsVariantWrapping` (→ `propose-*` diagnostics, §E / PR-L) |
-| `compiler/normalize.ts` | RENAME of `optimize.ts` (+ folds `wrapper-deletion.ts`) | **Normalize (non-lossy)** | `normalizeGrammar(linked, ctx)` (was `optimize`), `fanOutSeqChoices`, `factorChoiceBranches`, `dedupeSeqMembers`, `inlineSingleUseHidden`, `collapseWrappers`, `pushdownWrappers` (was `applyWrapperDeletion`). Produces the **RenderRule** snapshot. **DELETED (§B):** the 6 `mapPolymorphForms` arms (`optimize.ts:226/357/399/…` — `variant`/`polymorph` cases across the normalization passes) + the per-form snapshot block (per-form slots relocate to Assemble's `buildAssembledFormGroups`). Polymorph parents are now plain `ChoiceRule`s the existing seq/choice passes already handle |
-| `compiler/simplify.ts` | UNCHANGED structure — see `simplify.ts:331` | **Simplify (lossy)** | `computeSimplifiedRules`, `simplifyRules`, `simplifyRule`, `fuseHeadRepeatLists`, `hoistSharedFieldAcrossChoiceBranches`, `mergeChoiceBranches`, the field-hoist helpers. Produces the **SimplifiedRule** snapshot |
+| `compiler/evaluate.ts` | REFINED — see `evaluate.ts:200` | **Evaluate** | `evaluate(entryPath)`, DSL primitives, `synthesize*`, `liftCommaSep`, `grammarFn`. **DELETED (§B):** the heterogeneous-field-choice → `variant`-retype block (`evaluate.ts:330-339`). **CHANGED (§G-cut):** `choice()` (`evaluate.ts:268`) stops emitting `EnumRule` — `normalizeEnumMembers` returns a single-literal `StringRule` or a plain `ChoiceRule` |
+| `compiler/classify.ts` | RENAME of `link.ts` (+ folds `link-refine.ts`, `field-shape.ts`) | **Classify** | `classifyGrammar(raw, ctx)` (was `link`), `resolveRule`, `classifyHiddenRule`, `hoistIndentIntoRepeat`, `annotateBlockBearerFields`. **`promotePolymorph`/`applyOverridePolymorphs` REFRAMED** — they RECORD a `PolymorphSpec` (§B). **DELETED:** `detectClause` (§C); `classifyHiddenSeqRule`'s opaque GroupRule path (`link.ts:1963/1975`, §D); `promoteAndLogTerminalRules` (`link.ts:388`, called `:138`) + the enum branch of `classifyHiddenChoiceRule` (`link.ts:1935/1937`) as rewriters (§G-cut — classification is now a predicate at Assemble); `inferFieldNames`, `looksLikePolymorphCandidate`, `choiceNeedsVariantWrapping` (→ `propose-*` diagnostics, §E / PR-L). **NEW:** `isTerminalShaped` (reconciles `link.ts:1617` `isTerminalShape` + `assemble.ts:1561` `isAllTextShape` into one shared predicate) |
+| `compiler/normalize.ts` | RENAME of `optimize.ts` (+ folds `wrapper-deletion.ts`) | **Normalize (non-lossy)** | `normalizeGrammar(linked, ctx)` (was `optimize`), `fanOutSeqChoices`, `factorChoiceBranches`, `dedupeSeqMembers`, `inlineSingleUseHidden`, `collapseWrappers`, `pushdownWrappers` (was `applyWrapperDeletion`). Produces the **RenderRule** snapshot. **DELETED (§B):** the 6 `mapPolymorphForms` arms (`optimize.ts:226/357/399/…`) + the per-form snapshot block. **DELETED (§G-cut):** the transparent `case 'terminal'` arms (`optimize.ts:484/546/718`) + `case 'enum'` arms — the natural `seq`/`string`/`choice` arms already handle the shape; `rulesEqual`'s enum arm folds into the choice arm |
+| `compiler/simplify.ts` | REFINED — see `simplify.ts:331` | **Simplify (lossy)** | `computeSimplifiedRules`, `simplifyRules`, `simplifyRule`, `fuseHeadRepeatLists`, `hoistSharedFieldAcrossChoiceBranches`, `mergeChoiceBranches`, the field-hoist helpers. Produces the **SimplifiedRule** snapshot. **DELETED (§G-cut):** the transparent `case 'terminal'` arms (`simplify.ts:404/734/1159/1222`) + `case 'enum'` leaf arms — the underlying natural shapes are handled directly |
 | `compiler/transforms.ts` | **NEW** (#13a) — **rationale: de-scatter, not de-dup (M1).** These ops are already a *single body each*, shared by import between Normalize & Simplify today; there is no duplicated implementation to merge. The module exists to give the shared ops one named home (so a reader finds them in one place, and the `(rule, ctx)` signature is uniform) — not to eliminate copy-paste. | shared idempotent ops invoked by BOTH Normalize & Simplify | `collapseSeq(rule, ctx)`, `canonicalizeSeqOfLeaves(rule, ctx)`, `inlineRefs(rule, ctx)`, `deleteWrapper(rule, ctx)`, `pushAttrsToLeaves(rule, …)`, `combineMultiplicity`, `extractRepeatShape`, `findRepeatFlag` (moved out of the deleted `template-walker.ts`) |
-| `compiler/assemble.ts` (+ slot walk) | REFINED — see `assemble.ts:407` | **Assemble** (sole Model-builder) | `assembleModel(normalized, ctx)`, `classifyNode(rule, ctx)`, `hydrateSlotRefs(nodeMap, ctx)`, `markUserFacing(node, ctx)` (merged — §G/M3), `resolveCollidingNames(nodeMap, ctx)`, `resolveIrKeys(nodeMap, ctx)`, `collectAnonymousNodes(nodeMap, ctx)`, `collectSlots(rule, ctx)` (slot-enum walk — naming logic MOVED to the class, §7.3), `buildAssembledFormGroups(node, ctx)` (now reads the `PolymorphSpec` + parent `ChoiceRule` arms, §B — was `PolymorphRule.forms`). **AssembledPolymorph** built from `PolymorphSpec`; **AssembledGroup** built from the **wire-synthesized helper kind** (`dsl/wire/auto-groups.ts`, grammar-visible with a `kindId`, §D) — NOT from Link's opaque GroupRule classifier. **DELETED:** `buildSlot` free function (→ `AssembledNonterminal` constructor); **`markParameterlessKinds` fixpoint + helpers (→ memoized getters, §7.3).** All signatures per the §7.7 exhaustive map |
-| `compiler/rule.ts` | REFINED — see §7.4 | **shared rule helpers** (#13c) | Rule IR types + `RuleBase`; type guards (`isSeq`, …); `literalTextOf`, `collectFieldNames`, `replaceAtPath`. **DELETED — wrappers (PR3):** `OptionalRule`/`FieldRule`/`RepeatRule`/`Repeat1Rule`/`AliasRule`. **DELETED — sittir inventions (PR-M, §B/§C):** `PolymorphRule`/`VariantRule`/`ClauseRule` + their guards (`isClause` `rule.ts:440`). `normalizeEnumMembers` → audited per JC3 (likely → `transforms.ts`) |
+| `compiler/assemble.ts` (+ slot walk) | REFINED — see `assemble.ts:407` | **Assemble** (sole Model-builder) | `assembleModel(normalized, ctx)`, `classifyNode(rule, ctx)`, `hydrateSlotRefs(nodeMap, ctx)`, `markUserFacing(node, ctx)` (merged — §G/M3), `resolveCollidingNames(nodeMap, ctx)`, `resolveIrKeys(nodeMap, ctx)`, `collectAnonymousNodes(nodeMap, ctx)`, `collectSlots(rule, ctx)` (slot-enum walk — naming logic MOVED to the class, §7.3), `buildAssembledFormGroups(node, ctx)` (now reads the `PolymorphSpec` + parent `ChoiceRule` arms, §B — was `PolymorphRule.forms`). **AssembledPolymorph** built from `PolymorphSpec`; **AssembledGroup** built from the **wire-synthesized helper kind** (`dsl/wire/auto-groups.ts`, grammar-visible with a `kindId`, §D) — NOT from Link's opaque GroupRule classifier. **`classifyTerminalFallback` (`assemble.ts:1546`) becomes the PRIMARY predicate-driven classifier (§G-cut)** — `isTerminalShaped` → `modelType:'pattern'` (`AssembledPattern`); `isEnumShaped` → `modelType:'enum'` (`AssembledEnum`); **the `throw` at `assemble.ts:1549` becomes the normal path** (no longer a fallback). **DELETED:** `buildSlot` free function (→ `AssembledNonterminal` constructor); **`markParameterlessKinds` fixpoint + helpers (→ memoized getters, §7.3).** All signatures per the §7.7 exhaustive map |
+| `compiler/rule.ts` | REFINED — see §7.4 | **shared rule helpers** (#13c) | Rule IR types + `RuleBase`; type guards (`isSeq`, …); `literalTextOf`, `collectFieldNames`, `replaceAtPath`; **NEW predicates `isTerminalShaped`/`isEnumLeaf`/`isEnumShaped`** (§G-cut — or a sibling `predicates.ts`). **DELETED — wrappers (PR3):** `OptionalRule`/`FieldRule`/`RepeatRule`/`Repeat1Rule`/`AliasRule`. **DELETED — sittir inventions (PR-M, §B/§C):** `PolymorphRule`/`VariantRule`/`ClauseRule` + `isClause` (`rule.ts:440`). **DELETED — content classifications (§G-cut):** `EnumRule`/`TerminalRule` + `isEnum` (`rule.ts:441`)/`isTerminal` (`rule.ts:444`); `normalizeEnumMembers` (`rule.ts:276`) keeps ONLY the single-literal→`StringRule` collapse, else returns a plain `ChoiceRule` |
 | `compiler/node-map.ts` | REFINED — see §7.3 | the `AssembledNode*` class hierarchy + `AssembledNonterminal` class + slot value types | (class defs only — no free-standing pipeline methods). **DELETED:** `inlineJinjaClauses`, `translateToJinja`, `renderTemplate()` methods (PR3) |
 | `compiler/slot-model.ts` | **DELETED** | — | `SlotModel`/`createSlotModel`/`createNamedSlotModel`/`createUnnamedKindSlotModel`/`createUnnamedChildrenSlotModel`/`slotStorageKey` all gone — replaced by class getters (§7.3) |
 | `compiler/template-walker.ts` | **DELETED** (PR3) | — | `findRepeatFlag` survivor → `transforms.ts`; everything else deleted |
@@ -1203,7 +1210,7 @@ artifact numbers map to brainstorm #0's 1–6.
 | 4 — wrap | `emitters/wrap.ts` | `emitWrap(config): string` (`wrap.ts:80`) | reads `slot.arity`/`slot.storageKey`; `collectConcreteStorageKeys` routes on `slot.fieldName === undefined` (not `origin`); **`$other`** bucket lives HERE + its rust-reader twin only |
 | 5 — transports | `emitters/transport-common.ts`, `transport-projection.ts`, `transport-projection-cache.ts` | `buildSupertypeTransportSet(nodeMap)` (`transport-common.ts:71`) + projection builders | read `slot.values`/`slot.kinds`; **no `$other`**; no stored `$variant` |
 | 5/6 — render bridge | `emitters/render-module.ts` | `emitRenderModule(...)` (`render-module.ts:2349`), `emitRenderModuleBundle(...)` (`:436`), `emitHashFiles(...)` (`:2315`) | per-slot separator from value stamp (drop node-wide `meta.separators`); structural polymorph dispatch on kind+slots |
-| 6 — template renderer | `emitters/templates.ts` | `runTemplateEmitter(config): EmittedTemplates` (`templates.ts:1506`); per-modelType `emitBranchTemplate`/`emitGroupTemplate`/`emitMultiTemplate`/`emitPolymorphTemplate`; shared `emitRule(rule, ctx)` (`:739`) | reads **`node.renderRule`** (non-lossy); **DELETED:** legacy `emitBodyForNode` + `emitJinjaTemplates` legacy path |
+| 6 — template renderer | `emitters/templates.ts` | `runTemplateEmitter(config): EmittedTemplates` (`templates.ts:1506`); per-modelType `emitBranchTemplate`/`emitGroupTemplate`/`emitMultiTemplate`/`emitPolymorphTemplate`; shared `emitRule(rule, ctx)` (`:739`) | reads **`node.renderRule`** (non-lossy); **DELETED:** legacy `emitBodyForNode` + `emitJinjaTemplates` legacy path; the `case 'terminal'` arms in `emitRule`/`isLeftmostTerminalImmediate` (`templates.ts:605` — recurses one level shallower onto the natural subtree, §G-cut, no render fact lost) |
 | build artifact — serialized Model | `emitters/node-model.ts` | `emitNodeModel(config): string` (`node-model.ts:172`), `buildNodeModel(nodeMap)` (`:178`) | **absorbs** factory-map's 5 maps (§6) incl. dispatch-ready `polymorphVariants` + `$variant` (diagnostics/validate-only) |
 | — | `emitters/factory-map.ts` | **DELETED** (`emitFactoryMap`/`buildFactoryMap` fold into `node-model.ts`, §6) | — |
 
@@ -1232,10 +1239,11 @@ class hierarchy is **already class-based**; only the listed members change.
 | `AssembledMulti` | REFINED — see `node-map.ts:3617` | `elementRule`/`separator`/`nonEmpty`/`trailing`/`leading` unchanged. **DELETED:** `renderTemplate()` |
 | `AssembledSupertype` | UNCHANGED — see `node-map.ts:3573` | `subtypes` getter |
 | `AssembledLeaf<R>` (abstract) | UNCHANGED — see `node-map.ts:3393` | base for the four leaf classes |
-| `AssembledPattern` | UNCHANGED — see `node-map.ts:3406` | `pattern` getter |
+| `AssembledPattern` | REFINED — see `node-map.ts:3406` | `pattern` getter. **Constructed from `PatternRule` + the natural terminal subtree** (`seq`/`string`/`token`), selected by the `isTerminalShaped` predicate (§G-cut) — was `PatternRule | TerminalRule`. The `TerminalRule` wrapper no longer exists; the accepted type narrows accordingly. |
+| `AssembledTerminalShape` note | — | No new class: a `TerminalRule`-shaped leaf classifies to `modelType:'pattern'` → `AssembledPattern`. The predicate replaces the rule type. |
 | `AssembledKeyword` | REFINED — see `node-map.ts:3419` | `text` getter; **overrides `isParameterless` → `true` and `stampExpression` → the text literal** (base case of the recursive getter; was a constructor field-set) |
 | `AssembledToken` | REFINED — see `node-map.ts:3463` | `text` getter; overrides `isParameterless`/`stampExpression` (base case) + `stampChildExpression` |
-| `AssembledEnum` | UNCHANGED — see `node-map.ts:3543` | `values` getter |
+| `AssembledEnum` | REFINED — see `node-map.ts:3543` | `values` getter. **Constructed from a plain `ChoiceRule`** (selected by `isEnumShaped`, §G-cut) — was an `EnumRule`. **`.values` flattens nested string leaves** to the flat literal list (a recursive literal-choice yields one value set). Transport per-slot enums read this node (insulated from the rule-IR cut). |
 
 Slot **value** types (on `AssembledNonterminal.values`): `NodeRef`
 (`node-map.ts:168`), `TerminalValue` (`:195`), `NodeOrTerminal` union (`:210`),
@@ -1263,19 +1271,20 @@ no parallel type was introduced (#11 satisfied). End-state:
 |---|---|
 | `RuleBase` (the leaf attributes) | UNCHANGED — see `rule.ts:59-88` |
 | `Multiplicity` | UNCHANGED — see `rule.ts:37` |
-| `Rule` union | REFINED — drop the wrapper members (PR3) AND the sittir-invented members (`VariantRule`/`PolymorphRule`/`ClauseRule`, §B/§C below); see below |
+| `Rule` union | REFINED — drop the wrapper members (PR3), the sittir-invented members (`VariantRule`/`PolymorphRule`/`ClauseRule`, §B/§C), AND the content-classification members (`EnumRule`/`TerminalRule`, §G-cut below); see below |
 | `RenderRule` / `SimplifiedRule` branded types | UNCHANGED — see `rule.ts:144/160` (the `Exclude<…>` of wrapper types becomes a no-op once they delete) |
-| Structural members kept | `SeqRule`, `ChoiceRule`, `GroupRule`, `SupertypeRule`, `EnumRule`, `TerminalRule`, `StringRule`, `PatternRule`, `IndentRule`, `DedentRule`, `NewlineRule`, `SymbolRule`, `TokenRule` — UNCHANGED |
+| Structural members kept | `SeqRule`, `ChoiceRule`, `GroupRule`, `SupertypeRule`, `StringRule`, `PatternRule`, `IndentRule`, `DedentRule`, `NewlineRule`, `SymbolRule`, `TokenRule` — UNCHANGED |
 | Variants **DELETED — wrappers** (PR3, info pushed to `RuleBase`) | `OptionalRule`, `FieldRule`, `RepeatRule`, `Repeat1Rule`, `AliasRule` |
 | Variants **DELETED — sittir inventions, Model-only** (§B/§C, this spec — they violate #16: no grammar-visible kind underlies them) | `PolymorphRule`, `VariantRule` (→ `PolymorphSpec`/`FormSpec` classification side-channel; the structural rule is a plain `ChoiceRule`), `ClauseRule` (→ plain `optional(seq(fields))` structure) |
+| Variants **DELETED — content classifications, now predicates + Model nodes** (§G-cut, this spec — both wrap a natural structural shape redundantly) | `EnumRule` (→ `isEnumLeaf`/`isEnumShaped` predicates over a plain `ChoiceRule`; the Model node `AssembledEnum` stays), `TerminalRule` (→ `isTerminalShaped` predicate over the natural `seq`/`string`/`token` subtree; the Model node `AssembledPattern` stays) |
 | `RuleIdentity` deprecated alias | DELETED — see `rule.ts:95` |
 
 End-state `Rule` union:
 ```ts
 export type Rule =
   | SeqRule | ChoiceRule                    // structural grouping (wrappers gone)
-  | EnumRule | SupertypeRule | GroupRule | TerminalRule
-  | StringRule | PatternRule                // terminals
+  | SupertypeRule | GroupRule
+  | StringRule | PatternRule                // terminals (the natural leaf shapes)
   | IndentRule | DedentRule | NewlineRule   // structural whitespace
   | SymbolRule | TokenRule;                 // references (Link resolves symbol; token kept for adjacency)
 ```
@@ -1283,10 +1292,13 @@ export type Rule =
 > adjacency (a non-droppable render fact, #0.4). `repeat`/`repeat1` cardinality
 > survives as `multiplicity` on the leaf; `optional` as `multiplicity:'optional'`;
 > `field` as `fieldName`; `alias` as `aliasedFrom`/`aliasNamed`.
-> `VariantRule`/`PolymorphRule`/`ClauseRule` had **no grammar-visible kind** —
-> they were sittir-side rewrites of a plain `choice` / `optional(seq)`, so per
-> #16 they leave the Rule IR and move to the Model side-channel (§B) or dissolve
-> into structure (§C).
+> `VariantRule`/`PolymorphRule`/`ClauseRule` had **no grammar-visible kind**
+> (sittir-side rewrites of a plain `choice` / `optional(seq)`) → Model side-channel
+> (§B) or structure (§C). `EnumRule`/`TerminalRule` were **content classifications
+> redundantly wrapped as Rule types** — the underlying grammar shape is a plain
+> `choice`-of-strings (enum) or a `seq`/`string`/`token` leaf subtree (terminal),
+> which the natural rule arms already handle; the classification is a predicate +
+> a Model node, not a Rule member (§G-cut below).
 
 #### §B. Polymorph / Variant are Model-only (a classification side-channel)
 
@@ -1342,21 +1354,87 @@ interface FormSpec {
   PR0), so the old `collect-slots.ts:480` "clause forces optional" special-case
   is unnecessary — the fields carry their own optionality.
 
-#### Deferred — `Enum` / `Terminal` invention-classifications (note, no change)
+#### §G-cut. Enum + Terminal → content predicates (NEW to THIS spec)
 
-Per the brief: `EnumRule` and `TerminalRule` are also invention-classifications
-(they classify a `choice`-of-strings / a token-wrapped leaf, not a tree-sitter
-kind), but demoting them to attributes is **deeper** and carries **downstream
-value** — `EnumRule` drives per-slot transport enums (`project_universal_per_slot_enums`)
-and `TerminalRule` drives pattern routing. They stay in the `Rule` union for now;
-demotion is a tracked follow-up, NOT in this spec.
+`EnumRule` and `TerminalRule` are **content classifications redundantly wrapped
+as Rule types** — Assemble *already* recomputes both as a fallback predicate
+(`classifyTerminalFallback` `assemble.ts:1546`, whose `isAllTextShape`
+`assemble.ts:1561` is the terminal predicate; `classifyHiddenChoiceRule`
+`link.ts:1935` is the enum rewriter). Per #16/#1 the classification is a
+**predicate over the natural structural shape + a Model node**, not a Rule
+member. Both leave the `Rule` union; the Model nodes `AssembledEnum` /
+`AssembledPattern` stay. (This reverses the prior "deferred" note now that the
+dig is complete.)
 
-**R2 (discovery) — `TerminalRule.content` IS read post-Assemble.** Checked:
-`templates.ts:605` reads `(rule as { content: Rule }).content` for the
-immediate-leftmost-terminal adjacency test. So `TerminalRule.content` is **not**
-a clean demotion candidate — it is a live render-adjacency input. This reinforces
-deferring `Terminal` (its `content` carries render-relevant structure, not just a
-classification tag). Recorded for the follow-up, no change here.
+**Shared predicates (composition order; live in `rule.ts` or a `predicates.ts`):**
+```ts
+// 1. base leaves
+isTerminalShaped(rule)  // reconciles link.ts:1617 isTerminalShape + assemble.ts:1561 isAllTextShape
+                        //   into ONE predicate: a seq/string/token subtree with no fields/symbols
+isEnumLeaf(rule) = rule.type === 'string'   // StringRule ONLY — closed literal set
+                                            //   (pattern/token deliberately excluded: not a closed set)
+// 2. enum on top (RECURSIVE — the end-state)
+isEnumShaped(rule) = isEnumLeaf(rule)
+  || (rule.type === 'choice' && rule.members.length > 0 && rule.members.every(isEnumShaped))
+```
+
+**Terminal (clean — no behavior change).**
+- Delete `TerminalRule` from the union + the `isTerminal` guard (`rule.ts:444`).
+- Delete `promoteAndLogTerminalRules` (`link.ts:388`, called `:138`) as a
+  rule-rewriter.
+- Delete every transparent `case 'terminal'` arm: `wrapper-deletion.ts:155`;
+  `simplify.ts:404/734/1159/1222`; `optimize.ts:484/546/718`; `rule.ts:485/556/925`;
+  `templates.ts:605` (`isLeftmostTerminalImmediate` now recurses one level
+  shallower — onto the natural `seq`/`string` subtree, no render fact lost since
+  the terminal wrapper was transparent).
+- At Assemble, `classifyTerminalFallback` uses `isTerminalShaped` →
+  `modelType:'pattern'`. **The `throw` at `assemble.ts:1549` becomes the normal
+  path** (the predicate-driven classifier is now primary, not a fallback).
+  `AssembledPattern` narrows its accepted rule type to `PatternRule` + the
+  natural leaf subtree (was `PatternRule | TerminalRule`).
+
+**Enum (flat = byte-identical; recursive = end-state, count-gated).**
+- Delete `EnumRule` from the union + the `isEnum` guard (`rule.ts:441`).
+- `normalizeEnumMembers` (`rule.ts:276`) keeps ONLY the single-literal →
+  `StringRule` collapse; otherwise returns a plain `ChoiceRule` (no `EnumRule`).
+- `evaluate.ts:268` `choice()` stops emitting `EnumRule`; the enum branch of
+  `classifyHiddenChoiceRule` (`link.ts:1937`) is deleted as a rewriter.
+- Delete every `case 'enum'` arm: the `link-refine` `Choice | Enum` union
+  narrows to just `Choice`; `rulesEqual`'s enum arm folds into the choice arm;
+  the leaf arms in `simplify`/`optimize`/`rule.ts`.
+- **Transport per-slot enums read `AssembledEnum` (the Model node), so they are
+  insulated** from the rule-IR cut (`project_universal_per_slot_enums`).
+- At Assemble, `isEnumShaped` → `AssembledEnum`; its constructor takes the
+  `ChoiceRule`, and **`.values` flattens nested string leaves to the literal
+  list** (so a nested literal-choice yields one flat value set).
+
+**R2 (discovery) — resolved, not a blocker.** `TerminalRule.content` IS read
+post-Assemble at `templates.ts:605` (the immediate-leftmost adjacency test). But
+the read is on the *transparent wrapper's* content — deleting the wrapper means
+`isLeftmostTerminalImmediate` recurses directly onto the same `seq`/`string`
+subtree it would have unwrapped to. The render fact (leftmost-immediate) is
+preserved; only the wrapper hop is removed. So `Terminal` is a clean cut, not a
+deferral.
+
+**Behavior change + staging (Enum).** Today's enum check is **flat** (no
+nested-choice flattening); the recursive `isEnumShaped` NEWLY classifies nested
+literal-choices as enums — a **count move**. The recursive form is the
+END-STATE; the PR sequence STAGES it:
+1. **Flat shape-identical step** (in the main Enum-cut PR): use
+   `choice && members.every(isEnumLeaf)` (no recursion) — gated to **0 diff vs
+   today's `EnumRule` set**.
+2. **Count-gated recursive-widening PR**: switch to the recursive `isEnumShaped`,
+   explicitly count-gated (the newly-classified nested choices are reviewed +
+   regen'd; pass-rate must hold).
+
+> **Discovery (measured + cited) — the nested-literal-choice widening delta is
+> tiny.** Probed post-`optimize` rules across all 3 grammars (evaluate→link→optimize,
+> counting `choice` nodes that are recursive-enum-shaped but NOT flat-enum):
+> **rust 0, typescript 1, python 0**. (Measurement caveat: most enums are already
+> `EnumRule`-typed by `optimize`, so this counts the *residual* un-classified
+> nested choices — the true delta the recursive predicate newly catches. It is
+> ≤ a handful.) The widening is therefore a near-no-op count move, safely
+> count-gateable in its own small PR.
 
 ### §7.5 Diagnostic severity model + the gate (NEW)
 
