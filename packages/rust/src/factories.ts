@@ -3656,7 +3656,7 @@ export function staticItem(config: T.StaticItem.Config) {
     value() { return _value; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => staticItem({ ...config, visibilityModifier: value }),
-      mutableSpecifier: (value?: "ref" | "mut") => staticItem({ ...config, mutableSpecifier: value }),
+      mutableSpecifier: (value?: "ref" | T.MutableSpecifier) => staticItem({ ...config, mutableSpecifier: value }),
       name: (value: T.Identifier) => staticItem({ ...config, name: value }),
       type: (value: T._Type) => staticItem({ ...config, type: value }),
       value: (value?: T.Expression) => staticItem({ ...config, value: value }),

@@ -890,7 +890,7 @@ export interface FieldPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _ref_marker?: RefMarkerTransport
+  _ref_marker?: FieldPatternRefMarkerTransport
   _mutable_specifier?: _MutableSpecifierTransport
   _field_pattern_shorthand: FieldPatternShorthandTransport
   _field_pattern_named: FieldPatternNamedTransport

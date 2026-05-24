@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 395,
+  "nodeCount": 394,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -1750,6 +1750,17 @@
       "children": []
     },
     {
+      "kind": "_field_pattern_ref_marker",
+      "modelType": "keyword",
+      "typeName": "FieldPatternRefMarker",
+      "factoryName": "fieldPatternRefMarker",
+      "irKey": "fieldPatternRefMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"ref\" as const",
+      "text": "ref"
+    },
+    {
       "kind": "_field_pattern_shorthand",
       "modelType": "branch",
       "typeName": "_FieldPatternShorthand",
@@ -2150,17 +2161,6 @@
       "isParameterless": true,
       "stampExpression": "\"pub\" as const",
       "text": "pub"
-    },
-    {
-      "kind": "_kw_ref_marker",
-      "modelType": "keyword",
-      "typeName": "KwRefMarker",
-      "factoryName": "kwRefMarker",
-      "irKey": "kwRefMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"ref\" as const",
-      "text": "ref"
     },
     {
       "kind": "_kw_static_marker",
@@ -3930,17 +3930,6 @@
       "isParameterless": true,
       "stampExpression": "\"r#\\\"\" as const",
       "text": "r#\""
-    },
-    {
-      "kind": "_ref_marker",
-      "modelType": "keyword",
-      "typeName": "RefMarker",
-      "factoryName": "refMarker",
-      "irKey": "refMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"ref\" as const",
-      "text": "ref"
     },
     {
       "kind": "_reference_expression_raw_const",
@@ -8526,7 +8515,7 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "optional",
-                  "name": "_ref_marker",
+                  "name": "_field_pattern_ref_marker",
                   "unresolved": true
                 }
               ],
@@ -8534,7 +8523,7 @@
               "projection": {
                 "typeName": "",
                 "kinds": [
-                  "_ref_marker"
+                  "_field_pattern_ref_marker"
                 ]
               }
             },
@@ -8609,7 +8598,7 @@
                 {
                   "kind": "node-ref",
                   "multiplicity": "optional",
-                  "name": "_ref_marker",
+                  "name": "_field_pattern_ref_marker",
                   "unresolved": true
                 }
               ],
@@ -8617,7 +8606,7 @@
               "projection": {
                 "typeName": "",
                 "kinds": [
-                  "_ref_marker"
+                  "_field_pattern_ref_marker"
                 ]
               }
             },
@@ -14794,15 +14783,14 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_ref_marker",
-              "unresolved": true
+              "value": "ref"
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_mutable_specifier",
+              "name": "mutable_specifier",
               "unresolved": true
             }
           ],
@@ -14810,8 +14798,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_ref_marker",
-              "_mutable_specifier"
+              "mutable_specifier"
             ]
           }
         },

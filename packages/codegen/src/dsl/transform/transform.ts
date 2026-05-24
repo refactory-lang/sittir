@@ -53,7 +53,7 @@ import {
 	isOptionalType,
 	isPlainRepeatType
 } from '../runtime-shapes.ts';
-import type { RuntimeRule } from '../runtime-shapes.ts';
+import type { RuntimeRule, FieldLike } from '../runtime-shapes.ts';
 
 /**
  * Apply patches to a rule. Patches are an object with path-string keys
@@ -647,6 +647,124 @@ function resolvePatch(
  * @returns A new field rule marked `source: 'override'`.
  * @throws {Error} If no global `field()` function is available in the runtime.
  */
+/**
+ * Descend through field-transparent wrappers (optional, prec/*) to find
+ * the first inferred/enriched field inside. Returns a reconstruction
+ * function that rebuilds the wrapper chain with a new inner value, plus
+ * the found field (if any). Does NOT descend into seq/general-choice/repeat/field.
+ *
+ * Handles two shapes of "optional" wrapper:
+ *   - Sittir pipeline: `{ type: 'optional', content: ... }` (lowercase).
+ *   - Tree-sitter CLI pipeline: `{ type: 'CHOICE', members: [content, BLANK] }` —
+ *     tree-sitter's `optional(x)` desugars to `choice(x, blank())`. The
+ *     enrich pass uses `rebuildOptional` which preserves this CHOICE shape.
+ *     We treat 2-member CHOICE-with-BLANK as transparent so the rename
+ *     reaches the field inside.
+ *
+ * Only used by resolveFieldPlaceholder for the nested-inferred-field case.
+ */
+function findInferredFieldThroughTransparentWrappers(
+	node: unknown
+): { found: FieldLike; reconstruct: (newInner: unknown) => unknown } | null {
+	const r = node as Record<string, unknown>;
+	if (!r || typeof r !== 'object') return null;
+	const t = r.type as string | undefined;
+	if (!t) return null;
+
+	// Shape A: sittir's lowercase optional { type: 'optional', content: ... }
+	// or tree-sitter uppercase { type: 'OPTIONAL', content: ... }.
+	const isSittirOptional = t === 'optional' || t === 'OPTIONAL';
+	if (isSittirOptional) {
+		const inner = r.content as unknown;
+		if (!inner || typeof inner !== 'object') return null;
+		if (isFieldLike(inner) && (inner.source === 'inferred' || inner.source === 'enriched')) {
+			return {
+				found: inner,
+				reconstruct: (newInner: unknown) => ({ ...r, content: newInner })
+			};
+		}
+		const deeper = findInferredFieldThroughTransparentWrappers(inner);
+		if (deeper) {
+			return {
+				found: deeper.found,
+				reconstruct: (newInner: unknown) => ({ ...r, content: deeper.reconstruct(newInner) })
+			};
+		}
+		return null;
+	}
+
+	// Shape B: tree-sitter CLI's CHOICE-with-BLANK — the canonical encoding of
+	// optional(x) in tree-sitter's runtime: { type: 'CHOICE', members: [x, BLANK] }
+	// or [BLANK, x]. Enrich's rebuildOptional preserves this shape.
+	// Only treat as transparent when exactly 2 members and one is BLANK.
+	if (isChoiceType(t)) {
+		const members = r.members as unknown[] | undefined;
+		if (!Array.isArray(members) || members.length !== 2) return null;
+		const blankIdx = members.findIndex((m) => {
+			const mt = (m as Record<string, unknown>).type;
+			return mt === 'BLANK' || mt === 'blank';
+		});
+		if (blankIdx === -1) return null; // a real choice, not an optional
+		const contentIdx = 1 - blankIdx;
+		const inner = members[contentIdx] as unknown;
+		if (!inner || typeof inner !== 'object') return null;
+		if (isFieldLike(inner) && (inner.source === 'inferred' || inner.source === 'enriched')) {
+			return {
+				found: inner,
+				reconstruct: (newInner: unknown) => {
+					const newMembers = [...members];
+					newMembers[contentIdx] = newInner;
+					return { ...r, members: newMembers };
+				}
+			};
+		}
+		const deeper = findInferredFieldThroughTransparentWrappers(inner);
+		if (deeper) {
+			return {
+				found: deeper.found,
+				reconstruct: (newInner: unknown) => {
+					const newMembers = [...members];
+					newMembers[contentIdx] = deeper.reconstruct(newInner);
+					return { ...r, members: newMembers };
+				}
+			};
+		}
+		return null;
+	}
+
+	// Shape C: prec wrappers — transparent in path-addressing; content carries
+	// the actual rule (value is separate).
+	const isPrecWrapper2 =
+		t === 'prec' ||
+		t === 'PREC' ||
+		t === 'prec_left' ||
+		t === 'PREC_LEFT' ||
+		t === 'prec_right' ||
+		t === 'PREC_RIGHT' ||
+		t === 'prec_dynamic' ||
+		t === 'PREC_DYNAMIC';
+	if (isPrecWrapper2) {
+		const inner = r.content as unknown;
+		if (!inner || typeof inner !== 'object') return null;
+		if (isFieldLike(inner) && (inner.source === 'inferred' || inner.source === 'enriched')) {
+			return {
+				found: inner,
+				reconstruct: (newInner: unknown) => ({ ...r, content: newInner })
+			};
+		}
+		const deeper = findInferredFieldThroughTransparentWrappers(inner);
+		if (deeper) {
+			return {
+				found: deeper.found,
+				reconstruct: (newInner: unknown) => ({ ...r, content: deeper.reconstruct(newInner) })
+			};
+		}
+		return null;
+	}
+
+	return null;
+}
+
 function resolveFieldPlaceholder(
 	patch: FieldPlaceholder,
 	originalMember: RuntimeRule,
@@ -676,6 +794,29 @@ function resolveFieldPlaceholder(
 			);
 		}
 		content = content.content;
+	} else {
+		// Not a direct inferred field — check for inferred field nested inside
+		// field-transparent wrappers (optional, prec/*). This handles the case
+		// where enrich placed an auto-numbered field INSIDE an optional:
+		//   optional(field('where_clause1', $.where_clause))
+		// and the override wants to rename it via field('where_clause') at
+		// that position. Without this descent, resolveFieldPlaceholder wraps
+		// the entire optional with the new field name, producing:
+		//   field('where_clause', optional(field('where_clause1', ...)))
+		// tree-sitter collapses nested field wrappers to the innermost name,
+		// so the intended rename never reaches the parser.
+		const nested = findInferredFieldThroughTransparentWrappers(originalMember);
+		if (nested !== null) {
+			const overrideName = patch.name;
+			// findInferredFieldThroughTransparentWrappers only returns for
+			// inferred/enriched fields, so this is always a safe rename.
+			// Rename the inferred field in place and reconstruct the wrappers.
+			// Result: optional(field('trailing_where_clause', $.where_clause))
+			// instead of: field('trailing_where_clause', optional(field('where_clause2', ...)))
+			const renamedField = { ...nested.found, name: overrideName, source: 'override' as const };
+			const reconstructed = nested.reconstruct(renamedField) as RuntimeRule;
+			return reconstructed;
+		}
 	}
 	const maybeSymbolized = maybeKeywordSymbol(patch.name, content, (body) => wrapInPrec(body, precStack));
 	if (maybeSymbolized !== content) {

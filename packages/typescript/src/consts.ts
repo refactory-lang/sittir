@@ -1375,12 +1375,12 @@ export const enum TSFieldId {
   FieldStatements = 69,
   FieldStaticMarker = 70,
   FieldType = 71,
-  FieldTypeAnnotation = 73,
-  FieldTypeArguments = 74,
-  FieldTypeIdentifier = 75,
-  FieldTypeParameters = 76,
-  FieldTypePredicate = 77,
-  FieldValue = 79,
+  FieldTypeAnnotation = 72,
+  FieldTypeArguments = 73,
+  FieldTypeIdentifier = 74,
+  FieldTypeParameters = 75,
+  FieldTypePredicate = 76,
+  FieldValue = 78,
 }
 
 export const TREE_SITTER_FIELD_ID_BY_NAME = {
@@ -1609,12 +1609,12 @@ export const TREE_SITTER_FIELD_ID_JSON = [
   { name: "statements", id: 69, enumName: "FieldStatements", cName: "field_statements" },
   { name: "static_marker", id: 70, enumName: "FieldStaticMarker", cName: "field_static_marker" },
   { name: "type", id: 71, enumName: "FieldType", cName: "field_type" },
-  { name: "type_annotation", id: 73, enumName: "FieldTypeAnnotation", cName: "field_type_annotation" },
-  { name: "type_arguments", id: 74, enumName: "FieldTypeArguments", cName: "field_type_arguments" },
-  { name: "type_identifier", id: 75, enumName: "FieldTypeIdentifier", cName: "field_type_identifier" },
-  { name: "type_parameters", id: 76, enumName: "FieldTypeParameters", cName: "field_type_parameters" },
-  { name: "type_predicate", id: 77, enumName: "FieldTypePredicate", cName: "field_type_predicate" },
-  { name: "value", id: 79, enumName: "FieldValue", cName: "field_value" },
+  { name: "type_annotation", id: 72, enumName: "FieldTypeAnnotation", cName: "field_type_annotation" },
+  { name: "type_arguments", id: 73, enumName: "FieldTypeArguments", cName: "field_type_arguments" },
+  { name: "type_identifier", id: 74, enumName: "FieldTypeIdentifier", cName: "field_type_identifier" },
+  { name: "type_parameters", id: 75, enumName: "FieldTypeParameters", cName: "field_type_parameters" },
+  { name: "type_predicate", id: 76, enumName: "FieldTypePredicate", cName: "field_type_predicate" },
+  { name: "value", id: 78, enumName: "FieldValue", cName: "field_value" },
 ] as const;
 
 /** Per-node-kind field metadata. */

@@ -17,18 +17,17 @@ export type LeafStringMap = {
   _closure_expression_async_marker: "async";
   _closure_expression_static_marker: "static";
   _compound_assignment_expr_operator: "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^=" | "<<=" | ">>=";
+  _field_pattern_ref_marker: "ref";
   _kw_async_marker: "async";
   _kw_in: "in";
   _kw_move_marker: "move";
   _kw_pub: "pub";
-  _kw_ref_marker: "ref";
   _kw_static_marker: "static";
   _kw_unsafe_marker: "unsafe";
   _move_marker: "move";
   _mutable_specifier: "mut";
   _pointer_type_const: "const";
   _primitive_type: "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char";
-  _ref_marker: "ref";
   _reference_expression_raw_const: "const";
   _reserved_identifier: "default" | "union" | "gen";
   _token_binding_pattern_type: "block" | "expr" | "expr_2021" | "ident" | "item" | "lifetime" | "literal" | "meta" | "pat" | "pat_param" | "path" | "stmt" | "tt" | "ty" | "vis";
@@ -45,11 +44,11 @@ export type LeafStringMap = {
   async: "async";
   static: "static";
   as: "as";
+  ref: "ref";
   fn: "fn";
   in: "in";
   move: "move";
   pub: "pub";
-  ref: "ref";
   unsafe: "unsafe";
   else: "else";
   if: "if";
@@ -321,11 +320,11 @@ export const enum SyntaxKind {
   ClosureExpressionStaticMarker = "_closure_expression_static_marker",
   CompoundAssignmentExprOperator = "_compound_assignment_expr_operator",
   FieldIdentifier = "_field_identifier",
+  FieldPatternRefMarker = "_field_pattern_ref_marker",
   KwAsyncMarker = "_kw_async_marker",
   KwIn = "_kw_in",
   KwMoveMarker = "_kw_move_marker",
   KwPub = "_kw_pub",
-  KwRefMarker = "_kw_ref_marker",
   KwStaticMarker = "_kw_static_marker",
   KwUnsafeMarker = "_kw_unsafe_marker",
   LineCommentContent = "_line_comment_content",
@@ -334,7 +333,6 @@ export const enum SyntaxKind {
   _MutableSpecifier = "_mutable_specifier",
   PointerTypeConst = "_pointer_type_const",
   PrimitiveType = "_primitive_type",
-  RefMarker = "_ref_marker",
   ReferenceExpressionRawConst = "_reference_expression_raw_const",
   ReservedIdentifier = "_reserved_identifier",
   TokenBindingPatternType = "_token_binding_pattern_type",
@@ -365,11 +363,11 @@ export const enum SyntaxKind {
   Async = "async",
   Static = "static",
   As = "as",
+  Ref = "ref",
   Fn = "fn",
   In = "in",
   Move = "move",
   Pub = "pub",
-  Ref = "ref",
   Unsafe = "unsafe",
   Else = "else",
   If = "if",
@@ -3923,12 +3921,12 @@ export interface SourceFile {
 export interface StaticItem {
   readonly $type: TSKindId.StaticItem;
   readonly _visibility_modifier?: VisibilityModifier;
-  readonly _mutable_specifier?: "ref" | "mut";
+  readonly _mutable_specifier?: "ref" | MutableSpecifier;
   readonly _name: Identifier;
   readonly _type: _Type;
   readonly _value?: Expression;
   visibilityModifier(): VisibilityModifier | undefined;
-  mutableSpecifier(): "ref" | "mut" | undefined;
+  mutableSpecifier(): "ref" | MutableSpecifier | undefined;
   name(): Identifier;
   type(): _Type;
   value(): Expression | undefined;
@@ -4723,11 +4721,11 @@ export interface ErrorSentinelTree extends AnyTreeNode { readonly type: "_error_
 export interface AsyncTree extends AnyTreeNode { readonly type: "async"; }
 export interface StaticTree extends AnyTreeNode { readonly type: "static"; }
 export interface AsTree extends AnyTreeNode { readonly type: "as"; }
+export interface RefTree extends AnyTreeNode { readonly type: "ref"; }
 export interface FnTree extends AnyTreeNode { readonly type: "fn"; }
 export interface InTree extends AnyTreeNode { readonly type: "in"; }
 export interface MoveTree extends AnyTreeNode { readonly type: "move"; }
 export interface PubTree extends AnyTreeNode { readonly type: "pub"; }
-export interface RefTree extends AnyTreeNode { readonly type: "ref"; }
 export interface UnsafeTree extends AnyTreeNode { readonly type: "unsafe"; }
 export interface ElseTree extends AnyTreeNode { readonly type: "else"; }
 export interface IfTree extends AnyTreeNode { readonly type: "if"; }

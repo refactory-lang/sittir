@@ -1,13 +1,13 @@
 {
   "grammar": "python",
-  "source_hash": "4ae74ff8aad27d2482cde680ec4045f487d0b125802c2a3fe9b31b780761c5ba",
+  "source_hash": "58abc541f456d2e6ec19318cfd1b6521a707e45f17ea25d7f70838dc2763e219",
   "files": {
-    "packages/python/.sittir/grammar.js": "d8040a39ee41614a91ba519fbf41a3888a9b046d636f24c29f4413e6943fe2c2",
+    "packages/python/.sittir/grammar.js": "6bc4afea4ec1585b3df67c6d6c290cf183f46b890fa21d3f6d407d97da68bbf9",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
-    "packages/python/.sittir/parser.wasm": "13bc5ff3d9b3c7e3e8bb3a367d58c27f76ad31224064db576d9d7a42d9926325",
-    "packages/python/.sittir/src/grammar.json": "315881ebc58117c8d2408cacc7c9b0c9b070eea525c0a2fded886d0fc2d6c8ad",
-    "packages/python/.sittir/src/node-types.json": "4ce172375863235310350566653a80f7679e128762fada1f9d2a8d573f151d2f",
-    "packages/python/.sittir/src/parser.c": "7c4492bb2793fe5a38ce2dae0aee140129dd26f662cdf3533e144dc81f94fd1e",
+    "packages/python/.sittir/parser.wasm": "ba40fdc3ae33bcd10e3bb4d803d02960087cd27f3ab38eb965c90e6974e254a2",
+    "packages/python/.sittir/src/grammar.json": "3c91b118ef459693c061c28f500cc5450a3e2c09b373930af9a969f8f49166c0",
+    "packages/python/.sittir/src/node-types.json": "308f9378054a2c8c16339d6d77076880374caddd5437cbd955df2a91bd7c5c2e",
+    "packages/python/.sittir/src/parser.c": "5940b80c9cc716830d1c91f87ab3f923c446c3b06e319edddb2b84e28fd78e0e",
     "packages/python/.sittir/src/scanner.c": "6db82134ac2d4c90a1a1475487a625cface02662ebda9b7478cad9c7147e9afe",
     "packages/python/.sittir/src/tree_sitter/alloc.h": "b29c1c9fb7cc82f58c84b376df1297d6e2737a1d655fd356db0859e3c29c2fea",
     "packages/python/.sittir/src/tree_sitter/array.h": "31e60a1bff6f715afacce03b5b70efe42b58371b4f9595dd4af52a577ff9608c",
@@ -17,11 +17,11 @@
     "packages/python/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
     "packages/python/src/backend.ts": "ab39be3c39cea0601de33e650b578c363d741609e7ba58a1632bd4680421895e",
     "packages/python/src/boundary.ts": "3d134bb2d602f2072fda61aa748bf51b557d915c70fb220e6faebd01522567e9",
-    "packages/python/src/consts.ts": "6c783eccce4fbba9f1269d8bd4faa9c9d55a238742ff813515ab301dda0195ab",
+    "packages/python/src/consts.ts": "648cf5d94071941cedc4cc6986b1c4cb1c077c5138e5dfb7186eff86bbfa592f",
     "packages/python/src/engine.ts": "33c3032a1e1ae0697bb95aaf11e1827cdbdc152946aff9e630b30c90c5163594",
     "packages/python/src/factories.ts": "e38fd8adce1916b9c07121163da28cf49574ccf0455f58b1dcc8a9dd09c3e51d",
     "packages/python/src/from.ts": "9b1ebefb597c680aaa78ad67ee70dd4414c12b800d12bc1a2979cf27b3d6001b",
-    "packages/python/src/grammar.ts": "fb5391bd8aed07a6cfbac5310ec468d1a9902ab36c913b8fa6bfd3fb846b99a8",
+    "packages/python/src/grammar.ts": "c75006f21c5cd27f08e3f8a6b0675d9914d526f2d8de4131b872c09946d335e8",
     "packages/python/src/hash.ts": "54864bf5c93eede70f48f9009c7e48d78d597b535b00883d110d51a61a21d749",
     "packages/python/src/index.ts": "f669988a1dde55d96f2e9d08596fec30387ab9328443c7000568ea3a2731c975",
     "packages/python/src/ir.ts": "f441836a28402e16159b0186d95094b6fecd4ca28eb2d015cba6816c834bb365",
@@ -274,9 +274,9 @@
     "rust/crates/sittir-python/templates/with_item.jinja": "6de9ebfb84be05c1bf693a55855a5f65d4b30745e7bf7e94405ab675b3bcef8f",
     "rust/crates/sittir-python/templates/with_statement.jinja": "892f9897b8713eda534bd82a88d4687b73dbd9c834be164af7753a27a77120b3",
     "rust/crates/sittir-python/templates/yield.jinja": "4d27a116533eddf8b04d6e93058098c82ece52e0e4340320acad190d4ff6fcf7",
-    "rust/crates/sittir-python/test-fixtures.json": "c7180462f7a1790ad137a6eaa516e376029261a1178596290412768a2f47ff02"
+    "rust/crates/sittir-python/test-fixtures.json": "67566f022ec5f2cf54246fbeab312b2152b360b2d084b82387448c98cafa2229"
   },
   "host_files": {
-    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "1cf2e6ede65cfbc0d4ec76b6da5f611d81ae03a6f38c05509f781879ee420e5b"
+    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "a752833474f723732219d1058588086ff006e23e19feba670d26a11f7b65d179"
   }
 }
