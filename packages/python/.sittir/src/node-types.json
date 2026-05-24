@@ -3210,17 +3210,7 @@
     "type": "slice",
     "named": true,
     "fields": {
-      "expression1": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "expression",
-            "named": true
-          }
-        ]
-      },
-      "expression2": {
+      "start": {
         "multiple": false,
         "required": false,
         "types": [
@@ -3238,6 +3228,16 @@
             "type": ":",
             "named": false
           },
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "stop": {
+        "multiple": false,
+        "required": false,
+        "types": [
           {
             "type": "expression",
             "named": true

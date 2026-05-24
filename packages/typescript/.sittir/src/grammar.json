@@ -8,28 +8,23 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "FIELD",
-          "name": "hash_bang_line",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "FIELD",
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "hash_bang_line",
+              "content": {
+                "type": "SYMBOL",
                 "name": "hash_bang_line",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "hash_bang_line",
-                  "fieldName": "hash_bang_line",
-                  "nonterminal": true
-                },
-                "source": "enriched"
+                "fieldName": "hash_bang_line",
+                "nonterminal": true
               },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          "source": "override"
+              "source": "override"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "FIELD",
@@ -11632,28 +11627,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "FIELD",
-            "name": "left",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "FIELD",
-                  "name": "type1",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "type",
-                    "fieldName": "type1",
-                    "nonterminal": true
-                  },
-                  "source": "enriched"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "type",
+                  "fieldName": "type1",
+                  "nonterminal": true
                 },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            },
-            "source": "override"
+                "source": "override"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           },
           {
             "type": "STRING",
@@ -11680,28 +11670,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "FIELD",
-            "name": "left",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "FIELD",
-                  "name": "type1",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "type",
-                    "fieldName": "type1",
-                    "nonterminal": true
-                  },
-                  "source": "enriched"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "type",
+                  "fieldName": "type1",
+                  "nonterminal": true
                 },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            },
-            "source": "override"
+                "source": "override"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           },
           {
             "type": "STRING",

@@ -4263,9 +4263,9 @@
     "type": "intersection_type",
     "named": true,
     "fields": {
-      "right": {
+      "left": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "type",
@@ -4273,9 +4273,9 @@
           }
         ]
       },
-      "type1": {
+      "right": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "type",
@@ -6665,9 +6665,9 @@
     "type": "union_type",
     "named": true,
     "fields": {
-      "right": {
+      "left": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "type",
@@ -6675,9 +6675,9 @@
           }
         ]
       },
-      "type1": {
+      "right": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "type",

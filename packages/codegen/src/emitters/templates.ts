@@ -35,6 +35,7 @@ import type {
 	AssembledNode,
 	AssembledNonterminal,
 	AssembledPolymorph,
+	NodeOrTerminal,
 	TerminalValue
 } from '../compiler/node-map.ts';
 import type { Rule } from '../compiler/rule.ts';
@@ -75,6 +76,49 @@ export interface EmitCtx {
 	 * `emitGroupTemplate` before recursing into the node's `renderRule`.
 	 */
 	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
+	/**
+	 * DIAGNOSTIC (`DBG_SLOT_MISS=1`): the kind currently being emitted, threaded
+	 * by `emitOne` so `lookupSlot` can attribute a `slotByRuleId` miss to a kind.
+	 */
+	readonly currentKind?: string;
+}
+
+// ---------------------------------------------------------------------------
+// DIAGNOSTIC: slotByRuleId-miss inventory (env-gated via `DBG_SLOT_MISS=1`).
+//
+// Records every rule where the primary O(1) `slotByRuleId.get(rule.id)` lookup
+// FAILED (no id, or id not registered), plus whether a name-based fallback
+// recovered it. `recoveredBy: 'none'` is the bug class — the emitter then falls
+// back to the arm/symbol name (e.g. choice `parameter` instead of slot
+// `content`), producing a `.jinja` var with no matching transport field.
+// Surfaces the rule-ID-not-preserved gap so it can be fixed at the source.
+// ---------------------------------------------------------------------------
+interface SlotLookupMiss {
+	readonly kind: string | undefined;
+	readonly ruleType: string;
+	readonly ruleId: string | undefined;
+	readonly name: string | undefined;
+	readonly fieldName: string | undefined;
+	readonly recoveredBy: 'fieldName' | 'symbol-name' | 'none';
+}
+const DBG_SLOT_MISS = process.env.DBG_SLOT_MISS === '1';
+const SLOT_MISS_LOG: SlotLookupMiss[] = [];
+function dumpSlotMissLog(grammar: string): void {
+	if (!DBG_SLOT_MISS || SLOT_MISS_LOG.length === 0) return;
+	const tally = { fieldName: 0, 'symbol-name': 0, none: 0 } as Record<string, number>;
+	for (const m of SLOT_MISS_LOG) tally[m.recoveredBy]++;
+	process.stderr.write(
+		`\n=== slotByRuleId MISS inventory [${grammar}] — ${SLOT_MISS_LOG.length} total ` +
+			`(recovered fieldName=${tally.fieldName} symbol-name=${tally['symbol-name']} UNRESOLVED=${tally.none}) ===\n`
+	);
+	for (const m of SLOT_MISS_LOG) {
+		const tag = m.recoveredBy === 'none' ? 'UNRESOLVED ' : `recov:${m.recoveredBy} `;
+		const label = m.name ? `${m.ruleType}(${m.name})` : m.ruleType;
+		process.stderr.write(
+			`  ${tag} kind=${m.kind ?? '?'} ${label}${m.fieldName ? ` field=${m.fieldName}` : ''} id=${m.ruleId ?? '<none>'}\n`
+		);
+	}
+	SLOT_MISS_LOG.length = 0;
 }
 
 // Nunjucks whitespace control (`{#- ... -#}`) strips whitespace
@@ -149,24 +193,20 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	}
 
 	finalize(): EmittedTemplates {
+		dumpSlotMissLog(this.#config.grammar);
 		return { bodies: new Map(this.#bodies) };
 	}
 
 	#emitNode(node: AssembledNode): void {
-		// PR2 Task 3.B3: new emitter is authoritative — its output is written
-		// to disk. The legacy walker still runs for the skip-emit signal: when
-		// it returns null the kind doesn't get a template file (leaf / keyword
-		// / token / non-polymorph-form group / multi). PR3 deletes the legacy
-		// walker entirely.
-		const legacyBody = emitBodyForNode(
-			node,
-			this.#config.nodeMap.rules ?? {},
-			this.#wordMatcher,
-			this.#config.nodeMap.externals
-		);
-		// Legacy skip-emit gate: if legacy says "no template for this kind",
-		// honour it — the new emitter's output for such kinds is irrelevant.
-		if (legacyBody === null) return;
+		// PR3 step 0: skip-emit gate now uses classifyTemplateEmission (the
+		// new-side equivalent) instead of the legacy emitBodyForNode call.
+		// classifyTemplateEmission is now a strict superset of the legacy gate:
+		// it skips non-user-facing nodes, polymorph-form groups, and all
+		// leaf modelTypes (pattern/keyword/token/supertype/enum/multi) that
+		// emitBodyForNode returned null for unconditionally.
+		// emitBodyForNode is no longer called here; it will be deleted in the
+		// next step once no callers remain.
+		if (classifyTemplateEmission(node) !== 'emit') return;
 
 		this.#ctx.visitingHelpers.clear();
 		const newBody = emitOne(node, this.#ctx);
@@ -189,15 +229,16 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 }
 
 function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
+	const ctxK: EmitCtx = DBG_SLOT_MISS ? { ...ctx, currentKind: node.kind } : ctx;
 	switch (node.modelType) {
 		case 'branch':
-			return emitBranchTemplate(node, ctx);
+			return emitBranchTemplate(node, ctxK);
 		case 'polymorph':
-			return emitPolymorphTemplate(node, ctx);
+			return emitPolymorphTemplate(node, ctxK);
 		case 'group':
-			return emitGroupTemplate(node, ctx);
+			return emitGroupTemplate(node, ctxK);
 		case 'multi':
-			return emitMultiTemplate(node, ctx);
+			return emitMultiTemplate(node, ctxK);
 		case 'supertype':
 		case 'pattern':
 		case 'keyword':
@@ -966,6 +1007,10 @@ function lookupSlot(rule: Rule, ctx: EmitCtx): AssembledNonterminal | undefined 
 		const byId = ctx.nodeMap.slotByRuleId.get(rule.id);
 		if (byId) return byId;
 	}
+	// PRIMARY MISSED (no id, or id not registered — the rule-ID-not-preserved
+	// gap). Try the name-based fallbacks and record the miss for the diagnostic.
+	let recovered: AssembledNonterminal | undefined;
+	let recoveredBy: SlotLookupMiss['recoveredBy'] = 'none';
 	if (ctx.ownerSlots) {
 		// Fallback A: fieldName → storageName. For grammar-named fields whose
 		// FieldRule ID doesn't match the renderRule symbol's ID (because
@@ -973,7 +1018,10 @@ function lookupSlot(rule: Rule, ctx: EmitCtx): AssembledNonterminal | undefined 
 		// look up the slot by the field name the symbol carries.
 		if (rule.fieldName !== undefined) {
 			const byFieldName = ctx.ownerSlots[rule.fieldName.toLowerCase()];
-			if (byFieldName) return byFieldName;
+			if (byFieldName) {
+				recovered = byFieldName;
+				recoveredBy = 'fieldName';
+			}
 		}
 		// Fallback B: symbol name (exact, no underscore-stripping) → storageName.
 		// For inferred slots derived from tree-sitter's node-types.json children,
@@ -982,13 +1030,26 @@ function lookupSlot(rule: Rule, ctx: EmitCtx): AssembledNonterminal | undefined 
 		// map it. Only fires for symbols without fieldName (fieldName symbols are
 		// handled by Fallback A). Uses the EXACT name (no leading-_ stripping) to
 		// avoid false positives where `_hidden_rule` would match slot `hidden_rule`.
-		if (rule.type === 'symbol' && rule.fieldName === undefined && !rule.name.startsWith('_')) {
+		if (recovered === undefined && rule.type === 'symbol' && rule.fieldName === undefined && !rule.name.startsWith('_')) {
 			const exactName = rule.name.toLowerCase();
 			const byExactName = ctx.ownerSlots[exactName];
-			if (byExactName) return byExactName;
+			if (byExactName) {
+				recovered = byExactName;
+				recoveredBy = 'symbol-name';
+			}
 		}
 	}
-	return undefined;
+	if (DBG_SLOT_MISS) {
+		SLOT_MISS_LOG.push({
+			kind: ctx.currentKind,
+			ruleType: rule.type,
+			ruleId: rule.id,
+			name: (rule as { name?: string }).name,
+			fieldName: rule.fieldName,
+			recoveredBy
+		});
+	}
+	return recovered;
 }
 
 /**
@@ -1012,8 +1073,14 @@ function separatorToString(rule: Rule): string | undefined {
  * Pick the join-filter name based on a rule's flank metadata. Matches
  * the legacy `filterForFlanks` decision tree but reads attributes off
  * the rule directly (no `JinjaTranslateMeta` indirection).
+ *
+ * When the rule itself carries no trailing/leading flags (e.g. the outer
+ * choice in `fanOutSeqChoices`/`factorChoiceBranches` rebuilds), falls back
+ * to the slot values' per-value trailing/leading flags — stamped by
+ * `stampSeparatorOnValues` when the separator flowed from a repeat wrapper
+ * through wrapper-deletion onto the slot entries.
  */
-function selectJoinFilter(rule: Rule): 'join' | 'joinWithTrailing' | 'joinWithLeading' | 'joinWithFlanks' {
+function selectJoinFilter(rule: Rule, slot?: AssembledNonterminal): 'join' | 'joinWithTrailing' | 'joinWithLeading' | 'joinWithFlanks' {
 	const repeatLike = rule as { trailing?: boolean; leading?: boolean };
 	const trailing = repeatLike.trailing === true;
 	const leading = repeatLike.leading === true;
@@ -1030,6 +1097,26 @@ function selectJoinFilter(rule: Rule): 'join' | 'joinWithTrailing' | 'joinWithLe
 		if (t && l) return 'joinWithFlanks';
 		if (t) return 'joinWithTrailing';
 		if (l) return 'joinWithLeading';
+	}
+	// Fallback: read trailing/leading from the slot's per-value entries.
+	// This handles the case where the separator was stamped onto slot values
+	// by `stampSeparatorOnValues` but the rule itself (a rebuilt choice from
+	// `fanOutSeqChoices`/`factorChoiceBranches`) carries no flank flags.
+	if (slot !== undefined) {
+		const multiVal = slot.values.find(
+			(v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray'
+		);
+		if (multiVal) {
+			const t = (multiVal as { trailing?: boolean }).trailing === true;
+			const l = (multiVal as { leading?: boolean }).leading === true;
+			if (t && l) return 'joinWithFlanks';
+			if (t) return 'joinWithTrailing';
+			if (l) return 'joinWithLeading';
+		}
+		// Also check the AssembledNonterminal's own hasTrailing/hasLeading flags.
+		if (slot.hasTrailing && slot.hasLeading) return 'joinWithFlanks';
+		if (slot.hasTrailing) return 'joinWithTrailing';
+		if (slot.hasLeading) return 'joinWithLeading';
 	}
 	return 'join';
 }
@@ -1061,7 +1148,7 @@ const DEFAULT_JOIN_SEPARATOR = ' ';
  * `interpolation`) must concatenate without separator.
  */
 function emitListSlot(slotName: string, rule: Rule, slot?: AssembledNonterminal): string {
-	const filter = selectJoinFilter(rule);
+	const filter = selectJoinFilter(rule, slot);
 	// Immediate-terminal check: when ALL slot values are terminal entries
 	// stamped with `immediate: true` (produced by `token.immediate(…)` in
 	// the grammar), the correct separator is the empty string — the tokens
@@ -1070,7 +1157,22 @@ function emitListSlot(slotName: string, rule: Rule, slot?: AssembledNonterminal)
 		slot !== undefined &&
 		slot.values.length > 0 &&
 		slot.values.every((v) => v.kind === 'terminal' && (v as TerminalValue).immediate === true);
-	const sep = allImmediate ? '' : (separatorToString(rule) ?? DEFAULT_JOIN_SEPARATOR);
+	// Separator resolution: prefer the rule's own separator (directly carried),
+	// then fall back to the slot values' per-entry separator (stamped by
+	// `stampSeparatorOnValues` when the separator flowed from a repeat wrapper
+	// through wrapper-deletion). This handles the case where `fanOutSeqChoices`/
+	// `factorChoiceBranches` rebuilt a choice carrying only the rule id (not the
+	// separator), so the outer choice has no separator but the slot values do.
+	const ruleSep = separatorToString(rule);
+	const slotValueSep: string | undefined =
+		ruleSep === undefined && slot !== undefined
+			? slot.values.find(
+					(v): v is NodeOrTerminal & { separator: string } =>
+						(v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray') &&
+						typeof (v as { separator?: string }).separator === 'string'
+				)?.separator
+			: undefined;
+	const sep = allImmediate ? '' : (ruleSep ?? slotValueSep ?? DEFAULT_JOIN_SEPARATOR);
 	return `{{ ${slotName} | ${filter}("${escapeJinjaString(sep)}") }}`;
 }
 
@@ -1544,59 +1646,6 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 }
 
 /**
- * Legacy emitJinjaTemplates — walks the nodeMap's legacy walker
- * (emitBodyForNode) to emit templates. Called by test fixtures that
- * create minimal AssembledNodes without full rule setup.
- *
- * Emit templates for each node in the NodeMap. Returns a map keyed
- * by kind, where each value is a Jinja template body.
- *
- * Skips:
- * - Pattern, keyword, token, supertype, enum, multi (leaves)
- * - Hidden non-userFacing groups
- * - Nodes where classifyTemplateEmission returns 'skip' or 'no-file'
- *
- * The returned bodies are prepended with the @generated header.
- *
- * @param config Grammar, NodeMap, and optional grammar SHA
- * @returns EmittedTemplates with bodies keyed by kind
- */
-export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplates {
-	const { nodeMap } = config;
-	const wordMatcher = compileWordMatcher(nodeMap.word, nodeMap.rules ?? {});
-	const bodies = new Map<string, string>();
-	for (const node of nodeMap.nodes.values()) {
-		const emission = classifyTemplateEmission(node);
-		if (emission !== 'emit') continue;
-		let body: string | null;
-		try {
-			body = emitBodyForNode(node, nodeMap.rules ?? {}, wordMatcher ?? /\w/, nodeMap.externals);
-		} catch (err) {
-			// Re-throw with grammar + kind context so the emitter caller
-			// gets an actionable error message. `{ cause }` preserves
-			// the original stack for Error.cause-aware debuggers (Node
-			// 16.9+), matching the renderNunjucks wrap in core/render.ts.
-			const detail = err instanceof Error ? err.message : String(err);
-			throw new Error(`emitJinjaTemplates: failed on ${config.grammar}/${node.kind}: ${detail}`, {
-				cause: err
-			});
-		}
-		if (body === null) continue;
-		// Canonical-hidden architecture (Option Y): templates are emitted
-		// at the kind's actual name. Hidden alias-source kinds (`_x`) get
-		// `_x.jinja`; visible kinds (`x`) get `x.jinja`. The runtime
-		// canonicalizes parser-output `$type` (visible alias target →
-		// hidden alias source) inside `wrapNode` BEFORE template lookup,
-		// and `render.ts` falls back to `_${$type}.jinja` when called
-		// with a visible $type that has no own template. So both producer
-		// paths (factory output stamping `_x` directly + parser output
-		// remapped by wrap) converge on the single hidden template file.
-		bodies.set(node.kind, `${GENERATED_HEADER}\n${body}`);
-	}
-	return { bodies };
-}
-
-/**
  * Write per-kind `.jinja` files to `outputDir`. Creates the directory
  * if it does not exist. After writing, scans the directory for any
  * `.jinja` files whose kind is not in `emitted` and removes them —
@@ -1605,57 +1654,6 @@ export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplate
  *
  * Preserves `.gitkeep` and non-`.jinja` files (README.md, etc.).
  */
-/**
- * Ask the node for its Jinja body. Returns `null` for node kinds that
- * don't own a template file (leaves, keywords, tokens, supertypes,
- * enums, multis, non-polymorph-form groups). The class-hierarchy base
- * `renderTemplate()` returns `undefined` for those — we translate that
- * signal to the emitter's `null`.
- */
-function emitBodyForNode(
-	node: AssembledNode,
-	rules: Record<string, Rule>,
-	wordMatcher: RegExp,
-	externals: ReadonlySet<string> | undefined
-): string | null {
-	if (
-		node.modelType === 'pattern' ||
-		node.modelType === 'keyword' ||
-		node.modelType === 'token' ||
-		node.modelType === 'supertype' ||
-		node.modelType === 'enum' ||
-		node.modelType === 'multi'
-	) {
-		return null;
-	}
-	if (node instanceof AssembledGroup && !node.parentKind && !node.userFacing) {
-		// Non-polymorph-form groups without an alias-source reference
-		// are hidden helpers inlined at their referrers; no file emitted.
-		//
-		// Groups that ARE userFacing (populated by `markUserFacing` when
-		// the hidden kind shows up as an alias source in some other
-		// rule's child/field slots) get their own template — tree-sitter
-		// emits them via `alias($._kind, $.visible)` and the render
-		// pipeline dispatches to the hidden rule's body. Covers
-		// variant() adoption on rules with field-bearing branches
-		// (`_update_expression_postfix` etc.), where the hoisted hidden
-		// rule gets wrapped as a GroupRule by classifyHiddenSeqRule even
-		// though it's an alias source — the group classification fits
-		// the shape but the inlining assumption doesn't.
-		return null;
-	}
-	const entry = node.renderTemplate(rules, wordMatcher, externals);
-	if (!entry) return null;
-	const template = entry.template;
-	if (typeof template !== 'string') {
-		throw new Error(
-			`emitBodyForNode: rule '${node.kind}' (${node.modelType}) produced no template string — ` +
-				`renderTemplate() returned ${JSON.stringify(entry)}`
-		);
-	}
-	return template;
-}
-
 export function writeJinjaTemplates(emitted: EmittedTemplates, outputDir: string): void {
 	fs.mkdirSync(outputDir, { recursive: true });
 	for (const [kind, body] of emitted.bodies) {

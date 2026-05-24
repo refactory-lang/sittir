@@ -36,6 +36,7 @@ import type { AssembledNode } from './node-map.ts';
 import { compileWordMatcher } from './common.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
+import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
 
 /** Does this string lex as a "word" under the grammar's `word` rule? */
 /**
@@ -63,37 +64,6 @@ function isKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean
 	return /^\w+$/.test(value);
 }
 
-/**
- * Copy `fieldName` / `multiplicity` / `separator` from `original` onto
- * `result` when `original` carries those attributes and `result` does not
- * already have them. Used by `simplifyRule` rewrite branches that create new
- * rule objects (e.g. `case 'seq':` filtering members, `case 'choice':`
- * merging branches) to ensure RuleBase modifier attributes stamped by
- * `applyWrapperDeletion` are not silently dropped during simplification.
- *
- * Only non-undefined values are transferred; `result`'s own values always
- * win (non-overriding).
- */
-function withAttrsFrom(original: Rule, result: Rule): Rule {
-	const { fieldName, multiplicity, separator, id } = original;
-	const patch: Record<string, unknown> = {};
-	if (fieldName !== undefined && !Object.prototype.hasOwnProperty.call(result, 'fieldName'))
-		patch['fieldName'] = fieldName;
-	if (multiplicity !== undefined && !Object.prototype.hasOwnProperty.call(result, 'multiplicity'))
-		patch['multiplicity'] = multiplicity;
-	if (separator !== undefined && !Object.prototype.hasOwnProperty.call(result, 'separator'))
-		patch['separator'] = separator;
-	// Preserve the rule's identity through simplify: renderRule.id === simplifiedRule.id
-	// so the emitter (walks renderRule) and collectSlots (reads simplifiedRule) agree
-	// on the slot's `sourceRuleId`, making `slotByRuleId` (the canonical, primary slot
-	// lookup) resolve instead of degrading to the fragile fieldName/symbol-name
-	// fallbacks. The `hasOwnProperty` guard keeps a passed-through inner node's own id
-	// on collapse (e.g. `seq(field) → field`), only stamping the source id onto a
-	// freshly-rebuilt structural node (`{ type:'choice', members }`).
-	if (id !== undefined && !Object.prototype.hasOwnProperty.call(result, 'id')) patch['id'] = id;
-	if (Object.keys(patch).length === 0) return result;
-	return { ...result, ...patch };
-}
 
 export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean = false): Rule {
 	switch (rule.type) {
@@ -921,48 +891,6 @@ function reapplyInlinedLeafAttrs(ref: Rule, inlined: Rule): Rule {
 	return pushAttrsToLeaves(inlined, r.multiplicity, r.separator, r.fieldName);
 }
 
-// `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
-// missing multiplicity defaults to it (`combineMultiplicity` null-coalesces).
-type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray' | undefined;
-
-/**
- * Combine an OUTER multiplicity (pushed down from an enclosing wrapper) with
- * a leaf's own INNER multiplicity into the effective slot multiplicity.
- *
- * `undefined` means "single / exactly one". The lattice:
- *   - nothing pushed (`outer === undefined`) → keep `inner`.
- *   - either side is a collection (array / nonEmptyArray) → the result is a
- *     collection. It is `nonEmptyArray` only when BOTH sides guarantee ≥1
- *     element (a side guarantees ≥1 iff it is single (`undefined`) or
- *     `nonEmptyArray`); otherwise `array` (allows empty).
- *   - neither is a collection → `optional` if either is optional, else single.
- *
- * Examples (the cases this fixes):
- *   combine('nonEmptyArray', undefined)  → 'nonEmptyArray'  (type_arguments union: ≥1)
- *   combine('nonEmptyArray', 'optional') → 'array'          (trait_bounds: 0-or-more)
- *   combine('array', 'optional')         → 'array'
- *   combine('optional', 'optional')      → 'optional'
- *
- * This replaces the prior "outer wins unless inner is already an array" rule,
- * which clobbered an inner `optional` with the outer `nonEmptyArray` and
- * produced `NonEmptyArray<T>` where the runtime slot is 0-or-more.
- */
-function combineMultiplicity(outerIn: LeafMultiplicity, innerIn: LeafMultiplicity): LeafMultiplicity {
-	// `'single'` is the canonical required-one value (rule.ts `Multiplicity`);
-	// a missing multiplicity defaults to it (null-coalesce). The lattice then
-	// operates in `'single'` terms: `optional` trumps single
-	// (`combine(optional, single) → optional`), and `guaranteesOne('single')`
-	// is true (`combine(nonEmptyArray, single) → nonEmptyArray`, not `array`).
-	const outer = outerIn ?? 'single';
-	const inner = innerIn ?? 'single';
-	if (outer === 'single') return inner;
-	const isCollection = (m: LeafMultiplicity): boolean => m === 'array' || m === 'nonEmptyArray';
-	const guaranteesOne = (m: LeafMultiplicity): boolean => m === 'single' || m === 'nonEmptyArray';
-	if (isCollection(outer) || isCollection(inner)) {
-		return guaranteesOne(outer) && guaranteesOne(inner) ? 'nonEmptyArray' : 'array';
-	}
-	return outer === 'optional' || inner === 'optional' ? 'optional' : 'single';
-}
 
 /**
  * Collapse a `seq` during simplification, carrying the seq's slot attributes
@@ -1192,7 +1120,20 @@ function recurseChildren(rule: Rule, visit: (r: Rule) => Rule): Rule {
 export function canonicalizeSeqOfLeaves(rule: Rule): Rule {
 	const recursed = recurseChildren(rule, canonicalizeSeqOfLeaves);
 	if (recursed.type === 'seq' && recursed.members.length === 1) {
-		return recursed.members[0]!;
+		const survivor = recursed.members[0]!;
+		const carried = withAttrsFrom(recursed, survivor);
+		const outerMult = (recursed as { multiplicity?: LeafMultiplicity }).multiplicity;
+		// Only combine multiplicities when the seq itself carries an explicit one;
+		// otherwise withAttrsFrom already transferred it (absent-only) and we
+		// must not stamp 'single' onto nodes that had no explicit multiplicity.
+		if (outerMult !== undefined) {
+			const combined = combineMultiplicity(
+				outerMult,
+				(survivor as { multiplicity?: LeafMultiplicity }).multiplicity,
+			);
+			return { ...carried, multiplicity: combined } as Rule;
+		}
+		return carried;
 	}
 	return recursed;
 }

@@ -1,722 +1,597 @@
 # Compiler Phase Glossary
 
-Site documentation for every significant function in the sittir codegen
-compiler pipeline. Each entry covers pattern (when it fires), action
-(what it does), and output (what changes). Phases run in order:
-Enrich -> Evaluate -> Link -> Optimize -> Simplify -> Assemble.
+Per-function reference for every significant function in the sittir codegen
+compiler pipeline. Each entry covers pattern (when it fires), action (what it
+does), and output (what changes).
 
-> **Updated 2026-05-20 — PR0 + PR1 + PR2 SHIPPED.** Glossary still references
-> the planned shape from the 2026-05-19 spec; this note summarises what
-> actually landed. See sections inline for per-function deltas. Source of
-> truth: [`docs/superpowers/specs/2026-05-18-rule-attributes-and-template-emitter-design.md`](./superpowers/specs/2026-05-18-rule-attributes-and-template-emitter-design.md).
+> **Updated 2026-05-22 — reconciled to the PR2 merge (`bbadd99b` on master).**
+> The 4-PR [rule-attribute / template-emitter refactor](./superpowers/specs/2026-05-18-rule-attributes-and-template-emitter-design.md)
+> has shipped PR0 + PR1 + PR2. This glossary now documents the code as it
+> stands; the prior "planned" annotations have been reconciled to shipped
+> reality. **PR3 is still ahead** (legacy walker / `ClauseRule` / wrapper
+> rule-type deletion) and is flagged inline where it matters.
+>
+> **Pipeline order (as built today):**
+>
+> ```
+> enrich (author wraps grammar(enrich(base), …))   ← module-load, pre-tree-sitter
+>   → evaluate (compiler/evaluate.ts: runs DSL, wire(), auto-groups)
+>     → link (compiler/link.ts)
+>       → optimize (compiler/optimize.ts: + applyWrapperDeletion + computeSimplifiedRules)
+>         → assemble (compiler/assemble.ts + node-map.ts + collect-slots.ts)
+>           → emit (emitters/*.ts)
+> ```
+>
+> **Three Rule shapes flow through `optimize()` and are attached per node in
+> `assemble()`** (see [Rule data model](#rule-ir-compilerrulets)):
+>
+> | Snapshot | Produced by | Attached as | Consumed by |
+> |---|---|---|---|
+> | **RawRule** | `applyNormalizationPasses` (post-link) | `node.rule` | legacy walker (`renderTemplate`, until PR3) |
+> | **RenderRule** | `applyWrapperDeletion` | `node.renderRule` | the authoritative `TemplateEmitter` |
+> | **SimplifiedRule** | `computeSimplifiedRules` | `node.simplifiedRule` | slot derivation (`collectSlots`), factories/wrap/from |
 >
 > **What's shipped (PR0 + PR1 + PR2):**
-> - **RuleBase attributes** (PR0): `fieldName` / `multiplicity` / `nonterminal` / `separator` on every Rule via shared `RuleBase` interface.
-> - **applyWrapperDeletion** (PR1, `compiler/wrapper-deletion.ts`): new pass at the end of `optimize()`; pushes modifier wrappers (optional / field / repeat / repeat1) down to leaf RuleBase attributes. Output: `RenderRule` (wrapper-free).
-> - **RenderRule + SimplifiedRule branded types** (PR1/PR2, `compiler/rule.ts`): `RenderRule = Exclude<Rule, OptionalRule | FieldRule | RepeatRule | Repeat1Rule>` + brand; `SimplifiedRule = RenderRule` + universal-shape brand.
-> - **computeSimplifiedRules** (PR1, relocated to `compiler/simplify.ts`): takes RenderRule input, runs `inlineRefs` + `simplifyRules` + `canonicalizeSeqOfLeaves` + `deleteWrapper` (post-fixpoint guard). Output: `Record<string, SimplifiedRule>`.
-> - **Alias-body + polymorph-form + group-inner snapshots** (PR2): `optimize()` threads alias-bodies and polymorph-form contents through `applyWrapperDeletion` + `computeSimplifiedRules` and merges them into `renderRules` / `simplifiedRules`. `assemble.ts` reads snapshots directly; per-call `simplifyRule(...)` / `deleteWrapper(...)` fallbacks deleted.
-> - **applyAutoGroups re-enabled** (PR2): `dsl/wire/wire.ts` invokes `applyAutoGroups`; synthesized helpers (e.g. `_type_arguments_repeat1`) are registered in `grammar.inline`.
-> - **inlineRefs renamed + widened** (PR2, formerly `inlineGroupRefs`): inlines (a) hidden GROUP / MULTI refs as before, and (b) any group-lift-sourced ref whose target is in `grammar.inline`. Matches tree-sitter's parse-time inlining so simplified rules don't carry symbol refs to inlined helpers.
-> - **deriveSlotsRaw wrapper-case deletion** (PR2): 4 wrapper case arms (field / optional / repeat / repeat1) deleted; `clause` kept until PR3 deletes ClauseRule.
-> - **New TemplateEmitter** (PR2, `emitters/templates.ts`): authoritative, modelType-dispatching, consumes `node.renderRule`. Slot-preservation gate replaced the byte-equivalence diff gate.
-> - **Per-slot separator on EmittedField** (PR2, `emitters/render-module.ts`): rust render emission reads separator from the slot's NodeRef/TerminalValue stamp, falling back to the node-wide `meta.separators` for slots not yet stamped.
+> - **RuleBase attributes** (PR0): `fieldName` / `multiplicity` / `nonterminal` / `separator` / `aliasedFrom` / `aliasNamed` on every Rule via the shared `RuleBase` interface (`compiler/rule.ts`).
+> - **enrich attribute passes** (PR0): `enrichFieldWrappers` + `enrichMultiplicityWrappers` ship in `dsl/enrich.ts`. The originally-planned `decomposeOptional` / `decomposeRepeat` did **NOT** land in enrich — group SYNTHESIS moved to `dsl/wire/auto-groups.ts` (`applyAutoGroups`), and wrapper-attribute push-down lives in `applyWrapperDeletion`.
+> - **`applyWrapperDeletion`** (PR1, `compiler/wrapper-deletion.ts`): new last pass of `optimize()`; pushes modifier wrappers (optional / field / repeat / repeat1 / alias) down to leaf `RuleBase` attributes. Output: `RenderRule` (wrapper-free) snapshot.
+> - **RenderRule + SimplifiedRule branded types** (PR1/PR2, `compiler/rule.ts`).
+> - **`computeSimplifiedRules`** (relocated PR1 to `compiler/simplify.ts`): takes RenderRule, runs `inlineRefs` + `simplifyRules` + `canonicalizeSeqOfLeaves` + `deleteWrapper` (post-fixpoint wrapper-free guard) + `fuseHeadRepeatLists`. Output: `Record<string, SimplifiedRule>`.
+> - **Alias-body + polymorph-form snapshots** (PR2): `optimize()` threads top-level alias-bodies and polymorph-form contents through `applyWrapperDeletion` + `computeSimplifiedRules` and merges them into `renderRules` / `simplifiedRules`. `assemble.ts` reads snapshots directly; per-call `simplifyRule(...)` / `deleteWrapper(...)` fallbacks deleted.
+> - **`applyAutoGroups` re-enabled** (PR2): `dsl/wire/wire.ts` invokes it; synthesized helpers (`_<parent>_optional<N>` / `_<parent>_repeat<N>`) are registered in `grammar.inline` via `WireContext.syntheticInline`.
+> - **`inlineRefs`** (PR2, renamed from `inlineGroupRefs`): inlines (a) hidden GROUP / MULTI refs and (b) any ref whose target is in `grammar.inline`. Matches tree-sitter's parse-time inlining.
+> - **`collectSlots`** (PR2/post-PR2, NEW file `compiler/collect-slots.ts`): the `deriveSlotsRaw` fold/merge/`effectiveMultiplicity` walker is **deleted**. `_deriveSlotsInternal` now delegates to `collectSlots` ("a slot IS a `nonterminal`-flagged node"). `deriveSlots` keeps its signature.
+> - **New `TemplateEmitter`** (PR2, `emitters/templates.ts`): authoritative, modelType-dispatching, consumes `node.renderRule`. `runTemplateEmitter()` is the entry point. Slot-preservation gate (`SITTIR_SLOT_PRESERVATION`) replaced the byte-equivalence diff gate.
 >
 > **What's still ahead (PR3):**
-> - Delete `template-walker.ts` (~1758 lines) + translation pipeline + `AssembledXxx.renderTemplate()` methods.
-> - Delete `ClauseRule` + sweep `'clause'` case sites.
-> - Delete wrapper rule types (`OptionalRule` / `FieldRule` / `RepeatRule` / `Repeat1Rule`).
-> - Delete RawRule snapshot from `optimize()` return.
-> - Migrate per-slot separator stamping to all kinds; drop the `meta.separators` node-wide fallback in render-module.
-> - Wire `assertUniversalShape` as production fail-fast gate (currently test-only).
+> - Delete `compiler/template-walker.ts` (~66 KB) + the `node-map.ts` translation pipeline + `AssembledXxx.renderTemplate()` methods. **These all still exist** and are still referenced from `render-module.ts:2324`, the legacy `emitBodyForNode` (`templates.ts:1615`), and `node-map.ts:2343/2364`.
+> - Delete `ClauseRule` + `detectClause` + sweep `'clause'` case sites. **Still present.**
+> - Delete wrapper rule types (`OptionalRule` / `FieldRule` / `RepeatRule` / `Repeat1Rule`). **Still present** (wrapper-deletion still needs them as input).
+> - Delete the RawRule snapshot from `optimize()`.
+> - Replace `deriveSlotsRaw`'s recursive contract entirely (already done — `collectSlots` is the replacement; the `clause` branch in `collectSlots` is the remaining ClauseRule dependency).
+> - Wire `assertUniversalShapeRule` as a production fail-fast gate (currently `SITTIR_ASSERT_UNIVERSAL_SHAPE=1`-gated).
+> - Migrate render-module per-slot separator stamping to all kinds; drop the node-wide `meta.separators` fallback.
 
 ---
 
-## Rule IR (`compiler/rule.ts`) — planned attribute set
+## Rule IR (`compiler/rule.ts`)
 
-> **(PR0 — planned)** Every `Rule` extends a shared `RuleBase` with modifier
-> attributes that previously lived only as wrapper rule types. Wrapper types
-> stay in place through PR0–PR2 and delete in PR3; the attributes are additive
-> until then. Vocabulary mirrors `NodeOrTerminal` exactly so values that flow
-> from a rule to its slot use identical field names (see memory entry
-> `feedback_rule_slot_vocabulary_alignment`).
+One discriminated union (`Rule`) throughout the pipeline. Presence varies by
+phase: after Evaluate `symbol`/`alias`/`token`/`repeat1` are present; after
+Link `alias`/`token` are gone and `clause`/`group`/`indent`/`dedent`/`newline`
+are added; after Optimize `variant`/`polymorph` are present. `repeat1` is
+preserved end-to-end so downstream slot derivation can stamp the `nonEmpty`
+flag.
+
+### `RuleBase` (shipped attribute set)
+
+Every Rule variant extends `RuleBase`. Beyond the identity tag `id`, it carries
+modifier attributes pushed down from wrappers. Vocabulary deliberately mirrors
+`NodeOrTerminal` (node-map.ts) so values flow rule→slot under identical names
+(`feedback_rule_slot_vocabulary_alignment`):
 
 ```ts
 interface RuleBase {
   readonly id?: RuleId;
-
   readonly fieldName?: string;
   readonly multiplicity?: Multiplicity;   // 'optional' | 'single' | 'array' | 'nonEmptyArray'
-  readonly nonterminal?: boolean;         // explicit slottiness; promotes terminals to slots
-
+  readonly nonterminal?: boolean;          // explicit slottiness; promotes terminals to slots
+  readonly aliasedFrom?: string;           // alias target, pushed down from alias() by wrapper-deletion
+  readonly aliasNamed?: boolean;
   readonly separator?:
     | string
     | readonly Rule[]
-    | {
-        readonly rules: readonly Rule[];
-        readonly trailing?: boolean;     // separator MAY appear after last element
-        readonly leading?: boolean;      // separator MAY appear before first element
-      };
+    | { readonly rules: readonly Rule[]; readonly trailing?: boolean; readonly leading?: boolean };
 }
 ```
 
-- `Multiplicity` moves from `compiler/node-map.ts` to `compiler/rule.ts` (or
-  shared `compiler/multiplicity.ts`) so `rule.ts` can reference it without
-  inverting the existing `rule.ts` → `node-map.ts` layering.
-- **Wrapper rule types (`OptionalRule`, `FieldRule`, `RepeatRule`, `Repeat1Rule`)
-  ultimately delete in PR3.** Information they carried (presence, cardinality,
-  field binding, slottiness) lives on the inner rule as attributes. Type guards
-  collapse to attribute reads: `isOptional(r)` → `r.multiplicity === 'optional'`,
-  `isField(r)` → `r.fieldName !== undefined`, etc.
-- **`ClauseRule` deletes in PR2.** Its role (remembering flanking literals bound
-  to an optional's field) is subsumed by the universal seq-of-leaves canonical
-  shape — flanking literals naturally live as adjacent members of the
-  containing seq; no dedicated rule attribute is required.
+- `Multiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray'` lives in
+  `rule.ts` (moved from `node-map.ts` so layering isn't inverted). `'single'`
+  is the canonical required-one value; a missing multiplicity defaults to it.
+- `RuleIdentity` is a deprecated alias of `RuleBase`.
+- **Wrapper rule types** (`OptionalRule` / `FieldRule` / `RepeatRule` /
+  `Repeat1Rule`) and `ClauseRule` still exist. They are `applyWrapperDeletion`'s
+  *input*; PR3 deletes them once nothing consumes the wrapped shape.
 
-### Universal canonical shape (post-PR2)
+### `RenderRule` / `SimplifiedRule` (branded types)
 
-After simplification, every `AssembledBranch` and `AssembledGroup` body is a
-`SeqRule` whose members are **leaves**:
+- `RenderRule = Exclude<Rule, OptionalRule | FieldRule | RepeatRule | Repeat1Rule> & { __renderRule?: never }`.
+  Modifier wrappers pushed down to leaf attributes; structural rules
+  (`seq` / `choice` / `variant` / `group` / `polymorph`) preserved.
+- `SimplifiedRule = RenderRule & { __simplifiedRule?: never }`. Additionally
+  satisfies the universal seq-of-leaves invariant (enforced only under
+  `SITTIR_ASSERT_UNIVERSAL_SHAPE=1` today).
 
-- a pure-literal rule (`StringRule` with no slot attributes), or
-- a slot-ref leaf (`SymbolRule` / `StringRule` / `EnumRule` with at least one
-  of `{fieldName, multiplicity, nonterminal}` set).
+### Helpers in `rule.ts`
 
-No nested structural rules (`optional`, `repeat`, `repeat1`, `seq`, `choice`)
-appear inside a branch/group body. Wrapper content that was a single leaf is
-push-down-flattened into attributes on the leaf; wrapper content that was
-structural triggers group synthesis. The simplify phase is the post-condition
-verifier (see Phase 3.5).
+- `normalizeEnumMembers(members, source?)` — single literal collapses to its
+  `StringRule`; multi-member stays `EnumRule`.
+- Per-variant type guards (`isSeq`, `isChoice`, `isField`, …) — prefer over
+  inline `r.type === …` in `.filter`/`.find`; stay with literal case arms inside
+  a `switch` for exhaustiveness.
+- `literalTextOf(r)` — string value or a link-symbol's `literal`.
+- `collectFieldNames(rule)` — cheap one-pass field-name set, no AssembledField allocation.
+- `replaceAtPath(rule, path, replacement)` — pure path-addressed rewrite for
+  `polymorphs:` / `transforms:` / `groups:` overrides.
 
 ---
 
 ## Phase 0: Enrich (`dsl/enrich.ts`)
 
-Pre-evaluation mechanical grammar enrichment. Runs before `grammar()`
-so tree-sitter's native pipeline sees the enriched rules.
+Pre-evaluation mechanical grammar enrichment. The grammar author wraps the base
+as `grammar(enrich(base), { rules: { … } })`, so enrich runs at module-load
+**before tree-sitter consumes the grammar** — its synthesized `_kw_*` helpers
+reach the parser. (Enrich's attribute passes operate on the codegen-internal
+Rule view; per `feedback_enrich_post_evaluation_only` they shape the TS surface,
+not the parse table.)
 
-> **(PR0 — planned)** Enrich grows four additional passes that populate the
-> new `RuleBase` modifier attributes and (for non-leaf wrapper contents)
-> synthesize hidden helper rules using the same injection pattern as the
-> existing `_kw_<name>` helpers. The passes are idempotent and produce no
-> observable change to existing consumers — wrappers stay in place; synthesized
-> groups become first-class `AssembledGroup` kinds handled by the existing
-> hidden-rule classification path in Link.
->
-> **Open architectural question (resolved at PR0 implementation time):** where
-> auto-synthesis of multi-slot optional/repeat content lives. Option A —
-> TS-side-only via enrich (requires wrap/from to virtually project the parser's
-> flat CST onto the synthesized group). Option B — dual-side (wire patches the
-> parser; enrich/Link mirror codegen-side); mirrors the existing authored
-> `groups:` synthesis architecture. Option C — wire-only, with codegen
-> inheriting via post-evaluation. The choice affects scope of PR0 but not the
-> overall four-PR sequence. See spec §"Open architectural question".
-
-### enrich(base)
+### `enrich(base)`
 **Pattern:** Called with a `GrammarResult` before `grammar()`.
-**Action:** Applies all enrichment passes to every rule in the grammar. Injects synthesized `_kw_*` hidden rules into the rules map.
-**Output:** New `GrammarResult` with enriched rules and merged `_kw_*` entries.
+**Action:** Applies all enrichment passes to every rule; injects synthesized `_kw_*` hidden rules into the rules map.
+**Output:** New `GrammarResult` with enriched rules + merged `_kw_*` entries.
 
-### applyEnrichPasses(ruleName, rule, kwRules, supertypeNames)
+### `applyEnrichPasses(ruleName, rule, kwRules, supertypeNames)`
 **Pattern:** Each rule in the grammar.
-**Action:** Fixed-point loop (max 8 iterations) applying symbol-to-field and optional-keyword passes until convergence.
-**Output:** Enriched rule with field wrappers and `_kw_*` registrations.
+**Action:** Fixed-point loop (max 8 iterations) applying, until convergence: `applySymbolToField` → `applyOptionalKeyword` → `enrichFieldWrappers` → `enrichMultiplicityWrappers`.
+**Output:** Enriched rule with field wrappers, `_kw_*` registrations, and pushed-down attributes.
 
-### extractSupertypeNames(base, hasWrapper)
+### `extractSupertypeNames(base, hasWrapper)` / `harvestSupertypeNames(result)`
 **Pattern:** Grammar has a `supertypes:` callback.
 **Action:** Invokes the callback with a proxy `$` to extract supertype kind names.
-**Output:** `ReadonlySet<string>` of supertype names (with leading `_`).
+**Output:** `ReadonlySet<string>` of supertype names (leading `_`).
 
-### applySymbolToField(ruleName, rule, supertypeNames)
+### `applySymbolToField(ruleName, rule, supertypeNames)`
 **Pattern:** Non-hidden rule with a top-level seq containing bare symbols.
-**Action:** Wraps unique bare symbols as `field(name, symbol)`. Handles bare, optional, and optional-seq-with-one-symbol shapes. Skips hidden rules, duplicate symbols, claimed names, symbols inside repeats.
+**Action:** Wraps unique bare symbols as `field(name, symbol)`. Handles bare, `optional(symbol)`, and `optional(seq(symbol, anon…))`. Skips hidden rules, duplicate symbols, claimed names, symbols inside repeats, and supertype-only-bare targets.
 **Output:** Rule with FIELD wrappers carrying `source: 'enriched'`.
 
-### detectSymbolTarget(member)
-**Pattern:** A seq member that is a bare symbol, `optional(symbol)`, or `optional(seq(symbol, anon...))`.
-**Action:** Returns a `SymbolTarget` with the symbol name and a `wrap()` rebuilder.
+### `detectSymbolTarget(member)` / `isBareShapeTarget(member, target)`
+**Pattern:** A seq member that is a bare symbol, `optional(symbol)`, or `optional(seq(symbol, anon…))`.
+**Action:** Returns a `SymbolTarget` (symbol name + `wrap()` rebuilder).
 **Output:** `SymbolTarget | null`.
 
-### countSymbolsInRepeat(node, kindCounts, inRepeat)
-**Pattern:** Any rule tree position.
-**Action:** Walks the tree, counting symbol refs that appear inside `repeat`/`repeat1` wrappers. Stops at field/alias boundaries.
-**Output:** Mutates `kindCounts` map with per-symbol occurrence counts.
+### `countSymbolsInRepeat(node, kindCounts, inRepeat)`
+**Pattern:** Any rule position.
+**Action:** Counts symbol refs inside `repeat`/`repeat1` wrappers; stops at field/alias boundaries.
+**Output:** Mutates `kindCounts`.
 
-### promoteInsideRepeatMembers(ruleName, members, supertypeNames, existing)
-**Pattern:** Outer seq members that are `repeat(seq(...))` or `repeat1(seq(...))`.
-**Action:** Applies field-promotion to bare symbols inside each inner seq.
-**Output:** New members array if any promotions fired; original array otherwise.
-
-### tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertypeNames)
-**Pattern:** Top-level rule is `repeat(seq(...))` (not itself a seq).
-**Action:** Peels prec wrappers, applies field-promotion to the inner seq's bare symbols.
+### `promoteInsideRepeatMembers(...)` / `tryPromoteInRepeatMember(...)` / `tryPromoteInRepeatSeq(...)`
+**Pattern:** Outer seq members that are `repeat(seq(...))` / `repeat1(seq(...))`, or a top-level `repeat(seq(...))`.
+**Action:** Field-promotes bare symbols inside the inner seq (after peeling prec wrappers).
 **Output:** Rebuilt rule with field wrappers, or original unchanged.
 
-### applyOptionalKeyword(ruleName, rule, kwRules)
+### `applyOptionalKeyword(ruleName, rule, kwRules)` / `walkOptionalKeyword(...)` / `tryPromoteInnerKeyword(...)` / `registerKwRule(...)`
 **Pattern:** Rule containing `optional(identifier-literal)` at any position.
 **Action:** Wraps the inner literal as `field(<kw>_marker, symbol(_kw_<kw>))` and registers a hidden `_kw_*` rule.
-**Output:** Rule with keyword promotions applied.
+**Output:** Rule with keyword promotions; new `_kw_*` entries.
 
-### walkOptionalKeyword(ruleName, rule, claimedAtSeqLevel, kwRules)
-**Pattern:** Descends through seq, choice, optional, repeat, field, prec wrappers.
-**Action:** Finds `optional(string-literal)` positions and delegates to `tryPromoteInnerKeyword`.
-**Output:** Rewritten rule or `null` (no change).
+### `enrichFieldWrappers(rule)` **(SHIPPED — PR0)**
+**Pattern:** Every `FieldRule` (recursed throughout the tree via `recurseChildren`).
+**Action:** Propagates `fieldName` (and slottiness) onto the wrapped content. The wrapper stays in place until PR3.
+**Output:** Field rule whose inner content carries the field-binding attribute directly.
 
-### tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules)
-**Pattern:** Inner content of an optional is an identifier-shaped string literal.
-**Action:** Creates `field(<kw>_marker, symbol(_kw_<kw>))` wrapping the literal. Registers the `_kw_*` hidden rule.
-**Output:** Rebuilt optional with field-wrapped keyword, or `null`.
-
-### registerKwRule(hostRule, stringLiteral, keyword, kwRules)
-**Pattern:** A keyword literal needs a hidden rule for field wrapping.
-**Action:** Registers `_kw_<keyword>` in `kwRules` (idempotent). Returns a SYMBOL ref to it.
-**Output:** `SymbolRule` referencing the hidden `_kw_*` rule.
-
-### enrichFieldWrappers(rule) **(PR0 — planned)**
-**Pattern:** Every `FieldRule`.
-**Action:** Propagates `fieldName` and `nonterminal: true` onto the wrapped content (matches today's `rule-catalog.ts:234` `forcedBy === 'field'` force-promotion semantics). Wrapper stays in place until PR3.
-**Output:** Field rule whose inner content now carries the field-binding + slottiness attributes directly.
-
-### enrichMultiplicityWrappers(rule) **(PR0 — planned)**
+### `enrichMultiplicityWrappers(rule)` **(SHIPPED — PR0)**
 **Pattern:** Every `OptionalRule` / `RepeatRule` / `Repeat1Rule`.
-**Action:** Propagates the corresponding `multiplicity` (`'optional'` / `'array'` / `'nonEmptyArray'`) plus `nonterminal: true` onto the wrapped content. Wrappers force nonterminal-ness because they're presence-tracked or list-shaped. Wrapper stays in place until PR3.
-**Output:** Wrapper rule whose inner content now carries the multiplicity attribute directly.
+**Action:** Propagates `'optional'` / `'array'` / `'nonEmptyArray'` (and `nonterminal: true`) onto the wrapped content. Wrapper stays until PR3.
+**Output:** Wrapper rule whose inner content carries the multiplicity attribute directly.
 
-### decomposeOptional(rule, synth) **(PR0 — planned)**
-**Pattern:** `OptionalRule` whose content is a `seq` or `choice` with at least one slot-bearing member (i.e. structural content, not a single leaf).
-**Action:** Synthesizes a hidden helper rule (`_opt_group_<hash>`) containing the original seq/choice verbatim; replaces the optional's content with a symbol-ref to the synthesized group. Single-leaf contents are handled by `enrichMultiplicityWrappers` instead (no synthesis needed). Co-optional semantics ("both or neither" for multi-field optionals) are preserved by construction because the entire content becomes one slot.
-**Output:** Optional whose content is now a symbol-ref to a synthesized hidden group; new `_opt_group_<hash>` entry added to the rules map.
-
-### decomposeRepeat(rule, synth) **(PR0 — planned)**
-**Pattern:** `RepeatRule` / `Repeat1Rule` whose content is a `seq` / `choice` with slot-bearing members.
-**Action:** Two sub-cases. (1) Single slot-bearing member with separator-like string literals: lift the separator onto the repeat's `separator` attribute as `Rule[]`; point content at the inner leaf. (2) Multi-slot content: synthesize a hidden helper rule (`_rep_group_<hash>`) containing the original content; replace the repeat's content with a symbol-ref to the synthesized group; separator (if present) stays on the repeat.
-**Output:** Repeat whose content is either a leaf with attributes or a symbol-ref to a synthesized hidden group; new `_rep_group_<hash>` entry added to the rules map (case 2 only).
+> **Reconciliation:** the spec's planned `decomposeOptional` / `decomposeRepeat`
+> enrich passes were NOT implemented. Group synthesis for structural
+> optional/repeat content moved to `dsl/wire/auto-groups.ts` (it must reach
+> tree-sitter), and separator-lift / attribute push-down live in
+> `applyWrapperDeletion`. Enrich only ships the two attribute passes above.
 
 ---
 
-## Phase 1: Evaluate (`compiler/evaluate.ts`)
+## Phase 1: Evaluate (`compiler/evaluate.ts` + `dsl/wire/*` + `dsl/runtime-shapes.ts`)
 
-Executes grammar.js DSL and produces a `RawGrammar`. Mirrors tree-sitter's
-`grammar()` function with sittir extensions.
+Executes the grammar.js DSL and produces a `RawGrammar`. Mirrors tree-sitter's
+`grammar()` with sittir extensions.
 
-### evaluate(entryPath)
+> **Two-compiler-shape divergence (`dsl/runtime-shapes.ts`):** the DSL globals
+> run in two runtimes. Sittir's evaluator keeps `optional` as a lowercase
+> `{type:'optional'}` wrapper; tree-sitter's CLI lowers `optional(x)` to
+> `CHOICE[x, BLANK]` (uppercase). `runtime-shapes.ts` exposes dual-case
+> predicates (`isChoiceType`, `isBlankType`, `isSeqType`, `isOptionalType`,
+> `isPrecWrapper`, `typeEq`) so wire-side passes recognize both forms — see
+> `auto-groups.ts`'s `CHOICE[seq, BLANK]` → optional handling and `wire.ts`'s
+> `unwrapOptionalChoiceRt`.
+
+### `evaluate(entryPath)`
 **Pattern:** CLI invocation with a grammar.js or overrides.ts path.
-**Action:** Injects DSL globals, imports the module, extracts the grammar.
+**Action:** Injects DSL globals, imports the module, extracts the grammar, runs post-evaluation passes (synthetic-alias-source synthesis, field-enum synthesis, pattern replacement).
 **Output:** `Promise<RawGrammar>`.
 
-### normalize(input)
-**Pattern:** Any raw DSL input (string, RegExp, Rule object).
-**Action:** Converts to the canonical `Rule` type.
-**Output:** `StringRule`, `PatternRule`, or the input `Rule`.
+### `seq` / `choice` / `optional` / `repeat` / `repeat1` / `field` (DSL primitives)
+**Pattern:** DSL constructor calls.
+**Action:** Normalize members; collapse degenerate nestings; `choice(x, blank())` → `optional(x)`; compact all-string choices to `EnumRule`; factor all-field choices; lift `commaSep1`-shaped seqs to `repeat1` + separator; propagate field names to nested refs.
+**Output:** Canonical Rule objects.
 
-### seq(...members)
-**Pattern:** DSL `seq(a, b, c)` call.
-**Action:** Normalizes members; collapses single-member seqs; lifts `commaSep1` patterns to `repeat1` with separator; absorbs trailing separator optionals.
-**Output:** Canonical `SeqRule`, `Repeat1Rule`, or single member.
+### `createProxy(currentRule, refs)` / `isHiddenKind(name, inlineList?)`
+**Pattern:** Each rule evaluation needs a `$` proxy; any hidden-kind check.
+**Action:** Proxy records symbol refs; `isHiddenKind` is true for `_`-prefixed names or names in the `inline` list.
+**Output:** ref-recording proxy / `boolean`.
 
-### choice(...members)
-**Pattern:** DSL `choice(a, b, c)` call.
-**Action:** Collapses single-member; lowers `choice(x, blank())` to `optional(x)`; compacts all-string choices to `EnumRule`; factors all-field choices.
-**Output:** `ChoiceRule`, `OptionalRule`, `EnumRule`, or factored `FieldRule`.
-
-### optional(content)
-**Pattern:** DSL `optional(x)` call.
-**Action:** Marks refs as optional; collapses `optional(optional(x))`, `optional(repeat(x))`, and `optional(repeat1(x))`.
-**Output:** `OptionalRule` or collapsed equivalent.
-
-### repeat(content) / repeat1(content)
-**Pattern:** DSL `repeat(x)` / `repeat1(x)` calls.
-**Action:** Marks refs as repeated; collapses redundant nestings; extracts separator from inner `seq(sep, x)`.
-**Output:** `RepeatRule` / `Repeat1Rule` with optional `separator`, `trailing`, `leading`.
-
-### field(name, content?)
-**Pattern:** DSL `field('name', $.rule)` call.
-**Action:** Normalizes content; collapses `optional(repeat*)` inside fields; propagates field name to nested symbol refs.
-**Output:** `FieldRule` with propagated refs.
-
-### createProxy(currentRule, refs)
-**Pattern:** Each rule evaluation needs a `$` proxy.
-**Action:** Creates a Proxy that records symbol references into `refs` on property access.
-**Output:** `Record<string, SymbolRuleWithRef>` proxy.
-
-### isHiddenKind(name, inlineList?)
-**Pattern:** Any kind name check.
-**Action:** Returns true for `_`-prefixed names or names in the `inline` list.
-**Output:** `boolean`.
-
-### synthesizeInlineAliasSources(rules, provenanceByKind, externals)
+### `synthesizeInlineAliasSources(...)` / `synthesizeFieldEnumRules(...)` / `collapseAllFieldChoiceMembers(...)` / `liftCommaSep(...)`
 **Pattern:** Post rule-evaluation.
-**Action:** For `alias(inlineContent, $.target)` where source is not a bare symbol, synthesizes `_${target}` hidden rule with the inline body.
-**Output:** Mutates `rules` with new `_*` entries; rewrites alias sources to symbol refs.
+**Action:** Synthesize `_<target>` hidden rules for non-bare `alias(...)` sources; synthesize named hidden enum rules from `field(name, choice('a','b'))`; factor / retype all-field choices to `field(choice(...))` or `variant`s; lift comma-separated seqs to `repeat1` with separator.
+**Output:** Mutated rules map; rewritten contents.
 
-### synthesizeFieldEnumRules(rules, provenanceByKind)
-**Pattern:** Post rule-evaluation.
-**Action:** Detects `field(name, choice('a','b','c'))` patterns; synthesizes named hidden enum rules with dedup and canonical naming.
-**Output:** Mutates `rules` with synthesized `_*` enum entries; rewrites field contents to symbol refs.
-
-### collapseAllFieldChoiceMembers(fieldMembers)
-**Pattern:** `choice(field(x, A), field(x, B))` -- all members are fields.
-**Action:** Same name: factors to `field(x, choice(A, B))`. Different names: retypes to `variant` nodes.
-**Output:** Factored `FieldRule` or `choice` of `VariantRule`s.
-
-### liftCommaSep(members)
-**Pattern:** Normalized seq body matching `[x, repeat(sep, x)]` or variants.
-**Action:** Lifts to `repeat1(x, separator=sep)` with optional `trailing`/`leading`.
-**Output:** `Repeat1Rule` or `null`.
-
-### grammarFn(optionsOrBase, options?)
-**Pattern:** Top-level `grammar()` call in grammar.js.
-**Action:** Evaluates all rule functions, metadata callbacks, injects synthetics, builds rule catalog.
+### `grammarFn(optionsOrBase, options?)`
+**Pattern:** Top-level `grammar()` call.
+**Action:** Evaluates all rule fns + metadata callbacks, injects synthetics, builds the rule catalog.
 **Output:** `{ grammar: RawGrammar }`.
+
+### `wire(config, base?)` (`dsl/wire/wire.ts`)
+**Pattern:** Author wraps `grammar(enrich(base), wire({ rules, polymorphs, transforms, groups, renderAs, … }))`.
+**Action:** Folds declarative override config into the options object before tree-sitter sees it. Composes/synthesizes polymorph + transform parent fns; injects deferred-content fns for `_<parent>_<suffix>` / `_kw_<field>` / `_<alias>` hidden rules; wraps every rule fn so a per-invocation `WireContext` (and `currentRuleKind`) is active; drains accumulated conflict groups and synthetic-inline names into the `conflicts` / `inline` callbacks; runs `applyWirePatternReplacement` (the tree-sitter-runtime counterpart of evaluate's pattern replacement) for body-pattern `groups:`; then runs `applyAutoGroups`.
+**Output:** `WiredOpts` with a non-enumerable `__wireContext__` attached for the compiler pipeline (`evaluate` → `link`) to read polymorph/group metadata.
+
+Key wire internals: `composeOrSynthesize{Polymorph,Transform}Parents`,
+`buildPolymorphParentFn`, `injectHiddenRulePlaceholders`,
+`makeDeferredContentFn` (deposit → `previous` base rule → `blank()` fallback),
+`wrapAllRuleFns`, `buildWiredConflictsFn`, `buildWiredInlineFn`
+(`nativeInlineRef` constructs symbols via the runtime's `symbol()`),
+`applyWirePatternReplacement` + `replaceInBodyRt` / `patternBodyEqual` /
+`isComplexBodyRt`.
+
+### `applyAutoGroups(base, outRules, context, authoredSynthesisKinds)` (`dsl/wire/auto-groups.ts`) **(SHIPPED — re-enabled PR2)**
+**Pattern:** A parent rule body containing `optional(seq(...))` / `repeat(seq(...))` / `repeat1(seq(...))` (STRICT seq content only — `field`/`choice`/leaf content passes through). Recognizes both sittir lowercase and tree-sitter `CHOICE[seq, BLANK]` forms.
+**Action:** SYNTHESIS ONLY. For each match, synthesizes a hidden helper `_<parent>_optional<N>` / `_<parent>_repeat<N>` (cross-parent dedupe by canonical-stringified body) holding the inner seq, and rewrites the parent body's content to a `group-lift`-sourced SYMBOL ref. **Writes into `outRules`, not the base seed** (tree-sitter calls each `outRules` fn and overwrites the seeded entry). Registers each helper in `context.syntheticInline` so the wired `inline:` callback adds it to `grammar.inline` → tree-sitter inlines it → flat runtime. Skips author-overridden rules and `authoredSynthesisKinds` (kinds opted into `transforms:` / `polymorphs:` / path-mode `groups:`).
+**Output:** Mutated `outRules` (synthesized helper fns + rewritten parent fns); populated `syntheticInline`.
+
+> **Explicitly NOT decomposition:** auto-groups never touches
+> `separator`/`trailing`/`leading` metadata. Separator-lift and attribute
+> stamping are a separate concern handled in `applyWrapperDeletion` /
+> simplify, keeping the two passes from re-introducing the
+> renderer-reads-separator-on-all-repeats regression.
 
 ---
 
 ## Phase 2: Link (`compiler/link.ts`)
 
-Resolves what nodes ARE. After Link: no `alias`, no `token` wrapper.
-All field nodes enriched with provenance. Shape identical before and after
-(no restructuring).
+Resolves what nodes ARE. After Link: no `alias`, no `token` wrapper; all field
+nodes carry provenance; polymorphs/variants classified. Shape is otherwise
+preserved (no restructuring).
 
-> **(PR2 — planned)** Clause detection (`detectClause`) and the `ClauseRule`
-> case are removed. The 27 `'clause'` case sites across the codebase collapse
-> into the `'optional'` cases that already handle the same shape; flanking
-> literals live as adjacent members of the containing seq under the universal
-> canonical shape.
->
-> **(PR0 — planned)** `applyGroupOverrides` continues to process
-> user-authored `groups:` config unchanged. Auto-synthesized helper rules
-> emitted by `decomposeOptional` / `decomposeRepeat` already live in the
-> enriched rules map by the time Link runs; they're classified by the existing
-> hidden-rule classification path (`classifyHiddenRule` → `GroupRule`) with no
-> special handling.
+### `link(raw, include?)`
+**Pattern:** Called with a `RawGrammar`.
+**Action:** Resolves all rules, classifies hidden rules, promotes terminals, infers field names, detects polymorphs, applies override polymorphs + `applyGroupOverrides` (user `groups:`), hoists indent into repeats, annotates block-bearer fields, collects repeated shapes. Auto-synthesized hidden groups from `applyAutoGroups` are already in the rules map and classify through the normal hidden-rule path.
+**Output:** `LinkedGrammar` (resolved rules, derivation log, alias map, top-level alias bodies, word, pattern-replacement kinds).
 
-### link(raw, include?)
-**Pattern:** Called with a `RawGrammar` from Evaluate.
-**Action:** Resolves all rules, classifies hidden rules, promotes terminals, infers field names, detects polymorphs, applies override polymorphs, hoists indent into repeats, annotates block-bearer fields, collects repeated shapes.
-**Output:** `LinkedGrammar` with resolved rules, derivation log, alias map.
+### `resolveRule(rule, currentName, allRules, supertypes, externalRoles)`
+**Pattern:** Every rule, recursively.
+**Action:** Resolves aliases (named → symbol with `aliasedFrom`; unnamed non-word → string literal), flattens token wrappers, inlines role symbols, detects clauses (`detectClause`).
+**Output:** Resolved tree, no aliases or token wrappers.
 
-### resolveRule(rule, currentName, allRules, supertypes, externalRoles)
-**Pattern:** Every rule in the grammar, recursively.
-**Action:** Resolves aliases (named -> symbol with `aliasedFrom`; unnamed non-word -> string literal), flattens token wrappers, inlines role symbols, detects clauses from `optional(seq(string, field))`.
-**Output:** Resolved `Rule` tree with no aliases or token wrappers.
-
-### classifyHiddenRule(name, rule, supertypes, references)
+### `classifyHiddenRule(name, rule, supertypes, references)`
 **Pattern:** Hidden (`_`-prefixed) or supertype-declared rules.
-**Action:** Promotes all-string choices to `EnumRule`; promotes symbol-compatible choices to `SupertypeRule`; wraps hidden seqs with fields as `GroupRule`.
-**Output:** Classified rule or original unchanged.
+**Action:** Promotes all-string choices to `EnumRule`; symbol-compatible choices to `SupertypeRule`; hidden seqs with fields to `GroupRule`.
+**Output:** Classified rule or original.
 
-### promotePolymorph(rule)
-**Pattern:** Top-level choice of variant-wrapped members.
-**Action:** Checks all variants are distinguishable and field sets are heterogeneous. Builds `PolymorphRule` with fused prefix/suffix.
-**Output:** `PolymorphRule` with `source: 'promoted'`, or original unchanged.
+### `promotePolymorph(rule)` / `applyOverridePolymorphs(...)` / `findVariantChoice(rule)` / `wrapVariants(choice)` / `nameVariant(...)` / `tokenToName(token)`
+**Pattern:** Top-level / nested variant-bearing choices; `polymorphVariants` from wire.
+**Action:** Build `PolymorphRule`s (promoted or override-sourced) with fused prefix/suffix; wrap each choice member in a `variant` with a derived name; map punctuation to readable names.
+**Output:** `PolymorphRule` / variant-wrapped choices.
 
-### applyOverridePolymorphs(rules, variants, derivations)
-**Pattern:** `polymorphVariants` from evaluate (variant() declarations).
-**Action:** For each parent, finds the variant choice, builds override-source `PolymorphRule`. Pushes ambient scaffold into variant children when the choice is deeply nested.
-**Output:** Mutates `rules` with `PolymorphRule` entries; logs to derivations.
-
-### findVariantChoice(rule)
-**Pattern:** Rule with a top-level choice (bare or inside a seq with exactly one choice).
-**Action:** Extracts the choice and its prefix/suffix from the enclosing seq.
-**Output:** `VariantChoiceLocation` or `null`.
-
-### wrapVariants(choice)
-**Pattern:** A choice rule to be variant-wrapped.
-**Action:** Wraps each member in a `variant` node with a derived name (from detect token, symbol, or index).
-**Output:** Choice with `VariantRule` members, deduplicated.
-
-### nameVariant(variant, index, all)
-**Pattern:** A single choice member.
-**Action:** Finds a distinguishing string literal or symbol name; falls back to `form_N`.
-**Output:** Variant name string.
-
-### tokenToName(token)
-**Pattern:** A punctuation/operator string.
-**Action:** Maps via `TOKEN_NAMES` lookup, word-char passthrough, or char-by-char fallback.
-**Output:** Readable identifier name (e.g. `'+'` -> `'plus'`).
-
-### detectClause(content, currentName) **(legacy — to be removed in PR2)**
-**Pattern:** Content of an `optional` that is `seq(string, field, ...)`.
+### `detectClause(content, currentName)` **(legacy — PR3 deletes)**
+**Pattern:** Content of an `optional` that is `seq(string, field, …)`.
 **Action:** Wraps as `ClauseRule` named after the first field.
-**Output:** `ClauseRule` or plain `optional`.
+**Output:** `ClauseRule` or plain `optional`. **Still live** — `ClauseRule` and the `'clause'` case sites (incl. `collectSlots`'s `clause` arm) have not been removed.
 
-**Removal note:** PR2 deletes this function together with `ClauseRule` and the
-27 `'clause'` case sites. The same shape is recognized via the universal seq-of-leaves
-canonical shape — flanking string literals live as adjacent members of the
-optional's containing seq; no dedicated rule type is needed.
+### `inferFieldNames(references)` / `hoistIndentIntoRepeat(rules)` / `annotateBlockBearerFields(rules)` / `collectRepeatedShapes(rules, out)`
+**Pattern:** Symbol ref graph; indent-bearing seqs; fields reaching `indent`; repeated content-type sets.
+**Action:** Infer field names (≥5 named refs, ≥80% agreement); set `separator: '\n'` on the following repeat; mark `blockBearer: true`; suggest shared supertype/group names.
+**Output:** Inferred-name map / mutated repeat & field rules / `RepeatedShapeEntry` items.
 
-### inferFieldNames(references)
-**Pattern:** Symbol reference graph from evaluate.
-**Action:** Groups refs by target; finds symbols with >=5 named refs and >=80% agreement on a field name.
-**Output:** `Map<symbolName, InferredName>` with name, confidence, agreement.
-
-### hoistIndentIntoRepeat(rules)
-**Pattern:** Rules containing `seq(..., indent, repeat(...), ...)`.
-**Action:** Sets `separator: '\n'` on the nearest following repeat.
-**Output:** Mutates repeat rules with block separator.
-
-### annotateBlockBearerFields(rules)
-**Pattern:** Fields whose content transitively reaches an `indent` node.
-**Action:** Computes hidden-bearer set by fixpoint reachability; marks fields with `blockBearer: true`.
-**Output:** Mutates field rules with the `blockBearer` flag.
-
-### collectRepeatedShapes(rules, out)
-**Pattern:** Post-classification.
-**Action:** Finds field content-type sets appearing in >=2 parent rules. Suggests shared supertype or group names.
-**Output:** Appends `RepeatedShapeEntry` items to `out`.
-
-### looksLikePolymorphCandidate(choice) / choiceNeedsVariantWrapping(choice)
-**Pattern:** A choice rule during polymorph suggestion.
-**Action:** `looksLike...` checks >=2 distinguishable branches with heterogeneous signatures. `choiceNeeds...` checks whether any arm is anonymous (needs variant for render dispatch).
+### `looksLikePolymorphCandidate(choice)` / `choiceNeedsVariantWrapping(choice)`
+**Pattern:** A choice during polymorph suggestion.
+**Action:** `looksLike…` requires ≥2 distinguishable branches with heterogeneous signatures. `choiceNeeds…` checks whether any arm is anonymous (needs a variant wrapper for render dispatch). A choice qualifies for variant-wrapping when BOTH hold.
 **Output:** `boolean`.
 
 ---
 
 ## Phase 3: Optimize (`compiler/optimize.ts`)
 
-Restructures seq/choice/optional/repeat for simplification. Non-lossy.
-Does NOT change named content. Does NOT classify polymorphs.
+Restructures seq/choice/optional/repeat for simplification (non-lossy on named
+content), then produces the RenderRule + SimplifiedRule snapshots.
 
-### optimize(linked)
+### `optimize(linked, inlineKinds?)`
 **Pattern:** Called with a `LinkedGrammar`.
-**Action:** Runs normalization passes (collapse -> fan-out -> factor -> dedupe -> inline -> re-collapse), then computes simplified rules.
-**Output:** `OptimizedGrammar` with `rules` and `simplifiedRules`.
+**Action:**
+1. `applyNormalizationPasses(rawRules, …)` — collapse → fan-out → factor → dedupe → inline → re-collapse. Produces the **RawRule** map.
+2. `applyWrapperDeletion(rules)` — pushes modifier wrappers to leaf attributes. Produces the **RenderRule** snapshot.
+3. `computeSimplifiedRules(renderRules, word, inlineKinds)` — produces the **SimplifiedRule** snapshot.
+4. Threads top-level **alias bodies** and **polymorph-form** contents through the same `applyNormalizationPasses` → `applyWrapperDeletion` → `computeSimplifiedRules` pipeline and merges them into `renderRules` / `simplifiedRules` (so `assemble.ts` reads snapshots, never re-simplifies per call).
+**Output:** `OptimizedGrammar` with `rules` (RawRule), `renderRules` (RenderRule), `simplifiedRules` (SimplifiedRule).
 
-### fanOutSeqChoices(rule)
-**Pattern:** `seq(a, choice(b, c), d)` with exactly one inner choice.
-**Action:** Distributes: `choice(seq(a, b, d), seq(a, c, d))`. Preserves variant labels.
-**Output:** Rewritten `choice` of `seq`s, or original unchanged.
+### Normalization passes
+- `fanOutSeqChoices(rule)` — `seq(a, choice(b,c), d)` → `choice(seq(a,b,d), seq(a,c,d))` (single inner choice; preserves variant labels).
+- `factorChoiceBranches(rule)` — extracts common prefix/suffix across choice branches; wraps remainder in `optional` when some branches are empty.
+- `dedupeSeqMembers(rule)` — collapses adjacent structurally-equal members.
+- `inlineSingleUseHidden(rules)` — inlines hidden rules referenced from exactly one parent (fixpoint, ≤4 passes); skips supertype/polymorph/enum/terminal/group.
+- `collapseWrappers(rule)` — bottom-up collapse of degenerate wrappers.
+- `rulesEqual(a, b)` — recursive structural equality (incl. `aliasedFrom`).
+- `needsSpace(prev, next)` — true when both boundary chars are word chars.
 
-### factorChoiceBranches(rule)
-**Pattern:** `choice` of seqs (or atoms) sharing common prefix/suffix.
-**Action:** Extracts common prefix/suffix via structural equality. Wraps remainder in `optional` when some branches are empty.
-**Output:** `seq(prefix, choice/optional(remainder), suffix)`.
-
-### dedupeSeqMembers(rule)
-**Pattern:** `seq` with adjacent structurally-equal members.
-**Action:** Collapses adjacent duplicates using `rulesEqual`.
-**Output:** `seq` with deduped members.
-
-### inlineSingleUseHidden(rules)
-**Pattern:** Hidden (`_`-prefixed) rules referenced from exactly one parent.
-**Action:** Replaces the parent's symbol ref with the hidden rule's body; deletes the hidden entry. Fixed-point (up to 4 passes). Skips structurally meaningful rules (supertype, polymorph, enum, terminal, group).
-**Output:** New rules map with inlined entries removed.
-
-### collapseWrappers(rule)
-**Pattern:** Any rule tree.
-**Action:** Bottom-up collapse of degenerate wrappers: `optional(optional)`, `optional(repeat)`, `repeat(repeat)`, `repeat(optional)`, single-member seq/choice.
-**Output:** Simplified rule tree.
-
-### rulesEqual(a, b)
-**Pattern:** Two rules to compare.
-**Action:** Recursive structural equality check across all rule types. Includes `aliasedFrom` for symbols.
-**Output:** `boolean`.
-
-### needsSpace(prev, next)
-**Pattern:** Two rendered text fragments.
-**Action:** Returns true when both boundary characters are word chars.
-**Output:** `boolean`.
+### `applyWrapperDeletion(rules)` (`compiler/wrapper-deletion.ts`) **(SHIPPED — PR1)**
+**Pattern:** Any rule map. Also exposed as `deleteWrapper(rule)` for a single tree.
+**Action:** Pushes `optional` / `field` / `repeat` / `repeat1` / `alias` wrappers DOWN to leaf `RuleBase` attributes (`multiplicity` / `fieldName` / `separator` / `aliasedFrom`), removing the wrapper nodes. Structural rules (`seq` / `choice` / `variant` / `group` / `polymorph`) are preserved. "Outer wins" when stamping. Idempotent on wrapper-free input.
+**Output:** `RenderRule`-shaped tree(s).
 
 ---
 
 ## Phase 3.5: Simplify (`compiler/simplify.ts`)
 
-Derivation-only view of a rule tree. Strips anonymous delimiters,
-collapses single-member wrappers, normalizes idempotent nestings.
-Template emission reads the raw rule; simplify feeds field/child
-derivation.
+Computes the SimplifiedRule view consumed by slot derivation. Inlines
+parser-inlined helpers, strips anonymous delimiters, canonicalizes toward the
+universal seq-of-leaves shape, and re-pushes any wrapper attributes that hoist
+transforms re-introduced.
 
-> **(PR0 / PR2 — planned)** Simplify gains responsibility for normalizing every
-> branch/group body toward the **universal seq-of-leaves canonical shape**:
->
-> - Push leaf-content modifier wrappers into attributes on the leaf (idempotent
->   with enrich; absorbs any wrapper that escaped enrich-time attribute lifting).
-> - Trigger group synthesis for any structural-content modifier wrapper
->   (any `optional` / `repeat` / `repeat1` whose content is a multi-member
->   `seq` or `choice` with slot content) that wasn't already decomposed in
->   enrich.
-> - Flatten degenerate single-member seqs.
-> - **Verify post-condition**: every branch and group body is a `SeqRule` of
->   leaves. Any nested structural rule (`optional`, `repeat`, `repeat1`, `seq`,
->   `choice`) inside a branch/group body is a bug — fail loud.
->
-> Whether auto-synthesis itself runs in wire, enrich, or both (Options A/B/C in
-> the spec), simplify is the canonical-shape verifier regardless.
+### `computeSimplifiedRules(renderRules, word, inlineKinds?)`
+**Pattern:** Called from `optimize()` with the RenderRule map.
+**Action:** `simplifyRules` (fixpoint of `inlineRefs` + `simplifyRule`) → per-rule `canonicalizeSeqOfLeaves` → `deleteWrapper` (final wrapper-free guard) → `fuseHeadRepeatLists` (re-fuse head-single + tail-array pairs an inline exposed). Optionally runs `assertUniversalShapeRule` per kind when `SITTIR_ASSERT_UNIVERSAL_SHAPE=1`.
+**Output:** `Record<string, SimplifiedRule>`.
 
-### simplifyRules(rules, wordMatcher?)
-**Pattern:** Full rule map from Optimize.
-**Action:** Runs `normalizeToFixpoint` on each rule (inlineGroupRefs + simplifyRule fixpoint).
-**Output:** New `Record<string, Rule>` with simplified views.
+### `simplifyRules(rules, wordMatcher?, inlineKinds?)` / `normalizeToFixpoint(rule, wordMatcher, rules, inlineKinds?)`
+**Pattern:** Full rule map / single rule.
+**Action:** `normalizeToFixpoint` loops `simplifyRule(inlineRefs(current, …))` up to 16 iterations until structural convergence (each transform is non-increasing on tree size).
+**Output:** Simplified map / converged rule.
 
-### simplifyRule(rule, wordMatcher?, inField?)
-**Pattern:** Any rule tree node.
-**Action:** Strips non-keyword string members from seqs; folds empty-match choice members to optional; collapses single-member wrappers; flattens nested seqs; hoists fields out of optional/repeat wrappers; drops outer field wrappers when inner fields are exposed.
-**Output:** Simplified rule for derivation.
+### `simplifyRule(rule, wordMatcher?, inField?)`
+**Pattern:** Any rule node.
+**Action:** seq → `collapseSeq`; choice → recurse, fold empty-match member to `optional`, collapse single-member, `mergeChoiceBranches`, then `hoistSharedFieldAcrossChoiceBranches`; optional/repeat/repeat1 → recurse + `hoistFieldOutOfSingleContentWrapper`; field → recurse with `inField=true` + `hoistInnerFieldOutOfFieldWrapper`; group/variant/clause → recurse into content.
+**Output:** Simplified rule. `withAttrsFrom` carries the discarded node's slot attributes onto the survivor.
 
-### normalizeToFixpoint(rule, wordMatcher, rules)
-**Pattern:** A single rule to normalize.
-**Action:** Loop (max 16 iterations) of `inlineGroupRefs` + `simplifyRule` until structural convergence.
-**Output:** Converged simplified rule.
+### `collapseSeq(rule, wordMatcher?, inField?)`
+**Pattern:** A `seq` during simplify.
+**Action:** Maps + filters members (strips non-keyword strings and empty-seq sentinels), flattens bare nested seqs (a nested seq that carries its OWN `multiplicity`/`separator`/`fieldName` is kept as one member so its cardinality isn't lost). On collapse to one member, **`multiplicity` COMBINES via `combineMultiplicity`** (rather than the survivor silently keeping its narrower own); `separator`/`fieldName`/`id` ride along absent-only.
+**Output:** Collapsed seq / single survivor / empty seq.
 
-### hoistFieldOutOfSingleContentWrapper(rule)
+### `combineMultiplicity(outer, inner)`
+**Pattern:** Combining a pushed-down OUTER multiplicity with a leaf's INNER one.
+**Action:** Lattice over `'single'` (the canonical required-one; `undefined` defaults to it): `outer==='single'` → keep inner; either side a collection → `nonEmptyArray` only when BOTH guarantee ≥1 (single or nonEmptyArray), else `array`; neither a collection → `optional` if either is, else `single`. (E.g. `combine('nonEmptyArray', 'optional') → 'array'` for `trait_bounds`.)
+**Output:** Effective `LeafMultiplicity`.
+
+### `inlineRefs(rule, rules, inlineKinds?, visited?)` **(renamed from `inlineGroupRefs`, PR2)**
+**Pattern:** Symbol refs to inlinable targets.
+**Action:** Two paths. (1) **`grammar.inline` path:** ANY symbol whose name is in `inlineKinds` is inlined — regardless of `source` or `hidden` — because tree-sitter inlines exactly those kinds at parse time; group/multi targets inline their CONTENT. (2) **GROUP/MULTI path:** hidden refs to group/multi helpers inline (group → its `content`, multi → the whole wrapper). `source==='group-lift'` refs skip this path (they materialize as their own AssembledGroup). Both paths preserve the referring symbol's pushed-down leaf attributes via `reapplyInlinedLeafAttrs`. Cycle-safe via `visited`.
+**Output:** Rule with inline targets expanded.
+
+### `resolveGroupOrMultiInlineTarget(target)`
+**Pattern:** A hidden symbol target.
+**Action:** Returns the group's `content` (group target) or the whole rule (multi target, via `extractRepeatShape`); `null` for anything else.
+**Output:** `Rule | null`.
+
+### `reapplyInlinedLeafAttrs(ref, inlined)` / `pushAttrsToLeaves(rule, multiplicity, separator, fieldName)`
+**Pattern:** After substituting a ref with its target body during inlining.
+**Action:** Re-applies the referring symbol's `multiplicity`/`separator`/`fieldName` onto the inlined body's LEAVES (not an enclosing seq, which `canonicalizeSeqOfLeaves` would flatten). `pushAttrsToLeaves` descends structural nodes; the **`choice` case stamps the choice NODE itself** (the choice is a single slot boundary that survives flattening) — including `fieldName` (the leaf case did this; the choice case previously forgot, mis-naming inlined `field('body', _suite)` → `block`). Multiplicity combines via the lattice; an existing array/nonEmptyArray is preserved.
+**Output:** Body with attributes re-stamped.
+
+### `hoistFieldOutOfSingleContentWrapper(rule)`
 **Pattern:** `repeat(field('n', X))` / `optional(field('n', X))`.
 **Action:** Rewrites to `field('n', repeat(X))` / `field('n', optional(X))`.
-**Output:** Rule with field hoisted to outer position.
+**Output:** Field hoisted outward.
 
-### hoistInnerFieldOutOfFieldWrapper(rule)
-**Pattern:** `field('outer', wrapper(... field('inner', X) ...))`.
-**Action:** Drops the outer field when its content has an inner field at exposable depth and no named-symbol siblings of that inner field.
-**Output:** Inner content with outer field stripped, or original unchanged.
+### `hoistInnerFieldOutOfFieldWrapper(rule)` / `hasNamedSiblingOfInnerField` / `isNamedReference` / `hasInnerFieldAtExposableDepth`
+**Pattern:** `field('outer', wrapper(… field('inner', X) …))`.
+**Action:** Drops the outer field when an inner field sits at exposable depth and no named-symbol sibling would lose its label. Bails on direct field nesting or a named-symbol sibling.
+**Output:** Inner content (outer field stripped) or original.
 
-### hoistSharedFieldAcrossChoiceBranches(rule)
-**Pattern:** Choice where every branch contains the same field name exactly once.
-**Action:** Lifts the shared field out, unions its contents, keeps branch residuals as optional choice.
-**Output:** `seq(field(A, choice(X1, X2)), optional(residuals))`.
+### `hoistSharedFieldAcrossChoiceBranches(rule)` / `mergeChoiceBranches(rule)`
+**Pattern:** Choices where a field name appears once per branch / same-length structurally-equivalent seq branches.
+**Action:** Lift a shared field out and union its contents (residuals → optional choice); or merge into a flat seq with per-position unioned field contents (`field('op', choice('&&','||','+'))`).
+**Output:** `seq(field(A, choice(…)), …)`.
 
-### mergeChoiceBranches(rule)
-**Pattern:** Choice of same-length seqs with position-by-position structural equivalence.
-**Action:** Merges into a flat seq with per-position unioned field contents.
-**Output:** `seq(field('op', choice('&&','||','+')), ...)`.
+### `canonicalizeSeqOfLeaves(rule)` / `isLeaf(rule)` / `assertUniversalShapeRule(rule, kind)` / `assertUniversalShape(node)`
+**Pattern:** A simplified rule body / a post-simplify rule or node.
+**Action:** Flattens nested seqs toward a flat seq of leaves; `isLeaf` recognizes pure literals + slot-ref leaves. The assertions fail loud if a branch/group/polymorph/multi body still nests `optional`/`repeat`/`seq`/`choice` where it shouldn't — currently gated behind `SITTIR_ASSERT_UNIVERSAL_SHAPE=1`.
+**Output:** Canonicalized rule / throws on violation.
 
-### inlineRefs(rule, rules, inlineKinds, visited?)
-**Pattern:** Hidden symbol references to inlinable targets.
-**Action:** Two inlining paths in priority order:
-  1. **GROUP / MULTI path:** hidden refs to group/multi rules are substituted with the group's content (or the whole multi rule). `source === 'group-lift'` refs skip this path (they materialise as their own AssembledGroup).
-  2. **grammar.inline path:** hidden, group-lift-sourced refs whose target is in `inlineKinds` are substituted with the target body (or its group/multi content if applicable). Matches tree-sitter's parse-time inlining of auto-synthesized helpers (e.g. `_type_arguments_repeat1`).
-
-  Cycle-safe via visited set.
-**Output:** Rule with inline targets expanded inline.
-
-> **(PR2 SHIPPED)** Renamed from `inlineGroupRefs`. Widened to inline auto-synthesized helpers registered in `grammar.inline` by `applyAutoGroups`. Threaded through `normalizeToFixpoint` → `simplifyRules` → `computeSimplifiedRules` from `optimize()`.
-
-### extractRepeatShape(rule)
-**Pattern:** Rule that unwraps to `repeat` / `repeat1`.
+### `extractRepeatShape(rule)`
+**Pattern:** A rule that unwraps to `repeat` / `repeat1`.
 **Action:** Peels optional/variant/clause/group/token wrappers.
 **Output:** `{ repeat, nonEmpty }` or `null`.
 
-### hoistInnerFieldsForTemplate(rule)
-**Pattern:** Any rule tree (template-side path).
-**Action:** Applies `hoistInnerFieldOutOfFieldWrapper` throughout the tree without stripping anonymous delimiters (templates need them).
-**Output:** Rule with inner fields hoisted but literals preserved.
+### `hoistInnerFieldsForTemplate(rule)` **(legacy template path)**
+**Pattern:** Any rule (template-side).
+**Action:** Applies `hoistInnerFieldOutOfFieldWrapper` throughout without stripping anonymous delimiters.
+**Output:** Inner fields hoisted, literals preserved. Used by the legacy walker; PR3 removes the legacy path.
 
 ---
 
 ## Phase 4: Assemble (`compiler/assemble.ts`)
 
-First time nodes appear. All metadata derived from the rule tree.
-Produces the `NodeMap` consumed by emitters.
+First time nodes appear. All metadata derived from the rule snapshots.
 
-> **(PR0 — planned)** `NodeMap` gains two back-pointer maps populated at
-> assembly time:
->
-> ```ts
-> interface NodeMap {
->   // ... existing fields ...
->   readonly nodeByRuleId: ReadonlyMap<RuleId, AssembledNode>;
->   readonly slotByRuleId: ReadonlyMap<RuleId, AssembledNonterminal>;
-> }
-> ```
->
-> When an `AssembledNode` is constructed from a kind's root rule, the root
-> rule's `id` registers in `nodeByRuleId`. When an `AssembledNonterminal` is
-> constructed from a slot's source rule (via `deriveSlots`), the source rule's
-> `id` registers in `slotByRuleId`.
->
-> These are the runtime lookup mechanism for the PR1 template emitter (and any
-> future consumer that walks a rule tree and needs to ask "what
-> `AssembledNonterminal` does this rule position correspond to") without
-> falling back to owner traversal or re-derivation. See memory entry
-> `feedback_ruleid_backpointer`. Enrichment passes must preserve `Rule.id`
-> through any rule rewrite or the maps go stale.
-
-### assemble(optimized)
+### `assemble(optimized)`
 **Pattern:** Called with an `OptimizedGrammar`.
-**Action:** Classifies each rule into a model type, constructs `AssembledNode` instances, collects anonymous tokens/keywords, resolves colliding names, assigns ir keys, marks parameterless/user-facing kinds.
-**Output:** `NodeMap` with `nodes`, `signatures`, `derivations`, `rules`.
+**Action:** Classifies each rule into a model type, constructs `AssembledNode` instances (attaching `.rule` / `.renderRule` / `.simplifiedRule`), collects anonymous tokens/keywords, resolves colliding names, assigns ir keys, marks parameterless/user-facing kinds. Slot-ref hydration is deferred to `hydrateSlotRefs`.
+**Output:** `NodeMap` with `nodes`, `signatures`, `derivations`, `rules`, `externals`.
 
-### classifyNode(kind, rule, opts?)
-**Pattern:** Each rule in the optimized grammar.
-**Action:** Dispatches on `rule.type` for pre-classified rules (enum, supertype, group, terminal, polymorph, pattern, string). Falls back to `hasAnyField`/`hasAnyChild` for branch detection; `isAllTextShape` for terminal fallback.
-**Output:** `ModelType` string.
+### `classifyNode(kind, rule, opts?)`
+**Pattern:** Each rule.
+**Action:** Dispatches on `rule.type` for pre-classified rules (enum / supertype / group / terminal / polymorph / pattern / string); falls back to `hasAnyField` / `hasAnyChild` for branch detection and `isAllTextShape` for terminal fallback.
+**Output:** `ModelType`.
 
-### hydrateSlotRefs(nodeMap)
-**Pattern:** Called after assembly and serialization.
-**Action:** Replaces every `UnresolvedRef` in slot values with the concrete `AssembledNode`. Logs unresolvable refs; retries hidden-source lookup via `_<name>` convention.
-**Output:** Mutates slot values in place; node graph becomes cyclic.
+### `hydrateSlotRefs(nodeMap)`
+**Pattern:** Called after assembly + serialization.
+**Action:** Replaces every `UnresolvedRef` in slot **values** with the concrete `AssembledNode` (retrying hidden-source `_<name>` lookup). **Resolves value refs only — does NOT touch slot metadata** (`storageName` / `propertyName` / multiplicity are already final from `collectSlots`). Logs unresolvable refs.
+**Output:** Mutates slot value refs in place; node graph becomes cyclic.
 
-### markParameterlessKinds(nodes)
-**Pattern:** Post-assembly fixpoint.
-**Action:** Phase 1 marks keywords/tokens (self-initialize). Phase 2 iterates compounds: a kind is parameterless when every required slot auto-stamps (single literal or single parameterless-kind ref). Sets `isParameterless` and `stampExpression`.
-**Output:** Mutates nodes with parameterless flags and stamp expressions.
+### `markUserFacing(nodes)` / `markParameterlessKinds(nodes)` / `resolveCollidingNames(nodes)` / `resolveIrKeys(nodes)` / `collectAnonymousNodes(...)`
+**Pattern:** Post-assembly fixpoints/passes.
+**Action:** `markUserFacing` flags hidden kinds that surface as alias sources in some rule's slots (so they get their own template); `markParameterlessKinds` two-phase-marks keywords/tokens then compounds whose required slots all auto-stamp; `resolveCollidingNames` disambiguates colliding typeNames; `resolveIrKeys` assigns the ir namespace; `collectAnonymousNodes` creates `AssembledKeyword` / `AssembledToken` entries from string literals.
+**Output:** Mutated node metadata.
 
-### resolveCollidingNames(nodes)
-**Pattern:** Post-assembly.
-**Action:** Groups nodes by `typeName`; renames hidden kinds that collide with visible siblings; disambiguates with numeric suffixes.
-**Output:** Mutates `typeName` and `factoryName` on colliding nodes.
-
-### resolveIrKeys(nodes)
-**Pattern:** Post-assembly.
-**Action:** Two-phase ir-namespace assignment. Pre-claims supertype keys. Phase 1: nodes whose short form equals their factoryName. Phase 2: suffix-stripped abbreviations. Falls back to full factoryName on collision.
-**Output:** Mutates `irKey` on each node.
-
-### collectAnonymousNodes(rules, nodes, wordMatcher)
-**Pattern:** Post-assembly.
-**Action:** Walks all rules for string literals. Creates `AssembledKeyword` (word-shaped) or `AssembledToken` (punctuation) entries for each.
-**Output:** Adds anonymous token/keyword entries to `nodes`.
-
-### nameNode(kind) (from node-map.ts)
-**Pattern:** Any kind string.
-**Action:** Converts snake_case to PascalCase `typeName` and camelCase `factoryName`. Handles `_`-prefix, reserved words, operator tokens.
-**Output:** `{ typeName, factoryName, irKey }`.
-
-### nameField(fieldName)
-**Pattern:** Any field name string.
-**Action:** Converts snake_case to camelCase `propertyName`; suffixes reserved words with `_` for `paramName`.
-**Output:** `{ propertyName, paramName }`.
+### `nameNode(kind)` / `nameField(fieldName)` (from `node-map.ts`)
+**Pattern:** Any kind / field name.
+**Action:** snake_case → PascalCase typeName + camelCase factoryName / propertyName; reserved-word + operator-token handling.
+**Output:** name records.
 
 ---
 
-## Slot Derivation (`compiler/node-map.ts`)
+## Slot model + Assembled hierarchy (`compiler/node-map.ts`, `compiler/collect-slots.ts`)
 
-Classes and derivation helpers for the assembled node hierarchy.
+### `AssembledNodeBase<R>` and subclasses
+`AssembledBranch` / `AssembledPolymorph` / `AssembledGroup` / `AssembledMulti`
+/ `AssembledPattern` / `AssembledKeyword` / `AssembledToken` / `AssembledEnum`
+/ `AssembledSupertype`. Each stores its rule snapshots and precomputes
+model-type-specific metadata.
 
-### AssembledBranch
-**Pattern:** Rule classified as `'branch'`.
-**Action:** Lazy-computes `fields`, `children`, `slots` from the simplified rule. **(legacy — to be removed in PR2)** Builds `renderTemplate` from the raw (inlined+hoisted) rule.
-**Output:** Node with field/child/slot metadata. **(legacy — to be removed in PR2)** plus render template body.
+- **`AssembledBranch`** holds `protected _slots: Record<string, AssembledNonterminal>` =
+  `slotRecord ?? buildSlotsRecord(kind, simplifiedRule, kindEntries)`. Getters:
+  `slots` → `_slots`; **`fields` → `Object.values(this.slots)`** (every slot,
+  field-named or kind-named — consumers must NOT branch on origin);
+  **`children` → `[]`** (retired post slot-unification; kept as an
+  empty-returning getter for un-migrated callers); `members` → the seq/choice
+  members; `separator` → the repeat separator; `isContainerShape` →
+  `!hasAnyField(this.rule)`.
+- **`AssembledPolymorph`** stores pre-built forms (each with its own slots);
+  `fields` / `children` follow the same unified pattern.
+- **`AssembledGroup`** is the hidden synthesized-group shape; same getters.
 
-> **(PR2 — planned)** The `renderTemplate` method on every `AssembledXxx`
-> class is deleted. Template string generation moves to `emitters/templates.ts`
-> per the universal emitter pattern (see "Phase 5: Emit"). `AssembledXxx`
-> classes expose data only; emitters own all string generation locally.
+> **Legacy (PR3 deletes):** every Assembled class still carries a
+> `renderTemplate(rules?, wordMatcher?, externals?)` method. It is no longer
+> the authoritative template path (the `TemplateEmitter` is), but it is still
+> CALLED from `render-module.ts:2324`, the legacy `emitBodyForNode`
+> (`templates.ts:1615`), and `node-map.ts:2343/2364`. PR3 removes the method
+> and those callers along with `template-walker.ts` and the `node-map.ts`
+> translation pipeline (`inlineJinjaClauses` / `translateToJinja` / spacing
+> absorbers / `escapeJinjaBraceCollisions`).
 
-### AssembledPolymorph
-**Pattern:** Rule classified as `'polymorph'`.
-**Action:** Stores pre-built `AssembledGroup` forms. Each form has its own fields/children/slots. **(legacy — to be removed in PR2)** Plus a `renderTemplate` method that dispatches on `$variant`.
-**Output:** Node with `forms` array and variant-child kind list.
+### `collectSlots(rule, kindForName?, kindEntries?, inherited?, inheritedSeparator?)` (`compiler/collect-slots.ts`) **(NEW — replaces `deriveSlotsRaw`)**
+**Pattern:** A wrapper-free (post-`deleteWrapper`) rule body.
+**Action:** "A slot IS a `nonterminal`-flagged node." Walks the tree emitting one `AssembledNonterminal` per nonterminal node:
+- `seq` → **distribute**: flat-collect member slots; the seq emits no slot. A multi-slot seq that survives derivation propagates its own `multiplicity`/`separator` to members that have none (`slotMultiplicity`; an inherited `nonEmptyArray` relaxes to `array` because a single member of a repeat1-seq isn't itself guaranteed ≥1).
+- `choice` → **two routes.** If field-named OR a non-structural union (`!isStructuralChoice`) → ONE union slot via `buildSlot`. If `fieldName === undefined && isStructuralChoice` → **distribute** into arms, `mergeByName` within each arm, `mergeChoiceArms` across arms (a field absent from some arm relaxes to optional). The **field-named-choice guard** is load-bearing: a `field('body', choice(...))` is ONE slot named by the field — distributing it would drop the field name and split the body into per-arm slots (the python block family: `field('body', _suite)` mis-deriving to `block`).
+- `variant` / `group` → transparent, recurse into content; `clause` → transparent but forces `'optional'` (ClauseRule carries no stamped multiplicity).
+- non-nonterminal leaf → `[]`.
+**Output:** `AssembledNonterminal[]` (folded by `mergeSlotsByName` at the `_deriveSlotsInternal` boundary).
 
-### AssembledPattern / AssembledKeyword / AssembledToken / AssembledEnum / AssembledSupertype / AssembledGroup / AssembledMulti
-**Pattern:** Rules classified as their respective model types.
-**Action:** Each stores its rule and precomputes model-type-specific metadata. **(legacy — to be removed in PR2)** Branch/Group/Polymorph/Multi also expose `renderTemplate`.
-**Output:** Specialized node instances.
+Supporting predicates: `isSlotNode` (intrinsic nonterminal via
+`isNonterminalRuleType`, or pushed-down `nonterminal: true`),
+`isStructuralChoice` (an arm is a multi-member seq OR `carriesNamedField`, AND
+not a shared-arm-field operator-enum), `sharedArmFieldName`,
+`strongestArmMultiplicity`.
 
-### deriveSlots(rule)
-**Pattern:** Canonical simplified rule.
-**Action:** Single-walk derivation producing every slot (fields + children) in declared order. Delegates to `_deriveFieldsInternal`.
+### `buildSlot(rule, kindForName?, kindEntries?, inherited, inheritedSeparator)`
+**Pattern:** A single nonterminal node.
+**Action:** Computes the slot. **Name derivation (`baseName`/`source`/`origin`):** `rule.fieldName` wins (`source` from rule, `origin` unset); else by type — `symbol`/`supertype` → strip leading `_`, `source='inferred'`, `origin='kind'`; `choice`/`polymorph` → recover a `sharedArmFieldName` (operator-enum) else warn (unnamed-choice) and fall back to `'content'` with `origin='kind'`; default → elide (`null`). Values via `deriveValuesForRule` (polymorph: union of form contents); `'content'` arrays relax `nonEmptyArray`→`array` (may be legitimately empty). Separator + `hasTrailing`/`hasLeading` from `rule.separator ?? inheritedSeparator` (object form reads `.trailing`/`.leading`; else `findRepeatFlag`). Pluralizes multi-slot property names.
+**Output:** `AssembledNonterminal` (or `null`).
+
+> **`_new` naming getters (diagnostic scaffolding):** `buildSlot` additionally
+> stamps `fieldName`, `storageNameNew`, `nameNew`, `parseNamesNew` on every
+> slot — the **intended future single-source naming**: `fieldName` wins, else
+> the single referenced kind name (incl. a supertype's own name), else
+> `'content'`; `parseNamesNew = [fieldName]` (parser routes by field) or the
+> ref-kind names. These run alongside the legacy `baseName`/`origin`
+> derivation and are the migration target for retiring it.
+
+### `deriveSlots(rule, kindEntries?)` / `_deriveSlotsInternal(rule, kindEntries?)` / `mergeSlotsByName(slots)` / `buildSlotsRecord(...)`
+**Pattern:** Public slot-derivation entry point.
+**Action:** `deriveSlots` → `_deriveSlotsInternal` → `deleteWrapper(rule)` then `mergeSlotsByName(collectSlots(canonical, …))`. `mergeSlotsByName` folds same-named slots across positions (e.g. python `if_statement.alternative` from a repeat AND an optional) into one `AssembledNonterminal` whose `values` union.
 **Output:** `readonly AssembledNonterminal[]`.
 
-### deriveFieldsRaw(rule, outerMultiplicity)
-**Pattern:** Any rule tree node during field derivation.
-**Action:** Recursive walk collecting `field()` nodes. Handles synthetic wrappers, alias sources, multiplicity threading through optional/repeat/choice. Promotes positional symbols/supertypes to child-like slots.
-**Output:** `AssembledNonterminal[]`.
-
-### hasAnyField(rule) / hasAnyChild(rule)
-**Pattern:** Any rule tree.
-**Action:** Cheap existence predicates that short-circuit on first find.
-**Output:** `boolean`.
-
-### isRequired(slot) / isMultiple(slot) / isNonEmpty(slot)
-**Pattern:** An assembled slot's values array.
-**Action:** Derived from per-value `multiplicity` flags. No stored booleans.
-**Output:** `boolean`.
-
-### snakeToCamel(name)
-**Pattern:** Any snake_case string.
-**Action:** Canonical `foo_bar` -> `fooBar` transformation.
-**Output:** camelCase string.
-
-### isSyntheticFieldWrapper(content)
-**Pattern:** A field's content rule.
-**Action:** Detects autogen outer-field wrappers (multi-member seq containing inner fields).
-**Output:** `boolean`.
+### Slot helpers
+- `extractSeparatorString(sep)` — string / `Rule[]` / `{rules, trailing?, leading?}` → joined separator text.
+- `stampSeparatorOnValues(values, sep)` — stamps separator onto array/nonEmptyArray values only.
+- `isRequired` / `isMultiple` / `isNonEmpty` — derived from per-value `multiplicity`, no stored booleans.
+- `hasAnyField(rule)` / `hasAnyChild(rule)` — cheap short-circuit predicates.
+- `snakeToCamel` / `pluralize` / `safeParamName` / `kindsOf(slot)`.
 
 ---
 
 ## Phase 5: Emit (`emitters/*.ts`)
 
-Emitters consume the `NodeMap` and produce generated artifacts (factories,
-wrap, from, types, render templates, transport, node-model, suggested
-overrides, etc.). The **canonical emitter pattern** is established by
-`emitters/factories.ts`: iterate `nodeMap.nodes`, dispatch on
-`node.modelType`, own all string generation locally. Compiler-side
-`AssembledXxx` classes expose data only — no `.renderXxx()` methods that
-return output strings. See memory entry `feedback_emitter_pattern_consistency`.
+Every emitter follows the canonical pattern: iterate `nodeMap.nodes`, dispatch
+on `node.modelType`, own ALL string generation locally; compiler-side Assembled
+classes expose data only (`feedback_emitter_pattern_consistency`).
 
-### emitters/templates.ts **(PR1 — planned; PR2 deletes the legacy walker)**
+### `emitters/templates.ts` — `TemplateEmitter` / `runTemplateEmitter(config)` **(authoritative — PR2)**
+**Pattern:** Once per regen with the assembled `NodeMap`.
+**Action:** `runTemplateEmitter` walks `nodeMap.nodes` and dispatches: `branch` → `emitBranchTemplate` (consumes `node.renderRule`), `polymorph` → `emitPolymorphTemplate` (per-form `renderRule`; uses `variant`, not `$variant`, for Askama compatibility), `group` → `emitGroupTemplate`, `multi` → `emitMultiTemplate`; `supertype`/`pattern`/`keyword`/`token`/`enum` skipped. The shared `emitRule(rule, ctx)` switches on `Rule.type` and reads PR0 leaf attributes directly; slot property names resolve through the `EmitCtx`'s ownerSlots. A **slot-preservation gate** (each declared slot appears in the output exactly once; bypass with `SITTIR_SLOT_PRESERVATION=0`) replaced the byte-equivalence diff gate.
+**Output:** `EmittedTemplates` (`bodies: Map<kind, jinja>`); `writeJinjaTemplates` writes + prunes stale `.jinja` files.
 
-**Pattern:** Invoked once per regen with the assembled `NodeMap`.
-**Action:** Iterates `nodeMap.nodes`; dispatches on `node.modelType`
-(`'branch' | 'polymorph' | 'group' | 'multi'` emit a body; `'supertype' |
-'pattern' | 'keyword' | 'token' | 'enum'` are skipped). Each per-modelType
-emit function calls a shared `emitRule(rule, ctx)` that switches on
-`Rule.type` and reads the PR0 modifier attributes (`fieldName`,
-`multiplicity`, `separator`, `nonterminal`) directly from the leaf rule. Slot
-property names are resolved via `ctx.nodeMap.slotByRuleId.get(rule.id)` →
-`AssembledNonterminal.propertyName` (no re-derivation from `rule.name` plus
-owner traversal).
-**Output:** `EmittedTemplates` — a per-kind map of Jinja template bodies.
+> **Stale notes:** the file's top docstring still claims template generation
+> "happens inside the `AssembledNode` class hierarchy … `renderTemplate()`" —
+> that is the legacy path. `emitBodyForNode` (still calling `renderTemplate`)
+> is a residual legacy helper; the `TemplateEmitter` class is authoritative.
 
-The `EmitCtx` carries cross-cutting read-only context: hidden-symbol
-resolution (`rules` map), word-matcher regex, externals list, and the
-NodeMap (for `slotByRuleId` lookups). No metadata accumulators are needed
-because every rule already carries its modifier attributes.
+### `emitters/wrap.ts`
+**Pattern:** Per node; tree node → typed NodeData hydration.
+**Action:** Emits per-kind `wrap*` functions. **`collectConcreteStorageKeys(slot, nodeMap)`** is the `origin === 'kind'` arm-probe: for kind-named slots it expands runtime discriminator kinds, inverts the slot's `aliasSources` (`{target: source}`) to rewrite source→target storage keys, and returns the candidate `_<kind>` keys (or `undefined` when they collapse to the nominal `_<name>`). **`resolveSlotStoreExpr(slot, dataExpr, candidateKeys?)`** emits a `(_a ?? _b ?? _name)` multi-key probe over those candidates (the runtime data populates exactly one). This is the alias-target routing fix (`project_alias_target_routing`).
+**Output:** wrap function source.
 
-**PR1 in-process diff gate:** during PR1's lifetime the emitter runs both
-the legacy walker (via `node.renderTemplate()`) and the new per-modelType
-emit functions; output divergence on any kind fails regen with the kind +
-diff. PR2 deletes the gate together with the legacy paths.
+### `emitters/factories.ts` / `from.ts` / `types.ts` / `render-module.ts` / `transport-common.ts`
+**Pattern:** Per node.
+**Action:** Iterate nodes, dispatch on modelType, consume the AssembledNode slot view. `render-module.ts` reads per-slot separator from the slot's NodeRef/TerminalValue stamp, falling back to the node-wide `meta.separators` for slots not yet stamped (PR3 drops the fallback once stamping covers all kinds). `from.ts` consumes `AssembledGroup` for synthesized-group projection.
+**Output:** Generated TS / Rust render code.
 
-### Legacy template path **(legacy — to be removed in PR2)**
+### `emitters/node-model.ts` / `suggested.ts` / `compiler/grammar.ts` **(PR3 re-wrap target)**
+These serialize rules / re-print override syntax / emit grammar.js for
+cross-process consumers. When wrapper rule types delete (PR3), they gain a
+re-wrap pass reconstructing canonical wrapped form from attribute form, and
+`node-model.json5` bumps its schema with a migration step in `cli.ts`.
 
-The pre-refactor template path is **not** an emitter in the canonical sense
-and deletes wholesale in PR2:
+---
 
-- `compiler/template-walker.ts` (~1758 lines) — Rule-tree walker that
-  re-derives structural information (cardinality, optionality, separator,
-  clause-vs-plain) at emit time that assembly already learned. Emits an
-  intermediate format (`$NAME`, `$$$NAME`, `$NAME_CLAUSE`, plus a `clauses`
-  dict and `joinByField` metadata).
-- `compiler/node-map.ts` translation pipeline — second pass over the
-  walker's intermediate format:
-  - `inlineJinjaClauses` (~120 lines) — inlines clause snippets.
-  - `translateToJinja` (~200 lines) — produces the final Jinja text.
-  - `escapeJinjaBraceCollisions` (~40 lines) — escapes brace collisions.
-  - `JinjaTranslateMeta` interface and the 3 assembly call sites that
-    thread it.
-  - Spacing absorbers — adjacency fix-ups that won't be needed because the
-    new emitter outputs literals exactly as captured on rules.
-- `AssembledBranch.renderTemplate` (~50 lines), `AssembledPolymorph.renderTemplate`
-  (~80), `AssembledGroup.renderTemplate` (~50), `AssembledMulti.renderTemplate`
-  (~20) — the compiler-side string generators that violate the canonical
-  emitter pattern.
-- `ClauseRule` interface, `isClause` guard, `detectClause` (see Link). The
-  27 `'clause'` case sites collapse into the existing `'optional'` cases.
+## Complexity hotspots (simplification candidates)
 
-PR2's regression gate requires byte-identical output vs the legacy path
-(via the PR1 in-process diff gate that has already burned in). Edge case
-absorption (walker hotspot fixes without tests, choice-branch literal drop,
-scanner-delimited adjacency) lands as explicit test cases in
-`__tests__/templates-emitter.test.ts` during PR2.
+Feeds an upcoming simplification design. These are the over-conditional /
+surprising bits worth flagging:
 
-### Other emitters (unchanged pattern)
+1. **`collectSlots` choice distribution vs union (`collect-slots.ts:504`).**
+   The `choice` case forks on `fieldName === undefined && isStructuralChoice`.
+   Distribution (per-arm slots merged by name) is only correct for
+   field-contributing branches like ts `variable_declarator`
+   (`choice(seq(field('name'), …), seq(…))` → `name`/`type`/`value`). It
+   **mis-handled `field('body', _suite)`** (python block family) — the
+   field-named-choice guard (`rule.fieldName === undefined`) was added precisely
+   so a field-named choice stays ONE slot. The dual-path choice handling
+   (distribute / union / field-named) is the single most condition-dense site
+   in slot derivation and a prime candidate for collapsing into a uniform
+   "choice = one union slot, named by the enclosing field or shared-arm field"
+   rule once `_new` naming subsumes it.
 
-`emitters/factories.ts`, `emitters/wrap.ts`, `emitters/from.ts`,
-`emitters/types.ts`, `emitters/render-module.ts`, `emitters/transport-common.ts`
-already iterate `nodeMap.nodes`, dispatch on `node.modelType`, and own all
-string generation locally. They consume the `AssembledNode` view and don't
-walk raw rules.
+2. **`origin` is unreliable; naming derivation is scattered.** `buildSlot`
+   derives a slot name from three interacting sources — `rule.fieldName`,
+   per-type `baseName` fallback, and choice **distribution** — and stamps
+   `origin: 'kind'` on positional/unnamed slots. But `origin` is then **flipped
+   to `'kind'` by a later pass even for slots that originated from a `field()`**
+   (the `source='inferred'` positional-symbol arm forces it), so consumers that
+   branch on `origin` (e.g. wrap's `collectConcreteStorageKeys`, which keys
+   entirely off `slot.origin === 'kind'`) read a derived-not-authoritative
+   signal. The parallel **`_new` getters** (`fieldName` / `storageNameNew` /
+   `nameNew` / `parseNamesNew`) exist as the single-source replacement but run
+   *alongside* the legacy `baseName`/`origin` logic — both paths live until the
+   migration completes.
 
-**(PR3 — planned)** The two emitters that DO consume `Rule.type` migrate
-when wrapper rule types delete:
+3. **Supertype/hidden-choice name lost on inline.** When a hidden choice or a
+   supertype is inlined (`inlineRefs` / `pushAttrsToLeaves`), the **supertype's
+   own name is not preserved onto the resulting slot** — the choice case in
+   `pushAttrsToLeaves` had to be patched to propagate `fieldName` onto the
+   choice node (it previously only stamped leaves), and even so an inlined
+   `field('body', _suite)` over a choice recovers its name only via the
+   `sharedArmFieldName` fallback in `buildSlot`, not from the inlined
+   supertype. Inlining a named structural node should carry that name forward
+   as the slot's `baseName` rather than relying on downstream recovery.
 
-- `emitters/node-model.ts` — serializes rules to `node-model.json5`.
-  Serialized shape changes (no `optional`/`field`/`repeat`/`repeat1`
-  wrappers); schema version bumps; a migration step in
-  `packages/codegen/src/cli.ts` reads the old format and writes the new on
-  first regen.
-- `emitters/suggested.ts` — re-prints rule trees as TypeScript override
-  syntax. Adds a re-wrap pass that reconstructs canonical wrapped form from
-  attribute form when emitting (`field('name', optional(repeat($.X)))` etc.).
+4. **Transport/bridge render code referencing stale slot names.** A recurring
+   Codex PR-review class: generated Rust render / transport code references slot
+   names that no longer match the current slot model after auto-group synthesis
+   and inlining — e.g. `type_arguments_repeat1`, `*_optional1`
+   (`_<parent>_optional<N>` / `_<parent>_repeat<N>` synthesized helpers), and ts
+   `export_statement`. These arise because the synthesized-helper names leak
+   into emitted artifacts (`types.ts` / `consts.ts` / `transport.rs`) while the
+   slot the parent actually exposes is the inlined content. The render-module
+   per-slot-separator fallback (`meta.separators` node-wide) is part of the same
+   smell — render code reads a node-wide map keyed by names that may not survive
+   inlining. PR3's per-slot stamping + helper-name cleanup target this.
 
-`compiler/grammar.ts` (tree-sitter grammar.js emit) follows the same
-re-wrap pattern as `suggested.ts`.
+5. **Three legacy template paths still live (PR3).** `template-walker.ts`
+   (~66 KB), the `node-map.ts` translation pipeline, and every
+   `AssembledXxx.renderTemplate()` method coexist with the authoritative
+   `TemplateEmitter`. The `templates.ts` top docstring + `emitBodyForNode`
+   still describe/use the legacy path. This is dead-weight duplication that
+   confuses every reader until PR3 deletes it.

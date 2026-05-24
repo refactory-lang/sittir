@@ -13,7 +13,7 @@
     "_comprehension_clauses": "config",
     "_except_clause_as": "config",
     "_identifier": "text",
-    "_match_block": "spread",
+    "_match_block": "config",
     "_match_block_block": "config",
     "_simple_pattern_negative": "spread",
     "_simple_statements": "spread",
@@ -183,7 +183,7 @@
     "with": "text"
   },
   "fieldAliasMap": {
-    "_match_block.content": {
+    "_match_block.match_block_block": {
       "match_block_block": "_match_block_block"
     },
     "_suite.block": {
@@ -293,7 +293,7 @@
       "alias"
     ],
     "_match_block": [
-      "content"
+      "match_block_block"
     ],
     "_match_block_block": [
       "alternative"
@@ -789,7 +789,7 @@
       }
     },
     "_match_block": {
-      "content": {
+      "match_block_block": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2399,7 +2399,7 @@
     "_match_block": {
       "source": "override",
       "childKind": {
-        "_match_block_block": "block"
+        "match_block_block": "block"
       }
     },
     "assignment": {

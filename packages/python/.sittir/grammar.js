@@ -1338,6 +1338,85 @@ function resolvePatch(patch, originalMember, precStack) {
   }
   return patch;
 }
+function findInferredFieldThroughTransparentWrappers(node) {
+  const r = node;
+  if (!r || typeof r !== "object") return null;
+  const t = r.type;
+  if (!t) return null;
+  const isSittirOptional = t === "optional" || t === "OPTIONAL";
+  if (isSittirOptional) {
+    const inner = r.content;
+    if (!inner || typeof inner !== "object") return null;
+    if (isFieldLike(inner) && (inner.source === "inferred" || inner.source === "enriched")) {
+      return {
+        found: inner,
+        reconstruct: (newInner) => ({ ...r, content: newInner })
+      };
+    }
+    const deeper = findInferredFieldThroughTransparentWrappers(inner);
+    if (deeper) {
+      return {
+        found: deeper.found,
+        reconstruct: (newInner) => ({ ...r, content: deeper.reconstruct(newInner) })
+      };
+    }
+    return null;
+  }
+  if (isChoiceType(t)) {
+    const members = r.members;
+    if (!Array.isArray(members) || members.length !== 2) return null;
+    const blankIdx = members.findIndex((m) => {
+      const mt = m.type;
+      return mt === "BLANK" || mt === "blank";
+    });
+    if (blankIdx === -1) return null;
+    const contentIdx = 1 - blankIdx;
+    const inner = members[contentIdx];
+    if (!inner || typeof inner !== "object") return null;
+    if (isFieldLike(inner) && (inner.source === "inferred" || inner.source === "enriched")) {
+      return {
+        found: inner,
+        reconstruct: (newInner) => {
+          const newMembers = [...members];
+          newMembers[contentIdx] = newInner;
+          return { ...r, members: newMembers };
+        }
+      };
+    }
+    const deeper = findInferredFieldThroughTransparentWrappers(inner);
+    if (deeper) {
+      return {
+        found: deeper.found,
+        reconstruct: (newInner) => {
+          const newMembers = [...members];
+          newMembers[contentIdx] = deeper.reconstruct(newInner);
+          return { ...r, members: newMembers };
+        }
+      };
+    }
+    return null;
+  }
+  const isPrecWrapper2 = t === "prec" || t === "PREC" || t === "prec_left" || t === "PREC_LEFT" || t === "prec_right" || t === "PREC_RIGHT" || t === "prec_dynamic" || t === "PREC_DYNAMIC";
+  if (isPrecWrapper2) {
+    const inner = r.content;
+    if (!inner || typeof inner !== "object") return null;
+    if (isFieldLike(inner) && (inner.source === "inferred" || inner.source === "enriched")) {
+      return {
+        found: inner,
+        reconstruct: (newInner) => ({ ...r, content: newInner })
+      };
+    }
+    const deeper = findInferredFieldThroughTransparentWrappers(inner);
+    if (deeper) {
+      return {
+        found: deeper.found,
+        reconstruct: (newInner) => ({ ...r, content: deeper.reconstruct(newInner) })
+      };
+    }
+    return null;
+  }
+  return null;
+}
 function resolveFieldPlaceholder(patch, originalMember, precStack) {
   let content = originalMember;
   if (isFieldLike(content) && (content.source === "enriched" || content.source === "inferred")) {
@@ -1351,6 +1430,14 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
       );
     }
     content = content.content;
+  } else {
+    const nested = findInferredFieldThroughTransparentWrappers(originalMember);
+    if (nested !== null) {
+      const overrideName = patch.name;
+      const renamedField = { ...nested.found, name: overrideName, source: "override" };
+      const reconstructed = nested.reconstruct(renamedField);
+      return reconstructed;
+    }
   }
   const maybeSymbolized = maybeKeywordSymbol(patch.name, content, (body) => wrapInPrec(body, precStack));
   if (maybeSymbolized !== content) {

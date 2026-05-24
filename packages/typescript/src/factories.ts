@@ -331,38 +331,16 @@ export function _exportStatementDefaultDeclArmDefaultKwValue(config: T.ExportSta
   }, methodsEngine);
 }
 
-export function exportStatementDefaultFromArm(config: T.ExportStatementDefaultFromArm.Config) {
-  const _content = config.content;
-  const _semicolon = config.semicolon;
+export function exportStatementDefaultFromArmStarFrom(source: T.ExportStatementDefaultFromArmStarFrom.Config['source']) {
+  const _source = source;
   return withMethods({
-    $type: TSKindId.ExportStatementDefaultFromArm as const,
+    $type: TSKindId._ExportStatementDefaultFromArmStarFrom as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    _semicolon,
-    content() { return _content; },
-    semicolon() { return _semicolon; },
-    $with: {
-      content: (value: T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause) => exportStatementDefaultFromArm({ ...config, content: value }),
-      semicolon: (value?: T.Semicolon) => exportStatementDefaultFromArm({ ...config, semicolon: value }),
-    },
-  }, methodsEngine);
-}
-
-export function exportStatementDefaultFromArmClauseFrom(config: T.ExportStatementDefaultFromArmClauseFrom.Config) {
-  const _export_clause = config.exportClause;
-  const _source = config.source;
-  return withMethods({
-    $type: TSKindId.ExportStatementDefaultFromArmClauseFrom as const,
-    $source: 2 as const,
-    $named: true as const,
-    _export_clause,
     _source,
-    exportClause() { return _export_clause; },
     source() { return _source; },
     $with: {
-      exportClause: (value: T.ExportClause) => exportStatementDefaultFromArmClauseFrom({ ...config, exportClause: value }),
-      source: (value: T.String) => exportStatementDefaultFromArmClauseFrom({ ...config, source: value }),
+      source: (value: T.ExportStatementDefaultFromArmStarFrom.Config['source']) => exportStatementDefaultFromArmStarFrom(value),
     },
   }, methodsEngine);
 }
@@ -371,7 +349,7 @@ export function exportStatementDefaultFromArmNsFrom(config: T.ExportStatementDef
   const _namespace_export = config.namespaceExport;
   const _source = config.source;
   return withMethods({
-    $type: TSKindId.ExportStatementDefaultFromArmNsFrom as const,
+    $type: TSKindId._ExportStatementDefaultFromArmNsFrom as const,
     $source: 2 as const,
     $named: true as const,
     _namespace_export,
@@ -385,16 +363,156 @@ export function exportStatementDefaultFromArmNsFrom(config: T.ExportStatementDef
   }, methodsEngine);
 }
 
-export function exportStatementDefaultFromArmStarFrom(config: T.ExportStatementDefaultFromArmStarFrom.Config) {
+export function exportStatementDefaultFromArmClauseFrom(config: T.ExportStatementDefaultFromArmClauseFrom.Config) {
+  const _export_clause = config.exportClause;
   const _source = config.source;
   return withMethods({
-    $type: TSKindId.ExportStatementDefaultFromArmStarFrom as const,
+    $type: TSKindId._ExportStatementDefaultFromArmClauseFrom as const,
+    $source: 2 as const,
+    $named: true as const,
+    _export_clause,
+    _source,
+    exportClause() { return _export_clause; },
+    source() { return _source; },
+    $with: {
+      exportClause: (value: T.ExportClause) => exportStatementDefaultFromArmClauseFrom({ ...config, exportClause: value }),
+      source: (value: T.String) => exportStatementDefaultFromArmClauseFrom({ ...config, source: value }),
+    },
+  }, methodsEngine);
+}
+
+export function exportStatementDefaultFromArm(config: ConfigOf<T.ExportStatementDefaultFromArmUFormStarFrom>): ReturnType<typeof exportStatementDefaultFromArmUFormStarFrom>;
+export function exportStatementDefaultFromArm(config: ConfigOf<T.ExportStatementDefaultFromArmUFormNsFrom>): ReturnType<typeof exportStatementDefaultFromArmUFormNsFrom>;
+export function exportStatementDefaultFromArm(config: ConfigOf<T.ExportStatementDefaultFromArmUFormClauseFrom>): ReturnType<typeof exportStatementDefaultFromArmUFormClauseFrom>;
+export function exportStatementDefaultFromArm(config: ConfigOf<T.ExportStatementDefaultFromArmUFormExportClause>): ReturnType<typeof exportStatementDefaultFromArmUFormExportClause>;
+export function exportStatementDefaultFromArm(config: ConfigOf<T.ExportStatementDefaultFromArmUFormStarFrom> | ConfigOf<T.ExportStatementDefaultFromArmUFormNsFrom> | ConfigOf<T.ExportStatementDefaultFromArmUFormClauseFrom> | ConfigOf<T.ExportStatementDefaultFromArmUFormExportClause>) {
+  switch (config.$variant) {
+    case 'star_from': return exportStatementDefaultFromArmUFormStarFrom(config as Parameters<typeof exportStatementDefaultFromArmUFormStarFrom>[0]);
+    case 'ns_from': return exportStatementDefaultFromArmUFormNsFrom(config as Parameters<typeof exportStatementDefaultFromArmUFormNsFrom>[0]);
+    case 'clause_from': return exportStatementDefaultFromArmUFormClauseFrom(config as Parameters<typeof exportStatementDefaultFromArmUFormClauseFrom>[0]);
+    case 'export_clause': return exportStatementDefaultFromArmUFormExportClause(config as Parameters<typeof exportStatementDefaultFromArmUFormExportClause>[0]);
+  }
+  throw new Error(`exportStatementDefaultFromArm: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'star_from' | 'ns_from' | 'clause_from' | 'export_clause'.`);
+}
+export function exportStatementDefaultFromArmUFormStarFrom(config: Omit<ConfigOf<T.ExportStatementDefaultFromArmUFormStarFrom>, '$variant'>) {
+  const _export_statement_default_from_arm_star_from = config.exportStatementDefaultFromArmStarFrom;
+  const _semicolon = config.semicolon;
+  return withMethods({
+    $type: TSKindId.ExportStatementDefaultFromArm as const,
+    $source: 2 as const,
+    $named: true as const,
+    $variant: 'star_from' as const,
+    _export_statement_default_from_arm_star_from,
+    _semicolon,
+    exportStatementDefaultFromArmStarFrom() { return _export_statement_default_from_arm_star_from; },
+    semicolon() { return _semicolon; },
+    $with: {
+      exportStatementDefaultFromArmStarFrom: (value: T._ExportStatementDefaultFromArmStarFrom) => exportStatementDefaultFromArmUFormStarFrom({ ...config, exportStatementDefaultFromArmStarFrom: value }),
+      semicolon: (value?: T.Semicolon) => exportStatementDefaultFromArmUFormStarFrom({ ...config, semicolon: value }),
+    },
+  }, methodsEngine);
+}
+export function exportStatementDefaultFromArmUFormNsFrom(config: Omit<ConfigOf<T.ExportStatementDefaultFromArmUFormNsFrom>, '$variant'>) {
+  const _export_statement_default_from_arm_ns_from = config.exportStatementDefaultFromArmNsFrom;
+  const _semicolon = config.semicolon;
+  return withMethods({
+    $type: TSKindId.ExportStatementDefaultFromArm as const,
+    $source: 2 as const,
+    $named: true as const,
+    $variant: 'ns_from' as const,
+    _export_statement_default_from_arm_ns_from,
+    _semicolon,
+    exportStatementDefaultFromArmNsFrom() { return _export_statement_default_from_arm_ns_from; },
+    semicolon() { return _semicolon; },
+    $with: {
+      exportStatementDefaultFromArmNsFrom: (value: T._ExportStatementDefaultFromArmNsFrom) => exportStatementDefaultFromArmUFormNsFrom({ ...config, exportStatementDefaultFromArmNsFrom: value }),
+      semicolon: (value?: T.Semicolon) => exportStatementDefaultFromArmUFormNsFrom({ ...config, semicolon: value }),
+    },
+  }, methodsEngine);
+}
+export function exportStatementDefaultFromArmUFormClauseFrom(config: Omit<ConfigOf<T.ExportStatementDefaultFromArmUFormClauseFrom>, '$variant'>) {
+  const _export_statement_default_from_arm_clause_from = config.exportStatementDefaultFromArmClauseFrom;
+  const _semicolon = config.semicolon;
+  return withMethods({
+    $type: TSKindId.ExportStatementDefaultFromArm as const,
+    $source: 2 as const,
+    $named: true as const,
+    $variant: 'clause_from' as const,
+    _export_statement_default_from_arm_clause_from,
+    _semicolon,
+    exportStatementDefaultFromArmClauseFrom() { return _export_statement_default_from_arm_clause_from; },
+    semicolon() { return _semicolon; },
+    $with: {
+      exportStatementDefaultFromArmClauseFrom: (value: T._ExportStatementDefaultFromArmClauseFrom) => exportStatementDefaultFromArmUFormClauseFrom({ ...config, exportStatementDefaultFromArmClauseFrom: value }),
+      semicolon: (value?: T.Semicolon) => exportStatementDefaultFromArmUFormClauseFrom({ ...config, semicolon: value }),
+    },
+  }, methodsEngine);
+}
+export function exportStatementDefaultFromArmUFormExportClause(config: Omit<ConfigOf<T.ExportStatementDefaultFromArmUFormExportClause>, '$variant'>) {
+  const _export_clause = config.exportClause;
+  const _semicolon = config.semicolon;
+  return withMethods({
+    $type: TSKindId.ExportStatementDefaultFromArm as const,
+    $source: 2 as const,
+    $named: true as const,
+    $variant: 'export_clause' as const,
+    _export_clause,
+    _semicolon,
+    exportClause() { return _export_clause; },
+    semicolon() { return _semicolon; },
+    $with: {
+      exportClause: (value: T.ExportClause) => exportStatementDefaultFromArmUFormExportClause({ ...config, exportClause: value }),
+      semicolon: (value?: T.Semicolon) => exportStatementDefaultFromArmUFormExportClause({ ...config, semicolon: value }),
+    },
+  }, methodsEngine);
+}
+
+export function _exportStatementDefaultFromArmClauseFrom(config: T._ExportStatementDefaultFromArmClauseFrom.Config) {
+  const _export_clause = config.exportClause;
+  const _source = config.source;
+  return withMethods({
+    $type: TSKindId._ExportStatementDefaultFromArmClauseFrom as const,
+    $source: 2 as const,
+    $named: true as const,
+    _export_clause,
+    _source,
+    exportClause() { return _export_clause; },
+    source() { return _source; },
+    $with: {
+      exportClause: (value: T.ExportClause) => _exportStatementDefaultFromArmClauseFrom({ ...config, exportClause: value }),
+      source: (value: T.String) => _exportStatementDefaultFromArmClauseFrom({ ...config, source: value }),
+    },
+  }, methodsEngine);
+}
+
+export function _exportStatementDefaultFromArmNsFrom(config: T._ExportStatementDefaultFromArmNsFrom.Config) {
+  const _namespace_export = config.namespaceExport;
+  const _source = config.source;
+  return withMethods({
+    $type: TSKindId._ExportStatementDefaultFromArmNsFrom as const,
+    $source: 2 as const,
+    $named: true as const,
+    _namespace_export,
+    _source,
+    namespaceExport() { return _namespace_export; },
+    source() { return _source; },
+    $with: {
+      namespaceExport: (value: T.NamespaceExport) => _exportStatementDefaultFromArmNsFrom({ ...config, namespaceExport: value }),
+      source: (value: T.String) => _exportStatementDefaultFromArmNsFrom({ ...config, source: value }),
+    },
+  }, methodsEngine);
+}
+
+export function _exportStatementDefaultFromArmStarFrom(config: T._ExportStatementDefaultFromArmStarFrom.Config) {
+  const _source = config.source;
+  return withMethods({
+    $type: TSKindId._ExportStatementDefaultFromArmStarFrom as const,
     $source: 2 as const,
     $named: true as const,
     _source,
     source() { return _source; },
     $with: {
-      source: (value: T.String) => exportStatementDefaultFromArmStarFrom({ ...config, source: value }),
+      source: (value: T.String) => _exportStatementDefaultFromArmStarFrom({ ...config, source: value }),
     },
   }, methodsEngine);
 }
@@ -4806,10 +4924,13 @@ export type FluentKindMap = {
   "_export_statement_default_decl_arm": T.ExportStatementDefaultDeclArm;
   "_export_statement_default_decl_arm_default_kw": T.ExportStatementDefaultDeclArmDefaultKw;
   "_export_statement_default_decl_arm_default_kw_value": T.ExportStatementDefaultDeclArmDefaultKwValue;
+  "export_statement_default_from_arm_star_from": FluentNode<"export_statement_default_from_arm_star_from", T.ExportStatementDefaultFromArmStarFrom.Config>;
+  "export_statement_default_from_arm_ns_from": FluentNode<"export_statement_default_from_arm_ns_from", T.ExportStatementDefaultFromArmNsFrom.Config>;
+  "export_statement_default_from_arm_clause_from": FluentNode<"export_statement_default_from_arm_clause_from", T.ExportStatementDefaultFromArmClauseFrom.Config>;
   "_export_statement_default_from_arm": FluentNode<"_export_statement_default_from_arm", T.ExportStatementDefaultFromArm.Config>;
-  "_export_statement_default_from_arm_clause_from": FluentNode<"_export_statement_default_from_arm_clause_from", T.ExportStatementDefaultFromArmClauseFrom.Config>;
-  "_export_statement_default_from_arm_ns_from": FluentNode<"_export_statement_default_from_arm_ns_from", T.ExportStatementDefaultFromArmNsFrom.Config>;
-  "_export_statement_default_from_arm_star_from": FluentNode<"_export_statement_default_from_arm_star_from", T.ExportStatementDefaultFromArmStarFrom.Config>;
+  "_export_statement_default_from_arm_clause_from": FluentNode<"_export_statement_default_from_arm_clause_from", T._ExportStatementDefaultFromArmClauseFrom.Config>;
+  "_export_statement_default_from_arm_ns_from": FluentNode<"_export_statement_default_from_arm_ns_from", T._ExportStatementDefaultFromArmNsFrom.Config>;
+  "_export_statement_default_from_arm_star_from": FluentNode<"_export_statement_default_from_arm_star_from", T._ExportStatementDefaultFromArmStarFrom.Config>;
   "_export_statement_equals_export": FluentNode<"_export_statement_equals_export", T._ExportStatementEqualsExport.Config>;
   "_export_statement_namespace_export": FluentNode<"_export_statement_namespace_export", T._ExportStatementNamespaceExport.Config>;
   "_export_statement_type_export": FluentNode<"_export_statement_type_export", T._ExportStatementTypeExport.Config>;
@@ -5058,10 +5179,13 @@ export const _factoryMap = {
   "_export_statement_default_decl_arm": _exportStatementDefaultDeclArm,
   "_export_statement_default_decl_arm_default_kw": _exportStatementDefaultDeclArmDefaultKw,
   "_export_statement_default_decl_arm_default_kw_value": _exportStatementDefaultDeclArmDefaultKwValue,
+  "export_statement_default_from_arm_star_from": exportStatementDefaultFromArmStarFrom,
+  "export_statement_default_from_arm_ns_from": exportStatementDefaultFromArmNsFrom,
+  "export_statement_default_from_arm_clause_from": exportStatementDefaultFromArmClauseFrom,
   "_export_statement_default_from_arm": exportStatementDefaultFromArm,
-  "_export_statement_default_from_arm_clause_from": exportStatementDefaultFromArmClauseFrom,
-  "_export_statement_default_from_arm_ns_from": exportStatementDefaultFromArmNsFrom,
-  "_export_statement_default_from_arm_star_from": exportStatementDefaultFromArmStarFrom,
+  "_export_statement_default_from_arm_clause_from": _exportStatementDefaultFromArmClauseFrom,
+  "_export_statement_default_from_arm_ns_from": _exportStatementDefaultFromArmNsFrom,
+  "_export_statement_default_from_arm_star_from": _exportStatementDefaultFromArmStarFrom,
   "_export_statement_equals_export": _exportStatementEqualsExport,
   "_export_statement_namespace_export": _exportStatementNamespaceExport,
   "_export_statement_type_export": _exportStatementTypeExport,

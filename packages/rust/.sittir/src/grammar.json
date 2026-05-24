@@ -2163,28 +2163,23 @@
           }
         },
         {
-          "type": "FIELD",
-          "name": "where_clause",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "FIELD",
-                "name": "where_clause1",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "where_clause",
-                  "fieldName": "where_clause1",
-                  "nonterminal": true
-                },
-                "source": "enriched"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "where_clause",
+              "content": {
+                "type": "SYMBOL",
+                "name": "where_clause",
+                "fieldName": "where_clause1",
+                "nonterminal": true
               },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          "source": "override"
+              "source": "override"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "STRING",
@@ -2201,28 +2196,23 @@
           }
         },
         {
-          "type": "FIELD",
-          "name": "trailing_where_clause",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "FIELD",
-                "name": "where_clause2",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "where_clause",
-                  "fieldName": "where_clause2",
-                  "nonterminal": true
-                },
-                "source": "enriched"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "trailing_where_clause",
+              "content": {
+                "type": "SYMBOL",
+                "name": "where_clause",
+                "fieldName": "where_clause2",
+                "nonterminal": true
               },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          "source": "override"
+              "source": "override"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "STRING",

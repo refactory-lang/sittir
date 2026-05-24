@@ -117,6 +117,13 @@ interface SerializedPolymorph extends SerializedNodeBase {
 interface SerializedLeaf extends SerializedNodeBase {
 	modelType: 'pattern';
 	pattern?: string;
+	/**
+	 * Present when the pattern's sole realisation is a single fixed anonymous
+	 * literal (e.g. `_semicolon` → `";"`). Used by the render-module to gate
+	 * the u16 kind-id acceptance branch in the generated `FromNapiValue` impl.
+	 * Absent for content-bearing patterns (identifier, number, …).
+	 */
+	text?: string;
 }
 
 interface SerializedKeyword extends SerializedNodeBase {
@@ -253,7 +260,8 @@ function serializeNode(node: AssembledNode): SerializedNode {
 			return {
 				...base,
 				modelType: 'pattern',
-				pattern: node.pattern
+				pattern: node.pattern,
+				text: node.fixedLiteralText
 			};
 		case 'keyword':
 			return {

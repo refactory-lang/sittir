@@ -309,28 +309,28 @@ export function _foreignModItemBody(config: T._ForeignModItemBody.Config) {
   }, methodsEngine);
 }
 
-export function functionTypeFnForm(child?: T.FunctionModifiers) {
+export function _functionTypeFnForm(child?: T.FunctionModifiers) {
   const _function_modifiers = child;
   return withMethods({
-    $type: TSKindId.FunctionTypeFnForm as const,
+    $type: TSKindId._FunctionTypeFnForm as const,
     $source: 2 as const,
     $named: true as const,
     _function_modifiers,
     functionModifiers() { return _function_modifiers; },
-    $with: { $child: (v: T.FunctionModifiers) => functionTypeFnForm(v) },
+    $with: { $child: (v: T.FunctionModifiers) => _functionTypeFnForm(v) },
   }, methodsEngine);
 }
 
-export function functionTypeTraitForm(config: T.FunctionTypeTraitForm.Config) {
+export function _functionTypeTraitForm(config: T._FunctionTypeTraitForm.Config) {
   const _trait = config.trait;
   return withMethods({
-    $type: TSKindId.FunctionTypeTraitForm as const,
+    $type: TSKindId._FunctionTypeTraitForm as const,
     $source: 2 as const,
     $named: true as const,
     _trait,
     trait() { return _trait; },
     $with: {
-      trait: (value: T.Identifier | T.ScopedTypeIdentifier) => functionTypeTraitForm({ ...config, trait: value }),
+      trait: (value: T.Identifier | T.ScopedTypeIdentifier) => _functionTypeTraitForm({ ...config, trait: value }),
     },
   }, methodsEngine);
 }
@@ -633,20 +633,10 @@ export function _rangePatternPrefix(config: T.RangePatternPrefix.Config) {
   }, methodsEngine);
 }
 
-export function referenceExpressionRawConst(text: string) {
-  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_reference_expression_raw_const: text must be non-empty`);
-  return withMethods({
-    $type: TSKindId.ReferenceExpressionRawConst as const,
-    $source: 2 as const,
-    $named: true as const,
-    $text: text,
-  }, methodsEngine);
-}
-
-export function referenceExpressionRawMut(_config?: T.ReferenceExpressionRawMut.Config) {
+export function _referenceExpressionRawMut(_config?: T._ReferenceExpressionRawMut.Config) {
   const _mutable_specifier = "mut" as const;
   return withMethods({
-    $type: TSKindId.ReferenceExpressionRawMut as const,
+    $type: TSKindId._ReferenceExpressionRawMut as const,
     $source: 2 as const,
     $named: true as const,
     _mutable_specifier,
@@ -2079,32 +2069,90 @@ export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
   }, methodsEngine);
 }
 
-export function functionType(config: T.FunctionType.Config) {
+export function functionTypeTraitForm(trait: T.FunctionTypeTraitForm.Config['trait']) {
+  const _trait = trait;
+  return withMethods({
+    $type: TSKindId._FunctionTypeTraitForm as const,
+    $source: 2 as const,
+    $named: true as const,
+    _trait,
+    trait() { return _trait; },
+    $with: {
+      trait: (value: T.FunctionTypeTraitForm.Config['trait']) => functionTypeTraitForm(value),
+    },
+  }, methodsEngine);
+}
+
+export function functionTypeFnForm(child?: T.FunctionModifiers) {
+  const _function_modifiers = child;
+  return withMethods({
+    $type: TSKindId._FunctionTypeFnForm as const,
+    $source: 2 as const,
+    $named: true as const,
+    _function_modifiers,
+    functionModifiers() { return _function_modifiers; },
+    $with: { $child: (v: T.FunctionModifiers) => functionTypeFnForm(v) },
+  }, methodsEngine);
+}
+
+export function functionType(config: ConfigOf<T.FunctionTypeUFormTraitForm>): ReturnType<typeof functionTypeUFormTraitForm>;
+export function functionType(config: ConfigOf<T.FunctionTypeUFormFnForm>): ReturnType<typeof functionTypeUFormFnForm>;
+export function functionType(config: ConfigOf<T.FunctionTypeUFormTraitForm> | ConfigOf<T.FunctionTypeUFormFnForm>) {
+  switch (config.$variant) {
+    case 'trait_form': return functionTypeUFormTraitForm(config as Parameters<typeof functionTypeUFormTraitForm>[0]);
+    case 'fn_form': return functionTypeUFormFnForm(config as Parameters<typeof functionTypeUFormFnForm>[0]);
+  }
+  throw new Error(`functionType: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'trait_form' | 'fn_form'.`);
+}
+export function functionTypeUFormTraitForm(config: Omit<ConfigOf<T.FunctionTypeUFormTraitForm>, '$variant'>) {
   const _for_lifetimes = config.forLifetimes;
   const _function_type_trait_form = config.functionTypeTraitForm;
   const _parameters = config.parameters;
-  const _function_type_fn_form = config.functionTypeFnForm;
   const _return_type = config.returnType;
   return withMethods({
     $type: TSKindId.FunctionType as const,
     $source: 2 as const,
     $named: true as const,
+    $variant: 'trait_form' as const,
     _for_lifetimes,
     _function_type_trait_form,
     _parameters,
-    _function_type_fn_form,
     _return_type,
     forLifetimes() { return _for_lifetimes; },
     functionTypeTraitForm() { return _function_type_trait_form; },
     parameters() { return _parameters; },
-    functionTypeFnForm() { return _function_type_fn_form; },
     returnType() { return _return_type; },
     $with: {
-      forLifetimes: (value?: T.ForLifetimes) => functionType({ ...config, forLifetimes: value }),
-      functionTypeTraitForm: (value?: T.FunctionTypeTraitForm) => functionType({ ...config, functionTypeTraitForm: value }),
-      parameters: (value: T.Parameters) => functionType({ ...config, parameters: value }),
-      functionTypeFnForm: (value?: T.FunctionTypeFnForm) => functionType({ ...config, functionTypeFnForm: value }),
-      returnType: (value?: T._Type) => functionType({ ...config, returnType: value }),
+      forLifetimes: (value?: T.ForLifetimes) => functionTypeUFormTraitForm({ ...config, forLifetimes: value }),
+      functionTypeTraitForm: (value: T._FunctionTypeTraitForm) => functionTypeUFormTraitForm({ ...config, functionTypeTraitForm: value }),
+      parameters: (value: T.Parameters) => functionTypeUFormTraitForm({ ...config, parameters: value }),
+      returnType: (value?: T._Type) => functionTypeUFormTraitForm({ ...config, returnType: value }),
+    },
+  }, methodsEngine);
+}
+export function functionTypeUFormFnForm(config: Omit<ConfigOf<T.FunctionTypeUFormFnForm>, '$variant'>) {
+  const _for_lifetimes = config.forLifetimes;
+  const _function_type_fn_form = config.functionTypeFnForm;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  return withMethods({
+    $type: TSKindId.FunctionType as const,
+    $source: 2 as const,
+    $named: true as const,
+    $variant: 'fn_form' as const,
+    _for_lifetimes,
+    _function_type_fn_form,
+    _parameters,
+    _return_type,
+    forLifetimes() { return _for_lifetimes; },
+    functionTypeFnForm() { return _function_type_fn_form; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    $with: {
+      forLifetimes: (value?: T.ForLifetimes) => functionTypeUFormFnForm({ ...config, forLifetimes: value }),
+      functionTypeFnForm: (value: T._FunctionTypeFnForm) => functionTypeUFormFnForm({ ...config, functionTypeFnForm: value }),
+      parameters: (value: T.Parameters) => functionTypeUFormFnForm({ ...config, parameters: value }),
+      returnType: (value?: T._Type) => functionTypeUFormFnForm({ ...config, returnType: value }),
     },
   }, methodsEngine);
 }
@@ -3303,20 +3351,59 @@ export function refPattern(pattern: T.RefPattern.Config['pattern']) {
   }, methodsEngine);
 }
 
-export function referenceExpression(config: T.ReferenceExpression.Config) {
-  const _content = config.content;
+export function referenceExpressionRawMut(_config?: T.ReferenceExpressionRawMut.Config) {
+  const _mutable_specifier = "mut" as const;
+  return withMethods({
+    $type: TSKindId._ReferenceExpressionRawMut as const,
+    $source: 2 as const,
+    $named: true as const,
+    _mutable_specifier,
+    mutableSpecifier() { return _mutable_specifier; },
+    $with: {
+    },
+  }, methodsEngine);
+}
+
+export function referenceExpression(config: ConfigOf<T.ReferenceExpressionUFormRawConst>): ReturnType<typeof referenceExpressionUFormRawConst>;
+export function referenceExpression(config: ConfigOf<T.ReferenceExpressionUFormRawMut>): ReturnType<typeof referenceExpressionUFormRawMut>;
+export function referenceExpression(config: ConfigOf<T.ReferenceExpressionUFormRawConst> | ConfigOf<T.ReferenceExpressionUFormRawMut>) {
+  switch (config.$variant) {
+    case 'raw_const': return referenceExpressionUFormRawConst(config as Parameters<typeof referenceExpressionUFormRawConst>[0]);
+    case 'raw_mut': return referenceExpressionUFormRawMut(config as Parameters<typeof referenceExpressionUFormRawMut>[0]);
+  }
+  throw new Error(`referenceExpression: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'raw_const' | 'raw_mut'.`);
+}
+export function referenceExpressionUFormRawConst(config: Omit<ConfigOf<T.ReferenceExpressionUFormRawConst>, '$variant'>) {
+  const _reference_expression_raw_const = coerceKindEnumStorage("const" as const, []);
   const _value = config.value;
   return withMethods({
     $type: TSKindId.ReferenceExpression as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
+    $variant: 'raw_const' as const,
+    _reference_expression_raw_const,
     _value,
-    content() { return _content; },
+    referenceExpressionRawConst() { return _reference_expression_raw_const; },
     value() { return _value; },
     $with: {
-      content: (value?: T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier) => referenceExpression({ ...config, content: value }),
-      value: (value: T.Expression) => referenceExpression({ ...config, value: value }),
+      value: (value: T.Expression) => referenceExpressionUFormRawConst({ ...config, value: value }),
+    },
+  }, methodsEngine);
+}
+export function referenceExpressionUFormRawMut(config: Omit<ConfigOf<T.ReferenceExpressionUFormRawMut>, '$variant'>) {
+  const _reference_expression_raw_mut = _referenceExpressionRawMut();
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId.ReferenceExpression as const,
+    $source: 2 as const,
+    $named: true as const,
+    $variant: 'raw_mut' as const,
+    _reference_expression_raw_mut,
+    _value,
+    referenceExpressionRawMut() { return _reference_expression_raw_mut; },
+    value() { return _value; },
+    $with: {
+      value: (value: T.Expression) => referenceExpressionUFormRawMut({ ...config, value: value }),
     },
   }, methodsEngine);
 }
@@ -3569,7 +3656,7 @@ export function staticItem(config: T.StaticItem.Config) {
     value() { return _value; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => staticItem({ ...config, visibilityModifier: value }),
-      mutableSpecifier: (value?: "ref" | "mut") => staticItem({ ...config, mutableSpecifier: value }),
+      mutableSpecifier: (value?: "ref" | T.MutableSpecifier) => staticItem({ ...config, mutableSpecifier: value }),
       name: (value: T.Identifier) => staticItem({ ...config, name: value }),
       type: (value: T._Type) => staticItem({ ...config, type: value }),
       value: (value?: T.Expression) => staticItem({ ...config, value: value }),
@@ -4589,8 +4676,8 @@ export type FluentKindMap = {
   "_field_pattern_named": T.FieldPatternNamed;
   "_field_pattern_shorthand": FluentNode<"_field_pattern_shorthand", T._FieldPatternShorthand.Config>;
   "_foreign_mod_item_body": FluentNode<"_foreign_mod_item_body", T._ForeignModItemBody.Config>;
-  "_function_type_fn_form": FluentNode<"_function_type_fn_form", T.FunctionTypeFnForm.Config>;
-  "_function_type_trait_form": FluentNode<"_function_type_trait_form", T.FunctionTypeTraitForm.Config>;
+  "_function_type_fn_form": FluentNode<"_function_type_fn_form", T._FunctionTypeFnForm.Config>;
+  "_function_type_trait_form": FluentNode<"_function_type_trait_form", T._FunctionTypeTraitForm.Config>;
   "_impl_item_body": FluentNode<"_impl_item_body", T._ImplItemBody.Config>;
   "_let_chain": FluentNode<"_let_chain", T.LetChain.Config>;
   "_line_comment_content": T.LineCommentContent;
@@ -4611,8 +4698,7 @@ export type FluentKindMap = {
   "_range_expression_prefix": T.RangeExpressionPrefix;
   "_range_pattern_left_with_right": T.RangePatternLeftWithRight;
   "_range_pattern_prefix": T.RangePatternPrefix;
-  "_reference_expression_raw_const": T.ReferenceExpressionRawConst;
-  "_reference_expression_raw_mut": FluentNode<"_reference_expression_raw_mut", T.ReferenceExpressionRawMut.Config>;
+  "_reference_expression_raw_mut": FluentNode<"_reference_expression_raw_mut", T._ReferenceExpressionRawMut.Config>;
   "_struct_item_brace": T.StructItemBrace;
   "_struct_item_tuple": T.StructItemTuple;
   "_token_tree_brace": FluentNode<"_token_tree_brace", T._TokenTreeBrace.Config>;
@@ -4686,6 +4772,8 @@ export type FluentKindMap = {
   "function_item": FluentNode<"function_item", T.FunctionItem.Config>;
   "function_modifiers": FluentNode<"function_modifiers", T.FunctionModifiers.Config>;
   "function_signature_item": FluentNode<"function_signature_item", T.FunctionSignatureItem.Config>;
+  "function_type_trait_form": FluentNode<"function_type_trait_form", T.FunctionTypeTraitForm.Config>;
+  "function_type_fn_form": FluentNode<"function_type_fn_form", T.FunctionTypeFnForm.Config>;
   "function_type": FluentNode<"function_type", T.FunctionType.Config>;
   "gen_block": FluentNode<"gen_block", T.GenBlock.Config>;
   "generic_function": FluentNode<"generic_function", T.GenericFunction.Config>;
@@ -4738,6 +4826,7 @@ export type FluentKindMap = {
   "range_pattern": FluentNode<"range_pattern", T.RangePattern.Config>;
   "raw_string_literal": FluentNode<"raw_string_literal", T.RawStringLiteral.Config>;
   "ref_pattern": FluentNode<"ref_pattern", T.RefPattern.Config>;
+  "reference_expression_raw_mut": FluentNode<"reference_expression_raw_mut", T.ReferenceExpressionRawMut.Config>;
   "reference_expression": FluentNode<"reference_expression", T.ReferenceExpression.Config>;
   "reference_pattern": FluentNode<"reference_pattern", T.ReferencePattern.Config>;
   "reference_type": FluentNode<"reference_type", T.ReferenceType.Config>;
@@ -4827,8 +4916,8 @@ export const _factoryMap = {
   "_field_pattern_named": _fieldPatternNamed,
   "_field_pattern_shorthand": _fieldPatternShorthand,
   "_foreign_mod_item_body": _foreignModItemBody,
-  "_function_type_fn_form": functionTypeFnForm,
-  "_function_type_trait_form": functionTypeTraitForm,
+  "_function_type_fn_form": _functionTypeFnForm,
+  "_function_type_trait_form": _functionTypeTraitForm,
   "_impl_item_body": _implItemBody,
   "_let_chain": letChain,
   "_line_comment_content": lineCommentContent,
@@ -4849,8 +4938,7 @@ export const _factoryMap = {
   "_range_expression_prefix": _rangeExpressionPrefix,
   "_range_pattern_left_with_right": _rangePatternLeftWithRight,
   "_range_pattern_prefix": _rangePatternPrefix,
-  "_reference_expression_raw_const": referenceExpressionRawConst,
-  "_reference_expression_raw_mut": referenceExpressionRawMut,
+  "_reference_expression_raw_mut": _referenceExpressionRawMut,
   "_struct_item_brace": _structItemBrace,
   "_struct_item_tuple": _structItemTuple,
   "_token_tree_brace": _tokenTreeBrace,
@@ -4924,6 +5012,8 @@ export const _factoryMap = {
   "function_item": functionItem,
   "function_modifiers": functionModifiers,
   "function_signature_item": functionSignatureItem,
+  "function_type_trait_form": functionTypeTraitForm,
+  "function_type_fn_form": functionTypeFnForm,
   "function_type": functionType,
   "gen_block": genBlock,
   "generic_function": genericFunction,
@@ -4976,6 +5066,7 @@ export const _factoryMap = {
   "range_pattern": rangePattern,
   "raw_string_literal": rawStringLiteral,
   "ref_pattern": refPattern,
+  "reference_expression_raw_mut": referenceExpressionRawMut,
   "reference_expression": referenceExpression,
   "reference_pattern": referencePattern,
   "reference_type": referenceType,

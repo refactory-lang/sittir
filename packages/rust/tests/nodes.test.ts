@@ -681,15 +681,36 @@ describe('function_signature_item', () => {
   });
 });
 
-describe('function_type', () => {
+describe('function_type_trait_form', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionType({ parameters: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$type).toBe(TSKindId.FunctionType);
+    const node = ir.functionTypeTraitForm({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
+    expect(node.$type).toBe(TSKindId._FunctionTypeTraitForm);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionType({ parameters: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.functionTypeTraitForm({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
+  });
+});
+
+describe('function_type_fn_form', () => {
+  it('factory produces correct type', () => {
+    const node = ir.functionTypeFnForm();
+    expect(node.$type).toBe(TSKindId._FunctionTypeFnForm);
+    expect(node.$source).toBe(2);
+  });
+});
+
+describe('function_type', () => {
+  it('trait_form form produces correct type', () => {
+    const node = ir.functionType.trait_form({ functionTypeTraitForm: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, parameters: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$type).toBe(TSKindId.FunctionType);
+    expect(node.$source).toBe(2);
+  });
+  it('fn_form form produces correct type', () => {
+    const node = ir.functionType.fn_form({ functionTypeFnForm: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, parameters: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$type).toBe(TSKindId.FunctionType);
+    expect(node.$source).toBe(2);
   });
 });
 
@@ -1307,15 +1328,28 @@ describe('ref_pattern', () => {
   });
 });
 
-describe('reference_expression', () => {
+describe('reference_expression_raw_mut', () => {
   it('factory produces correct type', () => {
-    const node = ir.referenceExpression({ value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$type).toBe(TSKindId.ReferenceExpression);
+    const node = ir.referenceExpressionRawMut({ mutableSpecifier: { $type: TSKindId.MutableSpecifier, $text: 'mut', $source: 2, $named: true } as any });
+    expect(node.$type).toBe(TSKindId._ReferenceExpressionRawMut);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.referenceExpression({ value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.referenceExpressionRawMut({ mutableSpecifier: { $type: TSKindId.MutableSpecifier, $text: 'mut', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
+  });
+});
+
+describe('reference_expression', () => {
+  it('raw_const form produces correct type', () => {
+    const node = ir.referenceExpression.raw_const({ value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$type).toBe(TSKindId.ReferenceExpression);
+    expect(node.$source).toBe(2);
+  });
+  it('raw_mut form produces correct type', () => {
+    const node = ir.referenceExpression.raw_mut({ referenceExpressionRawMut: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$type).toBe(TSKindId.ReferenceExpression);
+    expect(node.$source).toBe(2);
   });
 });
 

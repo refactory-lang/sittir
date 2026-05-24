@@ -30,7 +30,7 @@
  *   - `emit.interface`  — emitted TypeScript interface shape for the
  *                         kind (from `emitTypes`).
  *   - `emit.template`   — emitted Jinja template body (from
- *                         `emitJinjaTemplates`).
+ *                         `runTemplateEmitter`).
  *
  * With `--no-overrides`, evaluates the base tree-sitter grammar.js
  * directly (skipping `overrides.ts`). Useful for seeing what

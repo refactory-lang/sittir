@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  3  (0 applied, 3 held)
-// Rule promotions:   100  (91 applied, 9 held)
+// Rule promotions:   104  (95 applied, 9 held)
 // Repeated shapes:   4  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -225,13 +225,6 @@ export const suggestedGroups = {
     '1/0/0': 'outer',
   },
 
-  // [held] 3 candidate(s)
-  function_type: {
-    '1/0': 'function_type_trait_form',
-    '1/1': 'function_type_fn_form',
-    '2/0': 'return_type',
-  },
-
   // [held] 1 candidate(s)
   match_block: {
     '1': 'match_arm',
@@ -319,6 +312,9 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "foreign_mod_item", classification: "polymorph", applied: true },
   { kind: "foreign_mod_item_body", classification: "polymorph", applied: true },
   { kind: "foreign_mod_item_semi", classification: "polymorph", applied: true },
+  { kind: "function_type", classification: "polymorph", applied: true },
+  { kind: "function_type_fn_form", classification: "polymorph", applied: true },
+  { kind: "function_type_trait_form", classification: "polymorph", applied: true },
   { kind: "impl_item", classification: "polymorph", applied: true },
   { kind: "impl_item_body", classification: "polymorph", applied: true },
   { kind: "impl_item_semi", classification: "polymorph", applied: true },
@@ -353,6 +349,7 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "range_pattern_left_with_right", classification: "polymorph", applied: true },
   { kind: "range_pattern_prefix", classification: "polymorph", applied: true },
   { kind: "reference_expression", classification: "polymorph", applied: false },
+  { kind: "reference_expression", classification: "polymorph", applied: true },
   { kind: "reference_expression_raw_const", classification: "polymorph", applied: true },
   { kind: "reference_expression_raw_mut", classification: "polymorph", applied: true },
   { kind: "return_expression", classification: "polymorph", applied: false },

@@ -472,29 +472,28 @@ function collectConcreteStorageKeys(
 	nodeMap: NodeMap
 ): readonly string[] | undefined {
 	if (slot.origin !== 'kind') return undefined;
-	const refKinds: string[] = [];
-	for (const v of slot.values) {
-		if (!isNodeRef(v)) continue;
-		const name = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind;
-		refKinds.push(name);
+	// Route by the slot's parse-names — the kinds the parser can actually emit:
+	// ref-kinds PLUS alias targets (collect-slots now folds the targets into
+	// parseNamesNew). Expand supertypes. No base→variant rewrite: parseNames
+	// already carries both the base kind (validation-only polymorph variants,
+	// which the parser emits as the base — e.g. type_query's
+	// instantiation_expression) AND the alias target (real tree-sitter aliases
+	// like decorator, which the parser emits as the target). The old rewrite
+	// REPLACED base with target, mis-routing the validation-only case.
+	let refKinds: string[];
+	if (slot.parseNamesNew && slot.parseNamesNew.length > 0) {
+		refKinds = [...slot.parseNamesNew];
+	} else {
+		refKinds = [];
+		for (const v of slot.values) {
+			if (!isNodeRef(v)) continue;
+			refKinds.push(isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind);
+		}
 	}
 	if (refKinds.length === 0) return undefined;
 	const concrete = expandRuntimeDiscriminatorKinds(refKinds, nodeMap);
 	if (concrete.length === 0) return undefined;
-	// Map source-kind names to the runtime CST kind (alias target) where the
-	// data actually lands. The slot's `aliasSources` is keyed `{target: source}`;
-	// invert it so we can rewrite source → target. When no alias applies the
-	// source name IS the runtime kind and the lookup is identity. See
-	// project-alias-target-routing for the bug class this fixes (decorator,
-	// required_parameter.pattern, rest_pattern, type_query — places where
-	// `alias($.source, $.target)` shifts the visible CST kind to the target).
-	const sourceToTarget: Record<string, string> = {};
-	if (slot.aliasSources) {
-		for (const [target, source] of Object.entries(slot.aliasSources)) {
-			sourceToTarget[source] = target;
-		}
-	}
-	const storageKeys = [...new Set(concrete.map((k) => `_${sourceToTarget[k] ?? k}`))];
+	const storageKeys = [...new Set(concrete.map((k) => `_${k}`))];
 	const legacyKey = `_${slot.name}`;
 	if (storageKeys.length === 1 && storageKeys[0] === legacyKey) {
 		return undefined;
@@ -517,13 +516,34 @@ function dataAccessExpr(dataExpr: string, storageKey: string): string {
 
 function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string, candidateKeys?: readonly string[]): string {
 	if (candidateKeys && candidateKeys.length > 0) {
-		// Multi-key probe: the runtime data has exactly one of these populated.
 		// Append the slot's nominal storage key as a final fallback for any
 		// edge case the analysis missed (e.g. a tree-sitter-injected alias the
 		// supertype-expansion doesn't see).
 		const allKeys = candidateKeys.includes(slot.storageKey)
 			? candidateKeys
 			: [...candidateKeys, slot.storageKey];
+
+		if (slot.arity === 'many') {
+			// Repeated supertype-list slot: the runtime reader populates EACH
+			// concrete-kind wire field as a separate array (e.g. `_primitive_type:
+			// ["i32"]`, `_type_identifier: ["String"]`). A ??-coalesce returns
+			// only the first non-null source, dropping the rest.
+			// Concatenate ALL source arrays instead, preserving child order
+			// (each kind-keyed array is already in source order; cross-kind
+			// ordering within a single slot relies on child position in the CST,
+			// which the reader preserves within each kind bucket — interleaved
+			// ordering across kinds is not guaranteed, but all elements are kept).
+			//
+			// Each wire field may be a scalar value (text-collapsed leaf, e.g.
+			// "i32" for primitive_type) OR an array of node stubs. Use
+			// _toArr() to normalize each source to an array before concatenating,
+			// so that spreading a string does not split it character-by-character.
+			const spreads = allKeys.map((k) => `..._toArr(${dataAccessExpr(dataExpr, k)})`);
+			return `[${spreads.join(', ')}]`;
+		}
+
+		// Singular slot: exactly one of these will be populated.
+		// ??-coalesce is correct — return the first non-null source.
 		const probes = allKeys.map((k) => dataAccessExpr(dataExpr, k));
 		return `(${probes.join(' ?? ')})`;
 	}
@@ -925,6 +945,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource);
 		const usesNormalizeSingular = /\bnormalizeSingularWrapSlot\b/.test(bodySource);
 		const usesNormalizeRepeated = /\bnormalizeRepeatedWrapSlot\b/.test(bodySource);
+		const usesToArr = /\b_toArr\b/.test(bodySource);
 		const variantDescriptors = buildWrapVariantDescriptors(this.#nodeMap);
 		const supertypeMembers = buildSupertypeMembersMap(this.#nodeMap);
 		const utilsImports = [
@@ -1004,6 +1025,19 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  const items: readonly T[] = Array.isArray(value) ? (value as readonly T[]) : value == null ? ([] as readonly T[]) : ([value] as readonly T[]);',
 						'  if (nonEmpty && items.length === 0) return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items);',
 						'  return items;',
+						'}'
+					]
+				: []),
+			...(usesToArr
+				? [
+						'// _toArr — normalize a single wire field (may be a scalar value or an',
+						'// array of node stubs) to a readonly array. Used by repeated supertype-',
+						'// list slot concatenation so that spreading a text-collapsed leaf (e.g.',
+						'// primitive_type "i32" arriving as the string "i32") does not split it',
+						'// character-by-character.',
+						'function _toArr<T>(value: T | readonly T[] | undefined): readonly T[] {',
+						'  if (value == null) return [];',
+						'  return Array.isArray(value) ? (value as readonly T[]) : [value as T];',
 						'}'
 					]
 				: []),

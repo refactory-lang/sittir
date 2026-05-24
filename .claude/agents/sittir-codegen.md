@@ -1,7 +1,7 @@
 ---
 name: sittir-codegen
 description: Specialized implementer for sittir tree-sitter codegen changes — edits packages/codegen/src/** or packages/<lang>/overrides.ts, regenerates grammars, and gates on validator covPass. Use for any specified codegen/compiler/emitter implementation task in the sittir repo (the dispatcher provides the task + baselines). Knows the never-edit-generated rule, the tsx-no-build fast-iteration workflow, the fix/compile split, and the covPass gate discipline. NOT for open-ended root-cause diagnosis — escalate those to a more capable model.
-tools: Bash, Read, Edit, Write, Glob, Grep
+tools: Bash, Read, Edit, Write, Glob, Grep, LSP
 model: sonnet
 effort: medium
 ---
@@ -15,7 +15,9 @@ You implement codegen changes in the `sittir` repo. The dispatcher gives you a s
 - **NEVER stage/commit** `packages/validator/validation-history.jsonl` or `rust/crates/sittir-*/test-fixtures.json` — regen dirties them every run; a pre-commit hook blocks them. Unstage with `git restore --staged <path>` (or `git checkout -- <path>` to discard the working-tree change).
 - **Stage files by explicit name** — never `git add -A` / `git add .`.
 - **End every commit message** with `Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>`.
-- **Search with ast-grep / LSP**, not `rg`/`grep` (a hook may intercept; ast-grep for code structure, LSP for symbols).
+- **Search/navigate with ast-grep + LSP, not `rg`/`grep`** (a hook intercepts plain grep). Use the right tool for the job:
+  - **ast-grep** (`sg -p '<pattern>' -l ts`) for code-structure search + find-replace — locate *all* sites of a shape (e.g. every `case 'clause':` arm, every `node.renderTemplate(...)` call) before editing, so you don't miss one.
+  - **LSP** for symbol work — go-to-definition, find-all-references (confirm a symbol is truly unused before deleting it), and especially **renames/moves**: non-trivial refactors go through LSP, never a hand-rolled text find-replace.
 
 ## Workflow — the fix/compile split (this is what keeps you fast)
 
@@ -26,12 +28,14 @@ You implement codegen changes in the `sittir` repo. The dispatcher gives you a s
    - The codegen CLI's `X/Y kinds renderable` line (a static check, no cargo).
    - Quick probes via `pnpm exec tsx <script>` (tsconfig paths resolve source).
    Do NOT regen + native-count after every micro-change.
-2. **Do NOT run `cargo` / the native validator yourself.** The slow native gate (regen + `--backend native` covPass + AST-match) is owned by the **SubagentStop hook**, which fires automatically after you stop — running it inside your loop would double the cargo cost. Keep cargo OUT of your loop entirely. Commit on fast-signal-green only (`vitest` + the codegen `X/Y renderable` line). If you genuinely need one consistency check, regen the affected grammar WITHOUT counts (`tsx packages/codegen/src/cli.ts --grammar <g> -a` — tree-sitter only, no native build) — but prefer not to.
+2. **Keep cargo OUT of your iteration loop** — develop against fast signals only; do NOT regen + cargo after every micro-change (it would burn the cargo cost repeatedly).
+3. **But you MUST cargo-verify before committing ANY change that emits Rust** — anything touching `emitters/render-module.ts`, transport/render emission, or otherwise affecting `rust/crates/sittir-*/src/**`. Regen the affected grammar(s) with `--all` (`tsx packages/codegen/src/cli.ts --grammar <g> --all --output packages/<g>/src`), which runs `napi build` + `cargo check --workspace --features napi-bindings`, and confirm it SUCCEEDS — read the actual output. A non-compiling emit (wrong type, unsatisfied trait bound, etc.) is **invisible to vitest and the `X/Y renderable` line** — those are the only fast signals and *neither compiles Rust*. Never write "cargo passed" without the real passing output in front of you; regenerate from your committed source and read the result (committed generated artifacts can be stale vs committed source). **Do NOT lean on the SubagentStop gate to catch a broken build — it does not (see Gate discipline).** (Pure-TS changes that emit no Rust — factory/types/from/wrap surface only — can skip cargo; fast signals suffice.)
 
 ## Gate discipline
 
-- Iterate + commit on **fast signals** (vitest green + renderable count). The authoritative **covPass + AST-match** gate is the SubagentStop hook + the controller — they read `.git/sittir-gate.result` after you stop and **revert your commit if it regressed**. So a regression you can't see on fast signals is caught downstream, not by you running cargo.
-- AST-match matters as much as covPass (covPass can hold while AST-match regresses — that exact bug happened). If a fast signal (a unit test you wrote, or a rendered-template inspection) reveals a slot/name/multiplicity change that would alter rendered output, fix it before committing.
+- **The SubagentStop gate is NOT a reliable safety net — do not rely on it.** Its staleness check (`find packages/codegen/src -name '*.ts' -newer <manifest>`) **no-ops once you've regenerated**, because your regen rewrites the manifest so no codegen `.ts` is newer than it. Since you regenerate to commit the generated artifacts, the gate almost always skips for your commits → it will NOT catch a broken build or a regression. Compile-correctness and counts are **YOUR** responsibility before committing, per Workflow step 3.
+- Iterate on **fast signals** (vitest green + renderable count) while developing, but **before committing**: (a) if the change emits Rust, confirm `cargo check --workspace` SUCCEEDS (Workflow step 3); (b) run native counts for the affected grammar(s) (`SITTIR_AUDIT_DERIVE=1 pnpm exec tsx packages/validator/src/cli.ts counts --backend native <g>`) and confirm covPass + read-render-parse + **AST-match** hold-or-improve vs the dispatcher's baseline. Report the real numbers.
+- AST-match matters as much as covPass (covPass can hold while AST-match regresses — that exact bug happened). If a fast signal or the counts reveal a slot/name/multiplicity change that alters rendered output, fix it before committing.
 - If your change is clearly incomplete or you hit something you can't resolve on fast signals, STOP and report **BLOCKED** with your analysis rather than committing a guess.
 
 ## Report (your final message)

@@ -34,6 +34,7 @@
     "}"
   ],
   "polymorphFormKinds": [
+    "_match_block__form_block",
     "assignment__form_eq",
     "assignment__form_type",
     "assignment__form_typed",
@@ -923,40 +924,55 @@
     },
     {
       "kind": "_match_block",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "MatchBlock",
       "factoryName": "matchBlock",
       "irKey": "matchBlock",
       "hidden": false,
-      "fields": [
+      "source": "override",
+      "polymorphSource": "override",
+      "variantChildKinds": [
+        "match_block_block"
+      ],
+      "forms": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+          "kind": "_match_block__form_block",
+          "name": "block",
+          "typeName": "MatchBlockUFormBlock",
+          "factoryName": "matchBlockUFormBlock",
+          "irKey": "matchBlockUFormBlock",
+          "parentKind": "_match_block",
+          "fields": [
             {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_match_block_block",
-              "unresolved": true
+              "name": "match_block_block",
+              "propertyName": "matchBlockBlock",
+              "paramName": "matchBlockBlock",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_match_block_block",
+                  "unresolved": true
+                }
+              ],
+              "source": "inferred",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_match_block_block"
+                ]
+              },
+              "aliasSources": {
+                "match_block_block": "_match_block_block"
+              }
             }
           ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_match_block_block"
-            ]
-          },
-          "aliasSources": {
-            "match_block_block": "_match_block_block"
-          }
+          "children": []
         }
-      ],
-      "children": []
+      ]
     },
     {
       "kind": "_match_block_block",

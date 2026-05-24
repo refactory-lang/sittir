@@ -17,6 +17,7 @@ import { isChoice } from './rule.ts';
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
 import { computeSimplifiedRules } from './simplify.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
+import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
 
 /**
  * Run the full ordered pipeline of non-lossy normalization passes over the
@@ -39,6 +40,26 @@ import { applyWrapperDeletion } from './wrapper-deletion.ts';
  * promotion are surfaced via suggested.ts; the user authors variant() in
  * overrides.ts to make them explicit.
  */
+// DIAGNOSTIC (`DBG_ID_LOSS=<kind>`): print the first choice's id for <kind>
+// after each normalization pass, to pinpoint where a rule id gets dropped.
+function dbgChoiceId(label: string, rules: Record<string, Rule>): void {
+	const target = process.env.DBG_ID_LOSS;
+	if (!target) return;
+	const r = rules[target];
+	if (!r) return;
+	const find = (x: Rule): string | undefined => {
+		if (x.type === 'choice') return (x as { id?: string }).id ?? '<NONE>';
+		const xs = x as { members?: readonly Rule[]; content?: Rule };
+		for (const m of xs.members ?? []) {
+			const g = find(m);
+			if (g) return g;
+		}
+		if (xs.content) return find(xs.content);
+		return undefined;
+	};
+	process.stderr.write(`[DBG_ID] ${label}: choice id=${find(r) ?? '<no-choice>'}\n`);
+}
+
 function applyNormalizationPasses(
 	rawRules: Record<string, Rule>,
 	preserveKinds?: ReadonlySet<string>
@@ -47,19 +68,25 @@ function applyNormalizationPasses(
 	for (const [name, rule] of Object.entries(rawRules)) {
 		rules[name] = collapseWrappers(rule);
 	}
+	dbgChoiceId('after collapseWrappers#1', rules);
 	for (const name of Object.keys(rules)) {
 		rules[name] = fanOutSeqChoices(rules[name]!);
 	}
+	dbgChoiceId('after fanOutSeqChoices', rules);
 	for (const name of Object.keys(rules)) {
 		rules[name] = factorChoiceBranches(rules[name]!);
 	}
+	dbgChoiceId('after factorChoiceBranches', rules);
 	for (const name of Object.keys(rules)) {
 		rules[name] = dedupeSeqMembers(rules[name]!);
 	}
+	dbgChoiceId('after dedupeSeqMembers', rules);
 	rules = inlineSingleUseHidden(rules, preserveKinds);
+	dbgChoiceId('after inlineSingleUseHidden', rules);
 	for (const name of Object.keys(rules)) {
 		rules[name] = collapseWrappers(rules[name]!);
 	}
+	dbgChoiceId('after collapseWrappers#2', rules);
 	return rules;
 }
 
@@ -178,7 +205,14 @@ export function fanOutSeqChoices(rule: Rule): Rule {
 				const flat: Rule = { type: 'seq', members: seqMembers };
 				return branch.type === 'variant' ? { type: 'variant', name: branch.name, content: flat } : flat;
 			});
-			return { type: 'choice', members: branches };
+			// The fanned choice replaces this seq 1:1 — carry the inner choice's
+			// separator/multiplicity/etc. attrs (so comma-separated lists keep
+			// their separator), then override id with the seq's id so downstream
+			// slot resolution (slotByRuleId) still finds it. A fresh
+			// `{ type: 'choice', ... }` here drops both the id and the separator
+			// (the source of the UNRESOLVED slotByRuleId misses AND the
+			// space-join regression on type_arguments / future_import_statement).
+			return { ...choice, type: 'choice', members: branches, ...(rule.id !== undefined ? { id: rule.id } : {}) };
 		}
 		case 'choice': {
 			const members = rule.members.map(fanOutSeqChoices);
@@ -301,7 +335,13 @@ export function factorChoiceBranches(rule: Rule): Rule {
 				// Every branch was empty → prefix/suffix already cover it.
 				return outerFromParts(prefix, suffix);
 			}
-			const core: Rule = nonEmpty.length === 1 ? nonEmpty[0]! : { type: 'choice', members: nonEmpty };
+			// Spread `rule` (the factored choice) to preserve separator/multiplicity/
+			// etc., then override only `members`. When there's exactly one branch,
+			// skip the choice wrapper (shape is already correct).
+			const core: Rule =
+				nonEmpty.length === 1
+					? nonEmpty[0]!
+					: { ...rule, type: 'choice', members: nonEmpty };
 			const inner: Rule = hasEmpty ? { type: 'optional', content: core } : core;
 			const outerMembers: Rule[] = [...prefix, inner, ...suffix];
 			return outerMembers.length === 1 ? outerMembers[0]! : { type: 'seq', members: outerMembers };
@@ -596,12 +636,27 @@ export function collapseWrappers(rule: Rule): Rule {
 		}
 		case 'seq': {
 			const members = rule.members.map(collapseWrappers);
-			if (members.length === 1) return members[0]!;
+			if (members.length === 1) {
+				const survivor = members[0]!;
+				const carried = withAttrsFrom(rule, survivor);
+				const outerMult = (rule as { multiplicity?: LeafMultiplicity }).multiplicity;
+				// Only combine multiplicities when the seq itself carries an explicit one;
+				// otherwise withAttrsFrom already transferred it (absent-only) and we
+				// must not stamp 'single' onto nodes that had no explicit multiplicity.
+				if (outerMult !== undefined) {
+					const combined = combineMultiplicity(
+						outerMult,
+						(survivor as { multiplicity?: LeafMultiplicity }).multiplicity,
+					);
+					return { ...carried, multiplicity: combined } as Rule;
+				}
+				return carried;
+			}
 			return { ...rule, members };
 		}
 		case 'choice': {
 			const members = rule.members.map(collapseWrappers);
-			if (members.length === 1) return members[0]!;
+			if (members.length === 1) return withAttrsFrom(rule, members[0]!);
 			return { ...rule, members };
 		}
 		case 'field':

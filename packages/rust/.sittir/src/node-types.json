@@ -6101,6 +6101,16 @@
           }
         ]
       },
+      "trailing_where_clause": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "where_clause",
+            "named": true
+          }
+        ]
+      },
       "type": {
         "multiple": false,
         "required": true,
@@ -6131,17 +6141,7 @@
           }
         ]
       },
-      "where_clause1": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "where_clause",
-            "named": true
-          }
-        ]
-      },
-      "where_clause2": {
+      "where_clause": {
         "multiple": false,
         "required": false,
         "types": [

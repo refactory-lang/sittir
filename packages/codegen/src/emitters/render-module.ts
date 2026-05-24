@@ -35,10 +35,10 @@ import {
 	isUnresolvedRef,
 	kindsOf,
 	structuralFieldsOf,
-	allFormFieldsOf
+	allFormFieldsOf,
+	allSlotsOf
 } from '../compiler/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { compileWordMatcher } from '../compiler/common.ts';
 import type { TemplateFile } from './template-hash.ts';
 import { computeTemplateBundleHash } from './template-hash.ts';
 import { renderModuleSrcDir, renderModuleTemplatesDir } from './render-module-paths.ts';
@@ -492,6 +492,36 @@ interface EmittedField {
 	 *  Used by ListNonterminalView emission so each list-multiplicity slot
 	 *  gets its own separator (rather than a node-wide first-match). */
 	separator?: string;
+	/**
+	 * When this surface slot was produced by inlining a group-lift helper
+	 * (e.g. template inlined `_const_item_optional1` and exposed its inner
+	 * field `value`), this field names the HELPER's transport struct field
+	 * (e.g. `const_item_optional1`) that must be matched at render time.
+	 *
+	 * When set, the render fn emits a match on the backing helper field
+	 * and then accesses the inner field (`v.<name>`). If the inner field
+	 * is itself `Option<T>` (`backingInnerRequired = false`), a nested
+	 * match is required to flatten it.
+	 */
+	backingTransportField?: string;
+	/**
+	 * True when the inner field (`v.<name>` inside the group-lift helper)
+	 * is a required (non-Option) transport — Renderable::Transport(inner)
+	 * can be used directly.
+	 * False when the inner field is itself Option<T> — a nested match is
+	 * needed: `match &v.<name> { Some(inner) => Present(inner), None => Missing }`.
+	 * Only meaningful when `backingTransportField` is set.
+	 */
+	backingInnerRequired?: boolean;
+	/**
+	 * When set, the transport struct ALSO has a direct field (`_<backingDirectField>`)
+	 * that the native CST reader can populate directly (since tree-sitter exposes
+	 * the inner CST field at the parent level, not wrapped inside a helper object).
+	 * The render fn tries this direct field first (for CST read path), then falls
+	 * back to `backingTransportField` (for factory path).
+	 * Only meaningful when `backingTransportField` is set.
+	 */
+	backingDirectField?: string;
 }
 
 interface EmittedStruct {
@@ -612,7 +642,7 @@ function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
 	};
 }
 
-function emitStruct(kind: string, node: AssembledNode | undefined, surface: RenderTemplateSurface): EmittedStruct {
+function emitStruct(kind: string, node: AssembledNode | undefined, surface: RenderTemplateSurface, nodeMap?: NodeMap): EmittedStruct {
 	const name = structNameFor(kind, node);
 	const slotModel = renderSlotModelOf(node);
 	// Build name→multiple and name→required lookups from the assembled node's
@@ -694,6 +724,43 @@ function emitStruct(kind: string, node: AssembledNode | undefined, surface: Rend
 		separator: separatorByName.get(slot.name)
 	}));
 	fields.sort((a, b) => a.name.localeCompare(b.name));
+	// Resolve group-lift backing transport fields for surface slots that have
+	// no direct transport field but are produced by inlining a hidden group-lift
+	// helper (e.g. `_const_item_optional1`). The template emitter inlined the
+	// helper and surfaced its inner field (e.g. `value`) directly — but the
+	// transport struct still carries the helper as a struct field under
+	// `const_item_optional1`. Detect this by looking for unnamed assembled slots
+	// whose helper node (`_<slotName>`) has a slot matching the surface slot name.
+	if (nodeMap !== undefined) {
+		for (const f of fields) {
+			if (f.hasTransportField || f.required || f.multiple) continue;
+			// Look for a helper backing this optional surface slot.
+			for (const helperSlot of slotModel.unnamed) {
+				// Helper nodes are hidden (leading `_`); the slot name has the `_` stripped.
+				const helperNodeName = `_${helperSlot.name}`;
+				const helperNode = nodeMap.nodes.get(helperNodeName);
+				if (helperNode === undefined) continue;
+				// Check if the helper node exposes the surface slot name.
+				const helperSlots = allSlotsOf(helperNode);
+				const innerSlot = helperSlots.find((s) => s.name === f.name);
+				if (innerSlot !== undefined) {
+					f.backingTransportField = helperSlot.storageName;
+					// Record whether the inner field is required (non-Option) or
+					// itself optional (Option<T>). Required inner fields can be
+					// referenced directly as `Renderable::Transport(&v.<name>)`;
+					// optional inner fields need a nested match to flatten the Option.
+					f.backingInnerRequired = isRequired(innerSlot);
+					// The CST reader (native side) exposes the inner field directly
+					// at the parent level (e.g. `_value` on const_item, not wrapped
+					// inside `_const_item_optional1`). Record the inner storageName
+					// so the struct emitter can add a direct fallback field AND the
+					// render fn can try it first (before the helper path).
+					f.backingDirectField = innerSlot.storageName;
+					break;
+				}
+			}
+		}
+	}
 	return {
 		name,
 		kind,
@@ -752,9 +819,34 @@ function mergeTemplateSurfaceFromBody(body: string, surface: RenderTemplateSurfa
 	}
 	return {
 		slots: [...byName.values()],
-		usesChildren: surface?.usesChildren ?? /\bchildren\b/.test(body),
-		usesVariant: surface?.usesVariant ?? /\bvariant\b/.test(body),
-		usesText: surface?.usesText ?? /\btext\b/.test(body)
+		usesChildren: (surface?.usesChildren ?? false) || /\bchildren\b/.test(body),
+		usesVariant: (surface?.usesVariant ?? false) || /\bvariant\b/.test(body),
+		usesText: (surface?.usesText ?? false) || /\btext\b/.test(body)
+	};
+}
+
+/**
+ * Build a RenderTemplateSurface from the assembled slot model, without
+ * invoking the legacy template walker. Named slots drive the surface:
+ * a multiple named slot maps to `'field'` view, a singular named slot
+ * maps to `'scalar'`. `hasLeading`/`hasTrailing` are forwarded from the
+ * slot. `usesChildren`/`usesVariant`/`usesText` are all false here —
+ * mergeTemplateSurfaceFromBody fills those in via body-regex fallback.
+ */
+function buildSlotModelSurface(node: AssembledNode | undefined): RenderTemplateSurface {
+	const slotModel = renderSlotModelOf(node);
+	const slots = slotModel.named.map((slot) => ({
+		name: slot.name,
+		view: (isMultiple(slot) ? 'field' : 'scalar') as 'scalar' | 'list' | 'field',
+		required: isRequired(slot),
+		hasLeading: slot.hasLeading,
+		hasTrailing: slot.hasTrailing
+	}));
+	return {
+		slots,
+		usesChildren: false,
+		usesVariant: false,
+		usesText: false
 	};
 }
 
@@ -2210,7 +2302,65 @@ function buildTypedTemplateBody(
 			}
 		} else {
 			// Optional single-value slot.
-			if (!f.hasTransportField) {
+			if (f.backingTransportField) {
+				// Group-lift inlining: the template emitter inlined a hidden helper
+				// (e.g. `_const_item_optional1`) and exposed its inner field as this
+				// surface slot (e.g. `value`). The transport struct carries the helper
+				// as `Option<HelperTransport>` under the helper's storage name.
+				//
+				// The helper template (` = {{ value }}`) is inlined into the PARENT
+				// template as `{% if value | isPresent %} = {{ value }}{% endif %}`.
+				// The `{{ value }}` slot in the parent MUST resolve to the INNER
+				// expression (e.g. `v.value`) — not the whole helper struct. Binding
+				// the whole helper struct would double-render the separator literal
+				// (` =  = expr` instead of ` = expr`).
+				//
+				// Two read paths exist:
+				//  1. Factory path: the JS factory writes `_const_item_optional1: { _value: ... }`.
+				//     The napi object has the helper object nested. Use node.<helper>.<inner>.
+				//  2. CST path: the native CST reader writes `_value: "5"` directly at the
+				//     parent level (tree-sitter places the field on the parent node, not the helper).
+				//     The transport struct has a direct `value` field for this path.
+				//
+				// When `backingDirectField` is set, the struct has both the helper field AND a
+				// direct inner field. Try the direct field first (CST path), fall back to the
+				// helper (factory path).
+				const backingRIdent = rustFieldIdent(f.backingTransportField);
+				if (f.backingDirectField) {
+					// Dual-path: try direct field (CST read) then helper (factory).
+					const directRIdent = rustFieldIdent(f.backingDirectField);
+					if (f.backingInnerRequired) {
+						// Direct field is T (not Option): always present when field exists.
+						lines.push(`        ${templateIdent}: node.${directRIdent}.as_ref().or_else(|| {`);
+						lines.push(`            node.${backingRIdent}.as_ref().map(|h| &h.${templateIdent})`);
+						lines.push(`        }).map_or(OptionalNonterminalView::Missing, |v| {`);
+						lines.push(`            OptionalNonterminalView::Present(${R}Renderable::Transport(v))`);
+						lines.push(`        }),`);
+					} else {
+						// Direct field is Option<T>; both paths need an Option unwrap.
+						lines.push(`        ${templateIdent}: node.${directRIdent}.as_ref().or_else(|| {`);
+						lines.push(`            node.${backingRIdent}.as_ref().and_then(|h| h.${templateIdent}.as_ref())`);
+						lines.push(`        }).map_or(OptionalNonterminalView::Missing, |inner| {`);
+						lines.push(`            OptionalNonterminalView::Present(${R}Renderable::Transport(inner))`);
+						lines.push(`        }),`);
+					}
+				} else if (f.backingInnerRequired) {
+					// Inner field is a direct (required) transport — reference directly.
+					lines.push(`        ${templateIdent}: match &node.${backingRIdent} {`);
+					lines.push(`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(&v.${templateIdent})),`);
+					lines.push(`            None => OptionalNonterminalView::Missing,`);
+					lines.push(`        },`);
+				} else {
+					// Inner field is itself Option<T> — flatten with a nested match.
+					lines.push(`        ${templateIdent}: match &node.${backingRIdent} {`);
+					lines.push(`            Some(v) => match &v.${templateIdent} {`);
+					lines.push(`                Some(inner) => OptionalNonterminalView::Present(${R}Renderable::Transport(inner)),`);
+					lines.push(`                None => OptionalNonterminalView::Missing,`);
+					lines.push(`            },`);
+					lines.push(`            None => OptionalNonterminalView::Missing,`);
+					lines.push(`        },`);
+				}
+			} else if (!f.hasTransportField) {
 				lines.push(`        ${templateIdent}: OptionalNonterminalView::Missing,`);
 			} else if (isBoxed) {
 				// Heterogeneous fallback — type is Option<Box<AnyTransport>>.
@@ -2311,7 +2461,6 @@ export function emitRenderModule(
 ): RustRenderModuleEmit {
 	const { hashRs, hashTs } = emitHashFiles(lang, files);
 	const structs: EmittedStruct[] = [];
-	const wordMatcher = compileWordMatcher(nodeMap.word, nodeMap.rules ?? {});
 	// Same order the hash function sorts under — deterministic output.
 	const sortedFiles = [...files].sort((a, b) => a.filename.localeCompare(b.filename));
 	for (const f of sortedFiles) {
@@ -2321,8 +2470,7 @@ export function emitRenderModule(
 		// Only user-facing nodes get templates emitted (see templates.ts
 		// emitJinjaTemplates); if the jinja file exists, the node exists
 		// and is userFacing.
-		const rendered = node?.renderTemplate(nodeMap.rules ?? {}, wordMatcher ?? /\w/, nodeMap.externals);
-		structs.push(emitStruct(kind, node, mergeTemplateSurfaceFromBody(f.content, rendered?.surface)));
+		structs.push(emitStruct(kind, node, mergeTemplateSurfaceFromBody(f.content, buildSlotModelSurface(node)), nodeMap));
 	}
 	const meta = collectMetaData(nodeMap);
 	const hasNumericDispatch = generatedIdTables !== undefined;
@@ -4309,6 +4457,44 @@ function renderTransportDataStruct(
 			for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 				lines.push(...renderTransportField(field, node.kind, node.typeName, nodeMap));
 			}
+			// Group-lift inner field hoisting: for each unnamed slot that is a
+			// group-lift helper (points to `_<slotName>`), also emit the helper's
+			// inner NAMED fields as direct transport fields on the parent struct
+			// (e.g. `_value: Option<ExpressionTransport>` on ConstItemTransport).
+			//
+			// The CST native reader exposes inner grammar fields at the parent
+			// level (tree-sitter places `value` directly on `const_item`, not
+			// nested inside `_const_item_optional1`). Adding the direct fields
+			// lets napi deserialization read the CST path without a nested
+			// helper object. The render fn then tries the direct field first,
+			// falling back to the helper for factory-built transports.
+			{
+				// Track ALL already-emitted storage names to prevent duplicate fields.
+				// Includes: named slots, unnamed slots (helpers themselves), and any
+				// inner fields already hoisted from previous helpers in this loop.
+				const emittedStorageNames = new Set([
+					...slotModel.named.map((f) => f.storageName),
+					...slotModel.unnamed.map((f) => f.storageName)
+				]);
+				for (const unnamedSlot of slotModel.unnamed) {
+					const helperNodeName = `_${unnamedSlot.name}`;
+					const helperNode = nodeMap.nodes.get(helperNodeName);
+					if (helperNode === undefined) continue;
+					const helperSlots = allSlotsOf(helperNode);
+					for (const innerSlot of helperSlots) {
+						if (innerSlot.source === 'inferred') continue; // skip unnamed inner slots
+						if (emittedStorageNames.has(innerSlot.storageName)) continue; // already present
+						// Emit the inner field directly on the parent struct.
+						// Use the HELPER node's kind/typeName so per-slot enum references
+						// resolve to the helper's already-generated per-slot enum types
+						// (e.g. FunctionTypeTraitFormTraitTransportSlot, not a new
+						// FunctionTypeTraitTransportSlot that would be undefined).
+						lines.push(...renderTransportField(innerSlot, helperNode.kind, helperNode.typeName, nodeMap));
+						// Track to avoid emitting the same inner field from multiple helpers.
+						emittedStorageNames.add(innerSlot.storageName);
+					}
+				}
+			}
 			break;
 		case 'pattern':
 		case 'keyword':
@@ -4533,8 +4719,16 @@ function renderLeafTransportNapiImpls(
 }
 
 function leafDefaultTextLiteral(node: AssembledNode): string | undefined {
-	if (node.modelType !== 'keyword' && node.modelType !== 'token') return undefined;
-	return node.text || undefined;
+	if (node.modelType === 'keyword' || node.modelType === 'token') return node.text || undefined;
+	// Patterns whose sole realisation is a single fixed anonymous literal
+	// (e.g. `_semicolon` → ";", `||` → "||") arrive over NAPI as a bare u16
+	// kind-id rather than a string, because scalar_leaf_value in sittir-core
+	// serialises anonymous single-leaf fields that way.  Accept the u16 branch
+	// only for patterns that carry a known fixed literal (`fixedLiteralText`);
+	// content-bearing patterns (identifier, number, …) must never collapse to a
+	// constant — they come in on the String path and must stay on that path.
+	if (node.modelType === 'pattern') return node.fixedLiteralText || undefined;
+	return undefined;
 }
 
 /**

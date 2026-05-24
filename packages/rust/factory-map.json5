@@ -24,6 +24,7 @@
     "_expression_statement_block_ending": "spread",
     "_expression_statement_with_semi": "spread",
     "_field_pattern_named": "config",
+    "_field_pattern_ref_marker": "text",
     "_field_pattern_shorthand": "config",
     "_for_expression_optional1": "config",
     "_foreign_mod_item_body": "config",
@@ -56,7 +57,6 @@
     "_range_expression_prefix": "config",
     "_range_pattern_left_with_right": "config",
     "_range_pattern_prefix": "config",
-    "_ref_marker": "text",
     "_reference_expression_raw_const": "text",
     "_reference_expression_raw_mut": "config",
     "_reserved_identifier": "text",
@@ -137,6 +137,8 @@
     "function_item": "config",
     "function_modifiers": "config",
     "function_signature_item": "config",
+    "function_type_trait_form": "direct",
+    "function_type_fn_form": "direct",
     "function_type": "config",
     "gen_block": "direct",
     "generic_function": "config",
@@ -189,6 +191,7 @@
     "range_pattern": "config",
     "raw_string_literal": "direct",
     "ref_pattern": "direct",
+    "reference_expression_raw_mut": "config",
     "reference_expression": "config",
     "reference_pattern": "direct",
     "reference_type": "config",
@@ -260,11 +263,11 @@
     "async": "text",
     "static": "text",
     "as": "text",
+    "ref": "text",
     "fn": "text",
     "in": "text",
     "move": "text",
     "pub": "text",
-    "ref": "text",
     "unsafe": "text",
     "else": "text",
     "if": "text",
@@ -290,7 +293,6 @@
     "use": "text",
     "where": "text",
     "while": "text",
-    "raw": "text",
     "dyn": "text",
     "extern": "text",
     "try": "text",
@@ -402,6 +404,9 @@
     "foreign_mod_item.foreign_mod_item_body": {
       "foreign_mod_item_body": "_foreign_mod_item_body"
     },
+    "function_type_trait_form.trait": {
+      "type_identifier": "identifier"
+    },
     "function_type.function_type_trait_form": {
       "function_type_trait_form": "_function_type_trait_form"
     },
@@ -495,8 +500,10 @@
     "raw_string_literal.string_content": {
       "string_content": "raw_string_literal_content"
     },
-    "reference_expression.content": {
-      "reference_expression_raw_const": "_reference_expression_raw_const",
+    "reference_expression.reference_expression_raw_const": {
+      "reference_expression_raw_const": "_reference_expression_raw_const"
+    },
+    "reference_expression.reference_expression_raw_mut": {
       "reference_expression_raw_mut": "_reference_expression_raw_mut"
     },
     "scoped_identifier.path": {
@@ -991,12 +998,18 @@
       "function_signature_item_optional1",
       "where_clause"
     ],
+    "function_type_trait_form": [
+      "trait"
+    ],
+    "function_type_fn_form": [
+      "function_modifiers"
+    ],
     "function_type": [
       "for_lifetimes",
       "function_type_trait_form",
       "parameters",
-      "function_type_fn_form",
-      "return_type"
+      "return_type",
+      "function_type_fn_form"
     ],
     "gen_block": [
       "block"
@@ -1179,8 +1192,8 @@
       "pattern"
     ],
     "reference_expression": [
-      "content",
-      "value"
+      "value",
+      "reference_expression_raw_mut"
     ],
     "reference_pattern": [
       "pattern"
@@ -1227,6 +1240,7 @@
     ],
     "static_item": [
       "visibility_modifier",
+      "mutable_specifier",
       "name",
       "type",
       "value"
@@ -3077,6 +3091,24 @@
         "nonEmpty": false
       }
     },
+    "function_type_trait_form": {
+      "trait": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "function_type_fn_form": {
+      "function_modifiers": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "function_type": {
       "for_lifetimes": {
         "unnamed": false,
@@ -3099,14 +3131,14 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "function_type_fn_form": {
+      "return_type": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
       },
-      "return_type": {
+      "function_type_fn_form": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3922,8 +3954,17 @@
         "nonEmpty": false
       }
     },
+    "reference_expression_raw_mut": {
+      "mutable_specifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "reference_expression": {
-      "content": {
+      "reference_expression_raw_const": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3934,6 +3975,13 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "reference_expression_raw_mut": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -5268,6 +5316,19 @@
       "childKind": {
         "function_type_trait_form": "trait_form",
         "function_type_fn_form": "fn_form"
+      },
+      "helperKind": {
+        "trait_form": "_function_type_trait_form",
+        "fn_form": "_function_type_fn_form"
+      },
+      "helperChildKind": {
+        "trait_form": [
+          "identifier",
+          "scoped_type_identifier"
+        ],
+        "fn_form": [
+          "function_modifiers"
+        ]
       }
     },
     "impl_item": {
@@ -5722,6 +5783,15 @@
       "childKind": {
         "reference_expression_raw_const": "raw_const",
         "reference_expression_raw_mut": "raw_mut"
+      },
+      "helperKind": {
+        "raw_const": "_reference_expression_raw_const",
+        "raw_mut": "_reference_expression_raw_mut"
+      },
+      "helperChildKind": {
+        "raw_mut": [
+          "mutable_specifier"
+        ]
       }
     },
     "struct_item": {

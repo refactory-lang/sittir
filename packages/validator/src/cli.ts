@@ -27,6 +27,7 @@ import {
 	type Backend,
 } from './run.ts';
 import { appendHistory, readHistory, type ValidationRun } from './history.ts';
+import { warnIfNativeBinaryStale } from './native-staleness.ts';
 import type { ReadRenderParseFailure } from '@sittir/codegen/validate/read-render-parse';
 
 const ALL_GRAMMARS: Grammar[] = ['rust', 'typescript', 'python'];
@@ -95,6 +96,10 @@ async function collectGrammarCounts(
 	backend: Backend,
 ): Promise<GrammarCounts> {
 	const tp = defaultTemplatesPath(grammar);
+	// Guard: a `.node` older than its templates means the binary wasn't rebuilt
+	// after the last regen — native render will silently fall back to TS (FR-020),
+	// so these counts would not be true native. Warn loudly rather than mislead.
+	if (backend === 'native') warnIfNativeBinaryStale(grammar, tp);
 	const [from, coverage, factoryRenderParse] = await Promise.all([
 		runFrom(grammar, backend),
 		runCoverage(grammar, tp),
