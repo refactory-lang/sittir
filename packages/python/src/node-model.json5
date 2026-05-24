@@ -4003,13 +4003,13 @@
           "name": "expression",
           "propertyName": "expressions",
           "paramName": "expressions",
-          "required": true,
+          "required": false,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "expression",
               "unresolved": true
             }

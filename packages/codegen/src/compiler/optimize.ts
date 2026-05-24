@@ -648,7 +648,8 @@ export function collapseWrappers(rule: Rule): Rule {
 						outerMult,
 						(survivor as { multiplicity?: LeafMultiplicity }).multiplicity,
 					);
-					return { ...carried, multiplicity: combined } as Rule;
+					// Only stamp when non-default (single → undefined per combineMultiplicity).
+					if (combined !== undefined) return { ...carried, multiplicity: combined } as Rule;
 				}
 				return carried;
 			}

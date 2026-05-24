@@ -971,7 +971,7 @@ export function execStatement(config: T.ExecStatement.Config) {
     expressions() { return _expression; },
     $with: {
       code: (value: T.String | T.Identifier) => execStatement({ ...config, code: value }),
-      expressions: (...values: NonEmptyArray<T.Expression>) => execStatement({ ...config, expression: values }),
+      expressions: (...values: T.Expression[]) => execStatement({ ...config, expression: values }),
     },
   }, methodsEngine);
 }

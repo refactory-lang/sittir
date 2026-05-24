@@ -1718,13 +1718,13 @@
           "name": "alias",
           "propertyName": "alias",
           "paramName": "alias",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
             }
@@ -2418,13 +2418,13 @@
           "name": "alternative",
           "propertyName": "alternative",
           "paramName": "alternative",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "block",
               "unresolved": true
             }
@@ -2823,13 +2823,13 @@
           "name": "condition",
           "propertyName": "condition",
           "paramName": "condition",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_condition",
               "unresolved": true
             }

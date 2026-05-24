@@ -1756,7 +1756,7 @@
       "alternative": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }

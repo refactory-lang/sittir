@@ -435,12 +435,12 @@ describe('except_clause', () => {
 
 describe('exec_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.execStatement({ code: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any] });
+    const node = ir.execStatement({ code: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ExecStatement);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.execStatement({ code: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, expression: [{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any] });
+    const node = ir.execStatement({ code: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });

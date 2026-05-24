@@ -1295,7 +1295,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'exec_statement': [
     { name: 'code', required: true, multiple: false },
-    { name: 'expressions', required: true, multiple: true },
+    { name: 'expressions', required: false, multiple: true },
   ],
   'expression_list': [
     { name: 'expressions', required: true, multiple: true },

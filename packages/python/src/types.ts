@@ -1769,9 +1769,9 @@ export interface ExceptClause {
 export interface ExecStatement {
   readonly $type: TSKindId.ExecStatement;
   readonly _code: String | Identifier;
-  readonly _expression: NonEmptyArray<Expression>;
+  readonly _expression?: readonly (Expression)[];
   code(): String | Identifier;
-  expressions(): NonEmptyArray<Expression>;
+  expressions(): readonly (Expression)[];
 }
 
 export interface ExpressionList {

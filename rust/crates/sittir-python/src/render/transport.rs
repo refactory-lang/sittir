@@ -11174,9 +11174,9 @@ pub struct AssignmentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_assignment_typed"))]
     pub assignment_typed: Box<AssignmentTypedTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
-    pub right: Box<RightHandSideTransport>,
+    pub right: Option<Box<RightHandSideTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: TypeTransport,
+    pub type_: Option<TypeTransport>,
 }
 
 impl RenderableTransport for AssignmentTransport {
@@ -13282,7 +13282,7 @@ pub struct ExecStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_code"))]
     pub code: PrimaryExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: Vec<ExpressionTransport>,
+    pub expression: Option<Vec<ExpressionTransport>>,
 }
 
 impl RenderableTransport for ExecStatementTransport {
@@ -27826,7 +27826,8 @@ fn render_except_clause(node: &ExceptClauseTransport, dest: &mut dyn ::std::fmt:
 }
 
 fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.expression.iter()
+    let expression_owned = node.expression.as_deref().unwrap_or(&[]);
+    let expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = expression_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ExecStatementTemplate {
@@ -31705,7 +31706,9 @@ fn transport_to_node_exec_statement(transport: ExecStatementTransport) -> Result
     fields.insert("code".to_string(), transport_field_value(primary_expression_transport_to_any(transport.code))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.extend(transport.expression.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>());
+    if let Some(value) = transport.expression {
+        children_buf.extend(value.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>());
+    }
     let children = if children_buf.is_empty() {
         None
     } else {

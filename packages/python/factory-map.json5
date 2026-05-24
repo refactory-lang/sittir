@@ -1387,9 +1387,9 @@
       "expression": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": true,
-        "nonEmpty": true
+        "nonEmpty": false
       }
     },
     "expression_list": {

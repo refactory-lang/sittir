@@ -4294,9 +4294,9 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.YieldExpression as const,
-    _expression: normalizeSingularWrapSlot(data._expression, "expression", true, data.$type),
+    _expression: normalizeSingularWrapSlot(data._expression, "expression", false, data.$type),
 
-    expression() { return drillIn<T.Expression>(this._expression, tree); },
+    expression() { return drillIn<T.Expression | undefined>(this._expression, tree); },
     $with: {
       expression: (v: NonNullable<T.YieldExpression['_expression']>) => wrapYieldExpression({ ...data, _expression: v }, tree),
     },

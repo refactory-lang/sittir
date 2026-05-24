@@ -2471,7 +2471,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'yield_expression': [
-    { name: 'expression', required: true, multiple: false },
+    { name: 'expression', required: false, multiple: false },
   ],
 };
 

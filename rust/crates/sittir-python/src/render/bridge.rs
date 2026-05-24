@@ -968,7 +968,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         152 => { // "exec_statement"
-            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("code"), true)?;
             let children_renderables = children.renderable_items();
             let template = ExecStatementTemplate {

@@ -18208,7 +18208,7 @@ pub struct ExternCrateDeclarationOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
-    pub alias: Option<IdentifierTransport>,
+    pub alias: IdentifierTransport,
 }
 
 impl RenderableTransport for ExternCrateDeclarationOptional1Transport {
@@ -20674,7 +20674,7 @@ pub struct LetDeclarationOptional3Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alternative"))]
-    pub alternative: Option<BlockTransport>,
+    pub alternative: BlockTransport,
 }
 
 impl RenderableTransport for LetDeclarationOptional3Transport {
@@ -21278,7 +21278,7 @@ pub struct MatchPatternOptional1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
-    pub condition: Option<ConditionTransport>,
+    pub condition: ConditionTransport,
 }
 
 impl RenderableTransport for MatchPatternOptional1Transport {
@@ -25392,7 +25392,7 @@ pub struct ArrayExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributes"))]
     pub attributes: Option<Vec<AttributeItemTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_length"))]
-    pub length: Box<ExpressionTransport>,
+    pub length: Option<Box<ExpressionTransport>>,
 }
 
 impl RenderableTransport for ArrayExpressionTransport {
@@ -26520,7 +26520,7 @@ pub struct ClosureExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<Box<_TypeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: Box<BlockTransport>,
+    pub body: Option<Box<BlockTransport>>,
 }
 
 impl RenderableTransport for ClosureExpressionTransport {
@@ -28334,9 +28334,9 @@ pub struct FieldPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_field_pattern_named"))]
     pub field_pattern_named: FieldPatternNamedTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: IdentifierTransport,
+    pub name: Option<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
-    pub pattern: PatternTransport,
+    pub pattern: Option<PatternTransport>,
 }
 
 impl RenderableTransport for FieldPatternTransport {
@@ -28552,7 +28552,7 @@ pub struct ForeignModItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_foreign_mod_item_body"))]
     pub foreign_mod_item_body: _ForeignModItemBodyTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: DeclarationListTransport,
+    pub body: Option<DeclarationListTransport>,
 }
 
 impl RenderableTransport for ForeignModItemTransport {
@@ -29072,7 +29072,7 @@ pub struct FunctionTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_type_fn_form"))]
     pub function_type_fn_form: _FunctionTypeFnFormTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trait"))]
-    pub trait_: Box<_FunctionTypeTraitFormTraitTransportSlot>,
+    pub trait_: Option<Box<_FunctionTypeTraitFormTraitTransportSlot>>,
 }
 
 impl RenderableTransport for FunctionTypeTransport {
@@ -29654,7 +29654,7 @@ pub struct ImplItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_impl_item_semi"))]
     pub impl_item_semi: ImplItemSemiTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: DeclarationListTransport,
+    pub body: Option<DeclarationListTransport>,
 }
 
 impl RenderableTransport for ImplItemTransport {
@@ -30234,7 +30234,7 @@ pub struct LineCommentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_inner"))]
     pub inner: Option<InnerLineDocCommentMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_doc"))]
-    pub doc: LineDocContentTransport,
+    pub doc: Option<LineDocContentTransport>,
 }
 
 impl RenderableTransport for LineCommentTransport {
@@ -30706,7 +30706,7 @@ pub struct MatchArmTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_match_arm_block_ending"))]
     pub match_arm_block_ending: _MatchArmBlockEndingTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    pub value: Option<ExpressionTransport>,
 }
 
 impl RenderableTransport for MatchArmTransport {
@@ -31068,7 +31068,7 @@ pub struct ModItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mod_item_inline"))]
     pub mod_item_inline: _ModItemInlineTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: DeclarationListTransport,
+    pub body: Option<DeclarationListTransport>,
 }
 
 impl RenderableTransport for ModItemTransport {
@@ -31428,9 +31428,9 @@ pub struct OrPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_or_pattern_prefix"))]
     pub or_pattern_prefix: Box<OrPatternPrefixTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
-    pub left: Box<PatternTransport>,
+    pub left: Option<Box<PatternTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
-    pub right: Box<PatternTransport>,
+    pub right: Option<Box<PatternTransport>>,
 }
 
 impl RenderableTransport for OrPatternTransport {
@@ -31898,11 +31898,11 @@ pub struct RangeExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_expression_bare"))]
     pub range_expression_bare: _RangeExpressionBareTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_start"))]
-    pub start: Box<ExpressionTransport>,
+    pub start: Option<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: RangeExpressionBinaryOperatorEnum,
+    pub operator: Option<RangeExpressionBinaryOperatorEnum>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_end"))]
-    pub end: Box<ExpressionTransport>,
+    pub end: Option<Box<ExpressionTransport>>,
 }
 
 impl RenderableTransport for RangeExpressionTransport {
@@ -31960,7 +31960,7 @@ pub struct RangePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_pattern_left_bare"))]
     pub range_pattern_left_bare: RangePatternLeftBareTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
-    pub right: Box<RangePatternPrefixRightTransportSlot>,
+    pub right: Option<Box<RangePatternPrefixRightTransportSlot>>,
 }
 
 impl RenderableTransport for RangePatternTransport {
@@ -33312,7 +33312,7 @@ pub struct StructItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_struct_item_unit"))]
     pub struct_item_unit: StructItemUnitTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: FieldDeclarationListTransport,
+    pub body: Option<FieldDeclarationListTransport>,
 }
 
 impl RenderableTransport for StructItemTransport {
@@ -35536,9 +35536,9 @@ pub struct VisibilityModifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier_in_path"))]
     pub visibility_modifier_in_path: VisibilityModifierInPathTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pub"))]
-    pub pub_: Box<AnyTransport>,
+    pub pub_: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_in"))]
-    pub in_: Box<AnyTransport>,
+    pub in_: Option<Box<AnyTransport>>,
 }
 
 impl RenderableTransport for VisibilityModifierTransport {
@@ -44608,9 +44608,7 @@ fn render__expression_statement_with_semi(node: &_ExpressionStatementWithSemiTra
 }
 
 fn render_extern_crate_declaration_optional1(node: &ExternCrateDeclarationOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.alias {
-        render_identifier(child, dest)?;
-    }
+    render_identifier(&node.alias, dest)?;
     Ok(())
 }
 
@@ -44800,16 +44798,8 @@ fn render_let_declaration_optional2(node: &LetDeclarationOptional2Transport, des
 }
 
 fn render_let_declaration_optional3(node: &LetDeclarationOptional3Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.alternative.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let template = LetDeclarationOptional3Template {
-        alternative: match &node.alternative {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        alternative: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alternative)),
     };
     template.render_into(dest)
 }
@@ -44930,9 +44920,7 @@ fn render_match_arm_with_comma(node: &MatchArmWithCommaTransport, dest: &mut dyn
 }
 
 fn render_match_pattern_optional1(node: &MatchPatternOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.condition {
-        render_condition(child, dest)?;
-    }
+    render_condition(&node.condition, dest)?;
     Ok(())
 }
 
@@ -46355,9 +46343,9 @@ fn render_let_condition(node: &LetConditionTransport, dest: &mut dyn ::std::fmt:
 fn render_let_declaration(node: &LetDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LetDeclarationTemplate {
         alternative: node.alternative.as_ref().or_else(|| {
-            node.let_declaration_optional3.as_ref().and_then(|h| h.alternative.as_ref())
-        }).map_or(OptionalNonterminalView::Missing, |inner| {
-            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(inner))
+            node.let_declaration_optional3.as_ref().map(|h| &h.alternative)
+        }).map_or(OptionalNonterminalView::Missing, |v| {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v))
         }),
         mutable_specifier: match &node.mutable_specifier {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -50276,9 +50264,7 @@ fn transport_to_node__expression_statement_with_semi(transport: _ExpressionState
 
 fn transport_to_node_extern_crate_declaration_optional1(transport: ExternCrateDeclarationOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.alias {
-        fields.insert("alias".to_string(), transport_field_value(AnyTransport::Identifier(value))?);
-    }
+    fields.insert("alias".to_string(), transport_field_value(AnyTransport::Identifier(transport.alias))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -50854,9 +50840,7 @@ fn transport_to_node_let_declaration_optional2(transport: LetDeclarationOptional
 
 fn transport_to_node_let_declaration_optional3(transport: LetDeclarationOptional3Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.alternative {
-        fields.insert("alternative".to_string(), transport_field_value(AnyTransport::Block(value))?);
-    }
+    fields.insert("alternative".to_string(), transport_field_value(AnyTransport::Block(transport.alternative))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -51087,9 +51071,7 @@ fn transport_to_node_match_arm_with_comma(transport: MatchArmWithCommaTransport)
 
 fn transport_to_node_match_pattern_optional1(transport: MatchPatternOptional1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    if let Some(value) = transport.condition {
-        fields.insert("condition".to_string(), transport_field_value(condition_transport_to_any(value))?);
-    }
+    fields.insert("condition".to_string(), transport_field_value(condition_transport_to_any(transport.condition))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());

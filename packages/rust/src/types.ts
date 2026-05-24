@@ -2284,8 +2284,8 @@ export interface _ExpressionStatementWithSemi {
 
 export interface ExternCrateDeclarationOptional1 {
   readonly $type: "_extern_crate_declaration_optional1";
-  readonly _alias?: Identifier;
-  alias(): Identifier | undefined;
+  readonly _alias: Identifier;
+  alias(): Identifier;
 }
 
 export interface FieldPatternNamed {
@@ -2368,8 +2368,8 @@ export interface LetDeclarationOptional2 {
 
 export interface LetDeclarationOptional3 {
   readonly $type: "_let_declaration_optional3";
-  readonly _alternative?: Block;
-  alternative(): Block | undefined;
+  readonly _alternative: Block;
+  alternative(): Block;
 }
 
 export interface LineCommentDoc {
@@ -2424,8 +2424,8 @@ export interface MatchArmWithComma {
 
 export interface MatchPatternOptional1 {
   readonly $type: "_match_pattern_optional1";
-  readonly _condition?: Condition;
-  condition(): Condition | undefined;
+  readonly _condition: Condition;
+  condition(): Condition;
 }
 
 export interface _ModItemInline {

@@ -1735,6 +1735,6 @@ pub struct WithStatementTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "yield_expression.jinja", escape = "none")]
 pub struct YieldExpressionTemplate<'a> {
-    pub expression: SingleNonterminalView<'a>,
+    pub expression: OptionalNonterminalView<'a>,
 }
 

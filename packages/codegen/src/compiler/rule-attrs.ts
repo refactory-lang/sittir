@@ -74,11 +74,15 @@ export function combineMultiplicity(outerIn: LeafMultiplicity, innerIn: LeafMult
 	// is true (`combine(nonEmptyArray, single) → nonEmptyArray`, not `array`).
 	const outer = outerIn ?? 'single';
 	const inner = innerIn ?? 'single';
-	if (outer === 'single') return inner;
 	const isCollection = (m: LeafMultiplicity): boolean => m === 'array' || m === 'nonEmptyArray';
 	const guaranteesOne = (m: LeafMultiplicity): boolean => m === 'single' || m === 'nonEmptyArray';
 	if (isCollection(outer) || isCollection(inner)) {
 		return guaranteesOne(outer) && guaranteesOne(inner) ? 'nonEmptyArray' : 'array';
 	}
-	return outer === 'optional' || inner === 'optional' ? 'optional' : 'single';
+	// Neither side is a collection.
+	if (outer === 'optional' || inner === 'optional') return 'optional';
+	// Both are 'single' → required-one / default. Return `undefined` rather
+	// than the explicit string so callers that only stamp non-default values
+	// don't write a spurious `multiplicity: 'single'` onto clean nodes (codex P1).
+	return undefined;
 }

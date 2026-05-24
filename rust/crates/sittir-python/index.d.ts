@@ -122,8 +122,8 @@ export interface AssignmentTransport {
   _assignment_eq: Box<AssignmentEqTransport>
   _assignment_type: AssignmentTypeTransport
   _assignment_typed: Box<AssignmentTypedTransport>
-  _right: Box<RightHandSideTransport>
-  _type: TypeTransport
+  _right?: Box<RightHandSideTransport>
+  _type?: TypeTransport
 }
 
 export interface AssignmentTypedTransport {
@@ -552,7 +552,7 @@ export interface ExecStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _code: PrimaryExpressionTransport
-  _expression: Array<ExpressionTransport>
+  _expression?: Array<ExpressionTransport>
 }
 
 export interface ExpressionListTransport {

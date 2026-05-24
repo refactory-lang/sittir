@@ -257,7 +257,7 @@ pub struct LetChainTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_let_declaration_optional3.jinja", escape = "none")]
 pub struct LetDeclarationOptional3Template<'a> {
-    pub alternative: OptionalNonterminalView<'a>,
+    pub alternative: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

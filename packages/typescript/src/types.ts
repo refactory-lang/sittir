@@ -4398,8 +4398,8 @@ export interface WithStatement {
 
 export interface YieldExpression {
   readonly $type: TSKindId.YieldExpression;
-  readonly _expression: Expression;
-  expression(): Expression;
+  readonly _expression?: Expression;
+  expression(): Expression | undefined;
 }
 
 
