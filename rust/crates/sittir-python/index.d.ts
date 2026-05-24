@@ -295,6 +295,18 @@ export interface ClassPatternTransport {
   _arguments?: Array<CasePatternTransport>
 }
 
+export interface ComparisonOperatorComparatorTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _operators: Box<AnyTransport>
+  _primary_expression: PrimaryExpressionTransport
+}
+
 export interface ComparisonOperatorTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -304,8 +316,7 @@ export interface ComparisonOperatorTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _left: Box<PrimaryExpressionTransport>
-  _operators?: Array<AnyTransport>
-  _primary_expression?: Array<PrimaryExpressionTransport>
+  _comparators: Array<ComparisonOperatorComparatorTransport>
 }
 
 export interface ComplexPatternTransport {

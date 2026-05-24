@@ -683,6 +683,7 @@ const _kindIdByKind = new Map<string, number>([
     ["_attributed_parameter", TSKindId.AttributedParameter],
     ["_attributed_type_parameter", TSKindId.AttributedTypeParameter],
     ["_attributed_argument", TSKindId.AttributedArgument],
+    ["_attributed_ordered_field", TSKindId.AttributedOrderedField],
     ["_field_identifier", TSKindId.FieldIdentifier],
     ["_type_identifier", TSKindId.TypeIdentifier],
 ]);

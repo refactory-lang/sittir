@@ -9,7 +9,7 @@
 
 // @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js';
-import { transform, role, enrich, field, wire } from '../codegen/src/dsl/index.ts';
+import { transform, role, enrich, field, alias, wire } from '../codegen/src/dsl/index.ts';
 
 export default grammar(
 	enrich(base),
@@ -155,6 +155,39 @@ export default grammar(
 			// aliased forms, add `[$.except_clause_as, $.except_clause_list]` to
 			// `conflicts`.
 			except_clause: { '2/0/0': 'as', '2/0/1': 'list' }
+		},
+		groups: {
+			// comparison_operator: each comparator pair is
+			// seq(field('operators', choice(...)), primary_expression).
+			// Without this lift the parent's $children flattens to alternating
+			// operator / primary_expression entries joined in sequence, losing
+			// the per-pair grouping needed to render `a < b <= c` correctly.
+			// `comparison_operator` is: prec.left(seq(primary_expression,
+			//   repeat1(seq(field('operators', choice(...)), primary_expression)))).
+			// The inner seq of the repeat1 is the multi-slot repeated unit —
+			// a multi-slot repeated unit must be a visible node so the flat
+			// parse can be reconstructed. This is step 1 of making multiplicity
+			// intrinsic; the first groups: registration in python overrides.
+			comparison_operator_comparator: ($) =>
+				seq(
+					field(
+						'operators',
+						choice(
+							'<',
+							'<=',
+							'==',
+							'!=',
+							'>=',
+							'>',
+							'<>',
+							'in',
+							alias($._not_in, 'not in'),
+							'is',
+							alias($._is_not, 'is not')
+						)
+					),
+					$.primary_expression
+				)
 		},
 		transforms: {
 			// argument_list: name the naked args choice (was an unresolvable

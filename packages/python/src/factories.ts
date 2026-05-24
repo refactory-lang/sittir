@@ -3,7 +3,7 @@
 import type * as T from './types.js';
 import { TSKindId } from './types.js';
 import type { ConfigOf, FluentNode, NonEmptyArray } from '@sittir/types';
-import { withMethods, methodsEngine, coerceBitflagStorage, coerceBooleanKeywordStorage, coerceKindEnumStorage } from './utils.js';
+import { withMethods, methodsEngine, coerceBooleanKeywordStorage, coerceKindEnumStorage } from './utils.js';
 
 function _configChildren<T>(config: unknown, fallback: T): T {
   if (config === null || config === undefined || typeof config !== 'object') return fallback;
@@ -83,6 +83,24 @@ export function _assignmentTyped(config: T.AssignmentTyped.Config) {
     $with: {
       type: (value: T.Type) => _assignmentTyped({ ...config, type: value }),
       right: (value: T.RightHandSide) => _assignmentTyped({ ...config, right: value }),
+    },
+  }, methodsEngine);
+}
+
+export function _comparisonOperatorComparator(config: T.ComparisonOperatorComparator.Config) {
+  const _operators = config.operators;
+  const _primary_expression = config.primaryExpression;
+  return withMethods({
+    $type: TSKindId.ComparisonOperatorComparator as const,
+    $source: 2 as const,
+    $named: true as const,
+    _operators,
+    _primary_expression,
+    operators() { return _operators; },
+    primaryExpression() { return _primary_expression; },
+    $with: {
+      operators: (value: "<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not") => _comparisonOperatorComparator({ ...config, operators: value }),
+      primaryExpression: (value: T.PrimaryExpression) => _comparisonOperatorComparator({ ...config, primaryExpression: value }),
     },
   }, methodsEngine);
 }
@@ -639,22 +657,18 @@ export function comment(text: string) {
 
 export function comparisonOperator(config: T.ComparisonOperator.Config) {
   const _left = config.left;
-  const _operators = coerceBitflagStorage(config.operators, ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"]);
-  const _primary_expression = config.primaryExpression;
+  const _comparators = config.comparators;
   return withMethods({
     $type: TSKindId.ComparisonOperator as const,
     $source: 2 as const,
     $named: true as const,
     _left,
-    _operators,
-    _primary_expression,
+    _comparators,
     left() { return _left; },
-    operators() { return _operators; },
-    primaryExpressions() { return _primary_expression; },
+    comparators() { return _comparators; },
     $with: {
       left: (value: T.PrimaryExpression) => comparisonOperator({ ...config, left: value }),
-      operators: (value?: NonNullable<Parameters<typeof comparisonOperator>[0]>['operators']) => comparisonOperator({ ...config, operators: value }),
-      primaryExpressions: (...values: T.PrimaryExpression[]) => comparisonOperator({ ...config, primaryExpression: values }),
+      comparators: (...values: NonEmptyArray<T.ComparisonOperatorComparator>) => comparisonOperator({ ...config, comparators: values }),
     },
   }, methodsEngine);
 }
@@ -2389,6 +2403,7 @@ export type FluentKindMap = {
   "_assignment_eq": T.AssignmentEq;
   "_assignment_type": T.AssignmentType;
   "_assignment_typed": T.AssignmentTyped;
+  "_comparison_operator_comparator": T.ComparisonOperatorComparator;
   "_comprehension_clauses": FluentNode<"_comprehension_clauses", T.ComprehensionClauses.Config>;
   "_except_clause_as": T.ExceptClauseAs;
   "_import_list": T.ImportList;
@@ -2538,6 +2553,7 @@ export const _factoryMap = {
   "_assignment_eq": _assignmentEq,
   "_assignment_type": _assignmentType,
   "_assignment_typed": _assignmentTyped,
+  "_comparison_operator_comparator": _comparisonOperatorComparator,
   "_comprehension_clauses": comprehensionClauses,
   "_except_clause_as": _exceptClauseAs,
   "_import_list": _importList,

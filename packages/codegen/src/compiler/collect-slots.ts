@@ -49,6 +49,61 @@ import {
 } from './node-map.ts';
 import { findRepeatFlag } from './template-walker.ts';
 
+// === DBG_MULT_INHERIT (027-intrinsic-multiplicity inventory) =================
+const DBG_MULT_INHERIT = process.env.DBG_MULT_INHERIT === '1';
+let DBG_IN_PROBE = false; // suppress logging during slot-bearing probe recursion
+
+function dbgMemberLabel(m: Rule): string {
+	const f = (m as { fieldName?: string }).fieldName;
+	const name = (m as { name?: string }).name;
+	if (m.type === 'symbol' || m.type === 'supertype') return f ? `${f}:${name ?? m.type}` : (name ?? m.type);
+	if (m.type === 'string') return `'${(m as { value?: string }).value ?? ''}'`;
+	return f ? `${f}:${m.type}` : m.type;
+}
+
+function dbgSlotBearingMembers(members: readonly Rule[]): { count: number; labels: string[] } {
+	let count = 0;
+	const labels: string[] = [];
+	const prev = DBG_IN_PROBE;
+	DBG_IN_PROBE = true;
+	try {
+		for (const m of members) {
+			const slots = collectSlots(m, undefined, undefined, 'single', undefined);
+			if (slots.length > 0) {
+				count += 1;
+				labels.push(dbgMemberLabel(m));
+			}
+		}
+	} finally {
+		DBG_IN_PROBE = prev;
+	}
+	return { count, labels };
+}
+
+function dbgLogMultInherit(kind: string | undefined, seqMult: Multiplicity, members: readonly Rule[]): void {
+	if (!DBG_MULT_INHERIT || DBG_IN_PROBE) return;
+	if (seqMult !== 'array' && seqMult !== 'nonEmptyArray' && seqMult !== 'optional') return;
+	const inheritors = members.filter((m) => (m as { multiplicity?: Multiplicity }).multiplicity === undefined);
+	if (inheritors.length === 0) return;
+	const { count, labels } = dbgSlotBearingMembers(members);
+	if (count === 0) return;
+	const derived = seqMult === 'optional' ? 'optional-derived' : 'repeat-derived';
+	process.stderr.write(
+		'DBG_MULT_INHERIT ' +
+			JSON.stringify({
+				kind: kind ?? '<unknown>',
+				inherited: seqMult,
+				derived,
+				slotBearingCount: count,
+				bucket: count >= 2 ? 'multi-slot' : 'single-slot',
+				members: labels,
+			}) +
+			'\n'
+	);
+}
+// === end DBG_MULT_INHERIT ===================================================
+
+
 /**
  * Walk a rule tree to find the first separator string nested inside it.
  * Mirrors `findRepeatFlag`'s descent through seq/choice members, but looks
@@ -509,6 +564,7 @@ export function collectSlots(
 			// to members that have none of their own (see `slotMultiplicity`).
 			const seqMult = rule.multiplicity ?? inherited;
 			const seqSep = rule.separator ?? inheritedSeparator;
+			dbgLogMultInherit(kindForName, seqMult, rule.members);
 			return rule.members.flatMap((m) => collectSlots(m, kindForName, kindEntries, seqMult, seqSep));
 		}
 

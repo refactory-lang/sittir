@@ -466,6 +466,18 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
+        251 => { // "_comparison_operator_comparator" | "comparison_operator_comparator"
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("operators"), true)?;
+            let template = ComparisonOperatorComparatorTemplate {
+                primary_expression: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                operators: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            };
+            template.render_into(dest)
+        }
         224 => { // "_comprehension_clauses"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let children_renderables = children.renderable_items();
@@ -756,25 +768,17 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         195 => { // "comparison_operator"
-            let children = resolve_slot(node, SlotAccessor::Children, false)?;
-            let field_0 = resolve_slot(node, SlotAccessor::Field("left"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("operators"), false)?;
-            let children_renderables = children.renderable_items();
-            let field_1_renderables = field_1.renderable_items();
+            let field_0 = resolve_slot(node, SlotAccessor::Field("comparators"), true)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("left"), true)?;
+            let field_0_renderables = field_0.renderable_items();
             let template = ComparisonOperatorTemplate {
-                primary_expression: ListNonterminalView {
-                    items: children_renderables.as_slice(),
-                    separator: children.separator,
-                    leading: children.leading_sep,
-                    trailing: children.trailing_sep,
+                comparators: ListNonterminalView {
+                    items: field_0_renderables.as_slice(),
+                    separator: field_0.separator,
+                    leading: field_0.leading_sep,
+                    trailing: field_0.trailing_sep,
                 },
-                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                operators: ListNonterminalView {
-                    items: field_1_renderables.as_slice(),
-                    separator: field_1.separator,
-                    leading: field_1.leading_sep,
-                    trailing: field_1.trailing_sep,
-                },
+                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
             };
             template.render_into(dest)
         }

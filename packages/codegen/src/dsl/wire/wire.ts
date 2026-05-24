@@ -1188,6 +1188,14 @@ function patternBodyEqual(aIn: unknown, bIn: unknown): boolean {
 	if (t === 'field') {
 		return ra.name === rb.name && patternBodyEqual(ra.content, rb.content);
 	}
+	if (t === 'alias') {
+		// ALIAS nodes carry `named` (bool) and `value` (the visible name string)
+		// in addition to `content`. Two aliases are structurally equal when all
+		// three match — e.g. `alias($._not_in, 'not in')` vs itself.
+		const raa = ra as { type: string; content?: unknown; named?: boolean; value?: string };
+		const rba = rb as { type: string; content?: unknown; named?: boolean; value?: string };
+		return raa.named === rba.named && raa.value === rba.value && patternBodyEqual(raa.content, rba.content);
+	}
 	return false;
 }
 

@@ -434,6 +434,24 @@ function variant(name) {
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
 }
+function alias(rule, value) {
+  if (typeof rule === "string" && value === void 0) {
+    return {
+      __sittirPlaceholder: "alias",
+      name: rule
+    };
+  }
+  const native = globalThis.alias;
+  if (typeof native !== "function") {
+    throw new Error(
+      "alias(): no global alias() found \u2014 must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)"
+    );
+  }
+  if (value !== void 0) {
+    return native(rule, value);
+  }
+  return native(rule, rule);
+}
 
 // packages/codegen/src/dsl/wire/auto-groups.ts
 function applyAutoGroups(base2, outRules, context, authoredSynthesisKinds = /* @__PURE__ */ new Set()) {
@@ -924,6 +942,11 @@ function patternBodyEqual(aIn, bIn) {
   if (t === "field") {
     return ra.name === rb.name && patternBodyEqual(ra.content, rb.content);
   }
+  if (t === "alias") {
+    const raa = ra;
+    const rba = rb;
+    return raa.named === rba.named && raa.value === rba.value && patternBodyEqual(raa.content, rba.content);
+  }
   return false;
 }
 function replaceInBodyRt(rule, candidates) {
@@ -1190,17 +1213,17 @@ function tryHoistSiblingVariants(rule, variantEntries) {
     );
   const seqMembers = [...membersOf2(core)];
   const resolvedPos = choicePos < 0 ? seqMembers.length + choicePos : choicePos;
-  const choice = seqMembers[resolvedPos];
-  if (!choice || !isChoiceType(choice.type))
-    return bail(`position ${resolvedPos} is '${choice?.type}', not choice/CHOICE`);
-  const choiceMembers = membersOf2(choice);
+  const choice2 = seqMembers[resolvedPos];
+  if (!choice2 || !isChoiceType(choice2.type))
+    return bail(`position ${resolvedPos} is '${choice2?.type}', not choice/CHOICE`);
+  const choiceMembers = membersOf2(choice2);
   const anyEmpty = parsed.some(
     (p) => matchesEmpty(choiceMembers[p.altIdx < 0 ? choiceMembers.length + p.altIdx : p.altIdx])
   );
   if (!anyEmpty) return null;
   const parentKind = wireGetCurrentRuleKind();
   if (!parentKind) return bail("no current rule kind (variant()/transform() called outside rule callback?)");
-  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack);
+  return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack);
 }
 function peelPrecWrappersFromRule(rule) {
   const dbg = typeof process !== "undefined" ? process?.env?.SITTIR_DEBUG : void 0;
@@ -1228,7 +1251,7 @@ function parseVariantPathsForHoist(variantEntries, bail) {
   }
   return parsed;
 }
-function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack) {
+function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice2, parsed, parentKind, precStack) {
   const refs = [];
   const isUpperCase = core.type === core.type.toUpperCase();
   for (const p of parsed) {
@@ -1255,7 +1278,7 @@ function buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choi
     });
   }
   registerHoistedVariantConflicts(parsed.map((p) => polymorphHiddenName(parentKind, p.v.name)));
-  const newChoice = reconstructContainer(choice, refs);
+  const newChoice = reconstructContainer(choice2, refs);
   return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
 function registerHoistedVariantConflicts(variantNames) {
@@ -2342,6 +2365,38 @@ var overrides_default = grammar(
       // aliased forms, add `[$.except_clause_as, $.except_clause_list]` to
       // `conflicts`.
       except_clause: { "2/0/0": "as", "2/0/1": "list" }
+    },
+    groups: {
+      // comparison_operator: each comparator pair is
+      // seq(field('operators', choice(...)), primary_expression).
+      // Without this lift the parent's $children flattens to alternating
+      // operator / primary_expression entries joined in sequence, losing
+      // the per-pair grouping needed to render `a < b <= c` correctly.
+      // `comparison_operator` is: prec.left(seq(primary_expression,
+      //   repeat1(seq(field('operators', choice(...)), primary_expression)))).
+      // The inner seq of the repeat1 is the multi-slot repeated unit —
+      // a multi-slot repeated unit must be a visible node so the flat
+      // parse can be reconstructed. This is step 1 of making multiplicity
+      // intrinsic; the first groups: registration in python overrides.
+      comparison_operator_comparator: ($) => seq(
+        field(
+          "operators",
+          choice(
+            "<",
+            "<=",
+            "==",
+            "!=",
+            ">=",
+            ">",
+            "<>",
+            "in",
+            alias($._not_in, "not in"),
+            "is",
+            alias($._is_not, "is not")
+          )
+        ),
+        $.primary_expression
+      )
     },
     transforms: {
       // argument_list: name the naked args choice (was an unresolvable

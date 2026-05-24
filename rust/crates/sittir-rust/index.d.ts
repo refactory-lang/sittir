@@ -73,8 +73,7 @@ export interface ArrayExpressionListTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributes?: Array<AttributeItemTransport>
-  _elements?: Array<ExpressionTransport>
-  _attribute_item?: Array<AttributeItemTransport>
+  _attributed_argument?: Array<AttributedArgumentTransport>
 }
 
 export interface ArrayExpressionSemiTransport {
@@ -86,8 +85,8 @@ export interface ArrayExpressionSemiTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _attributes?: Array<AttributeItemTransport>
-  _elements: Box<ExpressionTransport>
   _length: Box<ExpressionTransport>
+  _expression: Box<ExpressionTransport>
 }
 
 export interface ArrayExpressionTransport {
@@ -101,7 +100,6 @@ export interface ArrayExpressionTransport {
   _array_expression_semi: Box<ArrayExpressionSemiTransport>
   _array_expression_list: ArrayExpressionListTransport
   _attributes?: Array<AttributeItemTransport>
-  _elements: Box<ExpressionTransport>
   _length: Box<ExpressionTransport>
 }
 
@@ -200,6 +198,19 @@ export interface AttributedFieldDeclarationTransport {
   '$triviaData'?: TransportTrivia
   _attribute_item?: Array<AttributeItemTransport>
   _field_declaration: FieldDeclarationTransport
+}
+
+export interface AttributedOrderedFieldTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _type: _TypeTransport
+  _attribute_item?: Array<AttributeItemTransport>
+  _visibility_modifier?: VisibilityModifierTransport
 }
 
 export interface AttributedParameterTransport {
@@ -1701,9 +1712,7 @@ export interface OrderedFieldDeclarationListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _type?: Array<_TypeTransport>
-  _attribute_item?: Array<AttributeItemTransport>
-  _visibility_modifier?: VisibilityModifierTransport
+  _attributes?: Array<AttributedOrderedFieldTransport>
 }
 
 export interface OrPatternBinaryTransport {

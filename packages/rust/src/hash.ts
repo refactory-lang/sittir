@@ -6,4 +6,4 @@
 // (FR-020). Mismatch is caught by packages/rust/src/backend.ts and
 // falls through to the TS engine silently.
 
-export const TEMPLATE_BUNDLE_HASH = '99f3371d154dcb1dd93fc42b29a15f9f0a68af3bbce82a9760e08b474b9d009d'
+export const TEMPLATE_BUNDLE_HASH = 'c1e2805c2d7aa5c3ba5887f30a12f3055ce3bcaa7858beee0770d6907c8828e0'

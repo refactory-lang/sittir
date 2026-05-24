@@ -568,16 +568,6 @@
             "named": true
           }
         ]
-      },
-      "elements": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "_expression",
-            "named": true
-          }
-        ]
       }
     },
     "children": {
@@ -585,7 +575,7 @@
       "required": false,
       "types": [
         {
-          "type": "attribute_item",
+          "type": "attributed_argument",
           "named": true
         }
       ]
@@ -605,16 +595,6 @@
           }
         ]
       },
-      "elements": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_expression",
-            "named": true
-          }
-        ]
-      },
       "length": {
         "multiple": false,
         "required": true,
@@ -625,6 +605,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "_expression",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -875,6 +865,36 @@
         },
         {
           "type": "field_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "attributed_ordered_field",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_type",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "attribute_item",
+          "named": true
+        },
+        {
+          "type": "visibility_modifier",
           "named": true
         }
       ]
@@ -4066,25 +4086,7 @@
             "named": false
           },
           {
-            "type": "_type",
-            "named": true
-          },
-          {
-            "type": "attribute_item",
-            "named": true
-          },
-          {
-            "type": "visibility_modifier",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "_type",
+            "type": "attributed_ordered_field",
             "named": true
           }
         ]

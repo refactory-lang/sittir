@@ -8,7 +8,7 @@ import type { TreeHandle } from '@sittir/common';
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { TSKindId, KIND_NAMES } from './types.js';
 import type * as T from './types.js';
-import { withMethods, methodsEngine, coerceBooleanKeywordStorage, coerceBitflagStorage } from './utils.js';
+import { withMethods, methodsEngine, coerceBooleanKeywordStorage } from './utils.js';
 import * as _factories from './factories.js';
 
 const WRAP_WARNING_MODE = typeof process !== "undefined" && process.env?.SITTIR_WRAP_WARNING_MODE === "1";
@@ -364,6 +364,23 @@ export function wrapAssignmentTyped(data: T.AssignmentTyped, tree: TreeHandle) {
     $with: {
       type: (v: NonNullable<T.AssignmentTyped['_type']>) => wrapAssignmentTyped({ ...data, _type: v }, tree),
       right: (v: NonNullable<T.AssignmentTyped['_right']>) => wrapAssignmentTyped({ ...data, _right: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapComparisonOperatorComparator(data: T.ComparisonOperatorComparator, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.ComparisonOperatorComparator as const,
+    _operators: normalizeSingularWrapSlot(data._operators, "operators", true, data.$type),
+    _primary_expression: normalizeSingularWrapSlot((data._await ?? data._binary_operator ?? data._identifier ?? data._keyword_identifier ?? data._string ?? data._concatenated_string ?? data._integer ?? data._float ?? data._true ?? data._false ?? data._none ?? data._unary_operator ?? data._attribute ?? data._subscript ?? data._call ?? data._list ?? data._list_comprehension ?? data._dictionary ?? data._dictionary_comprehension ?? data._set ?? data._set_comprehension ?? data._tuple ?? data._parenthesized_expression ?? data._generator_expression ?? data._ellipsis ?? data._list_splat_pattern ?? data._primary_expression), "primary_expression", true, data.$type),
+
+    operators() { return drillIn<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">(this._operators, tree); },
+    primaryExpression() { return drillIn<T.PrimaryExpression>(this._primary_expression, tree); },
+    $with: {
+      operators: (v: NonNullable<T.ComparisonOperatorComparator['_operators']>) => wrapComparisonOperatorComparator({ ...data, _operators: v }, tree),
+      primaryExpression: (v: NonNullable<T.ComparisonOperatorComparator['_primary_expression']>) => wrapComparisonOperatorComparator({ ...data, _primary_expression: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -844,16 +861,13 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
     ...data,
     $type: TSKindId.ComparisonOperator as const,
     _left: normalizeSingularWrapSlot(data._left, "left", true, data.$type),
-    _operators: coerceBitflagStorage(normalizeRepeatedWrapSlot(data._operators, false, "operators"), ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"]),
-    _primary_expression: normalizeRepeatedWrapSlot([..._toArr(data._await), ..._toArr(data._binary_operator), ..._toArr(data._identifier), ..._toArr(data._keyword_identifier), ..._toArr(data._string), ..._toArr(data._concatenated_string), ..._toArr(data._integer), ..._toArr(data._float), ..._toArr(data._true), ..._toArr(data._false), ..._toArr(data._none), ..._toArr(data._unary_operator), ..._toArr(data._attribute), ..._toArr(data._subscript), ..._toArr(data._call), ..._toArr(data._list), ..._toArr(data._list_comprehension), ..._toArr(data._dictionary), ..._toArr(data._dictionary_comprehension), ..._toArr(data._set), ..._toArr(data._set_comprehension), ..._toArr(data._tuple), ..._toArr(data._parenthesized_expression), ..._toArr(data._generator_expression), ..._toArr(data._ellipsis), ..._toArr(data._list_splat_pattern), ..._toArr(data._primary_expression)], false, "primary_expression"),
+    _comparators: normalizeRepeatedWrapSlot(data._comparators, true, "comparators"),
 
     left() { return drillIn<T.PrimaryExpression>(this._left, tree); },
-    operators() { return this._operators; },
-    primaryExpressions() { return drillInAll<T.PrimaryExpression>(this._primary_expression as readonly T.PrimaryExpression[] | undefined, tree); },
+    comparators() { return drillAsAll<T.ComparisonOperatorComparator>(this._comparators, tree, "comparison_operator_comparator", "_comparison_operator_comparator"); },
     $with: {
       left: (v: NonNullable<T.ComparisonOperator['_left']>) => wrapComparisonOperator({ ...data, _left: v }, tree),
-      operators: (v: NonNullable<T.ComparisonOperator['_operators']>) => wrapComparisonOperator({ ...data, _operators: v }, tree),
-      primaryExpressions: (...v: NonNullable<T.ComparisonOperator['_primary_expression']>[number][]) => wrapComparisonOperator({ ...data, _primary_expression: v }, tree),
+      comparators: (...v: NonEmptyArray<NonNullable<T.ComparisonOperator['_comparators']>[number]>) => wrapComparisonOperator({ ...data, _comparators: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2224,6 +2238,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),
   '_assignment_type': (d, t) => wrapAssignmentType(d as unknown as T.AssignmentType, t),
   '_assignment_typed': (d, t) => wrapAssignmentTyped(d as unknown as T.AssignmentTyped, t),
+  '_comparison_operator_comparator': (d, t) => wrapComparisonOperatorComparator(d as unknown as T.ComparisonOperatorComparator, t),
   '_comprehension_clauses': (d, t) => wrapComprehensionClauses(d as unknown as T.ComprehensionClauses, t),
   '_dict_pattern_kv': (d, t) => wrapDictPatternKv(d as unknown as T.DictPatternKv, t),
   '_except_clause_as': (d, t) => wrapExceptClauseAs(d as unknown as T.ExceptClauseAs, t),
@@ -2385,6 +2400,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'assignment_typed': '_assignment_typed',
   'async_marker': '_async_marker',
   'augmented_assignment_operator': '_augmented_assignment_operator',
+  'comparison_operator_comparator': '_comparison_operator_comparator',
   'comprehension_clauses': '_comprehension_clauses',
   'dict_pattern_kv': '_dict_pattern_kv',
   'except_clause_as': '_except_clause_as',
