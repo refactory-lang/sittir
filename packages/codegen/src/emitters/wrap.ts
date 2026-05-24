@@ -516,13 +516,34 @@ function dataAccessExpr(dataExpr: string, storageKey: string): string {
 
 function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string, candidateKeys?: readonly string[]): string {
 	if (candidateKeys && candidateKeys.length > 0) {
-		// Multi-key probe: the runtime data has exactly one of these populated.
 		// Append the slot's nominal storage key as a final fallback for any
 		// edge case the analysis missed (e.g. a tree-sitter-injected alias the
 		// supertype-expansion doesn't see).
 		const allKeys = candidateKeys.includes(slot.storageKey)
 			? candidateKeys
 			: [...candidateKeys, slot.storageKey];
+
+		if (slot.arity === 'many') {
+			// Repeated supertype-list slot: the runtime reader populates EACH
+			// concrete-kind wire field as a separate array (e.g. `_primitive_type:
+			// ["i32"]`, `_type_identifier: ["String"]`). A ??-coalesce returns
+			// only the first non-null source, dropping the rest.
+			// Concatenate ALL source arrays instead, preserving child order
+			// (each kind-keyed array is already in source order; cross-kind
+			// ordering within a single slot relies on child position in the CST,
+			// which the reader preserves within each kind bucket — interleaved
+			// ordering across kinds is not guaranteed, but all elements are kept).
+			//
+			// Each wire field may be a scalar value (text-collapsed leaf, e.g.
+			// "i32" for primitive_type) OR an array of node stubs. Use
+			// _toArr() to normalize each source to an array before concatenating,
+			// so that spreading a string does not split it character-by-character.
+			const spreads = allKeys.map((k) => `..._toArr(${dataAccessExpr(dataExpr, k)})`);
+			return `[${spreads.join(', ')}]`;
+		}
+
+		// Singular slot: exactly one of these will be populated.
+		// ??-coalesce is correct — return the first non-null source.
 		const probes = allKeys.map((k) => dataAccessExpr(dataExpr, k));
 		return `(${probes.join(' ?? ')})`;
 	}
@@ -924,6 +945,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource);
 		const usesNormalizeSingular = /\bnormalizeSingularWrapSlot\b/.test(bodySource);
 		const usesNormalizeRepeated = /\bnormalizeRepeatedWrapSlot\b/.test(bodySource);
+		const usesToArr = /\b_toArr\b/.test(bodySource);
 		const variantDescriptors = buildWrapVariantDescriptors(this.#nodeMap);
 		const supertypeMembers = buildSupertypeMembersMap(this.#nodeMap);
 		const utilsImports = [
@@ -1003,6 +1025,19 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  const items: readonly T[] = Array.isArray(value) ? (value as readonly T[]) : value == null ? ([] as readonly T[]) : ([value] as readonly T[]);',
 						'  if (nonEmpty && items.length === 0) return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items);',
 						'  return items;',
+						'}'
+					]
+				: []),
+			...(usesToArr
+				? [
+						'// _toArr — normalize a single wire field (may be a scalar value or an',
+						'// array of node stubs) to a readonly array. Used by repeated supertype-',
+						'// list slot concatenation so that spreading a text-collapsed leaf (e.g.',
+						'// primitive_type "i32" arriving as the string "i32") does not split it',
+						'// character-by-character.',
+						'function _toArr<T>(value: T | readonly T[] | undefined): readonly T[] {',
+						'  if (value == null) return [];',
+						'  return Array.isArray(value) ? (value as readonly T[]) : [value as T];',
 						'}'
 					]
 				: []),
