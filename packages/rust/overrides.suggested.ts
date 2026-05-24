@@ -167,13 +167,8 @@ export const suggestedRules = {
 // ---------------------------------------------------------------
 export const suggestedGroups = {
   // [held] 1 candidate(s)
-  _array_expression_list: {
-    '0/2': 'attribute_item',
-  },
-
-  // [held] 1 candidate(s)
   _array_expression_semi: {
-    '0/2': 'elements',
+    '0/2': 'expression',
   },
 
   // [held] 1 candidate(s)
@@ -228,11 +223,6 @@ export const suggestedGroups = {
   // [held] 1 candidate(s)
   match_block: {
     '1': 'match_arm',
-  },
-
-  // [held] 1 candidate(s)
-  ordered_field_declaration_list: {
-    '1/0': 'attribute_item',
   },
 
   // [held] 1 candidate(s)

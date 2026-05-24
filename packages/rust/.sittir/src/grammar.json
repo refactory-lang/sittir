@@ -1736,42 +1736,13 @@
                 "type": "SEQ",
                 "members": [
                   {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "REPEAT",
-                        "content": {
-                          "type": "SYMBOL",
-                          "name": "attribute_item",
-                          "multiplicity": "array",
-                          "nonterminal": true
-                        },
-                        "multiplicity": "array",
-                        "nonterminal": true
-                      },
-                      {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "visibility_modifier"
-                          },
-                          {
-                            "type": "BLANK"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "FIELD",
-                        "name": "type",
-                        "content": {
-                          "type": "SYMBOL",
-                          "name": "_type",
-                          "fieldName": "type",
-                          "nonterminal": true
-                        }
-                      }
-                    ]
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_attributed_ordered_field"
+                    },
+                    "named": true,
+                    "value": "attributed_ordered_field"
                   },
                   {
                     "type": "REPEAT",
@@ -1783,42 +1754,13 @@
                           "value": ","
                         },
                         {
-                          "type": "SEQ",
-                          "members": [
-                            {
-                              "type": "REPEAT",
-                              "content": {
-                                "type": "SYMBOL",
-                                "name": "attribute_item",
-                                "multiplicity": "array",
-                                "nonterminal": true
-                              },
-                              "multiplicity": "array",
-                              "nonterminal": true
-                            },
-                            {
-                              "type": "CHOICE",
-                              "members": [
-                                {
-                                  "type": "SYMBOL",
-                                  "name": "visibility_modifier"
-                                },
-                                {
-                                  "type": "BLANK"
-                                }
-                              ]
-                            },
-                            {
-                              "type": "FIELD",
-                              "name": "type",
-                              "content": {
-                                "type": "SYMBOL",
-                                "name": "_type",
-                                "fieldName": "type",
-                                "nonterminal": true
-                              }
-                            }
-                          ]
+                          "type": "ALIAS",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_attributed_ordered_field"
+                          },
+                          "named": true,
+                          "value": "attributed_ordered_field"
                         }
                       ],
                       "multiplicity": "array",
@@ -9545,13 +9487,8 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "FIELD",
-              "name": "elements",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_expression"
-              },
-              "source": "override"
+              "type": "SYMBOL",
+              "name": "_expression"
             },
             {
               "type": "STRING",
@@ -9608,29 +9545,13 @@
                   "type": "SEQ",
                   "members": [
                     {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "REPEAT",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "attribute_item",
-                            "multiplicity": "array",
-                            "nonterminal": true
-                          },
-                          "multiplicity": "array",
-                          "nonterminal": true
-                        },
-                        {
-                          "type": "FIELD",
-                          "name": "elements",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "_expression"
-                          },
-                          "source": "override"
-                        }
-                      ]
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_attributed_argument"
+                      },
+                      "named": true,
+                      "value": "attributed_argument"
                     },
                     {
                       "type": "REPEAT",
@@ -9642,32 +9563,20 @@
                             "value": ","
                           },
                           {
-                            "type": "SEQ",
-                            "members": [
-                              {
-                                "type": "REPEAT",
-                                "content": {
-                                  "type": "SYMBOL",
-                                  "name": "attribute_item",
-                                  "multiplicity": "array",
-                                  "nonterminal": true
-                                },
-                                "multiplicity": "array",
-                                "nonterminal": true
-                              },
-                              {
-                                "type": "FIELD",
-                                "name": "elements",
-                                "content": {
-                                  "type": "SYMBOL",
-                                  "name": "_expression"
-                                },
-                                "source": "override"
-                              }
-                            ]
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "SYMBOL",
+                              "name": "_attributed_argument"
+                            },
+                            "named": true,
+                            "value": "attributed_argument"
                           }
-                        ]
-                      }
+                        ],
+                        "multiplicity": "array",
+                        "nonterminal": true
+                      },
+                      "multiplicity": "array",
+                      "nonterminal": true
                     }
                   ]
                 },
@@ -11064,6 +10973,39 @@
         }
       ]
     },
+    "_attributed_ordered_field": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute_item"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "visibility_modifier"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_type"
+          },
+          "source": "override"
+        }
+      ]
+    },
     "_enum_variant_list_optional1": {
       "type": "SEQ",
       "members": [
@@ -11732,6 +11674,9 @@
     [
       "_attributed_type_parameter",
       "_type"
+    ],
+    [
+      "_attributed_argument"
     ],
     [
       "_array_expression_semi",

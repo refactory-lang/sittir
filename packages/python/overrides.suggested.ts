@@ -159,11 +159,6 @@ export const suggestedGroups = {
   },
 
   // [held] 1 candidate(s)
-  comparison_operator: {
-    '1/0': 'operators',
-  },
-
-  // [held] 1 candidate(s)
   exec_statement: {
     '2/0': 'expression',
   },

@@ -142,9 +142,9 @@ export interface AmbientDeclarationTransport {
   _ambient_declaration_declaration: Box<AmbientDeclarationDeclarationTransport>
   _ambient_declaration_global: AmbientDeclarationGlobalTransport
   _ambient_declaration_module: AmbientDeclarationModuleTransport
-  _body: StatementBlockTransport
-  _name: IdentifierTransport
-  _type: TypeTransport
+  _body?: StatementBlockTransport
+  _name?: IdentifierTransport
+  _type?: TypeTransport
   _semicolon?: SemicolonTransport
 }
 
@@ -226,9 +226,9 @@ export interface ArrowFunctionTransport {
   _body: Box<ArrowFunctionBodyTransportSlot>
   _arrow_function_parameter: ArrowFunctionParameterTransport
   _arrow_function__call_signature: Box<ArrowFunctionUCallSignatureTransport>
-  _parameter: PropertyIdentifierTransport
+  _parameter?: PropertyIdentifierTransport
   _type_parameters?: TypeParametersTransport
-  _parameters: FormalParametersTransport
+  _parameters?: FormalParametersTransport
   _return_type?: Box<_ArrowFunctionUCallSignatureReturnTypeTransportSlot>
 }
 
@@ -414,9 +414,9 @@ export interface CallExpressionTransport {
   _call_expression_call: Box<CallExpressionCallTransport>
   _call_expression_template_call: Box<CallExpressionTemplateCallTransport>
   _call_expression_member: Box<CallExpressionMemberTransport>
-  _function: Box<CallExpressionCallFunctionTransportSlot>
+  _function?: Box<CallExpressionCallFunctionTransportSlot>
   _type_arguments?: TypeArgumentsTransport
-  _arguments: ArgumentsTransport
+  _arguments?: ArgumentsTransport
 }
 
 export interface CallSignatureTransport {
@@ -846,7 +846,7 @@ export interface ExportStatementDefaultDeclArmDefaultKwTransport {
   '$triviaData'?: TransportTrivia
   _declaration?: DeclarationTransport
   _export_statement_default_decl_arm_default_kw_value?: ExportStatementDefaultDeclArmDefaultKwValueTransport
-  _value: ExpressionTransport
+  _value?: ExpressionTransport
 }
 
 export interface ExportStatementDefaultDeclArmDefaultKwValueTransport {
@@ -957,7 +957,7 @@ export interface ExportStatementDefaultFromArmTransport {
   _export_statement_default_from_arm_ns_from: _ExportStatementDefaultFromArmNsFromTransport
   _export_statement_default_from_arm_clause_from: _ExportStatementDefaultFromArmClauseFromTransport
   _export_clause: ExportClauseTransport
-  _source: StringTransport
+  _source?: StringTransport
 }
 
 export interface ExportStatementEqualsExportTransport {
@@ -1521,8 +1521,8 @@ export interface ImportSpecifierTransport {
   _import_kind?: ExportSpecifierExportKindEnum
   _import_specifier_name: ImportSpecifierNameTransport
   _import_specifier_as: ImportSpecifierAsTransport
-  _name: ImportIdentifierTransport
-  _alias: ImportIdentifierTransport
+  _name?: ImportIdentifierTransport
+  _alias?: ImportIdentifierTransport
 }
 
 export interface ImportStatementTransport {
@@ -1585,8 +1585,8 @@ export interface IndexSignatureTransport {
   _type: IndexSignatureTypeTransportSlot
   _index_signature_colon: IndexSignatureColonTransport
   _index_signature_mapped_type_clause: IndexSignatureMappedTypeClauseTransport
-  _name: PropertyIdentifierTransport
-  _index_type: TypeTransport
+  _name?: PropertyIdentifierTransport
+  _index_type?: TypeTransport
 }
 
 export interface IndexTypeQueryTransport {
@@ -2880,8 +2880,8 @@ export interface UpdateExpressionTransport {
   '$triviaData'?: TransportTrivia
   _update_expression_postfix: Box<UpdateExpressionPostfixTransport>
   _update_expression_prefix: Box<UpdateExpressionPrefixTransport>
-  _argument: Box<ExpressionTransport>
-  _operator: OperatorEnum
+  _argument?: Box<ExpressionTransport>
+  _operator?: OperatorEnum
 }
 
 export interface VariableDeclarationTransport {
@@ -2941,5 +2941,5 @@ export interface YieldExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _expression: Box<ExpressionTransport>
+  _expression?: Box<ExpressionTransport>
 }

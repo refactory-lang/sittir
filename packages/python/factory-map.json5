@@ -10,6 +10,7 @@
     "_assignment_typed": "config",
     "_async_marker": "text",
     "_augmented_assignment_operator": "text",
+    "_comparison_operator_comparator": "config",
     "_comprehension_clauses": "config",
     "_except_clause_as": "config",
     "_identifier": "text",
@@ -149,6 +150,8 @@
     "except": "text",
     "as": "text",
     "async": "text",
+    "in": "text",
+    "is": "text",
     "assert": "text",
     "and": "text",
     "or": "text",
@@ -161,7 +164,6 @@
     "del": "text",
     "elif": "text",
     "exec": "text",
-    "in": "text",
     "False": "text",
     "finally": "text",
     "for": "text",
@@ -212,6 +214,9 @@
     },
     "class_definition.body": {
       "block": "_newline"
+    },
+    "comparison_operator.comparators": {
+      "comparison_operator_comparator": "_comparison_operator_comparator"
     },
     "dict_pattern.dict_pattern_kv": {
       "dict_pattern_kv": "_dict_pattern_kv"
@@ -283,6 +288,10 @@
     "_assignment_typed": [
       "type",
       "right"
+    ],
+    "_comparison_operator_comparator": [
+      "operators",
+      "primary_expression"
     ],
     "_comprehension_clauses": [
       "for_in_clause",
@@ -379,7 +388,7 @@
     ],
     "comparison_operator": [
       "left",
-      "primary_expression"
+      "comparators"
     ],
     "complex_pattern": [
       "imaginary",
@@ -749,6 +758,22 @@
         "nonEmpty": false
       },
       "right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_comparison_operator_comparator": {
+      "operators": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "primary_expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1127,19 +1152,12 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "operators": {
+      "comparators": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
-      },
-      "primary_expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "complex_pattern": {
@@ -1369,9 +1387,9 @@
       "expression": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": true,
-        "nonEmpty": true
+        "nonEmpty": false
       }
     },
     "expression_list": {

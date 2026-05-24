@@ -2160,8 +2160,8 @@ export function withStatementFrom(input: T.WithStatement.Loose): ReturnType<type
   });
 }
 
-export function yieldExpressionFrom(input: T.YieldExpression.Loose): ReturnType<typeof F.yieldExpression> {
-  if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("yield_expression")) return input as unknown as ReturnType<typeof F.yieldExpression>;
+export function yieldExpressionFrom(input?: T.YieldExpression.Loose): ReturnType<typeof F.yieldExpression> {
+  if (input !== undefined && isNodeData(input) && (input.$type as string | number) === kindIdFromName("yield_expression")) return input as unknown as ReturnType<typeof F.yieldExpression>;
   return F.yieldExpression(_resolveOne<T.Expression>((input !== null && typeof input === 'object' && !isNodeData(input) && "expression" in input ? input.expression : input), _K6, _K11));
 }
 

@@ -2010,9 +2010,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'orPatternPrefix', required: true, multiple: false },
   ],
   'ordered_field_declaration_list': [
-    { name: 'attributeItems', required: false, multiple: true },
-    { name: 'visibilityModifier', required: false, multiple: false },
-    { name: 'types', required: false, multiple: true },
+    { name: 'attributes', required: false, multiple: true },
   ],
   'parameter': [
     { name: 'mutableSpecifier', required: false, multiple: false },

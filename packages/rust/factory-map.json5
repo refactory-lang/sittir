@@ -10,6 +10,7 @@
     "_attributed_argument": "config",
     "_attributed_enum_variant": "config",
     "_attributed_field_declaration": "config",
+    "_attributed_ordered_field": "config",
     "_attributed_parameter": "config",
     "_attributed_type_parameter": "config",
     "_closure_expression_async_marker": "text",
@@ -299,6 +300,9 @@
     "yield": "text"
   },
   "fieldAliasMap": {
+    "_array_expression_list.attributed_argument": {
+      "attributed_argument": "_attributed_argument"
+    },
     "_field_pattern_named.name": {
       "field_identifier": "identifier"
     },
@@ -467,6 +471,9 @@
     "or_pattern.or_pattern_prefix": {
       "or_pattern_prefix": "_or_pattern_prefix"
     },
+    "ordered_field_declaration_list.attributes": {
+      "attributed_ordered_field": "_attributed_ordered_field"
+    },
     "parameters.attributed_parameter": {
       "attributed_parameter": "_attributed_parameter"
     },
@@ -599,12 +606,11 @@
   "factoryFields": {
     "_array_expression_list": [
       "attributes",
-      "attribute_item",
-      "elements"
+      "attributed_argument"
     ],
     "_array_expression_semi": [
       "attributes",
-      "elements",
+      "expression",
       "length"
     ],
     "_attributed_argument": [
@@ -618,6 +624,11 @@
     "_attributed_field_declaration": [
       "attribute_item",
       "field_declaration"
+    ],
+    "_attributed_ordered_field": [
+      "attribute_item",
+      "visibility_modifier",
+      "type"
     ],
     "_attributed_parameter": [
       "attribute_item",
@@ -1152,9 +1163,7 @@
       "or_pattern_prefix"
     ],
     "ordered_field_declaration_list": [
-      "attribute_item",
-      "visibility_modifier",
-      "type"
+      "attributes"
     ],
     "parameter": [
       "pattern",
@@ -1428,14 +1437,7 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "attribute_item": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "elements": {
+      "attributed_argument": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1451,7 +1453,7 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "elements": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1507,6 +1509,29 @@
         "nonEmpty": false
       },
       "field_declaration": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_attributed_ordered_field": {
+      "attribute_item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
+      "visibility_modifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1731,7 +1756,7 @@
       "alternative": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3756,21 +3781,7 @@
       }
     },
     "ordered_field_declaration_list": {
-      "attribute_item": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "visibility_modifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "type": {
+      "attributes": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4985,52 +4996,7 @@
         ],
         "list": [
           "attribute_item",
-          "unary_expression",
-          "reference_expression",
-          "try_expression",
-          "binary_expression",
-          "assignment_expression",
-          "compound_assignment_expr",
-          "type_cast_expression",
-          "call_expression",
-          "return_expression",
-          "yield_expression",
-          "string_literal",
-          "raw_string_literal",
-          "char_literal",
-          "boolean_literal",
-          "integer_literal",
-          "float_literal",
-          "identifier",
-          "reserved_identifier",
-          "self",
-          "scoped_identifier",
-          "generic_function",
-          "await_expression",
-          "field_expression",
-          "array_expression",
-          "tuple_expression",
-          "macro_invocation",
-          "unit_expression",
-          "break_expression",
-          "continue_expression",
-          "index_expression",
-          "metavariable",
-          "closure_expression",
-          "parenthesized_expression",
-          "struct_expression",
-          "unsafe_block",
-          "async_block",
-          "gen_block",
-          "try_block",
-          "block",
-          "if_expression",
-          "match_expression",
-          "while_expression",
-          "loop_expression",
-          "for_expression",
-          "const_block",
-          "range_expression"
+          "attributed_argument"
         ]
       }
     },

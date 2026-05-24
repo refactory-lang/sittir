@@ -1524,9 +1524,7 @@ export function orPatternUFormPrefixFrom(input: Omit<ConfigOf<T.OrPatternUFormPr
 export function orderedFieldDeclarationListFrom(input?: T.OrderedFieldDeclarationList.Loose): ReturnType<typeof F.orderedFieldDeclarationList> {
   if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.orderedFieldDeclarationList>;
   return F.orderedFieldDeclarationList({
-    attributeItem: _resolveManyBranch<T.AttributeItem>(input?.attributeItem, "attribute_item"),
-    visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input?.visibilityModifier, "visibility_modifier"),
-    type: _resolveMany<T._Type>(input?.type, _K2, _K3),
+    attributes: _resolveManyBranch<T.AttributedOrderedField>(input?.attributes, "_attributed_ordered_field"),
   });
 }
 

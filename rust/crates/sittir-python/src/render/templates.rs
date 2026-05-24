@@ -118,6 +118,13 @@ pub struct AssignmentTypedTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_comparison_operator_comparator.jinja", escape = "none")]
+pub struct ComparisonOperatorComparatorTemplate<'a> {
+    pub operators: SingleNonterminalView<'a>,
+    pub primary_expression: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_comprehension_clauses.jinja", escape = "none")]
 pub struct ComprehensionClausesTemplate<'a> {
     pub content: ListNonterminalView<'a>,
@@ -287,9 +294,8 @@ pub struct ClassPatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "comparison_operator.jinja", escape = "none")]
 pub struct ComparisonOperatorTemplate<'a> {
+    pub comparators: ListNonterminalView<'a>,
     pub left: SingleNonterminalView<'a>,
-    pub operators: ListNonterminalView<'a>,
-    pub primary_expression: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

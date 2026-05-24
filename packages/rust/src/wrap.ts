@@ -407,16 +407,13 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
     ...data,
     $type: TSKindId.ArrayExpressionList as const,
     _attributes: normalizeRepeatedWrapSlot(data._attributes, false, "attributes"),
-    _attribute_item: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._attribute_item, ["attribute_item"]), false, "attribute_item"),
-    _elements: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._elements, ["_expression","_expression_except_range","unary_expression","reference_expression","try_expression","binary_expression","assignment_expression","compound_assignment_expr","type_cast_expression","call_expression","return_expression","yield_expression","_literal","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","identifier","_reserved_identifier","self","scoped_identifier","generic_function","await_expression","field_expression","array_expression","tuple_expression","macro_invocation","unit_expression","break_expression","continue_expression","index_expression","metavariable","closure_expression","parenthesized_expression","struct_expression","_expression_ending_with_block","unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block","range_expression"]), false, "elements"),
+    _attributed_argument: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._attributed_argument, ["_attributed_argument","attributed_argument"]), false, "attributed_argument"),
 
     attributes() { return drillInAll<T.AttributeItem>(this._attributes as readonly T.AttributeItem[] | undefined, tree); },
-    attributeItems() { return drillInAll<T.AttributeItem>(this._attribute_item as readonly T.AttributeItem[] | undefined, tree); },
-    elements() { return drillInAll<T.Expression>(this._elements as readonly T.Expression[] | undefined, tree); },
+    attributedArguments() { return drillAsAll<T.AttributedArgument>(this._attributed_argument, tree, "attributed_argument", "_attributed_argument"); },
     $with: {
       attributes: (...v: NonNullable<T.ArrayExpressionList['_attributes']>[number][]) => wrapArrayExpressionList({ ...data, _attributes: v }, tree),
-      attributeItems: (...v: NonNullable<T.ArrayExpressionList['_attribute_item']>[number][]) => wrapArrayExpressionList({ ...data, _attribute_item: v }, tree),
-      elements: (...v: NonNullable<T.ArrayExpressionList['_elements']>[number][]) => wrapArrayExpressionList({ ...data, _elements: v }, tree),
+      attributedArguments: (...v: NonNullable<T.ArrayExpressionList['_attributed_argument']>[number][]) => wrapArrayExpressionList({ ...data, _attributed_argument: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -427,15 +424,15 @@ export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeH
     ...data,
     $type: TSKindId.ArrayExpressionSemi as const,
     _attributes: normalizeRepeatedWrapSlot(data._attributes, false, "attributes"),
-    _elements: normalizeSingularWrapSlot(data._elements, "elements", true, data.$type),
+    _expression: normalizeSingularWrapSlot((data._unary_expression ?? data._reference_expression ?? data._try_expression ?? data._binary_expression ?? data._assignment_expression ?? data._compound_assignment_expr ?? data._type_cast_expression ?? data._call_expression ?? data._return_expression ?? data._yield_expression ?? data._string_literal ?? data._raw_string_literal ?? data._char_literal ?? data._boolean_literal ?? data._integer_literal ?? data._float_literal ?? data._identifier ?? data._reserved_identifier ?? data._self ?? data._scoped_identifier ?? data._generic_function ?? data._await_expression ?? data._field_expression ?? data._array_expression ?? data._tuple_expression ?? data._macro_invocation ?? data._unit_expression ?? data._break_expression ?? data._continue_expression ?? data._index_expression ?? data._metavariable ?? data._closure_expression ?? data._parenthesized_expression ?? data._struct_expression ?? data._unsafe_block ?? data._async_block ?? data._gen_block ?? data._try_block ?? data._block ?? data._if_expression ?? data._match_expression ?? data._while_expression ?? data._loop_expression ?? data._for_expression ?? data._const_block ?? data._range_expression ?? data._expression), "expression", true, data.$type),
     _length: normalizeSingularWrapSlot(data._length, "length", true, data.$type),
 
     attributes() { return drillInAll<T.AttributeItem>(this._attributes as readonly T.AttributeItem[] | undefined, tree); },
-    elements() { return drillIn<T.Expression>(this._elements, tree); },
+    expression() { return drillIn<T.Expression>(this._expression, tree); },
     length() { return drillIn<T.Expression>(this._length, tree); },
     $with: {
       attributes: (...v: NonNullable<T.ArrayExpressionSemi['_attributes']>[number][]) => wrapArrayExpressionSemi({ ...data, _attributes: v }, tree),
-      elements: (v: NonNullable<T.ArrayExpressionSemi['_elements']>) => wrapArrayExpressionSemi({ ...data, _elements: v }, tree),
+      expression: (v: NonNullable<T.ArrayExpressionSemi['_expression']>) => wrapArrayExpressionSemi({ ...data, _expression: v }, tree),
       length: (v: NonNullable<T.ArrayExpressionSemi['_length']>) => wrapArrayExpressionSemi({ ...data, _length: v }, tree),
     },
   }, methodsEngine);
@@ -488,6 +485,26 @@ export function wrapAttributedFieldDeclaration(data: T.AttributedFieldDeclaratio
     $with: {
       attributeItems: (...v: NonNullable<T.AttributedFieldDeclaration['_attribute_item']>[number][]) => wrapAttributedFieldDeclaration({ ...data, _attribute_item: v }, tree),
       fieldDeclaration: (v: NonNullable<T.AttributedFieldDeclaration['_field_declaration']>) => wrapAttributedFieldDeclaration({ ...data, _field_declaration: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
+export function wrapAttributedOrderedField(data: T.AttributedOrderedField, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.AttributedOrderedField as const,
+    _attribute_item: normalizeRepeatedWrapSlot(data._attribute_item, false, "attribute_item"),
+    _visibility_modifier: normalizeSingularWrapSlot(data._visibility_modifier, "visibility_modifier", false, data.$type),
+    _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
+
+    attributeItems() { return drillInAll<T.AttributeItem>(this._attribute_item as readonly T.AttributeItem[] | undefined, tree); },
+    visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
+    $with: {
+      attributeItems: (...v: NonNullable<T.AttributedOrderedField['_attribute_item']>[number][]) => wrapAttributedOrderedField({ ...data, _attribute_item: v }, tree),
+      visibilityModifier: (v: NonNullable<T.AttributedOrderedField['_visibility_modifier']>) => wrapAttributedOrderedField({ ...data, _visibility_modifier: v }, tree),
+      type: (v: NonNullable<T.AttributedOrderedField['_type']>) => wrapAttributedOrderedField({ ...data, _type: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -2802,17 +2819,11 @@ export function wrapOrderedFieldDeclarationList(data: T.OrderedFieldDeclarationL
   const _node = withMethods({
     ...data,
     $type: TSKindId.OrderedFieldDeclarationList as const,
-    _attribute_item: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._attribute_item, ["attribute_item"]), false, "attribute_item"),
-    _visibility_modifier: normalizeSingularWrapSlot(data._visibility_modifier, "visibility_modifier", false, data.$type),
-    _type: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._type, ["_type","abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","_type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound","_primitive_type"]), false, "type"),
+    _attributes: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._attributes, ["_attributed_ordered_field","attributed_ordered_field"]), false, "attributes"),
 
-    attributeItems() { return drillInAll<T.AttributeItem>(this._attribute_item as readonly T.AttributeItem[] | undefined, tree); },
-    visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
-    types() { return drillInAll<T._Type>(this._type as readonly T._Type[] | undefined, tree); },
+    attributes() { return drillAsAll<T.AttributedOrderedField>(this._attributes, tree, "attributed_ordered_field", "_attributed_ordered_field"); },
     $with: {
-      attributeItems: (...v: NonNullable<T.OrderedFieldDeclarationList['_attribute_item']>[number][]) => wrapOrderedFieldDeclarationList({ ...data, _attribute_item: v }, tree),
-      visibilityModifier: (v: NonNullable<T.OrderedFieldDeclarationList['_visibility_modifier']>) => wrapOrderedFieldDeclarationList({ ...data, _visibility_modifier: v }, tree),
-      types: (...v: NonNullable<T.OrderedFieldDeclarationList['_type']>[number][]) => wrapOrderedFieldDeclarationList({ ...data, _type: v }, tree),
+      attributes: (...v: NonNullable<T.OrderedFieldDeclarationList['_attributes']>[number][]) => wrapOrderedFieldDeclarationList({ ...data, _attributes: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -3976,6 +3987,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_attributed_argument': (d, t) => wrapAttributedArgument(d as unknown as T.AttributedArgument, t),
   '_attributed_enum_variant': (d, t) => wrapAttributedEnumVariant(d as unknown as T.AttributedEnumVariant, t),
   '_attributed_field_declaration': (d, t) => wrapAttributedFieldDeclaration(d as unknown as T.AttributedFieldDeclaration, t),
+  '_attributed_ordered_field': (d, t) => wrapAttributedOrderedField(d as unknown as T.AttributedOrderedField, t),
   '_attributed_parameter': (d, t) => wrapAttributedParameter(d as unknown as T.AttributedParameter, t),
   '_attributed_type_parameter': (d, t) => wrapAttributedTypeParameter(d as unknown as T.AttributedTypeParameter, t),
   '_closure_expression_block': (d, t) => wrapClosureExpressionBlock(d as unknown as T.ClosureExpressionBlock, t),
@@ -4231,6 +4243,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'attributed_argument': '_attributed_argument',
   'attributed_enum_variant': '_attributed_enum_variant',
   'attributed_field_declaration': '_attributed_field_declaration',
+  'attributed_ordered_field': '_attributed_ordered_field',
   'attributed_parameter': '_attributed_parameter',
   'attributed_type_parameter': '_attributed_type_parameter',
   'closure_expression_async_marker': '_closure_expression_async_marker',

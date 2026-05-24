@@ -913,6 +913,11 @@ function patternBodyEqual(aIn, bIn) {
   if (t === "field") {
     return ra.name === rb.name && patternBodyEqual(ra.content, rb.content);
   }
+  if (t === "alias") {
+    const raa = ra;
+    const rba = rb;
+    return raa.named === rba.named && raa.value === rba.value && patternBodyEqual(raa.content, rba.content);
+  }
   return false;
 }
 function replaceInBodyRt(rule, candidates) {

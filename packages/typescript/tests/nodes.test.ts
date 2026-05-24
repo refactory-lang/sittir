@@ -2116,7 +2116,7 @@ describe('with_statement', () => {
 
 describe('yield_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.yieldExpression({ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any);
+    const node = ir.yieldExpression();
     expect(node.$type).toBe(TSKindId.YieldExpression);
     expect(node.$source).toBe(2);
   });

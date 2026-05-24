@@ -59,7 +59,14 @@ const config: WireConfig<RustGrammar> = {
 		// `_attributed_type_parameter` (body-pattern in groups:) and `_type`
 		// both can begin with `metavariable` — declare the conflict so
 		// tree-sitter uses lookahead instead of failing parser generation.
-		[$._attributed_type_parameter, $._type]
+		[$._attributed_type_parameter, $._type],
+		// `_attributed_argument` = seq(repeat(attribute_item), _expression).
+		// Since repeat(attribute_item) can be zero, bare `_expression` is a
+		// valid `_attributed_argument`. This creates an LR ambiguity in
+		// array_expression's list-arm where elements share the same structural
+		// unit as call arguments. The conflict declaration allows tree-sitter's
+		// GLR mechanism to disambiguate at parse time.
+		[$._attributed_argument]
 	],
 	polymorphs: {
 		array_expression: { '2/0': 'semi', '2/1': 'list' },
@@ -173,7 +180,24 @@ const config: WireConfig<RustGrammar> = {
 		// renders `attributed_argument` items. Replaces the transforms:
 		// field('attributes') collision-patch, which named the attribute but
 		// left `_expression` (the actual args) as an empty `$children` slot.
-		attributed_argument: ($) => seq(repeat($.attribute_item), $._expression)
+		// NOTE: the same `seq(repeat(attribute_item), _expression)` pattern
+		// also appears in array_expression's element list — the body-pattern
+		// replacement aliases BOTH sites to `attributed_argument` (call args
+		// and array elements share the same structural unit). The array_expression
+		// transform `{ '2/(_expression)': field('elements') }` is removed so the
+		// elements stay in the bare seq form that this pattern can match.
+		attributed_argument: ($) => seq(repeat($.attribute_item), $._expression),
+
+		// ordered_field_declaration_list: each comma-separated position is
+		// seq(repeat(attribute_item), optional(visibility_modifier), field('type', _type)).
+		// Without this lift the parent's $children flattens to alternating
+		// attribute_item / visibility_modifier / _type entries joined by commas
+		// (e.g. `#[attr] pub i32` as three siblings instead of one unit).
+		// Mirrors attributed_field_declaration (the brace-form `field_declaration_list`
+		// sibling). A multi-slot repeated unit must be a visible node so the flat
+		// parse can be reconstructed; this is step 1 of making multiplicity intrinsic.
+		attributed_ordered_field: ($) =>
+			seq(repeat($.attribute_item), optional($.visibility_modifier), field('type', $._type))
 	},
 	transforms: {
 		// abstract_type: 1 field(s)
@@ -222,10 +246,13 @@ const config: WireConfig<RustGrammar> = {
 		},
 
 		// array_expression polymorph splits '2/0' (semi) / '2/1' (list).
-		// These base-shape patches add field labels BEFORE polymorph
-		// aliasing — composition-order inversion in wire() lets this
-		// flow declaratively instead of inline in rules:.
-		array_expression: [{ 1: field('attributes') }, { '2/(_expression)': field('elements') }],
+		// Only the outer `repeat($.attribute_item)` at pos 1 needs a field
+		// label (the header attributes). The per-element label is no longer
+		// needed — the `attributed_array_element` visible group (see groups:
+		// above) now carries each element's attribute_item(s) + _expression
+		// pair as a self-contained unit, exactly as `attributed_argument`
+		// does for call arguments.
+		array_expression: [{ 1: field('attributes') }],
 
 		// arguments: handled by the `attributed_argument` body-pattern group
 		// (see groups: above) — each call arg is synthesized as a visible

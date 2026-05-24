@@ -473,12 +473,10 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         322 => { // "_array_expression_list" | "array_expression_list"
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("attributes"), false)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("elements"), false)?;
             let children_renderables = children.renderable_items();
             let field_0_renderables = field_0.renderable_items();
-            let field_1_renderables = field_1.renderable_items();
             let template = ArrayExpressionListTemplate {
-                attribute_item: ListNonterminalView {
+                attributed_argument: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
                     leading: children.leading_sep,
@@ -490,29 +488,26 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: field_0.leading_sep,
                     trailing: field_0.trailing_sep,
                 },
-                elements: ListNonterminalView {
-                    items: field_1_renderables.as_slice(),
-                    separator: field_1.separator,
-                    leading: field_1.leading_sep,
-                    trailing: field_1.trailing_sep,
-                },
             };
             template.render_into(dest)
         }
         321 => { // "_array_expression_semi" | "array_expression_semi"
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("attributes"), false)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("elements"), true)?;
-            let field_2 = resolve_slot(node, SlotAccessor::Field("length"), true)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("length"), true)?;
             let field_0_renderables = field_0.renderable_items();
             let template = ArrayExpressionSemiTemplate {
+                expression: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
                 attributes: ListNonterminalView {
                     items: field_0_renderables.as_slice(),
                     separator: field_0.separator,
                     leading: field_0.leading_sep,
                     trailing: field_0.trailing_sep,
                 },
-                elements: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                length: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                length: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
             };
             template.render_into(dest)
         }
@@ -564,6 +559,25 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
                 ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
             },
+            };
+            template.render_into(dest)
+        }
+        377 => { // "_attributed_ordered_field" | "attributed_ordered_field"
+            let children = resolve_slot(node, SlotAccessor::Children, false)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("type"), true)?;
+            let children_renderables = children.renderable_items();
+            let template = AttributedOrderedFieldTemplate {
+                attribute_item: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
+                visibility_modifier: match children.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+                },
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
         }
@@ -2198,22 +2212,10 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         183 => { // "ordered_field_declaration_list"
-            let children = resolve_slot(node, SlotAccessor::Children, false)?;
-            let field_0 = resolve_slot(node, SlotAccessor::Field("type"), false)?;
-            let children_renderables = children.renderable_items();
+            let field_0 = resolve_slot(node, SlotAccessor::Field("attributes"), false)?;
             let field_0_renderables = field_0.renderable_items();
             let template = OrderedFieldDeclarationListTemplate {
-                attribute_item: ListNonterminalView {
-                    items: children_renderables.as_slice(),
-                    separator: children.separator,
-                    leading: children.leading_sep,
-                    trailing: children.trailing_sep,
-                },
-                visibility_modifier: match children.kind {
-                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),
-                },
-                type_: ListNonterminalView {
+                attributes: ListNonterminalView {
                     items: field_0_renderables.as_slice(),
                     separator: field_0.separator,
                     leading: field_0.leading_sep,

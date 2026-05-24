@@ -766,7 +766,7 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
  * wrapper-free from `computeSimplifiedRules` — `deleteWrapper` is idempotent
  * on wrapper-free input, so this is a no-op on the hot path.
  */
-function _deriveSlotsInternal(rule: Rule, kindEntries?: readonly GeneratedKindEntry[]): AssembledNonterminal[] {
+function _deriveSlotsInternal(rule: Rule, kindEntries?: readonly GeneratedKindEntry[], kindName?: string): AssembledNonterminal[] {
 	const canonical = deleteWrapper(rule) as Rule;
 	auditDerivationShape(canonical, 'fields');
 	// Nonterminal-driven collection (2026-05-21 design): one slot per
@@ -775,7 +775,7 @@ function _deriveSlotsInternal(rule: Rule, kindEntries?: readonly GeneratedKindEn
 	// slots that appear in multiple positions (e.g. python `if_statement`'s
 	// `alternative` in both a repeat and an optional) are still folded into one
 	// AssembledNonterminal by `mergeSlotsByName`.
-	return mergeSlotsByName(collectSlots(canonical, currentAuditKind, kindEntries));
+	return mergeSlotsByName(collectSlots(canonical, kindName ?? currentAuditKind, kindEntries));
 }
 
 /**
@@ -892,10 +892,10 @@ export function stampSeparatorOnValues(values: NodeOrTerminal[], separatorStr: s
  * ordering. A future cleanup could rewrite the walk to preserve true
  * declared-order with one unified pass over the rule tree.
  */
-export function deriveSlots(rule: Rule, kindEntries?: readonly GeneratedKindEntry[]): readonly AssembledNonterminal[] {
+export function deriveSlots(rule: Rule, kindEntries?: readonly GeneratedKindEntry[], kindName?: string): readonly AssembledNonterminal[] {
 	// The field walker handles positional symbol/supertype/choice content
 	// too, so it produces every slot — no separate children walker needed.
-	return _deriveSlotsInternal(rule, kindEntries);
+	return _deriveSlotsInternal(rule, kindEntries, kindName);
 }
 
 /**
@@ -2038,7 +2038,7 @@ function buildSlotsRecord(
 	kindEntries?: readonly GeneratedKindEntry[]
 ): Readonly<Record<string, AssembledNonterminal>> {
 	const out: Record<string, AssembledNonterminal> = {};
-	for (const slot of deriveSlots(rule, kindEntries)) {
+	for (const slot of deriveSlots(rule, kindEntries, kind)) {
 		// Strict design (FR-T05): inferred slots remap to 'child'/'children'
 		// keys and at most one unnamed slot per branch is permitted. Empirical
 		// check confirms 14 kinds across 3 grammars currently have >1 unnamed

@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 247,
+  "nodeCount": 258,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -507,6 +507,111 @@
         "parenthesized_list_splat",
         "yield"
       ]
+    },
+    {
+      "kind": "_comparison_operator_comparator",
+      "modelType": "group",
+      "typeName": "ComparisonOperatorComparator",
+      "factoryName": "_comparisonOperatorComparator",
+      "irKey": "comparisonOperatorComparator",
+      "hidden": false,
+      "name": "_comparison_operator_comparator",
+      "fields": [
+        {
+          "name": "operators",
+          "propertyName": "operators",
+          "paramName": "operators",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "=="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "!="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<>"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "in"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "not in"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "is"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "is not"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "primary_expression",
+          "propertyName": "primaryExpression",
+          "paramName": "primaryExpression",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "primary_expression",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "primary_expression"
+            ]
+          }
+        }
+      ],
+      "children": []
     },
     {
       "kind": "_compound_statement",
@@ -2028,6 +2133,16 @@
       "children": []
     },
     {
+      "kind": "bang_eq",
+      "modelType": "token",
+      "typeName": "BangEq",
+      "irKey": "bangEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!=\" as const",
+      "text": "!="
+    },
+    {
       "kind": "binary_operator",
       "modelType": "branch",
       "typeName": "BinaryOperator",
@@ -2794,96 +2909,29 @@
           }
         },
         {
-          "name": "operators",
-          "propertyName": "operators",
-          "paramName": "operators",
-          "required": false,
+          "name": "comparators",
+          "propertyName": "comparators",
+          "paramName": "comparators",
+          "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "<"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "<="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "=="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "!="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": ">="
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": ">"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "<>"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "in"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "not in"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "is"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "is not"
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "_comparison_operator_comparator",
+              "unresolved": true
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": []
-          }
-        },
-        {
-          "name": "primary_expression",
-          "propertyName": "primaryExpressions",
-          "paramName": "primaryExpressions",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "primary_expression",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
             "kinds": [
-              "primary_expression"
+              "_comparison_operator_comparator"
             ]
+          },
+          "aliasSources": {
+            "comparison_operator_comparator": "_comparison_operator_comparator"
           }
         }
       ],
@@ -3785,6 +3833,16 @@
       "children": []
     },
     {
+      "kind": "eq_eq",
+      "modelType": "token",
+      "typeName": "EqEq",
+      "irKey": "eqEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"==\" as const",
+      "text": "=="
+    },
+    {
       "kind": "escape_interpolation",
       "modelType": "pattern",
       "typeName": "EscapeInterpolation",
@@ -3945,13 +4003,13 @@
           "name": "expression",
           "propertyName": "expressions",
           "paramName": "expressions",
-          "required": true,
+          "required": false,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "expression",
               "unresolved": true
             }
@@ -4970,6 +5028,26 @@
       "children": []
     },
     {
+      "kind": "gt",
+      "modelType": "token",
+      "typeName": "Gt",
+      "irKey": "gt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">\" as const",
+      "text": ">"
+    },
+    {
+      "kind": "gt_eq",
+      "modelType": "token",
+      "typeName": "GtEq",
+      "irKey": "gtEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\">=\" as const",
+      "text": ">="
+    },
+    {
       "kind": "gt_gt",
       "modelType": "token",
       "typeName": "GtGt",
@@ -5370,6 +5448,26 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "is",
+      "modelType": "keyword",
+      "typeName": "Is",
+      "irKey": "is",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"is\" as const",
+      "text": "is"
+    },
+    {
+      "kind": "is not",
+      "modelType": "token",
+      "typeName": "TokISSpNOT",
+      "irKey": "tokISSpNOT",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"is not\" as const",
+      "text": "is not"
     },
     {
       "kind": "keyword_argument",
@@ -5893,6 +5991,36 @@
       "children": []
     },
     {
+      "kind": "lt",
+      "modelType": "token",
+      "typeName": "Lt",
+      "irKey": "lt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<\" as const",
+      "text": "<"
+    },
+    {
+      "kind": "lt_eq",
+      "modelType": "token",
+      "typeName": "LtEq",
+      "irKey": "ltEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<=\" as const",
+      "text": "<="
+    },
+    {
+      "kind": "lt_gt",
+      "modelType": "token",
+      "typeName": "LtGt",
+      "irKey": "ltGt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"<>\" as const",
+      "text": "<>"
+    },
+    {
       "kind": "lt_lt",
       "modelType": "token",
       "typeName": "LtLt",
@@ -6184,6 +6312,16 @@
       "isParameterless": true,
       "stampExpression": "\"not\" as const",
       "text": "not"
+    },
+    {
+      "kind": "not in",
+      "modelType": "token",
+      "typeName": "TokNOTSpIN",
+      "irKey": "tokNOTSpIN",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"not in\" as const",
+      "text": "not in"
     },
     {
       "kind": "not_operator",

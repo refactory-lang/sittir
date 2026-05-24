@@ -94,16 +94,15 @@ pub mod filters {
 #[derive(::askama::Template)]
 #[template(path = "_array_expression_list.jinja", escape = "none")]
 pub struct ArrayExpressionListTemplate<'a> {
-    pub attribute_item: ListNonterminalView<'a>,
+    pub attributed_argument: ListNonterminalView<'a>,
     pub attributes: ListNonterminalView<'a>,
-    pub elements: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_array_expression_semi.jinja", escape = "none")]
 pub struct ArrayExpressionSemiTemplate<'a> {
     pub attributes: ListNonterminalView<'a>,
-    pub elements: SingleNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
     pub length: SingleNonterminalView<'a>,
 }
 
@@ -126,6 +125,14 @@ pub struct AttributedEnumVariantTemplate<'a> {
 pub struct AttributedFieldDeclarationTemplate<'a> {
     pub attribute_item: ListNonterminalView<'a>,
     pub field_declaration: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_attributed_ordered_field.jinja", escape = "none")]
+pub struct AttributedOrderedFieldTemplate<'a> {
+    pub attribute_item: ListNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
+    pub visibility_modifier: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -250,7 +257,7 @@ pub struct LetChainTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_let_declaration_optional3.jinja", escape = "none")]
 pub struct LetDeclarationOptional3Template<'a> {
-    pub alternative: OptionalNonterminalView<'a>,
+    pub alternative: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1150,9 +1157,7 @@ pub struct OrPatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "ordered_field_declaration_list.jinja", escape = "none")]
 pub struct OrderedFieldDeclarationListTemplate<'a> {
-    pub attribute_item: ListNonterminalView<'a>,
-    pub type_: ListNonterminalView<'a>,
-    pub visibility_modifier: OptionalNonterminalView<'a>,
+    pub attributes: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

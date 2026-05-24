@@ -4344,11 +4344,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     if let Ok(value) = NewExpressionTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::NewExpression(value));
                     }
-                    if let Ok(value) = YieldExpressionTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::YieldExpression(value));
-                    }
                     if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::PrimaryExpression(value));
+                    }
+                    if let Ok(value) = YieldExpressionTransport::from_napi_value(env, napi_val) {
+                        return Ok(Self::YieldExpression(value));
                     }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionTransport"))
                 },
@@ -4517,11 +4517,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     if let Ok(value) = NewExpressionTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::NewExpression(value));
                     }
-                    if let Ok(value) = YieldExpressionTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::YieldExpression(value));
-                    }
                     if let Ok(value) = PrimaryExpressionTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::PrimaryExpression(value));
+                    }
+                    if let Ok(value) = YieldExpressionTransport::from_napi_value(env, napi_val) {
+                        return Ok(Self::YieldExpression(value));
                     }
                     Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionTransport"))
                 },
@@ -20475,7 +20475,7 @@ pub struct ExportStatementDefaultDeclArmDefaultKwTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_statement_default_decl_arm_default_kw_value"))]
     pub export_statement_default_decl_arm_default_kw_value: Option<ExportStatementDefaultDeclArmDefaultKwValueTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
-    pub value: ExpressionTransport,
+    pub value: Option<ExpressionTransport>,
 }
 
 impl RenderableTransport for ExportStatementDefaultDeclArmDefaultKwTransport {
@@ -20741,7 +20741,7 @@ pub struct ExportStatementDefaultFromArmTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
     pub export_clause: ExportClauseTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
-    pub source: StringTransport,
+    pub source: Option<StringTransport>,
 }
 
 impl RenderableTransport for ExportStatementDefaultFromArmTransport {
@@ -26125,11 +26125,11 @@ pub struct AmbientDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ambient_declaration_module"))]
     pub ambient_declaration_module: AmbientDeclarationModuleTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
-    pub body: StatementBlockTransport,
+    pub body: Option<StatementBlockTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: IdentifierTransport,
+    pub name: Option<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
-    pub type_: TypeTransport,
+    pub type_: Option<TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: Option<SemicolonTransport>,
 }
@@ -26493,11 +26493,11 @@ pub struct ArrowFunctionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arrow_function__call_signature"))]
     pub arrow_function__call_signature: Box<_ArrowFunctionUCallSignatureTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameter"))]
-    pub parameter: PropertyIdentifierTransport,
+    pub parameter: Option<PropertyIdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
     pub type_parameters: Option<TypeParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
-    pub parameters: FormalParametersTransport,
+    pub parameters: Option<FormalParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<Box<_ArrowFunctionUCallSignatureReturnTypeTransportSlot>>,
 }
@@ -27021,11 +27021,11 @@ pub struct CallExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_call_expression_member"))]
     pub call_expression_member: Box<CallExpressionMemberTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function"))]
-    pub function: Box<CallExpressionCallFunctionTransportSlot>,
+    pub function: Option<Box<CallExpressionCallFunctionTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_arguments"))]
-    pub arguments: ArgumentsTransport,
+    pub arguments: Option<ArgumentsTransport>,
 }
 
 impl RenderableTransport for CallExpressionTransport {
@@ -31067,9 +31067,9 @@ pub struct ImportSpecifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_specifier_as"))]
     pub import_specifier_as: ImportSpecifierAsTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: ImportIdentifierTransport,
+    pub name: Option<ImportIdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
-    pub alias: ImportIdentifierTransport,
+    pub alias: Option<ImportIdentifierTransport>,
 }
 
 impl RenderableTransport for ImportSpecifierTransport {
@@ -31233,9 +31233,9 @@ pub struct IndexSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_signature_mapped_type_clause"))]
     pub index_signature_mapped_type_clause: _IndexSignatureMappedTypeClauseTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: PropertyIdentifierTransport,
+    pub name: Option<PropertyIdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index_type"))]
-    pub index_type: TypeTransport,
+    pub index_type: Option<TypeTransport>,
 }
 
 impl RenderableTransport for IndexSignatureTransport {
@@ -37341,9 +37341,9 @@ pub struct UpdateExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_update_expression_prefix"))]
     pub update_expression_prefix: Box<UpdateExpressionPrefixTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_argument"))]
-    pub argument: Box<ExpressionTransport>,
+    pub argument: Option<Box<ExpressionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: OperatorEnum,
+    pub operator: Option<OperatorEnum>,
 }
 
 impl RenderableTransport for UpdateExpressionTransport {
@@ -37603,7 +37603,7 @@ pub struct YieldExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: Box<ExpressionTransport>,
+    pub expression: Option<Box<ExpressionTransport>>,
 }
 
 impl RenderableTransport for YieldExpressionTransport {
@@ -52030,8 +52030,16 @@ fn render_with_statement(node: &WithStatementTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_yield_expression(node: &YieldExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.expression.is_none() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
+        }
+    }
     let template = YieldExpressionTemplate {
-        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        expression: match &node.expression {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
     };
     template.render_into(dest)
 }
@@ -61232,7 +61240,9 @@ fn transport_to_node_with_statement(transport: WithStatementTransport) -> Result
 
 fn transport_to_node_yield_expression(transport: YieldExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(*transport.expression))?);
+    if let Some(value) = transport.expression {
+        fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(*value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());

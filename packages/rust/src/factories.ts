@@ -29,43 +29,39 @@ const _leafRe_shebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
 
 export function _arrayExpressionList(config: Partial<T.ArrayExpressionList.Config> = {}) {
   const _attributes = config.attributes;
-  const _attribute_item = config.attributeItem;
-  const _elements = config.elements;
+  const _attributed_argument = config.attributedArgument;
   return withMethods({
     $type: TSKindId.ArrayExpressionList as const,
     $source: 2 as const,
     $named: true as const,
     _attributes,
-    _attribute_item,
-    _elements,
+    _attributed_argument,
     attributes() { return _attributes; },
-    attributeItems() { return _attribute_item; },
-    elements() { return _elements; },
+    attributedArguments() { return _attributed_argument; },
     $with: {
       attributes: (...values: T.AttributeItem[]) => _arrayExpressionList({ ...config, attributes: values }),
-      attributeItems: (...values: T.AttributeItem[]) => _arrayExpressionList({ ...config, attributeItem: values }),
-      elements: (...values: T.Expression[]) => _arrayExpressionList({ ...config, elements: values }),
+      attributedArguments: (...values: T.AttributedArgument[]) => _arrayExpressionList({ ...config, attributedArgument: values }),
     },
   }, methodsEngine);
 }
 
 export function _arrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
   const _attributes = config.attributes;
-  const _elements = config.elements;
+  const _expression = config.expression;
   const _length = config.length;
   return withMethods({
     $type: TSKindId.ArrayExpressionSemi as const,
     $source: 2 as const,
     $named: true as const,
     _attributes,
-    _elements,
+    _expression,
     _length,
     attributes() { return _attributes; },
-    elements() { return _elements; },
+    expression() { return _expression; },
     length() { return _length; },
     $with: {
       attributes: (...values: T.AttributeItem[]) => _arrayExpressionSemi({ ...config, attributes: values }),
-      elements: (value: T.Expression) => _arrayExpressionSemi({ ...config, elements: value }),
+      expression: (value: T.Expression) => _arrayExpressionSemi({ ...config, expression: value }),
       length: (value: T.Expression) => _arrayExpressionSemi({ ...config, length: value }),
     },
   }, methodsEngine);
@@ -121,6 +117,28 @@ export function attributedFieldDeclaration(config: T.AttributedFieldDeclaration.
     $with: {
       attributeItems: (...values: T.AttributeItem[]) => attributedFieldDeclaration({ ...config, attributeItem: values }),
       fieldDeclaration: (value: T.FieldDeclaration) => attributedFieldDeclaration({ ...config, fieldDeclaration: value }),
+    },
+  }, methodsEngine);
+}
+
+export function _attributedOrderedField(config: T.AttributedOrderedField.Config) {
+  const _attribute_item = config.attributeItem;
+  const _visibility_modifier = config.visibilityModifier;
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId.AttributedOrderedField as const,
+    $source: 2 as const,
+    $named: true as const,
+    _attribute_item,
+    _visibility_modifier,
+    _type,
+    attributeItems() { return _attribute_item; },
+    visibilityModifier() { return _visibility_modifier; },
+    type() { return _type; },
+    $with: {
+      attributeItems: (...values: T.AttributeItem[]) => _attributedOrderedField({ ...config, attributeItem: values }),
+      visibilityModifier: (value?: T.VisibilityModifier) => _attributedOrderedField({ ...config, visibilityModifier: value }),
+      type: (value: T._Type) => _attributedOrderedField({ ...config, type: value }),
     },
   }, methodsEngine);
 }
@@ -3036,23 +3054,15 @@ export function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUFormPrefi
 }
 
 export function orderedFieldDeclarationList(config: Partial<T.OrderedFieldDeclarationList.Config> = {}) {
-  const _attribute_item = config.attributeItem;
-  const _visibility_modifier = config.visibilityModifier;
-  const _type = config.type;
+  const _attributes = config.attributes;
   return withMethods({
     $type: TSKindId.OrderedFieldDeclarationList as const,
     $source: 2 as const,
     $named: true as const,
-    _attribute_item,
-    _visibility_modifier,
-    _type,
-    attributeItems() { return _attribute_item; },
-    visibilityModifier() { return _visibility_modifier; },
-    types() { return _type; },
+    _attributes,
+    attributes() { return _attributes; },
     $with: {
-      attributeItems: (...values: T.AttributeItem[]) => orderedFieldDeclarationList({ ...config, attributeItem: values }),
-      visibilityModifier: (value?: T.VisibilityModifier) => orderedFieldDeclarationList({ ...config, visibilityModifier: value }),
-      types: (...values: T._Type[]) => orderedFieldDeclarationList({ ...config, type: values }),
+      attributes: (...values: T.AttributedOrderedField[]) => orderedFieldDeclarationList({ ...config, attributes: values }),
     },
   }, methodsEngine);
 }
@@ -4663,6 +4673,7 @@ export type FluentKindMap = {
   "_attributed_argument": FluentNode<"_attributed_argument", T.AttributedArgument.Config>;
   "_attributed_enum_variant": FluentNode<"_attributed_enum_variant", T.AttributedEnumVariant.Config>;
   "_attributed_field_declaration": FluentNode<"_attributed_field_declaration", T.AttributedFieldDeclaration.Config>;
+  "_attributed_ordered_field": T.AttributedOrderedField;
   "_attributed_parameter": FluentNode<"_attributed_parameter", T.AttributedParameter.Config>;
   "_attributed_type_parameter": FluentNode<"_attributed_type_parameter", T.AttributedTypeParameter.Config>;
   "_closure_expression_block": T.ClosureExpressionBlock;
@@ -4903,6 +4914,7 @@ export const _factoryMap = {
   "_attributed_argument": attributedArgument,
   "_attributed_enum_variant": attributedEnumVariant,
   "_attributed_field_declaration": attributedFieldDeclaration,
+  "_attributed_ordered_field": _attributedOrderedField,
   "_attributed_parameter": attributedParameter,
   "_attributed_type_parameter": attributedTypeParameter,
   "_closure_expression_block": _closureExpressionBlock,

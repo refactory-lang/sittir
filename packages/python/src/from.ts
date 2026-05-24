@@ -632,10 +632,11 @@ export function commentFrom(input: string | T.Comment): ReturnType<typeof F.comm
 
 export function comparisonOperatorFrom(input: T.ComparisonOperator.Loose): ReturnType<typeof F.comparisonOperator> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.comparisonOperator>;
+  const _ne_comparators = _resolveManyBranch<T.ComparisonOperatorComparator>(input.comparators, "_comparison_operator_comparator");
+  _assertNonEmpty(_ne_comparators, 'comparison_operator.comparators');
   return F.comparisonOperator({
     left: _resolveOne<T.PrimaryExpression>(input.left, _K0, _K5),
-    operators: _resolveBitflag(input.operators),
-    primaryExpression: _resolveMany<T.PrimaryExpression>(input.primaryExpression, _K0, _K5),
+    comparators: _ne_comparators,
   });
 }
 
@@ -788,11 +789,9 @@ export function exceptClauseFrom(input: T.ExceptClause.Loose): ReturnType<typeof
 
 export function execStatementFrom(input: T.ExecStatement.Loose): ReturnType<typeof F.execStatement> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.execStatement>;
-  const _ne_expressions = _resolveMany<T.Expression>(input.expression, _K0, _K2);
-  _assertNonEmpty(_ne_expressions, 'exec_statement.expressions');
   return F.execStatement({
     code: _resolveOne<T.String | T.Identifier>(input.code, _K3, _K15),
-    expression: _ne_expressions,
+    expression: _resolveMany<T.Expression>(input.expression, _K0, _K2),
   });
 }
 

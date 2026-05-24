@@ -3223,9 +3223,12 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         212 => { // "yield_expression"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("expression"), true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("expression"), false)?;
             let template = YieldExpressionTemplate {
-                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                expression: match field_0.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                },
             };
             template.render_into(dest)
         }

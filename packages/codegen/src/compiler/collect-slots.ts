@@ -49,6 +49,8 @@ import {
 } from './node-map.ts';
 import { findRepeatFlag } from './template-walker.ts';
 
+
+
 /**
  * Walk a rule tree to find the first separator string nested inside it.
  * Mirrors `findRepeatFlag`'s descent through seq/choice members, but looks
@@ -280,25 +282,27 @@ function isSlotNode(rule: Rule): boolean {
 
 /**
  * The slot's effective multiplicity. Prefer the leaf's OWN pushed-down
- * `multiplicity`; otherwise inherit the enclosing seq's multiplicity.
+ * `multiplicity`; fall back to the `inherited` value from the closest
+ * structural ancestor that supplies one.
  *
- * Why inherit: `repeat(seq(X, Y))` / `optional(seq(...))` stamp the
- * array/optional multiplicity onto the SEQ node (wrapper-deletion recurses
- * into seq members with empty attrs), so a member symbol that has no
- * multiplicity of its own is implicitly array/optional via its enclosing
- * seq. Until autoApplyGroups (Chunk B) lifts such multi-slot seqs to a
- * synthesized group BEFORE derivation, `collectSlots` sees them inline and
- * must propagate the seq's multiplicity to its members — otherwise an array
- * slot is mis-typed as a required singular (e.g. `arguments._expression`,
- * `tuple_type._type`). This is a one-level inherit during seq distribution,
- * not the old recursive `effectiveMultiplicity` parameter.
+ * The seq-inheritance band-aid is deleted: the seq case of `collectSlots`
+ * no longer propagates `rule.multiplicity ?? inherited` — it just passes
+ * `inherited` unchanged (always `'single'` in practice because seqs carry
+ * no multiplicity after wrapper-deletion push-down). The `inherited` param
+ * remains for the `clause` case, which unconditionally passes `'optional'`
+ * so that fields inside a DSL clause node stay optional-typed.
+ *
+ * The nonEmptyArray → array relaxation is preserved: the at-least-one
+ * guarantee of a repeat1 applies to the seq group as a whole, not to each
+ * individual member slot. This covers inherited 'nonEmptyArray' from a
+ * group/variant ancestor (push-down handles the seq-member case separately
+ * by relaxing in the seq push-down itself).
  */
 function slotMultiplicity(rule: Rule, inherited: Multiplicity): Multiplicity {
-	if (rule.multiplicity !== undefined) return rule.multiplicity;
-	// Relax an inherited nonEmptyArray to array: a member of a repeat1-wrapped
-	// seq is not itself guaranteed ≥1 occurrences, so requiring at-least-one
-	// value at read time is wrong (the parse may legitimately yield 0 for that
-	// member). The repeat1's "at least one" applies to the seq as a whole.
+	const own = (rule as { multiplicity?: Multiplicity }).multiplicity;
+	if (own !== undefined) return own;
+	// Relax an inherited nonEmptyArray: a member of a repeat1-wrapped group is
+	// not itself guaranteed ≥1 occurrences at the individual-field level.
 	if (inherited === 'nonEmptyArray') return 'array';
 	return inherited;
 }
@@ -381,9 +385,10 @@ function buildSlot(
 				// registered polymorph (polymorph metadata drives the TYPE
 				// surface only; render just renders `content`).
 				if (rule.type === 'choice') {
-					// Collect by rule.id — it encodes provenance (owning kind +
-					// rule-tree path), unlike `kindForName` which is undefined here.
-					unnamedChoiceWarner(rule.id);
+					// Prefer rule.id (encodes owning-kind + rule-tree path provenance)
+					// as the warning key; fall back to kindForName for callers (e.g.
+					// unit tests) that create bare rules without an id.
+					unnamedChoiceWarner(rule.id ?? kindForName);
 				}
 				baseName = 'content';
 				source = (rule as { source?: RuleSource }).source ?? 'inferred';
@@ -502,14 +507,13 @@ export function collectSlots(
 ): AssembledNonterminal[] {
 	switch (rule.type) {
 		case 'seq': {
-			// Distribute: the seq is not a slot; its members are. A multi-slot
-			// seq that survives to derivation (i.e. autoApplyGroups/Chunk B has
-			// not lifted it to a group) may carry a `repeat`/`optional`
-			// multiplicity + separator on the seq node itself — propagate them
-			// to members that have none of their own (see `slotMultiplicity`).
-			const seqMult = rule.multiplicity ?? inherited;
+			// Distribute: the seq is not a slot; its members are.
+			// Each member now carries its own multiplicity intrinsically (pushed
+			// down by wrapper-deletion's seq case via combineMultiplicity), so
+			// no inheritance from the seq node is needed — the seq carries no
+			// multiplicity after deleteWrapper. Pass `inherited` unchanged.
 			const seqSep = rule.separator ?? inheritedSeparator;
-			return rule.members.flatMap((m) => collectSlots(m, kindForName, kindEntries, seqMult, seqSep));
+			return rule.members.flatMap((m) => collectSlots(m, kindForName, kindEntries, inherited, seqSep));
 		}
 
 		case 'clause':

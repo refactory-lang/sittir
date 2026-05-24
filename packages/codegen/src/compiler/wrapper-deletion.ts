@@ -26,6 +26,7 @@
 import type { Rule, RenderRule, PolymorphRule } from './rule.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
+import { combineMultiplicity } from './rule-attrs.ts';
 
 // ---------------------------------------------------------------------------
 // Accumulated modifier attributes from unwrapped wrappers
@@ -85,8 +86,10 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 		}
 
 		case 'repeat': {
-			// Only stamp multiplicity if not already set
-			const mult = attrs.multiplicity ?? 'array';
+			// Combine outer (pushed-down) multiplicity with repeat's native 'array'.
+			// combineMultiplicity('optional','array')='array'; ('nonEmptyArray','array')='array'.
+			// repeat's zero-or-more semantics always dominate an enclosing optional/nonEmptyArray.
+			const mult = combineMultiplicity(attrs.multiplicity, 'array') ?? 'array';
 			// Build separator: if trailing or leading is set, use object form
 			let sep = attrs.separator;
 			if (sep === undefined && rule.separator !== undefined) {
@@ -106,8 +109,10 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 		}
 
 		case 'repeat1': {
-			// Same as repeat but nonEmptyArray
-			const mult = attrs.multiplicity ?? 'nonEmptyArray';
+			// Same as repeat but nonEmptyArray as native.
+			// combineMultiplicity('optional','nonEmptyArray')='array' — outer optional
+			// makes the empty case valid (same as the optional case's innerIsRepeatVariant check).
+			const mult = combineMultiplicity(attrs.multiplicity, 'nonEmptyArray') ?? 'nonEmptyArray';
 			let sep = attrs.separator;
 			if (sep === undefined && rule.separator !== undefined) {
 				if (rule.trailing !== undefined || rule.leading !== undefined) {
@@ -128,8 +133,53 @@ function deleteWrapperWith(rule: Rule, attrs: WrapperAttrs): RenderRule {
 		// ----- Structural cases — recurse into members/content, stamp attrs onto this node -----
 
 		case 'seq': {
-			const members = rule.members.map((m) => deleteWrapperWith(m, {}));
-			return stampAttrs({ ...rule, members }, attrs);
+			// Push the wrapper's multiplicity intrinsically onto each SLOT-BEARING
+			// member so collect-slots can read it directly (no seq-level inheritance
+			// needed). optional(seq(field('x',…), field('y',…))): each field gets
+			// multiplicity:'optional' pushed down; the seq node itself carries none.
+			//
+			// IMPORTANT: only push to wrappers and nonterminal references — NOT to
+			// bare string/pattern literals (co-optional literals like `'in'`, `'='`,
+			// `':'`). String members must keep rendering unconditionally alongside
+			// their slot neighbours; the template emitter drops strings with
+			// multiplicity:'optional' (line ~804 in templates.ts), which would
+			// silently lose co-optional keywords like `in` in `exec code in expr`.
+			//
+			// Relax nonEmptyArray → array when pushing to members: the at-least-one
+			// guarantee of a repeat1 applies to the seq as a WHOLE, not to each
+			// individual member.
+			const rawMult = attrs.multiplicity;
+			const multToPush = rawMult === 'nonEmptyArray' ? 'array' : rawMult;
+			const members = rule.members.map((m) => {
+				// Only push multiplicity to potential slot-bearing members (wrappers or
+				// nonterminal rule types). String/pattern literals carry no slot; pushing
+				// would cause the template emitter to drop co-optional keywords.
+				const isSlotBearingShape =
+					m.type === 'field' ||
+					m.type === 'optional' ||
+					m.type === 'repeat' ||
+					m.type === 'repeat1' ||
+					m.type === 'symbol' ||
+					m.type === 'supertype' ||
+					m.type === 'choice' ||
+					m.type === 'seq' ||
+					m.type === 'group' ||
+					m.type === 'variant' ||
+					m.type === 'clause';
+				const memberAttrs: WrapperAttrs =
+					multToPush !== undefined && isSlotBearingShape ? { multiplicity: multToPush } : {};
+				return deleteWrapperWith(m, memberAttrs);
+			});
+			// Stamp the seq with accumulated attrs EXCEPT multiplicity (now on members).
+			const seqAttrs: WrapperAttrs = {
+				fieldName: attrs.fieldName,
+				separator: attrs.separator,
+				aliasedFrom: attrs.aliasedFrom,
+				aliasNamed: attrs.aliasNamed,
+				nonterminal: attrs.nonterminal,
+				// multiplicity intentionally omitted — pushed onto members above
+			};
+			return stampAttrs({ ...rule, members }, seqAttrs);
 		}
 
 		case 'choice': {

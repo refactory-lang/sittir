@@ -4832,7 +4832,7 @@ export function withStatement(config: T.WithStatement.Config) {
   }, methodsEngine);
 }
 
-export function yieldExpression(expression: T.YieldExpression.Config['expression']) {
+export function yieldExpression(expression?: T.YieldExpression.Config['expression']) {
   const _expression = expression;
   return withMethods({
     $type: TSKindId.YieldExpression as const,
@@ -4841,7 +4841,7 @@ export function yieldExpression(expression: T.YieldExpression.Config['expression
     _expression,
     expression() { return _expression; },
     $with: {
-      expression: (value: T.YieldExpression.Config['expression']) => yieldExpression(value),
+      expression: (value?: T.YieldExpression.Config['expression']) => yieldExpression(value),
     },
   }, methodsEngine);
 }

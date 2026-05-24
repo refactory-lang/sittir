@@ -1124,51 +1124,7 @@
         "required": true,
         "types": [
           {
-            "type": "!=",
-            "named": false
-          },
-          {
-            "type": "<",
-            "named": false
-          },
-          {
-            "type": "<=",
-            "named": false
-          },
-          {
-            "type": "<>",
-            "named": false
-          },
-          {
-            "type": "==",
-            "named": false
-          },
-          {
-            "type": ">",
-            "named": false
-          },
-          {
-            "type": ">=",
-            "named": false
-          },
-          {
-            "type": "in",
-            "named": false
-          },
-          {
-            "type": "is",
-            "named": false
-          },
-          {
-            "type": "is not",
-            "named": false
-          },
-          {
-            "type": "not in",
-            "named": false
-          },
-          {
-            "type": "primary_expression",
+            "type": "comparison_operator_comparator",
             "named": true
           }
         ]
@@ -1182,9 +1138,15 @@
             "named": true
           }
         ]
-      },
+      }
+    }
+  },
+  {
+    "type": "comparison_operator_comparator",
+    "named": true,
+    "fields": {
       "operators": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
@@ -1233,6 +1195,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "primary_expression",
+          "named": true
+        }
+      ]
     }
   },
   {

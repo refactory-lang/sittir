@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 394,
+  "nodeCount": 395,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -463,9 +463,9 @@
           }
         },
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItems",
-          "paramName": "attributeItems",
+          "name": "attributed_argument",
+          "propertyName": "attributedArguments",
+          "paramName": "attributedArguments",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -473,7 +473,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "attribute_item",
+              "name": "_attributed_argument",
               "unresolved": true
             }
           ],
@@ -481,31 +481,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "attribute_item"
+              "_attributed_argument"
             ]
-          }
-        },
-        {
-          "name": "elements",
-          "propertyName": "elements",
-          "paramName": "elements",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_expression",
-              "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_expression"
-            ]
+          },
+          "aliasSources": {
+            "attributed_argument": "_attributed_argument"
           }
         }
       ],
@@ -544,9 +524,9 @@
           }
         },
         {
-          "name": "elements",
-          "propertyName": "elements",
-          "paramName": "elements",
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -558,7 +538,7 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -792,6 +772,87 @@
             "typeName": "",
             "kinds": [
               "field_declaration"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_attributed_ordered_field",
+      "modelType": "group",
+      "typeName": "AttributedOrderedField",
+      "factoryName": "_attributedOrderedField",
+      "irKey": "attributedOrderedField",
+      "hidden": false,
+      "name": "_attributed_ordered_field",
+      "fields": [
+        {
+          "name": "attribute_item",
+          "propertyName": "attributeItems",
+          "paramName": "attributeItems",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "attribute_item",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "attribute_item"
+            ]
+          }
+        },
+        {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "paramName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "visibility_modifier"
+            ]
+          }
+        },
+        {
+          "name": "type",
+          "propertyName": "type",
+          "paramName": "type",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_type",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_type"
             ]
           }
         }
@@ -1657,13 +1718,13 @@
           "name": "alias",
           "propertyName": "alias",
           "paramName": "alias",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
             }
@@ -2357,13 +2418,13 @@
           "name": "alternative",
           "propertyName": "alternative",
           "paramName": "alternative",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "block",
               "unresolved": true
             }
@@ -2762,13 +2823,13 @@
           "name": "condition",
           "propertyName": "condition",
           "paramName": "condition",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_condition",
               "unresolved": true
             }
@@ -12820,9 +12881,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItems",
-          "paramName": "attributeItems",
+          "name": "attributes",
+          "propertyName": "attributes",
+          "paramName": "attributes",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -12830,53 +12891,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "attribute_item",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "attribute_item"
-            ]
-          }
-        },
-        {
-          "name": "visibility_modifier",
-          "propertyName": "visibilityModifier",
-          "paramName": "visibilityModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "visibility_modifier",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "visibility_modifier"
-            ]
-          }
-        },
-        {
-          "name": "type",
-          "propertyName": "types",
-          "paramName": "types",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_type",
+              "name": "_attributed_ordered_field",
               "unresolved": true
             }
           ],
@@ -12884,8 +12899,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type"
+              "_attributed_ordered_field"
             ]
+          },
+          "aliasSources": {
+            "attributed_ordered_field": "_attributed_ordered_field"
           }
         }
       ],

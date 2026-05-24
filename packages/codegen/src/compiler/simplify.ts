@@ -932,7 +932,9 @@ function collapseSeq(rule: SeqRule, wordMatcher?: RegExp, inField: boolean = fal
 			(rule as { multiplicity?: LeafMultiplicity }).multiplicity,
 			(survivor as { multiplicity?: LeafMultiplicity }).multiplicity
 		);
-		return { ...carried, multiplicity: combined } as Rule;
+		// Only stamp when non-default (single → undefined per combineMultiplicity).
+		if (combined !== undefined) return { ...carried, multiplicity: combined } as Rule;
+		return carried;
 	}
 	return withAttrsFrom(rule, { type: 'seq', members });
 }
@@ -1131,7 +1133,8 @@ export function canonicalizeSeqOfLeaves(rule: Rule): Rule {
 				outerMult,
 				(survivor as { multiplicity?: LeafMultiplicity }).multiplicity,
 			);
-			return { ...carried, multiplicity: combined } as Rule;
+			// Only stamp when non-default (single → undefined per combineMultiplicity).
+			if (combined !== undefined) return { ...carried, multiplicity: combined } as Rule;
 		}
 		return carried;
 	}

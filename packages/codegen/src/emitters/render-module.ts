@@ -4489,7 +4489,10 @@ function renderTransportDataStruct(
 						// resolve to the helper's already-generated per-slot enum types
 						// (e.g. FunctionTypeTraitFormTraitTransportSlot, not a new
 						// FunctionTypeTraitTransportSlot that would be undefined).
-						lines.push(...renderTransportField(innerSlot, helperNode.kind, helperNode.typeName, nodeMap));
+						// forceOptional=true: the outer helper is Option<HelperTransport>,
+						// so the hoisted direct field must always be Option<T> regardless
+						// of whether the inner slot is required inside the helper.
+						lines.push(...renderTransportField(innerSlot, helperNode.kind, helperNode.typeName, nodeMap, true));
 						// Track to avoid emitting the same inner field from multiple helpers.
 						emittedStorageNames.add(innerSlot.storageName);
 					}
@@ -4850,7 +4853,13 @@ function renderTransportField(
 	field: AssembledNonterminal,
 	parentKind: string,
 	typeName: string,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	/** When true, override required→false regardless of the slot's own multiplicity.
+	 *  Used for group-lift inner fields hoisted to the parent struct: those fields
+	 *  are accessible only when the outer optional helper is present, so the direct
+	 *  field on the parent is always Option<T>, even if the inner slot is required
+	 *  inside the helper. */
+	forceOptional = false
 ): string[] {
 	const lines: string[] = [];
 	const rustName = rustFieldIdent(field.storageName);
@@ -4863,7 +4872,7 @@ function renderTransportField(
 		`    pub ${rustName}: ${rustTransportSlotType(
 			kindsOf(field),
 			nodeMap,
-			{ required: isRequired(field), multiple: isMultiple(field) },
+			{ required: forceOptional ? false : isRequired(field), multiple: isMultiple(field) },
 			parentKind,
 			typeName,
 			field.name,

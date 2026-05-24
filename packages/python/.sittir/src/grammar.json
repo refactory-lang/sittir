@@ -4296,80 +4296,13 @@
             "content": {
               "type": "REPEAT1",
               "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "FIELD",
-                    "name": "operators",
-                    "content": {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "STRING",
-                          "value": "<"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "<="
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "=="
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "!="
-                        },
-                        {
-                          "type": "STRING",
-                          "value": ">="
-                        },
-                        {
-                          "type": "STRING",
-                          "value": ">"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "<>"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "in"
-                        },
-                        {
-                          "type": "ALIAS",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "_not_in"
-                          },
-                          "named": false,
-                          "value": "not in"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "is"
-                        },
-                        {
-                          "type": "ALIAS",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "_is_not"
-                          },
-                          "named": false,
-                          "value": "is not"
-                        }
-                      ],
-                      "fieldName": "operators",
-                      "nonterminal": true
-                    }
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "primary_expression"
-                  }
-                ],
-                "multiplicity": "nonEmptyArray",
-                "nonterminal": true
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_comparison_operator_comparator"
+                },
+                "named": true,
+                "value": "comparison_operator_comparator"
               },
               "multiplicity": "nonEmptyArray",
               "nonterminal": true
@@ -7162,6 +7095,79 @@
     },
     "_kw_right": {
       "type": "BLANK"
+    },
+    "_comparison_operator_comparator": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "operators",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "<"
+              },
+              {
+                "type": "STRING",
+                "value": "<="
+              },
+              {
+                "type": "STRING",
+                "value": "=="
+              },
+              {
+                "type": "STRING",
+                "value": "!="
+              },
+              {
+                "type": "STRING",
+                "value": ">="
+              },
+              {
+                "type": "STRING",
+                "value": ">"
+              },
+              {
+                "type": "STRING",
+                "value": "<>"
+              },
+              {
+                "type": "STRING",
+                "value": "in"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_not_in"
+                },
+                "named": false,
+                "value": "not in"
+              },
+              {
+                "type": "STRING",
+                "value": "is"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_is_not"
+                },
+                "named": false,
+                "value": "is not"
+              }
+            ]
+          },
+          "source": "override"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "primary_expression"
+        }
+      ]
     }
   },
   "extras": [
