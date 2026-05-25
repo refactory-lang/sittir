@@ -232,7 +232,7 @@
     "tuple_expression": "config",
     "tuple_pattern": "config",
     "tuple_struct_pattern": "config",
-    "tuple_type": "spread",
+    "tuple_type": "config",
     "type_arguments": "config",
     "type_binding": "config",
     "type_cast_expression": "config",

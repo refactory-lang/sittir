@@ -362,7 +362,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
   "token_tree_pattern_paren": TSKindId._TokenTreePatternParen,
   "token_tree_pattern_bracket": TSKindId._TokenTreePatternBracket,
   "token_tree_pattern_brace": TSKindId._TokenTreePatternBrace,
-  "tuple_type": TSKindId.TupleType,
   "type_parameters": TSKindId.TypeParameters,
   "use_list": TSKindId.UseList,
   "where_clause": TSKindId.WhereClause,
@@ -415,7 +414,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "token_tree_pattern_paren": return F.tokenTreePatternParen(...(children as Parameters<typeof F.tokenTreePatternParen>));
     case "token_tree_pattern_bracket": return F.tokenTreePatternBracket(...(children as Parameters<typeof F.tokenTreePatternBracket>));
     case "token_tree_pattern_brace": return F.tokenTreePatternBrace(...(children as Parameters<typeof F.tokenTreePatternBrace>));
-    case "tuple_type": return F.tupleType(...(children as Parameters<typeof F.tupleType>));
     case "type_parameters": return F.typeParameters(...(children as Parameters<typeof F.typeParameters>));
     case "use_list": return F.useList(...(children as Parameters<typeof F.useList>));
     case "where_clause": return F.whereClause(...(children as Parameters<typeof F.whereClause>));
@@ -2032,14 +2030,13 @@ export function tupleStructPatternFrom(input: T.TupleStructPattern.Loose): Retur
   });
 }
 
-export function tupleTypeFrom(...input: readonly (T._Type | T.TupleType)[]): ReturnType<typeof F.tupleType> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TupleType) {
-    const data = input[0];
-    const stored = (data as unknown as { _type?: unknown })._type;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.tupleType(...(children as unknown as Parameters<typeof F.tupleType>));
-  }
-  return F.tupleType(...(input as unknown as Parameters<typeof F.tupleType>));
+export function tupleTypeFrom(input: T.TupleType.Loose): ReturnType<typeof F.tupleType> {
+  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.tupleType>;
+  const _ne_types = _resolveMany<T._Type>(input.type, _K2, _K3);
+  _assertNonEmpty(_ne_types, 'tuple_type.types');
+  return F.tupleType({
+    type: _ne_types,
+  });
 }
 
 export function typeArgumentsFrom(input?: T.TypeArguments.Loose): ReturnType<typeof F.typeArguments> {

@@ -4172,16 +4172,17 @@ export function tupleStructPattern(config: T.TupleStructPattern.Config) {
   }, methodsEngine);
 }
 
-export function tupleType(...children: T._Type[]) {
-  _assertNonEmpty(children, 'tuple_type.children');
-  const _type = children;
+export function tupleType(config: T.TupleType.Config) {
+  const _type = config.type;
   return withMethods({
     $type: TSKindId.TupleType as const,
     $source: 2 as const,
     $named: true as const,
     _type,
     types() { return _type; },
-    $with: { $children: (...vs: T._Type[]) => tupleType(...vs) },
+    $with: {
+      types: (...values: NonEmptyArray<T._Type>) => tupleType({ ...config, type: values }),
+    },
   }, methodsEngine);
 }
 

@@ -56128,14 +56128,9 @@ fn transport_to_node_tuple_struct_pattern(transport: TupleStructPatternTransport
 
 fn transport_to_node_tuple_type(transport: TupleTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("type".to_string(), transport_field_values(transport.type_.into_iter().map(|v| _type_transport_to_any(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.extend(transport.type_.into_iter().map(|v| _type_transport_to_any(v)).collect::<Vec<_>>());
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(223) /* "tuple_type" */,
