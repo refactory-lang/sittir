@@ -26,6 +26,7 @@ export type LeafStringMap = {
   _kw_unsafe_marker: "unsafe";
   _move_marker: "move";
   _mutable_specifier: "mut";
+  _operator: "+" | "*" | "?";
   _pointer_type_const: "const";
   _primitive_type: "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char";
   _reference_expression_raw_const: "const";
@@ -333,6 +334,7 @@ export const enum SyntaxKind {
   LineCommentRegularDslash = "_line_comment_regular_dslash",
   MoveMarker = "_move_marker",
   _MutableSpecifier = "_mutable_specifier",
+  Operator = "_operator",
   PointerTypeConst = "_pointer_type_const",
   PrimitiveType = "_primitive_type",
   ReferenceExpressionRawConst = "_reference_expression_raw_const",
@@ -2511,13 +2513,23 @@ export interface RangeExpressionPrefix {
 
 export interface RangePatternLeftWithRight {
   readonly $type: TSKindId.RangePatternLeftWithRight;
+  readonly _content: number;
   readonly _right: LiteralPattern | Path;
+  readonly __inputHints__?: {
+    readonly content: KindEnum<"..." | "..=" | "..", TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot>;
+  };
+  content(): number;
   right(): LiteralPattern | Path;
 }
 
 export interface RangePatternPrefix {
   readonly $type: TSKindId.RangePatternPrefix;
+  readonly _content: number;
   readonly _right: LiteralPattern | Path;
+  readonly __inputHints__?: {
+    readonly content: KindEnum<"..=" | "..", TSKindId.DotDotEq | TSKindId.DotDot>;
+  };
+  content(): number;
   right(): LiteralPattern | Path;
 }
 
@@ -4026,13 +4038,29 @@ export interface TokenBindingPattern {
 export interface TokenRepetition {
   readonly $type: TSKindId.TokenRepetition;
   readonly _tokens?: readonly (Tokens)[];
+  readonly _separator?: boolean;
+  readonly _operator: number;
+  readonly __inputHints__?: {
+    readonly separator?: BooleanKeyword<"[^+*?]+">;
+    readonly operator: KindEnum<"+" | "*" | "?", TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
+  };
   tokens(): readonly (Tokens)[];
+  separator(): boolean | undefined;
+  operator(): number;
 }
 
 export interface TokenRepetitionPattern {
   readonly $type: TSKindId.TokenRepetitionPattern;
   readonly _token_pattern?: readonly (TokenPattern)[];
+  readonly _separator?: boolean;
+  readonly _operator: number;
+  readonly __inputHints__?: {
+    readonly separator?: BooleanKeyword<"[^+*?]+">;
+    readonly operator: KindEnum<"+" | "*" | "?", TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
+  };
   tokenPatterns(): readonly (TokenPattern)[];
+  separator(): boolean | undefined;
+  operator(): number;
 }
 
 export interface TokenTreeParen {
@@ -4388,6 +4416,7 @@ export type CompoundAssignmentExprOperator = Terminal<TSKindId.PlusEq | TSKindId
 export type FieldIdentifier = Terminal<TSKindId.FieldIdentifier, string>;
 export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
 export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
+export type Operator = Terminal<TSKindId.Plus | TSKindId.Star | TSKindId.Qmark, "+" | "*" | "?">;
 export type PrimitiveType = Terminal<TSKindId.U8 | TSKindId.I8 | TSKindId.U16 | TSKindId.I16 | TSKindId.U32 | TSKindId.I32 | TSKindId.U64 | TSKindId.I64 | TSKindId.U128 | TSKindId.I128 | TSKindId.Isize | TSKindId.Usize | TSKindId.F32 | TSKindId.F64 | TSKindId.Bool | TSKindId.Str | TSKindId.Char, "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char">;
 export type ReservedIdentifier = Terminal<TSKindId.Default | TSKindId.Union | TSKindId.Gen, "default" | "union" | "gen">;
 export type TokenBindingPatternType = Terminal<TSKindId.Block | TSKindId.Expr | TSKindId.Expr2021 | TSKindId.Ident | TSKindId.Item | TSKindId.Lifetime | TSKindId.Literal | TSKindId.Meta | TSKindId.Pat | TSKindId.PatParam | TSKindId.Path | TSKindId.Stmt | TSKindId.Tt | TSKindId.Ty | TSKindId.Vis, "block" | "expr" | "expr_2021" | "ident" | "item" | "lifetime" | "literal" | "meta" | "pat" | "pat_param" | "path" | "stmt" | "tt" | "ty" | "vis">;
@@ -4709,6 +4738,7 @@ export interface CompoundAssignmentExprOperatorTree extends AnyTreeNode { readon
 export interface FieldIdentifierTree extends AnyTreeNode { readonly type: "_field_identifier"; }
 export interface LineCommentContentTree extends AnyTreeNode { readonly type: "_line_comment_content"; }
 export interface LineCommentRegularDslashTree extends AnyTreeNode { readonly type: "_line_comment_regular_dslash"; }
+export interface OperatorTree extends AnyTreeNode { readonly type: "_operator"; }
 export interface PrimitiveTypeTree extends AnyTreeNode { readonly type: "_primitive_type"; }
 export interface ReservedIdentifierTree extends AnyTreeNode { readonly type: "_reserved_identifier"; }
 export interface TokenBindingPatternTypeTree extends AnyTreeNode { readonly type: "_token_binding_pattern_type"; }
@@ -5659,6 +5689,7 @@ export interface KindMap {
   '_field_identifier': FieldIdentifier;
   '_line_comment_content': LineCommentContent;
   '_line_comment_regular_dslash': LineCommentRegularDslash;
+  '_operator': Operator;
   '_primitive_type': PrimitiveType;
   '_reserved_identifier': ReservedIdentifier;
   '_token_binding_pattern_type': TokenBindingPatternType;

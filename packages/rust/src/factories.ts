@@ -624,28 +624,36 @@ export function _rangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
 }
 
 export function _rangePatternLeftWithRight(config: T.RangePatternLeftWithRight.Config) {
+  const _content = coerceKindEnumStorage(config.content, [["...", TSKindId.DotDotDot] as const, ["..=", TSKindId.DotDotEq] as const, ["..", TSKindId.DotDot] as const]);
   const _right = config.right;
   return withMethods({
     $type: TSKindId.RangePatternLeftWithRight as const,
     $source: 2 as const,
     $named: true as const,
+    _content,
     _right,
+    content() { return _content; },
     right() { return _right; },
     $with: {
+      content: (value: NonNullable<Parameters<typeof _rangePatternLeftWithRight>[0]>['content']) => _rangePatternLeftWithRight({ ...config, content: value }),
       right: (value: T.LiteralPattern | T.Path) => _rangePatternLeftWithRight({ ...config, right: value }),
     },
   }, methodsEngine);
 }
 
 export function _rangePatternPrefix(config: T.RangePatternPrefix.Config) {
+  const _content = coerceKindEnumStorage(config.content, [["..=", TSKindId.DotDotEq] as const, ["..", TSKindId.DotDot] as const]);
   const _right = config.right;
   return withMethods({
     $type: TSKindId.RangePatternPrefix as const,
     $source: 2 as const,
     $named: true as const,
+    _content,
     _right,
+    content() { return _content; },
     right() { return _right; },
     $with: {
+      content: (value: NonNullable<Parameters<typeof _rangePatternPrefix>[0]>['content']) => _rangePatternPrefix({ ...config, content: value }),
       right: (value: T.LiteralPattern | T.Path) => _rangePatternPrefix({ ...config, right: value }),
     },
   }, methodsEngine);
@@ -3856,27 +3864,47 @@ export function tokenBindingPattern(config: T.TokenBindingPattern.Config) {
   }, methodsEngine);
 }
 
-export function tokenRepetition(...children: T.Tokens[]) {
-  const _tokens = children;
+export function tokenRepetition(config: T.TokenRepetition.Config) {
+  const _tokens = config.tokens;
+  const _separator = coerceBooleanKeywordStorage(config.separator);
+  const _operator = coerceKindEnumStorage(config.operator, [["+", TSKindId.Plus] as const, ["*", TSKindId.Star] as const, ["?", TSKindId.Qmark] as const]);
   return withMethods({
     $type: TSKindId.TokenRepetition as const,
     $source: 2 as const,
     $named: true as const,
     _tokens,
+    _separator,
+    _operator,
     tokens() { return _tokens; },
-    $with: { $children: (...vs: T.Tokens[]) => tokenRepetition(...vs) },
+    separator() { return _separator; },
+    operator() { return _operator; },
+    $with: {
+      tokens: (...values: T.Tokens[]) => tokenRepetition({ ...config, tokens: values }),
+      separator: (value?: NonNullable<Parameters<typeof tokenRepetition>[0]>['separator']) => tokenRepetition({ ...config, separator: value }),
+      operator: (value: NonNullable<Parameters<typeof tokenRepetition>[0]>['operator']) => tokenRepetition({ ...config, operator: value }),
+    },
   }, methodsEngine);
 }
 
-export function tokenRepetitionPattern(...children: T.TokenPattern[]) {
-  const _token_pattern = children;
+export function tokenRepetitionPattern(config: T.TokenRepetitionPattern.Config) {
+  const _token_pattern = config.tokenPattern;
+  const _separator = coerceBooleanKeywordStorage(config.separator);
+  const _operator = coerceKindEnumStorage(config.operator, [["+", TSKindId.Plus] as const, ["*", TSKindId.Star] as const, ["?", TSKindId.Qmark] as const]);
   return withMethods({
     $type: TSKindId.TokenRepetitionPattern as const,
     $source: 2 as const,
     $named: true as const,
     _token_pattern,
+    _separator,
+    _operator,
     tokenPatterns() { return _token_pattern; },
-    $with: { $children: (...vs: T.TokenPattern[]) => tokenRepetitionPattern(...vs) },
+    separator() { return _separator; },
+    operator() { return _operator; },
+    $with: {
+      tokenPatterns: (...values: T.TokenPattern[]) => tokenRepetitionPattern({ ...config, tokenPattern: values }),
+      separator: (value?: NonNullable<Parameters<typeof tokenRepetitionPattern>[0]>['separator']) => tokenRepetitionPattern({ ...config, separator: value }),
+      operator: (value: NonNullable<Parameters<typeof tokenRepetitionPattern>[0]>['operator']) => tokenRepetitionPattern({ ...config, operator: value }),
+    },
   }, methodsEngine);
 }
 

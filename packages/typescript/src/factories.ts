@@ -197,15 +197,21 @@ export function _callSignature(config: T._CallSignature.Config) {
   }, methodsEngine);
 }
 
-export function classBodyMember(child?: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) {
-  const _content = child;
+export function _classBodyMember(config: T.ClassBodyMember.Config) {
+  const _content = config.content;
+  const _terminator = config.terminator;
   return withMethods({
     $type: TSKindId.ClassBodyMember as const,
     $source: 2 as const,
     $named: true as const,
     _content,
+    _terminator,
     content() { return _content; },
-    $with: { $child: (v: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) => classBodyMember(v) },
+    terminator() { return _terminator; },
+    $with: {
+      content: (value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition) => _classBodyMember({ ...config, content: value }),
+      terminator: (value?: T.Semicolon | ",") => _classBodyMember({ ...config, terminator: value }),
+    },
   }, methodsEngine);
 }
 
@@ -1053,17 +1059,21 @@ export function _typeQueryInstantiationExpression(config: T.TypeQueryInstantiati
 
 export function _typeQueryMemberExpression(config: T.TypeQueryMemberExpression.Config) {
   const _object = config.object;
+  const _content = coerceKindEnumStorage(config.content, [[".", TSKindId.Dot] as const, ["?.", TSKindId.QmarkDot] as const]);
   const _property = config.property;
   return withMethods({
     $type: TSKindId.TypeQueryMemberExpression as const,
     $source: 2 as const,
     $named: true as const,
     _object,
+    _content,
     _property,
     object() { return _object; },
+    content() { return _content; },
     property() { return _property; },
     $with: {
       object: (value: T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression) => _typeQueryMemberExpression({ ...config, object: value }),
+      content: (value: NonNullable<Parameters<typeof _typeQueryMemberExpression>[0]>['content']) => _typeQueryMemberExpression({ ...config, content: value }),
       property: (value: T.PrivatePropertyIdentifier | T.Identifier) => _typeQueryMemberExpression({ ...config, property: value }),
     },
   }, methodsEngine);
@@ -1906,16 +1916,20 @@ export function conditionalType(config: T.ConditionalType.Config) {
   }, methodsEngine);
 }
 
-export function constraint(type: T.Constraint.Config['type']) {
-  const _type = type;
+export function constraint(config: T.Constraint.Config) {
+  const _content = coerceKindEnumStorage(config.content, [["extends", TSKindId.Extends] as const, [":", TSKindId.Colon] as const]);
+  const _type = config.type;
   return withMethods({
     $type: TSKindId.Constraint as const,
     $source: 2 as const,
     $named: true as const,
+    _content,
     _type,
+    content() { return _content; },
     type() { return _type; },
     $with: {
-      type: (value: T.Constraint.Config['type']) => constraint(value),
+      content: (value: NonNullable<Parameters<typeof constraint>[0]>['content']) => constraint({ ...config, content: value }),
+      type: (value: T.Type) => constraint({ ...config, type: value }),
     },
   }, methodsEngine);
 }
@@ -3624,11 +3638,11 @@ export function objectType(config: ConfigOf<T.ObjectType>) {
     _content,
     _closing,
     opening() { return _opening; },
-    contents() { return _content; },
+    content() { return _content; },
     closing() { return _closing; },
     $with: {
       opening: (value: NonNullable<Parameters<typeof objectType>[0]>['opening']) => objectType({ ...config, opening: value }),
-      contents: (...values: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | "," | T.Semicolon)[]) => objectType({ ...config, content: values }),
+      content: (...values: ("," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon)[]) => objectType({ ...config, content: values }),
       closing: (value: NonNullable<Parameters<typeof objectType>[0]>['closing']) => objectType({ ...config, closing: value }),
     },
   }, methodsEngine);
@@ -3646,10 +3660,10 @@ export function objectTypeCurly(config?: T.ObjectType.Curly.Config) {
     _content,
     _closing,
     opening() { return _opening; },
-    contents() { return _content; },
+    content() { return _content; },
     closing() { return _closing; },
     $with: {
-      contents: (...values: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | "," | T.Semicolon)[]) => objectTypeCurly({ ...config, content: values }),
+      content: (...values: ("," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon)[]) => objectTypeCurly({ ...config, content: values }),
     },
   }, methodsEngine);
 }
@@ -3666,10 +3680,10 @@ export function objectTypeFlow(config?: T.ObjectType.Flow.Config) {
     _content,
     _closing,
     opening() { return _opening; },
-    contents() { return _content; },
+    content() { return _content; },
     closing() { return _closing; },
     $with: {
-      contents: (...values: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | "," | T.Semicolon)[]) => objectTypeFlow({ ...config, content: values }),
+      content: (...values: ("," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon)[]) => objectTypeFlow({ ...config, content: values }),
     },
   }, methodsEngine);
 }
@@ -4916,7 +4930,7 @@ export type FluentKindMap = {
   "_call_expression_member": T.CallExpressionMember;
   "_call_expression_template_call": T.CallExpressionTemplateCall;
   "_call_signature": T._CallSignature;
-  "_class_body_member": FluentNode<"_class_body_member", T.ClassBodyMember.Config>;
+  "_class_body_member": T.ClassBodyMember;
   "_class_body_method": T.ClassBodyMethod;
   "_class_body_method_sig": FluentNode<"_class_body_method_sig", T.ClassBodyMethodSig.Config>;
   "_class_heritage_extends_clause": FluentNode<"_class_heritage_extends_clause", T._ClassHeritageExtendsClause.Config>;
@@ -5171,7 +5185,7 @@ export const _factoryMap = {
   "_call_expression_member": _callExpressionMember,
   "_call_expression_template_call": _callExpressionTemplateCall,
   "_call_signature": _callSignature,
-  "_class_body_member": classBodyMember,
+  "_class_body_member": _classBodyMember,
   "_class_body_method": _classBodyMethod,
   "_class_body_method_sig": classBodyMethodSig,
   "_class_heritage_extends_clause": _classHeritageExtendsClause,

@@ -501,10 +501,15 @@ export function wrapClassBodyMember(data: T.ClassBodyMember, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassBodyMember as const,
-    _content: normalizeSingularWrapSlot((data._abstract_method_signature ?? data._index_signature ?? data._method_signature ?? data._public_field_definition ?? data._semicolon ?? data._comma ?? data._content), "content", false, data.$type),
+    _content: normalizeSingularWrapSlot((data._abstract_method_signature ?? data._index_signature ?? data._method_signature ?? data._public_field_definition ?? data._content), "content", true, data.$type),
+    _terminator: normalizeSingularWrapSlot(data._terminator, "terminator", false, data.$type),
 
-    content() { return drillIn<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon | "," | undefined>(this._content, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapClassBodyMember({ ...data, $children: vs }, tree) },
+    content() { return drillIn<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>(this._content, tree); },
+    terminator() { return drillIn<T.Semicolon | "," | undefined>(this._terminator, tree); },
+    $with: {
+      content: (v: NonNullable<T.ClassBodyMember['_content']>) => wrapClassBodyMember({ ...data, _content: v }, tree),
+      terminator: (v: NonNullable<T.ClassBodyMember['_terminator']>) => wrapClassBodyMember({ ...data, _terminator: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -1294,12 +1299,15 @@ export function wrapTypeQueryMemberExpression(data: T.TypeQueryMemberExpression,
     ...data,
     $type: TSKindId.TypeQueryMemberExpression as const,
     _object: normalizeSingularWrapSlot(data._object, "object", true, data.$type),
+    _content: projectKindEnumStorage(normalizeSingularWrapSlot((data._dot ?? data._qmark_dot ?? data._content), "content", true, data.$type)),
     _property: normalizeSingularWrapSlot(data._property, "property", true, data.$type),
 
     object() { return drillAs<T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression>(this._object, tree, "subscript_expression", "_type_query_subscript_expression"); },
+    content() { return this._content; },
     property() { return drillAs<T.PrivatePropertyIdentifier | T.Identifier>(this._property, tree, "property_identifier", "identifier"); },
     $with: {
       object: (v: NonNullable<T.TypeQueryMemberExpression['_object']>) => wrapTypeQueryMemberExpression({ ...data, _object: v }, tree),
+      content: (v: NonNullable<T.TypeQueryMemberExpression['_content']>) => wrapTypeQueryMemberExpression({ ...data, _content: v }, tree),
       property: (v: NonNullable<T.TypeQueryMemberExpression['_property']>) => wrapTypeQueryMemberExpression({ ...data, _property: v }, tree),
     },
   }, methodsEngine);
@@ -1962,10 +1970,13 @@ export function wrapConstraint(data: T.Constraint, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Constraint as const,
+    _content: projectKindEnumStorage(normalizeSingularWrapSlot((data._extends ?? data._colon ?? data._content), "content", true, data.$type)),
     _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type),
 
+    content() { return this._content; },
     type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
+      content: (v: NonNullable<T.Constraint['_content']>) => wrapConstraint({ ...data, _content: v }, tree),
       type: (v: NonNullable<T.Constraint['_type']>) => wrapConstraint({ ...data, _type: v }, tree),
     },
   }, methodsEngine);
@@ -3345,15 +3356,15 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ObjectType as const,
     _opening: projectKindEnumStorage(normalizeSingularWrapSlot(data._opening, "opening", true, data.$type)),
-    _content: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind([..._toArr(data._export_statement), ..._toArr(data._property_signature), ..._toArr(data._call_signature), ..._toArr(data._construct_signature), ..._toArr(data._index_signature), ..._toArr(data._method_signature), ..._toArr(data._comma), ..._toArr(data._semicolon), ..._toArr(data._content)], ["export_statement","property_signature","call_signature","construct_signature","index_signature","method_signature","_semicolon"]), false, "content"),
+    _content: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind([..._toArr(data._comma), ..._toArr(data._semi), ..._toArr(data._export_statement), ..._toArr(data._property_signature), ..._toArr(data._call_signature), ..._toArr(data._construct_signature), ..._toArr(data._index_signature), ..._toArr(data._method_signature), ..._toArr(data._semicolon), ..._toArr(data._content)], ["export_statement","property_signature","call_signature","construct_signature","index_signature","method_signature","_semicolon"]), false, "content"),
     _closing: projectKindEnumStorage(normalizeSingularWrapSlot(data._closing, "closing", true, data.$type)),
 
     opening() { return this._opening; },
-    contents() { return drillInAll<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | "," | T.Semicolon>(this._content as readonly (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | "," | T.Semicolon)[] | undefined, tree); },
+    content() { return drillInAll<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>(this._content as readonly ("," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon)[] | undefined, tree); },
     closing() { return this._closing; },
     $with: {
       opening: (v: NonNullable<T.ObjectType['_opening']>) => wrapObjectType({ ...data, _opening: v }, tree),
-      contents: (...v: NonNullable<T.ObjectType['_content']>[number][]) => wrapObjectType({ ...data, _content: v }, tree),
+      content: (...v: NonNullable<T.ObjectType['_content']>[number][]) => wrapObjectType({ ...data, _content: v }, tree),
       closing: (v: NonNullable<T.ObjectType['_closing']>) => wrapObjectType({ ...data, _closing: v }, tree),
     },
   }, methodsEngine);

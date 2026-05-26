@@ -1842,7 +1842,7 @@ export interface RangeExpressionBareTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _operator: OperatorTransport
+  _operator: OperatorUX2ex2eTransport
 }
 
 export interface RangeExpressionBareTransport {
@@ -1853,7 +1853,7 @@ export interface RangeExpressionBareTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _operator: OperatorTransport
+  _operator: OperatorUX2ex2eTransport
 }
 
 export interface RangeExpressionBinaryTransport {
@@ -1878,7 +1878,7 @@ export interface RangeExpressionPostfixTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _start: Box<ExpressionTransport>
-  _operator: OperatorTransport
+  _operator: OperatorUX2ex2eTransport
 }
 
 export interface RangeExpressionPrefixTransport {
@@ -1889,7 +1889,7 @@ export interface RangeExpressionPrefixTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _operator: OperatorTransport
+  _operator: OperatorUX2ex2eTransport
   _end: Box<ExpressionTransport>
 }
 
@@ -1918,6 +1918,7 @@ export interface RangePatternLeftWithRightTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _content: Box<AnyTransport>
   _right: Box<RangePatternLeftWithRightRightTransportSlot>
 }
 
@@ -1929,6 +1930,7 @@ export interface RangePatternPrefixTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _content: Box<AnyTransport>
   _right: Box<RangePatternPrefixRightTransportSlot>
 }
 
@@ -1944,6 +1946,7 @@ export interface RangePatternTransport {
   _range_pattern_prefix: Box<RangePatternPrefixTransport>
   _range_pattern_left_with_right: Box<RangePatternLeftWithRightTransport>
   _range_pattern_left_bare: RangePatternLeftBareTransport
+  _content?: Box<AnyTransport>
   _right?: Box<RangePatternPrefixRightTransportSlot>
 }
 
@@ -2258,6 +2261,8 @@ export interface TokenRepetitionPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _separator?: Box<AnyTransport>
+  _operator: OperatorEnum
   _token_pattern?: Array<TokenPatternTransport>
 }
 
@@ -2269,6 +2274,8 @@ export interface TokenRepetitionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _separator?: Box<AnyTransport>
+  _operator: OperatorEnum
   _tokens?: Array<TokensTransport>
 }
 

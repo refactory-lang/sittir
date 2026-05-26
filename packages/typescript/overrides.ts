@@ -317,6 +317,19 @@ export default grammar(
 				1: field('expression')
 			},
 
+			// class_body: repeat-choice arm 3 is the upstream inline
+			// `seq(choice(4 sigs), choice(_semicolon | ','))` that sittir extracts
+			// into the hidden `_class_body_member` — both positions unnamed → 2
+			// `content` slots (content-collision). Name the terminator by its path
+			// in the parent (fields are applied before the extraction): pos 0 (the
+			// member) keeps `content`, pos 1 (the `;`/`,` choice) → `terminator`.
+			// Path `1/0/3/1`: seq pos 1 (repeat) → `/0` repeat content (choice) →
+			// arm 3 → arm-seq pos 1 (terminator choice).
+			class_body: {
+				'1/0/3/1': field('terminator')
+			},
+
+
 			// abstract_class_declaration: wrap pos 5 (class_heritage choice).
 			// pos 0 is REPEAT(field('decorator')) — don't touch it, it's a real
 			// base-grammar field and the original override clobbered it.

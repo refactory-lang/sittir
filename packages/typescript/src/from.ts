@@ -323,7 +323,6 @@ function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
 
 const _wrapKindIds: { readonly [kind: string]: number } = {
   "_ambient_declaration_declaration": TSKindId._AmbientDeclarationDeclaration,
-  "_class_body_member": TSKindId.ClassBodyMember,
   "_class_body_method_sig": TSKindId.ClassBodyMethodSig,
   "_class_heritage_implements_clause": TSKindId._ClassHeritageImplementsClause,
   "_import_clause_named_imports": TSKindId._ImportClauseNamedImports,
@@ -362,7 +361,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
   switch (kind) {
     case "_ambient_declaration_declaration": return F._ambientDeclarationDeclaration(...(children as Parameters<typeof F._ambientDeclarationDeclaration>));
-    case "_class_body_member": return F.classBodyMember(...(children as Parameters<typeof F.classBodyMember>));
     case "_class_body_method_sig": return F.classBodyMethodSig(...(children as Parameters<typeof F.classBodyMethodSig>));
     case "_class_heritage_implements_clause": return F._classHeritageImplementsClause(...(children as Parameters<typeof F._classHeritageImplementsClause>));
     case "_import_clause_named_imports": return F._importClauseNamedImports(...(children as Parameters<typeof F._importClauseNamedImports>));
@@ -891,8 +889,11 @@ export function conditionalTypeFrom(input: T.ConditionalType.Loose): ReturnType<
 }
 
 export function constraintFrom(input: T.Constraint.Loose): ReturnType<typeof F.constraint> {
-  if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("constraint")) return input as unknown as ReturnType<typeof F.constraint>;
-  return F.constraint(_resolveOne<T.Type>((input !== null && typeof input === 'object' && !isNodeData(input) && "type" in input ? input.type : input), _K4, _K5));
+  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.constraint>;
+  return F.constraint({
+    content: coerceKindEnumStorage(_resolveOne<"extends" | ":">(input.content, _K2, _K2), [["extends", kindIdFromName("extends")] as const, [":", kindIdFromName(":")] as const]),
+    type: _resolveOne<T.Type>(input.type, _K4, _K5),
+  });
 }
 
 export function constructSignatureFrom(input: T.ConstructSignature.Loose): ReturnType<typeof F.constructSignature> {
@@ -1634,7 +1635,7 @@ export function objectTypeFrom(input: T.ObjectType.Loose): ReturnType<typeof F.o
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.objectType>;
   return F.objectType({
     opening: coerceKindEnumStorage(_resolveOneLeaf<T.ObjectTypeOpening>(input.opening, "_object_type_opening"), [["{", kindIdFromName("{")] as const, ["{|", kindIdFromName("{|")] as const]),
-    content: _resolveMany<T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | "," | T.Semicolon>(input.content, _K39, _K40),
+    content: _resolveMany<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>(input.content, _K39, _K40),
     closing: coerceKindEnumStorage(_resolveOneLeaf<T.ObjectTypeClosing>(input.closing, "_object_type_closing"), [["}", kindIdFromName("}")] as const, ["|}", kindIdFromName("|}")] as const]),
   });
 }

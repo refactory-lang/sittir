@@ -93,7 +93,8 @@ pub enum AnyTransport {
     MoveMarker(MoveMarkerTransport),
     _MutableSpecifier(_MutableSpecifierTransport),
     NonSpecialToken(NonSpecialTokenTransport),
-    Operator(OperatorTransport),
+    Operator(OperatorEnum),
+    OperatorUX2ex2e(OperatorUX2ex2eTransport),
     OrPatternBinary(OrPatternBinaryTransport),
     OrPatternPrefix(OrPatternPrefixTransport),
     OuterBlockDocCommentMarker(OuterBlockDocCommentMarkerTransport),
@@ -425,6 +426,7 @@ pub enum AnyTransport {
     Literal18_3c_3d,
     Literal19_2e_2e_3d,
     Literal20_3a_3a,
+    Literal21_5b_5e_2b_2a_3f_5d_2b,
     Verbatim(VerbatimTransport),
 }
 
@@ -6530,6 +6532,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                     if let Ok(value) = TokenTreePatternTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::TokenTreePattern(value));
                     }
+                    if let Ok(value) = TokenRepetitionPatternTransport::from_napi_value(env, napi_val) {
+                        return Ok(Self::TokenRepetitionPattern(value));
+                    }
                     if let Ok(value) = TokenBindingPatternTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::TokenBindingPattern(value));
                     }
@@ -6568,9 +6573,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                     }
                     if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::TokSq(value));
-                    }
-                    if let Ok(value) = TokenRepetitionPatternTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::TokenRepetitionPattern(value));
                     }
                     if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::StringLiteral(value));
@@ -6649,6 +6651,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                     if let Ok(value) = TokenTreePatternTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::TokenTreePattern(value));
                     }
+                    if let Ok(value) = TokenRepetitionPatternTransport::from_napi_value(env, napi_val) {
+                        return Ok(Self::TokenRepetitionPattern(value));
+                    }
                     if let Ok(value) = TokenBindingPatternTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::TokenBindingPattern(value));
                     }
@@ -6687,9 +6692,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                     }
                     if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::TokSq(value));
-                    }
-                    if let Ok(value) = TokenRepetitionPatternTransport::from_napi_value(env, napi_val) {
-                        return Ok(Self::TokenRepetitionPattern(value));
                     }
                     if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                         return Ok(Self::StringLiteral(value));
@@ -21271,8 +21273,94 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NonSpecialTokenTransport> {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OperatorEnum {
+    Plus,
+    Star,
+    Question,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for OperatorEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            match kind_id {
+                10 => return Ok(Self::Plus), // "+"
+                11 => return Ok(Self::Star), // "*"
+                12 => return Ok(Self::Question), // "?"
+                _ => {}
+            }
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            match text.as_str() {
+                "+" => return Ok(Self::Plus),
+                "*" => return Ok(Self::Star),
+                "?" => return Ok(Self::Question),
+                _ => {}
+            }
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        if let Some(kind_id) = obj.get::<u16>("$type")? {
+            match kind_id {
+                10 => return Ok(Self::Plus), // "+"
+                11 => return Ok(Self::Star), // "*"
+                12 => return Ok(Self::Question), // "?"
+                _ => {}
+            }
+        }
+        if let Some(text) = obj.get::<String>("$text")? {
+            match text.as_str() {
+                "+" => return Ok(Self::Plus),
+                "*" => return Ok(Self::Star),
+                "?" => return Ok(Self::Question),
+                _ => {}
+            }
+        }
+        if obj.get::<::napi::bindgen_prelude::Object>("_+")?.is_some() { return Ok(Self::Plus); }
+        if obj.get::<::napi::bindgen_prelude::Object>("_*")?.is_some() { return Ok(Self::Star); }
+        if obj.get::<::napi::bindgen_prelude::Object>("_?")?.is_some() { return Ok(Self::Question); }
+        Err(::napi::Error::from_reason("unknown enum payload for OperatorEnum"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for OperatorEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("OperatorEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for OperatorEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::Plus => "+",
+            Self::Star => "*",
+            Self::Question => "?",
+        })
+    }
+}
+
+impl RenderableTransport for OperatorEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::Plus => "+",
+            Self::Star => "*",
+            Self::Question => "?",
+        }).map_err(::askama::Error::from)
+    }
+}
+
 #[derive(Debug, Clone)]
-pub struct OperatorTransport {
+pub struct OperatorUX2ex2eTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -21282,7 +21370,7 @@ pub struct OperatorTransport {
     pub text: String,
 }
 
-impl RenderableTransport for OperatorTransport {
+impl RenderableTransport for OperatorUX2ex2eTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -21292,7 +21380,7 @@ impl RenderableTransport for OperatorTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for OperatorTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for OperatorUX2ex2eTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -21318,7 +21406,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OperatorTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for OperatorTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for OperatorUX2ex2eTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -21344,7 +21432,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OperatorTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OperatorTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for OperatorUX2ex2eTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -21354,22 +21442,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for OperatorTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<OperatorTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<OperatorUX2ex2eTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        OperatorTransport::from_napi_value(env, napi_val).map(Box::new)
+        OperatorUX2ex2eTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<OperatorTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<OperatorUX2ex2eTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        OperatorTransport::to_napi_value(env, *val)
+        OperatorUX2ex2eTransport::to_napi_value(env, *val)
     }
 }
 
@@ -22137,7 +22225,7 @@ pub struct _RangeExpressionBareTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: OperatorTransport,
+    pub operator: OperatorUX2ex2eTransport,
 }
 
 impl RenderableTransport for _RangeExpressionBareTransport {
@@ -22243,7 +22331,7 @@ pub struct RangeExpressionPostfixTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_start"))]
     pub start: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: OperatorTransport,
+    pub operator: OperatorUX2ex2eTransport,
 }
 
 impl RenderableTransport for RangeExpressionPostfixTransport {
@@ -22293,7 +22381,7 @@ pub struct RangeExpressionPrefixTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: OperatorTransport,
+    pub operator: OperatorUX2ex2eTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_end"))]
     pub end: Box<ExpressionTransport>,
 }
@@ -22476,6 +22564,8 @@ pub struct RangePatternLeftWithRightTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: Box<RangePatternLeftWithRightRightTransportSlot>,
 }
@@ -22526,6 +22616,8 @@ pub struct RangePatternPrefixTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: Box<RangePatternPrefixRightTransportSlot>,
 }
@@ -31353,7 +31445,7 @@ pub struct RangeExpressionBareTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: OperatorTransport,
+    pub operator: OperatorUX2ex2eTransport,
 }
 
 impl RenderableTransport for RangeExpressionBareTransport {
@@ -31472,6 +31564,8 @@ pub struct RangePatternTransport {
     pub range_pattern_left_with_right: Box<RangePatternLeftWithRightTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_pattern_left_bare"))]
     pub range_pattern_left_bare: RangePatternLeftBareTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: Option<Box<RangePatternPrefixRightTransportSlot>>,
 }
@@ -33080,6 +33174,10 @@ pub struct TokenRepetitionTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]
+    pub separator: Option<Box<AnyTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    pub operator: OperatorEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens"))]
     pub tokens: Option<Vec<TokensTransport>>,
 }
@@ -33130,6 +33228,10 @@ pub struct TokenRepetitionPatternTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]
+    pub separator: Option<Box<AnyTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    pub operator: OperatorEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_pattern"))]
     pub token_pattern: Option<Vec<TokenPatternTransport>>,
 }
@@ -44463,7 +44565,11 @@ fn render_non_special_token(node: &NonSpecialTokenTransport, dest: &mut dyn ::st
     Ok(())
 }
 
-fn render_operator(t: &OperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_operator(t: &OperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
+}
+
+fn render_operator_ux2ex2e(t: &OperatorUX2ex2eTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -44543,6 +44649,7 @@ fn render_range_pattern_left_bare(t: &RangePatternLeftBareTransport, dest: &mut 
 
 fn render_range_pattern_left_with_right(node: &RangePatternLeftWithRightTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = RangePatternLeftWithRightTemplate {
+        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.content.as_ref())),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
     template.render_into(dest)
@@ -44550,6 +44657,7 @@ fn render_range_pattern_left_with_right(node: &RangePatternLeftWithRightTranspor
 
 fn render_range_pattern_prefix(node: &RangePatternPrefixTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = RangePatternPrefixTemplate {
+        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.content.as_ref())),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
     template.render_into(dest)
@@ -46559,16 +46667,16 @@ fn render_token_binding_pattern(node: &TokenBindingPatternTransport, dest: &mut 
 }
 
 fn render_token_repetition(node: &TokenRepetitionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.tokens.as_deref().is_none_or(<[_]>::is_empty) {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let tokens_owned = node.tokens.as_deref().unwrap_or(&[]);
     let tokens_buf: Vec<::sittir_core::filters::Renderable<'_>> = tokens_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TokenRepetitionTemplate {
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
+        separator: match &node.separator {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => OptionalNonterminalView::Missing,
+        },
         tokens: ListNonterminalView {
             items: tokens_buf.as_slice(),
             separator: "",
@@ -46580,16 +46688,16 @@ fn render_token_repetition(node: &TokenRepetitionTransport, dest: &mut dyn ::std
 }
 
 fn render_token_repetition_pattern(node: &TokenRepetitionPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.token_pattern.as_deref().is_none_or(<[_]>::is_empty) {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let token_pattern_owned = node.token_pattern.as_deref().unwrap_or(&[]);
     let token_pattern_buf: Vec<::sittir_core::filters::Renderable<'_>> = token_pattern_owned.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TokenRepetitionPatternTemplate {
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
+        separator: match &node.separator {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => OptionalNonterminalView::Missing,
+        },
         token_pattern: ListNonterminalView {
             items: token_pattern_buf.as_slice(),
             separator: "",
@@ -48036,6 +48144,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::_MutableSpecifier(t) => t.render_into(dest),
             AnyTransport::NonSpecialToken(t) => render_non_special_token(t, dest),
             AnyTransport::Operator(t) => t.render_into(dest),
+            AnyTransport::OperatorUX2ex2e(t) => t.render_into(dest),
             AnyTransport::OrPatternBinary(t) => render_or_pattern_binary(t, dest),
             AnyTransport::OrPatternPrefix(t) => render_or_pattern_prefix(t, dest),
             AnyTransport::OuterBlockDocCommentMarker(t) => t.render_into(dest),
@@ -48367,6 +48476,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Literal18_3c_3d => dest.write_str("<=").map_err(::askama::Error::from),
             AnyTransport::Literal19_2e_2e_3d => dest.write_str("..=").map_err(::askama::Error::from),
             AnyTransport::Literal20_3a_3a => dest.write_str("::").map_err(::askama::Error::from),
+            AnyTransport::Literal21_5b_5e_2b_2a_3f_5d_2b => dest.write_str("[^+*?]+").map_err(::askama::Error::from),
             AnyTransport::Verbatim(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
         }
     }
@@ -48442,7 +48552,7 @@ impl AnyTransport {
             Self::MoveMarker(t) => t.transport_named,
             Self::_MutableSpecifier(t) => t.transport_named,
             Self::NonSpecialToken(t) => t.transport_named,
-            Self::Operator(t) => t.transport_named,
+            Self::OperatorUX2ex2e(t) => t.transport_named,
             Self::OrPatternBinary(t) => t.transport_named,
             Self::OrPatternPrefix(t) => t.transport_named,
             Self::OuterBlockDocCommentMarker(t) => t.transport_named,
@@ -48858,6 +48968,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::_MutableSpecifier(data) => transport_to_node__mutable_specifier(data),
         AnyTransport::NonSpecialToken(data) => transport_to_node_non_special_token(data),
         AnyTransport::Operator(data) => transport_to_node_operator(data),
+        AnyTransport::OperatorUX2ex2e(data) => transport_to_node_operator_ux2ex2e(data),
         AnyTransport::OrPatternBinary(data) => transport_to_node_or_pattern_binary(data),
         AnyTransport::OrPatternPrefix(data) => transport_to_node_or_pattern_prefix(data),
         AnyTransport::OuterBlockDocCommentMarker(data) => transport_to_node_outer_block_doc_comment_marker(data),
@@ -49189,6 +49300,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Literal18_3c_3d => Ok(transport_node_data(TransportKindId(72) /* "<=" */, None, None, false, Some("<=".to_string()), None, None, None, None, None, None)),
         AnyTransport::Literal19_2e_2e_3d => Ok(transport_node_data(TransportKindId(78) /* "..=" */, None, None, false, Some("..=".to_string()), None, None, None, None, None, None)),
         AnyTransport::Literal20_3a_3a => Ok(transport_node_data(TransportKindId(80) /* "::" */, None, None, false, Some("::".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal21_5b_5e_2b_2a_3f_5d_2b => Ok(transport_node_data(TransportKindId(0) /* "[^+*?]+" — no parser symbol */, None, None, false, Some("[^+*?]+".to_string()), None, None, None, None, None, None)),
         AnyTransport::Verbatim(data) => Ok(transport_node_data(TransportKindId(0) /* Verbatim — synthetic */, None, None, false, Some(data.text), None, None, None, None, None, None)),
     }
 }
@@ -50698,10 +50810,26 @@ fn transport_to_node_non_special_token(transport: NonSpecialTokenTransport) -> R
     ))
 }
 
-fn transport_to_node_operator(transport: OperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+fn transport_to_node_operator(transport: OperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
     Ok(transport_node_data(
         TransportKindId(0) /* "_operator" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+    ))
+}
+
+fn transport_to_node_operator_ux2ex2e(transport: OperatorUX2ex2eTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_operator__x2ex2e" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -50853,7 +50981,7 @@ fn transport_to_node_primitive_type(transport: PrimitiveTypeEnum) -> Result<Tran
 
 fn transport_to_node__range_expression_bare(transport: _RangeExpressionBareTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("operator".to_string(), transport_field_value(AnyTransport::Operator(transport.operator))?);
+    fields.insert("operator".to_string(), transport_field_value(AnyTransport::OperatorUX2ex2e(transport.operator))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -50898,7 +51026,7 @@ fn transport_to_node_range_expression_binary(transport: RangeExpressionBinaryTra
 fn transport_to_node_range_expression_postfix(transport: RangeExpressionPostfixTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("start".to_string(), transport_field_value(expression_transport_to_any(*transport.start))?);
-    fields.insert("operator".to_string(), transport_field_value(AnyTransport::Operator(transport.operator))?);
+    fields.insert("operator".to_string(), transport_field_value(AnyTransport::OperatorUX2ex2e(transport.operator))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -50919,7 +51047,7 @@ fn transport_to_node_range_expression_postfix(transport: RangeExpressionPostfixT
 
 fn transport_to_node_range_expression_prefix(transport: RangeExpressionPrefixTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("operator".to_string(), transport_field_value(AnyTransport::Operator(transport.operator))?);
+    fields.insert("operator".to_string(), transport_field_value(AnyTransport::OperatorUX2ex2e(transport.operator))?);
     fields.insert("end".to_string(), transport_field_value(expression_transport_to_any(*transport.end))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -50958,6 +51086,7 @@ fn transport_to_node_range_pattern_left_bare(transport: RangePatternLeftBareTran
 
 fn transport_to_node_range_pattern_left_with_right(transport: RangePatternLeftWithRightTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("content".to_string(), transport_field_value(*transport.content)?);
     fields.insert("right".to_string(), transport_field_value(range_pattern_left_with_right_right_transport_slot_to_any(*transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -50979,6 +51108,7 @@ fn transport_to_node_range_pattern_left_with_right(transport: RangePatternLeftWi
 
 fn transport_to_node_range_pattern_prefix(transport: RangePatternPrefixTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("content".to_string(), transport_field_value(*transport.content)?);
     fields.insert("right".to_string(), transport_field_value(range_pattern_prefix_right_transport_slot_to_any(*transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -54495,7 +54625,7 @@ fn transport_to_node_qualified_type(transport: QualifiedTypeTransport) -> Result
 
 fn transport_to_node_range_expression_bare(transport: RangeExpressionBareTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("operator".to_string(), transport_field_value(AnyTransport::Operator(transport.operator))?);
+    fields.insert("operator".to_string(), transport_field_value(AnyTransport::OperatorUX2ex2e(transport.operator))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
@@ -55201,6 +55331,10 @@ fn transport_to_node_token_binding_pattern(transport: TokenBindingPatternTranspo
 
 fn transport_to_node_token_repetition(transport: TokenRepetitionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.separator {
+        fields.insert("separator".to_string(), transport_field_value(*value)?);
+    }
+    fields.insert("operator".to_string(), transport_field_value(AnyTransport::Operator(transport.operator))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     if let Some(value) = transport.tokens {
@@ -55229,6 +55363,10 @@ fn transport_to_node_token_repetition(transport: TokenRepetitionTransport) -> Re
 
 fn transport_to_node_token_repetition_pattern(transport: TokenRepetitionPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.separator {
+        fields.insert("separator".to_string(), transport_field_value(*value)?);
+    }
+    fields.insert("operator".to_string(), transport_field_value(AnyTransport::Operator(transport.operator))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     if let Some(value) = transport.token_pattern {

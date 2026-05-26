@@ -15,7 +15,7 @@
 // Summary
 // ---------------------------------------------------------------
 // Field inferences:  0  (0 applied, 0 held)
-// Rule promotions:   88  (82 applied, 6 held)
+// Rule promotions:   87  (82 applied, 5 held)
 // Repeated shapes:   9  (advisory — suggested supertypes/groups)
 
 // ---------------------------------------------------------------
@@ -25,12 +25,6 @@
 // candidates target the same kind).
 // ---------------------------------------------------------------
 export const suggestedTransforms = {
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  _class_body_member: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-  },
-
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   // note: choice(s) sit inside field() wrapper(s) — variant() will supersede: type_annotation
   as_expression: {
@@ -346,7 +340,6 @@ export const promotedRules: readonly PromotedRule[] = [
   { kind: "predefined_type", classification: "terminal", applied: true },
   { kind: "private_property_identifier", classification: "terminal", applied: true },
   { kind: "regex_pattern", classification: "terminal", applied: true },
-  { kind: "_class_body_member", classification: "polymorph", applied: false },
   { kind: "_export_statement_default_from_arm", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm_clause_from", classification: "polymorph", applied: true },
   { kind: "_export_statement_default_from_arm_ns_from", classification: "polymorph", applied: true },

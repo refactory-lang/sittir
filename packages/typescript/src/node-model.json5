@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 437,
+  "nodeCount": 438,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -1092,17 +1092,18 @@
     },
     {
       "kind": "_class_body_member",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "ClassBodyMember",
-      "factoryName": "classBodyMember",
+      "factoryName": "_classBodyMember",
       "irKey": "classBodyMember",
       "hidden": false,
+      "name": "_class_body_member",
       "fields": [
         {
           "name": "content",
           "propertyName": "content",
           "paramName": "content",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
@@ -1129,7 +1130,27 @@
               "multiplicity": "single",
               "name": "public_field_definition",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "abstract_method_signature",
+              "index_signature",
+              "method_signature",
+              "public_field_definition"
+            ]
+          }
+        },
+        {
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -1142,14 +1163,10 @@
               "value": ","
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
-              "abstract_method_signature",
-              "index_signature",
-              "method_signature",
-              "public_field_definition",
               "_semicolon"
             ]
           }
@@ -4690,6 +4707,31 @@
           }
         },
         {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "."
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "?."
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
           "name": "property",
           "propertyName": "property",
           "paramName": "property",
@@ -7801,6 +7843,16 @@
       "children": []
     },
     {
+      "kind": "comma",
+      "modelType": "token",
+      "typeName": "Comma2",
+      "irKey": "comma",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\",\" as const",
+      "text": ","
+    },
+    {
       "kind": "comment",
       "modelType": "pattern",
       "typeName": "Comment",
@@ -7963,6 +8015,31 @@
       "irKey": "constraint",
       "hidden": false,
       "fields": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "extends"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ":"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
         {
           "name": "type",
           "propertyName": "type",
@@ -15262,12 +15339,22 @@
         },
         {
           "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "propertyName": "content",
+          "paramName": "content",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": ","
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": ";"
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -15305,18 +15392,13 @@
               "unresolved": true
             },
             {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": ","
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_semicolon",
               "unresolved": true
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [

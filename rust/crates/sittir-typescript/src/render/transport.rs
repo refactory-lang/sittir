@@ -337,6 +337,7 @@ pub enum AnyTransport {
     Colon(ColonTransport),
     Async(AsyncTransport),
     TokQDot(TokQDotTransport),
+    Comma2(Comma2Transport),
     Comma(CommaTransport),
     Const(ConstTransport),
     Export(ExportTransport),
@@ -1441,9 +1442,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 50 => Ok(AnyTransport::TokQDot(
                     TokQDotTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: , (COMMA)
-                6 => Ok(AnyTransport::Comma(
-                    CommaTransport::from_napi_value(env, napi_val)?
+                // kind: comma (COMMA2)
+                6 => Ok(AnyTransport::Comma2(
+                    Comma2Transport::from_napi_value(env, napi_val)?
                 )),
                 // kind: const (CONST)
                 16 => Ok(AnyTransport::Const(
@@ -7044,13 +7045,95 @@ impl RenderableTransport for _CallSignatureReturnTypeTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum ClassBodyMemberTerminatorTransportSlot {
+    Semicolon(SemicolonTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMemberTerminatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ClassBodyMemberTerminatorTransportSlot",
+                ))),
+            };
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            return Ok(Self::Verbatim(VerbatimTransport { text }));
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("ClassBodyMemberTerminatorTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in ClassBodyMemberTerminatorTransportSlot")
+        )?;
+        match kind_id {
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in ClassBodyMemberTerminatorTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ClassBodyMemberTerminatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ClassBodyMemberTerminatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassBodyMemberTerminatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ClassBodyMemberTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassBodyMemberTerminatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ClassBodyMemberTerminatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn class_body_member_terminator_transport_slot_to_any(t: ClassBodyMemberTerminatorTransportSlot) -> AnyTransport {
+    match t {
+        ClassBodyMemberTerminatorTransportSlot::Semicolon(inner) => AnyTransport::Semicolon(inner),
+        ClassBodyMemberTerminatorTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for ClassBodyMemberTerminatorTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ClassBodyMemberTerminatorTransportSlot::Semicolon(inner) => render_semicolon(inner, dest),
+            ClassBodyMemberTerminatorTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ClassBodyMemberContentTransportSlot {
     AbstractMethodSignature(AbstractMethodSignatureTransport),
     IndexSignature(IndexSignatureTransport),
     MethodSignature(MethodSignatureTransport),
     PublicFieldDefinition(PublicFieldDefinitionTransport),
-    Semicolon(SemicolonTransport),
-    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -7077,9 +7160,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMemberContentTransportS
                     "unknown kind id {other} in ClassBodyMemberContentTransportSlot",
                 ))),
             };
-        }
-        if let Ok(text) = String::from_napi_value(env, napi_val) {
-            return Ok(Self::Verbatim(VerbatimTransport { text }));
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
             .map_err(|_| ::napi::Error::from_reason("ClassBodyMemberContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
@@ -7142,8 +7222,6 @@ fn class_body_member_content_transport_slot_to_any(t: ClassBodyMemberContentTran
         ClassBodyMemberContentTransportSlot::IndexSignature(inner) => AnyTransport::IndexSignature(inner),
         ClassBodyMemberContentTransportSlot::MethodSignature(inner) => AnyTransport::MethodSignature(inner),
         ClassBodyMemberContentTransportSlot::PublicFieldDefinition(inner) => AnyTransport::PublicFieldDefinition(inner),
-        ClassBodyMemberContentTransportSlot::Semicolon(inner) => AnyTransport::Semicolon(inner),
-        ClassBodyMemberContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -7157,8 +7235,6 @@ impl RenderableTransport for ClassBodyMemberContentTransportSlot {
             ClassBodyMemberContentTransportSlot::IndexSignature(inner) => render_index_signature(inner, dest),
             ClassBodyMemberContentTransportSlot::MethodSignature(inner) => render_method_signature(inner, dest),
             ClassBodyMemberContentTransportSlot::PublicFieldDefinition(inner) => render_public_field_definition(inner, dest),
-            ClassBodyMemberContentTransportSlot::Semicolon(inner) => render_semicolon(inner, dest),
-            ClassBodyMemberContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -19950,8 +20026,10 @@ pub struct ClassBodyMemberTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: Option<ClassBodyMemberTerminatorTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<ClassBodyMemberContentTransportSlot>,
+    pub content: ClassBodyMemberContentTransportSlot,
 }
 
 impl RenderableTransport for ClassBodyMemberTransport {
@@ -25434,6 +25512,8 @@ pub struct TypeQueryMemberExpressionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: Box<TypeQueryMemberExpressionObjectTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
     pub property: Box<PropertyNameTransport>,
 }
@@ -27758,6 +27838,8 @@ pub struct ConstraintTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: TypeTransport,
 }
@@ -33386,10 +33468,10 @@ pub struct ObjectTypeTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_opening"))]
     pub opening: ObjectTypeOpeningEnum,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_closing"))]
-    pub closing: ObjectTypeClosingEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: Option<Vec<ObjectTypeContentTransportSlot>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_closing"))]
+    pub closing: ObjectTypeClosingEnum,
 }
 
 impl RenderableTransport for ObjectTypeTransport {
@@ -38844,6 +38926,108 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TokQDotTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         TokQDotTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Comma2Transport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for Comma2Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for Comma2Transport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            ",".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| ",".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for Comma2Transport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ",".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Comma2Transport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<Comma2Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        Comma2Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<Comma2Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Comma2Transport::to_napi_value(env, *val)
     }
 }
 
@@ -48894,13 +49078,9 @@ fn render__call_signature(node: &_CallSignatureTransport, dest: &mut dyn ::std::
 }
 
 fn render_class_body_member(node: &ClassBodyMemberTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.content.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let template = ClassBodyMemberTemplate {
-        content: match &node.content {
+        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
+        terminator: match &node.terminator {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -49501,6 +49681,7 @@ fn render_type_query_instantiation_expression(node: &TypeQueryInstantiationExpre
 
 fn render_type_query_member_expression(node: &TypeQueryMemberExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TypeQueryMemberExpressionTemplate {
+        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.content.as_ref())),
         object: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.object)),
         property: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.property)),
     };
@@ -49992,6 +50173,7 @@ fn render_conditional_type(node: &ConditionalTypeTransport, dest: &mut dyn ::std
 
 fn render_constraint(node: &ConstraintTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ConstraintTemplate {
+        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.content.as_ref())),
         type_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_)),
     };
     template.render_into(dest)
@@ -51223,6 +51405,7 @@ fn render_object_type(node: &ObjectTypeTransport, dest: &mut dyn ::std::fmt::Wri
             leading: false,
             trailing: false,
         },
+        export_statement: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
         opening: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.opening)),
     };
     template.render_into(dest)
@@ -52089,6 +52272,10 @@ fn render_async(t: &AsyncTransport, dest: &mut dyn ::std::fmt::Write) -> Result<
 }
 
 fn render_tok_qdot(t: &TokQDotTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_comma2(t: &Comma2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -53097,6 +53284,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Colon(t) => t.render_into(dest),
             AnyTransport::Async(t) => t.render_into(dest),
             AnyTransport::TokQDot(t) => t.render_into(dest),
+            AnyTransport::Comma2(t) => t.render_into(dest),
             AnyTransport::Comma(t) => t.render_into(dest),
             AnyTransport::Const(t) => t.render_into(dest),
             AnyTransport::Export(t) => t.render_into(dest),
@@ -53506,6 +53694,7 @@ impl AnyTransport {
             Self::Colon(t) => t.transport_named,
             Self::Async(t) => t.transport_named,
             Self::TokQDot(t) => t.transport_named,
+            Self::Comma2(t) => t.transport_named,
             Self::Comma(t) => t.transport_named,
             Self::Const(t) => t.transport_named,
             Self::Export(t) => t.transport_named,
@@ -53978,6 +54167,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Colon(data) => transport_to_node_colon(data),
         AnyTransport::Async(data) => transport_to_node_async(data),
         AnyTransport::TokQDot(data) => transport_to_node_tok_qdot(data),
+        AnyTransport::Comma2(data) => transport_to_node_comma2(data),
         AnyTransport::Comma(data) => transport_to_node_comma(data),
         AnyTransport::Const(data) => transport_to_node_const(data),
         AnyTransport::Export(data) => transport_to_node_export(data),
@@ -54448,11 +54638,12 @@ fn transport_to_node__call_signature(transport: _CallSignatureTransport) -> Resu
 
 fn transport_to_node_class_body_member(transport: ClassBodyMemberTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.terminator {
+        fields.insert("terminator".to_string(), transport_field_value(class_body_member_terminator_transport_slot_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.content {
-        children_buf.push(class_body_member_content_transport_slot_to_any(value));
-    }
+    children_buf.push(class_body_member_content_transport_slot_to_any(transport.content));
     let children = if children_buf.is_empty() {
         None
     } else {
@@ -56217,6 +56408,7 @@ fn transport_to_node_type_query_instantiation_expression(transport: TypeQueryIns
 fn transport_to_node_type_query_member_expression(transport: TypeQueryMemberExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("object".to_string(), transport_field_value(type_query_member_expression_object_transport_slot_to_any(*transport.object))?);
+    fields.insert("content".to_string(), transport_field_value(*transport.content)?);
     fields.insert("property".to_string(), transport_field_value(property_name_transport_to_any(*transport.property))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -57218,6 +57410,7 @@ fn transport_to_node_conditional_type(transport: ConditionalTypeTransport) -> Re
 
 fn transport_to_node_constraint(transport: ConstraintTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("content".to_string(), transport_field_value(*transport.content)?);
     fields.insert("type".to_string(), transport_field_value(type_transport_to_any(transport.type_))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
@@ -59609,17 +59802,12 @@ fn transport_to_node_object_pattern(transport: ObjectPatternTransport) -> Result
 fn transport_to_node_object_type(transport: ObjectTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("opening".to_string(), transport_field_value(AnyTransport::ObjectTypeOpening(transport.opening))?);
+    if let Some(value) = transport.content {
+        fields.insert("content".to_string(), transport_field_values(value.into_iter().map(|v| object_type_content_transport_slot_to_any(v)).collect::<Vec<_>>())?);
+    }
     fields.insert("closing".to_string(), transport_field_value(AnyTransport::ObjectTypeClosing(transport.closing))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.content {
-        children_buf.extend(value.into_iter().map(|v| object_type_content_transport_slot_to_any(v)).collect::<Vec<_>>());
-    }
-    let children = if children_buf.is_empty() {
-        None
-    } else {
-        Some(transport_children(children_buf)?)
-    };
+    let children = None;
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(337) /* "object_type" */,
@@ -61452,6 +61640,23 @@ fn transport_to_node_tok_qdot(transport: TokQDotTransport) -> Result<TransportNo
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(50) /* "?." */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_comma2(transport: Comma2Transport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(6) /* "comma" */,
         transport.transport_source,
         transport.transport_named,
         true,

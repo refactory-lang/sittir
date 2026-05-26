@@ -328,6 +328,7 @@ export interface ComplexPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _imaginary: PrimaryExpressionTransport
+  _operator: ComplexPatternOperatorEnum
   _content: PrimaryExpressionTransport
 }
 
@@ -624,7 +625,7 @@ export interface FormatSpecifierTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<InterpolationTransport>
+  _content?: Array<FormatSpecifierContentTransportSlot>
 }
 
 export interface ForStatementTransport {

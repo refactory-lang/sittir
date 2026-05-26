@@ -19,7 +19,7 @@
     "_call_expression_call": "config",
     "_call_expression_member": "config",
     "_call_expression_template_call": "config",
-    "_class_body_member": "spread",
+    "_class_body_member": "config",
     "_class_body_method": "config",
     "_class_body_method_sig": "spread",
     "_class_heritage_extends_clause": "config",
@@ -114,7 +114,7 @@
     "comment": "text",
     "computed_property_name": "direct",
     "conditional_type": "config",
-    "constraint": "direct",
+    "constraint": "config",
     "construct_signature": "config",
     "constructor_type": "config",
     "continue_statement": "config",
@@ -651,7 +651,8 @@
       "arguments"
     ],
     "_class_body_member": [
-      "content"
+      "content",
+      "terminator"
     ],
     "_class_body_method": [
       "decorator",
@@ -789,6 +790,7 @@
     ],
     "_type_query_member_expression": [
       "object",
+      "content",
       "property"
     ],
     "_type_query_member_expression_in_type_annotation": [
@@ -949,6 +951,7 @@
       "alternative"
     ],
     "constraint": [
+      "content",
       "type"
     ],
     "construct_signature": [
@@ -1665,6 +1668,13 @@
       "content": {
         "unnamed": false,
         "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "terminator": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": false,
         "multiple": false,
         "nonEmpty": false
@@ -2254,6 +2264,13 @@
     },
     "_type_query_member_expression": {
       "object": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2945,6 +2962,13 @@
       }
     },
     "constraint": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "type": {
         "unnamed": false,
         "slotCount": 1,

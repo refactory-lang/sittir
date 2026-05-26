@@ -360,12 +360,14 @@ pub struct RangeExpressionPrefixTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_range_pattern_left_with_right.jinja", escape = "none")]
 pub struct RangePatternLeftWithRightTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
     pub right: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_range_pattern_prefix.jinja", escape = "none")]
 pub struct RangePatternPrefixTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
     pub right: SingleNonterminalView<'a>,
 }
 
@@ -1398,12 +1400,16 @@ pub struct TokenBindingPatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "token_repetition_pattern.jinja", escape = "none")]
 pub struct TokenRepetitionPatternTemplate<'a> {
+    pub operator: SingleNonterminalView<'a>,
+    pub separator: OptionalNonterminalView<'a>,
     pub token_pattern: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "token_repetition.jinja", escape = "none")]
 pub struct TokenRepetitionTemplate<'a> {
+    pub operator: SingleNonterminalView<'a>,
+    pub separator: OptionalNonterminalView<'a>,
     pub tokens: ListNonterminalView<'a>,
 }
 

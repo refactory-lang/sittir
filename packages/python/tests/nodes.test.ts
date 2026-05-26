@@ -233,12 +233,12 @@ describe('comparison_operator', () => {
 
 describe('complex_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.complexPattern({ imaginary: { $type: TSKindId.Integer, $text: 'test', $source: 2, $named: true } as any, content: { $type: TSKindId.Integer, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.complexPattern({ imaginary: { $type: TSKindId.Integer, $text: 'test', $source: 2, $named: true } as any, operator: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, content: { $type: TSKindId.Integer, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ComplexPattern);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.complexPattern({ imaginary: { $type: TSKindId.Integer, $text: 'test', $source: 2, $named: true } as any, content: { $type: TSKindId.Integer, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.complexPattern({ imaginary: { $type: TSKindId.Integer, $text: 'test', $source: 2, $named: true } as any, operator: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, content: { $type: TSKindId.Integer, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });

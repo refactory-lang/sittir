@@ -785,14 +785,16 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         174 => { // "complex_pattern"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("imaginary"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("real"), true)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("operator"), true)?;
+            let field_2 = resolve_slot(node, SlotAccessor::Field("real"), true)?;
             let template = ComplexPatternTemplate {
                 content: match children.kind {
                 ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
                 ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
             },
                 imaginary: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                real: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                real: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
             };
             template.render_into(dest)
         }

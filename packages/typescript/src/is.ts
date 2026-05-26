@@ -40,7 +40,6 @@ export interface IsGuards {
     AmbientDeclarationDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._AmbientDeclarationDeclaration };
     ArrowFunction_CallSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ArrowFunctionUCallSignature };
     ArrowFunctionParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ArrowFunctionParameter };
-    ClassBodyMember<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassBodyMember };
     ClassBodyMethodSig<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ClassBodyMethodSig };
     ClassHeritageExtendsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ClassHeritageExtendsClause };
     ClassHeritageImplementsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ClassHeritageImplementsClause };
@@ -245,7 +244,6 @@ export interface AssertGuards {
     AmbientDeclarationDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._AmbientDeclarationDeclaration };
     ArrowFunction_CallSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ArrowFunctionUCallSignature };
     ArrowFunctionParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ArrowFunctionParameter };
-    ClassBodyMember(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBodyMember };
     ClassBodyMethodSig(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBodyMethodSig };
     ClassHeritageExtendsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ClassHeritageExtendsClause };
     ClassHeritageImplementsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ClassHeritageImplementsClause };
@@ -767,7 +765,6 @@ export const is = {
     AmbientDeclarationDeclaration: _g(TSKindId._AmbientDeclarationDeclaration),
     ArrowFunction_CallSignature: _g(TSKindId._ArrowFunctionUCallSignature),
     ArrowFunctionParameter: _g(TSKindId._ArrowFunctionParameter),
-    ClassBodyMember: _g(TSKindId.ClassBodyMember),
     ClassBodyMethodSig: _g(TSKindId.ClassBodyMethodSig),
     ClassHeritageExtendsClause: _g(TSKindId._ClassHeritageExtendsClause),
     ClassHeritageImplementsClause: _g(TSKindId._ClassHeritageImplementsClause),
@@ -996,7 +993,6 @@ export const assert = {
     AmbientDeclarationDeclaration: _makeAssert('AmbientDeclarationDeclaration', is.AmbientDeclarationDeclaration as _AnyGuard),
     ArrowFunction_CallSignature: _makeAssert('ArrowFunction_CallSignature', is.ArrowFunction_CallSignature as _AnyGuard),
     ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
-    ClassBodyMember: _makeAssert('ClassBodyMember', is.ClassBodyMember as _AnyGuard),
     ClassBodyMethodSig: _makeAssert('ClassBodyMethodSig', is.ClassBodyMethodSig as _AnyGuard),
     ClassHeritageExtendsClause: _makeAssert('ClassHeritageExtendsClause', is.ClassHeritageExtendsClause as _AnyGuard),
     ClassHeritageImplementsClause: _makeAssert('ClassHeritageImplementsClause', is.ClassHeritageImplementsClause as _AnyGuard),

@@ -6,4 +6,4 @@
 // (FR-020). Mismatch is caught by packages/python/src/backend.ts and
 // falls through to the TS engine silently.
 
-export const TEMPLATE_BUNDLE_HASH = '0d9c8803506a37384949df737e511082c004f6a111c7a149a6deccc3f3a53021'
+export const TEMPLATE_BUNDLE_HASH = 'f00b7bd0435aef04cbf7152720a48223bfbbeb48f590663eff58614b7ba6fff9'

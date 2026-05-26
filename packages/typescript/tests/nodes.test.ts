@@ -452,12 +452,12 @@ describe('conditional_type', () => {
 
 describe('constraint', () => {
   it('factory produces correct type', () => {
-    const node = ir.constraint({ $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any);
+    const node = ir.constraint({ content: 'test' as any, type: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.Constraint);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.constraint({ $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any);
+    const node = ir.constraint({ content: 'test' as any, type: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });

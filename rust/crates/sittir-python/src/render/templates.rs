@@ -303,6 +303,7 @@ pub struct ComparisonOperatorTemplate<'a> {
 pub struct ComplexPatternTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
     pub imaginary: SingleNonterminalView<'a>,
+    pub operator: SingleNonterminalView<'a>,
     pub real: SingleNonterminalView<'a>,
 }
 

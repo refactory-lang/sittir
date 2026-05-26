@@ -2992,17 +2992,22 @@
             "source": "override"
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "+"
-              },
-              {
-                "type": "STRING",
-                "value": "-"
-              }
-            ]
+            "type": "FIELD",
+            "name": "operator",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "+"
+                },
+                {
+                  "type": "STRING",
+                  "value": "-"
+                }
+              ]
+            },
+            "source": "override"
           },
           {
             "type": "CHOICE",
@@ -7028,6 +7033,9 @@
       "value": "-"
     },
     "_kw_imaginary": {
+      "type": "BLANK"
+    },
+    "_kw_operator": {
       "type": "BLANK"
     },
     "_kw_body": {

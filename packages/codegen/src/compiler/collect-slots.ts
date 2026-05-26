@@ -397,12 +397,17 @@ function buildSlot(
 				break;
 			}
 			default:
-				// pattern / enum / aliased leaf with no fieldName and no
-				// nameable kind — should not occur as a bare positional slot
-				// (they only reach collection via a fieldName or a repeat
-				// ancestor that supplies one). Elide rather than synthesize a
-				// phantom name.
-				return null;
+				// Any OTHER nonterminal slot (per `classifyByType`) with no
+				// fieldName and no nameable kind — `pattern` / `enum` / aliased
+				// leaf → `content`, like an unnamed choice. `buildSlot` is only
+				// reached for nonterminal positions, so we must NOT elide based on
+				// rule.type: patterns and enums are structural slots (the catalog
+				// classifies them nonterminal). Eliding here dropped real slots
+				// (e.g. token_repetition's operator enum + separator pattern).
+				baseName = 'content';
+				source = (rule as { source?: RuleSource }).source ?? 'inferred';
+				origin = 'kind';
+				break;
 		}
 	}
 

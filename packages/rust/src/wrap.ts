@@ -987,10 +987,13 @@ export function wrapRangePatternLeftWithRight(data: T.RangePatternLeftWithRight,
   const _node = withMethods({
     ...data,
     $type: TSKindId.RangePatternLeftWithRight as const,
+    _content: projectKindEnumStorage(normalizeSingularWrapSlot((data._dot_dot_dot ?? data._dot_dot_eq ?? data._dot_dot ?? data._content), "content", true, data.$type)),
     _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type),
 
+    content() { return this._content; },
     right() { return drillIn<T.LiteralPattern | T.Path>(this._right, tree); },
     $with: {
+      content: (v: NonNullable<T.RangePatternLeftWithRight['_content']>) => wrapRangePatternLeftWithRight({ ...data, _content: v }, tree),
       right: (v: NonNullable<T.RangePatternLeftWithRight['_right']>) => wrapRangePatternLeftWithRight({ ...data, _right: v }, tree),
     },
   }, methodsEngine);
@@ -1001,10 +1004,13 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.RangePatternPrefix as const,
+    _content: projectKindEnumStorage(normalizeSingularWrapSlot((data._dot_dot_eq ?? data._dot_dot ?? data._content), "content", true, data.$type)),
     _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type),
 
+    content() { return this._content; },
     right() { return drillIn<T.LiteralPattern | T.Path>(this._right, tree); },
     $with: {
+      content: (v: NonNullable<T.RangePatternPrefix['_content']>) => wrapRangePatternPrefix({ ...data, _content: v }, tree),
       right: (v: NonNullable<T.RangePatternPrefix['_right']>) => wrapRangePatternPrefix({ ...data, _right: v }, tree),
     },
   }, methodsEngine);
@@ -3382,9 +3388,17 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle) {
     ...data,
     $type: TSKindId.TokenRepetition as const,
     _tokens: normalizeRepeatedWrapSlot([..._toArr(data._token_tree), ..._toArr(data._token_repetition), ..._toArr(data._metavariable), ..._toArr(data._string_literal), ..._toArr(data._raw_string_literal), ..._toArr(data._char_literal), ..._toArr(data._boolean_literal), ..._toArr(data._integer_literal), ..._toArr(data._float_literal), ..._toArr(data._identifier), ..._toArr(data._mutable_specifier), ..._toArr(data._self), ..._toArr(data._super), ..._toArr(data._crate), ..._toArr(data["_'"]), ..._toArr(data._tokens)], false, "tokens"),
+    _separator: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._separator, "separator", false, data.$type)),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type)),
 
     tokens() { return drillInAll<T.Tokens>(this._tokens as readonly T.Tokens[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapTokenRepetition({ ...data, $children: vs }, tree) },
+    separator() { return this._separator; },
+    operator() { return this._operator; },
+    $with: {
+      tokens: (...v: NonNullable<T.TokenRepetition['_tokens']>[number][]) => wrapTokenRepetition({ ...data, _tokens: v }, tree),
+      separator: (v: NonNullable<T.TokenRepetition['_separator']>) => wrapTokenRepetition({ ...data, _separator: v }, tree),
+      operator: (v: NonNullable<T.TokenRepetition['_operator']>) => wrapTokenRepetition({ ...data, _operator: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -3394,9 +3408,17 @@ export function wrapTokenRepetitionPattern(data: T.TokenRepetitionPattern, tree:
     ...data,
     $type: TSKindId.TokenRepetitionPattern as const,
     _token_pattern: normalizeRepeatedWrapSlot([..._toArr(data._token_tree_pattern), ..._toArr(data._token_repetition_pattern), ..._toArr(data._token_binding_pattern), ..._toArr(data._metavariable), ..._toArr(data._string_literal), ..._toArr(data._raw_string_literal), ..._toArr(data._char_literal), ..._toArr(data._boolean_literal), ..._toArr(data._integer_literal), ..._toArr(data._float_literal), ..._toArr(data._identifier), ..._toArr(data._mutable_specifier), ..._toArr(data._self), ..._toArr(data._super), ..._toArr(data._crate), ..._toArr(data["_'"]), ..._toArr(data._token_pattern)], false, "token_pattern"),
+    _separator: coerceBooleanKeywordStorage(normalizeSingularWrapSlot(data._separator, "separator", false, data.$type)),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type)),
 
     tokenPatterns() { return drillInAll<T.TokenPattern>(this._token_pattern as readonly T.TokenPattern[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapTokenRepetitionPattern({ ...data, $children: vs }, tree) },
+    separator() { return this._separator; },
+    operator() { return this._operator; },
+    $with: {
+      tokenPatterns: (...v: NonNullable<T.TokenRepetitionPattern['_token_pattern']>[number][]) => wrapTokenRepetitionPattern({ ...data, _token_pattern: v }, tree),
+      separator: (v: NonNullable<T.TokenRepetitionPattern['_separator']>) => wrapTokenRepetitionPattern({ ...data, _separator: v }, tree),
+      operator: (v: NonNullable<T.TokenRepetitionPattern['_operator']>) => wrapTokenRepetitionPattern({ ...data, _operator: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
@@ -4287,6 +4309,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'loop_expression_optional1': '_loop_expression_optional1',
   'match_arm_with_comma': '_match_arm_with_comma',
   'move_marker': '_move_marker',
+  'operator': '_operator',
   'or_pattern_binary': '_or_pattern_binary',
   'or_pattern_prefix': '_or_pattern_prefix',
   'path': '_path',

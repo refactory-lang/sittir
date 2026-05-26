@@ -129,6 +129,7 @@ export const LEAF_KINDS = [
   '__future__',
   '_async_marker',
   '_augmented_assignment_operator',
+  '_complex_pattern_operator',
   '_dedent',
   '_identifier',
   '_indent',
@@ -1235,6 +1236,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'complex_pattern': [
     { name: 'imaginary', required: true, multiple: false },
+    { name: 'operator', required: true, multiple: false },
     { name: 'content', required: true, multiple: false },
   ],
   'concatenated_string': [
@@ -1580,6 +1582,13 @@ export const _AUGMENTED_ASSIGNMENT_OPERATORS = [
   '|=',
 ] as const;
 export type AugmentedAssignmentOperatorValue = (typeof _AUGMENTED_ASSIGNMENT_OPERATORS)[number];
+
+/** Valid values for `_complex_pattern_operator` nodes. */
+export const _COMPLEX_PATTERN_OPERATORS = [
+  '+',
+  '-',
+] as const;
+export type ComplexPatternOperatorValue = (typeof _COMPLEX_PATTERN_OPERATORS)[number];
 
 /** Valid values for `_identifier` nodes. */
 export const _IDENTIFIERS = [

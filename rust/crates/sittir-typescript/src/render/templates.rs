@@ -151,7 +151,8 @@ pub struct CallExpressionTemplateCallTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_class_body_member.jinja", escape = "none")]
 pub struct ClassBodyMemberTemplate<'a> {
-    pub content: OptionalNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
+    pub terminator: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -412,6 +413,7 @@ pub struct TypeQueryMemberExpressionInTypeAnnotationTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_type_query_member_expression.jinja", escape = "none")]
 pub struct TypeQueryMemberExpressionTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
     pub object: SingleNonterminalView<'a>,
     pub property: SingleNonterminalView<'a>,
 }
@@ -689,6 +691,7 @@ pub struct ConditionalTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "constraint.jinja", escape = "none")]
 pub struct ConstraintTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
     pub type_: SingleNonterminalView<'a>,
 }
 
@@ -1336,6 +1339,7 @@ pub struct ObjectPatternTemplate<'a> {
 pub struct ObjectTypeTemplate<'a> {
     pub closing: SingleNonterminalView<'a>,
     pub content: ListNonterminalView<'a>,
+    pub export_statement: SingleNonterminalView<'a>,
     pub opening: SingleNonterminalView<'a>,
 }
 

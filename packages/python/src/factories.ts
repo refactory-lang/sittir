@@ -675,17 +675,21 @@ export function comparisonOperator(config: T.ComparisonOperator.Config) {
 
 export function complexPattern(config: T.ComplexPattern.Config) {
   const _imaginary = config.imaginary;
+  const _operator = coerceKindEnumStorage(config.operator, [["+", TSKindId.Plus] as const, ["-", TSKindId.Dash] as const]);
   const _content = config.content;
   return withMethods({
     $type: TSKindId.ComplexPattern as const,
     $source: 2 as const,
     $named: true as const,
     _imaginary,
+    _operator,
     _content,
     imaginary() { return _imaginary; },
+    operator() { return _operator; },
     content() { return _content; },
     $with: {
       imaginary: (value: T.Integer | T.Float) => complexPattern({ ...config, imaginary: value }),
+      operator: (value: NonNullable<Parameters<typeof complexPattern>[0]>['operator']) => complexPattern({ ...config, operator: value }),
       content: (value: T.Integer | T.Float) => complexPattern({ ...config, content: value }),
     },
   }, methodsEngine);

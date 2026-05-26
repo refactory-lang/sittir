@@ -11,6 +11,7 @@
     "_async_marker": "text",
     "_augmented_assignment_operator": "text",
     "_comparison_operator_comparator": "config",
+    "_complex_pattern_operator": "text",
     "_comprehension_clauses": "config",
     "_except_clause_as": "config",
     "_identifier": "text",
@@ -392,6 +393,7 @@
     ],
     "complex_pattern": [
       "imaginary",
+      "operator",
       "content"
     ],
     "concatenated_string": [
@@ -1162,6 +1164,13 @@
     },
     "complex_pattern": {
       "imaginary": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "operator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,

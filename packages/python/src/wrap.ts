@@ -878,12 +878,15 @@ export function wrapComplexPattern(data: T.ComplexPattern, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ComplexPattern as const,
     _imaginary: normalizeSingularWrapSlot(data._imaginary, "imaginary", true, data.$type),
+    _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type)),
     _content: normalizeSingularWrapSlot((data._integer ?? data._float ?? data._content), "content", true, data.$type),
 
     imaginary() { return drillIn<T.Integer | T.Float>(this._imaginary, tree); },
+    operator() { return this._operator; },
     content() { return drillIn<T.Integer | T.Float>(this._content, tree); },
     $with: {
       imaginary: (v: NonNullable<T.ComplexPattern['_imaginary']>) => wrapComplexPattern({ ...data, _imaginary: v }, tree),
+      operator: (v: NonNullable<T.ComplexPattern['_operator']>) => wrapComplexPattern({ ...data, _operator: v }, tree),
       content: (v: NonNullable<T.ComplexPattern['_content']>) => wrapComplexPattern({ ...data, _content: v }, tree),
     },
   }, methodsEngine);
@@ -1264,7 +1267,7 @@ export function wrapFormatSpecifier(data: T.FormatSpecifier, tree: TreeHandle) {
     $type: TSKindId.FormatSpecifier as const,
     _content: normalizeRepeatedWrapSlot([..._toArr(data._format_expression), ..._toArr(data._content)], false, "content"),
 
-    contents() { return drillAsAll<T.Interpolation>(this._content, tree, "format_expression", "interpolation"); },
+    contents() { return drillAsAll<"[^{}\\n]+" | T.Interpolation>(this._content, tree, "format_expression", "interpolation"); },
     $with: { $children: (...vs: readonly [never]) => wrapFormatSpecifier({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -2401,6 +2404,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'async_marker': '_async_marker',
   'augmented_assignment_operator': '_augmented_assignment_operator',
   'comparison_operator_comparator': '_comparison_operator_comparator',
+  'complex_pattern_operator': '_complex_pattern_operator',
   'comprehension_clauses': '_comprehension_clauses',
   'dict_pattern_kv': '_dict_pattern_kv',
   'except_clause_as': '_except_clause_as',

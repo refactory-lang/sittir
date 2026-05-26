@@ -12362,17 +12362,22 @@
           ]
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_semicolon"
-            },
-            {
-              "type": "STRING",
-              "value": ","
-            }
-          ]
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_semicolon"
+              },
+              {
+                "type": "STRING",
+                "value": ","
+              }
+            ]
+          },
+          "source": "override"
         }
       ]
     },
@@ -12630,6 +12635,9 @@
       "type": "BLANK"
     },
     "_kw_expression": {
+      "type": "BLANK"
+    },
+    "_kw_terminator": {
       "type": "BLANK"
     },
     "_kw_accessor_kind": {

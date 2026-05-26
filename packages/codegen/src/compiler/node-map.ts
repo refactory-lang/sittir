@@ -1045,7 +1045,13 @@ export function deriveValuesForRule(
 				parseKind: { kind: 'unresolved-ref' as const, name },
 				multiplicity: relaxForOptionalBody(name, multiplicity)
 			}));
-		case 'string': {
+		case 'string':
+		// A `pattern` is a NONTERMINAL slot (classifyByType), but its VALUE is the
+		// anonymous-token text it matches — a terminal value, like a `string` or an
+		// `enum` member. Without this case it fell to `default: return []`, so a
+		// pattern slot had no values and was elided (e.g. token_repetition's
+		// separator pattern never became a slot).
+		case 'pattern': {
 			const rk = findGeneratedKindEntry(kindEntries ?? [], rule.value)?.kind;
 			return [
 				{

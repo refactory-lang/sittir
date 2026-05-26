@@ -456,7 +456,7 @@ export const enum TSKindId {
   Star2 = 3,
   As = 4,
   Lbrace = 5,
-  Comma = 6,
+  Comma2 = 6,
   Rbrace = 7,
   AnonType = 8,
   Typeof = 9,
@@ -1315,7 +1315,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "star": return TSKindId.Star2;
     case "as": return TSKindId.As;
     case "lbrace": return TSKindId.Lbrace;
-    case "comma": return TSKindId.Comma;
+    case "comma": return TSKindId.Comma2;
     case "rbrace": return TSKindId.Rbrace;
     case "anon_type": return TSKindId.AnonType;
     case "typeof": return TSKindId.Typeof;
@@ -1738,7 +1738,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_type_identifier": return TSKindId.TypeIdentifier;
     case "*": return TSKindId.Star2;
     case "{": return TSKindId.Lbrace;
-    case ",": return TSKindId.Comma;
+    case ",": return TSKindId.Comma2;
     case "}": return TSKindId.Rbrace;
     case "!": return TSKindId.Bang;
     case "(": return TSKindId.Lparen;
@@ -2187,8 +2187,10 @@ export interface _CallSignature {
 
 export interface ClassBodyMember {
   readonly $type: TSKindId.ClassBodyMember;
-  readonly _content?: AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition | Semicolon | ",";
-  content(): AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition | Semicolon | "," | undefined;
+  readonly _content: AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
+  readonly _terminator?: Semicolon | ",";
+  content(): AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
+  terminator(): Semicolon | "," | undefined;
 }
 
 export interface ClassBodyMethod {
@@ -2627,8 +2629,13 @@ export interface TypeQueryInstantiationExpression {
 export interface TypeQueryMemberExpression {
   readonly $type: TSKindId.TypeQueryMemberExpression;
   readonly _object: Identifier | This | TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression;
+  readonly _content: number;
   readonly _property: PrivatePropertyIdentifier | Identifier;
+  readonly __inputHints__?: {
+    readonly content: KindEnum<"." | "?.", TSKindId.Dot | TSKindId.QmarkDot>;
+  };
   object(): Identifier | This | TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression;
+  content(): number;
   property(): PrivatePropertyIdentifier | Identifier;
 }
 
@@ -3020,7 +3027,12 @@ export interface ConditionalType {
 
 export interface Constraint {
   readonly $type: TSKindId.Constraint;
+  readonly _content: number;
   readonly _type: Type;
+  readonly __inputHints__?: {
+    readonly content: KindEnum<"extends" | ":", TSKindId.Extends | TSKindId.Colon>;
+  };
+  content(): number;
   type(): Type;
 }
 
@@ -3896,14 +3908,14 @@ export interface ObjectPattern {
 export interface ObjectType {
   readonly $type: TSKindId.ObjectType;
   readonly _opening: number;
-  readonly _content?: readonly (ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | "," | Semicolon)[];
+  readonly _content?: readonly ("," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon)[];
   readonly _closing: number;
   readonly __inputHints__?: {
     readonly opening: KindEnum<"{" | "{|", TSKindId.Lbrace | TSKindId.LbracePipe>;
     readonly closing: KindEnum<"}" | "|}", TSKindId.Rbrace | TSKindId.PipeRbrace>;
   };
   opening(): number;
-  contents(): readonly (ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | "," | Semicolon)[];
+  content(): readonly ("," | ";" | ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature | Semicolon)[];
   closing(): number;
 }
 

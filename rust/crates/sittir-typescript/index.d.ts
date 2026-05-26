@@ -466,7 +466,8 @@ export interface ClassBodyMemberTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: ClassBodyMemberContentTransportSlot
+  _terminator?: ClassBodyMemberTerminatorTransportSlot
+  _content: ClassBodyMemberContentTransportSlot
 }
 
 export interface ClassBodyMethodSigTransport {
@@ -636,6 +637,7 @@ export interface ConstraintTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _content: Box<AnyTransport>
   _type: TypeTransport
 }
 
@@ -2069,8 +2071,8 @@ export interface ObjectTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _opening: ObjectTypeOpeningEnum
-  _closing: ObjectTypeClosingEnum
   _content?: Array<ObjectTypeContentTransportSlot>
+  _closing: ObjectTypeClosingEnum
 }
 
 export interface OmittingTypeAnnotationTransport {
@@ -2796,6 +2798,7 @@ export interface TypeQueryMemberExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _object: Box<TypeQueryMemberExpressionObjectTransportSlot>
+  _content: Box<AnyTransport>
   _property: Box<PropertyNameTransport>
 }
 
