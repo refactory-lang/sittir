@@ -522,8 +522,8 @@ encapsulated behavior (`isTextTemplate`, `textTemplate`, `hidden` getter,
 
 ### Target class shape (END-STATE)
 
-The Model speaks **one casing: snake_case** (Q1 decision), and **one slot
-identity: `storageName`** — there is no `name` alias in the end-state. camelCase
+The Model speaks **one casing: snake_case** (Q1 decision), and **one STORED slot
+identity: `storageName`** — `name` survives only as a **getter** over `storageName` (a pure projection with parity to `node.name`; #1 holds — one SOURCE, the getter can't drift). The old *stored* `name` field is what's gone. camelCase
 is **never** the identity; it is a projection-time transform (`snakeToCamel`,
 applied by the consuming emitter or surfaced via the explicit
 `configKey`/`propertyName`/`paramName` accessors). This satisfies principle #3
@@ -567,9 +567,11 @@ export class AssembledNonterminal {
 
   // ---------------------------------------------------------------
   // Naming — ONE derivation (the today-inert `_new` logic, promoted to
-  // canonical). `fieldName` wins; else the single referenced render/source
-  // kind name (`value.kind.name`); else the SANCTIONED `content` fallback
-  // (§4c, C3 — a real named slot that renders `{{ content }}`; warn, not fail).
+  // canonical). `fieldName` wins; else the single **parse-as** kind name
+  // (`value.parseKind.name` — implementer-confirmed via PR-A parity: `_suite`→`block`,
+  // not `simple_statements`; coincides with the render kind except for aliased/variant);
+  // else the SANCTIONED `content` fallback (§4c — warn for ONE per node; 2+ `content`
+  // slots on one node = fail{content-collision}).
   // Replaces: legacy buildSlot baseName/origin (collect-slots.ts:304-370), the
   // `_new` suffixed fields (node-map.ts:1505-1507), AND wrap.ts's SlotModel.
   //
@@ -581,11 +583,12 @@ export class AssembledNonterminal {
   //  exactly that distinction, replacing the slot-level `aliasSources` map.)
   // The END-STATE has exactly ONE identity: `storageName` (snake_case).
   // ---------------------------------------------------------------
-  get storageName(): string {                // snake_case — THE single identity (no `name` alias)
+  get storageName(): string {                // snake_case — THE single STORED identity
     if (this.fieldName !== undefined) return this.fieldName;
-    if (this.kinds.length === 1) return this.kinds[0]!;
-    return 'content';                        // sanctioned anonymous-content slot (§4c) — warn, not fail
+    if (this.parseNames.length === 1) return this.parseNames[0]!;  // PARSE-AS kind (value.parseKind.name), not render kind — implementer-confirmed (PR-A parity: `_suite`→`block`)
+    return 'content';                        // §4c anonymous-content: warn for ONE; 2+ on one node = fail{content-collision}
   }
+  get name(): string { return this.storageName; }  // snake_case convenience alias = storageName (parity with node.name); NOT the identity — pure projection (#1/#3)
   get storageKey(): string { return `_${this.storageName}`; } // tree-sitter-facing key; no $children/$other catch-all
   get parseNames(): readonly string[] {      // parser routes by field, else by per-value parse-as kind
     return this.fieldName !== undefined ? [this.fieldName] : dedupe(this.values.map((v) => v.parseKind.name));
@@ -1058,6 +1061,10 @@ Plus the two non-`propose` slot diagnostics already specced:
 - **`content` slot** → `warn{anonymous-content}`, a **sanctioned non-fail** path
   for genuinely-anonymous structural content (§4c — the C3 reconciliation; an
   earlier draft's blanket `fail{unnamed-slot}` was proven wrong by discovery).
+  **But 2+ `content` slots on the SAME node → `fail{content-collision}`** — two
+  slots cannot share the `_content` storage key, so the node can't be emitted
+  unambiguously; the author must `field()`-name at least one. (This is the PR-A
+  naming call — the parity check needs it to define a correct `storageName`.)
 - **unslotted child** → `fail{unslotted-child}` — a non-empty wrap-only `$other`
   bucket (JC5); `$other` never renders, so the defect surfaces here. (Distinct
   from a `content` slot, which IS a real named slot that renders — §4c.)
@@ -1101,9 +1108,14 @@ Examples (all `modelType: branch`/`group`, all rendered via `{{ content }}`):
 **sanctioned, deterministic outcome** — a choice/seq body with no `fieldName`
 and no shared-arm field name resolves to ONE slot named `content`. It is a real
 named slot: it renders (`{{ content }}`), stores at `_content`, and round-trips.
-It is **NOT** a `fail`. The `fail` is reserved for the *truly* unresolvable case:
-a slot whose `kinds`/`values` are empty or contradictory (nothing to render) —
-that is `fail{code:'empty-slot'}`, orthogonal to `content`.
+A **single** `content` slot per node is **NOT** a `fail`. Two `fail` cases are
+reserved: (1) a slot whose `kinds`/`values` are empty or contradictory (nothing
+to render) — `fail{code:'empty-slot'}`; (2) **2+ `content` slots on the SAME node
+— `fail{code:'content-collision'}`** — they would share the `_content` storage
+key (an unemittable ambiguity), so the author must `field()`-name at least one.
+A lone `content` slot stays sanctioned (warn). *(This is the call PR-A must make:
+without deciding the `content`-collision boundary, the storageName parity check
+is undefined for the multi-`content` case.)*
 
 **Distinguishing it from the deleted heuristic:** what is removed is the
 *guess* — `inferFieldNames`'s "≥5 refs / ≥80% agreement → fabricate a name."
@@ -1433,8 +1445,8 @@ live at `link.ts:2338`) — it is removed by **PR-M** in THIS spec (§C).
 |---|---|---|---|---|
 | ~~**PR3**~~ ✅ **DONE (#36, `ee3d7a0b`)** | Delete legacy render walker + render-fidelity fixes + staleness guard | Deleted the walker *pipeline* + `renderTemplate()` methods + the legacy call sites. **NOTE:** `template-walker.ts` SURVIVES as a query-helper module (`findRepeatSeparator`/`findRepeatFlag`/`findFieldsWithRepeatFlag`); wrapper rule types + ClauseRule were NOT removed (→ PR-M). | (landed) | — |
 | ~~**PR-A0**~~ ✅ **DONE (#36, `c38ffbf1` + `a91927c6`)** | Normalize losslessness fix — `collapseWrappers`/`canonicalizeSeqOfLeaves`/`fanOut`/`factor` preserve `id`/`separator` | `withAttrsFrom`/`combineMultiplicity` centralized in `compiler/rule-attrs.ts`; the single-member-collapse + wrapper-fold arms thread `withAttrsFrom`. Normalize is genuinely lossless (#2 enforced). | (landed — probe satisfied) | — |
-| **PR-A** | Reconcile `_new` naming to legacy (diff → 0), WIDE probe | No emitter changes. Probe asserts each projected name = its getter-computed value: `storageName` vs `storageNameNew`, `name`→`storageName`, `configKey`/`propertyName`/`paramName`/`parseNames` vs the §2 getter formulas. **`parseNames` probe stays on the CURRENT formula** — `parseNamesNew ≡ ref-kinds ∪ Object.keys(aliasSources)` post-`expandRuntimeDiscriminatorKinds` (`factory-map.ts:280`); per-value `value.parseKind` does NOT exist yet (PR-B adds it), so PR-A only validates the current `_new` field. *(Equivalence note: post-expansion the alias source name is redundant with the target, and per-value `parseKind` has no map-ambiguity — so the PR-B decomposition is value-identical to the PR-A formula, just relocated.)* Fix `collect-slots.ts`/`simplify.ts` until **all** divergences = 0 (H1). | the WIDE divergence probe = 0 for every projected name; counts unchanged | no consumer reads `_new` yet; the probe guarantees every getter PR-B introduces is byte-identical |
-| **PR-B** | `AssembledNonterminal` → class + per-value `kind`/`parseKind` refs (+ `sourceRuleIds`) | Swap the interface for the class (§2 getters). Delete the `_new` suffixed fields (now getters). One slot identity: `storageName`; migrate `slot.name`→`slot.storageName`. **Add `kind` (render/source) + `parseKind` (parse-as) kind REFS to `NodeRef`/`TerminalValue` (`node-map.ts:166/193`)** — resolve the `kind`-discriminant collision (§7.3 flag); **`TerminalValue.resolvedKind`→`parseKind`**. Set them in `deriveValuesForRule` (`node-map.ts:977`): symbol case (`:999/1004`) `parseKind = rule.name` target when aliased else the kind; literal case `:1029/1038` resolvedKind→`parseKind`. `kinds`/`parseNames` now project `values`. **FOLD-1:** `sourceRuleId?` → **`sourceRuleIds: RuleId[]`** (every renderRule + simplifiedRule position the slot occupies); `slotByRuleId` maps EACH id → the slot (§7.6). | counts unchanged (byte-identical, guaranteed by PR-A's WIDE probe + the equivalence note); `slotByRuleId` resolves at both views | every getter value-identical in PR-A; per-value `parseKind` reproduces `parseNamesNew` post-expansion; `sourceRuleIds` is purely additive registration (more ids → fewer misses, never a behavior change) |
+| **PR-A** | Reconcile `_new` naming to legacy (diff → 0), WIDE probe | No emitter changes. Probe asserts each projected name = its getter-computed value: `storageName` vs `storageNameNew`, `name`→`storageName`, `configKey`/`propertyName`/`paramName`/`parseNames` vs the §2 getter formulas. **FRONT-LOADS the value→`parseKind` decomposition (was PR-B's)** — the WIDE probe proved the naive `_new` proxies diverge from legacy and can't reconcile without it. Two corrections: (1) `storageName` names from the **parse-as** kind (`value.parseKind.name`), NOT `kindsOf`/render kind — 13 divergences, e.g. `_suite`→`block` is RIGHT (the naive `simple_statements` was an error); (2) `parseNames` = `values.map(v => v.parseKind.name)`, NOT `ref-kinds ∪ Object.keys(aliasSources)` — 7 over-inclusions (`semicolon`/`newline` terminals, un-collapsed `public_field_definition_*` variant-forms, `last_match_arm`); the claimed `expandRuntimeDiscriminatorKinds` equivalence does NOT hold. **Naming call PR-A MUST make (else the parity check is undefined):** unnamed slot with >1 distinct `parseKind` → `content` (warn); **2+ `content` slots on one node → `fail{content-collision}`** (§4c). Probe target = **0 unexpected divergences + N allowlisted intentional renames** (each count-gated on `validate:native`), NOT strict byte-identity. Fix `collect-slots.ts`/`simplify.ts` until **all** divergences = 0 (H1). | the WIDE divergence probe = 0 for every projected name; counts unchanged | no consumer reads `_new` yet; the probe guarantees every getter PR-B introduces is byte-identical |
+| **PR-B** | `AssembledNonterminal` → class + per-value `kind`/`parseKind` refs (+ `sourceRuleIds`) | Swap the interface for the class (§2 getters). Delete the `_new` suffixed fields (now getters). One STORED identity: `storageName`; **`slot.name` becomes a getter over it (NO read-site migration — the ~65 `name` reads keep working)**. *(The `kind`/`parseKind` value-ref decomposition below front-loads to PR-A — the parity check needs it; PR-B then consumes it.)* **Add `kind` (render/source) + `parseKind` (parse-as) kind REFS to `NodeRef`/`TerminalValue` (`node-map.ts:166/193`)** — resolve the `kind`-discriminant collision (§7.3 flag); **`TerminalValue.resolvedKind`→`parseKind`**. Set them in `deriveValuesForRule` (`node-map.ts:977`): symbol case (`:999/1004`) `parseKind = rule.name` target when aliased else the kind; literal case `:1029/1038` resolvedKind→`parseKind`. `kinds`/`parseNames` now project `values`. **FOLD-1:** `sourceRuleId?` → **`sourceRuleIds: RuleId[]`** (every renderRule + simplifiedRule position the slot occupies); `slotByRuleId` maps EACH id → the slot (§7.6). | counts unchanged (byte-identical, guaranteed by PR-A's WIDE probe + the equivalence note); `slotByRuleId` resolves at both views | every getter value-identical in PR-A; per-value `parseKind` reproduces `parseNamesNew` post-expansion; `sourceRuleIds` is purely additive registration (more ids → fewer misses, never a behavior change) |
 | **PR-C** | Eliminate `origin` + slot `aliasSources`; re-point behavior reads to `slot.isUnnamed` / `value.parseKind`; drop dead `'inlined'` | Replace `slot.origin === 'kind'` (`wrap.ts:470`) + every **behavior** read of `slot.source === 'inferred'` (`shared.ts:1056/1138/1173`, `render-module.ts:585/597/656/669`, `templates.ts:1540`) with `slot.isUnnamed`. **Remove the slot-level `aliasSources` map; re-point the 4 reader sites** (`collectConcreteStorageKeys` `wrap.ts:470` + the alias loops `wrap.ts:648/698`) to **`value.parseKind`**; **DELETE `deriveAliasSources` (`node-map.ts:908`) + the slot alias-merges (`collect-slots.ts:251`, `node-map.ts:809/2149`)** — values carry `parseKind` through merges. Delete `origin`+`SlotOrigin`. KEEP the `'inferred'` producer + diagnostic read (`node-model.ts:318`, #15). Drop `'inlined'` from `SlotSource`. | counts unchanged; wrap + render + factory-mode byte-diff; the `type_query` dual preserved per-value; `node-model.json5` still serializes `source` | `isUnnamed`/`value.parseKind` are the structural signals `origin`/`source==='inferred'`/`aliasSources` approximated; per-value `parseKind` carries the alias-target/variant-base distinction the map did, without map-ambiguity |
 | **PR-D** | wrap reads the class; delete `SlotModel`; `$children`→`$other` (paired codegen+rust) | Delete `compiler/slot-model.ts`. wrap.ts reads `slot.arity`/`slot.storageKey` getters instead of `createNamedSlotModel(...)`. **Redesign** the `$children` catch-all → wrap-only `$other` bucket (Finding 3 / Q4 / JC5). **Rust-reader twin (M2):** the napi reader's child-routing pass — which today routes unmatched children to a `$children`-keyed field — re-targets them to a `$other`-keyed accumulator; the reader emits `$other` ONLY for parsed children matching no named slot, and the codegen emits the matching rust struct field (a `Vec` of raw transports, NOT a typed slot). Both sides land together. **ACCEPTANCE CRITERION (generated-code-cleanup item 1, `wrap.ts:3653`):** for a `nonEmptyArray`-of-group-kind slot, `$with` must emit a **variadic-of-element** signature — `$with: { <slot>: (...vs: readonly [T.X, ...T.X[]]) => wrap…({ ...data, _<group>: vs }, tree) }` — updating the backing `_<group>` storageName key, **NOT** the uncallable `(...vs: readonly [never])`. Branch on slot multiplicity; key on `storageName`, not `$children`. | counts (esp. rust read-render-parse ast); wrap byte-diff; rust `cargo check`; **`$with` for a group-list slot is callable (variadic-of-element, not `[never]`)** | `arity`/`storageKey` getters are identical functions to `SlotModel`'s; `$other` is wrap+reader-only so no typed/render surface changes; a multiplicity-branched `$with` handles the group-list shape by construction (#9) |
 | **PR-D2** | Helper names must not leak into slot `values` (H2 — fixes a real OPEN bug) | **Discovery (cited):** today rust leaks 5 synthesized-helper names into slot values — `const_item.const_item_optional1 → _const_item_optional1`, `for_expression`, `function_signature_item`, `let_declaration` (`_..._optional3`), `loop_expression` (verified against `node-model.json5`); ts/python leak 0. Ensure the slot's `values` hold the **inlined target kinds**, not the `_<parent>_optionalN`/`_repeatN` helper name. Fix in Normalize/Simplify (`inlineRefs`/`reapplyInlinedLeafAttrs`, `simplify.ts:356/366`): when a helper ref is inlined, the surviving slot value must reference the helper's CONTENT kinds, not the helper symbol. | the H2 leak probe = 0 across all 3 grammars (rust 5→0); counts unchanged | makes PR-E's assumption TRUE before PR-E relies on it; the leaked names render to invalid kinds today, so fixing them only corrects |
@@ -2159,7 +2171,7 @@ by a separate pass when the graph already encodes it.**
    (matches `_new`), or keep `name`=snake to minimize churn and only rename
    internally? Recommend: keep `name`=snake, rename the camel accessor
    explicitly. **This decision sizes PR-B.**
-   - **✅ DECIDED (2026-05-22): `slot.name` = snake_case** — maximally consistent with kind/field/storage names (the whole Model speaks one casing). camelCase is a separately-named accessor / projection-time `snakeToCamel` transform (principle #3), not the canonical identity. Matches recommendation; minimal churn.
+   - **✅ DECIDED (2026-05-22): `slot.name` = snake_case** — maximally consistent with kind/field/storage names (the whole Model speaks one casing). camelCase is a separately-named accessor / projection-time `snakeToCamel` transform (principle #3), not the canonical identity. Matches recommendation; minimal churn. **(UPDATED 2026-05-26:** `slot.name` is RETAINED as a **getter** over `storageName` — `storageName` is the canonical STORED identity; `name` is a pure projection alias with parity to `node.name`, so PR-B drops the read-site migration entirely. #1 still holds: one SOURCE, the getter can't drift.**)**
 
 2. **Q2 — PR3 ownership.** PR3 (delete legacy walker / wrapper types /
    ClauseRule) is a hard prerequisite but is a *separate already-designed PR*
