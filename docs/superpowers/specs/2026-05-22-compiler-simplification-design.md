@@ -1,8 +1,16 @@
 # Compiler Workflow Simplification — Design
 
 **Date:** 2026-05-22
-**Status:** 📋 SPEC RECONCILED — brainstorm (above) + code-grounded implementation spec §1–§7 (below); **5 decisions + DRY/simplify review + critical-review batch + method-convergence fold + synthesis-discipline batch + losslessness audit + emit-DRY fold + choice-slot-submethods fold + naming/enum/registration unification (2026-05-23)**. End-state is clean (no transitional aliases, no sunset PRs; old code removed within the superseding strangler step). **Losslessness audit verdict: Simplify lossless-modulo-literal-removal HOLDS; `token.immediate` drop CONFIRMED FIXED; Normalize had ONE real violation (`collapseWrappers` dropped `id`/`separator` on single-member collapse) — closed by PR-A0 → Normalize is now genuinely lossless, #2 enforced not just asserted.** Adds **Principle #16 (synthesis only if deterministic AND grammar-visible; sittir-only inventions forbidden)**; cuts **ALL sittir-invented + content-classification Rule types** — `PolymorphRule`/`VariantRule`/`ClauseRule` + the opaque Group classifier (→ Model-only `PolymorphSpec` / plain structure / wire helper, §B/§C/§D) AND `EnumRule`/`TerminalRule` (→ `isEnumShaped`/`isTerminalShaped` predicates + the `AssembledEnum`/`AssembledPattern` Model nodes, §G-cut); the `propose-*` diagnostic class (§E); enrich-widening (§F); plus the earlier Principle #15, the sanctioned `content` slot (§4c), identical-form collapse (§4d), the H2 helper-leak fix, the #14 getter-vs-method line, the `parameterless`-as-memoized-getter convergence, and the M1/MO2/M3/P1 structural de-dups. The end-state `Rule` union is now purely structural (`seq`/`choice`/`group`/`supertype`/`string`/`pattern`/whitespace/`symbol`/`token`). The **emit-DRY fold** adds 5 small getter/delete tightenings (`slot.kinds` replaces `slotKindNames`; keyword-presence reads cached `slot.storageInfo.kind`; `discriminatorKindsOrDefault` + `isUnnamed` getters; dead `snakeToCamel` copy deleted) + the KEEP-clarification (`classifyFactoryShape` stays a per-consumer shared function, not a getter). The **choice-slot-submethods fold (§4f / §H, Principle #17)** is the largest: emission keys on a STRUCTURAL fact — an `AssembledBranch` with a discriminating choice slot (`slot.values.length > 1`) emits per-arm factory submethods (kind-arm delegates; literal-arm pins) — NOT on "is-polymorph"; **`AssembledPolymorph` is DELETED** (collapsed into `AssembledBranch.discriminatingSlot`), the polymorph-specific emitter functions collapse into ONE general path, generalizing from 32 registered polymorphs to **168 discriminating-slot branches** (additive). The **naming/enum/registration unification (§4e/§4f/§4g/§4h, Principle #18)** completes it: **all literals are kinds** (`TerminalValue.resolvedKind`, §4g) named by **tree-sitter** (`parser.c` `anon_sym_*` / grammar `alias_sym_<name>`) — so **arm name = the arm's KIND NAME** (`snakeToCamel(armKind(v))`), and the hand-maintained `TOKEN_NAMES`/`charFallback`/`tokenToName` map + the `form_<index>` fallback + `info{propose-arm-name}` are all **DELETED** (`fail{arm-name-collision}` kept as the safety net, 0 today). **Registration = two orthogonal primitives** — **ELEVATE** (`groups:`) ⊕ **RELABEL** (`alias()`/`variant()`), both existing grammar-visible passes (#16); `polymorphs:`/`enums:` are sugar; registered enums replace the per-slot sidecar (unregistered keep the predicate path). **Ready for user review → `writing-plans`.** **18 PRs** (PR3 prereq + PR-A0 + PR-A..PR-Q + PR-L; old PR-J `$variant`-removal merged into PR-I, the general choice-slot path). PR3 is a gating prerequisite (not yet landed — only its design doc is on this branch).
-**Base:** branch `026-pr3-delete-legacy-render-walker` (off `master`, post-PR2 merge `bbadd99b`).
+**Status:** 📋 SPEC RECONCILED TO REPO — brainstorm (above) + code-grounded implementation spec §1–§7 (below); **all prior folds + repo-reconciliation (2026-05-25)**. **PR3 has LANDED** (#36 `ee3d7a0b`, merged to master 2026-05-24): legacy render walker pipeline deleted, render-fidelity fixes, native-staleness guard. **PR-A0 is DONE** (the Normalize losslessness fix shipped in #36: `c38ffbf1` collapseWrappers+canonicalizeSeqOfLeaves, `a91927c6` fanOut+factor id-preservation; `withAttrsFrom`/`combineMultiplicity` live in `rule-attrs.ts`) → the pending sequence now starts at **PR-A**. The remaining design (Principles #15–#18, the Rule-IR cuts, the choice-slot-submethods + naming/enum/registration unification) is intact — no assumption broke. **Losslessness audit verdict: Simplify lossless-modulo-literal-removal HOLDS; `token.immediate` drop CONFIRMED FIXED; the Normalize `collapseWrappers` violation is now CLOSED (PR-A0, `c38ffbf1`) — Normalize is genuinely lossless, #2 enforced.** Adds **Principle #16 (synthesis only if deterministic AND grammar-visible)**; cuts **ALL sittir-invented + content-classification Rule types** — `PolymorphRule`/`VariantRule`/`ClauseRule` + the opaque Group classifier (§B/§C/§D — **ClauseRule still pending**, `detectClause` live at `link.ts:2338`) AND `EnumRule`/`TerminalRule` (→ predicates + Model nodes, §G-cut); the `propose-*` diagnostic class (§E); enrich-widening (§F); plus #15, the sanctioned `content` slot (§4c), identical-form collapse (§4d), the H2 helper-leak fix, the #14 getter-vs-method line, the `parameterless`-as-memoized-getter convergence, and the M1/MO2/M3/P1 structural de-dups. End-state `Rule` union is purely structural. The **choice-slot-submethods fold (§4f/§H, #17)** + the **naming/enum/registration unification (§4g/§4h, #18)** are the largest: emission keys on a STRUCTURAL fact (a branch's discriminating choice slot); **all literals are kinds** named by tree-sitter (`parser.c`); registration = **ELEVATE** ⊕ **RELABEL** (existing passes). **Branch 029 has landed a SEED of the §4b/§E diagnostics channel** — `diagnoseSlotGrouping` (`diagnose-slot-grouping.ts`, Simplify-time, 3 shapes with `proposal` strings) + `slot-count.ts` (`countSlots ≡ collectSlots`, the "a slot never contains slots" invariant). **Parse-naming decomposition (folded):** each slot value carries TWO kind REFERENCES (#4g) — `value.kind` (render/source) + `value.parseKind` (parse-as: alias target / variant base / own kind); `TerminalValue.resolvedKind`→`parseKind`. The slot-level `aliasSources` map + stored `#refKindNames` DISSOLVE into per-value `parseKind`/`kind` (#1); `kinds`/`parseNames` project `values`; `deriveAliasSources` deletes (PR-B adds the refs, PR-C removes the map + re-points wrap's 4 reader sites). **Ready for user review → `writing-plans`.** **18 PRs** (PR-A..PR-Q + PR-L; PR3 + PR-A0 DONE; old PR-J merged into PR-I).
+**Base:** branch `029-slot-grouping-diagnostic` (off `master`, post-PR3 merge `ee3d7a0b` #36; #37/#38 landed). **Baseline to hold (deep `read-render-parsePass`; confirm with a fresh `pnpm validate:native` at implementation start):** **rust** cov 181/186 · read-render-parse 134/136 · ast 125 — **python** cov 107/110 · read-render-parse 96/115 · ast 74 — **typescript** cov 174/182 · read-render-parse 82/111 · ast 75.
+> **Baseline caveat (FOLD-2 / visible kinds):** the headline rust number above
+> (`cov 181/186 · ast 125`) is **`origin/master`-accurate** (`486c5add`, #38) and
+> does NOT include 029's applied `type_arguments`/`type_parameters` visible groups
+> (`fc7c77de`). Those groups + the two visible-kind band-aids they motivated (§5
+> PR-E) are on **029**, not master. **If carried into the implementation base**,
+> the handoff measured **rust cov 182/186 · read-render-parse 134/136 · ast 126**
+> (cov +1, ast +1; py/ts unchanged); **otherwise the origin/master baseline above
+> holds.** Confirm with a fresh `pnpm validate:native` at implementation start.
 
 ---
 
@@ -10,7 +18,7 @@
 
 - **Scope:** the full pipeline **+ emitters** (largest scope).
 - **Primary pain:** *all three* — re-derivation/divergence, conditional special-casing, phase/representation sprawl. They share one root: **the same fact is derived in multiple places that drift apart** (this session's `block`-vs-`body`; the Codex stale-slot transport breaks).
-- **Structure:** **incremental strangler, one spec** — build the new model beside the old, migrate phase/emitter at a time, regen+validate every step, **never regress** the pass rates (rust 178/134/107, python 104/95/73, ts 172/81/59).
+- **Structure:** **incremental strangler, one spec** — build the new model beside the old, migrate phase/emitter at a time, `pnpm validate:native` every step, **never regress** the pass rates (current baseline, 2026-05-25: rust cov 181/186 · read-render-parse 134/136 · ast 125; python 107/110 · 96/115 · ast 74; ts 174/182 · 82/111 · ast 75 — deep `read-render-parsePass`).
 - **Architecture:** **centralize & strangle the existing slot model.** Make `AssembledNonterminal` (with the `_new` naming getters) authoritative; derive slots uniformly; migrate each emitter (wrap → transport → bridge → render → types/factories) to **read** the slot via `slotByRuleId` instead of re-deriving. Defer phase/Rule-type collapse to last.
 - **Refinement, not greenfield.** The Model and Rule IR *enhance* the existing `AssembledNonterminal` + Rule IR — never rebuild them. Concrete refinement: **make `AssembledNonterminal` a class** — following the existing class-based node model (`AssembledNode` is *already* a class, so this extends the established pattern rather than introducing one). It becomes the authoritative model object that encapsulates the naming derivation (today's `_new` getters) as methods. Emitters hold a reference and call `.storageName`/`.parseNames`/`.name`; re-derivation becomes impossible because there is no raw shape to re-walk. Same for the Rule IR: extend it with the leaf attributes (multiplicity/separator/fieldName/nonterminal) rather than introducing a parallel type — the strangler migrates *onto* it.
 
@@ -87,7 +95,7 @@ Given a grammar + overrides, generate a **rendering pipeline**:
 
 ### Diagnostics (cross-cutting)
 
-A **pipeline-wide channel**, not a 7th artifact. Discipline for every phase: **"derive deterministically, or diagnose — never guess."** Seed today: `overrides.suggested.ts` + the unnamed-choice diagnostic built this session.
+A **pipeline-wide channel**, not a 7th artifact. Discipline for every phase: **"derive deterministically, or diagnose — never guess."** Seeds landed today: `overrides.suggested.ts`; the unnamed-choice diagnostic; and (branch 029, #38-adjacent) **`diagnoseSlotGrouping`** (`compiler/diagnose-slot-grouping.ts`, Simplify-time, 3 shapes — multi-slot-nested-seq / supertype-list / repeat-choice-with-literal — each carrying a `proposal` string) backed by **`slot-count.ts`** (`countSlots ≡ collectSlots`, pinning the "a slot never contains multiple slots" invariant). This is a working SEED of the §4b/§E `propose-*` channel — though the landed form is a flat `SlotGroupingDiagnostic[]` of proposal strings (NO severity enum yet); the spec's `fail`/`warn`/`info` model is the target it grows into.
 
 Contract: `(grammar + overrides) → Model → {1–6}`, **plus** `→ diagnostics/suggestions` that loop back as overrides.
 
@@ -143,8 +151,8 @@ This shared layer is the **seam that keeps the parser and the IR consistent** (b
 - [x] **Phases confirmed** — Evaluate · Classify · Normalize (non-lossy) · Simplify (lossy, by-consumer) · Assemble · Project; Enrich/Wire are the shared grammar layer (run by both compilers).
 - [→] **Define the Model's contents** — *delegated to the spec-writer research agent.* It enumerates the per-consumer facts (1→6) grounded in the existing emitters, as a **refinement** of `AssembledNonterminal`/Rule IR — not hand-specified here. Method: work outward from each projection's consumed facts, union into the (class-based) Model, cross-check against #0's non-lossy source-side completeness.
 - [ ] **The strangler PR sequence** — proposed order: centralize naming (`_new` → the one rule) → collect-slots uniform derivation (kill distribution/origin) → wrap reads slot → transport → bridge → render → types/factories → (last) phase + Rule-type collapse.
-- [ ] **Validation gate per step** — regen all 3 + `counts --backend native`; never regress rust 178/134/107, python 104/95/73, ts 172/81/59.
-- [ ] **Settle Canonicalize's non-lossy mechanism** — leaf-attribute push (multiplicity/separator/fieldName/nonterminal) carries everything the collapse used to drop.
+- [ ] **Validation gate per step** — **`pnpm validate:native`** (NOT raw `counts` — it doesn't rebuild the `.node`; see §5 gating); never regress the 2026-05-25 baseline (rust cov 181/186 · 134/136 · ast 125; python 107/110 · 96/115 · ast 74; ts 174/182 · 82/111 · ast 75).
+- [x] **Settle Canonicalize's non-lossy mechanism** — *largely DONE:* leaf-attribute push lives in `rule-attrs.ts` (`withAttrsFrom`/`combineMultiplicity`) and the #37 push-down; the collapse-losslessness gap closed via PR-A0 (`c38ffbf1`/`a91927c6`, #36). Remaining: the §B/§C/§G-cut Rule-type cuts.
 
 ## References
 
@@ -163,38 +171,39 @@ This shared layer is the **seam that keeps the parser and the IR consistent** (b
 > *how*, citing `file:line`. Where the code contradicts a brainstorm assumption
 > it is flagged with **⚠ FLAG**.
 
-## Pre-flight: actual PR3 state (verified)
+## Pre-flight: repo state (verified 2026-05-25, branch `029-slot-grouping-diagnostic`)
 
-The brainstorm and the dispatch brief both say "assume PR3 has landed." **PR3
-has NOT landed.** The branch `026-pr3-delete-legacy-render-walker` carries only
-the PR3 *design doc* (`1ebe0407 docs(pr3): design — delete legacy render walker
-+ ClauseRule`) ahead of the PR2 merge `bbadd99b`. Verified by:
+**PR3 LANDED** — `ee3d7a0b` "PR3: delete legacy render walker + render-fidelity
+fixes + staleness guard (#36)", merged to master 2026-05-24. The legacy render
+**walker pipeline** is gone; `AssembledXxx.renderTemplate()` and the
+`render-module`/`templates`/`node-map` legacy call sites it cited are deleted.
+**PR-A0 (the Normalize losslessness fix) also landed in #36** (`c38ffbf1`
+collapseWrappers + canonicalizeSeqOfLeaves; `a91927c6` fanOut + factor
+id-preservation), with `withAttrsFrom`/`combineMultiplicity` now living in
+`compiler/rule-attrs.ts`. #37 (slot-model multiplicity push-down) and #38
+(supertype routing) followed.
 
-- `compiler/template-walker.ts` still exists (and is imported by
-  `collect-slots.ts:50` — `import { findRepeatFlag } from './template-walker.ts'`).
-- `ClauseRule` / the `'clause'` case still live: `collect-slots.ts:474` has a
-  `case 'clause'` arm; `link.ts`'s `detectClause` still runs (glossary
-  Phase 2, line 277).
-- Wrapper rule types (`OptionalRule`/`FieldRule`/`RepeatRule`/`Repeat1Rule`)
-  still exist as `applyWrapperDeletion`'s input (`rule.ts` `RuleBase` comment,
-  glossary lines 92–94).
-- `AssembledXxx.renderTemplate()` methods still exist and are still called
-  (`render-module.ts:2324`, `templates.ts:1615`, `node-map.ts:2343/2364`).
+**What PR3 did NOT remove (still pending in THIS spec — design intact):**
+- **`template-walker.ts` SURVIVES** as a query-helper module — `findRepeatSeparator`
+  / `findRepeatFlag` / `findFieldsWithRepeatFlag` remain, imported by
+  `node-map.ts` (AssembledBranch) and `collect-slots.ts:50`. Only the walker
+  *pipeline* was deleted. (Moving `findRepeatFlag`→`transforms.ts` + deleting the
+  rest stays a valid future step — §7.1.)
+- **`ClauseRule` + `detectClause` still live** (`detectClause` at `link.ts:2338`,
+  + the `'clause'` case arms). PR-M's §C carve-out is correct and still needed.
+- The other sittir-invention / content-classification Rule types
+  (`PolymorphRule`/`VariantRule`/`EnumRule`/`TerminalRule`, the opaque Group
+  classifier) are all **still present** — PR-M/PR-I/PR-P pending.
 
-**Consequence for this spec.** This spec is *written for* the post-PR3 world (it
-does not propose anything depending on the legacy walker or wrapper rule types
-surviving), but the **strangler PR sequence below makes PR3 its first
-prerequisite phase** rather than assuming it. The pass-rate baseline this spec
-must not regress, re-measured on this branch via
-`pnpm exec tsx packages/validator/src/cli.ts counts --backend native rust`:
+**Baseline this spec must not regress (deep `read-render-parsePass`; from
+`validation-history.jsonl` HEAD + #37/#38; re-confirm with `pnpm validate:native`
+at implementation start):**
 
 ```
-rust/native:   cov 178/185   read-render-parse 134/136 ast=107   from 133/168
+rust:        cov 181/186   read-render-parse 134/136   ast 125
+python:      cov 107/110   read-render-parse  96/115   ast  74
+typescript:  cov 174/182   read-render-parse  82/111   ast  75
 ```
-
-matching the brainstorm's `rust 178/134/107`. (python `104/95/73`, ts
-`172/81/59` are quoted from the brainstorm; re-measure per grammar at each PR
-gate — see cleanup-rules §D2.)
 
 ---
 
@@ -205,15 +214,16 @@ completeness) **and every fact a rule states** (source-side completeness). This
 section reads each emitter, lists the facts it consumes *today*, then unions
 them into the class-based `AssembledNonterminal` + the Rule IR. The key
 finding: **almost every fact already has a home** on `AssembledNonterminal`
-(`node-map.ts:1543`), `NodeOrTerminal` (`node-map.ts:168/195`), or `RuleBase`
-(`rule.ts`). The pain is **re-derivation**, not missing fields — three parallel
-naming derivations (`name`/`storageName` vs the `_new` getters vs wrap.ts's
-`SlotModel`) and one parallel projection type (`SlotModel`,
-`compiler/slot-model.ts:4`).
+(`node-map.ts:1476`, **still an interface** — class promotion PENDING),
+`NodeOrTerminal` (`node-map.ts:166/193`), or `RuleBase` (`rule.ts`). The pain is
+**re-derivation**, not missing fields — three parallel naming derivations
+(`name`/`storageName` vs the `_new` getters vs wrap.ts's `SlotModel`) and one
+parallel projection type (`SlotModel`, `compiler/slot-model.ts:4`).
 
 ### The slot fact inventory (current homes)
 
-`AssembledNonterminal` (`node-map.ts:1543–1575`) currently carries:
+`AssembledNonterminal` (`node-map.ts:1476`+; field offsets below are relative to
+that block and shift with edits) currently carries:
 
 | Fact | Field | Home today | Note |
 |---|---|---|---|
@@ -224,17 +234,20 @@ naming derivations (`name`/`storageName` vs the `_new` getters vs wrap.ts's
 | value list | `values: NodeOrTerminal[]` | `:1549` | the value-union; carries per-value multiplicity/separator/immediate |
 | param name | `paramName` | `:1550` | |
 | trailing/leading separator flags | `hasTrailing`/`hasLeading` | `:1551–1552` | ⚠ also duplicated per-value on `NodeRef`/`TerminalValue` |
-| alias source map | `aliasSources?` | `:1553` | `{target: source}` |
+| alias / parse-as | slot-level `aliasSources?` (`node-map.ts:1486`) **TODAY** → moves PER-VALUE to `value.parseKind` (end-state) | `{target: source}` today; a kind ref per value in the end-state (§7.3 / §4g). #1 — the alias/parse fact lives on the value, not a slot map |
 | provenance | `source` | `:1554` | grammar/override/inlined/enriched/inferred |
-| name origin | `origin?` | `:1555` | **⚠ UNRELIABLE** — see §1 finding below |
-| rule back-pointer | `sourceRuleId?` | `:1565` | `feedback_ruleid_backpointer` |
-| storage info | `storageInfo?` | `:1566` | boolean/bitflag/kindEnum/verbatim |
-| **`_new` single-source naming** | `fieldName?`/`storageNameNew?`/`nameNew?`/`parseNamesNew?` | `:1571–1574` | **DIAGNOSTIC SCAFFOLDING — no emitter reads these yet** (verified: only `collect-slots.ts` + `node-map.ts` reference them) |
+| name origin | `origin?` | `node-map.ts:1488` | **⚠ UNRELIABLE + STILL PRESENT** (PR-C pending) — see §1 finding below |
+| rule back-pointer(s) | `sourceRuleId?` (in block) **TODAY** → **`sourceRuleIds: RuleId[]`** (FOLD-1) | `feedback_ruleid_backpointer`. Keep **ALL** ids — every renderRule + simplifiedRule position the slot corresponds to — so `slotByRuleId` resolves at whichever view a consumer walks (the render emitter walks `renderRule`; the simplify-vs-render divergence is why a single id missed). §7.6 / §4 |
+| storage info | `storageInfo?` | (in block) | boolean/bitflag/kindEnum/verbatim |
+| **`_new` single-source naming** | `fieldName?`/`storageNameNew?`/`nameNew?`/`parseNamesNew?` | `node-map.ts:1505-1507`+ | **STILL DIAGNOSTIC SCAFFOLDING — no emitter reads these yet** (Finding-4 pending; only `collect-slots.ts` + `node-map.ts` reference them) |
 
-Per-value facts on `NodeRef` (`node-map.ts:168`) / `TerminalValue` (`:195`):
-`multiplicity`, `separator?`, `trailing?`, `leading?`, plus `immediate?` /
-`tokenized?` / `resolvedKind?` on terminals (render adjacency — these are the
-**non-droppable IMMEDIATE_TOKEN render facts** the brainstorm #0.4 names).
+Per-value facts on `NodeRef` (`node-map.ts:166`) / `TerminalValue` (`:193`):
+`multiplicity`, `separator?`, `trailing?`, `leading?`, `immediate?` /
+`tokenized?` on terminals (the **non-droppable IMMEDIATE_TOKEN render facts**,
+#0.4), plus the end-state per-value kind refs **`kind` (render/source)** +
+**`parseKind` (parse-as)** — `TerminalValue.resolvedKind?` (today a kind-name
+string, `:196`) becomes `parseKind` (a kind ref, §7.3 / parse-naming
+decomposition).
 
 ### Consumer 1 — Canonical typed representation (`emitters/types.ts`)
 
@@ -298,15 +311,20 @@ choice). wrap then reads `slot.arity` (`wrap.ts:371/395/411/534/558/761/809`)
 and `slot.storageKey` (`wrap.ts:378/384/390/398/404/524/530/536/538`).
 
 Plus the alias-routing probe `collectConcreteStorageKeys(slot, nodeMap)`
-(`wrap.ts:497`, `project_alias_target_routing`) which keys off
-`slot.origin === 'kind'` and inverts `slot.aliasSources`, and
-`resolveFieldStorageInfo` → `storageInfo` (boolean/bitflag/kindEnum).
+(`wrap.ts:470`, `project_alias_target_routing`) which TODAY keys off
+`slot.origin === 'kind'` and inverts `slot.aliasSources` (with the alias loops at
+`wrap.ts:648/698`), and `resolveFieldStorageInfo` → `storageInfo`.
 
 → **Model union:** `arity` = `isMultiple(slot) ? 'many':'one'` (derivable);
 `storageKey` = `` `_${storageName}` `` (derivable); `origin` is the
 **unreliable** signal (§1 finding 2). **The entire `SlotModel` indirection
-should be deleted** — wrap should read `slot.arity` / `slot.storageKey` as
-getters on the class. This is the highest-value strangler step (see §5 PR-D).
+should be deleted** — wrap reads `slot.arity` / `slot.storageKey` getters.
+**Alias-routing re-points to per-value `value.parseKind`** (the parse-as kind
+ref, §7.3) instead of inverting the slot-level `aliasSources` map: the probe
+already wants "the CST kind to store under," which is exactly `parseKind` — the
+`type_query` dual (real-alias target + validation-only base) is preserved
+per-value. (`collectConcreteStorageKeys` + the `wrap.ts:648/698` loops re-point
+in PR-C; `deriveAliasSources` deletes.) Highest-value strangler step (§5 PR-D/PR-C).
 
 ### Consumer 5 — Transports (`emitters/transport-common.ts`, `transport-projection.ts`, `render-module.ts` transport structs)
 
@@ -476,12 +494,26 @@ The behavior re-point folds into **PR-C** (the `origin`-elimination PR — both
 `fieldName === undefined`); the `'inlined'` variant deletion rides along. The
 `'inferred'` variant itself **stays** as retained provenance (#15).
 
+**Finding 6 — slot-model multiplicity LANDED in #37 (reconciles the §1/§2 model).**
+The intended slot-multiplicity model is now in the repo: **intrinsic single-by-
+default** — `combineMultiplicity` returns `undefined` for single (`rule-attrs.ts:69`),
+a missing multiplicity defaults to `'single'`. The **`collect-slots` seq-inheritance
+band-aid is DELETED** (`collect-slots.ts:288-290`): the `seq` case no longer
+propagates `rule.multiplicity ?? inherited` onto members — multiplicity is **always
+carried on the group, never distributed onto members**. The **visible vs inlined
+group split** landed: authored `groups:` → a **visible, multi-slot** group;
+auto-groups (wire `applyAutoGroups`) → an **inlined, single-slot** helper. This
+confirms §2's class-getter multiplicity derivation (read the leaf's own
+multiplicity; default single) against the shipped model — no design change, just
+ground-truth alignment. (`rule-attrs.ts` is the same module PR-A0 centralized
+`withAttrsFrom` into.)
+
 ---
 
 ## §2. `AssembledNonterminal` as a class
 
 Today `AssembledNonterminal` is a plain `interface` / record literal
-(`node-map.ts:1543`), constructed by `buildSlot` (`collect-slots.ts:281`) which
+(`node-map.ts:1476`), constructed by `buildSlot` (`collect-slots.ts:316`) which
 stamps ~16 fields including three parallel naming derivations. `AssembledNode`
 is **already a class** (`AssembledNodeBase`, `node-map.ts:1281`) with
 encapsulated behavior (`isTextTemplate`, `textTemplate`, `hidden` getter,
@@ -503,54 +535,60 @@ export class AssembledNonterminal {
   // ---------------------------------------------------------------
   // Stored state — the ONLY non-derived fields. Captured at construction
   // from the wrapper-free Rule node. Everything else is a getter.
-  // `#refKindNames` is PRIVATE (CW4): `kinds` is the single public surface
-  // for the referenced-kind list; there are not two public names for one value.
+  // NOTE: there is NO stored `#refKindNames` and NO slot-level `aliasSources`
+  // — the referenced-kind + alias/parse-as facts live PER VALUE on
+  // `value.kind` / `value.parseKind` (kind references, §7.3 / §4g). `kinds`
+  // and `parseNames` are projections of `values`, not stored lists.
   // ---------------------------------------------------------------
   readonly fieldName?: string;               // the grammar field() name, or undefined
-  #refKindNames: readonly string[];          // kinds this slot references (declaration order, deduped) — private
-  readonly values: readonly NodeOrTerminal[];// the value union (per-value multiplicity/separator/immediate)
-  readonly aliasSources?: Readonly<Record<string, string>>; // {target: source}
+  readonly values: readonly NodeOrTerminal[];// the value union; each value carries `kind` (render/source) + `parseKind` (parse-as), both kind REFS (#4g)
   readonly source: SlotSource;               // see SlotSource below
-  readonly sourceRuleId?: RuleId;            // back-pointer (feedback_ruleid_backpointer)
+  readonly sourceRuleIds: readonly RuleId[]; // ALL rule-position ids this slot corresponds to —
+                                             // across BOTH the renderRule and simplifiedRule views
+                                             // (FOLD-1; was a single `sourceRuleId?`). `slotByRuleId`
+                                             // maps EACH id here → this slot (§7.6), so the render emitter
+                                             // resolves the slot via the renderRule-position id it walks
+                                             // (no lookup-miss → no re-derivation, #9 holds by construction).
   readonly storageInfo?: FieldStorageInfo;   // boolean|bitflag|kindEnum|verbatim
 
   constructor(init: {
     fieldName?: string;
     values: readonly NodeOrTerminal[];
-    aliasSources?: Readonly<Record<string, string>>;
     source: SlotSource;
-    sourceRuleId?: RuleId;
+    sourceRuleIds: readonly RuleId[];
     storageInfo?: FieldStorageInfo;
   }) {
     this.fieldName = init.fieldName;
     this.values = init.values;
-    this.#refKindNames = kindsOf(this);      // derived once from values (node-map.ts:1593)
-    this.aliasSources = init.aliasSources;
     this.source = init.source;
-    this.sourceRuleId = init.sourceRuleId;
+    this.sourceRuleIds = init.sourceRuleIds; // every renderRule + simplifiedRule position id
     this.storageInfo = init.storageInfo;
   }
 
   // ---------------------------------------------------------------
   // Naming — ONE derivation (the today-inert `_new` logic, promoted to
-  // canonical). `fieldName` wins; else the single referenced kind name
-  // (incl. a supertype's own name); else the SANCTIONED `content` fallback
-  // (§4c, C3 — a real named slot that renders `{{ content }}` and round-trips;
-  // it emits a non-blocking warn{anonymous-content}, NOT a fail). Replaces:
-  // legacy buildSlot baseName/origin (collect-slots.ts:304-370), the `_new`
-  // suffixed fields (node-map.ts:1571-1574), AND wrap.ts's SlotModel.
+  // canonical). `fieldName` wins; else the single referenced render/source
+  // kind name (`value.kind.name`); else the SANCTIONED `content` fallback
+  // (§4c, C3 — a real named slot that renders `{{ content }}`; warn, not fail).
+  // Replaces: legacy buildSlot baseName/origin (collect-slots.ts:304-370), the
+  // `_new` suffixed fields (node-map.ts:1505-1507), AND wrap.ts's SlotModel.
   //
-  // The END-STATE has exactly ONE identity: `storageName` (snake_case). All
-  // other names are derived projections of it.
+  // TWO kind projections of `values` (#4g — every value is a kind ref):
+  //   • `kinds`      = render/source kinds  = values.map(v => v.kind.name)
+  //   • `parseNames` = parse-as / CST kinds = values.map(v => v.parseKind.name)
+  // (They coincide except where a value is aliased / a variant — there the
+  //  render kind and the parse-as kind differ; per-value `parseKind` carries
+  //  exactly that distinction, replacing the slot-level `aliasSources` map.)
+  // The END-STATE has exactly ONE identity: `storageName` (snake_case).
   // ---------------------------------------------------------------
   get storageName(): string {                // snake_case — THE single identity (no `name` alias)
     if (this.fieldName !== undefined) return this.fieldName;
-    if (this.#refKindNames.length === 1) return this.#refKindNames[0]!;
+    if (this.kinds.length === 1) return this.kinds[0]!;
     return 'content';                        // sanctioned anonymous-content slot (§4c) — warn, not fail
   }
   get storageKey(): string { return `_${this.storageName}`; } // tree-sitter-facing key; no $children/$other catch-all
-  get parseNames(): readonly string[] {      // parser routes by field, else by ref-kinds
-    return this.fieldName !== undefined ? [this.fieldName] : this.#refKindNames;
+  get parseNames(): readonly string[] {      // parser routes by field, else by per-value parse-as kind
+    return this.fieldName !== undefined ? [this.fieldName] : dedupe(this.values.map((v) => v.parseKind.name));
   }
 
   // camelCase projections (NEVER the identity — projection-time only, #3)
@@ -561,9 +599,7 @@ export class AssembledNonterminal {
   get paramName(): string { return safeParamName(this.propertyName); }
 
   // ---------------------------------------------------------------
-  // Cardinality + flank facts — derived from `values` (already DRY today;
-  // these are isRequired/isMultiple/isNonEmpty from node-map.ts:236/246/255
-  // promoted to instance getters).
+  // Cardinality + flank facts — derived from `values` (already DRY today).
   // ---------------------------------------------------------------
   get isRequired(): boolean { return isRequired(this); }
   get isMultiple(): boolean { return isMultiple(this); }
@@ -571,8 +607,10 @@ export class AssembledNonterminal {
   get arity(): 'one' | 'many' { return this.isMultiple ? 'many' : 'one'; }
   get hasTrailing(): boolean { return this.values.some((v) => v.trailing === true); }
   get hasLeading(): boolean { return this.values.some((v) => v.leading === true); }
-  get kinds(): readonly string[] { return this.#refKindNames; }  // the ONE public ref-kind surface (CW4)
-                                                                 // — deduped; replaces shared.ts:124 slotKindNames (EmitDRY-1)
+  get kinds(): readonly string[] { return dedupe(this.values.map((v) => v.kind.name)); } // render/source kinds (CW4)
+                                                                 // — `dedupe` = order-preserving dedup (the same `kindsOf`
+                                                                 //   does today, node-map.ts:1526 — now reading `v.kind.name`);
+                                                                 //   the ONE public surface, replaces shared.ts:124 slotKindNames (EmitDRY-1)
   get isUnnamed(): boolean { return this.fieldName === undefined; }  // the structural "no grammar field name"
                                                                      // signal — behavior consumers read THIS, not
                                                                      // source==='inferred' (Finding 5 / C1 / EmitDRY-4)
@@ -585,6 +623,16 @@ export class AssembledNonterminal {
 // honest "name was inferred" provenance is kept for tooling. Only `'inlined'` is
 // removed (no producer — not even diagnostics data).
 export type SlotSource = 'grammar' | 'override' | 'enriched' | 'inferred';
+
+// The visibility test (FOLD-2, §4 visible-kind-reference invariant). A PER-NODE
+// predicate (a target kind, not a slot field) — the single authoritative answer
+// the render/slot path needs for "do I inline this symbol's body, or keep it a
+// slot reference." NOT "lacks a leading `_`" (registered `groups:` are `_`-prefixed
+// yet visible via markUserFacing). The render emitter + the slot model read THIS.
+isVisibleKind(node): boolean = node.userFacing /* has a real kindId */
+                            && !grammar.inline.has(node.kind);  // inverse of inlineRefs-expandable
+// Visible → renders as a `{{ slot }}` reference (own template); only an
+// inline-listed hidden helper's body is spliced into the parent.
 ```
 
 **Deleted vs today:** `origin?` / `SlotOrigin` (Finding 2 — consumers route on
@@ -594,12 +642,15 @@ fields (now the canonical getters); the stored
 the `name` field/alias entirely (one identity: `storageName`); the `SlotSource`
 variant `'inlined'` only (Finding 5 — `'inferred'` is RETAINED as provenance per
 #15); `compiler/slot-model.ts`'s `SlotModel` (`arity`/`storageKey` are getters
-here); the public `refKindNames` field (now private `#refKindNames`, surfaced
-only via `kinds`, CW4); **the free fn `slotKindNames` (`shared.ts:124`)** — a
-parallel, NON-deduped, unresolved-including kind-name derivation read across
-factories/from/types/test; callers re-point to `slot.kinds` (the deduped
-`kindsOf`, `node-map.ts:1526`, is canonical), eliminating the divergent-semantics
-duplicate (EmitDRY-1).
+here); **the slot-level `aliasSources` map (`node-map.ts:1486`)** — the
+alias/parse-as fact moves PER-VALUE to `value.parseKind` (§1 fact inventory / §7.3),
+so `deriveAliasSources` (`node-map.ts:908`) + the slot alias-merges
+(`collect-slots.ts:251`, `node-map.ts:809/2149`) DELETE; **the stored
+`#refKindNames`** (now `kinds` projects `values.map(v => v.kind.name)` on read);
+**the free fn `slotKindNames` (`shared.ts:124`)** — a parallel, NON-deduped,
+unresolved-including derivation read across factories/from/types/test; callers
+re-point to `slot.kinds`, eliminating the divergent-semantics duplicate
+(EmitDRY-1).
 
 ### What this encapsulation buys (enforces single-source, #1/#11)
 
@@ -661,8 +712,10 @@ end-state.
   `seq`/`choice`/`variant`/`group`/`clause`) stays as the slot-enumeration walk.
 - **`compiler/slot-model.ts` → deleted** (its `SlotModel` is replaced by the
   class getters, §2).
-- **`template-walker.ts` → deleted** (PR3; `collect-slots.ts:50`'s
-  `findRepeatFlag` import moves to `transforms.ts` or the class).
+- **`template-walker.ts` → walker pipeline already deleted (PR3 #36); the
+  surviving query helpers** (`findRepeatSeparator`/`findRepeatFlag`/`findFieldsWithRepeatFlag`,
+  imported by `node-map.ts` + `collect-slots.ts:50`) → move `findRepeatFlag` to
+  `transforms.ts` or the class + delete the rest (pending step).
 - **`wrapper-deletion.ts` → folds into `normalize.ts`** (it is the non-lossy
   leaf-attribute push — Normalize's defining transform).
 - **The Normalize/Simplify shared ops** (`collapseSeq`,
@@ -681,7 +734,7 @@ Every pipeline method takes `(target, ctx)` and is named
 | `collapseSeq(rule, wordMatcher?, inField?)` (`simplify.ts:346`) | `collapseSeq(rule: SeqRule, ctx: SimplifyCtx)` |
 | `applyWrapperDeletion(rules)` / `deleteWrapper(rule)` | `pushdownWrappers(rule: Rule, ctx: NormalizeCtx)` |
 | `inlineRefs(rule, rules, inlineKinds?, visited?)` (`simplify.ts:356`) | `inlineRefs(rule: Rule, ctx)` — `rules`/`inlineKinds`/`visited` in ctx |
-| `buildSlot(rule, kindForName, kindEntries, inherited, sep)` (`collect-slots.ts:281`) | becomes the `AssembledNonterminal` constructor (no longer a free function) |
+| `buildSlot(rule, kindForName, kindEntries, inherited, sep)` (`collect-slots.ts:316`; `baseName`/`origin` arms `:339`/`:341`) | becomes the `AssembledNonterminal` constructor (no longer a free function) |
 | `collectSlots(rule, kindForName?, ...)` (`collect-slots.ts:455`) | `collectSlots(rule: Rule, ctx: AssembleCtx)` |
 
 **`NormalizeCtx` / `SimplifyCtx` / `AssembleCtx`** each carry phase-shared state
@@ -746,6 +799,77 @@ work is to make the boundary *clean and named*, not to invent it.
   legacy `render-module.ts` path that read the reduced/slot view. **This is the
   structural fix for the render-on-slot-path breaks** the brainstorm #B.3 cites.
 
+### The simplify-vs-render lookup divergence (FOLD-1 — the `lookupSlot` correctness fix)
+
+Slots are keyed on the **`simplifiedRule`** position id (that is the view
+`collectSlots` walks). But the template emitter (`lookupSlot` / `emitChoice`,
+`templates.ts`) walks the **`renderRule`** — and Normalize factors choices
+*differently* in the two views (e.g. `factorChoiceBranches` on the render side;
+the simplify reduction restructures the slot side). So a `renderRule` position the
+template visits has an id that is **not** the id the slot was registered under →
+`lookupSlot` / `slotByRuleId` **MISSES** → the emitter falls back to
+**re-deriving** the slot name from the arm/symbol — the
+`{{ parameter }}`-not-`{{ content }}` symptom. **That re-derivation violates #9**
+(emitters read the slot, never re-derive).
+
+**Resolution (two parts, both FOLD-1):**
+1. **Register the slot under EVERY position it occupies — `sourceRuleIds`** (§2):
+   each slot tracks all its rule-position ids across **both** the `renderRule` and
+   `simplifiedRule` views, and `slotByRuleId` maps **each** to the slot (§7.6).
+2. **The render emitter resolves at the position it walks** — `lookupSlot` keys
+   off the **renderRule-position id** (now in `sourceRuleIds`), so it hits
+   **directly**, with NO arm/symbol-name fallback. Registering under the
+   renderRule position the template walks IS the fix; the fallback search becomes
+   only a safety floor. This makes **#9 hold by construction** — lookup always
+   resolves, so the emitter never re-derives.
+
+**Caveat — this is a LOOKUP-correctness fix, NOT an AstMatch lever**
+(`project_optimize_id_loss_fix`). The "fix the lookup misses → AstMatch goes up"
+thesis was **DISPROVEN**: the divergent class (Class D) was cosmetic
+(`{{ parameter }}` vs `{{ content }}` render the same text), **+0 AstMatch**. Fold
+it as the #9-correctness fix it is (no re-derivation), not a count-mover. (PR-A's
+naming probe is unaffected — that is about *naming* derivation, not slot
+*lookup*.) **Sequencing:** PR-B owns `sourceRuleIds` (the class/slot-model field +
+`slotByRuleId` mapping each id); PR-E (render reads the class) makes the render
+emitter resolve via the renderRule-position id.
+
+### The visible-kind-reference invariant (FOLD-2 — the visibility predicate)
+
+> Integrates `docs/superpowers/handoffs/2026-05-26-029-visible-kind-rendering-foldin.md`.
+> Same root as the FOLD-1 `lookupSlot` divergence (a symbol ref resolving to the
+> wrong slot); the two folds are one fix driven by one authoritative source.
+
+**Invariant:** a symbol that resolves to a **VISIBLE kind** (its own `kindId`, its
+own node, rendered as its own template — *including* registered `groups:`, which
+are `_`-prefixed yet visible via `markUserFacing`) **must stay a slot REFERENCE in
+any parent's render body — its body is NEVER inlined.** Inlining is **only** for
+pure hidden helpers: exactly the kinds `grammar.inline` lists / `inlineRefs` may
+expand. A visible kind renders as `{{ <its slot name> }}`, recursing into its own
+template; only a hidden helper's body is spliced into the parent.
+
+**The visibility predicate is NOT "lacks a leading `_`".** Registered `groups:`
+are `_`-prefixed *and* visible (`markUserFacing` flags them). The correct,
+authoritative test:
+
+> **visible ⇔ user-facing / has a real `kindId` / NOT in `grammar.inline`** —
+> the **inverse of `inlineRefs`-expandable.**
+
+This is **the single authoritative visibility test the render + slot path needs**,
+from the **same authoritative source the `_new` naming derivation provides**
+(PR-A/PR-B): once the slot model answers "is this target visible, and what is its
+slot name," both the inline decision and the slot-reference name are determined —
+no emitter improvises either. (Cross-ref: §1/§2 slot model carries the
+`isVisibleKind` test; §4h ELEVATE creates visible kinds, which therefore render as
+references; §5 PR-E deletes the two band-aids this invariant subsumes.)
+
+> **Baseline note.** The two band-aids (PR-E) and their source groups
+> (`type_arguments`/`type_parameters`, 029 `fc7c77de`) are on **029, not
+> `origin/master`**. If carried into the implementation base, the handoff measured
+> **rust cov 182/186 · ast 126** (cov +1, ast +1 over the master headline; py/ts
+> unchanged); otherwise the origin/master baseline holds. Confirm with a fresh
+> `pnpm validate:native` at implementation start. (Headline baseline at line 5 is
+> left master-accurate per this caveat.)
+
 ### Losslessness audit (verified — verdict + the one real violation)
 
 Principle #2 ("complete & non-lossy") was **asserted** above; this audit
@@ -761,39 +885,36 @@ the fix-PR below closes (so #2 is enforced, not just claimed).
 - **`token.immediate` drop — CONFIRMED FIXED.** `wrapper-deletion.ts:160-164`
   preserves the token node, so the `project_preserve_token_wrappers` bug (link
   once dropped `token.immediate`, an illegal render-fact loss per #0.4) is gone.
-- **Normalize = fully lossless — BREAKS in `collapseWrappers` (`optimize.ts:622-645`). VIOLATION.**
-  The single-member-collapse arms — `seq([X]) → members[0]` (`:638`),
-  `choice([X]) → members[0]` (`:643`) — and the wrapper-fold arms
-  (`:622/624/630/633`) drop the *discarded* node's `id` (and its pre-wrapper-deletion
-  `separator`) with **no `withAttrsFrom`** — the exact omission `collapseSeq` /
-  `fanOutSeqChoices` / `factorChoiceBranches` were already patched to avoid.
-  **Impact:** degraded `slotByRuleId` lookup (bounded — the survivor keeps its own
-  `id` + the lookup's fallbacks), but it **contradicts Normalize's "fully
-  lossless" requirement** (#2) outright. This is the one place the asserted
-  invariant is false today.
-- **`canonicalizeSeqOfLeaves` (`simplify.ts:1192-1198`) shares the pattern** but
-  is currently *shielded* by the surrounding passes (the discarded id is already
-  carried by a prior arm), so it is **benign now** — fixed alongside for parity +
-  defense, not because it leaks today.
+- **Normalize = fully lossless — the `collapseWrappers` violation is CLOSED
+  (PR-A0, shipped #36).** The single-member-collapse arms (`collapseWrappers`,
+  `optimize.ts:618-…` `seq([X])`/`choice([X])` + the wrapper-fold arms) once
+  dropped the discarded node's `id`/`separator` with no `withAttrsFrom` — the
+  exact omission `collapseSeq`/`fanOutSeqChoices`/`factorChoiceBranches` were
+  patched to avoid. **Fixed in `c38ffbf1`** (collapseWrappers +
+  `canonicalizeSeqOfLeaves` now thread `withAttrsFrom`) **+ `a91927c6`** (fanOut +
+  factor preserve rule ids), with the shared `withAttrsFrom`/`combineMultiplicity`
+  now centralized in `compiler/rule-attrs.ts`. So Normalize is **genuinely
+  lossless today** — #2 enforced, not just asserted. (Was an open VIOLATION in the
+  pre-#36 spec; now historical.)
+- **`canonicalizeSeqOfLeaves`** shared the pattern and was fixed in the same
+  `c38ffbf1` for parity + defense.
 
-**The fix (a PR — see §5):** give `collapseWrappers`'s `seq`/`choice`/wrapper-fold
-arms the `withAttrsFrom(rule, survivor)` treatment (parity with `collapseSeq`,
-`simplify.ts:1001-1002`) so `id` (and `separator`) survive single-member
-collapse; apply the same to `canonicalizeSeqOfLeaves`. This makes Normalize
-**genuinely lossless** — #2 verified *and* enforced. **Sequencing constraint:**
-the fix must land **before any emitter starts reading `slotByRuleId`**, so the
-degraded-lookup window never opens — see the PR placement in §5.
+**Status: DONE (PR-A0 shipped in #36).** The fix gave `collapseWrappers`'s
+`seq`/`choice`/wrapper-fold arms (and `canonicalizeSeqOfLeaves`) the
+`withAttrsFrom(rule, survivor)` treatment (parity with `collapseSeq`,
+`simplify.ts:945`) so `id`/`separator` survive single-member collapse. The
+sequencing constraint ("land before any emitter reads `slotByRuleId`") is
+satisfied — it shipped with PR3 itself, ahead of the pending emitter-migration
+PRs.
 
-### ⚠ FLAG — `node.rule` (RawRule) is still consumed beyond the legacy walker
+### ⚠ FLAG — `node.rule` (RawRule) is still the generic `R` consumed by node getters
 
-`AssembledBranch` template emission historically read raw `rule` "because
-templates need the literals" (`node-map.ts:2605` comment). With the
-authoritative `TemplateEmitter` reading `renderRule` (which *also* preserves
-literals), the RawRule snapshot should be deletable. But `node.rule` is also the
-generic `R` stored on every `AssembledNodeBase` (`node-map.ts:1378`, protected)
-and read by `isTextTemplate` / `members` / `separator` getters. **Deleting the
-RawRule snapshot (brainstorm PR3 item) requires auditing those getters to read
-`renderRule` instead.** Flagged as a PR3 sub-task, not assumed done.
+PR3 (#36) deleted the legacy render *walker* + the `renderTemplate()` methods, so
+the walker no longer reads raw `rule`. But `node.rule` is still the generic `R`
+stored on every `AssembledNodeBase` (protected) and read by
+`isTextTemplate`/`members`/`separator` getters. **Deleting the RawRule snapshot
+entirely still requires auditing those getters to read `renderRule` instead** —
+it was NOT part of PR3's walker deletion. Remains a follow-up, not assumed done.
 
 ---
 
@@ -804,6 +925,18 @@ A fact the compiler cannot derive deterministically emits a **fail-level**
 diagnostic; if any fail-level diagnostic survives to the end of Assemble,
 **Project (Emit) is halted** — no incomplete Model is ever projected to 1–6.
 This is grammar-agnostic: it holds for every kind in every grammar.
+
+> **Landed seed (branch 029).** `diagnoseSlotGrouping` (`compiler/diagnose-slot-grouping.ts`)
+> is a working Simplify-time precursor: it emits a flat `SlotGroupingDiagnostic[]`
+> for 3 shapes — ① multi-slot-nested-seq, ② supertype-list, ③ repeat-choice-with-literal
+> — each with a `proposal` string, backed by `slot-count.ts` (`countSlots ≡
+> collectSlots`, enforcing "a slot never contains slots"). **It has proposal
+> strings but NO severity enum yet** — the `DiagnosticSeverity` model below is the
+> target it grows into (proposal-string → `Diagnostic.suggestion`; the 3 shapes →
+> `propose-*` codes). **#38's `transforms: { '(_type)': field('type') }`
+> (`packages/rust/overrides.ts:591`) is the IMPLEMENTED form of shape ②** — the
+> author applying the supertype-list proposal as a real override. So the
+> diagnose→suggest→override loop is already demonstrated end-to-end for one shape.
 
 ### Severity model (END-STATE types — NEW)
 
@@ -1104,8 +1237,9 @@ discriminates (the ELEVATE primitive), not a guess.
 
 **Arm-naming — the ONE rule (REWRITTEN): arm name = the arm's KIND NAME.** Since
 every arm is a kind (§4g — literals included), the submethod name is simply
-`snakeToCamel(armKind(v))`, where `armKind(v) = isNodeRef(v) ? v.node.kind :
-v.resolvedKind` (the unified kind-ref). The arm's kind name is **tree-sitter's**:
+`snakeToCamel(armKind(v))`, where `armKind(v) = v.kind.name` (the per-value
+render-kind ref, §7.3 parse-naming — no `isNodeRef` fork post-PR-B). The arm's
+kind name is **tree-sitter's**:
 the `anon_sym_*` parser.c symbol for a bare literal, or `alias_sym_<name>` when the
 grammar relabels it (§4-registration RELABEL). **DELETED** vs the prior rule:
 - the priority cascade (no more "registered → literal → kind" — kind name is the
@@ -1120,9 +1254,10 @@ grammar relabels it (§4-registration RELABEL). **DELETED** vs the prior rule:
   `snakeToCamel(armKind(v))`.
 
 **Dedup BEFORE collision-check (load-bearing order, retained).** First fold arms
-that are the *same logical arm*: alias-pairs (via `slot.aliasSources`) and
-multiplicity-merges (via `mergeSlotValues` `node-map.ts:272`) collapse to one arm.
-*Then* collision-check. Genuine collisions are 0 today.
+that are the *same logical arm*: alias-pairs (a value whose `parseKind` differs
+from its `kind` — the per-value parse-naming, replacing the slot `aliasSources`
+map) and multiplicity-merges (via `mergeSlotValues` `node-map.ts:272`) collapse to
+one arm. *Then* collision-check. Genuine collisions are 0 today.
 
 **Registration's residual role (never gates emission, #17):** registration is the
 two orthogonal primitives (§4-registration) — ELEVATE marks the discriminating
@@ -1179,16 +1314,20 @@ machinery exists: `generated-metadata.ts` parses `parser.c` (`:64`), captures
 naming can read the tree-sitter symbol name.
 
 **`TerminalValue` survives but unifies with `NodeRef` at the naming/dispatch
-layer:** it keeps `value` (render text, #0.4) but is a **kind-ref** via
-`resolvedKind`. The unified accessor:
+layer:** it keeps `value` (render text, #0.4) but is a **kind-ref**. With the
+parse-naming decomposition (§7.3 / §2) the unified accessor is just the per-value
+render-kind ref — no `isNodeRef` fork needed:
 ```ts
-armKind(v) = isNodeRef(v) ? v.node.kind : v.resolvedKind   // a literal IS a kind
+armKind(v)      = v.kind.name        // render/source kind — both NodeRef + TerminalValue carry `kind` (#4g)
+armParseKind(v) = v.parseKind.name   // parse-as kind (alias target / variant base / own)
 ```
-So §4f arm-naming + §4d dispatch treat literal-arm and kind-arm identically — both
-are arm kinds.
+(Pre-decomposition this read `isNodeRef(v) ? v.node.kind : v.resolvedKind`;
+post-PR-B both value types carry `kind`/`parseKind` refs, collapsing the fork.)
+So §4f arm-naming uses `armKind` (render) and §4d dispatch uses `armParseKind`
+(CST) — literal-arm and kind-arm treated identically, both arm kinds.
 
-**Deletions (superseded by reading parser.c):** `TOKEN_NAMES` (`link.ts:1491`) +
-`charFallback` (`link.ts:1561`) + `tokenToName` (`link.ts:1602`) — the sittir-side
+**Deletions (superseded by reading parser.c):** `TOKEN_NAMES` (`link.ts:1537`) +
+`charFallback` (`link.ts:1607`) + `tokenToName` (`link.ts:1648`) — the sittir-side
 literal→identifier map is **DELETED**; `nameVariant` (`link.ts:675`) / `nameNode`
 (`node-map.ts:1254`) re-point to the kind entry's tree-sitter name. (This is the
 #3 "no hardcoded maps" cut: a hand-maintained operator table is exactly the
@@ -1205,6 +1344,12 @@ pass (#16, no new mechanism):
   `groups:` / `auto-groups.ts` synthesis into `outRules`** (#16, grammar-visible,
   gets a `kindId`). Default name `<parent>_<slot>` (e.g.
   `binary_expression_operator`). Zero new machinery. *Rewrites the PARENT body.*
+  **An ELEVATE'd kind is VISIBLE (§4 visible-kind-reference invariant)** — even
+  though `_`-prefixed, `markUserFacing` flags it — so it **renders as a slot
+  reference in the parent, never inlined** (`isVisibleKind` true; not in
+  `grammar.inline`). This is why `type_arguments`/`type_parameters` (registered
+  `groups:`) keep their `type_argument` slot reference instead of expanding the
+  group body — the two band-aids §5 PR-E deletes were patching exactly this.
 - **RELABEL** `(choice, {arm: name})` — `alias(arm, name)` each arm →
   `alias_sym_<name>` kinds. **Mechanism = the existing `alias()` primitive
   (`dsl/primitives/alias.ts:35`) / `variant()` hoist (`transform.ts:422`)**
@@ -1245,45 +1390,58 @@ a branch = the unified choice-slot (§4f). §4d dispatch is unchanged (structura
 
 ## §5. Strangler PR sequence
 
-Ordered so each PR (a) migrates one concern, (b) regenerates all 3 grammars +
-runs `counts --backend native`, (c) **cannot regress** because each is either
+Ordered so each PR (a) migrates one concern, (b) runs **`pnpm validate:native`**
+for all 3 grammars, (c) **cannot regress** because each is either
 behavior-preserving-by-construction or gated by a diff probe that must reach
-zero before merge. The baseline gate per PR: `rust 178/134/107`,
-`python 104/95/73`, `ts 172/81/59` (re-measure each).
+zero before merge. The baseline gate per PR (2026-05-25): **rust** cov 181/186 ·
+read-render-parse 134/136 · ast 125 — **python** 107/110 · 96/115 · ast 74 —
+**typescript** 174/182 · 82/111 · ast 75 (re-measure each).
 
-**PR3 is a hard prerequisite** (it has not landed; this spec's later PRs assume
-the legacy walker + wrapper types are gone). **ClauseRule is NOT part of PR3** —
-it is removed by PR-M in THIS spec (§C), bundled with the other sittir-invention
-rule-IR cuts.
+**`pnpm validate:native`, NOT raw `counts --backend native`.** Raw `counts` does
+NOT rebuild the napi `.node`; Askama bakes templates into the binary, so a stale
+`.node` silently falls back to the TS path and masks regressions
+(`project_native_build_and_staleness`). `pnpm validate:native` rebuilds first.
+**For every RUST-EMITTING PR** (PR-D, PR-M, PR-P, PR-I — the general choice-slot /
+§H path): run an **independent `cargo check --workspace --features napi-bindings`
++ re-count** — the SubagentStop gate NO-OPS after a regen
+(`feedback_verify_cargo_not_gate`), so cargo-check is a manual step, not an
+automatic net.
+
+**PR3 + PR-A0 are DONE (#36).** PR3 deleted the legacy walker pipeline; PR-A0
+shipped the Normalize losslessness fix (`c38ffbf1`/`a91927c6`). The pending
+sequence starts at **PR-A**. **ClauseRule was NOT part of PR3** (`detectClause`
+live at `link.ts:2338`) — it is removed by **PR-M** in THIS spec (§C).
 
 | PR | Name | Changes | Validates | Why it can't regress |
 |---|---|---|---|---|
-| **PR3** (prereq) | Delete legacy render walker + wrapper types | Per `1ebe0407` design (**ClauseRule DROPPED from it — see PR-M**): delete `template-walker.ts`, `renderTemplate()` methods, wrapper rule types (`OptionalRule`/`FieldRule`/`RepeatRule`/`Repeat1Rule`/`AliasRule`), RawRule snapshot. | full regen + counts; the `TemplateEmitter` is already authoritative | the authoritative path already produces the output; legacy is dead-weight |
-| **PR-A0** | Normalize losslessness fix — `collapseWrappers` preserves `id`/`separator` (§4 audit) | Give `collapseWrappers`'s single-member-collapse + wrapper-fold arms (`optimize.ts:622/624/630/633/638/643`) the `withAttrsFrom(rule, survivor)` treatment (parity with `collapseSeq` `simplify.ts:1001-1002`), so the discarded node's `id` (and pre-wrapper-deletion `separator`) ride onto the survivor. Apply the same to `canonicalizeSeqOfLeaves` (`simplify.ts:1192-1198`, benign-now but fixed for parity/defense). Makes Normalize **genuinely lossless** (#2 enforced). | counts unchanged + a probe asserting single-member collapse preserves `id`/`separator` (no `slotByRuleId` miss introduced by collapse) | adding `withAttrsFrom` only carries MORE data onto the survivor — strictly non-lossy, can't regress; closes the already-open degraded-`slotByRuleId` window **before** PR-D onward deepen slot-lookup reliance |
-| **PR-A** | Reconcile `_new` naming to legacy (diff → 0), WIDE probe | No emitter changes. Add a `tools`-CLI probe that, for every slot in all 3 grammars, asserts **each projected name equals its getter-computed value**: `storageName` vs `storageNameNew`, AND `name`→`storageName`, AND `configKey`/`propertyName`/`paramName`/`parseNames` vs the §2 getter formulas (`snakeToCamel`/`pluralize`/`safeParamName`/the parse-name rule). Fix `collect-slots.ts`/`simplify.ts` until **all** divergences = 0 (H1). | the WIDE divergence probe = 0 for every projected name; counts unchanged | no consumer reads `_new` yet; the probe guarantees every getter PR-B introduces is byte-identical — not just `name`/`storageName` |
-| **PR-B** | `AssembledNonterminal` → class | Swap the interface for the class (§2 getters). Construct via `new` in `collect-slots.ts`. Delete the `_new` suffixed fields (now getters). One slot identity: `storageName` (snake_case); migrate `slot.name` reads → `slot.storageName` here. `refKindNames` is private `#refKindNames`, public via `kinds` only (CW4). | counts unchanged (byte-identical, guaranteed by PR-A's WIDE probe) | every getter (`configKey`/`propertyName`/`paramName`/`parseNames` included) was proven value-identical in PR-A |
-| **PR-C** | Eliminate `origin`; re-point `'inferred'` behavior reads to `slot.isUnnamed`; drop dead `'inlined'` | Replace every `slot.origin === 'kind'` test (wrap `collectConcreteStorageKeys` `wrap.ts:497`) AND every **behavior** read of `slot.source === 'inferred'` (`shared.ts:1056/1138/1173`, `render-module.ts:585/597/656/669`, `templates.ts:1540`) with the **`slot.isUnnamed` getter** (`= fieldName === undefined`, §2 / EmitDRY-4). Delete `origin` + `SlotOrigin`. **KEEP** the `'inferred'` producer + the diagnostic read (`node-model.ts:318`) — retained provenance (#15 / Finding 5 / C1). Drop only `'inlined'` from `SlotSource` — leaving `'grammar' | 'override' | 'enriched' | 'inferred'`. | counts unchanged; wrap + render + factory-mode byte-diff; `node-model.json5` still serializes `source` | `isUnnamed` (`fieldName === undefined`) is the structural signal both `origin:'kind'` and the behavior reads of `source:'inferred'` approximated; `'inferred'` stays diagnostics-live; `'inlined'` had no producer |
+| ~~**PR3**~~ ✅ **DONE (#36, `ee3d7a0b`)** | Delete legacy render walker + render-fidelity fixes + staleness guard | Deleted the walker *pipeline* + `renderTemplate()` methods + the legacy call sites. **NOTE:** `template-walker.ts` SURVIVES as a query-helper module (`findRepeatSeparator`/`findRepeatFlag`/`findFieldsWithRepeatFlag`); wrapper rule types + ClauseRule were NOT removed (→ PR-M). | (landed) | — |
+| ~~**PR-A0**~~ ✅ **DONE (#36, `c38ffbf1` + `a91927c6`)** | Normalize losslessness fix — `collapseWrappers`/`canonicalizeSeqOfLeaves`/`fanOut`/`factor` preserve `id`/`separator` | `withAttrsFrom`/`combineMultiplicity` centralized in `compiler/rule-attrs.ts`; the single-member-collapse + wrapper-fold arms thread `withAttrsFrom`. Normalize is genuinely lossless (#2 enforced). | (landed — probe satisfied) | — |
+| **PR-A** | Reconcile `_new` naming to legacy (diff → 0), WIDE probe | No emitter changes. Probe asserts each projected name = its getter-computed value: `storageName` vs `storageNameNew`, `name`→`storageName`, `configKey`/`propertyName`/`paramName`/`parseNames` vs the §2 getter formulas. **`parseNames` probe stays on the CURRENT formula** — `parseNamesNew ≡ ref-kinds ∪ Object.keys(aliasSources)` post-`expandRuntimeDiscriminatorKinds` (`factory-map.ts:280`); per-value `value.parseKind` does NOT exist yet (PR-B adds it), so PR-A only validates the current `_new` field. *(Equivalence note: post-expansion the alias source name is redundant with the target, and per-value `parseKind` has no map-ambiguity — so the PR-B decomposition is value-identical to the PR-A formula, just relocated.)* Fix `collect-slots.ts`/`simplify.ts` until **all** divergences = 0 (H1). | the WIDE divergence probe = 0 for every projected name; counts unchanged | no consumer reads `_new` yet; the probe guarantees every getter PR-B introduces is byte-identical |
+| **PR-B** | `AssembledNonterminal` → class + per-value `kind`/`parseKind` refs (+ `sourceRuleIds`) | Swap the interface for the class (§2 getters). Delete the `_new` suffixed fields (now getters). One slot identity: `storageName`; migrate `slot.name`→`slot.storageName`. **Add `kind` (render/source) + `parseKind` (parse-as) kind REFS to `NodeRef`/`TerminalValue` (`node-map.ts:166/193`)** — resolve the `kind`-discriminant collision (§7.3 flag); **`TerminalValue.resolvedKind`→`parseKind`**. Set them in `deriveValuesForRule` (`node-map.ts:977`): symbol case (`:999/1004`) `parseKind = rule.name` target when aliased else the kind; literal case `:1029/1038` resolvedKind→`parseKind`. `kinds`/`parseNames` now project `values`. **FOLD-1:** `sourceRuleId?` → **`sourceRuleIds: RuleId[]`** (every renderRule + simplifiedRule position the slot occupies); `slotByRuleId` maps EACH id → the slot (§7.6). | counts unchanged (byte-identical, guaranteed by PR-A's WIDE probe + the equivalence note); `slotByRuleId` resolves at both views | every getter value-identical in PR-A; per-value `parseKind` reproduces `parseNamesNew` post-expansion; `sourceRuleIds` is purely additive registration (more ids → fewer misses, never a behavior change) |
+| **PR-C** | Eliminate `origin` + slot `aliasSources`; re-point behavior reads to `slot.isUnnamed` / `value.parseKind`; drop dead `'inlined'` | Replace `slot.origin === 'kind'` (`wrap.ts:470`) + every **behavior** read of `slot.source === 'inferred'` (`shared.ts:1056/1138/1173`, `render-module.ts:585/597/656/669`, `templates.ts:1540`) with `slot.isUnnamed`. **Remove the slot-level `aliasSources` map; re-point the 4 reader sites** (`collectConcreteStorageKeys` `wrap.ts:470` + the alias loops `wrap.ts:648/698`) to **`value.parseKind`**; **DELETE `deriveAliasSources` (`node-map.ts:908`) + the slot alias-merges (`collect-slots.ts:251`, `node-map.ts:809/2149`)** — values carry `parseKind` through merges. Delete `origin`+`SlotOrigin`. KEEP the `'inferred'` producer + diagnostic read (`node-model.ts:318`, #15). Drop `'inlined'` from `SlotSource`. | counts unchanged; wrap + render + factory-mode byte-diff; the `type_query` dual preserved per-value; `node-model.json5` still serializes `source` | `isUnnamed`/`value.parseKind` are the structural signals `origin`/`source==='inferred'`/`aliasSources` approximated; per-value `parseKind` carries the alias-target/variant-base distinction the map did, without map-ambiguity |
 | **PR-D** | wrap reads the class; delete `SlotModel`; `$children`→`$other` (paired codegen+rust) | Delete `compiler/slot-model.ts`. wrap.ts reads `slot.arity`/`slot.storageKey` getters instead of `createNamedSlotModel(...)`. **Redesign** the `$children` catch-all → wrap-only `$other` bucket (Finding 3 / Q4 / JC5). **Rust-reader twin (M2):** the napi reader's child-routing pass — which today routes unmatched children to a `$children`-keyed field — re-targets them to a `$other`-keyed accumulator; the reader emits `$other` ONLY for parsed children matching no named slot, and the codegen emits the matching rust struct field (a `Vec` of raw transports, NOT a typed slot). Both sides land together. | counts (esp. rust read-render-parse ast); wrap byte-diff; rust `cargo check` | `arity`/`storageKey` getters are identical functions to `SlotModel`'s; `$other` is wrap+reader-only so no typed/render surface changes |
 | **PR-D2** | Helper names must not leak into slot `values` (H2 — fixes a real OPEN bug) | **Discovery (cited):** today rust leaks 5 synthesized-helper names into slot values — `const_item.const_item_optional1 → _const_item_optional1`, `for_expression`, `function_signature_item`, `let_declaration` (`_..._optional3`), `loop_expression` (verified against `node-model.json5`); ts/python leak 0. Ensure the slot's `values` hold the **inlined target kinds**, not the `_<parent>_optionalN`/`_repeatN` helper name. Fix in Normalize/Simplify (`inlineRefs`/`reapplyInlinedLeafAttrs`, `simplify.ts:356/366`): when a helper ref is inlined, the surviving slot value must reference the helper's CONTENT kinds, not the helper symbol. | the H2 leak probe = 0 across all 3 grammars (rust 5→0); counts unchanged | makes PR-E's assumption TRUE before PR-E relies on it; the leaked names render to invalid kinds today, so fixing them only corrects |
-| **PR-E** | transport + render read the class | Transport-projection / render-module read `slot.values`/`slot.kinds`/`slot.storageKey` getters; drop node-wide `meta.separators` fallback (per-slot stamping covers all kinds). **Depends on PR-D2** — values now hold inlined kinds. | counts; H2 leak probe still 0 | the slot's `values` hold inlined target kinds (guaranteed by PR-D2); getters identical |
+| **PR-E** | transport + render read the class (+ delete the two visible-kind band-aids) | Transport-projection / render-module read `slot.values`/`slot.kinds`/`slot.storageKey` getters; drop node-wide `meta.separators` fallback. **Depends on PR-D2** (values hold inlined kinds) **+ PR-A/PR-B** (authoritative `isVisibleKind` predicate + slot name via `_new`/`sourceRuleIds`). **FOLD-1:** `lookupSlot`/`emitChoice` (`templates.ts`) resolves the slot via the **renderRule-position id** (now in `sourceRuleIds`, PR-B) — direct hit, NO arm/symbol-name fallback → #9 holds by construction. **FOLD-2 — delete both band-aids (general fix = visibility predicate + authoritative slot name):** (1) **`emitSymbol`'s "Named-alias push-down" munge (`templates.ts:1290-1318`, on 029)** — it string-munges `aliasedFrom` to reproduce the slot name because `lookupSlot` returned the GROUP's own `content` slot instead of the PARENT's `type_argument` slot; general fix = `lookupSlot` resolves the PARENT's slot for a visible-kind/aliased-group ref (the §4 invariant), then the normal path emits the right name → delete the munge. (2) **`collectTopLevelAliasBodies`/`dereferenceTopLevelAliasBody` `patternReplacementKinds`-only skip (`link.ts:511/545`; the `:532-538` check on 029)** — generalize to "keep as a reference ANY symbol whose target is a visible kind" (`isVisibleKind`), subsuming + removing the narrow registered-group check. | **native `pnpm validate:native` hold-or-improve** (handoff gate); `lookupSlot` miss-count = 0; the slot-grouping diagnostic stays silent on `type_arguments`/`type_parameters`, nothing new fires; both band-aids gone | both band-aids encode the *same* missing invariant (§4); the predicate + authoritative slot name (PR-A/PR-B) make the general path emit the right reference, so deleting the improvisations can only hold-or-improve. Caveat: FOLD-1's `lookupSlot` part is a #9-correctness fix, **NOT** an AstMatch lever (Class D cosmetic, +0 AstMatch, `project_optimize_id_loss_fix`) |
 | **PR-F** | factory + from + types read the class | factories/from/types consume getters; `from.ts` storageKey param becomes `slot.storageKey`. **No `$other`** on these surfaces (Q4). | counts; from pass-rate | getters identical to today's stored fields; `$other` was never on these surfaces in the end-state |
 | **PR-G** | Diagnostics severity model + Assemble→Project gate | Add `compiler/diagnostics.ts` (`DiagnosticSink`, severity) + `compiler/emit-gate.ts` (`assertEmittable`); wire the gate into `generate.ts` after `assemble()`. Move the unnamed-choice warner global (`collect-slots.ts:61-68`) into the sink. Initially all current heuristics still fire (no `fail` yet) — gate is a no-op until PR-L flips severities. | counts unchanged; gate passes (no `fail` emitted yet) | additive infrastructure; no severity is `fail` until PR-L |
 | **PR-H** | Phase rename + shared `transforms.ts` + ctx + node-behavior-to-class | Rename `link.ts`→`classify.ts`, `optimize.ts`→`normalize.ts`. Extract shared idempotent ops to `transforms.ts`. Introduce `NormalizeCtx`/`SimplifyCtx`/`AssembleCtx` (carrying the sink from PR-G). Apply the §7.7 `<operation><ObjectType>(target, ctx)` signatures. **Node-behavior-to-class:** `markUserFacing`→`(node, ctx)` method; **DELETE the `markParameterlessKinds` fixpoint + stored field → memoized cycle-guarded `isParameterless`/`stampExpression` getters** on `AssembledNode` (§7.3 / §7.7), terminals override the base case. | counts; full test suite; the parameterless getter produces byte-identical factory auto-stamp output | pure rename + move + method relocations; the getter is the *same* recursion the fixpoint computed (cycle = not-parameterless matches the fixpoint's never-marks-a-cycle behavior), so factory output is unchanged |
-| **PR-M** | Sittir-invention rule-IR cut + `AssembledPolymorph` collapse (§B/§C/§D + §H-fold, #16) | **§B + §H-fold:** delete `PolymorphRule`/`VariantRule` from the `Rule` union; **DELETE `AssembledPolymorph` + `modelType:'polymorph'` (`node-map.ts:2599/3087`)** — a polymorph becomes an `AssembledBranch` with `discriminatingSlot?` (the former `structuralSlotRecordFromForms` `:2131` cross-arm union generalizes into the branch slot merge; `variantChildKinds` derived = `discriminatingSlot.kinds`); reframe `promotePolymorph`/`applyOverridePolymorphs` to RECORD a thin `DiscriminatingSlotMarker` (which-slot + arm-names, NOT per-form `FormSpec`); delete the 6 `mapPolymorphForms` arms; delete the `evaluate.ts:330-339` variant-retype. **§C:** delete `ClauseRule` + `detectClause` (`link.ts:2292`) + the `'clause'` arms (closes `project_clause_multifield_gap`). **§D:** delete Link's `classifyHiddenSeqRule` GroupRule path (`link.ts:1963/1975`); Assemble builds `AssembledGroup` from the wire helper. | counts unchanged; `AssembledPolymorph` gone; `PolymorphRule` import reach 7→marker-only; the secondary-field gap closes | a branch + its discriminating-slot `values` reconstruct the identical Model the per-form `AssembledPolymorph` held (a form = an arm); clause fields were already in the seq (restoring them only adds); the wire group helper is the kind Link's classifier shadowed |
-| **PR-I** | General choice-slot → factory submethods + structural arm-dispatch + `$variant` removal (§4f / §H-fold — replaces the old polymorph-specific PR-I + PR-J) | Add the **general resolver** keyed on a discriminating choice slot's `values` arms (kind-arm → `$type`; literal-arm → literal) — generalizes `project_polymorph_dispatcher_slot_probe` to all 168 branches. **Identical-arm collapse** first (C2 / §4d), assert no duplicate-signature arm. ONE general emit path replaces the polymorph-specific functions (`emitPolymorphFactory` `factories.ts:1401`, per-form loop `:1426/1435`, `emitPolymorphDispatcher` `factories.ts:1713`+`from.ts:1110/1293`, `emitFormInterface` `types.ts:1231`, wrap polymorph path `wrap.ts:158-197`/dispatch maps `:305-322`, `emitPolymorphTemplate`): types emit union + per-arm narrowed views; factory emits dispatcher + per-arm submethods (kind-arm delegates, literal-arm pins, e.g. `binary_operator.plus()`); from/wrap dispatch on the concrete arm. **Discriminating-slot default** = single required choice slot; 0-or->1 → `propose-discriminator` (keep plain unions). **Arm-naming = the arm's KIND NAME (§4f rewrite + §4g)**: `snakeToCamel(armKind(v))` where `armKind = isNodeRef ? node.kind : resolvedKind` — read from tree-sitter (`parser.c` `anon_sym_*` / grammar `alias_sym_<name>`). Dedup-by-logical-identity FIRST (alias-pairs + `mergeSlotValues`), then collision-check. **DELETE `TOKEN_NAMES`/`charFallback`/`tokenToName` (`link.ts:1491/1561/1602`)** + the priority cascade + the parent-prefix-strip + the `form_<index>` fallback (`link.ts:684`) + `propose-arm-name`; re-point `nameVariant`/`nameNode` to the kind entry's tree-sitter name (surface `cSymbol` on `GeneratedKindEntry`, §4g); a true post-dedup collision → `fail{arm-name-collision}`. **Remove the stored `$variant`** from all shipped surfaces (~95+ ts sites); validate-only in node-model. | counts: **existing output byte-identical**; new per-arm submethods ADDITIVE for the ~136 non-polymorph branches → gate ACCEPTS new surface; no compile-time "no arm matched"; collapse assertion holds; **0 `arm-name-collision` today**; no `$variant` in generated 1–6 | a kind's name is tree-sitter's (already in parser.c) — reading it can't regress; the general path reproduces every dispatch decision (a form = an arm); the other 136 branches only GAIN methods |
+| **PR-M** | Sittir-invention rule-IR cut + `AssembledPolymorph` collapse (§B/§C/§D + §H-fold, #16) | **§B + §H-fold:** delete `PolymorphRule`/`VariantRule` from the `Rule` union; **DELETE `AssembledPolymorph` + `modelType:'polymorph'` (`node-map.ts:2599/3163`)** — a polymorph becomes an `AssembledBranch` with `discriminatingSlot?` (the former `structuralSlotRecordFromForms` `:2131` cross-arm union generalizes into the branch slot merge; `variantChildKinds` derived = `discriminatingSlot.kinds`); reframe `promotePolymorph`/`applyOverridePolymorphs` to RECORD a thin `DiscriminatingSlotMarker` (which-slot + arm-names, NOT per-form `FormSpec`); delete the 6 `mapPolymorphForms` arms; delete the `evaluate.ts:330-339` variant-retype. **§C:** delete `ClauseRule` + `detectClause` (`link.ts:2338`) + the `'clause'` arms (closes `project_clause_multifield_gap`). **§D:** delete Link's `classifyHiddenSeqRule` GroupRule path (`link.ts:2010/1975`); Assemble builds `AssembledGroup` from the wire helper. | counts unchanged; `AssembledPolymorph` gone; `PolymorphRule` import reach 7→marker-only; the secondary-field gap closes | a branch + its discriminating-slot `values` reconstruct the identical Model the per-form `AssembledPolymorph` held (a form = an arm); clause fields were already in the seq (restoring them only adds); the wire group helper is the kind Link's classifier shadowed |
+| **PR-I** | General choice-slot → factory submethods + structural arm-dispatch + `$variant` removal (§4f / §H-fold — replaces the old polymorph-specific PR-I + PR-J) | Add the **general resolver** keyed on a discriminating choice slot's `values` arms (kind-arm → `$type`; literal-arm → literal) — generalizes `project_polymorph_dispatcher_slot_probe` to all 168 branches. **Identical-arm collapse** first (C2 / §4d), assert no duplicate-signature arm. ONE general emit path replaces the polymorph-specific functions (`emitPolymorphFactory` `factories.ts:1401`, per-form loop `:1426/1435`, `emitPolymorphDispatcher` `factories.ts:1713`+`from.ts:1110/1293`, `emitFormInterface` `types.ts:1231`, wrap polymorph path `wrap.ts:158-197`/dispatch maps `:305-322`, `emitPolymorphTemplate`): types emit union + per-arm narrowed views; factory emits dispatcher + per-arm submethods (kind-arm delegates, literal-arm pins, e.g. `binary_operator.plus()`); from/wrap dispatch on the concrete arm. **Discriminating-slot default** = single required choice slot; 0-or->1 → `propose-discriminator` (keep plain unions). **Arm-naming = the arm's KIND NAME (§4f rewrite + §4g)**: `snakeToCamel(armKind(v))` where `armKind(v) = v.kind.name` (the per-value render-kind ref, §7.3 — no `isNodeRef` fork post-PR-B) — read from tree-sitter (`parser.c` `anon_sym_*` / grammar `alias_sym_<name>`). Dedup-by-logical-identity FIRST (per-value `parseKind`≠`kind` alias-pairs + `mergeSlotValues`), then collision-check. **DELETE `TOKEN_NAMES`/`charFallback`/`tokenToName` (`link.ts:1537/1607/1648`)** + the priority cascade + the parent-prefix-strip + the `form_<index>` fallback (`link.ts:684`) + `propose-arm-name`; re-point `nameVariant`/`nameNode` to the kind entry's tree-sitter name (surface `cSymbol` on `GeneratedKindEntry`, §4g); a true post-dedup collision → `fail{arm-name-collision}`. **Remove the stored `$variant`** from all shipped surfaces (~95+ ts sites); validate-only in node-model. | counts: **existing output byte-identical**; new per-arm submethods ADDITIVE for the ~136 non-polymorph branches → gate ACCEPTS new surface; no compile-time "no arm matched"; collapse assertion holds; **0 `arm-name-collision` today**; no `$variant` in generated 1–6 | a kind's name is tree-sitter's (already in parser.c) — reading it can't regress; the general path reproduces every dispatch decision (a form = an arm); the other 136 branches only GAIN methods |
 | **PR-K** | `factory-map.json5` → `node-model.json5` + registration-primitive surfacing + enum-sidecar retirement (orthogonal) | Make `node-model.json5` carry factory-map's subset (§6); **`polymorphVariants` rebuilt per-branch from the discriminating slot's `values` arms** (§6 / §H-fold). **§4h:** expose `elevate`/`relabel` as the two primitives `polymorphs:`/`enums:` desugar to (ELEVATE = existing `groups:`/`auto-groups`; RELABEL = existing `alias()`/`variant()` — no new machinery); **replace `collectPerSlotChildEnums` (`render-module.ts:2480/3198`) with the ELEVATE'd grammar kind FOR REGISTERED enums only** (the sidecar remains for unregistered enum-shaped slots, §G-cut). Point validator/`nodeToConfig` at node-model; delete `factory-map.json5` + emitter. | validator passes; counts; registered-enum slots render via the elevated kind (sidecar output unchanged for unregistered) | factory-map is a strict subset (§6 proof); elevate/relabel are existing passes surfaced (#16); the sidecar→kind swap is per-registered-enum, gated on counts |
 | **PR-N** | enrich-widening — name the easy positional symbols (§F) | Widen enrich symbol-to-field promotion to ALL unambiguous single-occurrence positional symbols (LR-safe via the landed `syntheticInline` `_kw_*` auto-inline). Shrinks the 243 `inferred` slots; pure-direct duplicates → deterministic positional numbering. | counts; the `inferred` slot count drops; no LR regression (override-parser errors unchanged) | promotion is deterministic + grammar-visible (#16); the `_kw_*` auto-inline keeps the parse table stable; naming a slot doesn't change its values/cardinality |
 | **PR-O** | Structural de-dup (M1/MO2/P1 — non-behavioral) | **MO2:** extract `SlotValueBase` (`NodeRef`+`TerminalValue` share 5 fields). **P1:** extract `BaseEmitConfig` (`grammar`/`nodeMap`/`generatedIdTables?` on every emit Config). **M1:** relocate the shared transforms into `transforms.ts` (de-scatter — already single-bodied, no merge). | counts unchanged; type-check passes | pure type/interface refactors + a file move; zero runtime behavior change |
-| **PR-P** | Content-classification cut: Terminal + Enum (flat) → predicates (§G-cut, #16/#1) | **Terminal (clean):** delete `TerminalRule` + `isTerminal`; delete `promoteAndLogTerminalRules` (`link.ts:388`); delete the transparent `case 'terminal'` arms (`wrapper-deletion.ts:155`, `simplify.ts:404/734/1159/1222`, `optimize.ts:484/546/718`, `rule.ts:485/556/925`, `templates.ts:605`); add `isTerminalShaped` (reconcile `link.ts:1617` + `assemble.ts:1561`); `classifyTerminalFallback` becomes primary, the `assemble.ts:1549` throw becomes the normal path; `AssembledPattern` narrows to `PatternRule` + natural subtree. **Enum (FLAT, shape-identical):** delete `EnumRule` + `isEnum`; `normalizeEnumMembers` keeps only single-literal→`StringRule`; `evaluate.ts:268` stops emitting `EnumRule`; delete the enum branch of `classifyHiddenChoiceRule` (`link.ts:1937`) + the `case 'enum'` arms; classify enums at Assemble via **`choice && members.every(isEnumLeaf)` (FLAT, no recursion)** → `AssembledEnum`. | counts unchanged; **the classified enum set + pattern set are byte-identical to today** (flat predicate matches the old flat `EnumRule`/`isAllTextShape` exactly); transport enums (read `AssembledEnum`) unchanged | both predicates reproduce the exact shape the rule-type wrappers classified; the wrappers were transparent (terminal) / a flat all-string test (enum) — no nested widening yet |
+| **PR-P** | Content-classification cut: Terminal + Enum (flat) → predicates (§G-cut, #16/#1) | **Terminal (clean):** delete `TerminalRule` + `isTerminal`; delete `promoteAndLogTerminalRules` (`link.ts:389`); delete the transparent `case 'terminal'` arms (`wrapper-deletion.ts:155`, `simplify.ts:404/734/1159/1222`, `optimize.ts:484/546/718`, `rule.ts:485/556/925`, `templates.ts:605`); add `isTerminalShaped` (reconcile `link.ts:1663` + `assemble.ts:1561`); `classifyTerminalFallback` becomes primary, the `assemble.ts:1549` throw becomes the normal path; `AssembledPattern` narrows to `PatternRule` + natural subtree. **Enum (FLAT, shape-identical):** delete `EnumRule` + `isEnum`; `normalizeEnumMembers` keeps only single-literal→`StringRule`; `evaluate.ts:268` stops emitting `EnumRule`; delete the enum branch of `classifyHiddenChoiceRule` (`link.ts:1981`) + the `case 'enum'` arms; classify enums at Assemble via **`choice && members.every(isEnumLeaf)` (FLAT, no recursion)** → `AssembledEnum`. | counts unchanged; **the classified enum set + pattern set are byte-identical to today** (flat predicate matches the old flat `EnumRule`/`isAllTextShape` exactly); transport enums (read `AssembledEnum`) unchanged | both predicates reproduce the exact shape the rule-type wrappers classified; the wrappers were transparent (terminal) / a flat all-string test (enum) — no nested widening yet |
 | **PR-Q** | Enum recursive-widening (count-gated, §G-cut staging step 2) | Switch the enum predicate from flat to **recursive `isEnumShaped`** (`choice && members.every(isEnumShaped)`) so nested literal-choices classify as `AssembledEnum`; `AssembledEnum.values` flattens nested leaves. **Count-gated:** the newly-classified nested choices are reviewed + all 3 grammars regen'd; pass-rate must hold. | counts hold; the newly-`enum` kinds are reviewed; **measured widening delta = rust 0 / ts 1 / python 0** (so a near-no-op) | the widening only re-classifies choices whose members are all literal sets (recursively) — semantically already enums; the measured delta is ≤ a handful, each regen-verified |
 | **PR-L** | Flip remaining heuristics to `propose-*` fail-diagnostics (author overrides first) | For each *guess* still present after PR-M/PR-I/PR-N (`inferFieldNames` residue → `propose-field`; any leftover polymorph candidacy → `propose-polymorph`; the choice distribute-vs-union guess `collect-slots.ts:520`; the discriminating-slot 0-or->1 case → `propose-discriminator`): **first** instrument the **pre-merge** slot stream (before `mergeSlotsByName`, §F) to count the direct+repeat-mix `propose-field` FAIL residue per grammar; author the `field()`/`polymorphs:` overrides that clear it (counts must hold); **then** delete the heuristic and `fail`. **NOT in scope:** (a) the sanctioned `content` slot (§4c) — stays `warn`, never `fail`; (b) `propose-top-level-rule` — info/warn, never `fail` (auto-groups render fine); (c) the **parameterless derivation** — not a guess, became a getter in PR-H. | counts hold AT EACH heuristic removal; the pre-merge `propose-field` residue → 0 via overrides; `overrides.suggested.ts` reviewed; gate (PR-G) actively blocks | overrides authored before each guess is removed → deterministic path produces the same Model; `content`/`propose-top-level-rule`/parameterless are not fails, so no surprise cliff |
 
-**Proposed PR count: 18** (PR3 prereq + PR-A0 + PR-A..PR-I/K..PR-Q + PR-L; **the
-old PR-J `$variant`-removal merged into PR-I**, the general choice-slot path).
-Sequence order: PR3 → A0 → A → B → C → D → D2 → E → F → G → H → **M → I → K** →
-N → O → P → Q → L.
-**PR-A0 (first, right after PR3)** is the Normalize losslessness fix (§4 audit) —
-sequenced before PR-D onward so the degraded-`slotByRuleId` window closes early.
+**PR count: 18 designed; PR3 + PR-A0 already DONE (#36) → 16 PENDING**
+(PR-A..PR-I/K..PR-Q + PR-L; **the old PR-J `$variant`-removal merged into PR-I**,
+the general choice-slot path).
+**Pending sequence order (PR3 + PR-A0 landed):** PR-A → B → C → D → D2 → E → F →
+G → H → **M → I → K** → N → O → P → Q → L.
+**PR-A0 was the Normalize losslessness fix (§4 audit) — shipped in #36**
+(`c38ffbf1`/`a91927c6`), ahead of every pending emitter-migration PR, so the
+degraded-`slotByRuleId` window is already closed.
 PR-A..PR-D are the load-bearing core (centralize naming + kill
 `SlotModel`/`origin`/`name`, narrow `$children`→`$other`); PR-D2 fixes the
 helper-name leak; PR-E..PR-F migrate the remaining read sites; PR-G is the
@@ -1303,12 +1461,13 @@ retype + establishing the discriminating-slot model, PR-N shrinking the residue,
 and PR-G providing the gate). Each PR is a strangler step that **removes the old
 code it supersedes within the same PR** — no dedicated "sunset" PRs.
 
-**Gating discipline (#12, brainstorm validation gate).** Each PR ends with:
-`npx tsx packages/codegen/src/cli.ts --grammar <g> --all --output …` for all 3,
-then `counts --backend native <g>` for all 3, asserting no regression vs the
-baseline. **PR-A0 gates on a probe asserting single-member collapse preserves
-`id`/`separator` (no `slotByRuleId` miss from `collapseWrappers`);** PR-A gates
-on the WIDE divergence probe = 0 (every projected name);
+**Gating discipline (#12, brainstorm validation gate).** Each PR ends with
+**`pnpm validate:native`** (rebuilds the `.node` then re-counts — NOT raw
+`counts`, see above) for all 3, asserting no regression vs the 2026-05-25
+baseline; rust-emitting PRs also run an independent `cargo check --workspace
+--features napi-bindings`. **PR-A0 DONE (#36)** — its probe (single-member
+collapse preserves `id`/`separator`) is satisfied by `c38ffbf1`/`a91927c6`. PR-A
+gates on the WIDE divergence probe = 0 (every projected name);
 PR-D2 gates on the H2 helper-leak probe = 0; **PR-M gates on `AssembledPolymorph`
 deleted + the clause-multifield gap closing (no field lost) + `PolymorphRule`
 leaving the Rule union; PR-I gates on the identical-arm collapse assertion +
@@ -1332,7 +1491,7 @@ derivation already available from the assembled `NodeMap`:
 | factory-map map | Source on the Model | Already serialized in node-model? |
 |---|---|---|
 | `factoryShapes` | `classifyFactoryShape(node)` (`shared.ts`) — pure function of node modelType + slots | derivable; node-model has `modelType` + slots |
-| `fieldAliasMap` | `slot.aliasSources` (`factory-map.ts:87`) | YES — `node-model.ts:328` serializes `aliasSources` per field |
+| `fieldAliasMap` | `slot.aliasSources` (`factory-map.ts:87`) **TODAY**; post-PR-C rebuilds from per-value `value.parseKind` (the alias-target ref) — same data, relocated off the slot map | YES — `node-model.ts:328` serializes it per field |
 | `factoryFields` | `resolveFactoryFieldNames(node)` (`factory-map.ts:96`) — the factory-field gating predicate | derivable from slots + `isParameterless` |
 | `factorySlots` | `deriveSlotCardinality(field)` per slot (`factory-map.ts:106`) | YES — `node-model.ts:314` serializes `required`/`multiple`/`nonEmpty` per field |
 | `polymorphVariants` | `node.forms` field-signatures / `node.variantChildKinds` (`factory-map.ts:119`) | partially — node-model has `forms` + `variantChildKinds` (`node-model.ts:249/304`) but not the pre-computed `childKind`/`fields` dispatch map |
@@ -1418,15 +1577,15 @@ classes (§7.3).
 | `dsl/enrich.ts` | UNCHANGED — see glossary Phase 0 | shared grammar layer (not a sittir phase) | `enrich`, `applyEnrichPasses`, `enrichFieldWrappers`, `enrichMultiplicityWrappers`, … |
 | `dsl/wire/*` + `dsl/runtime-shapes.ts` | UNCHANGED — see glossary Phase 1 | shared grammar layer | `wire`, `applyAutoGroups`, dual-case predicates, … |
 | `compiler/evaluate.ts` | REFINED — see `evaluate.ts:200` | **Evaluate** | `evaluate(entryPath)`, DSL primitives, `synthesize*`, `liftCommaSep`, `grammarFn`. **DELETED (§B):** the heterogeneous-field-choice → `variant`-retype block (`evaluate.ts:330-339`). **CHANGED (§G-cut):** `choice()` (`evaluate.ts:268`) stops emitting `EnumRule` — `normalizeEnumMembers` returns a single-literal `StringRule` or a plain `ChoiceRule` |
-| `compiler/classify.ts` | RENAME of `link.ts` (+ folds `link-refine.ts`, `field-shape.ts`) | **Classify** | `classifyGrammar(raw, ctx)` (was `link`), `resolveRule`, `classifyHiddenRule`, `hoistIndentIntoRepeat`, `annotateBlockBearerFields`. **`promotePolymorph`/`applyOverridePolymorphs` REFRAMED** — they RECORD a `PolymorphSpec` (§B). **DELETED:** `detectClause` (§C); `classifyHiddenSeqRule`'s opaque GroupRule path (`link.ts:1963/1975`, §D); `promoteAndLogTerminalRules` (`link.ts:388`, called `:138`) + the enum branch of `classifyHiddenChoiceRule` (`link.ts:1935/1937`) as rewriters (§G-cut — classification is now a predicate at Assemble); `inferFieldNames`, `looksLikePolymorphCandidate`, `choiceNeedsVariantWrapping` (→ `propose-*` diagnostics, §E / PR-L). **NEW:** `isTerminalShaped` (reconciles `link.ts:1617` `isTerminalShape` + `assemble.ts:1561` `isAllTextShape` into one shared predicate) |
-| `compiler/normalize.ts` | RENAME of `optimize.ts` (+ folds `wrapper-deletion.ts`) | **Normalize (non-lossy)** | `normalizeGrammar(linked, ctx)` (was `optimize`), `fanOutSeqChoices`, `factorChoiceBranches`, `dedupeSeqMembers`, `inlineSingleUseHidden`, `collapseWrappers`, `pushdownWrappers` (was `applyWrapperDeletion`). Produces the **RenderRule** snapshot. **FIXED (PR-A0, §4 audit):** `collapseWrappers` (`optimize.ts:622-645`) now threads `withAttrsFrom` on its single-member-collapse + wrapper-fold arms so `id`/`separator` survive — the one place Normalize was NOT actually lossless (#2). **DELETED (§B):** the 6 `mapPolymorphForms` arms (`optimize.ts:226/357/399/…`) + the per-form snapshot block. **DELETED (§G-cut):** the transparent `case 'terminal'` arms (`optimize.ts:484/546/718`) + `case 'enum'` arms — the natural `seq`/`string`/`choice` arms already handle the shape; `rulesEqual`'s enum arm folds into the choice arm |
+| `compiler/classify.ts` | RENAME of `link.ts` (+ folds `link-refine.ts`, `field-shape.ts`) | **Classify** | `classifyGrammar(raw, ctx)` (was `link`), `resolveRule`, `classifyHiddenRule`, `hoistIndentIntoRepeat`, `annotateBlockBearerFields`. **`promotePolymorph`/`applyOverridePolymorphs` REFRAMED** — they RECORD a `PolymorphSpec` (§B). **DELETED:** `detectClause` (§C); `classifyHiddenSeqRule`'s opaque GroupRule path (`link.ts:2010/1975`, §D); `promoteAndLogTerminalRules` (`link.ts:389`, called `:138`) + the enum branch of `classifyHiddenChoiceRule` (`link.ts:1979/1937`) as rewriters (§G-cut — classification is now a predicate at Assemble); `inferFieldNames`, `looksLikePolymorphCandidate`, `choiceNeedsVariantWrapping` (→ `propose-*` diagnostics, §E / PR-L). **NEW:** `isTerminalShaped` (reconciles `link.ts:1663` `isTerminalShape` + `assemble.ts:1561` `isAllTextShape` into one shared predicate) |
+| `compiler/normalize.ts` | RENAME of `optimize.ts` (+ folds `wrapper-deletion.ts`) | **Normalize (non-lossy)** | `normalizeGrammar(linked, ctx)` (was `optimize`), `fanOutSeqChoices`, `factorChoiceBranches`, `dedupeSeqMembers`, `inlineSingleUseHidden`, `collapseWrappers`, `pushdownWrappers` (was `applyWrapperDeletion`). Produces the **RenderRule** snapshot. **FIXED (PR-A0, §4 audit):** `collapseWrappers` (`optimize.ts:618-…`) now threads `withAttrsFrom` on its single-member-collapse + wrapper-fold arms so `id`/`separator` survive — the one place Normalize was NOT actually lossless (#2). **DELETED (§B):** the 6 `mapPolymorphForms` arms (`optimize.ts:226/357/399/…`) + the per-form snapshot block. **DELETED (§G-cut):** the transparent `case 'terminal'` arms (`optimize.ts:484/546/718`) + `case 'enum'` arms — the natural `seq`/`string`/`choice` arms already handle the shape; `rulesEqual`'s enum arm folds into the choice arm |
 | `compiler/simplify.ts` | REFINED — see `simplify.ts:331` | **Simplify (lossy)** | `computeSimplifiedRules`, `simplifyRules`, `simplifyRule`, `fuseHeadRepeatLists`, `hoistSharedFieldAcrossChoiceBranches`, `mergeChoiceBranches`, the field-hoist helpers. Produces the **SimplifiedRule** snapshot. **DELETED (§G-cut):** the transparent `case 'terminal'` arms (`simplify.ts:404/734/1159/1222`) + `case 'enum'` leaf arms — the underlying natural shapes are handled directly |
 | `compiler/transforms.ts` | **NEW** (#13a) — **rationale: de-scatter, not de-dup (M1).** These ops are already a *single body each*, shared by import between Normalize & Simplify today; there is no duplicated implementation to merge. The module exists to give the shared ops one named home (so a reader finds them in one place, and the `(rule, ctx)` signature is uniform) — not to eliminate copy-paste. | shared idempotent ops invoked by BOTH Normalize & Simplify | `collapseSeq(rule, ctx)`, `canonicalizeSeqOfLeaves(rule, ctx)` (`withAttrsFrom`-threaded per PR-A0 — single-member collapse preserves `id`/`separator`), `inlineRefs(rule, ctx)`, `deleteWrapper(rule, ctx)`, `pushAttrsToLeaves(rule, …)`, `combineMultiplicity`, `extractRepeatShape`, `findRepeatFlag` (moved out of the deleted `template-walker.ts`) |
 | `compiler/assemble.ts` (+ slot walk) | REFINED — see `assemble.ts:407` | **Assemble** (sole Model-builder) | `assembleModel(normalized, ctx)`, `classifyNode(rule, ctx)`, `hydrateSlotRefs(nodeMap, ctx)`, `markUserFacing(node, ctx)` (merged — §G/M3), `resolveCollidingNames(nodeMap, ctx)`, `resolveIrKeys(nodeMap, ctx)`, `collectAnonymousNodes(nodeMap, ctx)`, `collectSlots(rule, ctx)` (slot-enum walk — naming logic MOVED to the class, §7.3), `buildAssembledFormGroups(node, ctx)` (now reads the `PolymorphSpec` + parent `ChoiceRule` arms, §B — was `PolymorphRule.forms`). **AssembledPolymorph** built from `PolymorphSpec`; **AssembledGroup** built from the **wire-synthesized helper kind** (`dsl/wire/auto-groups.ts`, grammar-visible with a `kindId`, §D) — NOT from Link's opaque GroupRule classifier. **`classifyTerminalFallback` (`assemble.ts:1546`) becomes the PRIMARY predicate-driven classifier (§G-cut)** — `isTerminalShaped` → `modelType:'pattern'` (`AssembledPattern`); `isEnumShaped` → `modelType:'enum'` (`AssembledEnum`); **the `throw` at `assemble.ts:1549` becomes the normal path** (no longer a fallback). **DELETED:** `buildSlot` free function (→ `AssembledNonterminal` constructor); **`markParameterlessKinds` fixpoint + helpers (→ memoized getters, §7.3).** All signatures per the §7.7 exhaustive map |
 | `compiler/rule.ts` | REFINED — see §7.4 | **shared rule helpers** (#13c) | Rule IR types + `RuleBase`; type guards (`isSeq`, …); `literalTextOf`, `collectFieldNames`, `replaceAtPath`; **NEW predicates `isTerminalShaped`/`isEnumLeaf`/`isEnumShaped`** (§G-cut — or a sibling `predicates.ts`). **DELETED — wrappers (PR3):** `OptionalRule`/`FieldRule`/`RepeatRule`/`Repeat1Rule`/`AliasRule`. **DELETED — sittir inventions (PR-M, §B/§C):** `PolymorphRule`/`VariantRule`/`ClauseRule` + `isClause` (`rule.ts:440`). **DELETED — content classifications (§G-cut):** `EnumRule`/`TerminalRule` + `isEnum` (`rule.ts:441`)/`isTerminal` (`rule.ts:444`); `normalizeEnumMembers` (`rule.ts:276`) keeps ONLY the single-literal→`StringRule` collapse, else returns a plain `ChoiceRule` |
 | `compiler/node-map.ts` | REFINED — see §7.3 | the `AssembledNode*` class hierarchy + `AssembledNonterminal` class + slot value types | (class defs only — no free-standing pipeline methods). **DELETED:** `inlineJinjaClauses`, `translateToJinja`, `renderTemplate()` methods (PR3) |
 | `compiler/slot-model.ts` | **DELETED** | — | `SlotModel`/`createSlotModel`/`createNamedSlotModel`/`createUnnamedKindSlotModel`/`createUnnamedChildrenSlotModel`/`slotStorageKey` all gone — replaced by class getters (§7.3) |
-| `compiler/template-walker.ts` | **DELETED** (PR3) | — | `findRepeatFlag` survivor → `transforms.ts`; everything else deleted |
+| `compiler/template-walker.ts` | **PIPELINE DELETED (PR3 #36); module SURVIVES** | query helpers | PR3 deleted the walker *pipeline*; the file now holds only the query helpers `findRepeatSeparator` / `findRepeatFlag` / `findFieldsWithRepeatFlag` (imported by `node-map.ts` + `collect-slots.ts:50`). **Pending future step:** move `findRepeatFlag` → `transforms.ts` (or onto the class) + delete the rest |
 | `compiler/diagnostics.ts` | **NEW** (§7.5) | cross-cutting diagnostics | `DiagnosticSink`, `Diagnostic`, `DiagnosticSeverity`, `EmitHaltedError` |
 | `compiler/emit-gate.ts` | **NEW** (§7.5) | Assemble→Project gate | `assertEmittable(nodeMap, sink)` |
 | `compiler/generate.ts` | REFINED — see `generate.ts` | pipeline driver | sequences Evaluate→Classify→Normalize→Simplify→Assemble→`assertEmittable`→Emit; constructs + threads the `DiagnosticSink` |
@@ -1487,8 +1646,8 @@ artifact numbers map to brainstorm #0's 1–6.
 | 3 — `from` | `emitters/from.ts` | `emitFrom(config): string` (`from.ts:304`) | `storageKey` param → `slot.storageKey`; `slot.kinds` (not `slotKindNames`); keyword-presence via cached `slot.storageInfo?.kind` (EmitDRY-2); **§H-fold: ONE path** — dispatch structurally on the concrete arm (replaces `emitPolymorphDispatcher` `from.ts:1110/1293`); **no `$other`**; no stored `$variant` |
 | 4 — wrap | `emitters/wrap.ts` | `emitWrap(config): string` (`wrap.ts:80`) | reads `slot.arity`/`slot.storageKey`; `collectConcreteStorageKeys` routes on `slot.isUnnamed`; **§H-fold: ONE path** — dispatch on the concrete arm (`$type` for kind-arm, literal for literal-arm); replaces the wrap polymorph path (`wrap.ts:158-197`) + dispatch maps (`:305-322`); **`$other`** bucket lives HERE + its rust-reader twin only |
 | 5 — transports | `emitters/transport-common.ts`, `transport-projection.ts`, `transport-projection-cache.ts` | `buildSupertypeTransportSet(nodeMap)` (`transport-common.ts:71`) + projection builders | read `slot.values`/`slot.kinds`; **no `$other`**; no stored `$variant` |
-| 5/6 — render bridge | `emitters/render-module.ts` | `emitRenderModule(...)` (`render-module.ts:2349`), `emitRenderModuleBundle(...)` (`:436`), `emitHashFiles(...)` (`:2315`) | per-slot separator from value stamp (drop node-wide `meta.separators`); structural arm dispatch on `$type`/literal (not "is-polymorph", §H-fold) |
-| 6 — template renderer | `emitters/templates.ts` | `runTemplateEmitter(config): EmittedTemplates` (`templates.ts:1506`); per-modelType `emitBranchTemplate`/`emitGroupTemplate`/`emitMultiTemplate`; shared `emitRule(rule, ctx)` (`:739`) | reads **`node.renderRule`** (non-lossy). **§H-fold:** `emitPolymorphTemplate` folds into `emitBranchTemplate` (a polymorph IS a branch with a discriminating slot — its arms render via the slot's `values`); no separate polymorph dispatch in templates. **DELETED:** legacy `emitBodyForNode` + `emitJinjaTemplates`; the `case 'terminal'` arms (`templates.ts:605`, §G-cut); the dead `snakeToCamel` copy (`templates.ts:137`, EmitDRY-5) |
+| 5/6 — render bridge | `emitters/render-module.ts` | `emitRenderModule(...)` (`render-module.ts:2456`), `emitRenderModuleBundle(...)` (`:436`), `emitHashFiles(...)` (`:2315`) | per-slot separator from value stamp (drop node-wide `meta.separators`); structural arm dispatch on `$type`/literal (not "is-polymorph", §H-fold) |
+| 6 — template renderer | `emitters/templates.ts` | `runTemplateEmitter(config): EmittedTemplates` (`templates.ts:1608`); per-modelType `emitBranchTemplate`/`emitGroupTemplate`/`emitMultiTemplate`; shared `emitRule(rule, ctx)` (`:780`) | reads **`node.renderRule`** (non-lossy). **§H-fold:** `emitPolymorphTemplate` folds into `emitBranchTemplate` (a polymorph IS a branch with a discriminating slot — its arms render via the slot's `values`); no separate polymorph dispatch in templates. **DELETED:** legacy `emitBodyForNode` + `emitJinjaTemplates`; the `case 'terminal'` arms (`templates.ts:605`, §G-cut); the dead `snakeToCamel` copy (`templates.ts:137`, EmitDRY-5) |
 | build artifact — serialized Model | `emitters/node-model.ts` | `emitNodeModel(config): string` (`node-model.ts:172`), `buildNodeModel(nodeMap)` (`:178`) | **absorbs** factory-map's 5 maps (§6) incl. dispatch-ready `polymorphVariants` + `$variant` (diagnostics/validate-only) |
 | — | `emitters/factory-map.ts` | **DELETED** (`emitFactoryMap`/`buildFactoryMap` fold into `node-model.ts`, §6) | — |
 
@@ -1550,9 +1709,9 @@ class hierarchy is **already class-based**; only the listed members change.
 | Class | Status | End-state note |
 |---|---|---|
 | `AssembledNodeBase<R>` | REFINED — see `node-map.ts:1281` | **DELETED method:** `renderTemplate()` (PR3). `protected rule: R` getters (`members`/`separator`/`isTextTemplate`) read `renderRule` after the RawRule snapshot is dropped (§4 FLAG). **NEW memoized getters (replace the deleted fixpoint pass + stored fields, §7.7):** `isParameterless` + `stampExpression`/`stampChildExpression` — recursive over `slot.values[].node`, cycle-guarded (in-progress = not parameterless), memoized per node; terminal subclasses override the base case. **Stored field populated by a `(node, ctx)` pass, read field-style:** `userFacing` (set by `markUserFacing` — cross-node, NOT a getter). Otherwise unchanged (`kind`/`typeName`/`factoryName`/`irKey`/`source`/`hidden`) |
-| `AssembledNonterminal` | **REFINED → CLASS** (§2 full def) | the slot class; getters `storageName` (the ONE identity)/`storageKey`/`parseNames`/`configKey`/`propertyName`/`paramName`/`arity`/`isRequired`/`isMultiple`/`isNonEmpty`/`hasTrailing`/`hasLeading`/`kinds`. Stored: `fieldName`/`values`/`aliasSources`/`source` (provenance, incl. retained `'inferred'`)/`sourceRuleId`/`storageInfo`/`#refKindNames`. **DELETED:** the `name` field/alias (one identity: `storageName`); stored `storageName`/`propertyName`/`configKey`/`paramName`/`hasTrailing`/`hasLeading`/`origin`; the `_new` suffixed fields; `SlotSource` variant `'inlined'` only (`'inferred'` retained as provenance) |
+| `AssembledNonterminal` | **REFINED → CLASS** (§2 full def) | the slot class; getters `storageName` (the ONE identity)/`storageKey`/`parseNames`/`configKey`/`propertyName`/`paramName`/`arity`/`isRequired`/`isMultiple`/`isNonEmpty`/`hasTrailing`/`hasLeading`/`kinds`. Stored: `fieldName`/`values` (each value carries `kind`+`parseKind` refs, §7.3)/`source` (provenance, incl. retained `'inferred'`)/**`sourceRuleIds: RuleId[]`** (FOLD-1 — ALL renderRule+simplifiedRule position ids, was `sourceRuleId?`)/`storageInfo`. **DELETED:** the `name` field/alias (one identity: `storageName`); stored `storageName`/`propertyName`/`configKey`/`paramName`/`hasTrailing`/`hasLeading`/`origin`; the `_new` suffixed fields; **the slot-level `aliasSources` map (→ per-value `parseKind`) + the stored `#refKindNames` (→ `kinds` projects `values`)**; `SlotSource` variant `'inlined'` only (`'inferred'` retained as provenance) |
 | `AssembledBranch` | REFINED — see `node-map.ts:2586` | `_slots` record now holds `AssembledNonterminal` instances; `slots`/`fields` getters unchanged. **ABSORBS `AssembledPolymorph` (§H-fold):** a branch with a **discriminating choice slot** (`slot.values.length > 1`) carries `discriminatingSlot?: string` (the slot's `storageName`) + `variantChildKinds` (now derived = `discriminatingSlot.kinds`, not stored from forms). The former `structuralSlotRecordFromForms` (`node-map.ts:2131`) cross-arm union + optionality-relax generalizes into the branch slot merge. **Arm name is a DERIVED property `armNameOf(slot, value, parentKind)` (§4f)** — registration provides only the priority-1 override name + the discriminating-slot marker + `$variant` validation, NOT a stored per-arm name. **DELETED:** `renderTemplate()`; `children` getter already retired (returns `[]`) |
-| `AssembledPolymorph` | **DELETED (§H-fold)** — see `node-map.ts:2599-2710` | Removed entirely; `modelType:'polymorph'` removed from the `AssembledNode` union (`node-map.ts:3087`). A polymorph kind is now an `AssembledBranch` with a `discriminatingSlot`; each form = one arm of that slot. The per-form `AssembledGroup` (the prior `PolymorphSpec`/`FormSpec` dissolution, §B) is gone — arms are `ChoiceRule` members fully modeled by the slot's `values` (kind-arm = `NodeRef`, literal-arm = `TerminalValue`) |
+| `AssembledPolymorph` | **DELETED (§H-fold) — PENDING** (still present at `node-map.ts:2599-2710`; union member at `node-map.ts:3163`) | Removed entirely; `modelType:'polymorph'` removed from the `AssembledNode` union (`node-map.ts:3163`). A polymorph kind is now an `AssembledBranch` with a `discriminatingSlot`; each form = one arm of that slot. The per-form `AssembledGroup` (the prior `PolymorphSpec`/`FormSpec` dissolution, §B) is gone — arms are `ChoiceRule` members fully modeled by the slot's `values` (kind-arm = `NodeRef`, literal-arm = `TerminalValue`) |
 | `AssembledGroup` | REFINED — see `node-map.ts:3659` | hidden synthesized-group; `fields`/`children` unchanged, but **built from the wire-synthesized helper kind** (grammar-visible, `kindId`, §D), not Link's deleted opaque GroupRule classifier. **NEW getter `discriminatorKindsOrDefault` (EmitDRY-3)** `= discriminatorKinds ?? [\`${parentKind}_${name}\`]` — the byte-identical fallback duplicated at `factory-map.ts:146` + `wrap.ts:310`; both consumers read the getter (a polymorph form IS an `AssembledGroup`). **DELETED:** `renderTemplate()` |
 | `AssembledMulti` | REFINED — see `node-map.ts:3617` | `elementRule`/`separator`/`nonEmpty`/`trailing`/`leading` unchanged. **DELETED:** `renderTemplate()` |
 | `AssembledSupertype` | UNCHANGED — see `node-map.ts:3573` | `subtypes` getter |
@@ -1564,19 +1723,47 @@ class hierarchy is **already class-based**; only the listed members change.
 | `AssembledEnum` | REFINED — see `node-map.ts:3543` | `values` getter. **Constructed from a plain `ChoiceRule`** (selected by `isEnumShaped`, §G-cut) — was an `EnumRule`. **`.values` flattens nested string leaves** to the flat literal list (a recursive literal-choice yields one value set). Transport per-slot enums read this node (insulated from the rule-IR cut). |
 
 Slot **value** types (on `AssembledNonterminal.values`): `NodeRef`
-(`node-map.ts:168`), `TerminalValue` (`:195`), `NodeOrTerminal` union (`:210`),
+(`node-map.ts:166`), `TerminalValue` (`:193`), `NodeOrTerminal` union,
 `UnresolvedRef` (`:128`) — carry per-value
-`multiplicity`/`separator`/`trailing`/`leading`/`immediate`/`tokenized`/`resolvedKind`,
-the non-droppable render facts. `FieldStorageInfo` (`:161`) UNCHANGED.
-`BranchSlotClass` (`:149`) UNCHANGED.
+`multiplicity`/`separator`/`trailing`/`leading`/`immediate`/`tokenized`,
+the non-droppable render facts.
 
-> **MO2 — extract `SlotValueBase`.** `NodeRef` and `TerminalValue` share **5
-> fields** (`kind` discriminant, `multiplicity`, `separator?`, `trailing?`,
-> `leading?` — `node-map.ts:171-175` vs `:199-202`). Extract a `SlotValueBase`
-> interface both extend; each adds only its own payload (`NodeRef.node`;
-> `TerminalValue.value`/`resolvedKind?`/`immediate?`/`tokenized?`). The
+> **Per-value parse-naming (the parse-naming decomposition).** Each value carries
+> **two kind REFERENCES** (objects with `.name` + a kindId, per all-literals-are-kinds
+> §4g) — NOT bare strings:
+> - **`value.kind`** = the **render/source** kind ref — what to render / recurse
+>   into. (For `NodeRef` this is today's `node` *name* promoted to a ref; for
+>   `TerminalValue` the literal's own kind.)
+> - **`value.parseKind`** = the **parse-as / CST** kind ref — the alias **target**
+>   when a real tree-sitter alias, the validation-only **base** when a variant,
+>   else the value's **own** kind. **`TerminalValue.resolvedKind` (today a
+>   kind-name string, `node-map.ts:196`) IS `parseKind`** → becomes `parseKind`,
+>   a kind ref.
+>
+> This is where the slot-level `aliasSources` map dissolves (§1 / §2): the
+> render-vs-parse distinction is now PER VALUE (`kind` vs `parseKind`), so a slot
+> needs no `{target: source}` map. The two `AssembledNonterminal` projections
+> read straight off the values: `kinds = values.map(v => v.kind.name)` (render),
+> `parseNames = values.map(v => v.parseKind.name)` (parse). The `type_query`
+> dual (a real-alias target AND a validation-only base for different arms) is
+> preserved naturally — each arm-value carries its own `parseKind`.
+>
+> **⚠ Naming-collision flag:** `NodeRef`/`TerminalValue` already use a field named
+> `kind` as the union *discriminant* (`'node-ref'`/`'terminal'`,
+> `node-map.ts:167/193`). Adding `value.kind` as the render-kind ref collides.
+> Resolve at PR-B: rename the discriminant (e.g. `tag: 'node-ref'|'terminal'`, or
+> rely on the `isNodeRef`/`isTerminalValue` guards) so `kind` is free for the
+> render-kind ref. (Implementation-plan detail; the design intent — `value.kind`
+> = render ref, `value.parseKind` = parse ref — is unaffected.)
+
+> **MO2 — extract `SlotValueBase`.** `NodeRef` and `TerminalValue` share fields
+> (the discriminant, `multiplicity`, `separator?`, `trailing?`, `leading?`, AND
+> now `kind`/`parseKind`). Extract a `SlotValueBase` both extend (carrying the
+> shared `kind`/`parseKind` refs + cardinality/flank); each adds only its own
+> payload (`NodeRef.node`; `TerminalValue.value`/`immediate?`/`tokenized?`). The
 > `NodeOrTerminal` union + the `isNodeRef`/`isTerminalValue` guards are unchanged.
-> Pure structural de-dup of the field declarations — no behavior change.
+> Pure structural de-dup — no behavior change. `FieldStorageInfo` (`:161`) +
+> `BranchSlotClass` (`:149`) UNCHANGED.
 
 ### §7.4 Rule IR (already extended — PR0 shipped)
 
@@ -1659,14 +1846,14 @@ interface DiscriminatingSlotMarker {
 
 #### §C. ClauseRule removal (NEW to THIS spec — did NOT land in PR3)
 
-`ClauseRule` is the same anti-pattern: `detectClause` (`link.ts:2292`, called at
+`ClauseRule` is the same anti-pattern: `detectClause` (`link.ts:2338`, called at
 `link.ts:1733`) rewrites `optional(seq(string, field, …))` into a sittir-only
 `ClauseRule` named after the *first* field — which **dropped secondary fields**
 (`project_clause_multifield_gap`). Per #16 there is no grammar kind for a
 "clause"; it is plain `optional(seq(...))`. Remove it:
 - Delete `ClauseRule` from the `Rule` union (`rule.ts:113/232`), `isClause`
   (`rule.ts:440`), the `'clause'` case arms (`rule.ts:490/554`, `link.ts:287/1125`,
-  `collect-slots.ts:151/480`), and `detectClause` (`link.ts:2292`).
+  `collect-slots.ts:151/480`), and `detectClause` (`link.ts:2338`).
 - `optional(seq(fieldA, fieldB, …))` is left as plain structure; `collectSlots`
   distributes the seq and derives a slot **per field** — so `fieldB` is no longer
   lost. **This closes `project_clause_multifield_gap` as a side effect.**
@@ -1680,7 +1867,7 @@ interface DiscriminatingSlotMarker {
 as Rule types** — Assemble *already* recomputes both as a fallback predicate
 (`classifyTerminalFallback` `assemble.ts:1546`, whose `isAllTextShape`
 `assemble.ts:1561` is the terminal predicate; `classifyHiddenChoiceRule`
-`link.ts:1935` is the enum rewriter). Per #16/#1 the classification is a
+`link.ts:1979` is the enum rewriter). Per #16/#1 the classification is a
 **predicate over the natural structural shape + a Model node**, not a Rule
 member. Both leave the `Rule` union; the Model nodes `AssembledEnum` /
 `AssembledPattern` stay. (This reverses the prior "deferred" note now that the
@@ -1688,18 +1875,18 @@ dig is complete.)
 
 > **§7.4 layer unification (§4g).** At the **slot layer** a literal-arm
 > (`TerminalValue`) and a kind-arm (`NodeRef`) are **one concept — both are arm
-> KINDS** (`armKind(v) = isNodeRef(v) ? v.node.kind : v.resolvedKind`, §4g). There
-> are **no enum/polymorph rule types** (consistent with the `EnumRule`/`PolymorphRule`
-> deletions): a choice slot's arms are uniformly kinds, named by tree-sitter,
-> dispatched structurally (§4d). `AssembledEnum` is retained only as the
-> *standalone leaf* choice-of-literals kind (which ELEVATE produces, §4h);
-> `TerminalValue` is retained only for its render `value` (#0.4) — neither is a
-> Rule member.
+> KINDS** (`armKind(v) = v.kind.name`, the per-value render-kind ref, §7.3
+> parse-naming). There are **no enum/polymorph rule types** (consistent with the
+> `EnumRule`/`PolymorphRule` deletions): a choice slot's arms are uniformly kinds,
+> named by tree-sitter, dispatched structurally on `v.parseKind` (§4d).
+> `AssembledEnum` is retained only as the *standalone leaf* choice-of-literals
+> kind (which ELEVATE produces, §4h); `TerminalValue` is retained only for its
+> render `value` (#0.4) — neither is a Rule member.
 
 **Shared predicates (composition order; live in `rule.ts` or a `predicates.ts`):**
 ```ts
 // 1. base leaves
-isTerminalShaped(rule)  // reconciles link.ts:1617 isTerminalShape + assemble.ts:1561 isAllTextShape
+isTerminalShaped(rule)  // reconciles link.ts:1663 isTerminalShape + assemble.ts:1561 isAllTextShape
                         //   into ONE predicate: a seq/string/token subtree with no fields/symbols
 isEnumLeaf(rule) = rule.type === 'string'   // StringRule ONLY — closed literal set
                                             //   (pattern/token deliberately excluded: not a closed set)
@@ -1710,7 +1897,7 @@ isEnumShaped(rule) = isEnumLeaf(rule)
 
 **Terminal (clean — no behavior change).**
 - Delete `TerminalRule` from the union + the `isTerminal` guard (`rule.ts:444`).
-- Delete `promoteAndLogTerminalRules` (`link.ts:388`, called `:138`) as a
+- Delete `promoteAndLogTerminalRules` (`link.ts:389`, called `:138`) as a
   rule-rewriter.
 - Delete every transparent `case 'terminal'` arm: `wrapper-deletion.ts:155`;
   `simplify.ts:404/734/1159/1222`; `optimize.ts:484/546/718`; `rule.ts:485/556/925`;
@@ -1728,7 +1915,7 @@ isEnumShaped(rule) = isEnumLeaf(rule)
 - `normalizeEnumMembers` (`rule.ts:276`) keeps ONLY the single-literal →
   `StringRule` collapse; otherwise returns a plain `ChoiceRule` (no `EnumRule`).
 - `evaluate.ts:268` `choice()` stops emitting `EnumRule`; the enum branch of
-  `classifyHiddenChoiceRule` (`link.ts:1937`) is deleted as a rewriter.
+  `classifyHiddenChoiceRule` (`link.ts:1981`) is deleted as a rewriter.
 - Delete every `case 'enum'` arm: the `link-refine` `Choice | Enum` union
   narrows to just `Choice`; `rulesEqual`'s enum arm folds into the choice arm;
   the leaf arms in `simplify`/`optimize`/`rule.ts`.
@@ -1783,10 +1970,14 @@ is `fail{code:'unslotted-child'}`.
 
 `NodeMap` (`compiler/types.ts:459`) is **UNCHANGED in shape**. End-state notes:
 `nodes: Map<string, AssembledNode>` now holds nodes whose slots are
-`AssembledNonterminal` instances; `slotByRuleId` (`:475`) maps to those
-instances; the `rules?` field's docstring referencing "the template walker"
-(`:484`) updates (walker deleted) but the field stays (Simplify/inlineRefs read
-it). `nodeByRuleId`/`signatures`/`derivations`/`word`/`polymorphFormKinds`/`externals`
+`AssembledNonterminal` instances; **`slotByRuleId` (`:475`) maps EACH id in a
+slot's `sourceRuleIds` → that slot** (FOLD-1 — every renderRule + simplifiedRule
+position the slot occupies, so a lookup hits regardless of which view the
+consumer walks; today's single `sourceRuleId` registers only one position and
+misses the other). The `rules?` field's docstring referencing "the template
+walker" (`:484`) updates (walker deleted) but the field stays
+(Simplify/inlineRefs read it).
+`nodeByRuleId`/`signatures`/`derivations`/`word`/`polymorphFormKinds`/`externals`
 unchanged.
 
 ### §7.7 Phase context types (NEW) + uniform method signature
