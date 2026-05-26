@@ -57,6 +57,7 @@ export interface IsGuards {
     TokenTreePatternBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreePatternBrace };
     TokenTreePatternBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreePatternBracket };
     TokenTreePatternParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TokenTreePatternParen };
+    TypeArgument<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeArgument };
     VisibilityModifierCrate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._VisibilityModifierCrate };
     abstractType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractType };
     arguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Arguments };
@@ -249,6 +250,7 @@ export interface AssertGuards {
     TokenTreePatternBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreePatternBrace };
     TokenTreePatternBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreePatternBracket };
     TokenTreePatternParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TokenTreePatternParen };
+    TypeArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArgument };
     VisibilityModifierCrate(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._VisibilityModifierCrate };
     abstractType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractType };
     arguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Arguments };
@@ -430,7 +432,7 @@ const _supertype_pattern_ids = new Set<number>([311, 312, 129, 313, 126, 151, 31
 const _supertype_statement_ids = new Set<number>([160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186]);
 const _supertype_tokenPattern_ids = new Set<number>([164, 166, 165, 142, 311, 312, 129, 313, 126, 151, 1, 119, 139, 140, 141]);
 const _supertype_tokens_ids = new Set<number>([168, 169, 142, 311, 312, 129, 313, 126, 151, 1, 119, 139, 140, 141]);
-const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 412, 239, 236, 228, 198]);
+const _supertype_type_ids = new Set<number>([235, 232, 142, 233, 226, 245, 223, 224, 220, 222, 413, 239, 236, 228, 198]);
 const _supertype_useClause_ids = new Set<number>([139, 1, 142, 140, 141, 243, 208, 207, 206, 209]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -684,6 +686,7 @@ const _kindIdByKind = new Map<string, number>([
     ["_attributed_type_parameter", TSKindId.AttributedTypeParameter],
     ["_attributed_argument", TSKindId.AttributedArgument],
     ["_attributed_ordered_field", TSKindId.AttributedOrderedField],
+    ["_type_argument", TSKindId.TypeArgument],
     ["_field_identifier", TSKindId.FieldIdentifier],
     ["_type_identifier", TSKindId.TypeIdentifier],
 ]);
@@ -720,6 +723,7 @@ export const is = {
     TokenTreePatternBrace: _g(TSKindId._TokenTreePatternBrace),
     TokenTreePatternBracket: _g(TSKindId._TokenTreePatternBracket),
     TokenTreePatternParen: _g(TSKindId._TokenTreePatternParen),
+    TypeArgument: _g(TSKindId.TypeArgument),
     VisibilityModifierCrate: _g(TSKindId._VisibilityModifierCrate),
     abstractType: _g(TSKindId.AbstractType),
     arguments: _g(TSKindId.Arguments),
@@ -936,6 +940,7 @@ export const assert = {
     TokenTreePatternBrace: _makeAssert('TokenTreePatternBrace', is.TokenTreePatternBrace as _AnyGuard),
     TokenTreePatternBracket: _makeAssert('TokenTreePatternBracket', is.TokenTreePatternBracket as _AnyGuard),
     TokenTreePatternParen: _makeAssert('TokenTreePatternParen', is.TokenTreePatternParen as _AnyGuard),
+    TypeArgument: _makeAssert('TypeArgument', is.TypeArgument as _AnyGuard),
     VisibilityModifierCrate: _makeAssert('VisibilityModifierCrate', is.VisibilityModifierCrate as _AnyGuard),
     abstractType: _makeAssert('abstractType', is.abstractType as _AnyGuard),
     arguments: _makeAssert('arguments', is.arguments as _AnyGuard),

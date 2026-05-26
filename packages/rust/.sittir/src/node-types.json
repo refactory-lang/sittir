@@ -5994,7 +5994,7 @@
     }
   },
   {
-    "type": "type_arguments",
+    "type": "type_argument",
     "named": true,
     "fields": {},
     "children": {
@@ -6023,6 +6023,21 @@
         },
         {
           "type": "type_binding",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "type_arguments",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "type_argument",
           "named": true
         }
       ]

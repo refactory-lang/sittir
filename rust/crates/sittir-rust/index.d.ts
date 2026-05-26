@@ -2534,8 +2534,7 @@ export interface TypeArgumentsRepeat1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: TypeArgumentsRepeat1ContentTransportSlot
-  _trait_bounds?: TraitBoundsTransport
+  _type_argument: TypeArgumentTransport
 }
 
 export interface TypeArgumentsTransport {
@@ -2546,8 +2545,19 @@ export interface TypeArgumentsTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: Array<TypeArgumentsContentTransportSlot>
-  _trait_bounds?: Array<TraitBoundsTransport>
+  _type_argument: Array<TypeArgumentTransport>
+}
+
+export interface TypeArgumentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _content: TypeArgumentContentTransportSlot
+  _trait_bounds?: TraitBoundsTransport
 }
 
 export interface TypeBindingTransport {
@@ -2610,8 +2620,7 @@ export interface TypeParametersRepeat1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _attribute_item?: Array<AttributeItemTransport>
-  _content: TypeParametersRepeat1ContentTransportSlot
+  _attributed_type_parameter: AttributedTypeParameterTransport
 }
 
 export interface TypeParametersTransport {

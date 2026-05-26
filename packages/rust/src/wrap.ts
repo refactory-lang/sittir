@@ -1143,6 +1143,23 @@ export function wrap_Type(data: T._Type, tree: TreeHandle) {
   return drillIn<T._Type>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","_type_identifier","type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound","_primitive_type","primitive_type"]), "children", true, data.$type), tree);
 }
 
+export function wrapTypeArgument(data: T.TypeArgument, tree: TreeHandle) {
+  const _node = withMethods({
+    ...data,
+    $type: TSKindId.TypeArgument as const,
+    _content: normalizeSingularWrapSlot((data._abstract_type ?? data._reference_type ?? data._metavariable ?? data._pointer_type ?? data._generic_type ?? data._scoped_type_identifier ?? data._tuple_type ?? data._unit_type ?? data._array_type ?? data._function_type ?? data._type_identifier ?? data._macro_invocation ?? data._never_type ?? data._dynamic_type ?? data._bounded_type ?? data._removed_trait_bound ?? data._primitive_type ?? data._type_binding ?? data._lifetime ?? data._string_literal ?? data._raw_string_literal ?? data._char_literal ?? data._boolean_literal ?? data._integer_literal ?? data._float_literal ?? data._block ?? data._content), "content", true, data.$type),
+    _trait_bounds: normalizeSingularWrapSlot(data._trait_bounds, "trait_bounds", false, data.$type),
+
+    content() { return drillIn<T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(this._content, tree); },
+    traitBounds() { return drillIn<T.TraitBounds | undefined>(this._trait_bounds, tree); },
+    $with: {
+      content: (v: NonNullable<T.TypeArgument['_content']>) => wrapTypeArgument({ ...data, _content: v }, tree),
+      traitBounds: (v: NonNullable<T.TypeArgument['_trait_bounds']>) => wrapTypeArgument({ ...data, _trait_bounds: v }, tree),
+    },
+  }, methodsEngine);
+  return _node;
+}
+
 export function wrapUseClause(data: T.UseClause, tree: TreeHandle) {
   return drillIn<T.UseClause>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["_path","path","self","identifier","metavariable","super","crate","scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"]), "children", true, data.$type), tree);
 }
@@ -3630,15 +3647,10 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeArguments as const,
-    _content: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind([..._toArr(data._abstract_type), ..._toArr(data._reference_type), ..._toArr(data._metavariable), ..._toArr(data._pointer_type), ..._toArr(data._generic_type), ..._toArr(data._scoped_type_identifier), ..._toArr(data._tuple_type), ..._toArr(data._unit_type), ..._toArr(data._array_type), ..._toArr(data._function_type), ..._toArr(data._type_identifier), ..._toArr(data._macro_invocation), ..._toArr(data._never_type), ..._toArr(data._dynamic_type), ..._toArr(data._bounded_type), ..._toArr(data._removed_trait_bound), ..._toArr(data._primitive_type), ..._toArr(data._type_binding), ..._toArr(data._lifetime), ..._toArr(data._string_literal), ..._toArr(data._raw_string_literal), ..._toArr(data._char_literal), ..._toArr(data._boolean_literal), ..._toArr(data._integer_literal), ..._toArr(data._float_literal), ..._toArr(data._block), ..._toArr(data._content)], ["_type","abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","_type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound","_primitive_type","type_binding","lifetime","_literal","string_literal","raw_string_literal","char_literal","boolean_literal","integer_literal","float_literal","block"]), false, "content"),
-    _trait_bounds: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._trait_bounds, ["trait_bounds"]), false, "trait_bounds"),
+    _type_argument: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._type_argument, ["_type_argument","type_argument"]), true, "type_argument"),
 
-    contents() { return drillInAll<T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block>(this._content as readonly (T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)[] | undefined, tree); },
-    traitBounds() { return drillInAll<T.TraitBounds>(this._trait_bounds as readonly T.TraitBounds[] | undefined, tree); },
-    $with: {
-      contents: (...v: NonNullable<T.TypeArguments['_content']>[number][]) => wrapTypeArguments({ ...data, _content: v }, tree),
-      traitBounds: (...v: NonNullable<T.TypeArguments['_trait_bounds']>[number][]) => wrapTypeArguments({ ...data, _trait_bounds: v }, tree),
-    },
+    typeArguments() { return drillAsAll<T.TypeArgument>(this._type_argument, tree, "type_argument", "_type_argument"); },
+    $with: { $children: (...vs: readonly [never]) => wrapTypeArguments({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
 }
@@ -4047,6 +4059,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
   '_token_tree_pattern_bracket': (d, t) => wrap_TokenTreePatternBracket(d as unknown as T._TokenTreePatternBracket, t),
   '_token_tree_pattern_paren': (d, t) => wrap_TokenTreePatternParen(d as unknown as T._TokenTreePatternParen, t),
   '_type': (d, t) => wrap_Type(d as unknown as T._Type, t),
+  '_type_argument': (d, t) => wrapTypeArgument(d as unknown as T.TypeArgument, t),
   '_type_identifier': (d) => ({ ...d, $type: TSKindId.TypeIdentifier as const }),
   '_use_clause': (d, t) => wrapUseClause(d as unknown as T.UseClause, t),
   '_visibility_modifier_crate': (d, t) => wrap_VisibilityModifierCrate(d as unknown as T._VisibilityModifierCrate, t),
@@ -4294,6 +4307,7 @@ const _aliasTargetToSource: Record<string, string> = {
   'token_binding_pattern_type': '_token_binding_pattern_type',
   'token_pattern': '_token_pattern',
   'tokens': '_tokens',
+  'type_argument': '_type_argument',
   'type_identifier': '_type_identifier',
   'unary_expression_operator': '_unary_expression_operator',
   'unsafe_marker': '_unsafe_marker',

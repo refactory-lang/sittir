@@ -70,6 +70,7 @@
     "_token_tree_pattern_brace": "spread",
     "_token_tree_pattern_bracket": "spread",
     "_token_tree_pattern_paren": "spread",
+    "_type_argument": "config",
     "_type_identifier": "text",
     "_unary_expression_operator": "text",
     "_unsafe_marker": "text",
@@ -233,7 +234,7 @@
     "tuple_pattern": "config",
     "tuple_struct_pattern": "config",
     "tuple_type": "config",
-    "type_arguments": "config",
+    "type_arguments": "spread",
     "type_binding": "config",
     "type_cast_expression": "config",
     "type_item": "config",
@@ -323,6 +324,12 @@
     },
     "_non_special_token.content": {
       "primitive_type": "_primitive_type"
+    },
+    "_type_arguments_repeat1.type_argument": {
+      "type_argument": "_type_argument"
+    },
+    "_type_parameters_repeat1.attributed_type_parameter": {
+      "attributed_type_parameter": "_attributed_type_parameter"
     },
     "abstract_type.trait": {
       "type_identifier": "identifier"
@@ -568,6 +575,9 @@
     "tuple_struct_pattern.type": {
       "generic_type": "generic_type_with_turbofish"
     },
+    "type_arguments.type_argument": {
+      "type_argument": "_type_argument"
+    },
     "type_binding.name": {
       "type_identifier": "identifier"
     },
@@ -769,6 +779,10 @@
     ],
     "_token_tree_pattern_paren": [
       "token_pattern"
+    ],
+    "_type_argument": [
+      "content",
+      "trait_bounds"
     ],
     "_visibility_modifier_in_path": [
       "path"
@@ -1342,8 +1356,7 @@
       "type"
     ],
     "type_arguments": [
-      "content",
-      "trait_bounds"
+      "type_argument"
     ],
     "type_binding": [
       "name",
@@ -2055,6 +2068,22 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "_type_argument": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "trait_bounds": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -4567,19 +4596,12 @@
       }
     },
     "type_arguments": {
-      "content": {
+      "type_argument": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
-      },
-      "trait_bounds": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "type_binding": {

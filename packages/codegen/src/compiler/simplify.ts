@@ -37,6 +37,56 @@ import { compileWordMatcher } from './common.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
 import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
+import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
+
+// ---------------------------------------------------------------------------
+// Slot-grouping diagnostic accumulator (propose-promotion only).
+//
+// `computeSimplifiedRules` is invoked multiple times per grammar (main rules,
+// alias bodies, polymorph forms — see optimize.ts), so records are deduped by
+// (ownerKind, shape) as they accumulate, and the whole accumulator is reset
+// once per `optimize()` run via `resetSlotGroupingDiagnostics()`. That keeps
+// `drain` honest (one run's unique records) and bounds memory in long-lived
+// processes. They NEVER drive codegen behavior (feedback_metadata_not_behavior).
+// ---------------------------------------------------------------------------
+
+const _slotGroupingDiagnostics: SlotGroupingDiagnostic[] = [];
+const _slotGroupingSeen = new Set<string>();
+
+const slotGroupingKey = (rec: SlotGroupingDiagnostic): string => `${rec.ownerKind} ${rec.shape}`;
+
+/**
+ * Push a record if its (ownerKind, shape) hasn't been seen this run. Returns
+ * true when newly added (so the caller can log only first occurrences).
+ */
+function recordSlotGroupingDiagnostic(rec: SlotGroupingDiagnostic): boolean {
+	const key = slotGroupingKey(rec);
+	if (_slotGroupingSeen.has(key)) return false;
+	_slotGroupingSeen.add(key);
+	_slotGroupingDiagnostics.push(rec);
+	return true;
+}
+
+/**
+ * Clear the accumulator. Called once at the start of each `optimize()` run so
+ * diagnostics from one grammar never leak into the next (the multiple
+ * `computeSimplifiedRules` calls within a run still accumulate into one batch).
+ */
+export function resetSlotGroupingDiagnostics(): void {
+	_slotGroupingDiagnostics.length = 0;
+	_slotGroupingSeen.clear();
+}
+
+/**
+ * Return + clear the slot-grouping diagnostics accumulated during the current
+ * `optimize()` run. The codegen CLI calls this after regen to print
+ * propose-promotion suggestions; tests call it to verify the wiring.
+ */
+export function drainSlotGroupingDiagnostics(): SlotGroupingDiagnostic[] {
+	const out = [..._slotGroupingDiagnostics];
+	resetSlotGroupingDiagnostics();
+	return out;
+}
 
 /** Does this string lex as a "word" under the grammar's `word` rule? */
 /**
@@ -194,7 +244,8 @@ export function simplifyRules(
 export function computeSimplifiedRules(
 	renderRules: Record<string, RenderRule>,
 	word: string | null,
-	inlineKinds: ReadonlySet<string> = new Set()
+	inlineKinds: ReadonlySet<string> = new Set(),
+	polymorphSkipExtra: ReadonlySet<string> = new Set()
 ): Record<string, SimplifiedRule> {
 	const wordMatcher = compileWordMatcher(word, renderRules as Record<string, Rule>);
 	const simplified = simplifyRules(renderRules as Record<string, Rule>, wordMatcher, inlineKinds);
@@ -225,6 +276,24 @@ export function computeSimplifiedRules(
 			assertUniversalShapeRule(rule, kind);
 		}
 	}
+
+	// Slot-grouping diagnostic: propose-promotion only. Records never drive
+	// codegen behavior (feedback_metadata_not_behavior) — they surface for the
+	// author via the derivation log and regen console output.
+	// Pass inlineKinds so auto-group helpers (_*_repeat1/_*_optional1) are
+	// treated as slot-position bodies (they represent seq content of inlined
+	// repeats), while normal branch kinds are silent at the top level.
+	const slotDiagnostics = diagnoseSlotGrouping(canonicalized, inlineKinds, polymorphSkipExtra);
+	const quiet = process.env['SITTIR_SLOT_GROUPING_QUIET'] === '1';
+	for (const rec of slotDiagnostics) {
+		// Dedup by (ownerKind, shape) across the multiple computeSimplifiedRules
+		// calls per run (and any repeated hits within one walk); log only the
+		// first occurrence.
+		if (recordSlotGroupingDiagnostic(rec) && !quiet) {
+			console.info(`[slot-grouping] ${rec.ownerKind} (${rec.shape}): ${rec.proposal}`);
+		}
+	}
+
 	return canonicalized;
 }
 

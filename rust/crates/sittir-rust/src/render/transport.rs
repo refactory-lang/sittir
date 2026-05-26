@@ -125,6 +125,7 @@ pub enum AnyTransport {
     _TokenTreePatternBrace(_TokenTreePatternBraceTransport),
     _TokenTreePatternBracket(_TokenTreePatternBracketTransport),
     _TokenTreePatternParen(_TokenTreePatternParenTransport),
+    TypeArgument(TypeArgumentTransport),
     TypeArgumentsRepeat1(TypeArgumentsRepeat1Transport),
     TypeIdentifier(TypeIdentifierTransport),
     TypeParameterOptional1(TypeParameterOptional1Transport),
@@ -503,7 +504,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     _ExpressionStatementWithSemiTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _field_identifier (_FIELD_IDENTIFIER)
-                409 => Ok(AnyTransport::FieldIdentifier(
+                410 => Ok(AnyTransport::FieldIdentifier(
                     FieldIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _field_pattern_named (_FIELD_PATTERN_NAMED)
@@ -694,8 +695,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 363 => Ok(AnyTransport::_TokenTreePatternParen(
                     _TokenTreePatternParenTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _type_argument (_TYPE_ARGUMENT)
+                378 => Ok(AnyTransport::TypeArgument(
+                    TypeArgumentTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: _type_identifier (_TYPE_IDENTIFIER)
-                412 => Ok(AnyTransport::TypeIdentifier(
+                413 => Ok(AnyTransport::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _visibility_modifier_crate (_VISIBILITY_MODIFIER_CRATE)
@@ -7138,7 +7143,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -7305,7 +7310,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -7749,7 +7754,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -7871,7 +7876,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -9808,7 +9813,7 @@ impl RenderableTransport for RangePatternPrefixRightTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum TypeArgumentsRepeat1ContentTransportSlot {
+pub enum TypeArgumentContentTransportSlot {
     AbstractType(AbstractTypeTransport),
     ReferenceType(ReferenceTypeTransport),
     Metavariable(MetavariableTransport),
@@ -9839,7 +9844,7 @@ pub enum TypeArgumentsRepeat1ContentTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsRepeat1ContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentContentTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -9876,7 +9881,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsRepeat1ContentTrans
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -9979,7 +9984,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsRepeat1ContentTrans
                     BlockTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in TypeArgumentsRepeat1ContentTransportSlot",
+                    "unknown kind id {other} in TypeArgumentContentTransportSlot",
                 ))),
             };
         }
@@ -9987,9 +9992,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsRepeat1ContentTrans
             return Ok(Self::Verbatim(VerbatimTransport { text }));
         }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
-            .map_err(|_| ::napi::Error::from_reason("TypeArgumentsRepeat1ContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+            .map_err(|_| ::napi::Error::from_reason("TypeArgumentContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
         let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-            ::napi::Error::from_reason("$type property missing in TypeArgumentsRepeat1ContentTransportSlot")
+            ::napi::Error::from_reason("$type property missing in TypeArgumentContentTransportSlot")
         )?;
         match kind_id {
                 235 => Ok(Self::AbstractType(
@@ -10022,7 +10027,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsRepeat1ContentTrans
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -10125,224 +10130,107 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsRepeat1ContentTrans
                     BlockTransport::from_napi_value(env, napi_val)?
                 )),
                 other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in TypeArgumentsRepeat1ContentTransportSlot",
+                    "unknown kind id {other} in TypeArgumentContentTransportSlot",
                 ))),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TypeArgumentsRepeat1ContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for TypeArgumentContentTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TypeArgumentsRepeat1ContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("TypeArgumentContentTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TypeArgumentsRepeat1ContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TypeArgumentContentTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TypeArgumentsRepeat1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        TypeArgumentContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeArgumentsRepeat1ContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeArgumentContentTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TypeArgumentsRepeat1ContentTransportSlot::to_napi_value(env, *val)
+        TypeArgumentContentTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn type_arguments_repeat1_content_transport_slot_to_any(t: TypeArgumentsRepeat1ContentTransportSlot) -> AnyTransport {
+fn type_argument_content_transport_slot_to_any(t: TypeArgumentContentTransportSlot) -> AnyTransport {
     match t {
-        TypeArgumentsRepeat1ContentTransportSlot::AbstractType(inner) => AnyTransport::AbstractType(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::ReferenceType(inner) => AnyTransport::ReferenceType(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::PointerType(inner) => AnyTransport::PointerType(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::GenericType(inner) => AnyTransport::GenericType(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::ScopedTypeIdentifier(inner) => AnyTransport::ScopedTypeIdentifier(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::TupleType(inner) => AnyTransport::TupleType(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::UnitType(inner) => AnyTransport::UnitType(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::ArrayType(inner) => AnyTransport::ArrayType(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::FunctionType(inner) => AnyTransport::FunctionType(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::TypeIdentifier(inner) => AnyTransport::TypeIdentifier(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::NeverType(inner) => AnyTransport::NeverType(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::DynamicType(inner) => AnyTransport::DynamicType(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::BoundedType(inner) => AnyTransport::BoundedType(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::RemovedTraitBound(inner) => AnyTransport::RemovedTraitBound(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::TypeBinding(inner) => AnyTransport::TypeBinding(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::Lifetime(inner) => AnyTransport::Lifetime(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::Block(inner) => AnyTransport::Block(inner),
-        TypeArgumentsRepeat1ContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        TypeArgumentContentTransportSlot::AbstractType(inner) => AnyTransport::AbstractType(inner),
+        TypeArgumentContentTransportSlot::ReferenceType(inner) => AnyTransport::ReferenceType(inner),
+        TypeArgumentContentTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
+        TypeArgumentContentTransportSlot::PointerType(inner) => AnyTransport::PointerType(inner),
+        TypeArgumentContentTransportSlot::GenericType(inner) => AnyTransport::GenericType(inner),
+        TypeArgumentContentTransportSlot::ScopedTypeIdentifier(inner) => AnyTransport::ScopedTypeIdentifier(inner),
+        TypeArgumentContentTransportSlot::TupleType(inner) => AnyTransport::TupleType(inner),
+        TypeArgumentContentTransportSlot::UnitType(inner) => AnyTransport::UnitType(inner),
+        TypeArgumentContentTransportSlot::ArrayType(inner) => AnyTransport::ArrayType(inner),
+        TypeArgumentContentTransportSlot::FunctionType(inner) => AnyTransport::FunctionType(inner),
+        TypeArgumentContentTransportSlot::TypeIdentifier(inner) => AnyTransport::TypeIdentifier(inner),
+        TypeArgumentContentTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
+        TypeArgumentContentTransportSlot::NeverType(inner) => AnyTransport::NeverType(inner),
+        TypeArgumentContentTransportSlot::DynamicType(inner) => AnyTransport::DynamicType(inner),
+        TypeArgumentContentTransportSlot::BoundedType(inner) => AnyTransport::BoundedType(inner),
+        TypeArgumentContentTransportSlot::RemovedTraitBound(inner) => AnyTransport::RemovedTraitBound(inner),
+        TypeArgumentContentTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        TypeArgumentContentTransportSlot::TypeBinding(inner) => AnyTransport::TypeBinding(inner),
+        TypeArgumentContentTransportSlot::Lifetime(inner) => AnyTransport::Lifetime(inner),
+        TypeArgumentContentTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
+        TypeArgumentContentTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
+        TypeArgumentContentTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
+        TypeArgumentContentTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
+        TypeArgumentContentTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
+        TypeArgumentContentTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
+        TypeArgumentContentTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        TypeArgumentContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for TypeArgumentsRepeat1ContentTransportSlot {
+impl RenderableTransport for TypeArgumentContentTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeArgumentsRepeat1ContentTransportSlot::AbstractType(inner) => render_abstract_type(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::ReferenceType(inner) => render_reference_type(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::Metavariable(inner) => render_metavariable(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::PointerType(inner) => render_pointer_type(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::GenericType(inner) => render_generic_type(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::ScopedTypeIdentifier(inner) => render_scoped_type_identifier(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::TupleType(inner) => render_tuple_type(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::UnitType(inner) => render_unit_type(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::ArrayType(inner) => render_array_type(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::FunctionType(inner) => render_function_type(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::TypeIdentifier(inner) => render_type_identifier(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::MacroInvocation(inner) => render_macro_invocation(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::NeverType(inner) => render_never_type(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::DynamicType(inner) => render_dynamic_type(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::BoundedType(inner) => render_bounded_type(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::RemovedTraitBound(inner) => render_removed_trait_bound(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::PrimitiveType(inner) => render_primitive_type(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::TypeBinding(inner) => render_type_binding(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::Lifetime(inner) => render_lifetime(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::StringLiteral(inner) => render_string_literal(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::CharLiteral(inner) => render_char_literal(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::IntegerLiteral(inner) => render_integer_literal(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::Block(inner) => render_block(inner, dest),
-            TypeArgumentsRepeat1ContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum TypeParametersRepeat1ContentTransportSlot {
-    Metavariable(MetavariableTransport),
-    TypeParameter(TypeParameterTransport),
-    LifetimeParameter(LifetimeParameterTransport),
-    ConstParameter(ConstParameterTransport),
-    Verbatim(VerbatimTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TypeParametersRepeat1ContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-            return match kind_id {
-                142 => Ok(Self::Metavariable(
-                    MetavariableTransport::from_napi_value(env, napi_val)?
-                )),
-                201 => Ok(Self::TypeParameter(
-                    TypeParameterTransport::from_napi_value(env, napi_val)?
-                )),
-                202 => Ok(Self::LifetimeParameter(
-                    LifetimeParameterTransport::from_napi_value(env, napi_val)?
-                )),
-                200 => Ok(Self::ConstParameter(
-                    ConstParameterTransport::from_napi_value(env, napi_val)?
-                )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in TypeParametersRepeat1ContentTransportSlot",
-                ))),
-            };
-        }
-        if let Ok(text) = String::from_napi_value(env, napi_val) {
-            return Ok(Self::Verbatim(VerbatimTransport { text }));
-        }
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
-            .map_err(|_| ::napi::Error::from_reason("TypeParametersRepeat1ContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
-        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-            ::napi::Error::from_reason("$type property missing in TypeParametersRepeat1ContentTransportSlot")
-        )?;
-        match kind_id {
-                142 => Ok(Self::Metavariable(
-                    MetavariableTransport::from_napi_value(env, napi_val)?
-                )),
-                201 => Ok(Self::TypeParameter(
-                    TypeParameterTransport::from_napi_value(env, napi_val)?
-                )),
-                202 => Ok(Self::LifetimeParameter(
-                    LifetimeParameterTransport::from_napi_value(env, napi_val)?
-                )),
-                200 => Ok(Self::ConstParameter(
-                    ConstParameterTransport::from_napi_value(env, napi_val)?
-                )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in TypeParametersRepeat1ContentTransportSlot",
-                ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TypeParametersRepeat1ContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TypeParametersRepeat1ContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TypeParametersRepeat1ContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        TypeParametersRepeat1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeParametersRepeat1ContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        TypeParametersRepeat1ContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn type_parameters_repeat1_content_transport_slot_to_any(t: TypeParametersRepeat1ContentTransportSlot) -> AnyTransport {
-    match t {
-        TypeParametersRepeat1ContentTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
-        TypeParametersRepeat1ContentTransportSlot::TypeParameter(inner) => AnyTransport::TypeParameter(inner),
-        TypeParametersRepeat1ContentTransportSlot::LifetimeParameter(inner) => AnyTransport::LifetimeParameter(inner),
-        TypeParametersRepeat1ContentTransportSlot::ConstParameter(inner) => AnyTransport::ConstParameter(inner),
-        TypeParametersRepeat1ContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl RenderableTransport for TypeParametersRepeat1ContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            TypeParametersRepeat1ContentTransportSlot::Metavariable(inner) => render_metavariable(inner, dest),
-            TypeParametersRepeat1ContentTransportSlot::TypeParameter(inner) => render_type_parameter(inner, dest),
-            TypeParametersRepeat1ContentTransportSlot::LifetimeParameter(inner) => render_lifetime_parameter(inner, dest),
-            TypeParametersRepeat1ContentTransportSlot::ConstParameter(inner) => render_const_parameter(inner, dest),
-            TypeParametersRepeat1ContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            TypeArgumentContentTransportSlot::AbstractType(inner) => render_abstract_type(inner, dest),
+            TypeArgumentContentTransportSlot::ReferenceType(inner) => render_reference_type(inner, dest),
+            TypeArgumentContentTransportSlot::Metavariable(inner) => render_metavariable(inner, dest),
+            TypeArgumentContentTransportSlot::PointerType(inner) => render_pointer_type(inner, dest),
+            TypeArgumentContentTransportSlot::GenericType(inner) => render_generic_type(inner, dest),
+            TypeArgumentContentTransportSlot::ScopedTypeIdentifier(inner) => render_scoped_type_identifier(inner, dest),
+            TypeArgumentContentTransportSlot::TupleType(inner) => render_tuple_type(inner, dest),
+            TypeArgumentContentTransportSlot::UnitType(inner) => render_unit_type(inner, dest),
+            TypeArgumentContentTransportSlot::ArrayType(inner) => render_array_type(inner, dest),
+            TypeArgumentContentTransportSlot::FunctionType(inner) => render_function_type(inner, dest),
+            TypeArgumentContentTransportSlot::TypeIdentifier(inner) => render_type_identifier(inner, dest),
+            TypeArgumentContentTransportSlot::MacroInvocation(inner) => render_macro_invocation(inner, dest),
+            TypeArgumentContentTransportSlot::NeverType(inner) => render_never_type(inner, dest),
+            TypeArgumentContentTransportSlot::DynamicType(inner) => render_dynamic_type(inner, dest),
+            TypeArgumentContentTransportSlot::BoundedType(inner) => render_bounded_type(inner, dest),
+            TypeArgumentContentTransportSlot::RemovedTraitBound(inner) => render_removed_trait_bound(inner, dest),
+            TypeArgumentContentTransportSlot::PrimitiveType(inner) => render_primitive_type(inner, dest),
+            TypeArgumentContentTransportSlot::TypeBinding(inner) => render_type_binding(inner, dest),
+            TypeArgumentContentTransportSlot::Lifetime(inner) => render_lifetime(inner, dest),
+            TypeArgumentContentTransportSlot::StringLiteral(inner) => render_string_literal(inner, dest),
+            TypeArgumentContentTransportSlot::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
+            TypeArgumentContentTransportSlot::CharLiteral(inner) => render_char_literal(inner, dest),
+            TypeArgumentContentTransportSlot::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
+            TypeArgumentContentTransportSlot::IntegerLiteral(inner) => render_integer_literal(inner, dest),
+            TypeArgumentContentTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
+            TypeArgumentContentTransportSlot::Block(inner) => render_block(inner, dest),
+            TypeArgumentContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -10556,7 +10444,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeLeftTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -10675,7 +10563,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeLeftTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -10904,7 +10792,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeRightTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -11023,7 +10911,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeRightTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -11248,7 +11136,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -11364,7 +11252,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -15092,7 +14980,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsBoundsTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -15211,7 +15099,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsBoundsTransportSlot {
                 222 => Ok(Self::FunctionType(
                     FunctionTypeTransport::from_napi_value(env, napi_val)?
                 )),
-                412 => Ok(Self::TypeIdentifier(
+                413 => Ok(Self::TypeIdentifier(
                     TypeIdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 239 => Ok(Self::MacroInvocation(
@@ -15821,429 +15709,6 @@ impl RenderableTransport for TupleStructPatternTypeTransportSlot {
             TupleStructPatternTypeTransportSlot::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
             TupleStructPatternTypeTransportSlot::GenericTypeWithTurbofish(inner) => render_generic_type_with_turbofish(inner, dest),
             TupleStructPatternTypeTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum TypeArgumentsContentTransportSlot {
-    AbstractType(AbstractTypeTransport),
-    ReferenceType(ReferenceTypeTransport),
-    Metavariable(MetavariableTransport),
-    PointerType(PointerTypeTransport),
-    GenericType(GenericTypeTransport),
-    ScopedTypeIdentifier(ScopedTypeIdentifierTransport),
-    TupleType(TupleTypeTransport),
-    UnitType(UnitTypeTransport),
-    ArrayType(ArrayTypeTransport),
-    FunctionType(FunctionTypeTransport),
-    TypeIdentifier(TypeIdentifierTransport),
-    MacroInvocation(MacroInvocationTransport),
-    NeverType(NeverTypeTransport),
-    DynamicType(DynamicTypeTransport),
-    BoundedType(BoundedTypeTransport),
-    RemovedTraitBound(RemovedTraitBoundTransport),
-    PrimitiveType(PrimitiveTypeEnum),
-    TypeBinding(TypeBindingTransport),
-    Lifetime(LifetimeTransport),
-    StringLiteral(StringLiteralTransport),
-    RawStringLiteral(RawStringLiteralTransport),
-    CharLiteral(CharLiteralTransport),
-    BooleanLiteral(BooleanLiteralEnum),
-    IntegerLiteral(IntegerLiteralTransport),
-    FloatLiteral(FloatLiteralTransport),
-    Block(BlockTransport),
-    Verbatim(VerbatimTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-            return match kind_id {
-                235 => Ok(Self::AbstractType(
-                    AbstractTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                232 => Ok(Self::ReferenceType(
-                    ReferenceTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                142 => Ok(Self::Metavariable(
-                    MetavariableTransport::from_napi_value(env, napi_val)?
-                )),
-                233 => Ok(Self::PointerType(
-                    PointerTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                226 => Ok(Self::GenericType(
-                    GenericTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                245 => Ok(Self::ScopedTypeIdentifier(
-                    ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
-                )),
-                223 => Ok(Self::TupleType(
-                    TupleTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                224 => Ok(Self::UnitType(
-                    UnitTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                220 => Ok(Self::ArrayType(
-                    ArrayTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                222 => Ok(Self::FunctionType(
-                    FunctionTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                412 => Ok(Self::TypeIdentifier(
-                    TypeIdentifierTransport::from_napi_value(env, napi_val)?
-                )),
-                239 => Ok(Self::MacroInvocation(
-                    MacroInvocationTransport::from_napi_value(env, napi_val)?
-                )),
-                234 => Ok(Self::NeverType(
-                    NeverTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                236 => Ok(Self::DynamicType(
-                    DynamicTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                228 => Ok(Self::BoundedType(
-                    BoundedTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                198 => Ok(Self::RemovedTraitBound(
-                    RemovedTraitBoundTransport::from_napi_value(env, napi_val)?
-                )),
-                28 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                29 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                30 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                31 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                32 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                33 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                34 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                35 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                36 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                37 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                38 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                39 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                40 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                41 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                42 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                43 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                44 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                231 => Ok(Self::TypeBinding(
-                    TypeBindingTransport::from_napi_value(env, napi_val)?
-                )),
-                219 => Ok(Self::Lifetime(
-                    LifetimeTransport::from_napi_value(env, napi_val)?
-                )),
-                311 => Ok(Self::StringLiteral(
-                    StringLiteralTransport::from_napi_value(env, napi_val)?
-                )),
-                312 => Ok(Self::RawStringLiteral(
-                    RawStringLiteralTransport::from_napi_value(env, napi_val)?
-                )),
-                129 => Ok(Self::CharLiteral(
-                    CharLiteralTransport::from_napi_value(env, napi_val)?
-                )),
-                313 => Ok(Self::BooleanLiteral(
-                    BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                )),
-                131 => Ok(Self::BooleanLiteral(
-                    BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                )),
-                132 => Ok(Self::BooleanLiteral(
-                    BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                )),
-                126 => Ok(Self::IntegerLiteral(
-                    IntegerLiteralTransport::from_napi_value(env, napi_val)?
-                )),
-                151 => Ok(Self::FloatLiteral(
-                    FloatLiteralTransport::from_napi_value(env, napi_val)?
-                )),
-                293 => Ok(Self::Block(
-                    BlockTransport::from_napi_value(env, napi_val)?
-                )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in TypeArgumentsContentTransportSlot",
-                ))),
-            };
-        }
-        if let Ok(text) = String::from_napi_value(env, napi_val) {
-            return Ok(Self::Verbatim(VerbatimTransport { text }));
-        }
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
-            .map_err(|_| ::napi::Error::from_reason("TypeArgumentsContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
-        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-            ::napi::Error::from_reason("$type property missing in TypeArgumentsContentTransportSlot")
-        )?;
-        match kind_id {
-                235 => Ok(Self::AbstractType(
-                    AbstractTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                232 => Ok(Self::ReferenceType(
-                    ReferenceTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                142 => Ok(Self::Metavariable(
-                    MetavariableTransport::from_napi_value(env, napi_val)?
-                )),
-                233 => Ok(Self::PointerType(
-                    PointerTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                226 => Ok(Self::GenericType(
-                    GenericTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                245 => Ok(Self::ScopedTypeIdentifier(
-                    ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
-                )),
-                223 => Ok(Self::TupleType(
-                    TupleTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                224 => Ok(Self::UnitType(
-                    UnitTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                220 => Ok(Self::ArrayType(
-                    ArrayTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                222 => Ok(Self::FunctionType(
-                    FunctionTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                412 => Ok(Self::TypeIdentifier(
-                    TypeIdentifierTransport::from_napi_value(env, napi_val)?
-                )),
-                239 => Ok(Self::MacroInvocation(
-                    MacroInvocationTransport::from_napi_value(env, napi_val)?
-                )),
-                234 => Ok(Self::NeverType(
-                    NeverTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                236 => Ok(Self::DynamicType(
-                    DynamicTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                228 => Ok(Self::BoundedType(
-                    BoundedTypeTransport::from_napi_value(env, napi_val)?
-                )),
-                198 => Ok(Self::RemovedTraitBound(
-                    RemovedTraitBoundTransport::from_napi_value(env, napi_val)?
-                )),
-                28 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                29 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                30 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                31 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                32 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                33 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                34 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                35 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                36 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                37 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                38 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                39 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                40 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                41 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                42 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                43 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                44 => Ok(Self::PrimitiveType(
-                    PrimitiveTypeEnum::from_napi_value(env, napi_val)?
-                )),
-                231 => Ok(Self::TypeBinding(
-                    TypeBindingTransport::from_napi_value(env, napi_val)?
-                )),
-                219 => Ok(Self::Lifetime(
-                    LifetimeTransport::from_napi_value(env, napi_val)?
-                )),
-                311 => Ok(Self::StringLiteral(
-                    StringLiteralTransport::from_napi_value(env, napi_val)?
-                )),
-                312 => Ok(Self::RawStringLiteral(
-                    RawStringLiteralTransport::from_napi_value(env, napi_val)?
-                )),
-                129 => Ok(Self::CharLiteral(
-                    CharLiteralTransport::from_napi_value(env, napi_val)?
-                )),
-                313 => Ok(Self::BooleanLiteral(
-                    BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                )),
-                131 => Ok(Self::BooleanLiteral(
-                    BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                )),
-                132 => Ok(Self::BooleanLiteral(
-                    BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                )),
-                126 => Ok(Self::IntegerLiteral(
-                    IntegerLiteralTransport::from_napi_value(env, napi_val)?
-                )),
-                151 => Ok(Self::FloatLiteral(
-                    FloatLiteralTransport::from_napi_value(env, napi_val)?
-                )),
-                293 => Ok(Self::Block(
-                    BlockTransport::from_napi_value(env, napi_val)?
-                )),
-                other => Err(::napi::Error::from_reason(format!(
-                    "unknown kind id {other} in TypeArgumentsContentTransportSlot",
-                ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TypeArgumentsContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TypeArgumentsContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TypeArgumentsContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        TypeArgumentsContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeArgumentsContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        TypeArgumentsContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn type_arguments_content_transport_slot_to_any(t: TypeArgumentsContentTransportSlot) -> AnyTransport {
-    match t {
-        TypeArgumentsContentTransportSlot::AbstractType(inner) => AnyTransport::AbstractType(inner),
-        TypeArgumentsContentTransportSlot::ReferenceType(inner) => AnyTransport::ReferenceType(inner),
-        TypeArgumentsContentTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
-        TypeArgumentsContentTransportSlot::PointerType(inner) => AnyTransport::PointerType(inner),
-        TypeArgumentsContentTransportSlot::GenericType(inner) => AnyTransport::GenericType(inner),
-        TypeArgumentsContentTransportSlot::ScopedTypeIdentifier(inner) => AnyTransport::ScopedTypeIdentifier(inner),
-        TypeArgumentsContentTransportSlot::TupleType(inner) => AnyTransport::TupleType(inner),
-        TypeArgumentsContentTransportSlot::UnitType(inner) => AnyTransport::UnitType(inner),
-        TypeArgumentsContentTransportSlot::ArrayType(inner) => AnyTransport::ArrayType(inner),
-        TypeArgumentsContentTransportSlot::FunctionType(inner) => AnyTransport::FunctionType(inner),
-        TypeArgumentsContentTransportSlot::TypeIdentifier(inner) => AnyTransport::TypeIdentifier(inner),
-        TypeArgumentsContentTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
-        TypeArgumentsContentTransportSlot::NeverType(inner) => AnyTransport::NeverType(inner),
-        TypeArgumentsContentTransportSlot::DynamicType(inner) => AnyTransport::DynamicType(inner),
-        TypeArgumentsContentTransportSlot::BoundedType(inner) => AnyTransport::BoundedType(inner),
-        TypeArgumentsContentTransportSlot::RemovedTraitBound(inner) => AnyTransport::RemovedTraitBound(inner),
-        TypeArgumentsContentTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
-        TypeArgumentsContentTransportSlot::TypeBinding(inner) => AnyTransport::TypeBinding(inner),
-        TypeArgumentsContentTransportSlot::Lifetime(inner) => AnyTransport::Lifetime(inner),
-        TypeArgumentsContentTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
-        TypeArgumentsContentTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
-        TypeArgumentsContentTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
-        TypeArgumentsContentTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
-        TypeArgumentsContentTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
-        TypeArgumentsContentTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
-        TypeArgumentsContentTransportSlot::Block(inner) => AnyTransport::Block(inner),
-        TypeArgumentsContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl RenderableTransport for TypeArgumentsContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            TypeArgumentsContentTransportSlot::AbstractType(inner) => render_abstract_type(inner, dest),
-            TypeArgumentsContentTransportSlot::ReferenceType(inner) => render_reference_type(inner, dest),
-            TypeArgumentsContentTransportSlot::Metavariable(inner) => render_metavariable(inner, dest),
-            TypeArgumentsContentTransportSlot::PointerType(inner) => render_pointer_type(inner, dest),
-            TypeArgumentsContentTransportSlot::GenericType(inner) => render_generic_type(inner, dest),
-            TypeArgumentsContentTransportSlot::ScopedTypeIdentifier(inner) => render_scoped_type_identifier(inner, dest),
-            TypeArgumentsContentTransportSlot::TupleType(inner) => render_tuple_type(inner, dest),
-            TypeArgumentsContentTransportSlot::UnitType(inner) => render_unit_type(inner, dest),
-            TypeArgumentsContentTransportSlot::ArrayType(inner) => render_array_type(inner, dest),
-            TypeArgumentsContentTransportSlot::FunctionType(inner) => render_function_type(inner, dest),
-            TypeArgumentsContentTransportSlot::TypeIdentifier(inner) => render_type_identifier(inner, dest),
-            TypeArgumentsContentTransportSlot::MacroInvocation(inner) => render_macro_invocation(inner, dest),
-            TypeArgumentsContentTransportSlot::NeverType(inner) => render_never_type(inner, dest),
-            TypeArgumentsContentTransportSlot::DynamicType(inner) => render_dynamic_type(inner, dest),
-            TypeArgumentsContentTransportSlot::BoundedType(inner) => render_bounded_type(inner, dest),
-            TypeArgumentsContentTransportSlot::RemovedTraitBound(inner) => render_removed_trait_bound(inner, dest),
-            TypeArgumentsContentTransportSlot::PrimitiveType(inner) => render_primitive_type(inner, dest),
-            TypeArgumentsContentTransportSlot::TypeBinding(inner) => render_type_binding(inner, dest),
-            TypeArgumentsContentTransportSlot::Lifetime(inner) => render_lifetime(inner, dest),
-            TypeArgumentsContentTransportSlot::StringLiteral(inner) => render_string_literal(inner, dest),
-            TypeArgumentsContentTransportSlot::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
-            TypeArgumentsContentTransportSlot::CharLiteral(inner) => render_char_literal(inner, dest),
-            TypeArgumentsContentTransportSlot::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
-            TypeArgumentsContentTransportSlot::IntegerLiteral(inner) => render_integer_literal(inner, dest),
-            TypeArgumentsContentTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
-            TypeArgumentsContentTransportSlot::Block(inner) => render_block(inner, dest),
-            TypeArgumentsContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -24490,7 +23955,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<_TokenTreePatternParenTranspor
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct TypeArgumentsRepeat1Transport {
+pub struct TypeArgumentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -24506,9 +23971,59 @@ pub struct TypeArgumentsRepeat1Transport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: TypeArgumentsRepeat1ContentTransportSlot,
+    pub content: TypeArgumentContentTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trait_bounds"))]
     pub trait_bounds: Option<TraitBoundsTransport>,
+}
+
+impl RenderableTransport for TypeArgumentTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_type_argument(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TypeArgumentTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        TypeArgumentTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeArgumentTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        TypeArgumentTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct TypeArgumentsRepeat1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_argument"))]
+    pub type_argument: TypeArgumentTransport,
 }
 
 impl RenderableTransport for TypeArgumentsRepeat1Transport {
@@ -24707,10 +24222,8 @@ pub struct TypeParametersRepeat1Transport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute_item"))]
-    pub attribute_item: Option<Vec<AttributeItemTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: TypeParametersRepeat1ContentTransportSlot,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attributed_type_parameter"))]
+    pub attributed_type_parameter: AttributedTypeParameterTransport,
 }
 
 impl RenderableTransport for TypeParametersRepeat1Transport {
@@ -34491,10 +34004,8 @@ pub struct TypeArgumentsTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Vec<TypeArgumentsContentTransportSlot>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_trait_bounds"))]
-    pub trait_bounds: Option<Vec<TraitBoundsTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_argument"))]
+    pub type_argument: Vec<TypeArgumentTransport>,
 }
 
 impl RenderableTransport for TypeArgumentsTransport {
@@ -45231,11 +44742,19 @@ fn render__token_tree_pattern_paren(node: &_TokenTreePatternParenTransport, dest
     template.render_into(dest)
 }
 
+fn render_type_argument(node: &TypeArgumentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = TypeArgumentTemplate {
+        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
+        trait_bounds: match &node.trait_bounds {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+    };
+    template.render_into(dest)
+}
+
 fn render_type_arguments_repeat1(node: &TypeArgumentsRepeat1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    node.content.render_into(dest)?;
-    if let Some(child) = &node.trait_bounds {
-        render_trait_bounds(child, dest)?;
-    }
+    render_type_argument(&node.type_argument, dest)?;
     Ok(())
 }
 
@@ -45251,12 +44770,7 @@ fn render_type_parameter_optional1(node: &TypeParameterOptional1Transport, dest:
 }
 
 fn render_type_parameters_repeat1(node: &TypeParametersRepeat1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(items) = &node.attribute_item {
-        for child in items.iter() {
-        render_attribute_item(child, dest)?;
-        }
-    }
-    node.content.render_into(dest)?;
+    render_attributed_type_parameter(&node.attributed_type_parameter, dest)?;
     Ok(())
 }
 
@@ -47384,28 +46898,17 @@ fn render_tuple_type(node: &TupleTypeTransport, dest: &mut dyn ::std::fmt::Write
 }
 
 fn render_type_arguments(node: &TypeArgumentsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.content.as_deref().is_none_or(<[_]>::is_empty) && node.trait_bounds.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.type_argument.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let content_owned = node.content.as_deref().unwrap_or(&[]);
-    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
-    let trait_bounds_owned = node.trait_bounds.as_deref().unwrap_or(&[]);
-    let trait_bounds_buf: Vec<::sittir_core::filters::Renderable<'_>> = trait_bounds_owned.iter()
+    let type_argument_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.type_argument.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TypeArgumentsTemplate {
-        content: ListNonterminalView {
-            items: content_buf.as_slice(),
-            separator: ",",
-            leading: false,
-            trailing: false,
-        },
-        trait_bounds: ListNonterminalView {
-            items: trait_bounds_buf.as_slice(),
+        type_argument: ListNonterminalView {
+            items: type_argument_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
@@ -47479,14 +46982,16 @@ fn render_type_parameters(node: &TypeParametersTransport, dest: &mut dyn ::std::
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
+    let attributed_type_parameter_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.attributed_type_parameter.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = TypeParametersTemplate {
-        attribute_item: ListNonterminalView {
-            items: &[],
+        attributed_type_parameter: ListNonterminalView {
+            items: attributed_type_parameter_buf.as_slice(),
             separator: ",",
             leading: false,
             trailing: false,
         },
-        content: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -48562,6 +48067,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::_TokenTreePatternBrace(t) => render__token_tree_pattern_brace(t, dest),
             AnyTransport::_TokenTreePatternBracket(t) => render__token_tree_pattern_bracket(t, dest),
             AnyTransport::_TokenTreePatternParen(t) => render__token_tree_pattern_paren(t, dest),
+            AnyTransport::TypeArgument(t) => render_type_argument(t, dest),
             AnyTransport::TypeArgumentsRepeat1(t) => render_type_arguments_repeat1(t, dest),
             AnyTransport::TypeIdentifier(t) => t.render_into(dest),
             AnyTransport::TypeParameterOptional1(t) => render_type_parameter_optional1(t, dest),
@@ -48965,6 +48471,7 @@ impl AnyTransport {
             Self::_TokenTreePatternBrace(t) => t.transport_named,
             Self::_TokenTreePatternBracket(t) => t.transport_named,
             Self::_TokenTreePatternParen(t) => t.transport_named,
+            Self::TypeArgument(t) => t.transport_named,
             Self::TypeArgumentsRepeat1(t) => t.transport_named,
             Self::TypeIdentifier(t) => t.transport_named,
             Self::TypeParameterOptional1(t) => t.transport_named,
@@ -49382,6 +48889,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::_TokenTreePatternBrace(data) => transport_to_node__token_tree_pattern_brace(data),
         AnyTransport::_TokenTreePatternBracket(data) => transport_to_node__token_tree_pattern_bracket(data),
         AnyTransport::_TokenTreePatternParen(data) => transport_to_node__token_tree_pattern_paren(data),
+        AnyTransport::TypeArgument(data) => transport_to_node_type_argument(data),
         AnyTransport::TypeArgumentsRepeat1(data) => transport_to_node_type_arguments_repeat1(data),
         AnyTransport::TypeIdentifier(data) => transport_to_node_type_identifier(data),
         AnyTransport::TypeParameterOptional1(data) => transport_to_node_type_parameter_optional1(data),
@@ -50286,7 +49794,7 @@ fn transport_to_node_extern_crate_declaration_optional1(transport: ExternCrateDe
 fn transport_to_node_field_identifier(transport: FieldIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(409) /* "_field_identifier" */,
+        TransportKindId(410) /* "_field_identifier" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -51876,14 +51384,40 @@ fn transport_to_node__token_tree_pattern_paren(transport: _TokenTreePatternParen
     ))
 }
 
+fn transport_to_node_type_argument(transport: TypeArgumentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(type_argument_content_transport_slot_to_any(transport.content));
+    if let Some(value) = transport.trait_bounds {
+        children_buf.push(AnyTransport::TraitBounds(value));
+    }
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(378) /* "_type_argument" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
 fn transport_to_node_type_arguments_repeat1(transport: TypeArgumentsRepeat1Transport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    children_buf.push(type_arguments_repeat1_content_transport_slot_to_any(transport.content));
-    if let Some(value) = transport.trait_bounds {
-        children_buf.push(AnyTransport::TraitBounds(value));
-    }
+    children_buf.push(AnyTransport::TypeArgument(transport.type_argument));
     let children = if children_buf.is_empty() {
         None
     } else {
@@ -51908,7 +51442,7 @@ fn transport_to_node_type_arguments_repeat1(transport: TypeArgumentsRepeat1Trans
 fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
-        TransportKindId(412) /* "_type_identifier" */,
+        TransportKindId(413) /* "_type_identifier" */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -51949,10 +51483,7 @@ fn transport_to_node_type_parameters_repeat1(transport: TypeParametersRepeat1Tra
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.attribute_item {
-        children_buf.extend(value.into_iter().map(|v| AnyTransport::AttributeItem(v)).collect::<Vec<_>>());
-    }
-    children_buf.push(type_parameters_repeat1_content_transport_slot_to_any(transport.content));
+    children_buf.push(AnyTransport::AttributedTypeParameter(transport.attributed_type_parameter));
     let children = if children_buf.is_empty() {
         None
     } else {
@@ -56151,12 +55682,7 @@ fn transport_to_node_type_arguments(transport: TypeArgumentsTransport) -> Result
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
-    if let Some(value) = transport.content {
-        children_buf.extend(value.into_iter().map(|v| type_arguments_content_transport_slot_to_any(v)).collect::<Vec<_>>());
-    }
-    if let Some(value) = transport.trait_bounds {
-        children_buf.extend(value.into_iter().map(|v| AnyTransport::TraitBounds(v)).collect::<Vec<_>>());
-    }
+    children_buf.extend(transport.type_argument.into_iter().map(|v| AnyTransport::TypeArgument(v)).collect::<Vec<_>>());
     let children = if children_buf.is_empty() {
         None
     } else {

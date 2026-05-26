@@ -52,8 +52,8 @@ export const suggestedTransforms = {
   },
 
 
-  // _type_arguments_repeat1: 1 inferred field(s)
-  _type_arguments_repeat1: {
+  // _type_argument: 1 inferred field(s)
+  _type_argument: {
       // [held] 100% agreement, 5 parents
       1: field("bounds"),  // $.trait_bounds
   },
@@ -374,7 +374,7 @@ export interface InferredField {
 export const inferredFields: readonly InferredField[] = [
   { kind: "slice_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "tuple_struct_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
-  { kind: "_type_arguments_repeat1", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },
+  { kind: "_type_argument", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },
 ];
 
 export interface RepeatedShape {
