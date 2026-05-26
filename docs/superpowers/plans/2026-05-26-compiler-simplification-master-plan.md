@@ -32,7 +32,7 @@
 | ~~PR-A0~~ | Normalize losslessness fix | — | — | — | — | ✅ DONE (#36 `c38ffbf1`/`a91927c6`) |
 | **PR-A** | Reconcile `_new` naming → 0-diff WIDE probe | PR-A0 | 0 | no | `pr-a-reconcile-new-naming` | ⬜ next (plan written) |
 | **PR-B** | `AssembledNonterminal`→class; `kind`/`parseKind` refs; `sourceRuleIds` | A | 1 | no | `pr-b-assembled-nonterminal-class` | ⬜ |
-| **PR-C** | Eliminate `origin` + slot `aliasSources` → `value.parseKind`/`isUnnamed` | B | 2 | no | `pr-c-eliminate-origin-aliassources` | ⬜ |
+| **PR-C** | Eliminate `origin` + slot `aliasSources` → `value.parseKind`/`isUnnamed`; + §4d.1 non-injective-`parseKind` pass | B | 2 | no | `pr-c-eliminate-origin-aliassources` | ⬜ |
 | **PR-D** | wrap reads class; delete `SlotModel`; `$children`→`$other` (codegen+rust) | C | 3 | **yes** | `pr-d-wrap-reads-class` | ⬜ |
 | **PR-D2** | Helper-name leak fix (H2 probe → 0) | D | 4 | no | `pr-d2-helper-name-leak` | ⬜ |
 | **PR-E** | transport + render read class; delete 2 visible-kind band-aids; delete deprecated `bridge.rs` | D2, B (A) | 5 | **yes** | `pr-e-transport-render-class` | ⬜ |
