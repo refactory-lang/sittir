@@ -37,6 +37,28 @@ import { compileWordMatcher } from './common.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
 import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
+import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
+
+// ---------------------------------------------------------------------------
+// Slot-grouping diagnostic accumulator (propose-promotion only).
+//
+// Diagnostics are accumulated here and drained by the CLI / tests after each
+// computeSimplifiedRules call. They NEVER drive codegen behavior
+// (feedback_metadata_not_behavior).
+// ---------------------------------------------------------------------------
+
+const _slotGroupingDiagnostics: SlotGroupingDiagnostic[] = [];
+
+/**
+ * Return + clear the slot-grouping diagnostics accumulated during the last
+ * `computeSimplifiedRules` call. The codegen CLI calls this after regen to
+ * print propose-promotion suggestions; tests call it to verify the wiring.
+ */
+export function drainSlotGroupingDiagnostics(): SlotGroupingDiagnostic[] {
+	const out = [..._slotGroupingDiagnostics];
+	_slotGroupingDiagnostics.length = 0;
+	return out;
+}
 
 /** Does this string lex as a "word" under the grammar's `word` rule? */
 /**
@@ -225,6 +247,20 @@ export function computeSimplifiedRules(
 			assertUniversalShapeRule(rule, kind);
 		}
 	}
+
+	// Slot-grouping diagnostic: propose-promotion only. Records never drive
+	// codegen behavior (feedback_metadata_not_behavior) — they surface for the
+	// author via the derivation log and regen console output.
+	const slotDiagnostics = diagnoseSlotGrouping(canonicalized);
+	for (const rec of slotDiagnostics) {
+		_slotGroupingDiagnostics.push(rec);
+	}
+	if (slotDiagnostics.length > 0 && process.env['SITTIR_SLOT_GROUPING_QUIET'] !== '1') {
+		for (const rec of slotDiagnostics) {
+			console.info(`[slot-grouping] ${rec.ownerKind} (${rec.shape}): ${rec.proposal}`);
+		}
+	}
+
 	return canonicalized;
 }
 
