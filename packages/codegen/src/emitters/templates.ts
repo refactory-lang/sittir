@@ -1287,6 +1287,37 @@ function emitSymbol(rule: Extract<Rule, { type: 'symbol' }>, ctx: EmitCtx): stri
 		return emitFieldNameSlot(rule.fieldName.toLowerCase(), rule);
 	}
 
+	// Named-alias push-down (aliasedFrom + aliasNamed stamped by wrapper-deletion):
+	// `ALIAS(_hidden → 'visible', named:true)` in the grammar is lowered to a
+	// SYMBOL(_hidden) with `aliasedFrom = 'visible'` and `aliasNamed = true` by
+	// `deleteWrapperWith`. The wrapper-deleted symbol still carries the internal
+	// `_hidden` name, but the CST exposes it as the VISIBLE kind `'visible'`.
+	// Emit a slot reference using the visible name — do NOT fall through to the
+	// hidden-helper inline path or lookupSlot below, which would expand `_hidden`'s
+	// raw rule body instead of producing a slot reference to the user-facing kind.
+	//
+	// IMPORTANT: this must run BEFORE lookupSlot (the next block) because
+	// lookupSlot can find a slot whose storageName is the inner hidden rule's
+	// OWN slot (e.g. `content` from `_type_argument`'s body), causing
+	// emitSlotReference to emit `{{ content }}` instead of `{{ type_argument }}`.
+	//
+	// Example: `_type_argument` (hidden) is aliased to `type_argument` (visible
+	// group) in `_type_arguments_repeat1`. Without this guard the emitter
+	// calls lookupSlot → finds the `content` slot → emits `{{ content }}`.
+	const aliasedFromPre = (rule as unknown as { aliasedFrom?: string }).aliasedFrom;
+	const aliasNamedPre = (rule as unknown as { aliasNamed?: boolean }).aliasNamed;
+	if (aliasNamedPre === true && aliasedFromPre !== undefined) {
+		const slotName = (aliasedFromPre.replace(/^_+/, '') || 'children').toLowerCase();
+		const multAlias = (rule as { multiplicity?: string }).multiplicity;
+		if (multAlias === 'array' || multAlias === 'nonEmptyArray') {
+			return emitListSlot(slotName, rule, undefined);
+		}
+		if (multAlias === 'optional') {
+			return `{% if ${slotName} | isPresent %}${emitScalarSlot(slotName)}{% endif %}`;
+		}
+		return emitScalarSlot(slotName);
+	}
+
 	// Slot back-pointer: when assembly registered a slot for this rule
 	// position, emit a multiplicity-aware slot expression. In RenderRule
 	// input, a symbol with a slot and no multiplicity attribute is a single

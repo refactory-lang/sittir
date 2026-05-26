@@ -772,6 +772,24 @@ export function _tokenTreePatternParen(...children: T.TokenPattern[]) {
   }, methodsEngine);
 }
 
+export function typeArgument(config: T.TypeArgument.Config) {
+  const _content = config.content;
+  const _trait_bounds = config.traitBounds;
+  return withMethods({
+    $type: TSKindId.TypeArgument as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    _trait_bounds,
+    content() { return _content; },
+    traitBounds() { return _trait_bounds; },
+    $with: {
+      content: (value: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block) => typeArgument({ ...config, content: value }),
+      traitBounds: (value?: T.TraitBounds) => typeArgument({ ...config, traitBounds: value }),
+    },
+  }, methodsEngine);
+}
+
 export function typeIdentifier(text: string) {
   if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_type_identifier: text must be non-empty`); if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_typeIdentifier.test(text)) throw new Error(`_type_identifier: text does not match pattern: ${text}`);
   return withMethods({
@@ -4186,21 +4204,16 @@ export function tupleType(config: T.TupleType.Config) {
   }, methodsEngine);
 }
 
-export function typeArguments(config: Partial<T.TypeArguments.Config> = {}) {
-  const _content = config.content;
-  const _trait_bounds = config.traitBounds;
+export function typeArguments(...children: T.TypeArgument[]) {
+  _assertNonEmpty(children, 'type_arguments.children');
+  const _type_argument = children;
   return withMethods({
     $type: TSKindId.TypeArguments as const,
     $source: 2 as const,
     $named: true as const,
-    _content,
-    _trait_bounds,
-    contents() { return _content; },
-    traitBounds() { return _trait_bounds; },
-    $with: {
-      contents: (...values: (T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)[]) => typeArguments({ ...config, content: values }),
-      traitBounds: (...values: T.TraitBounds[]) => typeArguments({ ...config, traitBounds: values }),
-    },
+    _type_argument,
+    typeArguments() { return _type_argument; },
+    $with: { $children: (...vs: T.TypeArgument[]) => typeArguments(...vs) },
   }, methodsEngine);
 }
 
@@ -4719,6 +4732,7 @@ export type FluentKindMap = {
   "_token_tree_pattern_brace": FluentNode<"_token_tree_pattern_brace", T._TokenTreePatternBrace.Config>;
   "_token_tree_pattern_bracket": FluentNode<"_token_tree_pattern_bracket", T._TokenTreePatternBracket.Config>;
   "_token_tree_pattern_paren": FluentNode<"_token_tree_pattern_paren", T._TokenTreePatternParen.Config>;
+  "_type_argument": FluentNode<"_type_argument", T.TypeArgument.Config>;
   "_type_identifier": T.TypeIdentifier;
   "_visibility_modifier_crate": FluentNode<"_visibility_modifier_crate", T._VisibilityModifierCrate.Config>;
   "_visibility_modifier_in_path": T.VisibilityModifierInPath;
@@ -4960,6 +4974,7 @@ export const _factoryMap = {
   "_token_tree_pattern_brace": _tokenTreePatternBrace,
   "_token_tree_pattern_bracket": _tokenTreePatternBracket,
   "_token_tree_pattern_paren": _tokenTreePatternParen,
+  "_type_argument": typeArgument,
   "_type_identifier": typeIdentifier,
   "_visibility_modifier_crate": _visibilityModifierCrate,
   "_visibility_modifier_in_path": _visibilityModifierInPath,

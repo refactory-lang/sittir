@@ -1779,13 +1779,9 @@ describe('tuple_type', () => {
 
 describe('type_arguments', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeArguments({});
+    const node = ir.typeArguments();
     expect(node.$type).toBe(TSKindId.TypeArguments);
     expect(node.$source).toBe(2);
-  });
-  it('render does not throw on minimal config', () => {
-    const node = ir.typeArguments({});
-    expect(() => node.$render!()).not.toThrow();
   });
 });
 

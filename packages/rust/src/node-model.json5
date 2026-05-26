@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 395,
+  "nodeCount": 396,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -4515,11 +4515,11 @@
       ]
     },
     {
-      "kind": "_type_arguments_repeat1",
+      "kind": "_type_argument",
       "modelType": "branch",
-      "typeName": "TypeArgumentsRepeat1",
-      "factoryName": "typeArgumentsRepeat1",
-      "irKey": "typeArgumentsRepeat1",
+      "typeName": "TypeArgument",
+      "factoryName": "typeArgument",
+      "irKey": "typeArgument",
       "hidden": false,
       "fields": [
         {
@@ -4600,6 +4600,43 @@
       "children": []
     },
     {
+      "kind": "_type_arguments_repeat1",
+      "modelType": "branch",
+      "typeName": "TypeArgumentsRepeat1",
+      "factoryName": "typeArgumentsRepeat1",
+      "irKey": "typeArgumentsRepeat1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "type_argument",
+          "propertyName": "typeArgument",
+          "paramName": "typeArgument",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_type_argument",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_type_argument"
+            ]
+          },
+          "aliasSources": {
+            "type_argument": "_type_argument"
+          }
+        }
+      ],
+      "children": []
+    },
+    {
       "kind": "_type_identifier",
       "modelType": "pattern",
       "typeName": "TypeIdentifier",
@@ -4652,32 +4689,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItems",
-          "paramName": "attributeItems",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "attribute_item",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "attribute_item"
-            ]
-          }
-        },
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "attributed_type_parameter",
+          "propertyName": "attributedTypeParameter",
+          "paramName": "attributedTypeParameter",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4685,25 +4699,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "metavariable",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "type_parameter",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "lifetime_parameter",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "const_parameter",
+              "name": "_attributed_type_parameter",
               "unresolved": true
             }
           ],
@@ -4711,11 +4707,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "metavariable",
-              "type_parameter",
-              "lifetime_parameter",
-              "const_parameter"
+              "_attributed_type_parameter"
             ]
+          },
+          "aliasSources": {
+            "attributed_type_parameter": "_attributed_type_parameter"
           }
         }
       ],
@@ -16573,41 +16569,17 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
-          "required": false,
+          "name": "type_argument",
+          "propertyName": "typeArguments",
+          "paramName": "typeArguments",
+          "required": true,
           "multiple": true,
-          "nonEmpty": false,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_type",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "type_binding",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "lifetime",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_literal",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "block",
+              "multiplicity": "nonEmptyArray",
+              "name": "_type_argument",
               "unresolved": true
             }
           ],
@@ -16615,35 +16587,11 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_type",
-              "type_binding",
-              "lifetime",
-              "_literal",
-              "block"
+              "_type_argument"
             ]
-          }
-        },
-        {
-          "name": "trait_bounds",
-          "propertyName": "traitBounds",
-          "paramName": "traitBounds",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "trait_bounds",
-              "unresolved": true
-            }
-          ],
-          "source": "inferred",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "trait_bounds"
-            ]
+          },
+          "aliasSources": {
+            "type_argument": "_type_argument"
           }
         }
       ],

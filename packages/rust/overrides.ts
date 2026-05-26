@@ -197,7 +197,25 @@ const config: WireConfig<RustGrammar> = {
 		// sibling). A multi-slot repeated unit must be a visible node so the flat
 		// parse can be reconstructed; this is step 1 of making multiplicity intrinsic.
 		attributed_ordered_field: ($) =>
-			seq(repeat($.attribute_item), optional($.visibility_modifier), field('type', $._type))
+			seq(repeat($.attribute_item), optional($.visibility_modifier), field('type', $._type)),
+
+		// type_arguments: each comma-separated position after the first is
+		// seq(choice(_type, type_binding, lifetime, _literal, block), optional(trait_bounds)).
+		// The inner seq is a 2-slot unit (element type + optional bounds) that
+		// auto-group synthesis lifts into `_type_arguments_repeat1` (inline).
+		// Without a visible group the slot-grouping diagnostic fires and the
+		// parent template fragments (type + bounds appear as separate flat slots).
+		// `type_argument` makes the repeating unit a first-class visible kind so
+		// `type_arguments` renders `<{{ type_argument | joinWithTrailing(",") }}>`.
+		//
+		// Conflict: choice($._type, ...) can begin with `metavariable` (same as
+		// `_attributed_type_parameter`); declare the conflict to allow tree-sitter
+		// to use lookahead.
+		type_argument: ($) =>
+			seq(
+				choice($._type, $.type_binding, $.lifetime, $._literal, $.block),
+				optional($.trait_bounds)
+			)
 	},
 	transforms: {
 		// abstract_type: 1 field(s)

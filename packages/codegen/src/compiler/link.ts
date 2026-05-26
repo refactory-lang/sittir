@@ -153,7 +153,8 @@ export function link(
 		raw.rules,
 		rules,
 		supertypes,
-		externalRoles
+		externalRoles,
+		raw.patternReplacementKinds
 	);
 	canonicalizeCatalogLiteralRefs(rules, kindEntries);
 	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, kindEntries);
@@ -512,13 +513,29 @@ function collectTopLevelAliasBodies(
 	rawRules: Record<string, Rule>,
 	resolvedRules: Record<string, Rule>,
 	supertypes: Set<string>,
-	externalRoles: Map<string, ExternalRole>
+	externalRoles: Map<string, ExternalRole>,
+	patternReplacementKinds?: ReadonlySet<string>
 ): Map<string, Rule> {
 	const out = new Map<string, Rule>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
 		const content = extractTopLevelNamedAliasContent(rule);
 		if (!content) continue;
+		// Body-pattern groups produce `alias(SYMBOL(_hidden), $.visible)` where
+		// `_hidden` is a pattern-replacement kind. The alias' content is a symbol
+		// ref to the hidden rule (`_type_argument` etc.), but the render template
+		// must reference the VISIBLE kind (e.g. `type_argument`) — not inline the
+		// hidden rule's body. Skip these entries so `renderRules[name]` keeps the
+		// wrapper-deleted `SYMBOL(visible, aliasedFrom='_hidden')` form set by the
+		// main normalization path, rather than being overwritten with the hidden
+		// rule's body.
+		if (
+			patternReplacementKinds &&
+			content.type === 'symbol' &&
+			patternReplacementKinds.has(content.name)
+		) {
+			continue;
+		}
 		const resolvedContent = resolveRule(content, name, rawRules, supertypes, externalRoles);
 		out.set(
 			name,

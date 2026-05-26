@@ -426,6 +426,13 @@ pub struct _TokenTreePatternParenTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_type_argument.jinja", escape = "none")]
+pub struct TypeArgumentTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+    pub trait_bounds: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_visibility_modifier_crate.jinja", escape = "none")]
 pub struct _VisibilityModifierCrateTemplate<'a> {
     pub crate_: SingleNonterminalView<'a>,
@@ -1513,8 +1520,7 @@ pub struct TupleTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_arguments.jinja", escape = "none")]
 pub struct TypeArgumentsTemplate<'a> {
-    pub content: ListNonterminalView<'a>,
-    pub trait_bounds: ListNonterminalView<'a>,
+    pub type_argument: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1554,8 +1560,7 @@ pub struct TypeParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_parameters.jinja", escape = "none")]
 pub struct TypeParametersTemplate<'a> {
-    pub attribute_item: ListNonterminalView<'a>,
-    pub content: SingleNonterminalView<'a>,
+    pub attributed_type_parameter: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

@@ -1018,6 +1018,21 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
+        378 => { // "_type_argument" | "type_argument"
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let children_renderables = children.renderable_items();
+            let template = TypeArgumentTemplate {
+                content: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                trait_bounds: match children.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+                },
+            };
+            template.render_into(dest)
+        }
         348 => { // "_visibility_modifier_crate" | "visibility_modifier_crate"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let template = _VisibilityModifierCrateTemplate {
@@ -2814,16 +2829,10 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         230 => { // "type_arguments"
-            let children = resolve_slot(node, SlotAccessor::Children, false)?;
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let children_renderables = children.renderable_items();
             let template = TypeArgumentsTemplate {
-                content: ListNonterminalView {
-                    items: children_renderables.as_slice(),
-                    separator: children.separator,
-                    leading: children.leading_sep,
-                    trailing: children.trailing_sep,
-                },
-                trait_bounds: ListNonterminalView {
+                type_argument: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
                     leading: children.leading_sep,
@@ -2902,17 +2911,15 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         199 => { // "type_parameters"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("attribute_item"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("content"), true)?;
-            let field_0_renderables = field_0.renderable_items();
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let children_renderables = children.renderable_items();
             let template = TypeParametersTemplate {
-                attribute_item: ListNonterminalView {
-                    items: field_0_renderables.as_slice(),
-                    separator: field_0.separator,
-                    leading: field_0.leading_sep,
-                    trailing: field_0.trailing_sep,
+                attributed_type_parameter: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
                 },
-                content: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
             };
             template.render_into(dest)
         }

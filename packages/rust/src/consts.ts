@@ -34,6 +34,7 @@ export const NODE_KINDS = [
   '_token_tree_pattern_brace',
   '_token_tree_pattern_bracket',
   '_token_tree_pattern_paren',
+  '_type_argument',
   '_type_arguments_repeat1',
   '_type_parameters_repeat1',
   '_visibility_modifier_crate',
@@ -682,8 +683,9 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "_attributed_parameter": 374,
   "_attributed_type_parameter": 375,
   "_attributed_argument": 376,
-  "_field_identifier": 409,
-  "_type_identifier": 412,
+  "_type_argument": 378,
+  "_field_identifier": 410,
+  "_type_identifier": 413,
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -938,8 +940,9 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [374]: "_attributed_parameter",
   [375]: "_attributed_type_parameter",
   [376]: "_attributed_argument",
-  [409]: "_field_identifier",
-  [412]: "_type_identifier",
+  [378]: "_type_argument",
+  [410]: "_field_identifier",
+  [413]: "_type_identifier",
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -1194,8 +1197,9 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "_attributed_parameter", id: 374, enumName: "AttributedParameter", cName: "sym__attributed_parameter" },
   { name: "_attributed_type_parameter", id: 375, enumName: "AttributedTypeParameter", cName: "sym__attributed_type_parameter" },
   { name: "_attributed_argument", id: 376, enumName: "AttributedArgument", cName: "sym__attributed_argument" },
-  { name: "_field_identifier", id: 409, enumName: "AliasFieldIdentifier", cName: "alias_sym_field_identifier" },
-  { name: "_type_identifier", id: 412, enumName: "AliasTypeIdentifier", cName: "alias_sym_type_identifier" },
+  { name: "_type_argument", id: 378, enumName: "TypeArgument", cName: "sym__type_argument" },
+  { name: "_field_identifier", id: 410, enumName: "AliasFieldIdentifier", cName: "alias_sym_field_identifier" },
+  { name: "_type_identifier", id: 413, enumName: "AliasTypeIdentifier", cName: "alias_sym_type_identifier" },
 ] as const;
 
 export const enum TSFieldId {
@@ -1595,13 +1599,15 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_token_tree_pattern_paren': [
     { name: 'tokenPatterns', required: false, multiple: true },
   ],
-  '_type_arguments_repeat1': [
+  '_type_argument': [
     { name: 'content', required: true, multiple: false },
     { name: 'traitBounds', required: false, multiple: false },
   ],
+  '_type_arguments_repeat1': [
+    { name: 'typeArgument', required: true, multiple: false },
+  ],
   '_type_parameters_repeat1': [
-    { name: 'attributeItems', required: false, multiple: true },
-    { name: 'content', required: true, multiple: false },
+    { name: 'attributedTypeParameter', required: true, multiple: false },
   ],
   '_visibility_modifier_crate': [
     { name: 'crate', required: true, multiple: false },
@@ -2208,8 +2214,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'types', required: true, multiple: true },
   ],
   'type_arguments': [
-    { name: 'contents', required: false, multiple: true },
-    { name: 'traitBounds', required: false, multiple: true },
+    { name: 'typeArguments', required: true, multiple: true },
   ],
   'type_binding': [
     { name: 'name', required: true, multiple: false },

@@ -142,6 +142,7 @@ export const enum SyntaxKind {
   _TokenTreePatternBrace = "_token_tree_pattern_brace",
   _TokenTreePatternBracket = "_token_tree_pattern_bracket",
   _TokenTreePatternParen = "_token_tree_pattern_paren",
+  TypeArgument = "_type_argument",
   TypeArgumentsRepeat1 = "_type_arguments_repeat1",
   TypeParameterOptional1 = "_type_parameter_optional1",
   TypeParametersRepeat1 = "_type_parameters_repeat1",
@@ -778,40 +779,41 @@ export const enum TSKindId {
   AttributedTypeParameter = 375,
   AttributedArgument = 376,
   AttributedOrderedField = 377,
-  SourceFileRepeat1 = 378,
-  TokenRepetitionPatternRepeat1 = 379,
-  TokenRepetitionRepeat1 = 380,
-  _NonSpecialTokenRepeat1 = 381,
-  DeclarationListRepeat1 = 382,
-  OrderedFieldDeclarationListRepeat1 = 383,
-  FunctionModifiersRepeat1 = 384,
-  TraitBoundsRepeat1 = 385,
-  TypeParametersRepeat1 = 386,
-  ForLifetimesRepeat1 = 387,
-  TupleTypeRepeat1 = 388,
-  UseBoundsRepeat1 = 389,
-  TypeArgumentsRepeat1 = 390,
-  TupleExpressionRepeat1 = 391,
-  TupleExpressionRepeat2 = 392,
-  FieldInitializerListRepeat1 = 393,
-  MatchArmRepeat1 = 394,
-  ClosureParametersRepeat1 = 395,
-  TuplePatternRepeat1 = 396,
-  StructPatternRepeat1 = 397,
-  StringLiteralRepeat1 = 398,
-  _ArrayExpressionListRepeat1 = 399,
-  _MacroDefinitionParenRepeat1 = 400,
-  _DelimTokenTreeParenRepeat1 = 401,
-  _EnumVariantListOptional1Repeat1 = 402,
-  _FieldDeclarationListOptional1Repeat1 = 403,
-  _WhereClauseOptional1Repeat1 = 404,
-  _UseListOptional1Repeat1 = 405,
-  _ParametersOptional1Repeat1 = 406,
-  _MatchBlockOptional1Repeat1 = 407,
-  _SlicePatternOptional1Repeat1 = 408,
-  FieldIdentifier = 409,
-  _ShorthandFieldIdentifier = 411,
-  TypeIdentifier = 412,
+  TypeArgument = 378,
+  SourceFileRepeat1 = 379,
+  TokenRepetitionPatternRepeat1 = 380,
+  TokenRepetitionRepeat1 = 381,
+  _NonSpecialTokenRepeat1 = 382,
+  DeclarationListRepeat1 = 383,
+  OrderedFieldDeclarationListRepeat1 = 384,
+  FunctionModifiersRepeat1 = 385,
+  TraitBoundsRepeat1 = 386,
+  TypeParametersRepeat1 = 387,
+  ForLifetimesRepeat1 = 388,
+  TupleTypeRepeat1 = 389,
+  UseBoundsRepeat1 = 390,
+  TypeArgumentsRepeat1 = 391,
+  TupleExpressionRepeat1 = 392,
+  TupleExpressionRepeat2 = 393,
+  FieldInitializerListRepeat1 = 394,
+  MatchArmRepeat1 = 395,
+  ClosureParametersRepeat1 = 396,
+  TuplePatternRepeat1 = 397,
+  StructPatternRepeat1 = 398,
+  StringLiteralRepeat1 = 399,
+  _ArrayExpressionListRepeat1 = 400,
+  _MacroDefinitionParenRepeat1 = 401,
+  _DelimTokenTreeParenRepeat1 = 402,
+  _EnumVariantListOptional1Repeat1 = 403,
+  _FieldDeclarationListOptional1Repeat1 = 404,
+  _WhereClauseOptional1Repeat1 = 405,
+  _UseListOptional1Repeat1 = 406,
+  _ParametersOptional1Repeat1 = 407,
+  _MatchBlockOptional1Repeat1 = 408,
+  _SlicePatternOptional1Repeat1 = 409,
+  FieldIdentifier = 410,
+  _ShorthandFieldIdentifier = 412,
+  TypeIdentifier = 413,
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -1192,40 +1194,41 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
   [375, "_attributed_type_parameter"],
   [376, "_attributed_argument"],
   [377, "_attributed_ordered_field"],
-  [378, "source_file_repeat1"],
-  [379, "token_repetition_pattern_repeat1"],
-  [380, "token_repetition_repeat1"],
-  [381, "_non_special_token_repeat1"],
-  [382, "declaration_list_repeat1"],
-  [383, "ordered_field_declaration_list_repeat1"],
-  [384, "function_modifiers_repeat1"],
-  [385, "trait_bounds_repeat1"],
-  [386, "type_parameters_repeat1"],
-  [387, "for_lifetimes_repeat1"],
-  [388, "tuple_type_repeat1"],
-  [389, "use_bounds_repeat1"],
-  [390, "type_arguments_repeat1"],
-  [391, "tuple_expression_repeat1"],
-  [392, "tuple_expression_repeat2"],
-  [393, "field_initializer_list_repeat1"],
-  [394, "match_arm_repeat1"],
-  [395, "closure_parameters_repeat1"],
-  [396, "tuple_pattern_repeat1"],
-  [397, "struct_pattern_repeat1"],
-  [398, "string_literal_repeat1"],
-  [399, "_array_expression_list_repeat1"],
-  [400, "_macro_definition_paren_repeat1"],
-  [401, "_delim_token_tree_paren_repeat1"],
-  [402, "_enum_variant_list_optional1_repeat1"],
-  [403, "_field_declaration_list_optional1_repeat1"],
-  [404, "_where_clause_optional1_repeat1"],
-  [405, "_use_list_optional1_repeat1"],
-  [406, "_parameters_optional1_repeat1"],
-  [407, "_match_block_optional1_repeat1"],
-  [408, "_slice_pattern_optional1_repeat1"],
-  [409, "_field_identifier"],
-  [411, "_shorthand_field_identifier"],
-  [412, "_type_identifier"],
+  [378, "_type_argument"],
+  [379, "source_file_repeat1"],
+  [380, "token_repetition_pattern_repeat1"],
+  [381, "token_repetition_repeat1"],
+  [382, "_non_special_token_repeat1"],
+  [383, "declaration_list_repeat1"],
+  [384, "ordered_field_declaration_list_repeat1"],
+  [385, "function_modifiers_repeat1"],
+  [386, "trait_bounds_repeat1"],
+  [387, "type_parameters_repeat1"],
+  [388, "for_lifetimes_repeat1"],
+  [389, "tuple_type_repeat1"],
+  [390, "use_bounds_repeat1"],
+  [391, "type_arguments_repeat1"],
+  [392, "tuple_expression_repeat1"],
+  [393, "tuple_expression_repeat2"],
+  [394, "field_initializer_list_repeat1"],
+  [395, "match_arm_repeat1"],
+  [396, "closure_parameters_repeat1"],
+  [397, "tuple_pattern_repeat1"],
+  [398, "struct_pattern_repeat1"],
+  [399, "string_literal_repeat1"],
+  [400, "_array_expression_list_repeat1"],
+  [401, "_macro_definition_paren_repeat1"],
+  [402, "_delim_token_tree_paren_repeat1"],
+  [403, "_enum_variant_list_optional1_repeat1"],
+  [404, "_field_declaration_list_optional1_repeat1"],
+  [405, "_where_clause_optional1_repeat1"],
+  [406, "_use_list_optional1_repeat1"],
+  [407, "_parameters_optional1_repeat1"],
+  [408, "_match_block_optional1_repeat1"],
+  [409, "_slice_pattern_optional1_repeat1"],
+  [410, "_field_identifier"],
+  [412, "_shorthand_field_identifier"],
+  [413, "_type_identifier"],
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -1607,6 +1610,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "_attributed_type_parameter": return TSKindId.AttributedTypeParameter;
     case "_attributed_argument": return TSKindId.AttributedArgument;
     case "_attributed_ordered_field": return TSKindId.AttributedOrderedField;
+    case "_type_argument": return TSKindId.TypeArgument;
     case "source_file_repeat1": return TSKindId.SourceFileRepeat1;
     case "token_repetition_pattern_repeat1": return TSKindId.TokenRepetitionPatternRepeat1;
     case "token_repetition_repeat1": return TSKindId.TokenRepetitionRepeat1;
@@ -1760,6 +1764,7 @@ export function kindIdFromName(kindName: string): TSKindId {
     case "attributed_type_parameter": return TSKindId.AttributedTypeParameter;
     case "attributed_argument": return TSKindId.AttributedArgument;
     case "attributed_ordered_field": return TSKindId.AttributedOrderedField;
+    case "type_argument": return TSKindId.TypeArgument;
     case "field_identifier": return TSKindId.FieldIdentifier;
     case "shorthand_field_identifier": return TSKindId._ShorthandFieldIdentifier;
     case "type_identifier": return TSKindId.TypeIdentifier;
@@ -2574,12 +2579,18 @@ export interface _TokenTreePatternParen {
   tokenPatterns(): readonly (TokenPattern)[];
 }
 
-export interface TypeArgumentsRepeat1 {
-  readonly $type: "_type_arguments_repeat1";
+export interface TypeArgument {
+  readonly $type: TSKindId.TypeArgument;
   readonly _content: _Type | TypeBinding | Lifetime | Literal | Block;
   readonly _trait_bounds?: TraitBounds;
   content(): _Type | TypeBinding | Lifetime | Literal | Block;
   traitBounds(): TraitBounds | undefined;
+}
+
+export interface TypeArgumentsRepeat1 {
+  readonly $type: "_type_arguments_repeat1";
+  readonly _type_argument: TypeArgument;
+  typeArgument(): TypeArgument;
 }
 
 export interface TypeParameterOptional1 {
@@ -2590,10 +2601,8 @@ export interface TypeParameterOptional1 {
 
 export interface TypeParametersRepeat1 {
   readonly $type: "_type_parameters_repeat1";
-  readonly _attribute_item?: readonly (AttributeItem)[];
-  readonly _content: Metavariable | TypeParameter | LifetimeParameter | ConstParameter;
-  attributeItems(): readonly (AttributeItem)[];
-  content(): Metavariable | TypeParameter | LifetimeParameter | ConstParameter;
+  readonly _attributed_type_parameter: AttributedTypeParameter;
+  attributedTypeParameter(): AttributedTypeParameter;
 }
 
 export interface _VisibilityModifierCrate {
@@ -4175,10 +4184,8 @@ export interface TupleType {
 
 export interface TypeArguments {
   readonly $type: TSKindId.TypeArguments;
-  readonly _content?: readonly (_Type | TypeBinding | Lifetime | Literal | Block)[];
-  readonly _trait_bounds?: readonly (TraitBounds)[];
-  contents(): readonly (_Type | TypeBinding | Lifetime | Literal | Block)[];
-  traitBounds(): readonly (TraitBounds)[];
+  readonly _type_argument: NonEmptyArray<TypeArgument>;
+  typeArguments(): NonEmptyArray<TypeArgument>;
 }
 
 export interface TypeBinding {
@@ -4470,6 +4477,7 @@ export interface _TokenTreeParenTree extends AnyTreeNode { readonly type: "_toke
 export interface _TokenTreePatternBraceTree extends AnyTreeNode { readonly type: "_token_tree_pattern_brace"; }
 export interface _TokenTreePatternBracketTree extends AnyTreeNode { readonly type: "_token_tree_pattern_bracket"; }
 export interface _TokenTreePatternParenTree extends AnyTreeNode { readonly type: "_token_tree_pattern_paren"; }
+export interface TypeArgumentTree extends AnyTreeNode { readonly type: "_type_argument"; }
 export interface TypeArgumentsRepeat1Tree extends AnyTreeNode { readonly type: "_type_arguments_repeat1"; }
 export interface TypeParameterOptional1Tree extends AnyTreeNode { readonly type: "_type_parameter_optional1"; }
 export interface TypeParametersRepeat1Tree extends AnyTreeNode { readonly type: "_type_parameters_repeat1"; }
@@ -5232,6 +5240,7 @@ export type RustNode =
   | _TokenTreePatternBrace
   | _TokenTreePatternBracket
   | _TokenTreePatternParen
+  | TypeArgument
   | TypeArgumentsRepeat1
   | TypeParameterOptional1
   | TypeParametersRepeat1
@@ -5470,6 +5479,7 @@ export interface KindMap {
   '_token_tree_pattern_brace': _TokenTreePatternBrace;
   '_token_tree_pattern_bracket': _TokenTreePatternBracket;
   '_token_tree_pattern_paren': _TokenTreePatternParen;
+  '_type_argument': TypeArgument;
   '_type_arguments_repeat1': TypeArgumentsRepeat1;
   '_type_parameter_optional1': TypeParameterOptional1;
   '_type_parameters_repeat1': TypeParametersRepeat1;
@@ -5761,6 +5771,7 @@ export interface _TokenTreeParenNs extends NodeNs<_TokenTreeParen, LeafScalarMap
 export interface _TokenTreePatternBraceNs extends NodeNs<_TokenTreePatternBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _TokenTreePatternBracketNs extends NodeNs<_TokenTreePatternBracket, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _TokenTreePatternParenNs extends NodeNs<_TokenTreePatternParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TypeArgumentNs extends NodeNs<TypeArgument, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TypeArgumentsRepeat1Ns extends NodeNs<TypeArgumentsRepeat1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TypeParameterOptional1Ns extends NodeNs<TypeParameterOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface TypeParametersRepeat1Ns extends NodeNs<TypeParametersRepeat1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
@@ -5998,6 +6009,7 @@ export interface NamespaceMap {
   '_token_tree_pattern_brace': _TokenTreePatternBraceNs;
   '_token_tree_pattern_bracket': _TokenTreePatternBracketNs;
   '_token_tree_pattern_paren': _TokenTreePatternParenNs;
+  '_type_argument': TypeArgumentNs;
   '_type_arguments_repeat1': TypeArgumentsRepeat1Ns;
   '_type_parameter_optional1': TypeParameterOptional1Ns;
   '_type_parameters_repeat1': TypeParametersRepeat1Ns;
@@ -6607,6 +6619,13 @@ export namespace _TokenTreePatternParen {
   export type Loose = LooseFor<'_token_tree_pattern_paren'>;
   export type Tree = TreeFor<'_token_tree_pattern_paren'>;
   export type Kind = '_token_tree_pattern_paren';
+}
+export namespace TypeArgument {
+  export type Config = ConfigFor<'_type_argument'>;
+  export type Fluent = FluentFor<'_type_argument'>;
+  export type Loose = LooseFor<'_type_argument'>;
+  export type Tree = TreeFor<'_type_argument'>;
+  export type Kind = '_type_argument';
 }
 export namespace TypeArgumentsRepeat1 {
   export type Config = ConfigFor<'_type_arguments_repeat1'>;
