@@ -19,7 +19,6 @@ import type { Rule } from './rule.ts';
 import { afterEach } from 'vitest';
 
 const sym = (name: string) => ({ type: 'symbol', name }) as any;
-const supertype = (name: string) => ({ type: 'supertype', name }) as any;
 const str = (v: string) => ({ type: 'string', value: v }) as any;
 const seq = (...m: any[]) => ({ type: 'seq', members: m }) as any;
 const choice = (...m: any[]) => ({ type: 'choice', members: m }) as any;

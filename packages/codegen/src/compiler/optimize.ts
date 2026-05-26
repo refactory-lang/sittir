@@ -15,7 +15,7 @@
 import type { Rule, SeqRule, PolymorphRule } from './rule.ts';
 import { isChoice } from './rule.ts';
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
-import { computeSimplifiedRules } from './simplify.ts';
+import { computeSimplifiedRules, resetSlotGroupingDiagnostics } from './simplify.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
 import { buildPolymorphSkipSetFromRules } from './diagnose-slot-grouping.ts';
 import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
@@ -104,6 +104,9 @@ export function optimize(
 	 */
 	extraPolymorphSkip: ReadonlySet<string> = new Set()
 ): OptimizedGrammar {
+	// Slot-grouping diagnostics accumulate across the several computeSimplifiedRules
+	// calls below; reset per run so one grammar's records never leak into the next.
+	resetSlotGroupingDiagnostics();
 	const rules = applyNormalizationPasses(linked.rules, linked.patternReplacementKinds);
 	const renderRules = applyWrapperDeletion(rules);
 
