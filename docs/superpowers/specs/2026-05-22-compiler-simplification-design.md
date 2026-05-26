@@ -1136,7 +1136,7 @@ rendering exactly as today.
 > `'content'` fallback would have blocked emit for all 49 current slots — a hard
 > regression. C3 corrects this: `content` is sanctioned + warned, never failed.
 
-### §4d. Structural dispatch on the discriminating choice slot's arm; `$variant` is diagnostics-only (Q5 + §H-fold)
+### §4d. Child-kind dispatch on the discriminating choice slot's arm; `$variant` is diagnostics-only (Q5 + §H-fold)
 
 Dispatch keys on a **structural fact** (#17), not "is-polymorph": a branch with a
 **discriminating choice slot** dispatches on the **concrete arm** of that slot.
@@ -1176,13 +1176,26 @@ has a distinct signature ⇒ arm dispatch is total. Collapsing is part of the
 > duplicate-signature arm post-collapse.
 
 Consequence for the shipped artifacts: **no stored `$variant` discriminant
-ships in 1–6.** The runtime resolves the arm structurally — wrap knows the
-concrete kind / sees the literal; factory/`from` select an arm explicitly via the
-per-arm submethods (§factory-fold below); render dispatches on `$type` + slot
-presence. `$variant` is **diagnostics/validate-only** (the same scope discipline
+ships in 1–6.** The runtime routes on the **concrete child kind** — wrap reads the
+CST node's `$type` (or the literal value); factory/`from` select an arm explicitly via the
+per-arm submethods (§factory-fold below); render dispatches on `$type`. **This is
+deterministic child-kind routing, NOT runtime structural recovery** — no
+structure-walking and no slot-presence probe at read time. `$variant` is **diagnostics/validate-only** (the same scope discipline
 as `node-model.json5`, #10): it may appear in the serialized Model and the
 validator's dispatch map, never in generated `types.ts` / `factories.ts` /
 `from.ts` / `wrap.ts` / transports / templates.
+
+> **Dispatch is by child kind ONLY — no runtime structural recovery (clarified 2026-05-26).**
+> The polymorph construction already recovers the arm from the child's concrete kind
+> (`$type`) alone — distinct `variant()` aliases make every arm a distinct CST kind, so
+> the reader routes on the kind it reads. The slot model's "structural fact" (#17) is the
+> **compile-time** property of *which slot discriminates*; it is **not** a license to walk
+> structure at read time. The **one gap** child-kind dispatch cannot close is a
+> **non-injective `parseKind`** — a tree-sitter shared `alias()` collapsing 2+ distinct
+> logical kinds onto one CST kind name, so `$type` no longer disambiguates. That case is
+> detected and **resolved-or-diagnosed at CODEGEN** (a heuristic under design — `block`/`_suite`
+> is the discovered example), **never** recovered at runtime. This **supersedes** any runtime
+> slot-presence probe (`project_polymorph_dispatcher_slot_probe` → codegen-time).
 
 ### ⚠ FLAG — dispatch is total ONLY after identical-arm collapse
 
