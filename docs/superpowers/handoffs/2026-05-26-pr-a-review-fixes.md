@@ -65,3 +65,27 @@
 
 ## Provenance
 Codex formal review, 2026-05-26 (read-only, scoped to `git diff origin/master..HEAD -- packages/`). This handoff packages its three actionable findings; the full review also confirmed the items in "Already good" above.
+
+---
+
+## sittir-review addendum (2026-05-26 — verdict: **needs-rework**)
+
+Read-only DRY/design-conformance pass on the *current* PR-A state (after Fix 2/3 landed).
+
+### BLOCKER — Fix 4 NOT done; the cross-wiring is live **and the probe is a false green**
+`projectSlotNaming` (`node-map.ts:148-164`) derives **`storageName` from `parseNames` (= `parseKind`)**, not the render/source kind — the cross-wiring the spec forbids (storageKind→storageName / parseKind→parseNames). The refactor **regressed** the previously-correct deleted code (`storageNameNew = fieldName ?? (refKindNames.length===1 ? refKindNames[0] : 'content')`, `refKindNames = kindsOf` = render/source).
+- **Proof (`_suite`, vs `origin/master:node-model.json5:1346-1393`):** storage-kinds `{_simple_statements, block, _newline}`, all `parseKind=block` → spec: `storageName='content'`; code yields `'block'` (the parseName).
+- **The probe can't catch it:** legacy's stored `storageName` for `_suite` is *also* `block` (identically cross-wired) → parity=0; and no test uses an aliased value (`node.name ≠ parseKind.name`). "Probe == legacy" ≠ "probe == spec."
+- **Fix:** `storageName = fieldName ?? (distinctStorageKinds.length===1 && !hasUnnamedValue ? trim(distinctStorageKinds[0]) : 'content')` where `distinctStorageKinds = kindsOf`/`v.node`-derived. Keep `parseNames` on `parseKind`. **ADD a probe/test case with a genuinely aliased value** (`node.name ≠ parseKind.name`, e.g. `_suite`) asserting `storageName='content'`, `parseNames=['block']` — the case that currently cannot fail.
+
+### IMPORTANT — DRY: two shared-arm-attribute derivations
+`liftSharedArmAttrs` (`simplify.ts:31-64`) vs `sharedArmFieldName`+`strongestArmMultiplicity` (`collect-slots.ts:122-167`) both derive shared-arm facts on the same arms, in two phases — already inconsistent (choice-only vs choice+polymorph; unanimous vs strongest-multiplicity). Consolidate to one helper consumed by both phases.
+
+### Fix 1 (parseNames probe axis) — rejection SOUND, with a deferred obligation
+Correct: there's no stored legacy `parseNames` to diff (only `parseNamesNew` = the projection under test; `kindsOf` is the source axis, wrong to compare). Excluding it from the parity probe is right. BUT `parseNames` (parse-routing) is then verified by **nothing static in PR-A** — it rides `validate:native`, which PR-A's gate doesn't run. **PR-B GATE OBLIGATION:** when `parseNames` becomes a live getter emitters read, discharge "parseNames correct" via `validate:native` hold-or-improve. Don't let it ride on "the probe is green."
+
+### Fix 2 — DONE + sound (`isAllowlisted` matches all 5 fields; value-gated, not loose `kind.slot`).
+### Fix 3 — DONE + no silent merge (`countContentSlots`/`diagnose-slot-grouping.ts:188-199` fires simplify-time on the un-merged rule, before `mergeSlotsByName` could fold two `content` slots). Severity note: §4c says `fail{content-collision}` (blocking), code emits a non-blocking propose-diagnostic — **consistent with the fail-gate discipline** (propose now, fail at the PR-G/PR-L gate); §4c's `fail` is the *end-state* severity. No rework unless it should hard-fail in PR-A now.
+
+### Provenance
+sittir-review (via general agent reading `.claude/agents/sittir-review.md`), read-only static analysis (probe couldn't run live in the sandbox; the `_suite` baseline proof is conclusive).
