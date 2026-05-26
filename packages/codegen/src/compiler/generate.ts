@@ -179,10 +179,30 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		})
 	);
 
+	// Build the extra polymorph skip-set for the slot-grouping diagnostic.
+	// `raw.polymorphsConfig` is the `polymorphs:` / `n:` declarative path-split
+	// config from overrides.ts. Each entry `{ parent: { path: suffix } }` produces
+	// hidden arm rules named `_${parent}_${suffix}` (via `polymorphHiddenName`).
+	// These arms are already handled by the polymorph dispatch machinery; the
+	// diagnostic must not flag their multi-slot seq bodies as violations.
+	// Note: the parent kinds themselves are included too, to silence the top-level
+	// polymorph rule if it isn't already classified as PolymorphRule in the simplified
+	// map (e.g. when all arms are inlined, the structure gets flattened).
+	const polymorphsConfigSkip = new Set<string>();
+	for (const [parentKind, armMap] of Object.entries(raw.polymorphsConfig ?? {})) {
+		if (!armMap) continue;
+		polymorphsConfigSkip.add(parentKind);
+		for (const suffix of Object.values(armMap)) {
+			// `polymorphHiddenName` formula: `_${parentKind}_${suffix}` for non-hidden parents
+			const visibleParent = parentKind.startsWith('_') ? parentKind.slice(1) : parentKind;
+			polymorphsConfigSkip.add(`_${visibleParent}_${suffix}`);
+		}
+	}
+
 	// Phase 3: Optimize — pass the inline-decision set so computeSimplifiedRules's
 	// inlineRefs inlines exactly the grammar.inline group-lift / structural
 	// helpers (excluding supertypes / keywords / tokens).
-	const optimized = optimize(linked, inlinableKinds);
+	const optimized = optimize(linked, inlinableKinds, polymorphsConfigSkip);
 	tracePhaseRules('optimize', optimized.rules);
 	tracePhaseRules('simplify', optimized.simplifiedRules);
 

@@ -17,6 +17,7 @@ import { isChoice } from './rule.ts';
 import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
 import { computeSimplifiedRules } from './simplify.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
+import { buildPolymorphSkipSetFromRules } from './diagnose-slot-grouping.ts';
 import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
 
 /**
@@ -90,10 +91,37 @@ function applyNormalizationPasses(
 	return rules;
 }
 
-export function optimize(linked: LinkedGrammar, inlineKinds: ReadonlySet<string> = new Set()): OptimizedGrammar {
+export function optimize(
+	linked: LinkedGrammar,
+	inlineKinds: ReadonlySet<string> = new Set(),
+	/**
+	 * Optional extra polymorph skip-set for the slot-grouping diagnostic.
+	 * Callers that have access to `raw.polymorphsConfig` (e.g. `generate.ts`)
+	 * can pre-populate this with all polymorphs-config parent + hidden child
+	 * kind names so the diagnostic doesn't fire on inlined polymorph arms
+	 * (like `_public_field_definition_abstract_first`) whose simplified rule
+	 * type is no longer `polymorph` after inlining.
+	 */
+	extraPolymorphSkip: ReadonlySet<string> = new Set()
+): OptimizedGrammar {
 	const rules = applyNormalizationPasses(linked.rules, linked.patternReplacementKinds);
 	const renderRules = applyWrapperDeletion(rules);
-	const simplifiedRules = computeSimplifiedRules(renderRules, linked.word, inlineKinds);
+
+	// Build a base polymorph skip-set from polymorphVariants metadata.
+	// `polymorphVariants` records every `variant('x')` override as
+	// `{parent, child}` — `child` is the actual grammar rule name (e.g.
+	// `_public_field_definition_abstract_first`) that carries the variant body.
+	// These kinds are already resolved by the polymorph dispatch machinery;
+	// flagging them as multi-slot seqs in the diagnostic would be a false positive.
+	// We collect both parent kinds and child variant kinds into a single base skip
+	// that augments the structural PolymorphRule detection in diagnoseSlotGrouping.
+	const variantSkip = extraPolymorphSkip.size === 0 ? new Set<string>() : new Set<string>(extraPolymorphSkip);
+	for (const pv of linked.polymorphVariants ?? []) {
+		variantSkip.add(pv.parent);
+		variantSkip.add(pv.child);
+	}
+
+	const simplifiedRules = computeSimplifiedRules(renderRules, linked.word, inlineKinds, variantSkip);
 
 	// Alias-body kinds: thread the alias-target bodies through the same pipeline
 	// so renderRules / simplifiedRules cover them too. Eliminates the
@@ -102,7 +130,7 @@ export function optimize(linked: LinkedGrammar, inlineKinds: ReadonlySet<string>
 		const aliasBodiesRaw: Record<string, Rule> = Object.fromEntries(linked.topLevelAliasBodies);
 		const aliasBodiesNormalized = applyNormalizationPasses(aliasBodiesRaw, linked.patternReplacementKinds);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesNormalized);
-		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, linked.word, inlineKinds);
+		const aliasBodiesSimplified = computeSimplifiedRules(aliasBodiesRender, linked.word, inlineKinds, variantSkip);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			renderRules[kind] = rule;
 		}
@@ -140,8 +168,16 @@ export function optimize(linked: LinkedGrammar, inlineKinds: ReadonlySet<string>
 		}
 	}
 	if (Object.keys(polyFormBodies).length > 0) {
+		// Pre-build the polymorph skip-set from the full rules map so the diagnostic
+		// in computeSimplifiedRules knows to skip form kinds even when the rules map
+		// passed to that call only contains form body entries (not the parent polymorphs).
+		const polySkipFromRules = buildPolymorphSkipSetFromRules(rules);
+		// Merge structural polymorph skip-set with variant-metadata skip-set.
+		const polySkip = variantSkip.size === 0
+			? polySkipFromRules
+			: new Set([...polySkipFromRules, ...variantSkip]);
 		const polyFormRender = applyWrapperDeletion(polyFormBodies);
-		const polyFormSimplified = computeSimplifiedRules(polyFormRender, linked.word, inlineKinds);
+		const polyFormSimplified = computeSimplifiedRules(polyFormRender, linked.word, inlineKinds, polySkip);
 		for (const [kind, rule] of Object.entries(polyFormRender)) {
 			renderRules[kind] = rule;
 		}

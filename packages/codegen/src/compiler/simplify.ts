@@ -216,7 +216,8 @@ export function simplifyRules(
 export function computeSimplifiedRules(
 	renderRules: Record<string, RenderRule>,
 	word: string | null,
-	inlineKinds: ReadonlySet<string> = new Set()
+	inlineKinds: ReadonlySet<string> = new Set(),
+	polymorphSkipExtra: ReadonlySet<string> = new Set()
 ): Record<string, SimplifiedRule> {
 	const wordMatcher = compileWordMatcher(word, renderRules as Record<string, Rule>);
 	const simplified = simplifyRules(renderRules as Record<string, Rule>, wordMatcher, inlineKinds);
@@ -254,7 +255,7 @@ export function computeSimplifiedRules(
 	// Pass inlineKinds so auto-group helpers (_*_repeat1/_*_optional1) are
 	// treated as slot-position bodies (they represent seq content of inlined
 	// repeats), while normal branch kinds are silent at the top level.
-	const slotDiagnostics = diagnoseSlotGrouping(canonicalized, inlineKinds);
+	const slotDiagnostics = diagnoseSlotGrouping(canonicalized, inlineKinds, polymorphSkipExtra);
 	for (const rec of slotDiagnostics) {
 		_slotGroupingDiagnostics.push(rec);
 	}
