@@ -5,7 +5,7 @@
 > **Verdict:** fix-then-ship. The foundation is sound; three gaps in PR-A's *acceptance contract* must close before merge. Probe output at review time: **rust 0/0, typescript 0/0, python 0 unexpected / 5 allowlisted.**
 
 ## Already good — do NOT touch
-- `projectSlotNaming`'s `storageName` formula matches spec §2 (`fieldName` ?? parse-as kind `value.parseKind.name` ?? `'content'`).
+- `projectSlotNaming`'s `parseNames` derivation (`values.map(v => v.parseKind.name)`) is correct — `parseKind`→`parseNames`. *(Its `storageName` formula is NOT correct — see Fix 4; Codex marked it "matches spec," but the spec it matched was wrong and is now fixed.)*
 - The **shared-arm lift** is structurally sound — no dropped `rule.id` / slot-identity on lifted entries.
 - `parseKind` derivation in `deriveValuesForRule` draws from the alias target / generated terminal kind — the right source.
 - Regen commit `1e43e87e` only mutates the three `generated.manifest.json` hashes — machine-generated, not hand-edited.
@@ -44,6 +44,16 @@
 **Why:** spec §4c (the design call): a *single* `content` slot per node is a sanctioned `warn`; **2+ `content` slots on one node → `fail{content-collision}`** (they'd share the `_content` storage key). The current merge path folds duplicate `content` slots by unioning their values — silently hiding the collision. No `fail{content-collision}` emission exists anywhere in the diff.
 
 **Fix:** in `mergeSlotsByName`, *before* folding a duplicate name: if the incoming name is `'content'` AND an existing `'content'` slot is already present on the node → emit `fail{content-collision}` (and skip the silent merge).
+
+---
+
+## Fix 4 — important (spec-originated): `storageName` derives from the wrong kind
+
+**Where:** `projectSlotNaming` (`node-map.ts`) — `storageName = fieldName ?? parseKind.name ?? 'content'`.
+
+**Why:** the two name-projections are parallel and must NOT cross — **`storageKind` → `storageName`, `parseKind` → `parseNames`**. `storageName` must derive from the **render/source kind** (`value.kind.name` = the `storageKind` — what the value is stored as, keyed via `drillAs`), NOT `parseKind`. This was a **spec error** (the PR-A row + §2 told you `parseKind`); the spec is now corrected. For `_suite`, the storage-kind union `{_simple_statements, block, _newline}` is multi → `storageName` should be `content`, not `block` (`block` is the *parseName*).
+
+**Fix:** `storageName = fieldName ?? (single render/source kind, `value.kind.name`) ?? 'content'`. Leave `parseNames` (`parseKind`) as-is.
 
 ---
 
