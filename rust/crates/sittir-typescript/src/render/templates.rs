@@ -783,7 +783,7 @@ pub struct EnumAssignmentTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "enum_body.jinja", escape = "none")]
 pub struct EnumBodyTemplate<'a> {
-    pub opening: ListNonterminalView<'a>,
+    pub name: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1335,11 +1335,28 @@ pub struct ObjectPatternTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "object_type_content_comma.jinja", escape = "none")]
+pub struct ObjectTypeContentCommaTemplate<'a> {
+    pub content: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "object_type_content_semi.jinja", escape = "none")]
+pub struct ObjectTypeContentSemiTemplate<'a> {
+    pub content: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "object_type_content.jinja", escape = "none")]
+pub struct ObjectTypeContentTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "object_type.jinja", escape = "none")]
 pub struct ObjectTypeTemplate<'a> {
     pub closing: SingleNonterminalView<'a>,
-    pub content: ListNonterminalView<'a>,
-    pub export_statement: SingleNonterminalView<'a>,
+    pub members: OptionalNonterminalView<'a>,
     pub opening: SingleNonterminalView<'a>,
 }
 

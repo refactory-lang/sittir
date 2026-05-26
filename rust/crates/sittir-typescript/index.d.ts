@@ -798,7 +798,8 @@ export interface EnumBodyTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _opening?: Array<EnumBodyOpeningTransportSlot>
+  _name?: Array<PropertyNameTransport>
+  _enum_assignment?: Array<EnumAssignmentTransport>
 }
 
 export interface EnumDeclarationTransport {
@@ -2062,6 +2063,39 @@ export interface ObjectTransport {
   _properties?: Array<ObjectPropertiesTransportSlot>
 }
 
+export interface ObjectTypeContentCommaTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _content?: Array<ObjectTypeContentCommaContentTransportSlot>
+}
+
+export interface ObjectTypeContentSemiTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _content?: Array<ObjectTypeContentSemiContentTransportSlot>
+}
+
+export interface ObjectTypeContentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _content: ObjectTypeContentContentTransportSlot
+}
+
 export interface ObjectTypeTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2071,7 +2105,7 @@ export interface ObjectTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _opening: ObjectTypeOpeningEnum
-  _content?: Array<ObjectTypeContentTransportSlot>
+  _members?: ObjectTypeContentTransport
   _closing: ObjectTypeClosingEnum
 }
 

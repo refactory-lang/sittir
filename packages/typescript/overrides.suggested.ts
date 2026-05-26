@@ -276,11 +276,6 @@ export const suggestedGroups = {
     '1/0': 'pair_pattern',
   },
 
-  // [held] 1 candidate(s)
-  object_type: {
-    '1/0': 'export_statement',
-  },
-
   // [held] 2 candidate(s)
   variable_declarator: {
     '0': 'name',

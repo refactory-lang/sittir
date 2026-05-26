@@ -89,6 +89,12 @@ export default grammar(
 			[$._call_signature, $.constructor_type],
 			[$.template_string, $.template_literal_type],
 			[$.object, $.object_pattern, $.object_type],
+			// object_type_content comma/semi split: a single-member body
+			// (`{ a }`) has no delimiter yet, so it matches BOTH
+			// object_type_content_comma and object_type_content_semi until a
+			// `,`/`;` appears. Declare the GLR conflict so tree-sitter forks
+			// and resolves once the delimiter (or `}`) disambiguates.
+			[$.object_type_content_comma, $.object_type_content_semi],
 			[$.primary_expression, $.rest_pattern, $.primary_type],
 			[$.primary_expression, $.rest_pattern, $.literal_type],
 			[$.primary_expression, $.rest_pattern, $.predefined_type],
@@ -397,10 +403,19 @@ export default grammar(
 			// else_clause: 1 field(s)
 			else_clause: {},
 
-			// enum_body: 2 field(s)
-			enum_body: {
-				1: field('opening') // enum_assignment [struct=0]
-			},
+			// enum_body — NO override field. Upstream each member is already
+			// `choice(field('name', $._property_name), $.enum_assignment)`, so the
+			// members carry their own fields. The auto-generated `field('opening')`
+			// wrapped the list in a SPURIOUS outer field that nested over the inner
+			// `name`; the reader keyed members under the innermost (`name`) while the
+			// model only knew `opening`, dropping every member on render (`{ }`).
+			// The fix is to add no field at all — pass the upstream rule through.
+			// (Tried aliasing the bare-name arm to a node kind to force one union
+			// slot; `carriesNamedField` sees through the alias to the inner field and
+			// distributes anyway, and the alias-of-hidden-rule got stripped — no gain.
+			// A separate visible `enum_property` rule would work but is a parser
+			// change for the uncorpused mixed-enum case; left as a latent gap.)
+			enum_body: {},
 
 			// flow_maybe_type: 1 field(s)
 			flow_maybe_type: {},
@@ -974,31 +989,90 @@ export default grammar(
 					}
 				),
 
-			// object_type / interface_body — correlated choice selection
-			// across non-adjacent positions: the opening and closing
-			// delimiters must agree (`{ }` pair is a curly object type;
-			// `{| |}` pair is a flow object type). Refine declares two
-			// named forms so factory callers can pick one and have both
-			// literals auto-stamped:
-			//   ir.objectType.curly({ members: [...] })  // {  }
-			//   ir.objectType.flow ({ members: [...] })  // {| |}
-			// The `transform(original, { ... })` inside adds the
-			// `opening`/`members`/`closing` field labels that refine()'s
-			// path segments (`'opening:'` / `'closing:'`) target. Both
-			// object_type (primary rule) and interface_body (alias target)
-			// share the same parse shape — both get the same treatment.
-			object_type: ($, original) =>
+			// object_type — full manual rewrite (deviates from author intent).
+			// Upstream is
+			//   seq(brace,
+			//       optional(seq(
+			//         optional(choice(',', ';')),                       // leading sep
+			//         sepBy1(choice(',', $._semicolon), member),        // the list
+			//         optional(choice(',', $._semicolon)))),            // trailing sep
+			//       brace)
+			// which folds the `,`-vs-`;` delimiter choice AND both flanking
+			// separators into one opaque body. Under the value-bearing-slot
+			// model the flanking `optional(choice(...))` survive as phantom
+			// unnamed `content` slots (a choice is a nonterminal), so the
+			// renderer emits stray separators (`{ , … , }`).
+			//
+			// Re-express the intent explicitly: a curly/flow brace pair around
+			// an optional `object_type_content`, where the content is a
+			// comma-delimited OR semicolon-delimited member list. Splitting the
+			// two delimiter forms makes each form's flanking separators BARE
+			// strings (`optional(',')` / `optional(';')`), which the
+			// leading/trailing separator fold absorbs into the list repeat's
+			// `leading`/`trailing` flags — no phantom content slot. A VISIBLE
+			// `object_type_content` rule (not a hidden group) gives tree-sitter
+			// real LR states to disambiguate `,` vs `;` at parse time.
+			//
+			// The brace pair is modeled with `refine` curly/flow forms (NOT a
+			// bare `choice(seq(...), seq(...))` and NOT `variant()`): a bare
+			// choice distributes to just the shared `content` slot and DROPS
+			// the `{`/`{|`/`}`/`|}` differentiating literals from the render
+			// template, and `variant()` does not transpile to grammar.js in a
+			// full rule replacement (`Invalid rule: [object Object]`). `refine`
+			// declares two correlated named forms so the opening/closing brace
+			// pair agrees (`{ }` curly, `{| |}` flow) and both literals are
+			// auto-stamped, restoring `ir.objectType.curly()` / `.flow()`.
+			object_type: ($) =>
 				refine(
-					transform(original, {
-						0: field('opening'),
-						1: field('members'),
-						2: field('closing')
-					}),
+					seq(
+						field('opening', choice('{', '{|')),
+						field('members', optional($.object_type_content)),
+						field('closing', choice('}', '|}'))
+					),
 					{
 						curly: { 'opening:': '{', 'closing:': '}' },
 						flow: { 'opening:': '{|', 'closing:': '|}' }
 					}
-				)
+				),
+
+			// object_type_content — NEW visible rule: the member list is a
+			// comma-delimited OR semicolon-delimited list. Each delimiter form
+			// is its OWN visible rule (`object_type_content_comma` /
+			// `_semi`) so each carries its own render template with its own
+			// separator — a single shared template would render both forms with
+			// one separator and DROP the `;` on round-trip (`{ a; }` → `{ a }`).
+			// The visible per-delimiter rules also give tree-sitter explicit LR
+			// states to keep the `,`-list and `;`-list parses distinct.
+			object_type_content: ($) => choice($.object_type_content_comma, $.object_type_content_semi),
+
+			// Comma-delimited member list. `sepBy1` is written out as
+			// `seq(member, repeat(seq(',', member)))` so the DSL lifts it to
+			// `repeat1(member, ',')` and absorbs the bare `optional(',')` flanks
+			// into the repeat's leading/trailing flags (no phantom content slot).
+			object_type_content_comma: ($) => {
+				const member = choice(
+					$.export_statement,
+					$.property_signature,
+					$.call_signature,
+					$.construct_signature,
+					$.index_signature,
+					$.method_signature
+				);
+				return seq(optional(','), seq(member, repeat(seq(',', member))), optional(','));
+			},
+
+			// Semicolon-delimited member list (same shape, `;` separator).
+			object_type_content_semi: ($) => {
+				const member = choice(
+					$.export_statement,
+					$.property_signature,
+					$.call_signature,
+					$.construct_signature,
+					$.index_signature,
+					$.method_signature
+				);
+				return seq(optional(';'), seq(member, repeat(seq(';', member))), optional(';'));
+			}
 			// interface_body is a tree-sitter alias target of object_type —
 			// it has no base rule of its own, so there's nothing to refine
 			// via an override callback. It inherits the parse shape from

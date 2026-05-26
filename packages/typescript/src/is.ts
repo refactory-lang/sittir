@@ -155,6 +155,9 @@ export interface IsGuards {
     objectAssignmentPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectAssignmentPattern };
     objectPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectPattern };
     objectType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectType };
+    objectTypeContent<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectTypeContent };
+    objectTypeContentComma<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectTypeContentComma };
+    objectTypeContentSemi<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ObjectTypeContentSemi };
     omittingTypeAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OmittingTypeAnnotation };
     optingTypeAnnotation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OptingTypeAnnotation };
     optionalParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OptionalParameter };
@@ -359,6 +362,9 @@ export interface AssertGuards {
     objectAssignmentPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectAssignmentPattern };
     objectPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectPattern };
     objectType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectType };
+    objectTypeContent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectTypeContent };
+    objectTypeContentComma(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectTypeContentComma };
+    objectTypeContentSemi(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ObjectTypeContentSemi };
     omittingTypeAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OmittingTypeAnnotation };
     optingTypeAnnotation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OptingTypeAnnotation };
     optionalParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OptionalParameter };
@@ -452,7 +458,7 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 }
 
 const _supertype_destructuringPattern_ids = new Set<number>([214, 218]);
-const _supertype_exportStatementDefault_ids = new Set<number>([355, 356]);
+const _supertype_exportStatementDefault_ids = new Set<number>([358, 359]);
 const _supertype_expressions_ids = new Set<number>([246]);
 const _supertype_formalParameter_ids = new Set<number>([296, 297]);
 const _supertype_identifier_ids = new Set<number>([114, 1]);
@@ -472,7 +478,7 @@ const _supertype_declaration_ids = new Set<number>([224, 226, 221, 184, 183, 271
 const _supertype_expression_ids = new Set<number>([274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212]);
 const _supertype_pattern_ids = new Set<number>([234, 235, 114, 1, 214, 218, 268, 260]);
 const _supertype_primaryExpression_ids = new Set<number>([235, 234, 209, 114, 1, 109, 110, 105, 247, 248, 250, 111, 112, 113, 213, 217, 223, 227, 225, 220, 251, 231, 268]);
-const _supertype_primaryType_ids = new Set<number>([334, 335, 426, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
+const _supertype_primaryType_ids = new Set<number>([334, 335, 430, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349]);
 const _supertype_statement_ids = new Set<number>([167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203]);
 const _supertype_type_ids = new Set<number>([351, 348, 313, 317, 303, 304]);
 
@@ -717,6 +723,9 @@ const _kindIdByKind = new Map<string, number>([
     ["function_type", TSKindId.FunctionType],
     ["_ambient_declaration_global", TSKindId.AmbientDeclarationGlobal],
     ["_ambient_declaration_module", TSKindId.AmbientDeclarationModule],
+    ["object_type_content", TSKindId.ObjectTypeContent],
+    ["object_type_content_comma", TSKindId.ObjectTypeContentComma],
+    ["object_type_content_semi", TSKindId.ObjectTypeContentSemi],
     ["_export_statement_default_from_arm", TSKindId.ExportStatementDefaultFromArm],
     ["_export_statement_default_decl_arm", TSKindId.ExportStatementDefaultDeclArm],
     ["_export_statement_default_decl_arm_default_kw", TSKindId.ExportStatementDefaultDeclArmDefaultKw],
@@ -880,6 +889,9 @@ export const is = {
     objectAssignmentPattern: _g(TSKindId.ObjectAssignmentPattern),
     objectPattern: _g(TSKindId.ObjectPattern),
     objectType: _g(TSKindId.ObjectType),
+    objectTypeContent: _g(TSKindId.ObjectTypeContent),
+    objectTypeContentComma: _g(TSKindId.ObjectTypeContentComma),
+    objectTypeContentSemi: _g(TSKindId.ObjectTypeContentSemi),
     omittingTypeAnnotation: _g(TSKindId.OmittingTypeAnnotation),
     optingTypeAnnotation: _g(TSKindId.OptingTypeAnnotation),
     optionalParameter: _g(TSKindId.OptionalParameter),
@@ -1108,6 +1120,9 @@ export const assert = {
     objectAssignmentPattern: _makeAssert('objectAssignmentPattern', is.objectAssignmentPattern as _AnyGuard),
     objectPattern: _makeAssert('objectPattern', is.objectPattern as _AnyGuard),
     objectType: _makeAssert('objectType', is.objectType as _AnyGuard),
+    objectTypeContent: _makeAssert('objectTypeContent', is.objectTypeContent as _AnyGuard),
+    objectTypeContentComma: _makeAssert('objectTypeContentComma', is.objectTypeContentComma as _AnyGuard),
+    objectTypeContentSemi: _makeAssert('objectTypeContentSemi', is.objectTypeContentSemi as _AnyGuard),
     omittingTypeAnnotation: _makeAssert('omittingTypeAnnotation', is.omittingTypeAnnotation as _AnyGuard),
     optingTypeAnnotation: _makeAssert('optingTypeAnnotation', is.optingTypeAnnotation as _AnyGuard),
     optionalParameter: _makeAssert('optionalParameter', is.optionalParameter as _AnyGuard),

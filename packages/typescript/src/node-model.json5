@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 438,
+  "nodeCount": 441,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -8965,9 +8965,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "opening",
-          "propertyName": "openings",
-          "paramName": "openings",
+          "name": "name",
+          "propertyName": "names",
+          "paramName": "names",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -8977,7 +8977,24 @@
               "multiplicity": "array",
               "name": "_property_name",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_property_name"
+            ]
+          }
+        },
+        {
+          "name": "enum_assignment",
+          "propertyName": "enumAssignments",
+          "paramName": "enumAssignments",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -8985,11 +9002,10 @@
               "unresolved": true
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_property_name",
               "enum_assignment"
             ]
           }
@@ -15338,23 +15354,111 @@
           }
         },
         {
+          "name": "members",
+          "propertyName": "members",
+          "paramName": "members",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "object_type_content",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "object_type_content"
+            ]
+          }
+        },
+        {
+          "name": "closing",
+          "propertyName": "closing",
+          "paramName": "closing",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_object_type_closing",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_object_type_closing"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "object_type_content",
+      "modelType": "branch",
+      "typeName": "ObjectTypeContent",
+      "factoryName": "objectTypeContent",
+      "irKey": "objectTypeContent",
+      "hidden": false,
+      "fields": [
+        {
           "name": "content",
           "propertyName": "content",
           "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "object_type_content_comma",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "object_type_content_semi",
+              "unresolved": true
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "object_type_content_comma",
+              "object_type_content_semi"
+            ]
+          }
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "object_type_content_comma",
+      "modelType": "branch",
+      "typeName": "ObjectTypeContentComma",
+      "factoryName": "objectTypeContentComma",
+      "irKey": "objectTypeContentComma",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": ","
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": ";"
-            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -15390,15 +15494,9 @@
               "multiplicity": "array",
               "name": "method_signature",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_semicolon",
-              "unresolved": true
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
@@ -15407,31 +15505,76 @@
               "call_signature",
               "construct_signature",
               "index_signature",
-              "method_signature",
-              "_semicolon"
+              "method_signature"
             ]
           }
-        },
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "object_type_content_semi",
+      "modelType": "branch",
+      "typeName": "ObjectTypeContentSemi",
+      "factoryName": "objectTypeContentSemi",
+      "irKey": "objectTypeContentSemi",
+      "hidden": false,
+      "fields": [
         {
-          "name": "closing",
-          "propertyName": "closing",
-          "paramName": "closing",
-          "required": true,
-          "multiple": false,
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
+          "required": false,
+          "multiple": true,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_object_type_closing",
+              "multiplicity": "array",
+              "name": "export_statement",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "property_signature",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "call_signature",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "construct_signature",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "index_signature",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "method_signature",
               "unresolved": true
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_object_type_closing"
+              "export_statement",
+              "property_signature",
+              "call_signature",
+              "construct_signature",
+              "index_signature",
+              "method_signature"
             ]
           }
         }

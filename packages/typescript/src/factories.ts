@@ -2151,15 +2151,19 @@ export function enumAssignment(config: T.EnumAssignment.Config) {
 }
 
 export function enumBody(config: Partial<T.EnumBody.Config> = {}) {
-  const _opening = config.opening;
+  const _name = config.name;
+  const _enum_assignment = config.enumAssignment;
   return withMethods({
     $type: TSKindId.EnumBody as const,
     $source: 2 as const,
     $named: true as const,
-    _opening,
-    openings() { return _opening; },
+    _name,
+    _enum_assignment,
+    names() { return _name; },
+    enumAssignments() { return _enum_assignment; },
     $with: {
-      openings: (...values: (T.PropertyName | T.EnumAssignment)[]) => enumBody({ ...config, opening: values }),
+      names: (...values: T.PropertyName[]) => enumBody({ ...config, name: values }),
+      enumAssignments: (...values: T.EnumAssignment[]) => enumBody({ ...config, enumAssignment: values }),
     },
   }, methodsEngine);
 }
@@ -3628,21 +3632,21 @@ export function objectPattern(config: Partial<T.ObjectPattern.Config> = {}) {
 
 export function objectType(config: ConfigOf<T.ObjectType>) {
   const _opening = coerceKindEnumStorage(config.opening, [["{", TSKindId.Lbrace] as const, ["{|", TSKindId.LbracePipe] as const]);
-  const _content = config.content;
+  const _members = config.members;
   const _closing = coerceKindEnumStorage(config.closing, [["}", TSKindId.Rbrace] as const, ["|}", TSKindId.PipeRbrace] as const]);
   return withMethods({
     $type: TSKindId.ObjectType as const,
     $source: 2 as const,
     $named: true as const,
     _opening,
-    _content,
+    _members,
     _closing,
     opening() { return _opening; },
-    content() { return _content; },
+    members() { return _members; },
     closing() { return _closing; },
     $with: {
       opening: (value: NonNullable<Parameters<typeof objectType>[0]>['opening']) => objectType({ ...config, opening: value }),
-      content: (...values: ("," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon)[]) => objectType({ ...config, content: values }),
+      members: (value?: T.ObjectTypeContent) => objectType({ ...config, members: value }),
       closing: (value: NonNullable<Parameters<typeof objectType>[0]>['closing']) => objectType({ ...config, closing: value }),
     },
   }, methodsEngine);
@@ -3650,41 +3654,77 @@ export function objectType(config: ConfigOf<T.ObjectType>) {
 
 export function objectTypeCurly(config?: T.ObjectType.Curly.Config) {
   const _opening = coerceKindEnumStorage("{" as const, [["{", TSKindId.Lbrace] as const, ["{|", TSKindId.LbracePipe] as const]);
-  const _content = config?.content;
+  const _members = config?.members;
   const _closing = coerceKindEnumStorage("}" as const, [["}", TSKindId.Rbrace] as const, ["|}", TSKindId.PipeRbrace] as const]);
   return withMethods({
     $type: TSKindId.ObjectType as const,
     $source: 2 as const,
     $named: true as const,
     _opening,
-    _content,
+    _members,
     _closing,
     opening() { return _opening; },
-    content() { return _content; },
+    members() { return _members; },
     closing() { return _closing; },
     $with: {
-      content: (...values: ("," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon)[]) => objectTypeCurly({ ...config, content: values }),
+      members: (value?: T.ObjectTypeContent) => objectTypeCurly({ ...config, members: value }),
     },
   }, methodsEngine);
 }
 
 export function objectTypeFlow(config?: T.ObjectType.Flow.Config) {
   const _opening = coerceKindEnumStorage("{|" as const, [["{", TSKindId.Lbrace] as const, ["{|", TSKindId.LbracePipe] as const]);
-  const _content = config?.content;
+  const _members = config?.members;
   const _closing = coerceKindEnumStorage("|}" as const, [["}", TSKindId.Rbrace] as const, ["|}", TSKindId.PipeRbrace] as const]);
   return withMethods({
     $type: TSKindId.ObjectType as const,
     $source: 2 as const,
     $named: true as const,
     _opening,
-    _content,
+    _members,
     _closing,
     opening() { return _opening; },
-    content() { return _content; },
+    members() { return _members; },
     closing() { return _closing; },
     $with: {
-      content: (...values: ("," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon)[]) => objectTypeFlow({ ...config, content: values }),
+      members: (value?: T.ObjectTypeContent) => objectTypeFlow({ ...config, members: value }),
     },
+  }, methodsEngine);
+}
+
+export function objectTypeContent(child: (T.ObjectTypeContentComma | T.ObjectTypeContentSemi)) {
+  const _content = child;
+  return withMethods({
+    $type: TSKindId.ObjectTypeContent as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    content() { return _content; },
+    $with: { $child: (v: (T.ObjectTypeContentComma | T.ObjectTypeContentSemi)) => objectTypeContent(v) },
+  }, methodsEngine);
+}
+
+export function objectTypeContentComma(...children: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature)[]) {
+  const _content = children;
+  return withMethods({
+    $type: TSKindId.ObjectTypeContentComma as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    contents() { return _content; },
+    $with: { $children: (...vs: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature)[]) => objectTypeContentComma(...vs) },
+  }, methodsEngine);
+}
+
+export function objectTypeContentSemi(...children: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature)[]) {
+  const _content = children;
+  return withMethods({
+    $type: TSKindId.ObjectTypeContentSemi as const,
+    $source: 2 as const,
+    $named: true as const,
+    _content,
+    contents() { return _content; },
+    $with: { $children: (...vs: (T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature)[]) => objectTypeContentSemi(...vs) },
   }, methodsEngine);
 }
 
@@ -5101,6 +5141,9 @@ export type FluentKindMap = {
   "object_assignment_pattern": FluentNode<"object_assignment_pattern", T.ObjectAssignmentPattern.Config>;
   "object_pattern": FluentNode<"object_pattern", T.ObjectPattern.Config>;
   "object_type": FluentNode<"object_type", T.ObjectType.Config>;
+  "object_type_content": FluentNode<"object_type_content", T.ObjectTypeContent.Config>;
+  "object_type_content_comma": FluentNode<"object_type_content_comma", T.ObjectTypeContentComma.Config>;
+  "object_type_content_semi": FluentNode<"object_type_content_semi", T.ObjectTypeContentSemi.Config>;
   "omitting_type_annotation": FluentNode<"omitting_type_annotation", T.OmittingTypeAnnotation.Config>;
   "opting_type_annotation": FluentNode<"opting_type_annotation", T.OptingTypeAnnotation.Config>;
   "optional_parameter": FluentNode<"optional_parameter", T.OptionalParameter.Config>;
@@ -5356,6 +5399,9 @@ export const _factoryMap = {
   "object_assignment_pattern": objectAssignmentPattern,
   "object_pattern": objectPattern,
   "object_type": objectType,
+  "object_type_content": objectTypeContent,
+  "object_type_content_comma": objectTypeContentComma,
+  "object_type_content_semi": objectTypeContentSemi,
   "omitting_type_annotation": omittingTypeAnnotation,
   "opting_type_annotation": optingTypeAnnotation,
   "optional_parameter": optionalParameter,

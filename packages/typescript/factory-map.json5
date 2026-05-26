@@ -208,6 +208,9 @@
     "object_assignment_pattern": "config",
     "object_pattern": "config",
     "object_type": "config",
+    "object_type_content": "direct",
+    "object_type_content_comma": "spread",
+    "object_type_content_semi": "spread",
     "omitting_type_annotation": "direct",
     "opting_type_annotation": "direct",
     "optional_parameter": "config",
@@ -1002,7 +1005,8 @@
       "value"
     ],
     "enum_body": [
-      "opening"
+      "name",
+      "enum_assignment"
     ],
     "enum_declaration": [
       "name",
@@ -1310,8 +1314,17 @@
     ],
     "object_type": [
       "opening",
-      "content",
+      "members",
       "closing"
+    ],
+    "object_type_content": [
+      "content"
+    ],
+    "object_type_content_comma": [
+      "content"
+    ],
+    "object_type_content_semi": [
+      "content"
     ],
     "omitting_type_annotation": [
       "type"
@@ -3177,7 +3190,14 @@
       }
     },
     "enum_body": {
-      "opening": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
+      "enum_assignment": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4619,11 +4639,11 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "members": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       },
       "closing": {
@@ -4631,6 +4651,33 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "object_type_content": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "object_type_content_comma": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "object_type_content_semi": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
