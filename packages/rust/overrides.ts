@@ -580,6 +580,18 @@ const config: WireConfig<RustGrammar> = {
 			'(_expression)': field('elements')
 		},
 
+		// tuple_type: seq('(', sepBy1(',', $._type), optional(','), ')').
+		// sepBy1 expands to seq($._type, repeat(seq(',', $._type))).
+		// read_node routes unfielded _type children by concrete kind
+		// (primitive_type, type_identifier, …) into separate supertype
+		// buckets — losing CST order and reversing the tuple element list.
+		// Kind-match wraps EVERY $._type occurrence with the same 'type'
+		// field name so read_node collapses them into one ordered slot.
+		// Uses transforms: (not rules:) so the parse is unchanged.
+		tuple_type: {
+			'(_type)': field('type')
+		},
+
 		// type_item: 3 field(s)
 		type_item: {
 			4: field('where_clause'), // where_clause [struct=1]

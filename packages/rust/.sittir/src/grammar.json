@@ -4265,18 +4265,34 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_type"
+              "type": "FIELD",
+              "name": "type",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_type"
+              },
+              "source": "override"
             },
             {
               "type": "REPEAT",
               "content": {
-                "type": "SYMBOL",
-                "name": "_tuple_type_repeat1",
-                "source": "group-lift"
-              },
-              "multiplicity": "array",
-              "nonterminal": true
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "type",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_type"
+                    },
+                    "source": "override"
+                  }
+                ]
+              }
             }
           ]
         },
@@ -10494,6 +10510,9 @@
       "type": "STRING",
       "value": "ref"
     },
+    "_kw_type": {
+      "type": "BLANK"
+    },
     "_kw_where_clause": {
       "type": "BLANK"
     },
@@ -11412,21 +11431,6 @@
       "multiplicity": "array",
       "nonterminal": true
     },
-    "_tuple_type_repeat1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": ","
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_type"
-        }
-      ],
-      "multiplicity": "array",
-      "nonterminal": true
-    },
     "_type_arguments_repeat1": {
       "type": "SEQ",
       "members": [
@@ -11756,7 +11760,6 @@
     "_parameters_optional1",
     "_array_type_optional1",
     "_for_lifetimes_repeat1",
-    "_tuple_type_repeat1",
     "_type_arguments_repeat1",
     "_arguments_optional1",
     "_match_block_optional1",

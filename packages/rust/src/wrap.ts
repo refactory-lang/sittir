@@ -3616,10 +3616,12 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TupleType as const,
-    _type: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind([..._toArr(data._abstract_type), ..._toArr(data._reference_type), ..._toArr(data._metavariable), ..._toArr(data._pointer_type), ..._toArr(data._generic_type), ..._toArr(data._scoped_type_identifier), ..._toArr(data._tuple_type), ..._toArr(data._unit_type), ..._toArr(data._array_type), ..._toArr(data._function_type), ..._toArr(data._type_identifier), ..._toArr(data._macro_invocation), ..._toArr(data._never_type), ..._toArr(data._dynamic_type), ..._toArr(data._bounded_type), ..._toArr(data._removed_trait_bound), ..._toArr(data._primitive_type), ..._toArr(data._type)], ["_type","abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","_type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound","_primitive_type"]), true, "type"),
+    _type: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data._type, ["_type","abstract_type","reference_type","metavariable","pointer_type","generic_type","scoped_type_identifier","tuple_type","unit_type","array_type","function_type","_type_identifier","macro_invocation","never_type","dynamic_type","bounded_type","removed_trait_bound","_primitive_type"]), true, "type"),
 
     types() { return drillInAll<T._Type>(this._type as readonly T._Type[] | undefined, tree); },
-    $with: { $children: (...vs: readonly [never]) => wrapTupleType({ ...data, $children: vs }, tree) },
+    $with: {
+      types: (...v: NonEmptyArray<NonNullable<T.TupleType['_type']>[number]>) => wrapTupleType({ ...data, _type: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }
