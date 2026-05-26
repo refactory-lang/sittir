@@ -1591,6 +1591,10 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	paramName: string;
 	parseNames: readonly string[];
 } {
+	// parseNames = the names tree-sitter routes this slot's children by. A FIELDED
+	// slot routes by its field name (`childByFieldName('body')`) — so the field
+	// name IS the parse name. An UNNAMED slot routes by child kind — so the parse
+	// names are the distinct value parse-as (CST / alias-target) kinds.
 	const parseNames =
 		slot.fieldName !== undefined
 			? [slot.fieldName]

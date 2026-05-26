@@ -19,6 +19,7 @@
  */
 import { parseArgs } from 'node:util';
 import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 
@@ -42,27 +43,58 @@ export interface Divergence {
 
 /**
  * Intended §2 renames, accepted as count-gated improvements (not byte-identical
- * to legacy). Keyed by `${kind}.${slot}`. These are inferred UNNAMED slots with
- * a GENUINELY single parse-kind that §2 projects to the kind name, where legacy
- * hard-coded the generic `content`; the kind name is the desired surface. The
- * PR-B cutover renames these fields (`content` → the kind name). Any divergence
- * OUTSIDE this set is UNEXPECTED and fails the gate.
+ * to legacy). Each entry pins the EXACT expected delta — kind, slot, projection,
+ * AND both the legacy and recomputed values. A divergence is allowlisted only if
+ * it matches an entry on all five fields, so a NEW mismatch on the same slot (a
+ * different projection, or the same projection with different values) is still
+ * UNEXPECTED and fails the gate. This keeps the "count-gated" promise: the
+ * allowlist suppresses precisely the known rename, nothing adjacent.
+ *
+ * These are inferred UNNAMED slots with a GENUINELY single parse-kind that §2
+ * projects to the kind name, where legacy hard-coded the generic `content`; the
+ * kind name is the desired surface, and the PR-B cutover renames the field.
  *
  * NB: only TRULY single-kind slots belong here. `splat_pattern.content` looked
  * single-kind but holds `[identifier, "_"]` (a literal with no parseKind); its
  * `content` name is correct and is now produced by the projection's
  * `hasUnnamedValue` guard — NOT allowlisted.
  */
-export const ALLOWLISTED_RENAMES: ReadonlySet<string> = new Set([
-	'format_specifier.content', // genuinely 1 value → format_expression / formatExpressions
-]);
+export const ALLOWLISTED_RENAMES: readonly Divergence[] = [
+	// format_specifier.content: genuinely 1 value → format_expression.
+	{ kind: 'format_specifier', slot: 'content', projection: 'storageName', legacy: 'content', recomputed: 'format_expression' },
+	{ kind: 'format_specifier', slot: 'content', projection: 'name', legacy: 'content', recomputed: 'format_expression' },
+	{ kind: 'format_specifier', slot: 'content', projection: 'configKey', legacy: 'content', recomputed: 'formatExpression' },
+	{ kind: 'format_specifier', slot: 'content', projection: 'propertyName', legacy: 'contents', recomputed: 'formatExpressions' },
+	{ kind: 'format_specifier', slot: 'content', projection: 'paramName', legacy: 'contents', recomputed: 'formatExpressions' },
+];
+
+/** A divergence is allowlisted only if it matches an expected rename on ALL fields. */
+function isAllowlisted(d: Divergence): boolean {
+	return ALLOWLISTED_RENAMES.some(
+		(e) =>
+			e.kind === d.kind &&
+			e.slot === d.slot &&
+			e.projection === d.projection &&
+			e.legacy === d.legacy &&
+			e.recomputed === d.recomputed,
+	);
+}
 
 /**
  * Compare one slot's legacy projected names against the values the §2 PROJECTION
  * computes from `values` + `fieldName`. Returns one Divergence per mismatched
- * projection (empty array = fully consistent). `parseNames` has no legacy stored
- * field to diverge from — it's a pure projection of `values` (the CST kinds);
- * the storageName check validates the single-parse-kind case.
+ * projection (empty array = fully consistent).
+ *
+ * `parseNames` is deliberately NOT an axis here. Unlike storageName/name/etc.
+ * (which compare against the slot's REAL legacy stored fields), there is no
+ * stored legacy `parseNames` to compare against — only `parseNamesNew` (which IS
+ * this projection). The only "legacy" stand-in would be `kindsOf`, a
+ * reconstruction that returns un-normalized SOURCE names (`_X`) the real reader
+ * never used (it resolves `alias($._X, $.X)` → `X` at runtime). The projection's
+ * `parseNames` is the alias target `X` — what tree-sitter actually emits — and
+ * it's validated where it counts: the read-render-parse / AST-match metrics in
+ * `validate:native` (tree-sitter ground truth), not by diffing against invented
+ * legacy code.
  */
 export function diffSlotNames(slot: AssembledNonterminal, kind: string): Divergence[] {
 	const out: Divergence[] = [];
@@ -125,7 +157,7 @@ export async function run(argv: string[]): Promise<number> {
 	try {
 		for (const grammar of targets) {
 			const divergences = await probeGrammar(grammar, repoRoot);
-			const unexpected = divergences.filter((d) => !ALLOWLISTED_RENAMES.has(`${d.kind}.${d.slot}`));
+			const unexpected = divergences.filter((d) => !isAllowlisted(d));
 			const allowlisted = divergences.length - unexpected.length;
 			totalUnexpected += unexpected.length;
 			process.stdout.write(`${grammar}: ${unexpected.length} unexpected, ${allowlisted} allowlisted\n`);
@@ -147,7 +179,10 @@ export async function run(argv: string[]): Promise<number> {
 	return totalUnexpected === 0 ? 0 : 1;
 }
 
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
+// `process.argv[1]` is a filesystem path; convert it to a normalized file:// URL
+// (handles absolute paths / escaping) rather than string-interpolating, so the
+// `npx tsx reconcile-naming.ts` invocation is detected reliably.
+const _isMain = process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (_isMain) {
 	run(process.argv.slice(2))
 		.then(process.exit)
