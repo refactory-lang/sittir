@@ -27,14 +27,19 @@ A **rule-shaped separator** (`choice`/`optional`/token — *not* a fixed literal
 
 - **Verbatim pass-through value** — the actual separator token text (`project_verbatim_transport_pattern`'s
   text-only carrier), never a classified choice arm. "Don't know which arm; pass it through."
-- **Multiplicity follows the repeat** — one token per gap → a *list* separator slot; a single occurrence →
-  singular. Scalar-vs-per-occurrence is just **normal slot multiplicity** — no special capture-shape
-  machinery. (Read always preserves each gap's token, so it's faithful even when a list genuinely mixes
-  `,`/`;`.)
+- **Single-or-per-gap, stored on the content slot** — the common *uniform* case stores **one** separator
+  value (the list's separator); the rare *genuine-mixing* case stores a **per-gap list** aligned to the
+  elements. Which applies is the content slot's separator multiplicity, grammar-derived — no special
+  capture-shape machinery. (Read preserves each gap's token, so even a mixed list round-trips faithfully.)
 - **`delimits: <contentSlotId>`** — a **slot-to-slot edge** to the content slot this separator delimits,
   plus **placement** (`infix`, `trailing?`, `leading?`). This is a genuinely new relational fact in the
   (today flat) slot model; it is intrinsic + grammar-derived, so it is modeled **explicitly**, not via a
   `propose-*` diagnostic.
+- **Storage folds onto the content slot (decided).** The `separator`-role slot + `delimits` are **read-time
+  structure** — they bucket the CST separator children and route each to its content slot. The pass-through
+  value is **stored on the content slot** it delimits (the list carries its separator), NOT under a
+  standalone `_separator` Config key. One home for the value, no parallel separator list to keep aligned;
+  render reads the separator **directly** from the content slot (no `delimits` cross-lookup at runtime).
 
 ## Read / round-trip
 
@@ -49,8 +54,9 @@ separator, the global `joinByTrailing`/`joinByLeading` flags, mixed-per-occurren
 Content slots stay the **primary** surface (positional/named factory args + `_`-prefixed Config storage).
 The separator + flank flags ride an **options block on the Config surface (#2)** —
 `{ separator?, trailing?, leading? }` — **settable via the factory + defaulted** when omitted; types (#1)
-reflect it; render (#6) reads the separator from there. Keeps the primary surface clean; the separator is an
-optional knob. "Per-slot default, per-occurrence where needed" lives here: the options block defaults one
+reflect it; render (#6) reads the separator from there. **This options block IS the content slot's separator
+storage** (per the Model's storage decision) — one home, not a standalone separator-slot key. Keeps the
+primary surface clean; the separator is an optional knob. "Per-slot default, per-occurrence where needed" lives here: the options block defaults one
 separator for the whole list, with a per-gap override for the rare genuine-mixing case.
 
 ## Fixed-literal separators
@@ -74,6 +80,8 @@ content slot → a diagnostic, never a silent guess (#4).
 2. **`delimits` slot-to-slot edge** — separator → content slot, grammar-derived (a new relational fact).
 3. **Options block on the Config surface (#2)** — `{ separator?, trailing?, leading? }` — the construct knob.
 
-`role` + `delimits` are model facts; the options block is the surface projection. Render placement-by-role is
-the behavioral change (the multi-separator memory's gap). No new top-level structure — a separator is a
-*child slot*, just one with a delimiter role and a `delimits` relationship.
+`role` + `delimits` are **read-time** model facts; the **value is stored on the content slot** (surfaced via
+the options block) — no standalone separator-slot storage key. Render placement-by-role is the behavioral
+change (the multi-separator memory's gap). No new top-level structure — a separator is a *child slot* for
+*reading*, with a delimiter role + a `delimits` relationship, whose value **folds onto the content slot** it
+delimits.
