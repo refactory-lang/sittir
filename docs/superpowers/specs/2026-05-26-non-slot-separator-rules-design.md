@@ -32,9 +32,10 @@ A **rule-shaped separator** (`choice`/`optional`/token — *not* a fixed literal
   elements. Which applies is the content slot's separator multiplicity, grammar-derived — no special
   capture-shape machinery. (Read preserves each gap's token, so even a mixed list round-trips faithfully.)
 - **`delimits: <contentSlotId>`** — a **slot-to-slot edge** to the content slot this separator delimits,
-  plus **placement** (`infix`, `trailing?`, `leading?`). This is a genuinely new relational fact in the
-  (today flat) slot model; it is intrinsic + grammar-derived, so it is modeled **explicitly**, not via a
-  `propose-*` diagnostic.
+  plus **placement** (`infix`; `trailingPermitted?`/`leadingPermitted?` — grammar-level *permission*,
+  static; the per-instance *presence* of a flank separator is **captured**, not a static flag — see
+  Validation). This is a genuinely new relational fact in the (today flat) slot model; it is intrinsic +
+  grammar-derived, so it is modeled **explicitly**, not via a `propose-*` diagnostic.
 - **Storage folds onto the content slot (decided).** The `separator`-role slot + `delimits` are **read-time
   structure** — they bucket the CST separator children and route each to its content slot. The pass-through
   value is **stored on the content slot** it delimits (the list carries its separator), NOT under a
@@ -73,6 +74,40 @@ the delimiter member (the non-content, rule-shaped element co-located with the c
 `delimits` → the content slot, placement from where the separator sits relative to the element. Per-occurrence
 (list) vs singular = normal multiplicity. A separator the derivation can't deterministically attach to a
 content slot → a diagnostic, never a silent guess (#4).
+
+## Validation + native realization (the active `object_type` work)
+
+The typescript `object_type` rewrite (`project_object_type_rewrite_and_native_list_gaps`) is hitting this
+design empirically — it's the concrete native realization and a strong validation:
+
+- **Per-instance, never static (the core lesson).** Bug 1: `{ foo: string; }` renders `{ foo :string }` — the
+  trailing `;` is dropped because anon separator tokens land in `$children` (no typed slot) and
+  `render-module.ts:2283-2288` hardcodes `leading:false, trailing:false`. A **static** `trailing:
+  ${f.hasTrailing}` flag was tried and **crashed deep-AST 70→53** — grammar-level "trailing permitted"
+  forces *every* flank list to always emit it. **Flank-separator presence is genuinely PER-INSTANCE** —
+  exactly why this design captures the separator per-instance on the content slot (pass-through), not as
+  static metadata. Distinguish: the grammar *permits* a flank separator (static placement) vs the instance
+  *has* one (captured `trailing_sep`/`leading_sep`; render reads the captured bool, never a constant).
+- **Native mechanism (the spec'd 3-edit fix).** "Value on the content slot" realizes natively as: (1)
+  `wrap.ts` (`arity==='many'`) emits sibling `_content_trailing_sep`/`_content_leading_sep` booleans from
+  the `$children` spans relative to the sorted member array; (2) the transport struct gains two
+  `Option<bool>` fields beside `content: Option<Vec<…>>`; (3) `render-module.ts:2287` reads
+  `node.<r>_trailing_sep.unwrap_or(false)`. Mirrors the working `$$$CHILDREN` path (`render-module:1520-1522`
+  reads `children.trailing_sep`) + legacy `bridge.rs:154-194 detect_field_trailing_sep`. Gate on
+  **deep-AST hold-or-improve** (covPass masks it).
+- **Alignment by CST span.** Read-time bucketing/interleaving of content children + separator children
+  aligns by **`$span.start`** — the same `_concatInSourceOrder` stable-sort that fixed Bug 2 (heterogeneous
+  union reordered on read). Interleaving uses CST position, not declaration order.
+- **Relationship to per-delimiter visible rules.** `object_type` handles choice-of-separator *manually*
+  today: `object_type_content = choice(object_type_content_comma, object_type_content_semi)` (via `refine`,
+  NOT `variant` — which doesn't transpile in a full replacement), each a VISIBLE rule with its own fixed
+  separator (`joinWithTrailing(',')` vs `';'`), tree-sitter disambiguating at parse + a declared GLR
+  conflict. That's the **uniform-per-list** case made explicit (which separator = which kind). This design's
+  auto-derived separator-role slot + per-gap capture is the **general** mechanism that subsumes the manual
+  per-delimiter split (and additionally handles genuine per-gap mixing). `refine` stays the construct where
+  you *want* distinct kinds.
+- **Out of scope here:** `enum_body` rendering empty (Bug 3) is a *separate* FIELD-inside-FIELD reader/slot-key
+  mismatch (`_name` vs `_opening`), not a separator issue — handled via the `aliasSources` machinery.
 
 ## Model additions (summary)
 
