@@ -251,7 +251,10 @@ export function computeSimplifiedRules(
 	// Slot-grouping diagnostic: propose-promotion only. Records never drive
 	// codegen behavior (feedback_metadata_not_behavior) — they surface for the
 	// author via the derivation log and regen console output.
-	const slotDiagnostics = diagnoseSlotGrouping(canonicalized);
+	// Pass inlineKinds so auto-group helpers (_*_repeat1/_*_optional1) are
+	// treated as slot-position bodies (they represent seq content of inlined
+	// repeats), while normal branch kinds are silent at the top level.
+	const slotDiagnostics = diagnoseSlotGrouping(canonicalized, inlineKinds);
 	for (const rec of slotDiagnostics) {
 		_slotGroupingDiagnostics.push(rec);
 	}

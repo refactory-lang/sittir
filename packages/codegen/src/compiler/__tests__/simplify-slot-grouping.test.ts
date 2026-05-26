@@ -2,8 +2,14 @@
  * Task 4: verify that `computeSimplifiedRules` wires `diagnoseSlotGrouping`
  * and surfaces records via the drain function.
  *
- * A grammar fixture with a `repeat(seq(sym, sym))` must produce a
- * `multi-slot-nested-seq` diagnostic record.
+ * Production signal: auto-group helpers (kinds in `inlineKinds`) have their
+ * top-level body treated as a slot-position seq. Normal rule bodies are silent.
+ *
+ * Note: `computeSimplifiedRules` runs `deleteWrapper` which pushes repeat/
+ * optional wrappers down to leaf attributes. There are no `repeat` nodes in
+ * the final simplified output — so shape ① fires only via:
+ *   a. A kind in `inlineKinds` whose top-level body seq has ≥2 slots, OR
+ *   b. A seq that is a direct member of a `choice` arm (choice arms remain).
  */
 
 import { describe, it, expect, afterEach } from 'vitest';
@@ -17,36 +23,44 @@ afterEach(() => {
 });
 
 describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
-	it('repeat(seq(sym a, sym b)) produces a multi-slot-nested-seq record', () => {
-		// A rule with a multi-slot repeat(seq) that is NOT already a group.
+	it('auto-group helper kind in inlineKinds with multi-slot body → multi-slot-nested-seq', () => {
+		// A helper kind whose body is seq(sym_a, sym_b) and is listed in inlineKinds
+		// (simulates _parent_repeat1 style auto-group). Its body is the seq content
+		// of an inlined repeat — slot position via inlineKinds.
 		const renderRules: Record<string, RenderRule> = {
-			// Simplified form: repeat(seq(sym_a, sym_b)) — two symbols, no
-			// field names, no group wrapping → shape ①.
-			tuple_like: {
+			_parent_repeat1: {
 				type: 'seq',
 				members: [
-					{ type: 'string', value: '(' },
-					{
-						type: 'repeat',
-						content: {
-							type: 'seq',
-							members: [
-								{ type: 'symbol', name: '_a' },
-								{ type: 'symbol', name: '_b' },
-							],
-						},
-					} as any,
-					{ type: 'string', value: ')' },
+					{ type: 'symbol', name: '_a' },
+					{ type: 'symbol', name: '_b' },
 				],
 			} as any,
 		};
-
-		computeSimplifiedRules(renderRules, null);
+		const inlineKinds = new Set(['_parent_repeat1']);
+		computeSimplifiedRules(renderRules, null, inlineKinds);
 		const diagnostics = drainSlotGroupingDiagnostics();
 		const multiSlot = diagnostics.filter((d) => d.shape === 'multi-slot-nested-seq');
 		expect(multiSlot.length).toBeGreaterThanOrEqual(1);
-		expect(multiSlot[0]!.ownerKind).toBe('tuple_like');
+		expect(multiSlot[0]!.ownerKind).toBe('_parent_repeat1');
 		expect(multiSlot[0]!.slotCount).toBeGreaterThanOrEqual(2);
+	});
+
+	it('normal multi-field rule body → SILENT (not in inlineKinds, not in slot position)', () => {
+		// A normal rule like assignment_expression with seq(left, '=', right)
+		// must NOT fire — the rule body is not in slot position.
+		const renderRules: Record<string, RenderRule> = {
+			assignment_expression: {
+				type: 'seq',
+				members: [
+					{ type: 'symbol', name: 'left', fieldName: 'left' } as any,
+					{ type: 'string', value: '=' } as any,
+					{ type: 'symbol', name: 'right', fieldName: 'right' } as any,
+				],
+			} as any,
+		};
+		computeSimplifiedRules(renderRules, null);
+		const diagnostics = drainSlotGroupingDiagnostics();
+		expect(diagnostics.filter((d) => d.shape === 'multi-slot-nested-seq')).toHaveLength(0);
 	});
 
 	it('a rule with no multi-slot substructure produces no diagnostics', () => {

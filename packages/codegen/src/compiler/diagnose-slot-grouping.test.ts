@@ -2,11 +2,14 @@
  * Tests for `diagnoseSlotGrouping` — three-shape violation detection.
  *
  * Shapes:
- *   1. multi-slot-nested-seq   — countSlots≥2 nested seq (not already a group)
+ *   1. multi-slot-nested-seq   — countSlots≥2 seq in a slot-creating position
+ *      (inside repeat/optional, inside a choice arm, or top-level body of an
+ *      inline-listed auto-group helper kind)
  *   2. supertype-list          — repeat/repeat1 of single non-field-named symbol/supertype
  *   3. repeat-choice-with-literal — repeat(choice(..., literal, ...))
  *
- * Already-field-named or already-group nodes are silent.
+ * KEY INVARIANT: the top-level rule body of a NORMAL grammar kind is NOT a
+ * "slot" — it is the kind itself. Shape ① fires only at slot-creating positions.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -20,14 +23,10 @@ const seq = (...m: any[]) => ({ type: 'seq', members: m }) as any;
 const choice = (...m: any[]) => ({ type: 'choice', members: m }) as any;
 const repeat = (content: any) => ({ type: 'repeat', content }) as any;
 const repeat1 = (content: any) => ({ type: 'repeat1', content }) as any;
-const fieldWrap = (name: string, content: any) => {
-	// In simplified rules, field is pushed down to fieldName on the content.
-	// We model this by attaching fieldName to the content node.
-	return { ...content, fieldName: name };
-};
 
 describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 	it('repeat(seq(sym a, sym b)) → one multi-slot-nested-seq record', () => {
+		// repeat sets slot position; inner seq IS in a slot position
 		const rule = repeat(seq(sym('a'), sym('b')));
 		const records = diagnoseSlotGrouping({ foo: rule as any });
 		expect(records).toHaveLength(1);
@@ -43,19 +42,61 @@ describe('diagnoseSlotGrouping — multi-slot-nested-seq', () => {
 		expect(records).toHaveLength(0);
 	});
 
-	it('nested seq(sym a, sym b) inside another seq → both flagged', () => {
-		// Parent seq: seq(sym x, inner_seq(sym a, sym b))
-		// - outer seq has 3 slots (sym x + inner_seq distributes to sym a + sym b = 3)
-		// - inner seq has 2 slots (sym a + sym b = 2)
-		// Both fire as multi-slot-nested-seq records.
-		const inner = seq(sym('a'), sym('b'));
-		const rule = seq(sym('x'), inner);
-		const records = diagnoseSlotGrouping({ baz: rule as any });
-		const multiSlot = records.filter((r) => r.shape === 'multi-slot-nested-seq');
-		// Outer seq (3 slots) AND inner seq (2 slots) both have ≥2 → 2 records.
-		expect(multiSlot).toHaveLength(2);
-		const slotCounts = multiSlot.map((r) => r.slotCount).sort();
-		expect(slotCounts).toEqual([2, 3]);
+	it('top-level rule body seq(field_a, field_b) → SILENT (not in slot position)', () => {
+		// A plain multi-field rule body is NOT a slot — it is the rule itself.
+		// Bug 1 regression: must not fire for normal grammar kinds.
+		const rule = seq(
+			{ type: 'symbol', name: 'left', fieldName: 'left' },
+			{ type: 'symbol', name: 'right', fieldName: 'right' }
+		);
+		const records = diagnoseSlotGrouping({ assignment_expression: rule as any });
+		expect(records).toHaveLength(0);
+	});
+
+	it('repeat(seq(field_a, field_b)) inside a rule → fires (slot position)', () => {
+		// The seq is inside a repeat's content → slot position → should fire.
+		const rule = repeat(seq(
+			{ type: 'symbol', name: 'a', fieldName: 'a' },
+			{ type: 'symbol', name: 'b', fieldName: 'b' }
+		));
+		const records = diagnoseSlotGrouping({ some_list: rule as any });
+		expect(records.filter((r) => r.shape === 'multi-slot-nested-seq')).toHaveLength(1);
+	});
+
+	it('auto-group helper body seq fires when kind is in inlineKinds', () => {
+		// An auto-group helper like _parent_repeat1 has its body at the top level,
+		// but since it's in inlineKinds, its body IS in slot position.
+		const rule = seq(sym('a'), sym('b'));
+		const inlineKinds = new Set(['_parent_repeat1']);
+		const records = diagnoseSlotGrouping({ _parent_repeat1: rule as any }, inlineKinds);
+		expect(records).toHaveLength(1);
+		expect(records[0]!.shape).toBe('multi-slot-nested-seq');
+	});
+
+	it('auto-group helper body seq is SILENT when NOT in inlineKinds', () => {
+		// Same rule shape, but not in inlineKinds → treated as normal kind → silent.
+		const rule = seq(sym('a'), sym('b'));
+		const records = diagnoseSlotGrouping({ _parent_repeat1: rule as any });
+		expect(records).toHaveLength(0);
+	});
+
+	it('already-registered visible group kind → SILENT (not in inlineKinds)', () => {
+		// Bug 2 regression: visible groups like _attributed_argument are not
+		// in inlineKinds → their top-level body must NOT fire.
+		const rule = seq(
+			{ type: 'symbol', name: 'attribute_item', multiplicity: 'array' },
+			{ type: 'symbol', name: '_expression' }
+		);
+		// Not in inlineKinds → treated as normal grammar kind → silent.
+		const records = diagnoseSlotGrouping({ _attributed_argument: rule as any });
+		expect(records).toHaveLength(0);
+	});
+
+	it('seq inside a choice arm → fires (choice arm is slot position)', () => {
+		// choice(seq(sym a, sym b), seq(sym c, sym d)) — choice arms are slot position.
+		const rule = choice(seq(sym('a'), sym('b')), seq(sym('c'), sym('d')));
+		const records = diagnoseSlotGrouping({ choice_kind: rule as any });
+		expect(records.filter((r) => r.shape === 'multi-slot-nested-seq').length).toBeGreaterThanOrEqual(1);
 	});
 });
 
@@ -110,5 +151,12 @@ describe('diagnoseSlotGrouping — silent cases', () => {
 	it('seq of only literals is silent', () => {
 		const rule = seq(str('('), str(')'));
 		expect(diagnoseSlotGrouping({ x: rule as any })).toHaveLength(0);
+	});
+
+	it('multi-field rule body seq(sym, sym) is silent (not in slot position)', () => {
+		// binary_expression body: seq(left, operator, right) — 3 slots but
+		// it's the rule body, not a nested seq in a slot position.
+		const rule = seq(sym('left'), sym('operator'), sym('right'));
+		expect(diagnoseSlotGrouping({ binary_expression: rule as any })).toHaveLength(0);
 	});
 });

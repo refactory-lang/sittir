@@ -5,12 +5,31 @@
  * substructure must be a group." Walks each simplified rule and emits diagnostic
  * records for three violation shapes:
  *
- *   1. multi-slot-nested-seq   — a seq with countSlots≥2 that is not already a
- *      group → propose a visible `groups:` registration.
+ *   1. multi-slot-nested-seq   — a seq with countSlots≥2 that is in a slot-creating
+ *      position (inside repeat/optional content, inside a choice arm, or in the body
+ *      of an auto-group helper that is in the grammar's inline set).
+ *      → propose a visible `groups:` registration.
  *   2. supertype-list          — repeat/repeat1 of a single non-field-named
  *      symbol/supertype → propose `transforms: field()` rename.
  *   3. repeat-choice-with-literal — repeat/repeat1(choice(..., literal, ...))
  *      → flag as ambiguous; author decides.
+ *
+ * Key invariant for shape ①: the top-level rule BODY of a normal grammar kind
+ * is NOT a "slot" — it is the kind itself. Shape ① fires only when a seq
+ * occupies a slot-creating position:
+ *
+ *   a. As the content of a `repeat` / `repeat1` / `optional` (seq is the
+ *      repeating element body — the whole point of the diagnostic).
+ *   b. As a member of a `choice` arm (structural choice arms are each a slot
+ *      boundary; a multi-slot seq arm needs grouping).
+ *   c. As the top-level body of an auto-group helper kind (a hidden kind whose
+ *      name appears in `inlineKinds` — these are exactly the synthesized
+ *      `_<parent>_repeat<N>` / `_<parent>_optional<N>` helpers that represent
+ *      the seq content of an inlined `repeat(seq(...))`).
+ *
+ *   Rules whose top-level body is a seq but are NOT in `inlineKinds` (normal
+ *   branch kinds, already-registered group kinds) are SILENT at the top level
+ *   because their seq is the rule body, not a slot.
  *
  * DIAGNOSTIC ONLY: records never drive codegen behavior
  * (feedback_metadata_not_behavior). They are surfaced via the derivation log
@@ -46,56 +65,81 @@ export interface SlotGroupingDiagnostic {
  * violation of the "one slot per structural boundary" invariant.
  *
  * @param rules - The simplified rule map (output of `computeSimplifiedRules`).
+ * @param inlineKinds - The grammar's inline kind set (from wire phase). Auto-group
+ *   helpers (`_<parent>_repeat<N>`, `_<parent>_optional<N>`) are in this set;
+ *   their top-level bodies are treated as slot-position seqs and checked.
+ *   All other kinds are only checked for NESTED slot-position seqs.
  * @returns An array of diagnostic records (may be empty).
  */
-export function diagnoseSlotGrouping(rules: Record<string, SimplifiedRule>): SlotGroupingDiagnostic[] {
+export function diagnoseSlotGrouping(
+	rules: Record<string, SimplifiedRule>,
+	inlineKinds: ReadonlySet<string> = new Set()
+): SlotGroupingDiagnostic[] {
 	const records: SlotGroupingDiagnostic[] = [];
 	for (const [ownerKind, rule] of Object.entries(rules)) {
-		walkRule(rule, ownerKind, records);
+		// Determine whether the top-level rule body is in slot position.
+		// Auto-group helpers (in inlineKinds) represent extracted seq content
+		// of an inlined repeat(seq(...)) — their body IS the repeating element,
+		// so it is in slot position. All other kinds: top-level body is NOT
+		// in slot position (it is the rule itself, not a slot).
+		const topLevelInSlot = inlineKinds.has(ownerKind);
+		walkRule(rule, ownerKind, records, topLevelInSlot);
 	}
 	return records;
 }
 
 // ---------------------------------------------------------------------------
-// Walk — visits seq and repeat/repeat1 nodes at any depth
+// Walk — visits seq and repeat/repeat1 nodes tracking slot position
 // ---------------------------------------------------------------------------
 
-function walkRule(rule: Rule, ownerKind: string, records: SlotGroupingDiagnostic[]): void {
+/**
+ * @param inSlotPosition - True when `rule` occupies a slot-creating position:
+ *   inside a repeat/optional content, inside a choice arm, or as the top-level
+ *   body of an inline-listed (auto-group helper) kind.
+ */
+function walkRule(rule: Rule, ownerKind: string, records: SlotGroupingDiagnostic[], inSlotPosition: boolean): void {
 	switch (rule.type) {
 		case 'seq':
-			checkSeq(rule, ownerKind, records);
-			// Also recurse into members so nested seqs at deeper levels are visited.
+			// Only check if in a slot-creating position — a top-level rule body
+			// seq is the rule itself, not a nested seq inside a slot.
+			if (inSlotPosition) {
+				checkSeq(rule, ownerKind, records);
+			}
+			// Recurse into members. A seq member's position context is inherited
+			// from the current position (a nested seq inside another seq that is
+			// already in slot position is also in slot position).
 			for (const m of rule.members) {
-				walkRule(m, ownerKind, records);
+				walkRule(m, ownerKind, records, inSlotPosition);
 			}
 			break;
 
 		case 'repeat':
 		case 'repeat1':
+			// Content of a repeat is in slot position.
 			checkRepeat(rule, ownerKind, records);
-			// Recurse into the content so nested structures are visited.
-			walkRule(rule.content, ownerKind, records);
+			walkRule(rule.content, ownerKind, records, /* inSlotPosition= */ true);
 			break;
 
 		case 'choice':
-			// Recurse into each choice arm — nested seqs / repeats inside choice
-			// arms are still subject to the invariant.
+			// Each choice arm is in slot position — a multi-slot seq arm is a
+			// slot-position violation.
 			for (const m of rule.members) {
-				walkRule(m, ownerKind, records);
+				walkRule(m, ownerKind, records, /* inSlotPosition= */ true);
 			}
 			break;
 
 		case 'optional':
 		case 'field':
-			// These should not appear in simplified rules (deleteWrapper removes
-			// them), but handle defensively.
-			walkRule((rule as unknown as { content: Rule }).content, ownerKind, records);
+			// Simplified rules normally have wrappers deleted, but handle
+			// defensively. Content is in slot position.
+			walkRule((rule as unknown as { content: Rule }).content, ownerKind, records, /* inSlotPosition= */ true);
 			break;
 
 		case 'variant':
 		case 'group':
 		case 'clause':
-			walkRule((rule as { content: Rule }).content, ownerKind, records);
+			// Transparent structural wrappers — propagate current slot position.
+			walkRule((rule as { content: Rule }).content, ownerKind, records, inSlotPosition);
 			break;
 
 		default:
@@ -105,23 +149,19 @@ function walkRule(rule: Rule, ownerKind: string, records: SlotGroupingDiagnostic
 }
 
 // ---------------------------------------------------------------------------
-// Shape ①: multi-slot nested seq
+// Shape ①: multi-slot seq in a slot position
 // ---------------------------------------------------------------------------
 
 function checkSeq(rule: Extract<Rule, { type: 'seq' }>, ownerKind: string, records: SlotGroupingDiagnostic[]): void {
-	// Already a group → silent. (`seq` with `type: 'group'` is impossible since
-	// they are separate rule types, but a group wrapping a seq is handled by
-	// walkRule descending into the group's content before calling checkSeq.)
 	const slotCount = countSlots(rule);
 	if (slotCount < 2) return;
 
-	// Not already a group — emit the proposal.
 	records.push({
 		ownerKind,
 		shape: 'multi-slot-nested-seq',
 		slotCount,
 		proposal:
-			`Kind '${ownerKind}' has a nested seq with ${slotCount} slots. ` +
+			`Kind '${ownerKind}' has a multi-slot seq with ${slotCount} slots in a slot-creating position. ` +
 			`Propose: register a visible groups: entry so this substructure ` +
 			`becomes a single group slot in the parent.`,
 	});
