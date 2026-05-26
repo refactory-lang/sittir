@@ -166,6 +166,11 @@ export interface FieldStorageInfo {
 export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly kind: 'node-ref';
 	readonly node: T | UnresolvedRef;
+	// Parse-as kind ref (§7.3 / §4g, PR-A front-load): the CST kind this value
+	// surfaces under — the alias TARGET when aliased (`rule.name`), else the
+	// own kind. Differs from `node` (render/source = `aliasedFrom ?? rule.name`)
+	// only for aliased/variant values. `storageName`/`parseNames` project this.
+	readonly parseKind?: UnresolvedRef;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -194,6 +199,10 @@ export interface TerminalValue {
 	readonly kind: 'terminal';
 	readonly value: string;
 	readonly resolvedKind?: string;
+	// Parse-as kind ref (§7.3 / §4g, PR-A front-load): the CST kind this literal
+	// surfaces under (= `resolvedKind` as a ref). `parseNames` projects this;
+	// PR-B renames `resolvedKind`→`parseKind` outright.
+	readonly parseKind?: UnresolvedRef;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -807,12 +816,21 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 		const mergedValues = dedupeValues([...existing.values, ...f.values]);
 		const mergedAliases =
 			existing.aliasSources || f.aliasSources ? { ...existing.aliasSources, ...f.aliasSources } : undefined;
+		// Re-derive the projection-backed `_new` naming fields from the MERGED
+		// values. `parseNames` is the live set of CST kinds tree-sitter emits, so
+		// the value-union must re-project — the per-position `parseNamesNew` was a
+		// subset (this is the stale-projection modeling bug: e.g. a `content` slot
+		// merged across positions unions all the polymorph forms / CST kinds).
+		const naming = projectSlotNaming({ fieldName: existing.fieldName, values: mergedValues });
 		byName.set(f.name, {
 			...existing,
 			values: mergedValues,
 			hasTrailing: existing.hasTrailing || f.hasTrailing,
 			hasLeading: existing.hasLeading || f.hasLeading,
-			aliasSources: mergedAliases && Object.keys(mergedAliases).length > 0 ? mergedAliases : undefined
+			aliasSources: mergedAliases && Object.keys(mergedAliases).length > 0 ? mergedAliases : undefined,
+			storageNameNew: naming.storageName,
+			nameNew: naming.name,
+			parseNamesNew: naming.parseNames
 		});
 	}
 	return Array.from(byName.values());
@@ -997,6 +1015,7 @@ export function deriveValuesForRule(
 						kind: 'terminal',
 						value: rule.literal,
 						resolvedKind: rule.name,
+						parseKind: { kind: 'unresolved-ref', name: rule.name },
 						multiplicity
 					}
 				];
@@ -1009,6 +1028,10 @@ export function deriveValuesForRule(
 				{
 					kind: 'node-ref',
 					node: { kind: 'unresolved-ref', name: refName },
+					// parse-as kind = the alias TARGET (`rule.name`); `node` is the
+					// render/source (`refName`). For `_suite`: node=_simple_statements,
+					// parseKind=block (the CST kind). §7.3 / §4g.
+					parseKind: { kind: 'unresolved-ref', name: rule.name },
 					multiplicity: relaxForOptionalBody(refName, multiplicity)
 				}
 			];
@@ -1019,25 +1042,33 @@ export function deriveValuesForRule(
 			return rule.subtypes.map((name) => ({
 				kind: 'node-ref' as const,
 				node: { kind: 'unresolved-ref' as const, name },
+				parseKind: { kind: 'unresolved-ref' as const, name },
 				multiplicity: relaxForOptionalBody(name, multiplicity)
 			}));
-		case 'string':
+		case 'string': {
+			const rk = findGeneratedKindEntry(kindEntries ?? [], rule.value)?.kind;
 			return [
 				{
 					kind: 'terminal',
 					value: rule.value,
-					resolvedKind: findGeneratedKindEntry(kindEntries ?? [], rule.value)?.kind,
+					resolvedKind: rk,
+					parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
 					multiplicity
 				}
 			];
+		}
 		case 'enum':
 			// Enum: each enum member is a TerminalValue
-			return rule.members.map((m) => ({
-				kind: 'terminal' as const,
-				value: m.value,
-				resolvedKind: findGeneratedKindEntry(kindEntries ?? [], m.value)?.kind,
-				multiplicity
-			}));
+			return rule.members.map((m) => {
+				const rk = findGeneratedKindEntry(kindEntries ?? [], m.value)?.kind;
+				return {
+					kind: 'terminal' as const,
+					value: m.value,
+					resolvedKind: rk,
+					parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
+					multiplicity
+				};
+			});
 		case 'choice': {
 			// `choice(X, blank)` is functionally `optional(X)` — the blank arm
 			// makes the entire choice optional. Downgrade nonEmptyArray → array
@@ -1535,6 +1566,52 @@ export function kindsOf(slot: AssembledNonterminal): readonly string[] {
 		}
 	}
 	return out;
+}
+
+/** The slot-naming inputs a projection needs (the only stored facts). */
+export interface SlotNamingInputs {
+	readonly fieldName?: string;
+	readonly values: readonly NodeOrTerminal[];
+}
+
+/**
+ * Project a slot's names from its `values` + `fieldName` — the §2 getter logic
+ * as a pure function (PR-A; PR-B promotes these to `AssembledNonterminal` class
+ * getters). PROJECTIONS, not stored fields: `parseNames` is the live set of CST
+ * kinds tree-sitter emits (per-value `parseKind.name`, underscore RETAINED), so
+ * it can't go stale across `mergeSlotsByName`'s value-union. The leading `_` is
+ * trimmed ONLY in `storageName` (the TS-facing identity). camelCase projections
+ * derive from `storageName` (#3 — never the identity).
+ */
+export function projectSlotNaming(slot: SlotNamingInputs): {
+	storageName: string;
+	name: string;
+	configKey: string;
+	propertyName: string;
+	paramName: string;
+	parseNames: readonly string[];
+} {
+	const parseNames =
+		slot.fieldName !== undefined
+			? [slot.fieldName]
+			: [...new Set(slot.values.map((v) => v.parseKind?.name).filter((n): n is string => n !== undefined))];
+	// A value with no parseKind is a literal / anonymous token (e.g.
+	// splat_pattern's `_`). Its presence means the slot is NOT a single named
+	// kind, so storageName falls back to the generic `content` (matching legacy)
+	// — even when exactly one NAMED kind is present. Without this guard a
+	// 2-value slot (named ref + literal) is mis-read as single-kind and named
+	// after the lone ref (`splat_pattern.content` → `identifier`).
+	const hasUnnamedValue =
+		slot.fieldName === undefined && slot.values.some((v) => v.parseKind?.name === undefined);
+	const storageName =
+		slot.fieldName ??
+		(parseNames.length === 1 && !hasUnnamedValue
+			? parseNames[0]!.replace(/^_+/, '') || parseNames[0]!
+			: 'content');
+	const configKey = snakeToCamel(storageName);
+	const isMulti = slot.values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
+	const propertyName = isMulti ? pluralize(configKey) : configKey;
+	return { storageName, name: storageName, configKey, propertyName, paramName: safeParamName(propertyName), parseNames };
 }
 
 // --- Concrete classes per model type ---

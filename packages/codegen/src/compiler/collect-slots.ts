@@ -46,6 +46,7 @@ import {
 	pluralize,
 	safeParamName,
 	kindsOf,
+	projectSlotNaming,
 } from './node-map.ts';
 import { findRepeatFlag } from './template-walker.ts';
 
@@ -474,21 +475,21 @@ function buildSlot(
 		...(origin ? { origin } : {}),
 		sourceRuleId: rule.id,
 	};
-	// --- _new centralized naming (foundation for retiring the scattered
-	// origin/baseName/distribution logic). `fieldName` wins; else the single
-	// referenced kind name (incl. a supertype's own name); else warn → 'content'.
-	// `parseNames` = [fieldName] (parser routes by field) or the ref-kind names.
-	const refKindNames = kindsOf(slot);
+	// `_new`-suffixed naming fields are PROJECTION-backed (`projectSlotNaming`,
+	// §2 getter logic) — kept on the interface as the cutover target; PR-B
+	// promotes them to class getters + drops the legacy fields. They are
+	// RE-DERIVED in `mergeSlotsByName` after the value-union so they always
+	// track the live (merged) CST kinds — never stale (the modeling bug). The
+	// underscore is trimmed only in `storageName`; `parseNames` keep it.
 	const fieldName = rule.fieldName;
-	// parseNames = the kinds the parser can actually emit for this slot: the
-	// ref-kind names PLUS the alias TARGETS. Real tree-sitter aliases
-	// (alias($.source, $.target)) emit the target; validation-only polymorph
-	// variants emit the base. Including both lets the wrap route either without
-	// the base→variant rewrite (which mis-routed the validation-only case).
-	const parseNamesNew =
-		fieldName !== undefined ? [fieldName] : [...new Set([...refKindNames, ...Object.keys(aliasSources)])];
-	const storageNameNew = fieldName ?? (refKindNames.length === 1 ? refKindNames[0]! : 'content');
-	return { ...slot, fieldName, storageNameNew, nameNew: snakeToCamel(storageNameNew), parseNamesNew };
+	const naming = projectSlotNaming({ fieldName, values: slot.values });
+	return {
+		...slot,
+		fieldName,
+		storageNameNew: naming.storageName,
+		nameNew: naming.name,
+		parseNamesNew: naming.parseNames
+	};
 }
 
 /**

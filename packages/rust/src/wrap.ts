@@ -515,7 +515,7 @@ export function wrapAttributedParameter(data: T.AttributedParameter, tree: TreeH
     ...data,
     $type: TSKindId.AttributedParameter as const,
     _attribute_item: normalizeSingularWrapSlot(data._attribute_item, "attribute_item", false, data.$type),
-    _content: normalizeSingularWrapSlot((data._parameter ?? data._self_parameter ?? data._variadic_parameter ?? data._abstract_type ?? data._reference_type ?? data._metavariable ?? data._pointer_type ?? data._generic_type ?? data._scoped_type_identifier ?? data._tuple_type ?? data._unit_type ?? data._array_type ?? data._function_type ?? data._type_identifier ?? data._macro_invocation ?? data._never_type ?? data._dynamic_type ?? data._bounded_type ?? data._removed_trait_bound ?? data._primitive_type ?? data._content), "content", true, data.$type),
+    _content: normalizeSingularWrapSlot((data._parameter ?? data._self_parameter ?? data._variadic_parameter ?? data["_"] ?? data._abstract_type ?? data._reference_type ?? data._metavariable ?? data._pointer_type ?? data._generic_type ?? data._scoped_type_identifier ?? data._tuple_type ?? data._unit_type ?? data._array_type ?? data._function_type ?? data._type_identifier ?? data._macro_invocation ?? data._never_type ?? data._dynamic_type ?? data._bounded_type ?? data._removed_trait_bound ?? data._primitive_type ?? data._content), "content", true, data.$type),
 
     attributeItem() { return drillIn<T.AttributeItem | undefined>(this._attribute_item, tree); },
     content() { return drillIn<T.Parameter | T.SelfParameter | T.VariadicParameter | "_" | T._Type>(this._content, tree); },

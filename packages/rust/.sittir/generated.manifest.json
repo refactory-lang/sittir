@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "517f1cb496f737d49117e602cdb0a47dc16b52660fd1f367567f42494aedf297",
+  "source_hash": "87e04c194fa6a1d9a960b9aa157b7250a9e862437e24f5442ba9b50b696c7af1",
   "files": {
     "packages/rust/.sittir/grammar.js": "9dfdb0628cd9649980be1b9faec0d2adcf6ddb0bfd7400b6dde61e3de0897834",
     "packages/rust/.sittir/package.json": "bdab057c3301bd235e9a388063623685881661f0809682fc361a510fd47f531a",
@@ -30,7 +30,7 @@
     "packages/rust/src/type-test.ts": "38b88f20671231e2e1bcdde133aa15dc3009943f16cfb24cc3441addf01a0712",
     "packages/rust/src/types.ts": "10ca1b704987fae100538e19a771000f97682010e3644c4be3e6699871d756ea",
     "packages/rust/src/utils.ts": "3aa4e8040f417f92d6bfa4c3638e9fb05209c73591c2bad0f03a85f5fa3d8d49",
-    "packages/rust/src/wrap.ts": "25cd6545301737e41f814e99f9ce993757429697327ea31107afe1bddaee55f6",
+    "packages/rust/src/wrap.ts": "f95abea8239365c925ff203c9f84b3d7fd34729cb9ef4d5919e07c398aabf943",
     "packages/rust/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/rust/templates/_array_expression_list.jinja": "cb79ca044a363d6da422cded4329a04e3a518075a248890644bfc0024b61012d",
     "packages/rust/templates/_array_expression_semi.jinja": "fd256325a165b9ec9c6b24c1251cb8bb40e4481ab6f9a7327b0a2de7cc9b23a5",

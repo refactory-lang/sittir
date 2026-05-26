@@ -620,6 +620,63 @@ function extractFieldAcrossBranches(perBranch: Rule[][], name: string): Rule {
  * canonicalized, so nested choice-of-equivalent-branches inside a
  * branch has already been flattened.
  */
+/**
+ * Lift any slot-shape ATTRIBUTE shared by every choice arm onto the choice
+ * node itself.
+ *
+ * After wrapper-deletion the grammar is wrapper-free: a per-arm wrapper (a
+ * distributed `field('op', …)`, `optional(…)`, `repeat(…)`, …) has become a
+ * leaf attribute on each arm. E.g. rust binary_expression's operator position
+ * is `choice(string{fieldName:'operator'}, enum{fieldName:'operator'}, …)` —
+ * the field NODES are gone, `fieldName` survives only as an arm attribute. The
+ * choice IS one slot, so an attribute ALL arms agree on describes the slot and
+ * belongs on the choice NODE (the slot boundary): `fieldName` (the slot's
+ * name), `multiplicity` (every arm `array` ⇒ the slot is `array`), `separator`
+ * and `nonterminal` likewise. This mirrors `deleteWrapper`'s field→choice
+ * case, which stamps the choice node when one wrapper encloses the whole
+ * choice; here the wrapper was distributed across the arms instead.
+ *
+ * Without this, slot derivation reads the bare choice node's (absent)
+ * attribute and falls back (e.g. `fieldName` → `content`). The arms keep their
+ * attributes — harmless, and legacy shared-arm recovery still reads them, so
+ * legacy output is unchanged (this only makes the choice-node view agree).
+ * Only lifts an attribute the choice node doesn't already carry.
+ */
+function liftSharedArmAttrs(rule: ChoiceRule): Rule {
+	const m0 = rule.members[0];
+	if (m0 === undefined) return rule;
+	let result: ChoiceRule = rule;
+	if (
+		result.fieldName === undefined &&
+		m0.fieldName !== undefined &&
+		rule.members.every((m) => m.fieldName === m0.fieldName)
+	) {
+		result = { ...result, fieldName: m0.fieldName };
+	}
+	if (
+		result.multiplicity === undefined &&
+		m0.multiplicity !== undefined &&
+		rule.members.every((m) => m.multiplicity === m0.multiplicity)
+	) {
+		result = { ...result, multiplicity: m0.multiplicity };
+	}
+	if (
+		result.nonterminal === undefined &&
+		m0.nonterminal !== undefined &&
+		rule.members.every((m) => m.nonterminal === m0.nonterminal)
+	) {
+		result = { ...result, nonterminal: m0.nonterminal };
+	}
+	if (
+		result.separator === undefined &&
+		m0.separator !== undefined &&
+		rule.members.every((m) => JSON.stringify(m.separator) === JSON.stringify(m0.separator))
+	) {
+		result = { ...result, separator: m0.separator };
+	}
+	return result;
+}
+
 function mergeChoiceBranches(rule: ChoiceRule): Rule {
 	if (rule.members.length === 0) return rule;
 	// NEVER unwrap variant() — variants mark intentional polymorph-
@@ -641,14 +698,16 @@ function mergeChoiceBranches(rule: ChoiceRule): Rule {
 			return mergePosition(unwrapped);
 		}
 	}
-	// Every branch must be a seq of the same length.
-	if (!unwrapped.every((b): b is SeqRule => b.type === 'seq')) return rule;
+	// Every branch must be a seq of the same length. When the branches are
+	// NOT mergeable seqs (e.g. a choice of leaf arms — the wrapper-free operator
+	// case), still lift any attribute all arms share onto the choice node.
+	if (!unwrapped.every((b): b is SeqRule => b.type === 'seq')) return liftSharedArmAttrs(rule);
 	const len = unwrapped[0]!.members.length;
-	if (!unwrapped.every((b) => b.members.length === len)) return rule;
+	if (!unwrapped.every((b) => b.members.length === len)) return liftSharedArmAttrs(rule);
 	// Check position-by-position structural equivalence.
 	for (let i = 0; i < len; i++) {
 		const position = unwrapped.map((b) => b.members[i]!);
-		if (!positionsAreMergeable(position)) return rule;
+		if (!positionsAreMergeable(position)) return liftSharedArmAttrs(rule);
 	}
 	// All positions mergeable. Build the merged seq.
 	const mergedMembers: Rule[] = [];
