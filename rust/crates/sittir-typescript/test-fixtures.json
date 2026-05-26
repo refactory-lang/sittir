@@ -2637,9 +2637,319 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "declare type IndexableType = string | number | Date | Array<string | number | Date>;",
-    "expectedReparseTree": "(program statements: (ambient_declaration (ambient_declaration_declaration (type_alias_declaration name: (type_identifier) value: (union_type type1: (union_type type1: (union_type type1: (predefined_type) right: (predefined_type)) right: (type_identifier)) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (union_type type1: (union_type type1: (predefined_type) right: (predefined_type)) right: (type_identifier)))))))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (ambient_declaration_declaration (type_alias_declaration name: (type_identifier) value: (union_type left: (union_type left: (union_type left: (predefined_type) right: (predefined_type)) right: (type_identifier)) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (union_type left: (union_type left: (predefined_type) right: (predefined_type)) right: (type_identifier)))))))))",
     "wrappedText": "declare type IndexableType = string | number | Date | Array<string | number | Date>;",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 349,
+      "$source": 0,
+      "$span": {
+        "start": 29,
+        "end": 83
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 349,
+        "$source": 0,
+        "$text": "string | number | Date",
+        "$span": {
+          "start": 29,
+          "end": 51
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_|": {
+        "$type": 75,
+        "$source": 0,
+        "$text": "|",
+        "$span": {
+          "start": 52,
+          "end": 53
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 319,
+        "$source": 0,
+        "$text": "Array<string | number | Date>",
+        "$span": {
+          "start": 54,
+          "end": 83
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "string | number | Date|Array<string | number | Date>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "string | number | Date | Array<string | number | Date>",
+    "pattern": "union_type",
+    "edits": [],
+    "expectedSourceOut": "string | number | Date|Array<string | number | Date>",
+    "expectedReparseTree": "(union_type left: (union_type left: (union_type left: (predefined_type) right: (predefined_type)) right: (type_identifier)) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (union_type left: (union_type left: (predefined_type) right: (predefined_type)) right: (type_identifier)))))",
+    "wrappedText": "type _X = string | number | Date|Array<string | number | Date>;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 349,
+      "$source": 0,
+      "$span": {
+        "start": 29,
+        "end": 51
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_left": {
+        "$type": 349,
+        "$source": 0,
+        "$text": "string | number",
+        "$span": {
+          "start": 29,
+          "end": 44
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_|": {
+        "$type": 75,
+        "$source": 0,
+        "$text": "|",
+        "$span": {
+          "start": 45,
+          "end": 46
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 426,
+        "$source": 0,
+        "$text": "Date",
+        "$span": {
+          "start": 47,
+          "end": 51
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "string | number|Date"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "string | number | Date",
+    "pattern": "union_type",
+    "edits": [],
+    "expectedSourceOut": "string | number|Date",
+    "expectedReparseTree": "(union_type left: (union_type left: (predefined_type) right: (predefined_type)) right: (type_identifier))",
+    "wrappedText": "type _X = string | number|Date;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 349,
+      "$source": 0,
+      "$span": {
+        "start": 29,
+        "end": 44
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_left": {
+        "$type": 335,
+        "$source": 0,
+        "$text": "string",
+        "$span": {
+          "start": 29,
+          "end": 35
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_|": {
+        "$type": 75,
+        "$source": 0,
+        "$text": "|",
+        "$span": {
+          "start": 36,
+          "end": 37
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 335,
+        "$source": 0,
+        "$text": "number",
+        "$span": {
+          "start": 38,
+          "end": 44
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "string|number"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "string | number",
+    "pattern": "union_type",
+    "edits": [],
+    "expectedSourceOut": "string|number",
+    "expectedReparseTree": "(union_type left: (predefined_type) right: (predefined_type))",
+    "wrappedText": "type _X = string|number;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 349,
+      "$source": 0,
+      "$span": {
+        "start": 60,
+        "end": 82
+      },
+      "$nodeHandle": 3,
+      "$named": true,
+      "_left": {
+        "$type": 349,
+        "$source": 0,
+        "$text": "string | number",
+        "$span": {
+          "start": 60,
+          "end": 75
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_|": {
+        "$type": 75,
+        "$source": 0,
+        "$text": "|",
+        "$span": {
+          "start": 76,
+          "end": 77
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 426,
+        "$source": 0,
+        "$text": "Date",
+        "$span": {
+          "start": 78,
+          "end": 82
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "string | number|Date"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "string | number | Date",
+    "pattern": "union_type",
+    "edits": [],
+    "expectedSourceOut": "string | number|Date",
+    "expectedReparseTree": "(union_type left: (union_type left: (predefined_type) right: (predefined_type)) right: (type_identifier))",
+    "wrappedText": "type _X = string | number|Date;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 349,
+      "$source": 0,
+      "$span": {
+        "start": 60,
+        "end": 75
+      },
+      "$nodeHandle": 4,
+      "$named": true,
+      "_left": {
+        "$type": 335,
+        "$source": 0,
+        "$text": "string",
+        "$span": {
+          "start": 60,
+          "end": 66
+        },
+        "$nodeHandle": 4,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_|": {
+        "$type": 75,
+        "$source": 0,
+        "$text": "|",
+        "$span": {
+          "start": 67,
+          "end": 68
+        },
+        "$nodeHandle": 4,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 335,
+        "$source": 0,
+        "$text": "number",
+        "$span": {
+          "start": 69,
+          "end": 75
+        },
+        "$nodeHandle": 4,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "string|number"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "string | number",
+    "pattern": "union_type",
+    "edits": [],
+    "expectedSourceOut": "string|number",
+    "expectedReparseTree": "(union_type left: (predefined_type) right: (predefined_type))",
+    "wrappedText": "type _X = string|number;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -2687,7 +2997,7 @@
     "pattern": "generic_type",
     "edits": [],
     "expectedSourceOut": "Array <string | number | Date>",
-    "expectedReparseTree": "(generic_type name: (type_identifier) type_arguments: (type_arguments (union_type type1: (union_type type1: (predefined_type) right: (predefined_type)) right: (type_identifier))))",
+    "expectedReparseTree": "(generic_type name: (type_identifier) type_arguments: (type_arguments (union_type left: (union_type left: (predefined_type) right: (predefined_type)) right: (type_identifier))))",
     "wrappedText": "type _X = Array <string | number | Date>;",
     "wrappedOffset": 10
   },
@@ -4807,7 +5117,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T>;\n\n  public readonly async bar?<T>();\n  private static bar();\n  private static async bar(): T;\n}",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type type1: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (union_type type1: (type_identifier) right: (literal_type (undefined))))))))) (optional_parameter pattern: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (type_identifier)))) return_type: (union_type type1: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (predefined_type))))))) (optional_parameter pattern: (identifier) type: (type_annotation type: (predefined_type))) (optional_parameter pattern: (identifier) type: (type_annotation type: (predefined_type)))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier)))))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) parameters: (formal_parameters))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (union_type left: (type_identifier) right: (literal_type (undefined))))))))) (optional_parameter pattern: (identifier) type: (type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (type_identifier)))) return_type: (union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (predefined_type))))))) (optional_parameter pattern: (identifier) type: (type_annotation type: (predefined_type))) (optional_parameter pattern: (identifier) type: (type_annotation type: (predefined_type)))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier)))))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) parameters: (formal_parameters))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters))) (class_body_member (method_signature accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))))",
     "wrappedText": "class Foo {\n  public async waitFor<T>(func: () => T | Promise<T | undefined>, accept?: (result: T) => boolean | Promise<boolean>, timeoutMessage?: string, retryCount?: number): Promise<T>;\n\n  public readonly async bar?<T>();\n  private static bar();\n  private static async bar(): T;\n}",
     "wrappedOffset": 0
   },
@@ -5157,7 +5467,7 @@
     "pattern": "type_annotation",
     "edits": [],
     "expectedSourceOut": ":() => T | Promise<T | undefined>",
-    "expectedReparseTree": "(type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type type1: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (union_type type1: (type_identifier) right: (literal_type (undefined))))))))",
+    "expectedReparseTree": "(type_annotation type: (function_type parameters: (formal_parameters) return_type: (union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (union_type left: (type_identifier) right: (literal_type (undefined))))))))",
     "wrappedText": "let _:() => T | Promise<T | undefined>;",
     "wrappedOffset": 5
   },
@@ -5207,7 +5517,7 @@
     "pattern": "type_annotation",
     "edits": [],
     "expectedSourceOut": ":(result: T) => boolean | Promise<boolean>",
-    "expectedReparseTree": "(type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (type_identifier)))) return_type: (union_type type1: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (predefined_type))))))",
+    "expectedReparseTree": "(type_annotation type: (function_type parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (type_identifier)))) return_type: (union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (predefined_type))))))",
     "wrappedText": "let _:(result: T) => boolean | Promise<boolean>;",
     "wrappedOffset": 5
   },
@@ -5419,7 +5729,7 @@
     "pattern": "function_type",
     "edits": [],
     "expectedSourceOut": "()=>T | Promise<T | undefined>",
-    "expectedReparseTree": "(function_type parameters: (formal_parameters) return_type: (union_type type1: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (union_type type1: (type_identifier) right: (literal_type (undefined)))))))",
+    "expectedReparseTree": "(function_type parameters: (formal_parameters) return_type: (union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (union_type left: (type_identifier) right: (literal_type (undefined)))))))",
     "wrappedText": "type _X = ()=>T | Promise<T | undefined>;",
     "wrappedOffset": 10
   },
@@ -5481,8 +5791,194 @@
     "pattern": "function_type",
     "edits": [],
     "expectedSourceOut": "(result: T)=>boolean | Promise<boolean>",
-    "expectedReparseTree": "(function_type parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (type_identifier)))) return_type: (union_type type1: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (predefined_type)))))",
+    "expectedReparseTree": "(function_type parameters: (formal_parameters (required_parameter pattern: (identifier) type: (type_annotation type: (type_identifier)))) return_type: (union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (predefined_type)))))",
     "wrappedText": "type _X = (result: T)=>boolean | Promise<boolean>;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 349,
+      "$source": 0,
+      "$span": {
+        "start": 50,
+        "end": 76
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 426,
+        "$source": 0,
+        "$text": "T",
+        "$span": {
+          "start": 50,
+          "end": 51
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_|": {
+        "$type": 75,
+        "$source": 0,
+        "$text": "|",
+        "$span": {
+          "start": 52,
+          "end": 53
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 319,
+        "$source": 0,
+        "$text": "Promise<T | undefined>",
+        "$span": {
+          "start": 54,
+          "end": 76
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "T|Promise<T | undefined>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "T | Promise<T | undefined>",
+    "pattern": "union_type",
+    "edits": [],
+    "expectedSourceOut": "T|Promise<T | undefined>",
+    "expectedReparseTree": "(union_type left: (type_identifier) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (union_type left: (type_identifier) right: (literal_type (undefined))))))",
+    "wrappedText": "type _X = T|Promise<T | undefined>;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 349,
+      "$source": 0,
+      "$span": {
+        "start": 102,
+        "end": 128
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_left": {
+        "$type": 335,
+        "$source": 0,
+        "$text": "boolean",
+        "$span": {
+          "start": 102,
+          "end": 109
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_|": {
+        "$type": 75,
+        "$source": 0,
+        "$text": "|",
+        "$span": {
+          "start": 110,
+          "end": 111
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 319,
+        "$source": 0,
+        "$text": "Promise<boolean>",
+        "$span": {
+          "start": 112,
+          "end": 128
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "boolean|Promise<boolean>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "boolean | Promise<boolean>",
+    "pattern": "union_type",
+    "edits": [],
+    "expectedSourceOut": "boolean|Promise<boolean>",
+    "expectedReparseTree": "(union_type left: (predefined_type) right: (generic_type name: (type_identifier) type_arguments: (type_arguments (predefined_type))))",
+    "wrappedText": "type _X = boolean|Promise<boolean>;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 349,
+      "$source": 0,
+      "$span": {
+        "start": 62,
+        "end": 75
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_left": {
+        "$type": 426,
+        "$source": 0,
+        "$text": "T",
+        "$span": {
+          "start": 62,
+          "end": 63
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_|": {
+        "$type": 75,
+        "$source": 0,
+        "$text": "|",
+        "$span": {
+          "start": 64,
+          "end": 65
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 330,
+        "$source": 0,
+        "$text": "undefined",
+        "$span": {
+          "start": 66,
+          "end": 75
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "T|undefined"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "T | undefined",
+    "pattern": "union_type",
+    "edits": [],
+    "expectedSourceOut": "T|undefined",
+    "expectedReparseTree": "(union_type left: (type_identifier) right: (literal_type (undefined)))",
+    "wrappedText": "type _X = T|undefined;",
     "wrappedOffset": 10
   },
   {
@@ -5581,7 +6077,7 @@
     "pattern": "generic_type",
     "edits": [],
     "expectedSourceOut": "Promise <T | undefined>",
-    "expectedReparseTree": "(generic_type name: (type_identifier) type_arguments: (type_arguments (union_type type1: (type_identifier) right: (literal_type (undefined)))))",
+    "expectedReparseTree": "(generic_type name: (type_identifier) type_arguments: (type_arguments (union_type left: (type_identifier) right: (literal_type (undefined)))))",
     "wrappedText": "type _X = Promise <T | undefined>;",
     "wrappedOffset": 10
   },
@@ -8159,7 +8655,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "T as {} & { [t: T]: T }",
-    "expectedReparseTree": "(as_expression expression: (identifier) type_annotation: (intersection_type type1: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
+    "expectedReparseTree": "(as_expression expression: (identifier) type_annotation: (intersection_type left: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
     "wrappedText": "T as {} & { [t: T]: T }",
     "wrappedOffset": 0
   },
@@ -8221,9 +8717,195 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "T as {} & { [t: T]: T } & { [g: G]: G }",
-    "expectedReparseTree": "(as_expression expression: (identifier) type_annotation: (intersection_type type1: (intersection_type type1: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
+    "expectedReparseTree": "(as_expression expression: (identifier) type_annotation: (intersection_type left: (intersection_type left: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
     "wrappedText": "T as {} & { [t: T]: T } & { [g: G]: G }",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 350,
+      "$source": 0,
+      "$span": {
+        "start": 18,
+        "end": 36
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 337,
+        "$source": 0,
+        "$text": "{}",
+        "$span": {
+          "start": 18,
+          "end": 20
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_&": {
+        "$type": 73,
+        "$source": 0,
+        "$text": "&",
+        "$span": {
+          "start": 21,
+          "end": 22
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 337,
+        "$source": 0,
+        "$text": "{ [t: T]: T }",
+        "$span": {
+          "start": 23,
+          "end": 36
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "{}&{ [t: T]: T }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{} & { [t: T]: T }",
+    "pattern": "intersection_type",
+    "edits": [],
+    "expectedSourceOut": "{}&{ [t: T]: T }",
+    "expectedReparseTree": "(intersection_type left: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
+    "wrappedText": "type _X = {}&{ [t: T]: T };",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 350,
+      "$source": 0,
+      "$span": {
+        "start": 42,
+        "end": 76
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_left": {
+        "$type": 350,
+        "$source": 0,
+        "$text": "{} & { [t: T]: T }",
+        "$span": {
+          "start": 42,
+          "end": 60
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_&": {
+        "$type": 73,
+        "$source": 0,
+        "$text": "&",
+        "$span": {
+          "start": 61,
+          "end": 62
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 337,
+        "$source": 0,
+        "$text": "{ [g: G]: G }",
+        "$span": {
+          "start": 63,
+          "end": 76
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "{} & { [t: T]: T }&{ [g: G]: G }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{} & { [t: T]: T } & { [g: G]: G }",
+    "pattern": "intersection_type",
+    "edits": [],
+    "expectedSourceOut": "{} & { [t: T]: T }&{ [g: G]: G }",
+    "expectedReparseTree": "(intersection_type left: (intersection_type left: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
+    "wrappedText": "type _X = {} & { [t: T]: T }&{ [g: G]: G };",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 350,
+      "$source": 0,
+      "$span": {
+        "start": 42,
+        "end": 60
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_left": {
+        "$type": 337,
+        "$source": 0,
+        "$text": "{}",
+        "$span": {
+          "start": 42,
+          "end": 44
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_&": {
+        "$type": 73,
+        "$source": 0,
+        "$text": "&",
+        "$span": {
+          "start": 45,
+          "end": 46
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 337,
+        "$source": 0,
+        "$text": "{ [t: T]: T }",
+        "$span": {
+          "start": 47,
+          "end": 60
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "{}&{ [t: T]: T }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{} & { [t: T]: T }",
+    "pattern": "intersection_type",
+    "edits": [],
+    "expectedSourceOut": "{}&{ [t: T]: T }",
+    "expectedReparseTree": "(intersection_type left: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
+    "wrappedText": "type _X = {}&{ [t: T]: T };",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -8495,7 +9177,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "T satisfies {} & { [t: T]: T }",
-    "expectedReparseTree": "(satisfies_expression expression: (identifier) type_annotation: (intersection_type type1: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
+    "expectedReparseTree": "(satisfies_expression expression: (identifier) type_annotation: (intersection_type left: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
     "wrappedText": "T satisfies {} & { [t: T]: T }",
     "wrappedOffset": 0
   },
@@ -8557,9 +9239,195 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "T satisfies {} & { [t: T]: T } & { [g: G]: G }",
-    "expectedReparseTree": "(satisfies_expression expression: (identifier) type_annotation: (intersection_type type1: (intersection_type type1: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
+    "expectedReparseTree": "(satisfies_expression expression: (identifier) type_annotation: (intersection_type left: (intersection_type left: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))))",
     "wrappedText": "T satisfies {} & { [t: T]: T } & { [g: G]: G }",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 350,
+      "$source": 0,
+      "$span": {
+        "start": 32,
+        "end": 50
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 337,
+        "$source": 0,
+        "$text": "{}",
+        "$span": {
+          "start": 32,
+          "end": 34
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_&": {
+        "$type": 73,
+        "$source": 0,
+        "$text": "&",
+        "$span": {
+          "start": 35,
+          "end": 36
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 337,
+        "$source": 0,
+        "$text": "{ [t: T]: T }",
+        "$span": {
+          "start": 37,
+          "end": 50
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "{}&{ [t: T]: T }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{} & { [t: T]: T }",
+    "pattern": "intersection_type",
+    "edits": [],
+    "expectedSourceOut": "{}&{ [t: T]: T }",
+    "expectedReparseTree": "(intersection_type left: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
+    "wrappedText": "type _X = {}&{ [t: T]: T };",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 350,
+      "$source": 0,
+      "$span": {
+        "start": 63,
+        "end": 97
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_left": {
+        "$type": 350,
+        "$source": 0,
+        "$text": "{} & { [t: T]: T }",
+        "$span": {
+          "start": 63,
+          "end": 81
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_&": {
+        "$type": 73,
+        "$source": 0,
+        "$text": "&",
+        "$span": {
+          "start": 82,
+          "end": 83
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 337,
+        "$source": 0,
+        "$text": "{ [g: G]: G }",
+        "$span": {
+          "start": 84,
+          "end": 97
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "{} & { [t: T]: T }&{ [g: G]: G }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{} & { [t: T]: T } & { [g: G]: G }",
+    "pattern": "intersection_type",
+    "edits": [],
+    "expectedSourceOut": "{} & { [t: T]: T }&{ [g: G]: G }",
+    "expectedReparseTree": "(intersection_type left: (intersection_type left: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier))))) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
+    "wrappedText": "type _X = {} & { [t: T]: T }&{ [g: G]: G };",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 350,
+      "$source": 0,
+      "$span": {
+        "start": 63,
+        "end": 81
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_left": {
+        "$type": 337,
+        "$source": 0,
+        "$text": "{}",
+        "$span": {
+          "start": 63,
+          "end": 65
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_&": {
+        "$type": 73,
+        "$source": 0,
+        "$text": "&",
+        "$span": {
+          "start": 66,
+          "end": 67
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 337,
+        "$source": 0,
+        "$text": "{ [t: T]: T }",
+        "$span": {
+          "start": 68,
+          "end": 81
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "{}&{ [t: T]: T }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{} & { [t: T]: T }",
+    "pattern": "intersection_type",
+    "edits": [],
+    "expectedSourceOut": "{}&{ [t: T]: T }",
+    "expectedReparseTree": "(intersection_type left: (object_type) right: (object_type members: (index_signature (index_signature_colon name: (identifier) index_type: (type_identifier)) type: (type_annotation type: (type_identifier)))))",
+    "wrappedText": "type _X = {}&{ [t: T]: T };",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -22279,7 +23147,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "type BrowserStats$ResourceTiming = number & string;",
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (intersection_type type1: (predefined_type) right: (predefined_type))))",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (intersection_type left: (predefined_type) right: (predefined_type))))",
     "wrappedText": "type BrowserStats$ResourceTiming = number & string;",
     "wrappedOffset": 0
   },
@@ -22365,9 +23233,71 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "type BrowserStats$ResourceTiming=number & string ;",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (intersection_type type1: (predefined_type) right: (predefined_type)))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (intersection_type left: (predefined_type) right: (predefined_type)))",
     "wrappedText": "type BrowserStats$ResourceTiming=number & string ;",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 350,
+      "$source": 0,
+      "$span": {
+        "start": 35,
+        "end": 50
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 335,
+        "$source": 0,
+        "$text": "number",
+        "$span": {
+          "start": 35,
+          "end": 41
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_&": {
+        "$type": 73,
+        "$source": 0,
+        "$text": "&",
+        "$span": {
+          "start": 42,
+          "end": 43
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 335,
+        "$source": 0,
+        "$text": "string",
+        "$span": {
+          "start": 44,
+          "end": 50
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "number&string"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "number & string",
+    "pattern": "intersection_type",
+    "edits": [],
+    "expectedSourceOut": "number&string",
+    "expectedReparseTree": "(intersection_type left: (predefined_type) right: (predefined_type))",
+    "wrappedText": "type _X = number&string;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -23953,7 +24883,7 @@
     "pattern": "_export_statement_default",
     "edits": [],
     "expectedSourceOut": "export type NoInfer<T> = T & { [K in keyof T]: T[K] };",
-    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (intersection_type type1: (type_identifier) right: (object_type members: (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query primary_type: (type_identifier)))) type: (type_annotation type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier)))))))))))",
+    "expectedReparseTree": "(program statements: (export_statement (export_statement_default (export_statement_default_decl_arm declaration: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (intersection_type left: (type_identifier) right: (object_type members: (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query primary_type: (type_identifier)))) type: (type_annotation type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier)))))))))))",
     "wrappedText": "export type NoInfer<T> = T & { [K in keyof T]: T[K] };",
     "wrappedOffset": 0
   },
@@ -24051,9 +24981,71 @@
     "pattern": "type_alias_declaration",
     "edits": [],
     "expectedSourceOut": "type NoInfer <T>=T & { [K in keyof T]: T[K] } ;",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (intersection_type type1: (type_identifier) right: (object_type members: (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query primary_type: (type_identifier)))) type: (type_annotation type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier)))))))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (intersection_type left: (type_identifier) right: (object_type members: (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query primary_type: (type_identifier)))) type: (type_annotation type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier)))))))",
     "wrappedText": "type NoInfer <T>=T & { [K in keyof T]: T[K] } ;",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 350,
+      "$source": 0,
+      "$span": {
+        "start": 25,
+        "end": 53
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 426,
+        "$source": 0,
+        "$text": "T",
+        "$span": {
+          "start": 25,
+          "end": 26
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_&": {
+        "$type": 73,
+        "$source": 0,
+        "$text": "&",
+        "$span": {
+          "start": 27,
+          "end": 28
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 337,
+        "$source": 0,
+        "$text": "{ [K in keyof T]: T[K] }",
+        "$span": {
+          "start": 29,
+          "end": 53
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "T&{ [K in keyof T]: T[K] }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "T & { [K in keyof T]: T[K] }",
+    "pattern": "intersection_type",
+    "edits": [],
+    "expectedSourceOut": "T&{ [K in keyof T]: T[K] }",
+    "expectedReparseTree": "(intersection_type left: (type_identifier) right: (object_type members: (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (index_type_query primary_type: (type_identifier)))) type: (type_annotation type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier))))))",
+    "wrappedText": "type _X = T&{ [K in keyof T]: T[K] };",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -27359,7 +28351,7 @@
     "pattern": "type_alias_declaration",
     "edits": [],
     "expectedSourceOut": "type t=[A|B, C]",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (tuple_type (union_type type1: (type_identifier) right: (type_identifier)) (type_identifier)))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (tuple_type (union_type left: (type_identifier) right: (type_identifier)) (type_identifier)))",
     "wrappedText": "type t=[A|B, C]",
     "wrappedOffset": 0
   },
@@ -27633,6 +28625,68 @@
     "expectedSourceOut": "[]",
     "expectedReparseTree": "(tuple_type)",
     "wrappedText": "type _X = [];",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 349,
+      "$source": 0,
+      "$span": {
+        "start": 36,
+        "end": 39
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 426,
+        "$source": 0,
+        "$text": "A",
+        "$span": {
+          "start": 36,
+          "end": 37
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_|": {
+        "$type": 75,
+        "$source": 0,
+        "$text": "|",
+        "$span": {
+          "start": 37,
+          "end": 38
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 426,
+        "$source": 0,
+        "$text": "B",
+        "$span": {
+          "start": 38,
+          "end": 39
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "A|B"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "A|B",
+    "pattern": "union_type",
+    "edits": [],
+    "expectedSourceOut": "A|B",
+    "expectedReparseTree": "(union_type left: (type_identifier) right: (type_identifier))",
+    "wrappedText": "type _X = A|B;",
     "wrappedOffset": 10
   },
   {
@@ -31259,7 +32313,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "type A<B> = { [B in keyof C & string as `get${Capitalize<P>}`]: () => A[B] }; type A<B> = { [B in keyof C & string as `${P}1` | `${P}2`]: A[B] }",
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (object_type members: (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (intersection_type type1: (index_type_query primary_type: (type_identifier)) right: (predefined_type)) alias: (template_literal_type (string_fragment) (template_type (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier))))))) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier))))))) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (object_type members: (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (intersection_type type1: (index_type_query primary_type: (type_identifier)) right: (predefined_type)) alias: (union_type type1: (template_literal_type (template_type (type_identifier)) (string_fragment)) right: (template_literal_type (template_type (type_identifier)) (string_fragment))))) type: (type_annotation type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier)))))))",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (object_type members: (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (intersection_type left: (index_type_query primary_type: (type_identifier)) right: (predefined_type)) alias: (template_literal_type (string_fragment) (template_type (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier))))))) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier))))))) statements: (type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (object_type members: (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (intersection_type left: (index_type_query primary_type: (type_identifier)) right: (predefined_type)) alias: (union_type left: (template_literal_type (template_type (type_identifier)) (string_fragment)) right: (template_literal_type (template_type (type_identifier)) (string_fragment))))) type: (type_annotation type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier)))))))",
     "wrappedText": "type A<B> = { [B in keyof C & string as `get${Capitalize<P>}`]: () => A[B] }; type A<B> = { [B in keyof C & string as `${P}1` | `${P}2`]: A[B] }",
     "wrappedOffset": 0
   },
@@ -31357,7 +32411,7 @@
     "pattern": "type_alias_declaration",
     "edits": [],
     "expectedSourceOut": "type A <B>={ [B in keyof C & string as `get${Capitalize<P>}`]: () => A[B] } ;",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (object_type members: (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (intersection_type type1: (index_type_query primary_type: (type_identifier)) right: (predefined_type)) alias: (template_literal_type (string_fragment) (template_type (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier))))))) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier)))))))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (object_type members: (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (intersection_type left: (index_type_query primary_type: (type_identifier)) right: (predefined_type)) alias: (template_literal_type (string_fragment) (template_type (generic_type name: (type_identifier) type_arguments: (type_arguments (type_identifier))))))) type: (type_annotation type: (function_type parameters: (formal_parameters) return_type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier)))))))",
     "wrappedText": "type A <B>={ [B in keyof C & string as `get${Capitalize<P>}`]: () => A[B] } ;",
     "wrappedOffset": 0
   },
@@ -31443,9 +32497,133 @@
     "pattern": "type_alias_declaration",
     "edits": [],
     "expectedSourceOut": "type A <B>={ [B in keyof C & string as `${P}1` | `${P}2`]: A[B] }",
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (object_type members: (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (intersection_type type1: (index_type_query primary_type: (type_identifier)) right: (predefined_type)) alias: (union_type type1: (template_literal_type (template_type (type_identifier)) (string_fragment)) right: (template_literal_type (template_type (type_identifier)) (string_fragment))))) type: (type_annotation type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier))))))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) value: (object_type members: (index_signature (index_signature_mapped_type_clause (mapped_type_clause name: (type_identifier) type: (intersection_type left: (index_type_query primary_type: (type_identifier)) right: (predefined_type)) alias: (union_type left: (template_literal_type (template_type (type_identifier)) (string_fragment)) right: (template_literal_type (template_type (type_identifier)) (string_fragment))))) type: (type_annotation type: (lookup_type primary_type: (type_identifier) index_type: (type_identifier))))))",
     "wrappedText": "type A <B>={ [B in keyof C & string as `${P}1` | `${P}2`]: A[B] }",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 350,
+      "$source": 0,
+      "$span": {
+        "start": 20,
+        "end": 36
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 327,
+        "$source": 0,
+        "$text": "keyof C",
+        "$span": {
+          "start": 20,
+          "end": 27
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_&": {
+        "$type": 73,
+        "$source": 0,
+        "$text": "&",
+        "$span": {
+          "start": 28,
+          "end": 29
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 335,
+        "$source": 0,
+        "$text": "string",
+        "$span": {
+          "start": 30,
+          "end": 36
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "keyof C&string"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "keyof C & string",
+    "pattern": "intersection_type",
+    "edits": [],
+    "expectedSourceOut": "keyof C&string",
+    "expectedReparseTree": "(intersection_type left: (index_type_query primary_type: (type_identifier)) right: (predefined_type))",
+    "wrappedText": "type _X = keyof C&string;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 350,
+      "$source": 0,
+      "$span": {
+        "start": 98,
+        "end": 114
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_left": {
+        "$type": 327,
+        "$source": 0,
+        "$text": "keyof C",
+        "$span": {
+          "start": 98,
+          "end": 105
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_&": {
+        "$type": 73,
+        "$source": 0,
+        "$text": "&",
+        "$span": {
+          "start": 106,
+          "end": 107
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 335,
+        "$source": 0,
+        "$text": "string",
+        "$span": {
+          "start": 108,
+          "end": 114
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "keyof C&string"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "keyof C & string",
+    "pattern": "intersection_type",
+    "edits": [],
+    "expectedSourceOut": "keyof C&string",
+    "expectedReparseTree": "(intersection_type left: (index_type_query primary_type: (type_identifier)) right: (predefined_type))",
+    "wrappedText": "type _X = keyof C&string;",
+    "wrappedOffset": 10
   },
   {
     "kind": "render",
@@ -31955,6 +33133,68 @@
     "expectedSourceOut": "A[B]",
     "expectedReparseTree": "(lookup_type primary_type: (type_identifier) index_type: (type_identifier))",
     "wrappedText": "type _X = A[B];",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 349,
+      "$source": 0,
+      "$span": {
+        "start": 118,
+        "end": 135
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 316,
+        "$source": 0,
+        "$text": "`${P}1`",
+        "$span": {
+          "start": 118,
+          "end": 125
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_|": {
+        "$type": 75,
+        "$source": 0,
+        "$text": "|",
+        "$span": {
+          "start": 126,
+          "end": 127
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 316,
+        "$source": 0,
+        "$text": "`${P}2`",
+        "$span": {
+          "start": 128,
+          "end": 135
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "`${P}1`|`${P}2`"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "`${P}1` | `${P}2`",
+    "pattern": "union_type",
+    "edits": [],
+    "expectedSourceOut": "`${P}1`|`${P}2`",
+    "expectedReparseTree": "(union_type left: (template_literal_type (template_type (type_identifier)) (string_fragment)) right: (template_literal_type (template_type (type_identifier)) (string_fragment)))",
+    "wrappedText": "type _X = `${P}1`|`${P}2`;",
     "wrappedOffset": 10
   },
   {
