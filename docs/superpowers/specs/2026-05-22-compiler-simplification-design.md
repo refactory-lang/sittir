@@ -1041,6 +1041,13 @@ stays serialized for diagnostics only (#15), correlating with where
   the author marks WHICH slot discriminates (`variant()` / `polymorphs:` selects
   it). Deterministic, no guess — the diagnostic suggests the marker. A branch with
   exactly one required choice slot needs no diagnostic (the default fires).
+- **`propose-distinct-alias`** (**fail** — §4d.1) — a slot's `parseKind` is
+  **non-injective**: 2+ structurally-distinct `value.kind` aliased to one CST name
+  (e.g. python `_suite.block ← {_simple_statements, block, _newline}`), so child-kind
+  dispatch can't disambiguate and runtime structural recovery is forbidden (§4d).
+  Suggests distinct `variant()`/`alias()` names per arm to restore injectivity.
+  (Structurally-identical collisions MERGE with no diagnostic; only genuinely-distinct
+  structures fail — ~5 cases corpus-wide.)
 
 > **`propose-arm-name` DELETED (§4g/§4f rewrite).** The earlier draft surfaced
 > `tok_*` `charFallback` operator names as an optional DX nudge. With arm names now
@@ -1193,9 +1200,42 @@ validator's dispatch map, never in generated `types.ts` / `factories.ts` /
 > structure at read time. The **one gap** child-kind dispatch cannot close is a
 > **non-injective `parseKind`** — a tree-sitter shared `alias()` collapsing 2+ distinct
 > logical kinds onto one CST kind name, so `$type` no longer disambiguates. That case is
-> detected and **resolved-or-diagnosed at CODEGEN** (a heuristic under design — `block`/`_suite`
-> is the discovered example), **never** recovered at runtime. This **supersedes** any runtime
+> detected and **resolved-or-diagnosed at CODEGEN** by the **non-injective-`parseKind` pass**
+> (§4d.1 below; `block`/`_suite` is the discovered example), **never** recovered at runtime. This **supersedes** any runtime
 > slot-presence probe (`project_polymorph_dispatcher_slot_probe` → codegen-time).
+
+### §4d.1. The non-injective-`parseKind` pass (shared-alias gap — codegen-time, merge-or-diagnose)
+
+tree-sitter `alias()` is many-to-one: a `choice` can alias 2+ structurally distinct
+rules to one named kind. Discovered case: python `_suite =
+choice(alias($._simple_statements, $.block), seq($._indent, $.block), alias($._newline, $.block))`
+→ CST kind `block` ← `{_simple_statements, block, _newline}`. The per-value `parseKind`
+is then **non-injective** — multiple distinct `value.kind` share one `parseKind.name` —
+so child-kind dispatch (§4d) cannot disambiguate. (Per-value `parseKind` from PR-B/PR-C
+preserves the full value-set; the old slot-level `aliasSources: Record<target→source>`
+clobbered it to one source — that loss disappears with PR-C.)
+
+**Where:** a pass in `node-map.ts` after the slot `values` are populated (where
+`parseNames` is projected). **Detection:** group a slot's `values` by `parseKind.name`;
+a bucket with ≥2 entries whose `value.kind.name` differ is non-injective.
+
+**Resolution — exactly two outcomes (no runtime structural recovery, no resolution tables):**
+1. **MERGE** — if the colliding sources are structurally identical (bare keyword/literal
+   relabels `alias(STRING, X)` / `alias(choice(literals), X)`, or identical lexer-fragment
+   rules), they are legitimately ONE kind: collapse the bucket to a single value, no
+   diagnostic. (Clears the ~12 trivial relabels — the bulk of the inventory.)
+2. **DIAGNOSE** — otherwise (genuinely distinct structures) → **`propose-distinct-alias`**
+   (`fail`): the grammar collapsed distinguishable kinds onto one CST name with no read-time
+   way back. The fix is the existing `variant()`/`overrides.ts` pattern — give each arm a
+   distinct alias (`block_simple`/`block_compound`/`block_empty`), restoring an injective
+   `parseKind`. **No "resolution table" / sub-discriminator routing** — that would
+   reintroduce read-time structural inspection (rejected, §4d).
+
+**Inventory (genuine slot-level collisions = the actionable set):** python 1
+(`_suite.block`), rust 1 (`scoped_type_identifier.path ← {generic_type,
+generic_type_with_turbofish}`), typescript ~3 (`type_predicate.name`, string-fragment,
+`_jsx_identifier`); ~12 further buckets are trivial relabels that MERGE. So the
+diagnose-and-author-override burden is ~5 cases total.
 
 ### ⚠ FLAG — dispatch is total ONLY after identical-arm collapse
 
