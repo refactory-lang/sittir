@@ -28,6 +28,7 @@ vi.mock('../src/history.ts', () => ({
 		} satisfies ValidationRun,
 	]),
 	appendHistory: vi.fn(),
+	commitHistory: vi.fn(),
 	historyPath: vi.fn().mockReturnValue('/fake/validation-history.jsonl'),
 }));
 
