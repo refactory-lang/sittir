@@ -36,7 +36,7 @@ import type { AssembledNode } from './node-map.ts';
 import { compileWordMatcher } from './common.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
-import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
+import { withAttrsFrom, combineMultiplicity, sharedArmAttrs, type LeafMultiplicity } from './rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
 
 // ---------------------------------------------------------------------------
@@ -643,37 +643,19 @@ function extractFieldAcrossBranches(perBranch: Rule[][], name: string): Rule {
  * Only lifts an attribute the choice node doesn't already carry.
  */
 function liftSharedArmAttrs(rule: ChoiceRule): Rule {
-	const m0 = rule.members[0];
-	if (m0 === undefined) return rule;
+	// Hoist the UNANIMOUS arm attrs (shared by EVERY arm) onto the choice node,
+	// but only those the choice doesn't already carry. Shares the arm-walk with
+	// collect-slots via `sharedArmAttrs` — the single source for shared-arm facts.
+	const shared = sharedArmAttrs(rule);
 	let result: ChoiceRule = rule;
-	if (
-		result.fieldName === undefined &&
-		m0.fieldName !== undefined &&
-		rule.members.every((m) => m.fieldName === m0.fieldName)
-	) {
-		result = { ...result, fieldName: m0.fieldName };
-	}
-	if (
-		result.multiplicity === undefined &&
-		m0.multiplicity !== undefined &&
-		rule.members.every((m) => m.multiplicity === m0.multiplicity)
-	) {
-		result = { ...result, multiplicity: m0.multiplicity };
-	}
-	if (
-		result.nonterminal === undefined &&
-		m0.nonterminal !== undefined &&
-		rule.members.every((m) => m.nonterminal === m0.nonterminal)
-	) {
-		result = { ...result, nonterminal: m0.nonterminal };
-	}
-	if (
-		result.separator === undefined &&
-		m0.separator !== undefined &&
-		rule.members.every((m) => JSON.stringify(m.separator) === JSON.stringify(m0.separator))
-	) {
-		result = { ...result, separator: m0.separator };
-	}
+	if (result.fieldName === undefined && shared.fieldName !== undefined)
+		result = { ...result, fieldName: shared.fieldName };
+	if (result.multiplicity === undefined && shared.multiplicity !== undefined)
+		result = { ...result, multiplicity: shared.multiplicity };
+	if (result.nonterminal === undefined && shared.nonterminal !== undefined)
+		result = { ...result, nonterminal: shared.nonterminal };
+	if (result.separator === undefined && shared.separator !== undefined)
+		result = { ...result, separator: shared.separator };
 	return result;
 }
 

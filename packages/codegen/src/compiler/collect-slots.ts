@@ -34,6 +34,7 @@
 import type { Rule, Multiplicity, RuleSource } from './rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
+import { sharedArmAttrs } from './rule-attrs.ts';
 import {
 	type AssembledNonterminal,
 	type NodeOrTerminal,
@@ -117,24 +118,11 @@ export function drainUnnamedChoiceSlots(): string[] {
  * simplify strips a wrapping `field()`'s name off the choice node itself but
  * leaves it stamped on each arm (e.g. `field('operator', choice(<,>,...))` →
  * arms each `{ ..., fieldName: 'operator' }`). Recovering the shared name keeps
- * the choice slot correctly named instead of defaulting to `content`.
+ * the choice slot correctly named instead of defaulting to `content`. Thin
+ * adapter over the shared {@link sharedArmAttrs} arm-walk.
  */
 function sharedArmFieldName(rule: Rule): string | undefined {
-	const arms: readonly Rule[] =
-		rule.type === 'choice'
-			? rule.members
-			: rule.type === 'polymorph'
-				? rule.forms.map((f) => f.content)
-				: [];
-	if (arms.length === 0) return undefined;
-	let shared: string | undefined;
-	for (const arm of arms) {
-		const fn = (arm as { fieldName?: string }).fieldName;
-		if (fn === undefined) return undefined;
-		if (shared === undefined) shared = fn;
-		else if (shared !== fn) return undefined;
-	}
-	return shared;
+	return sharedArmAttrs(rule).fieldName;
 }
 
 /**
@@ -142,28 +130,10 @@ function sharedArmFieldName(rule: Rule): string | undefined {
  * or `undefined` if no arm carries one. "Strongest" = most-multi:
  * nonEmptyArray > array > optional. Used to lift an array multiplicity that
  * simplify left on an inner arm (e.g. `choice(choice(X){nonEmptyArray}, X)`)
- * up to the outer choice slot.
+ * up to the outer choice slot. Thin adapter over {@link sharedArmAttrs}.
  */
 function strongestArmMultiplicity(rule: Rule): Multiplicity | undefined {
-	const arms: readonly Rule[] =
-		rule.type === 'choice'
-			? rule.members
-			: rule.type === 'polymorph'
-				? rule.forms.map((f) => f.content)
-				: [];
-	const rank: Record<Multiplicity, number> = {
-		single: 0,
-		optional: 1,
-		array: 2,
-		nonEmptyArray: 3,
-	};
-	let best: Multiplicity | undefined;
-	for (const arm of arms) {
-		const m = (arm as { multiplicity?: Multiplicity }).multiplicity;
-		if (m === undefined || m === 'single') continue;
-		if (best === undefined || rank[m] > rank[best]) best = m;
-	}
-	return best;
+	return sharedArmAttrs(rule).strongestMultiplicity;
 }
 
 /**

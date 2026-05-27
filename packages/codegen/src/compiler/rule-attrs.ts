@@ -8,7 +8,7 @@
  * use the SAME implementation, and future collapse sites can't drift apart.
  */
 
-import type { Rule } from './rule.ts';
+import type { Rule, Multiplicity } from './rule.ts';
 
 /**
  * Transfer slot-identity attributes from a discarded wrapper node onto the
@@ -85,4 +85,68 @@ export function combineMultiplicity(outerIn: LeafMultiplicity, innerIn: LeafMult
 	// than the explicit string so callers that only stamp non-default values
 	// don't write a spurious `multiplicity: 'single'` onto clean nodes (codex P1).
 	return undefined;
+}
+
+/**
+ * Attributes shared across the arms of a choice / polymorph. ONE derivation
+ * consumed by both phases (was previously implemented twice, inconsistently —
+ * simplify's `liftSharedArmAttrs` was choice-only + unanimous-multiplicity;
+ * collect-slots' `sharedArmFieldName` + `strongestArmMultiplicity` were
+ * choice+polymorph + strongest-multiplicity):
+ *  - simplify's `liftSharedArmAttrs` hoists the UNANIMOUS attrs onto the choice.
+ *  - collect-slots reads the unanimous `fieldName` (slot naming) and the
+ *    `strongestMultiplicity` (to lift an array multiplicity a single arm carries,
+ *    e.g. `choice(commaSep1(X), X)`).
+ *
+ * `fieldName` / `multiplicity` / `nonterminal` / `separator` are UNANIMOUS —
+ * present and equal on EVERY arm, else `undefined`. `strongestMultiplicity` is
+ * the most-multi multiplicity ANY single arm carries (`nonEmptyArray > array >
+ * optional`; `single` / absent ignored), regardless of unanimity.
+ */
+export interface SharedArmAttrs {
+	readonly fieldName?: string;
+	readonly multiplicity?: Multiplicity;
+	readonly nonterminal?: boolean;
+	readonly separator?: Rule['separator'];
+	readonly strongestMultiplicity?: Multiplicity;
+}
+
+const MULTIPLICITY_RANK: Record<Multiplicity, number> = { single: 0, optional: 1, array: 2, nonEmptyArray: 3 };
+
+/** The arms of a choice (`members`) or polymorph (form `content`s); `[]` otherwise. */
+function armsOf(rule: Rule): readonly Rule[] {
+	if (rule.type === 'choice') return rule.members;
+	if (rule.type === 'polymorph') return rule.forms.map((f) => f.content);
+	return [];
+}
+
+export function sharedArmAttrs(rule: Rule): SharedArmAttrs {
+	const arms = armsOf(rule);
+	if (arms.length === 0) return {};
+	const a0 = arms[0]!;
+	// A primitive attr is unanimous when present on a0 and === on every arm.
+	const unanimous = <T>(get: (r: Rule) => T): T | undefined => {
+		const v = get(a0);
+		return v !== undefined && arms.every((m) => get(m) === v) ? v : undefined;
+	};
+	// separator may be a string | Rule[] | { rules } object — compare by structure.
+	const sep0 = a0.separator;
+	const separator =
+		sep0 !== undefined && arms.every((m) => JSON.stringify(m.separator) === JSON.stringify(sep0))
+			? sep0
+			: undefined;
+	let strongestMultiplicity: Multiplicity | undefined;
+	for (const arm of arms) {
+		const m = arm.multiplicity;
+		if (m === undefined || m === 'single') continue;
+		if (strongestMultiplicity === undefined || MULTIPLICITY_RANK[m] > MULTIPLICITY_RANK[strongestMultiplicity])
+			strongestMultiplicity = m;
+	}
+	return {
+		fieldName: unanimous((r) => r.fieldName),
+		multiplicity: unanimous((r) => r.multiplicity),
+		nonterminal: unanimous((r) => r.nonterminal),
+		separator,
+		strongestMultiplicity,
+	};
 }
