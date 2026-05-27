@@ -367,10 +367,11 @@ function resolveSlotDrillExprs(
 		config.allowedKinds && config.allowedKinds.length > 0
 			? `_filterWrapChildrenByKind(${slotStoreExpr}, ${JSON.stringify(config.allowedKinds)})`
 			: slotStoreExpr;
+	const diagnosticContextExpr = `{ tree, nodeType: ${config.dataExpr}.$type, slotName: ${JSON.stringify(slot.name)}, span: ${config.dataExpr}.$span }`;
 	const normalizedStoreExpr =
 		slot.arity === 'many'
-			? `normalizeRepeatedWrapSlot(${filteredStoreExpr}, ${config.nonEmpty ? 'true' : 'false'}, ${JSON.stringify(slot.name)})`
-			: `normalizeSingularWrapSlot(${filteredStoreExpr}, ${JSON.stringify(slot.name)}, ${config.required ? 'true' : 'false'}, ${config.dataExpr}.$type)`;
+			? `normalizeRepeatedWrapSlot(${filteredStoreExpr}, ${config.nonEmpty ? 'true' : 'false'}, ${JSON.stringify(slot.name)}, ${diagnosticContextExpr})`
+			: `normalizeSingularWrapSlot(${filteredStoreExpr}, ${JSON.stringify(slot.name)}, ${config.required ? 'true' : 'false'}, ${config.dataExpr}.$type, ${diagnosticContextExpr})`;
 	const storageInfo = config.storageInfo;
 	if (storageInfo?.kind === 'boolean') {
 		return {
@@ -591,7 +592,7 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	const allowedKinds = [...new Set(node.subtypes.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))];
 	return [
 		`export function ${fn}(data: T.${node.typeName}, tree: TreeHandle) {`,
-		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ${JSON.stringify(allowedKinds)}), "children", true, data.$type), tree);`,
+		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ${JSON.stringify(allowedKinds)}), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: data.$span }), tree);`,
 		`}`
 	].join('\n');
 }
@@ -975,19 +976,51 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			`import { ${utilsImports.join(', ')} } from './utils.js';`,
 			"import * as _factories from './factories.js';",
 			'',
-			...(usesNormalizeSingular
+			...(usesNormalizeSingular || usesNormalizeRepeated
 				? [
 						'const WRAP_WARNING_MODE = typeof process !== "undefined" && process.env?.SITTIR_WRAP_WARNING_MODE === "1";',
+						'interface WrapDiagnosticContext {',
+						'  tree?: TreeHandle;',
+						'  nodeType: string | number;',
+						'  slotName?: string;',
+						'  span?: { start?: number; end?: number };',
+						'}',
 						'function describeWrapNodeType(nodeType: string | number): string {',
 						'  if (typeof nodeType === "number") return KIND_NAMES.get(nodeType) ?? String(nodeType);',
 						'  return nodeType;',
 						'}',
-						'function handleWrapViolation<T>(message: string, fallback: T): T {',
+						'function describeWrapLocation(context: WrapDiagnosticContext): string | undefined {',
+						'  const source = context.tree ? context.tree.source : undefined;',
+						'  const start = context.span?.start;',
+						'  if (source == null || start == null) return undefined;',
+						"  const lines = source.slice(0, start).split('\\n');",
+						'  const line = lines.length;',
+						'  const column = (lines[lines.length - 1]?.length ?? 0) + 1;',
+						'  return `${line}:${column}`;',
+						'}',
+						'function describeWrapSnippet(context: WrapDiagnosticContext): string | undefined {',
+						'  const source = context.tree ? context.tree.source : undefined;',
+						'  const start = context.span?.start;',
+						'  const end = context.span?.end;',
+						'  if (source == null || start == null || end == null) return undefined;',
+						'  return JSON.stringify(source.slice(start, end));',
+						'}',
+						'function buildWrapDiagnostic(message: string, context: WrapDiagnosticContext): string {',
+						'  const location = describeWrapLocation(context);',
+						'  const snippet = describeWrapSnippet(context);',
+						'  if (location === undefined && snippet === undefined) return message;',
+						'  const parts = [message];',
+						'  if (location !== undefined) parts.push(`at ${location}`);',
+						'  if (snippet !== undefined) parts.push(`near ${snippet}`);',
+						'  return parts.join(` — `);',
+						'}',
+						'function handleWrapViolation<T>(message: string, fallback: T, context: WrapDiagnosticContext): T {',
+						'  const diagnostic = buildWrapDiagnostic(message, context);',
 						'  if (WRAP_WARNING_MODE) {',
-						'    console.warn(`[wrapNode warning] ${message}`);',
+						'    console.warn(`[wrapNode warning] ${diagnostic}`);',
 						'    return fallback;',
 						'  }',
-						'  throw new TypeError(message);',
+						'  throw new TypeError(diagnostic);',
 						'}',
 						'function describeWrapSlotItem(value: unknown): string {',
 						'  if (value == null) return String(value);',
@@ -1008,27 +1041,31 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  if (value == null) return String(value);',
 						'  return describeWrapSlotItem(value);',
 						'}',
-						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: true, nodeType: string | number): T;',
-						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: false, nodeType: string | number): T | undefined;',
-						'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: boolean, nodeType: string | number): T | undefined {',
+						...(usesNormalizeSingular
+							? [
+									'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: true, nodeType: string | number, context: WrapDiagnosticContext): T;',
+									'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: false, nodeType: string | number, context: WrapDiagnosticContext): T | undefined;',
+									'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: boolean, nodeType: string | number, context: WrapDiagnosticContext): T | undefined {',
 						'  if (Array.isArray(value)) {',
 						'    if (value.length === 0) {',
-						'      if (required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined);',
+									'      if (required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined, context);',
 						'      return undefined;',
 						'    }',
-						'    if (value.length !== 1) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T);',
+									'    if (value.length !== 1) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T, context);',
 						'    return value[0] as T;',
 						'  }',
-						'  if (value == null && required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined);',
+									'  if (value == null && required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined, context);',
 						'  return value as T | undefined;',
 						'}'
+								]
+							: [])
 					]
 				: []),
-			...(usesNormalizeRepeated
+			...(usesNormalizeSingular || usesNormalizeRepeated
 				? [
-						'function normalizeRepeatedWrapSlot<T>(value: T | readonly T[] | undefined, nonEmpty: boolean, slotName: string): readonly T[] {',
+						'function normalizeRepeatedWrapSlot<T>(value: T | readonly T[] | undefined, nonEmpty: boolean, slotName: string, context: WrapDiagnosticContext): readonly T[] {',
 						'  const items: readonly T[] = Array.isArray(value) ? (value as readonly T[]) : value == null ? ([] as readonly T[]) : ([value] as readonly T[]);',
-						'  if (nonEmpty && items.length === 0) return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items);',
+						'  if (nonEmpty && items.length === 0) return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items, context);',
 						'  return items;',
 						'}'
 					]
