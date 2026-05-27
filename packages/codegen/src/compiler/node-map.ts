@@ -1605,18 +1605,36 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 		slot.fieldName !== undefined
 			? [slot.fieldName]
 			: [...new Set(slot.values.map((v) => v.parseKind?.name).filter((n): n is string => n !== undefined))];
+	// storageName derives from the STORAGE / render-source kind (`value.node` —
+	// how the value is stored and keyed via `drillAs`), NOT `parseKind`. The two
+	// projections are parallel and must NOT cross: storageKind→storageName,
+	// parseKind→parseNames. `distinctStorageKinds` mirrors `kindsOf` (node-ref
+	// values' source kind). A slot whose values share ONE storage kind is named
+	// after it; a multi-storage-kind slot — e.g. `_suite`'s
+	// `{_simple_statements, block, _newline}` (all `parseKind=block`) — falls back
+	// to the generic `content` (the parseName `block` is NOT its storage name).
+	const distinctStorageKinds = [
+		...new Set(
+			slot.values
+				.filter((v) => v.kind === 'node-ref')
+				.map((v) => {
+					const node = (v as NodeRef).node;
+					return isUnresolvedRef(node) ? node.name : node.kind;
+				})
+		)
+	];
 	// A value with no parseKind is a literal / anonymous token (e.g.
 	// splat_pattern's `_`). Its presence means the slot is NOT a single named
-	// kind, so storageName falls back to the generic `content` (matching legacy)
-	// — even when exactly one NAMED kind is present. Without this guard a
-	// 2-value slot (named ref + literal) is mis-read as single-kind and named
-	// after the lone ref (`splat_pattern.content` → `identifier`).
+	// kind, so storageName falls back to the generic `content` — even when
+	// exactly one NAMED storage kind is present. Without this guard a 2-value
+	// slot (named ref + literal) is mis-read as single-kind and named after the
+	// lone ref (`splat_pattern.content` → `identifier`).
 	const hasUnnamedValue =
 		slot.fieldName === undefined && slot.values.some((v) => v.parseKind?.name === undefined);
 	const storageName =
 		slot.fieldName ??
-		(parseNames.length === 1 && !hasUnnamedValue
-			? parseNames[0]!.replace(/^_+/, '') || parseNames[0]!
+		(distinctStorageKinds.length === 1 && !hasUnnamedValue
+			? distinctStorageKinds[0]!.replace(/^_+/, '') || distinctStorageKinds[0]!
 			: 'content');
 	const configKey = snakeToCamel(storageName);
 	const isMulti = slot.values.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');

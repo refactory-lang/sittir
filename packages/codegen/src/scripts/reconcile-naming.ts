@@ -66,6 +66,28 @@ export const ALLOWLISTED_RENAMES: readonly Divergence[] = [
 	{ kind: 'format_specifier', slot: 'content', projection: 'configKey', legacy: 'content', recomputed: 'formatExpression' },
 	{ kind: 'format_specifier', slot: 'content', projection: 'propertyName', legacy: 'contents', recomputed: 'formatExpressions' },
 	{ kind: 'format_specifier', slot: 'content', projection: 'paramName', legacy: 'contents', recomputed: 'formatExpressions' },
+	// _suite.block: the OPPOSITE-direction correction (kind name → `content`).
+	// _suite's values have storage-kinds {_simple_statements, block, _newline}
+	// (all `parseKind=block`). storageKind→storageName makes this MULTI-storage
+	// → `content`; legacy was cross-wired to the parseName `block`. The
+	// projection corrects it (Fix 4 / spec §2); the PR-B cutover renames the
+	// field. The 5 derived projections all flip block→content.
+	{ kind: '_suite', slot: 'block', projection: 'storageName', legacy: 'block', recomputed: 'content' },
+	{ kind: '_suite', slot: 'block', projection: 'name', legacy: 'block', recomputed: 'content' },
+	{ kind: '_suite', slot: 'block', projection: 'configKey', legacy: 'block', recomputed: 'content' },
+	{ kind: '_suite', slot: 'block', projection: 'propertyName', legacy: 'block', recomputed: 'content' },
+	{ kind: '_suite', slot: 'block', projection: 'paramName', legacy: 'block', recomputed: 'content' },
+	// match_block.match_arm (rust): same multi-storage-kind pattern as _suite —
+	// the arm slot holds {match_arm, last_match_arm} (2 distinct, non-aliased
+	// storage kinds), so storageKind→storageName yields `content`. Legacy was
+	// cross-wired to the kind name `match_arm`. (Whether last_match_arm SHOULD be
+	// unified with match_arm so the slot reads `matchArms` is a separate spec
+	// question for the PR-B cutover.)
+	{ kind: 'match_block', slot: 'match_arm', projection: 'storageName', legacy: 'match_arm', recomputed: 'content' },
+	{ kind: 'match_block', slot: 'match_arm', projection: 'name', legacy: 'match_arm', recomputed: 'content' },
+	{ kind: 'match_block', slot: 'match_arm', projection: 'configKey', legacy: 'matchArm', recomputed: 'content' },
+	{ kind: 'match_block', slot: 'match_arm', projection: 'propertyName', legacy: 'matchArms', recomputed: 'contents' },
+	{ kind: 'match_block', slot: 'match_arm', projection: 'paramName', legacy: 'matchArms', recomputed: 'contents' },
 ];
 
 /** A divergence is allowlisted only if it matches an expected rename on ALL fields. */
