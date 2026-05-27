@@ -1364,28 +1364,65 @@
       "hidden": false,
       "fields": [
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
-          "required": true,
+          "name": "simple_statements",
+          "propertyName": "simpleStatements",
+          "paramName": "simpleStatements",
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_simple_statements",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_simple_statements"
+            ]
+          },
+          "aliasSources": {
+            "block": "_simple_statements"
+          }
+        },
+        {
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "block",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "block"
+            ]
+          }
+        },
+        {
+          "name": "newline",
+          "propertyName": "newline",
+          "paramName": "newline",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_newline",
               "unresolved": true
             }
@@ -1394,8 +1431,6 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_simple_statements",
-              "block",
               "_newline"
             ]
           },
@@ -3944,28 +3979,65 @@
           }
         },
         {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
-          "required": true,
+          "name": "simple_statements",
+          "propertyName": "simpleStatements",
+          "paramName": "simpleStatements",
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_simple_statements",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_simple_statements"
+            ]
+          },
+          "aliasSources": {
+            "block": "_simple_statements"
+          }
+        },
+        {
+          "name": "block",
+          "propertyName": "block",
+          "paramName": "block",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "block",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "block"
+            ]
+          }
+        },
+        {
+          "name": "newline",
+          "propertyName": "newline",
+          "paramName": "newline",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "single",
+              "multiplicity": "optional",
               "name": "_newline",
               "unresolved": true
             }
@@ -3974,8 +4046,6 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_simple_statements",
-              "block",
               "_newline"
             ]
           },
@@ -7200,24 +7270,7 @@
               "multiplicity": "single",
               "name": "_identifier",
               "unresolved": true
-            }
-          ],
-          "source": "grammar",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_identifier"
-            ]
-          }
-        },
-        {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -7230,10 +7283,11 @@
               "value": "_"
             }
           ],
-          "source": "inferred",
+          "source": "grammar",
           "projection": {
             "typeName": "",
             "kinds": [
+              "_identifier",
               "identifier"
             ]
           }

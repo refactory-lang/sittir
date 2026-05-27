@@ -1459,8 +1459,12 @@ export interface SimpleStatements {
 
 export interface Suite {
   readonly $type: "_suite";
-  readonly _block: SimpleStatements | Newline;
-  block(): SimpleStatements | Newline;
+  readonly _simple_statements?: SimpleStatements;
+  readonly _block?: Block;
+  readonly _newline?: Newline;
+  simpleStatements(): SimpleStatements | undefined;
+  block(): Block | undefined;
+  newline(): Newline | undefined;
 }
 
 export interface _TuplePattern {
@@ -1768,9 +1772,13 @@ export interface ElseClause {
 export interface ExceptClause {
   readonly $type: TSKindId.ExceptClause;
   readonly _content?: ExceptClauseAs | ExceptClauseList;
-  readonly _block: SimpleStatements | Newline;
+  readonly _simple_statements?: SimpleStatements;
+  readonly _block?: Block;
+  readonly _newline?: Newline;
   content(): ExceptClauseAs | ExceptClauseList | undefined;
-  block(): SimpleStatements | Newline;
+  simpleStatements(): SimpleStatements | undefined;
+  block(): Block | undefined;
+  newline(): Newline | undefined;
 }
 
 export interface ExecStatement {
@@ -2164,13 +2172,8 @@ export interface Slice {
 
 export interface SplatPattern {
   readonly $type: TSKindId.SplatPattern;
-  readonly _identifier: number;
-  readonly _content: Identifier | "_";
-  readonly __inputHints__?: {
-    readonly identifier: KindEnum<"*" | "**", TSKindId.Star2 | TSKindId.StarStar>;
-  };
-  identifier(): number;
-  content(): Identifier | "_";
+  readonly _identifier: _Identifier | Identifier | "_";
+  identifier(): _Identifier | Identifier | "_";
 }
 
 export interface SplatType {

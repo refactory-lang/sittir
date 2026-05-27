@@ -423,13 +423,13 @@ describe('escape_sequence', () => {
 
 describe('except_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.exceptClause({ block: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.exceptClause({});
     expect(node.$type).toBe(TSKindId.ExceptClause);
     expect(node.$source).toBe(2);
   });
-  it('render produces non-empty string', () => {
-    const node = ir.exceptClause({ block: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
-    expect(node.$render!().length).toBeGreaterThan(0);
+  it('render does not throw on minimal config', () => {
+    const node = ir.exceptClause({});
+    expect(() => node.$render!()).not.toThrow();
   });
 });
 
@@ -1011,12 +1011,12 @@ describe('slice', () => {
 
 describe('splat_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.splatPattern({ identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.splatPattern({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.SplatPattern);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.splatPattern({ identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.splatPattern({ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });

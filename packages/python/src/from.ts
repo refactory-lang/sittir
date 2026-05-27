@@ -780,11 +780,13 @@ export function escapeSequenceFrom(input: string | T.EscapeSequence): ReturnType
   return F.escapeSequence(input as Parameters<typeof F.escapeSequence>[0]);
 }
 
-export function exceptClauseFrom(input: T.ExceptClause.Loose): ReturnType<typeof F.exceptClause> {
-  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.exceptClause>;
+export function exceptClauseFrom(input?: T.ExceptClause.Loose): ReturnType<typeof F.exceptClause> {
+  if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.exceptClause>;
   return F.exceptClause({
-    content: _resolveOneBranch<T.ExceptClauseAs | T.ExceptClauseList>(input.content, "_except_clause_as"),
-    block: _resolveOne<T.SimpleStatements | T.Newline>(input.block, _K9, _K10),
+    content: _resolveOneBranch<T.ExceptClauseAs | T.ExceptClauseList>(input?.content, "_except_clause_as"),
+    simpleStatements: _resolveOneBranch<T.SimpleStatements>(input?.simpleStatements, "_simple_statements"),
+    block: _resolveOneBranch<T.Block>(input?.block, "block"),
+    newline: _resolveOneLeaf<T.Newline>(input?.newline, "_newline"),
   });
 }
 
@@ -1250,11 +1252,8 @@ export function sliceFrom(input?: T.Slice.Loose): ReturnType<typeof F.slice> {
 }
 
 export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof F.splatPattern> {
-  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.splatPattern>;
-  return F.splatPattern({
-    identifier: coerceKindEnumStorage(_resolveOneLeaf<T._Identifier>(input.identifier, "_identifier"), [["*", kindIdFromName("*")] as const, ["**", kindIdFromName("**")] as const]),
-    content: _resolveOneLeaf<T.Identifier | "_">(input.content, "identifier"),
-  });
+  if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("splat_pattern")) return input as unknown as ReturnType<typeof F.splatPattern>;
+  return F.splatPattern(_resolveOne<T._Identifier | T.Identifier | "_">((input !== null && typeof input === 'object' && !isNodeData(input) && "identifier" in input ? input.identifier : input), _K25, _K7));
 }
 
 export function splatTypeFrom(input: T.SplatType.Loose): ReturnType<typeof F.splatType> {

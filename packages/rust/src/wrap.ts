@@ -2732,9 +2732,14 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
     ...data,
     $type: TSKindId.MatchBlock as const,
     _match_arm: normalizeRepeatedWrapSlot(data._match_arm, false, "match_arm"),
+    _last_match_arm: normalizeSingularWrapSlot((data._match_arm ?? data._last_match_arm), "last_match_arm", false, data.$type),
 
-    matchArms() { return drillAsAll<T.LastMatchArm>(this._match_arm, tree, "match_arm", "last_match_arm"); },
-    $with: { $children: (...vs: readonly [never]) => wrapMatchBlock({ ...data, $children: vs }, tree) },
+    matchArms() { return drillInAll<T.MatchArm>(this._match_arm as readonly T.MatchArm[] | undefined, tree); },
+    lastMatchArm() { return drillAs<T.LastMatchArm | undefined>(this._last_match_arm, tree, "match_arm", "last_match_arm"); },
+    $with: {
+      matchArms: (...v: NonNullable<T.MatchBlock['_match_arm']>[number][]) => wrapMatchBlock({ ...data, _match_arm: v }, tree),
+      lastMatchArm: (v: NonNullable<T.MatchBlock['_last_match_arm']>) => wrapMatchBlock({ ...data, _last_match_arm: v }, tree),
+    },
   }, methodsEngine);
   return _node;
 }

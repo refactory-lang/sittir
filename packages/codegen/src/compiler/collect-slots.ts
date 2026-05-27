@@ -36,18 +36,13 @@ import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 import { sharedArmAttrs } from './rule-attrs.ts';
 import {
-	type AssembledNonterminal,
+	AssembledNonterminal,
 	type NodeOrTerminal,
 	deriveValuesForRule,
 	deriveAliasSources,
 	dedupeValues,
 	extractSeparatorString,
 	stampSeparatorOnValues,
-	snakeToCamel,
-	pluralize,
-	safeParamName,
-	kindsOf,
-	projectSlotNaming,
 } from './node-map.ts';
 import { findRepeatFlag } from './template-walker.ts';
 
@@ -187,12 +182,11 @@ function mergeByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 			byName.set(s.name, s);
 			continue;
 		}
-		byName.set(s.name, {
-			...prev,
+		byName.set(s.name, prev.with({
 			values: dedupeValues([...prev.values, ...s.values]),
 			hasTrailing: prev.hasTrailing || s.hasTrailing,
 			hasLeading: prev.hasLeading || s.hasLeading,
-		});
+		}));
 	}
 	return [...byName.values()];
 }
@@ -214,8 +208,7 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 				merged.set(slot.name, slot);
 				continue;
 			}
-			merged.set(slot.name, {
-				...prev,
+			merged.set(slot.name, prev.with({
 				values: dedupeValues([...prev.values, ...slot.values]),
 				hasTrailing: prev.hasTrailing || slot.hasTrailing,
 				hasLeading: prev.hasLeading || slot.hasLeading,
@@ -223,7 +216,7 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 					prev.aliasSources || slot.aliasSources
 						? { ...prev.aliasSources, ...slot.aliasSources }
 						: undefined,
-			});
+			}));
 		}
 	}
 	return [...merged.values()].map((slot) =>
@@ -233,8 +226,7 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 
 /** Relax a slot's singular/required values to optional (cross-arm absence). */
 function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
-	return {
-		...slot,
+	return slot.with({
 		values: slot.values.map((v) =>
 			v.multiplicity === 'single'
 				? { ...v, multiplicity: 'optional' as const }
@@ -242,7 +234,7 @@ function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
 					? { ...v, multiplicity: 'array' as const }
 					: v
 		),
-	};
+	});
 }
 
 /** True iff this node is a slot-bearing nonterminal (intrinsic or pushed-down). */
@@ -431,40 +423,18 @@ function buildSlot(
 	const separatorStr = isMultiSlot ? extractSeparatorString(sep) : undefined;
 	const values: readonly NodeOrTerminal[] = stampSeparatorOnValues([...dedupedValues], separatorStr);
 
-	const basePropertyName = snakeToCamel(baseName);
-	const propertyName = isMultiSlot ? pluralize(basePropertyName) : basePropertyName;
-
 	const aliasSources = deriveAliasSources(rule);
 
-	const slot: AssembledNonterminal = {
-		name: baseName,
-		propertyName,
-		configKey: basePropertyName,
-		storageName: baseName,
-		paramName: safeParamName(propertyName),
+	return new AssembledNonterminal({
 		values,
+		fieldName: rule.fieldName,
 		hasTrailing,
 		hasLeading,
 		aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
 		source,
 		...(origin ? { origin } : {}),
 		sourceRuleId: rule.id,
-	};
-	// `_new`-suffixed naming fields are PROJECTION-backed (`projectSlotNaming`,
-	// §2 getter logic) — kept on the interface as the cutover target; PR-B
-	// promotes them to class getters + drops the legacy fields. They are
-	// RE-DERIVED in `mergeSlotsByName` after the value-union so they always
-	// track the live (merged) CST kinds — never stale (the modeling bug). The
-	// underscore is trimmed only in `storageName`; `parseNames` keep it.
-	const fieldName = rule.fieldName;
-	const naming = projectSlotNaming({ fieldName, values: slot.values });
-	return {
-		...slot,
-		fieldName,
-		storageNameNew: naming.storageName,
-		nameNew: naming.name,
-		parseNamesNew: naming.parseNames
-	};
+	});
 }
 
 /**

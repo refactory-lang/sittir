@@ -115,7 +115,7 @@
     "set": "direct",
     "set_comprehension": "config",
     "slice": "config",
-    "splat_pattern": "config",
+    "splat_pattern": "direct",
     "splat_type": "direct",
     "string": "config",
     "string_content": "spread",
@@ -189,7 +189,10 @@
     "_match_block.match_block_block": {
       "match_block_block": "_match_block_block"
     },
-    "_suite.block": {
+    "_suite.simple_statements": {
+      "block": "_simple_statements"
+    },
+    "_suite.newline": {
       "block": "_newline"
     },
     "argument_list.arguments": {
@@ -232,7 +235,10 @@
       "except_clause_as": "_except_clause_as",
       "except_clause_list": "_except_clause_list"
     },
-    "except_clause.block": {
+    "except_clause.simple_statements": {
+      "block": "_simple_statements"
+    },
+    "except_clause.newline": {
       "block": "_newline"
     },
     "expression_statement.expression_statement_tuple": {
@@ -450,7 +456,9 @@
     ],
     "except_clause": [
       "content",
-      "block"
+      "simple_statements",
+      "block",
+      "newline"
     ],
     "exec_statement": [
       "code",
@@ -629,8 +637,7 @@
       "step"
     ],
     "splat_pattern": [
-      "identifier",
-      "content"
+      "identifier"
     ],
     "splat_type": [
       "identifier"
@@ -1377,10 +1384,24 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "simple_statements": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "block": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "newline": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2076,13 +2097,6 @@
     },
     "splat_pattern": {
       "identifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,

@@ -816,22 +816,12 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 		const mergedValues = dedupeValues([...existing.values, ...f.values]);
 		const mergedAliases =
 			existing.aliasSources || f.aliasSources ? { ...existing.aliasSources, ...f.aliasSources } : undefined;
-		// Re-derive the projection-backed `_new` naming fields from the MERGED
-		// values. `parseNames` is the live set of CST kinds tree-sitter emits, so
-		// the value-union must re-project — the per-position `parseNamesNew` was a
-		// subset (this is the stale-projection modeling bug: e.g. a `content` slot
-		// merged across positions unions all the polymorph forms / CST kinds).
-		const naming = projectSlotNaming({ fieldName: existing.fieldName, values: mergedValues });
-		byName.set(f.name, {
-			...existing,
+		byName.set(f.name, existing.with({
 			values: mergedValues,
 			hasTrailing: existing.hasTrailing || f.hasTrailing,
 			hasLeading: existing.hasLeading || f.hasLeading,
 			aliasSources: mergedAliases && Object.keys(mergedAliases).length > 0 ? mergedAliases : undefined,
-			storageNameNew: naming.storageName,
-			nameNew: naming.name,
-			parseNamesNew: naming.parseNames
-		});
+		}));
 	}
 	return Array.from(byName.values());
 }
@@ -1510,14 +1500,33 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
  * `AssembledField` and `AssembledChild` have been removed; all consumers
  * use `AssembledNonterminal` directly.
  */
-export interface AssembledNonterminal {
-	readonly name: string;
-	readonly propertyName: string;
-	/** Config key — matches ConfigOf projection (CamelCase of name). Always singular. */
-	readonly configKey: string;
-	readonly storageName: string;
+/** Stored (non-computed) constructor inputs for {@link AssembledNonterminal}. */
+export interface AssembledNonterminalInit {
 	readonly values: readonly NodeOrTerminal[];
-	readonly paramName: string;
+	readonly fieldName?: string;
+	readonly hasTrailing: boolean;
+	readonly hasLeading: boolean;
+	readonly aliasSources?: Readonly<Record<string, string>>;
+	readonly source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
+	readonly origin?: SlotOrigin;
+	/**
+	 * Rule-id of the rule that produced this slot — see `AssembledNonterminal.sourceRuleId`.
+	 */
+	readonly sourceRuleId?: RuleId;
+	storageInfo?: FieldStorageInfo;
+}
+
+/**
+ * A fully-resolved slot produced by the collect-slots / assemble pipeline.
+ *
+ * Naming properties (`storageName`, `name`, `configKey`, `propertyName`,
+ * `paramName`, `parseNames`) are computed getters derived from `values` +
+ * `fieldName` via {@link projectSlotNaming}. They are never stored or spread
+ * — use `.with(overrides)` to create a modified copy.
+ */
+export class AssembledNonterminal {
+	readonly values: readonly NodeOrTerminal[];
+	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
 	readonly aliasSources?: Readonly<Record<string, string>>;
@@ -1534,14 +1543,42 @@ export interface AssembledNonterminal {
 	 */
 	readonly sourceRuleId?: RuleId;
 	storageInfo?: FieldStorageInfo;
-	// --- _new centralized naming (DIAGNOSTIC, pre-switch-over) ---
-	// Single-source naming: `fieldName` wins; else the single referenced kind
-	// name; else a warn → 'content'. Compare against `name`/`storageName` to find
-	// where the legacy scattered derivation deviates before migrating.
-	readonly fieldName?: string;
-	readonly storageNameNew?: string;
-	readonly nameNew?: string;
-	readonly parseNamesNew?: readonly string[];
+
+	get storageName(): string { return projectSlotNaming(this).storageName; }
+	get name(): string { return projectSlotNaming(this).name; }
+	/** Config key — matches ConfigOf projection (camelCase of storageName). Always singular. */
+	get configKey(): string { return projectSlotNaming(this).configKey; }
+	get propertyName(): string { return projectSlotNaming(this).propertyName; }
+	get paramName(): string { return projectSlotNaming(this).paramName; }
+	get parseNames(): readonly string[] { return projectSlotNaming(this).parseNames; }
+
+	constructor(init: AssembledNonterminalInit) {
+		this.values = init.values;
+		this.fieldName = init.fieldName;
+		this.hasTrailing = init.hasTrailing;
+		this.hasLeading = init.hasLeading;
+		this.aliasSources = init.aliasSources;
+		this.source = init.source;
+		this.origin = init.origin;
+		this.sourceRuleId = init.sourceRuleId;
+		this.storageInfo = init.storageInfo;
+	}
+
+	/** Return a new instance with the given fields overridden; naming recomputed. */
+	with(overrides: Partial<AssembledNonterminalInit>): AssembledNonterminal {
+		return new AssembledNonterminal({
+			values: this.values,
+			fieldName: this.fieldName,
+			hasTrailing: this.hasTrailing,
+			hasLeading: this.hasLeading,
+			aliasSources: this.aliasSources,
+			source: this.source,
+			origin: this.origin,
+			sourceRuleId: this.sourceRuleId,
+			storageInfo: this.storageInfo,
+			...overrides,
+		});
+	}
 }
 
 /**
@@ -2222,15 +2259,14 @@ function relaxMultiplicityForCrossFormAbsence(multiplicity: Multiplicity): Multi
 }
 
 function relaxSlotForCrossFormAbsence(slot: AssembledNonterminal): AssembledNonterminal {
-	return {
-		...slot,
+	return slot.with({
 		values: dedupeValues(
 			slot.values.map((value) => ({
 				...value,
 				multiplicity: relaxMultiplicityForCrossFormAbsence(value.multiplicity)
 			}))
 		)
-	};
+	});
 }
 
 function structuralSlotRecordFromForms(
@@ -2246,8 +2282,7 @@ function structuralSlotRecordFromForms(
 				slots.set(slot.name, slot);
 				continue;
 			}
-			slots.set(slot.name, {
-				...existing,
+			slots.set(slot.name, existing.with({
 				values: dedupeValues([...existing.values, ...slot.values]),
 				hasTrailing: existing.hasTrailing || slot.hasTrailing,
 				hasLeading: existing.hasLeading || slot.hasLeading,
@@ -2258,7 +2293,7 @@ function structuralSlotRecordFromForms(
 								...slot.aliasSources
 							}
 						: undefined
-			});
+			}));
 		}
 	}
 	return freezeSlotRecord(

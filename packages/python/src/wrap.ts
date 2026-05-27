@@ -1138,13 +1138,19 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle) {
     ...data,
     $type: TSKindId.ExceptClause as const,
     _content: normalizeSingularWrapSlot((data._except_clause_as ?? data._except_clause_list ?? data._content), "content", false, data.$type),
-    _block: normalizeSingularWrapSlot(data._block, "block", true, data.$type),
+    _simple_statements: normalizeSingularWrapSlot((data._block ?? data._simple_statements), "simple_statements", false, data.$type),
+    _block: normalizeSingularWrapSlot(data._block, "block", false, data.$type),
+    _newline: normalizeSingularWrapSlot((data._block ?? data._newline), "newline", false, data.$type),
 
     content() { return drillAs<T.ExceptClauseAs | T.ExceptClauseList | undefined>(this._content, tree, "except_clause_as", "_except_clause_as"); },
-    block() { return drillAs<T.SimpleStatements | T.Newline>(this._block, tree, "block", "_newline"); },
+    simpleStatements() { return drillAs<T.SimpleStatements | undefined>(this._simple_statements, tree, "block", "_simple_statements"); },
+    block() { return drillIn<T.Block | undefined>(this._block, tree); },
+    newline() { return drillAs<T.Newline | undefined>(this._newline, tree, "block", "_newline"); },
     $with: {
       content: (v: NonNullable<T.ExceptClause['_content']>) => wrapExceptClause({ ...data, _content: v }, tree),
+      simpleStatements: (v: NonNullable<T.ExceptClause['_simple_statements']>) => wrapExceptClause({ ...data, _simple_statements: v }, tree),
       block: (v: NonNullable<T.ExceptClause['_block']>) => wrapExceptClause({ ...data, _block: v }, tree),
+      newline: (v: NonNullable<T.ExceptClause['_newline']>) => wrapExceptClause({ ...data, _newline: v }, tree),
     },
   }, methodsEngine);
   return _node;
@@ -1895,14 +1901,11 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SplatPattern as const,
-    _identifier: projectKindEnumStorage(normalizeSingularWrapSlot(data._identifier, "identifier", true, data.$type)),
-    _content: normalizeSingularWrapSlot((data._identifier ?? data["_"] ?? data._content), "content", true, data.$type),
+    _identifier: normalizeSingularWrapSlot(data._identifier, "identifier", true, data.$type),
 
-    identifier() { return this._identifier; },
-    content() { return drillIn<T.Identifier | "_">(this._content, tree); },
+    identifier() { return drillIn<T._Identifier | T.Identifier | "_">(this._identifier, tree); },
     $with: {
       identifier: (v: NonNullable<T.SplatPattern['_identifier']>) => wrapSplatPattern({ ...data, _identifier: v }, tree),
-      content: (v: NonNullable<T.SplatPattern['_content']>) => wrapSplatPattern({ ...data, _content: v }, tree),
     },
   }, methodsEngine);
   return _node;

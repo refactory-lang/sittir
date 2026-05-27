@@ -923,6 +923,7 @@ export const enum TSFieldId {
   FieldLeft = 32,
   FieldModuleName = 33,
   FieldName = 34,
+  FieldNewline = 35,
   FieldObject = 36,
   FieldOperator = 37,
   FieldOperators = 38,
@@ -982,6 +983,7 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
   "left": TSFieldId.FieldLeft,
   "module_name": TSFieldId.FieldModuleName,
   "name": TSFieldId.FieldName,
+  "newline": TSFieldId.FieldNewline,
   "object": TSFieldId.FieldObject,
   "operator": TSFieldId.FieldOperator,
   "operators": TSFieldId.FieldOperators,
@@ -1041,6 +1043,7 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
   [TSFieldId.FieldLeft]: "left",
   [TSFieldId.FieldModuleName]: "module_name",
   [TSFieldId.FieldName]: "name",
+  [TSFieldId.FieldNewline]: "newline",
   [TSFieldId.FieldObject]: "object",
   [TSFieldId.FieldOperator]: "operator",
   [TSFieldId.FieldOperators]: "operators",
@@ -1100,6 +1103,7 @@ export const TREE_SITTER_FIELD_ID_JSON = [
   { name: "left", id: 32, enumName: "FieldLeft", cName: "field_left" },
   { name: "module_name", id: 33, enumName: "FieldModuleName", cName: "field_module_name" },
   { name: "name", id: 34, enumName: "FieldName", cName: "field_name" },
+  { name: "newline", id: 35, enumName: "FieldNewline", cName: "field_newline" },
   { name: "object", id: 36, enumName: "FieldObject", cName: "field_object" },
   { name: "operator", id: 37, enumName: "FieldOperator", cName: "field_operator" },
   { name: "operators", id: 38, enumName: "FieldOperators", cName: "field_operators" },
@@ -1152,7 +1156,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'simpleStatements', required: true, multiple: true },
   ],
   '_suite': [
-    { name: 'block', required: true, multiple: false },
+    { name: 'simpleStatements', required: false, multiple: false },
+    { name: 'block', required: false, multiple: false },
+    { name: 'newline', required: false, multiple: false },
   ],
   '_tuple_pattern': [
     { name: 'casePatterns', required: false, multiple: true },
@@ -1293,7 +1299,9 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'except_clause': [
     { name: 'content', required: false, multiple: false },
-    { name: 'block', required: true, multiple: false },
+    { name: 'simpleStatements', required: false, multiple: false },
+    { name: 'block', required: false, multiple: false },
+    { name: 'newline', required: false, multiple: false },
   ],
   'exec_statement': [
     { name: 'code', required: true, multiple: false },
@@ -1476,7 +1484,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'splat_pattern': [
     { name: 'identifier', required: true, multiple: false },
-    { name: 'content', required: true, multiple: false },
   ],
   'splat_type': [
     { name: 'identifier', required: true, multiple: false },

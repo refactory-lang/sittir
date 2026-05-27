@@ -2876,15 +2876,21 @@ export function matchArmUFormBlockEnding(config: Omit<ConfigOf<T.MatchArmUFormBl
   }, methodsEngine);
 }
 
-export function matchBlock(...children: (T.MatchArm | T.LastMatchArm)[]) {
-  const _match_arm = children;
+export function matchBlock(config: Partial<T.MatchBlock.Config> = {}) {
+  const _match_arm = config.matchArm;
+  const _last_match_arm = config.lastMatchArm;
   return withMethods({
     $type: TSKindId.MatchBlock as const,
     $source: 2 as const,
     $named: true as const,
     _match_arm,
+    _last_match_arm,
     matchArms() { return _match_arm; },
-    $with: { $children: (...vs: (T.MatchArm | T.LastMatchArm)[]) => matchBlock(...vs) },
+    lastMatchArm() { return _last_match_arm; },
+    $with: {
+      matchArms: (...values: T.MatchArm[]) => matchBlock({ ...config, matchArm: values }),
+      lastMatchArm: (value?: T.LastMatchArm) => matchBlock({ ...config, lastMatchArm: value }),
+    },
   }, methodsEngine);
 }
 

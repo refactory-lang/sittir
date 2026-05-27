@@ -474,15 +474,15 @@ function collectConcreteStorageKeys(
 	if (slot.origin !== 'kind') return undefined;
 	// Route by the slot's parse-names — the kinds the parser can actually emit:
 	// ref-kinds PLUS alias targets (collect-slots now folds the targets into
-	// parseNamesNew). Expand supertypes. No base→variant rewrite: parseNames
+	// parseNames). Expand supertypes. No base→variant rewrite: parseNames
 	// already carries both the base kind (validation-only polymorph variants,
 	// which the parser emits as the base — e.g. type_query's
 	// instantiation_expression) AND the alias target (real tree-sitter aliases
 	// like decorator, which the parser emits as the target). The old rewrite
 	// REPLACED base with target, mis-routing the validation-only case.
 	let refKinds: string[];
-	if (slot.parseNamesNew && slot.parseNamesNew.length > 0) {
-		refKinds = [...slot.parseNamesNew];
+	if (slot.parseNames && slot.parseNames.length > 0) {
+		refKinds = [...slot.parseNames];
 	} else {
 		refKinds = [];
 		for (const v of slot.values) {

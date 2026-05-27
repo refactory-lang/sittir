@@ -12335,7 +12335,24 @@
               "multiplicity": "array",
               "name": "match_arm",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "inferred",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "match_arm"
+            ]
+          }
+        },
+        {
+          "name": "last_match_arm",
+          "propertyName": "lastMatchArm",
+          "paramName": "lastMatchArm",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -12347,7 +12364,6 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "match_arm",
               "last_match_arm"
             ]
           },

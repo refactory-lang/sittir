@@ -3586,8 +3586,10 @@ export interface MatchArmUFormBlockEnding {
 export type MatchArm = MatchArmUFormWithComma | MatchArmUFormBlockEnding;
 export interface MatchBlock {
   readonly $type: TSKindId.MatchBlock;
-  readonly _match_arm?: readonly (LastMatchArm)[];
-  matchArms(): readonly (LastMatchArm)[];
+  readonly _match_arm?: readonly (MatchArm)[];
+  readonly _last_match_arm?: LastMatchArm;
+  matchArms(): readonly (MatchArm)[];
+  lastMatchArm(): LastMatchArm | undefined;
 }
 
 export interface MatchExpression {
