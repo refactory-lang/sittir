@@ -103,14 +103,14 @@ describe('probe-kind native trace helpers', () => {
 	});
 
 	it('limits trace output to the requested engine and reproduces native wrap errors for validator-like probes', async () => {
-		const trace = await probeTrace('python', 'print(d, *e)', {
-			kind: 'list_splat',
+		const trace = await probeTrace('python', '(x for x in y)', {
+			kind: 'generator_expression',
 			engine: 'native'
 		});
 
 		expect(trace.trace.js).toBeUndefined();
 		expect(trace.trace.native).toMatchObject({
-			wrapError: expect.stringContaining('singular slot "expression" on "list_splat" requires one value')
+			wrapError: expect.stringContaining('singular slot "comprehension_clauses" on "generator_expression" requires one value')
 		});
 	});
 });

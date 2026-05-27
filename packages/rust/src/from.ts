@@ -1672,7 +1672,7 @@ export function referenceExpressionFrom(input?: T.ReferenceExpression.Loose): Re
 
 export function referenceExpressionUFormRawConstFrom(input: Omit<ConfigOf<T.ReferenceExpressionUFormRawConst>, '$variant'>): ReturnType<typeof F.referenceExpressionUFormRawConst> {
   return F.referenceExpressionUFormRawConst({
-    mutableSpecifier: coerceKindEnumStorage(_resolveOne<"&">("&", _K8, _K8), []),
+    reference: coerceKindEnumStorage(_resolveOne<"&">("&", _K8, _K8), []),
     referenceExpressionRawConst: coerceKindEnumStorage(_resolveOneLeaf<"const">("const", "_reference_expression_raw_const"), []),
     value: _resolveOne<T.Expression>(input.value, _K4, _K5),
   });
@@ -1680,7 +1680,7 @@ export function referenceExpressionUFormRawConstFrom(input: Omit<ConfigOf<T.Refe
 
 export function referenceExpressionUFormRawMutFrom(input: Omit<ConfigOf<T.ReferenceExpressionUFormRawMut>, '$variant'>): ReturnType<typeof F.referenceExpressionUFormRawMut> {
   return F.referenceExpressionUFormRawMut({
-    mutableSpecifier: coerceKindEnumStorage(_resolveOne<"&">("&", _K8, _K8), []),
+    reference: coerceKindEnumStorage(_resolveOne<"&">("&", _K8, _K8), []),
     referenceExpressionRawMut: _resolveOneBranch<T._ReferenceExpressionRawMut>(input.referenceExpressionRawMut, "_reference_expression_raw_mut"),
     value: _resolveOne<T.Expression>(input.value, _K4, _K5),
   });

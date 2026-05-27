@@ -2673,7 +2673,7 @@ var config = {
     },
     // reference_expression: 1 field(s)
     reference_expression: {
-      0: field("mutable_specifier"),
+      0: field("reference"),
       "1/0/1/0": variant("raw_const"),
       "1/0/1/1": variant("raw_mut")
       // mutable_specifier [struct=0]

@@ -1259,7 +1259,7 @@ pub struct ReferenceExpressionRawMutTemplate<'a> {
 #[template(path = "reference_expression.jinja", escape = "none")]
 pub struct ReferenceExpressionTemplate<'a> {
     pub variant: &'a str,
-    pub mutable_specifier: SingleNonterminalView<'a>,
+    pub reference: SingleNonterminalView<'a>,
     pub reference_expression_raw_const: SingleNonterminalView<'a>,
     pub reference_expression_raw_mut: SingleNonterminalView<'a>,
     pub value: SingleNonterminalView<'a>,

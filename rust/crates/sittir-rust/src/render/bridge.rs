@@ -2366,7 +2366,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         249 => { // "reference_expression"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
-            let field_0 = resolve_slot(node, SlotAccessor::Field("mutable_specifier"), true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("reference"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("value"), true)?;
             let variant = resolve_variant(node);
             let template = ReferenceExpressionTemplate {
@@ -2379,7 +2379,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
             },
                 variant,
-                mutable_specifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                reference: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
                 value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
             };
             template.render_into(dest)

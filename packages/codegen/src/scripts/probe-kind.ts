@@ -300,22 +300,21 @@ export interface ProbeTraceLane {
 	renderError?: string;
 }
 
+export interface ProbeTraceEngineReport {
+	shallow?: ProbeTraceLane;
+	deep?: ProbeTraceLane;
+	wrapError?: string;
+}
+
 export interface ProbeTraceReport {
 	grammar: string;
 	source: string;
 	probeRange?: { start: number; end: number; kind?: string; text: string };
 	cst: CstNode;
+	sexp: string;
 	trace: {
-		js?: {
-			shallow: ProbeTraceLane;
-			deep: ProbeTraceLane;
-			wrapError?: string;
-		};
-		native?: {
-			shallow: ProbeTraceLane;
-			deep: ProbeTraceLane;
-			wrapError?: string;
-		};
+		js?: ProbeTraceEngineReport;
+		native?: ProbeTraceEngineReport;
 	};
 }
 
@@ -517,6 +516,7 @@ export async function probeTrace(
 		baselineDir?: string;
 		useBaselineParser?: boolean;
 		engine?: 'js' | 'native' | 'both';
+		logParse?: boolean;
 	} = {}
 ): Promise<ProbeTraceReport> {
 	const { Parser, lang } =
@@ -524,9 +524,11 @@ export async function probeTrace(
 			? await loadLanguageFromPath(resolveBaselinePath(opts.baselineDir, '.sittir/parser.wasm'))
 			: await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
+	if (opts.logParse) {
 		parser.setLogger((message, isLex) => {
-		process.stderr.write(`tree-sitter: ${isLex ? 'lex' : 'parse'} ${message}\n`);
-	});
+			process.stderr.write(`tree-sitter: ${isLex ? 'lex' : 'parse'} ${message}\n`);
+		});
+	}
 	parser.setLanguage(lang);
 	const tree = parser.parse(source);
 
@@ -562,7 +564,7 @@ export async function probeTrace(
 	// slot the parser didn't route into it, like `function_definition.block`.
 	// Catch per-engine so the CST (parser output) and the other engine still
 	// report instead of the whole probe aborting.
-	const buildEngineTrace = async (engine: 'js' | 'native') => {
+	const buildEngineTrace = async (engine: 'js' | 'native'): Promise<ProbeTraceEngineReport> => {
 		let read: Awaited<ReturnType<typeof readProbeNodeData>>;
 		try {
 			read = await readProbeNodeData(grammar, source, tree, targetNode, isRoot, engine, opts.kind);
@@ -593,7 +595,7 @@ export async function probeTrace(
 		cst,
 		sexp,
 		trace
-	} as unknown as ProbeTraceReport;
+	};
 }
 
 // ---------------------------------------------------------------------------

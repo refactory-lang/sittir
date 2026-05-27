@@ -372,7 +372,7 @@ function shortSha(): string {
 
 function resolveBackend(input: string | undefined): Backend {
 	if (input === 'native') return 'native';
-	return 'typescript';
+	return 'js';
 }
 
 function computeTotals(grammars: BackendBaseline['grammars']): BackendBaseline['totals'] {

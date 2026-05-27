@@ -3824,14 +3824,14 @@ export interface ReferenceExpressionRawMut {
 export interface ReferenceExpressionUFormRawConst {
   readonly $type: TSKindId.ReferenceExpression;
   readonly $variant: 'raw_const';
-  readonly _mutable_specifier: number;
+  readonly _reference: number;
   readonly _reference_expression_raw_const: number;
   readonly _value: Expression;
   readonly __inputHints__?: {
-    readonly mutable_specifier: KindEnum<"&", TSKindId.Amp2>;
+    readonly reference: KindEnum<"&", TSKindId.Amp2>;
     readonly reference_expression_raw_const: KindEnum<"const", TSKindId.Const>;
   };
-  mutableSpecifier(): number;
+  reference(): number;
   referenceExpressionRawConst(): number;
   value(): Expression;
 }
@@ -3839,13 +3839,13 @@ export interface ReferenceExpressionUFormRawConst {
 export interface ReferenceExpressionUFormRawMut {
   readonly $type: TSKindId.ReferenceExpression;
   readonly $variant: 'raw_mut';
-  readonly _mutable_specifier: number;
+  readonly _reference: number;
   readonly _reference_expression_raw_mut: _ReferenceExpressionRawMut;
   readonly _value: Expression;
   readonly __inputHints__?: {
-    readonly mutable_specifier: KindEnum<"&", TSKindId.Amp2>;
+    readonly reference: KindEnum<"&", TSKindId.Amp2>;
   };
-  mutableSpecifier(): number;
+  reference(): number;
   referenceExpressionRawMut(): _ReferenceExpressionRawMut;
   value(): Expression;
 }

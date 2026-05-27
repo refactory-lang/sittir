@@ -69,7 +69,6 @@ pub enum AnyTransport {
     KwAsyncMarker(KwAsyncMarkerTransport),
     KwIn(KwInTransport),
     KwMoveMarker(KwMoveMarkerTransport),
-    KwMutableSpecifier(KwMutableSpecifierTransport),
     KwNegative(KwNegativeTransport),
     KwOperator(KwOperatorTransport),
     KwPub(KwPubTransport),
@@ -19369,108 +19368,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<KwMoveMarkerTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct KwMutableSpecifierTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for KwMutableSpecifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for KwMutableSpecifierTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
-            text
-        } else if u16::from_napi_value(env, napi_val).is_ok() {
-            "&".to_string()
-        } else {
-            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_else(|| "&".to_string())
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(false),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for KwMutableSpecifierTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "&".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for KwMutableSpecifierTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<KwMutableSpecifierTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        KwMutableSpecifierTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<KwMutableSpecifierTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        KwMutableSpecifierTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct KwNegativeTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -31881,8 +31778,8 @@ pub struct ReferenceExpressionTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
-    pub mutable_specifier: BinaryExpressionOperatorUX26Transport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_reference"))]
+    pub reference: BinaryExpressionOperatorUX26Transport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Box<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_reference_expression_raw_const"))]
@@ -44474,10 +44371,6 @@ fn render_kw_move_marker(t: &KwMoveMarkerTransport, dest: &mut dyn ::std::fmt::W
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_kw_mutable_specifier(t: &KwMutableSpecifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
 fn render_kw_negative(t: &KwNegativeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -46504,7 +46397,7 @@ fn render_reference_expression_raw_mut(node: &ReferenceExpressionRawMutTransport
 fn render_reference_expression(node: &ReferenceExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ReferenceExpressionTemplate {
         variant: "",
-        mutable_specifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.mutable_specifier)),
+        reference: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.reference)),
         reference_expression_raw_const: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.reference_expression_raw_const)),
         reference_expression_raw_mut: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.reference_expression_raw_mut)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
@@ -48245,7 +48138,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::KwAsyncMarker(t) => t.render_into(dest),
             AnyTransport::KwIn(t) => t.render_into(dest),
             AnyTransport::KwMoveMarker(t) => t.render_into(dest),
-            AnyTransport::KwMutableSpecifier(t) => t.render_into(dest),
             AnyTransport::KwNegative(t) => t.render_into(dest),
             AnyTransport::KwOperator(t) => t.render_into(dest),
             AnyTransport::KwPub(t) => t.render_into(dest),
@@ -48656,7 +48548,6 @@ impl AnyTransport {
             Self::KwAsyncMarker(t) => t.transport_named,
             Self::KwIn(t) => t.transport_named,
             Self::KwMoveMarker(t) => t.transport_named,
-            Self::KwMutableSpecifier(t) => t.transport_named,
             Self::KwNegative(t) => t.transport_named,
             Self::KwOperator(t) => t.transport_named,
             Self::KwPub(t) => t.transport_named,
@@ -49073,7 +48964,6 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::KwAsyncMarker(data) => transport_to_node_kw_async_marker(data),
         AnyTransport::KwIn(data) => transport_to_node_kw_in(data),
         AnyTransport::KwMoveMarker(data) => transport_to_node_kw_move_marker(data),
-        AnyTransport::KwMutableSpecifier(data) => transport_to_node_kw_mutable_specifier(data),
         AnyTransport::KwNegative(data) => transport_to_node_kw_negative(data),
         AnyTransport::KwOperator(data) => transport_to_node_kw_operator(data),
         AnyTransport::KwPub(data) => transport_to_node_kw_pub(data),
@@ -50412,23 +50302,6 @@ fn transport_to_node_kw_move_marker(transport: KwMoveMarkerTransport) -> Result<
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(0) /* "_kw_move_marker" — no parser symbol */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_handle.map(|v| v as u32),
-        transport.transport_child_index.map(|v| v as u16),
-        None,
-        None,
-        trivia_data,
-    ))
-}
-
-fn transport_to_node_kw_mutable_specifier(transport: KwMutableSpecifierTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_kw_mutable_specifier" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -54941,7 +54814,7 @@ fn transport_to_node_reference_expression_raw_mut(transport: ReferenceExpression
 
 fn transport_to_node_reference_expression(transport: ReferenceExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("mutable_specifier".to_string(), transport_field_value(AnyTransport::BinaryExpressionOperatorUX26(transport.mutable_specifier))?);
+    fields.insert("reference".to_string(), transport_field_value(AnyTransport::BinaryExpressionOperatorUX26(transport.reference))?);
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(*transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();

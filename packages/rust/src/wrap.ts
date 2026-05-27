@@ -3108,17 +3108,17 @@ export function wrapReferenceExpression(data: T.ReferenceExpression, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.ReferenceExpression as const,
-    _mutable_specifier: projectKindEnumStorage(normalizeSingularWrapSlot((data as any)._mutable_specifier, "mutable_specifier", true, (data as any).$type, { tree, nodeType: (data as any).$type, slotName: "mutable_specifier", span: (data as any).$span })),
+    _reference: projectKindEnumStorage(normalizeSingularWrapSlot((data as any)._reference, "reference", true, (data as any).$type, { tree, nodeType: (data as any).$type, slotName: "reference", span: (data as any).$span })),
     _reference_expression_raw_const: coerceBooleanKeywordStorage(normalizeSingularWrapSlot((data as any)._reference_expression_raw_const, "reference_expression_raw_const", false, (data as any).$type, { tree, nodeType: (data as any).$type, slotName: "reference_expression_raw_const", span: (data as any).$span })),
     _value: normalizeSingularWrapSlot((data as any)._value, "value", true, (data as any).$type, { tree, nodeType: (data as any).$type, slotName: "value", span: (data as any).$span }),
     _reference_expression_raw_mut: normalizeSingularWrapSlot((data as any)._reference_expression_raw_mut, "reference_expression_raw_mut", false, (data as any).$type, { tree, nodeType: (data as any).$type, slotName: "reference_expression_raw_mut", span: (data as any).$span }),
 
-    mutableSpecifier() { return this._mutable_specifier; },
+    reference() { return this._reference; },
     referenceExpressionRawConst() { return this._reference_expression_raw_const; },
     value() { return drillIn<T.Expression>(this._value, tree); },
     referenceExpressionRawMut() { return drillAs<T._ReferenceExpressionRawMut | undefined>(this._reference_expression_raw_mut, tree, "reference_expression_raw_mut", "_reference_expression_raw_mut"); },
     $with: {
-      mutableSpecifier: (v: number) => wrapReferenceExpression({ ...(data as any), _mutable_specifier: v }, tree),
+      reference: (v: number) => wrapReferenceExpression({ ...(data as any), _reference: v }, tree),
       referenceExpressionRawConst: (v: boolean) => wrapReferenceExpression({ ...(data as any), _reference_expression_raw_const: v }, tree),
       value: (v: T.Expression) => wrapReferenceExpression({ ...(data as any), _value: v }, tree),
       referenceExpressionRawMut: (v: T._ReferenceExpressionRawMut) => wrapReferenceExpression({ ...(data as any), _reference_expression_raw_mut: v }, tree),

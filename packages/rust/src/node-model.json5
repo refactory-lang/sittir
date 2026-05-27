@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 399,
+  "nodeCount": 398,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -2201,16 +2201,6 @@
       "isParameterless": true,
       "stampExpression": "\"move\" as const",
       "text": "move"
-    },
-    {
-      "kind": "_kw_mutable_specifier",
-      "modelType": "token",
-      "typeName": "KwMutableSpecifier",
-      "irKey": "kwMutableSpecifier",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"&\" as const",
-      "text": "&"
     },
     {
       "kind": "_kw_negative",
@@ -13938,9 +13928,9 @@
           "parentKind": "reference_expression",
           "fields": [
             {
-              "name": "mutable_specifier",
-              "propertyName": "mutableSpecifier",
-              "paramName": "mutableSpecifier",
+              "name": "reference",
+              "propertyName": "reference",
+              "paramName": "reference",
               "required": true,
               "multiple": false,
               "nonEmpty": false,
@@ -14021,9 +14011,9 @@
           "parentKind": "reference_expression",
           "fields": [
             {
-              "name": "mutable_specifier",
-              "propertyName": "mutableSpecifier",
-              "paramName": "mutableSpecifier",
+              "name": "reference",
+              "propertyName": "reference",
+              "paramName": "reference",
               "required": true,
               "multiple": false,
               "nonEmpty": false,

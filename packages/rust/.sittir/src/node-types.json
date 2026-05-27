@@ -4563,12 +4563,12 @@
     "type": "reference_expression",
     "named": true,
     "fields": {
-      "mutable_specifier": {
+      "reference": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "ref",
+            "type": "&",
             "named": false
           }
         ]
