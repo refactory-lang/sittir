@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 396,
+  "nodeCount": 397,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -3379,9 +3379,22 @@
     },
     {
       "kind": "_operator",
-      "modelType": "token",
+      "modelType": "enum",
       "typeName": "Operator",
+      "factoryName": "operator",
       "irKey": "operator",
+      "hidden": false,
+      "values": [
+        "+",
+        "*",
+        "?"
+      ]
+    },
+    {
+      "kind": "_operator__x2ex2e",
+      "modelType": "token",
+      "typeName": "OperatorUX2ex2e",
+      "irKey": "operatorUX2ex2e",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"..\" as const",
@@ -3646,7 +3659,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_operator",
+              "name": "_operator__x2ex2e",
               "unresolved": true
             }
           ],
@@ -3654,7 +3667,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_operator"
+              "_operator__x2ex2e"
             ]
           }
         }
@@ -3785,7 +3798,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_operator",
+              "name": "_operator__x2ex2e",
               "unresolved": true
             }
           ],
@@ -3793,7 +3806,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_operator"
+              "_operator__x2ex2e"
             ]
           }
         }
@@ -3820,7 +3833,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_operator",
+              "name": "_operator__x2ex2e",
               "unresolved": true
             }
           ],
@@ -3828,7 +3841,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_operator"
+              "_operator__x2ex2e"
             ]
           }
         },
@@ -3878,6 +3891,36 @@
       "name": "_range_pattern_left_with_right",
       "fields": [
         {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "..."
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "..="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ".."
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
           "name": "right",
           "propertyName": "right",
           "paramName": "right",
@@ -3919,6 +3962,31 @@
       "hidden": false,
       "name": "_range_pattern_prefix",
       "fields": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "..="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ".."
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
         {
           "name": "right",
           "propertyName": "right",
@@ -13519,7 +13587,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_operator",
+              "name": "_operator__x2ex2e",
               "unresolved": true
             }
           ],
@@ -13527,7 +13595,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_operator"
+              "_operator__x2ex2e"
             ]
           }
         }
@@ -15529,6 +15597,49 @@
               "_tokens"
             ]
           }
+        },
+        {
+          "name": "separator",
+          "propertyName": "separator",
+          "paramName": "separator",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "[^+*?]+"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "operator",
+          "propertyName": "operator",
+          "paramName": "operator",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_operator",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_operator"
+            ]
+          }
         }
       ],
       "children": []
@@ -15561,6 +15672,49 @@
             "typeName": "",
             "kinds": [
               "_token_pattern"
+            ]
+          }
+        },
+        {
+          "name": "separator",
+          "propertyName": "separator",
+          "paramName": "separator",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "[^+*?]+"
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "operator",
+          "propertyName": "operator",
+          "paramName": "operator",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_operator",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_operator"
             ]
           }
         }

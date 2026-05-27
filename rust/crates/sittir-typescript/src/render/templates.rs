@@ -151,7 +151,8 @@ pub struct CallExpressionTemplateCallTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_class_body_member.jinja", escape = "none")]
 pub struct ClassBodyMemberTemplate<'a> {
-    pub content: OptionalNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
+    pub terminator: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -412,6 +413,7 @@ pub struct TypeQueryMemberExpressionInTypeAnnotationTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_type_query_member_expression.jinja", escape = "none")]
 pub struct TypeQueryMemberExpressionTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
     pub object: SingleNonterminalView<'a>,
     pub property: SingleNonterminalView<'a>,
 }
@@ -689,6 +691,7 @@ pub struct ConditionalTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "constraint.jinja", escape = "none")]
 pub struct ConstraintTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
     pub type_: SingleNonterminalView<'a>,
 }
 
@@ -780,7 +783,7 @@ pub struct EnumAssignmentTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "enum_body.jinja", escape = "none")]
 pub struct EnumBodyTemplate<'a> {
-    pub opening: ListNonterminalView<'a>,
+    pub name: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1332,10 +1335,28 @@ pub struct ObjectPatternTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "object_type_content_comma.jinja", escape = "none")]
+pub struct ObjectTypeContentCommaTemplate<'a> {
+    pub content: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "object_type_content_semi.jinja", escape = "none")]
+pub struct ObjectTypeContentSemiTemplate<'a> {
+    pub content: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "object_type_content.jinja", escape = "none")]
+pub struct ObjectTypeContentTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "object_type.jinja", escape = "none")]
 pub struct ObjectTypeTemplate<'a> {
     pub closing: SingleNonterminalView<'a>,
-    pub content: ListNonterminalView<'a>,
+    pub members: OptionalNonterminalView<'a>,
     pub opening: SingleNonterminalView<'a>,
 }
 

@@ -47,6 +47,7 @@
     "_mod_item_inline": "config",
     "_move_marker": "text",
     "_mutable_specifier": "text",
+    "_operator": "text",
     "_or_pattern_binary": "config",
     "_or_pattern_prefix": "config",
     "_pointer_type_const": "text",
@@ -216,8 +217,8 @@
     "struct_pattern": "config",
     "super": "text",
     "token_binding_pattern": "config",
-    "token_repetition": "spread",
-    "token_repetition_pattern": "spread",
+    "token_repetition": "config",
+    "token_repetition_pattern": "config",
     "token_tree_paren": "spread",
     "token_tree_bracket": "spread",
     "token_tree_brace": "spread",
@@ -749,9 +750,11 @@
       "end"
     ],
     "_range_pattern_left_with_right": [
+      "content",
       "right"
     ],
     "_range_pattern_prefix": [
+      "content",
       "right"
     ],
     "_struct_item_brace": [
@@ -1291,10 +1294,12 @@
       "type"
     ],
     "token_repetition": [
-      "tokens"
+      "tokens",
+      "operator"
     ],
     "token_repetition_pattern": [
-      "token_pattern"
+      "token_pattern",
+      "operator"
     ],
     "token_tree_paren": [
       "tokens"
@@ -1959,6 +1964,13 @@
       }
     },
     "_range_pattern_left_with_right": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "right": {
         "unnamed": false,
         "slotCount": 1,
@@ -1968,6 +1980,13 @@
       }
     },
     "_range_pattern_prefix": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "right": {
         "unnamed": false,
         "slotCount": 1,
@@ -4356,6 +4375,20 @@
         "required": false,
         "multiple": true,
         "nonEmpty": false
+      },
+      "separator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "operator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "token_repetition_pattern": {
@@ -4364,6 +4397,20 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
+        "nonEmpty": false
+      },
+      "separator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "operator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -5663,10 +5710,10 @@
           "for_expression",
           "const_block",
           "range_expression",
-          "operator"
+          "operator__x2ex2e"
         ],
         "prefix": [
-          "operator",
+          "operator__x2ex2e",
           "unary_expression",
           "reference_expression",
           "try_expression",
@@ -5715,7 +5762,7 @@
           "range_expression"
         ],
         "bare": [
-          "operator"
+          "operator__x2ex2e"
         ]
       }
     },

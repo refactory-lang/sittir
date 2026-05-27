@@ -98,7 +98,7 @@
         "$named": false
       },
       "_subscript": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -173,7 +173,7 @@
       },
       "_subscript": [
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "2",
           "$span": {
@@ -185,7 +185,7 @@
           "$named": true
         },
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "3",
           "$span": {
@@ -287,7 +287,7 @@
       },
       "_subscript": [
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "4",
           "$span": {
@@ -299,7 +299,7 @@
           "$named": true
         },
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "5",
           "$span": {
@@ -493,7 +493,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "b[5:]",
-    "expectedReparseTree": "(subscript value: (identifier) subscript: (slice expression1: (integer)))",
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (slice start: (integer)))",
     "wrappedText": "[b[5:]]",
     "wrappedOffset": 1
   },
@@ -547,7 +547,7 @@
           "$named": true
         },
         {
-          "$type": 87,
+          "$type": 80,
           "$source": 0,
           "$text": "...",
           "$span": {
@@ -593,7 +593,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "b[5:6,...]",
-    "expectedReparseTree": "(subscript value: (identifier) subscript: (slice expression1: (integer) expression2: (integer)) subscript: (ellipsis))",
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (slice start: (integer) stop: (integer)) subscript: (ellipsis))",
     "wrappedText": "[b[5:6,...]]",
     "wrappedOffset": 1
   },
@@ -1245,7 +1245,7 @@
           "$named": false
         },
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "5",
           "$span": {
@@ -1333,7 +1333,7 @@
           "$named": false
         },
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "5",
           "$span": {
@@ -1482,6 +1482,106 @@
     "expectedReparseTree": "(argument_list)",
     "wrappedText": "_f()",
     "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 130,
+        "end": 145
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 237,
+        "$source": 0,
+        "$text": "await a(b)",
+        "$span": {
+          "start": 130,
+          "end": 140
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_comparators": {
+        "$type": 251,
+        "$source": 0,
+        "$text": "== c",
+        "$span": {
+          "start": 141,
+          "end": 145
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      }
+    },
+    "expectedOutput": "await a(b) == c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "await a(b) == c",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "await a(b) == c",
+    "expectedReparseTree": "(comparison_operator left: (await primary_expression: (call function: (identifier) arguments: (argument_list arguments: (identifier)))) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "_ = await a(b) == c",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 92,
+        "end": 121
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "region",
+        "$span": {
+          "start": 92,
+          "end": 98
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_comparators": {
+        "$type": 251,
+        "$source": 0,
+        "$text": "in await all_regions()",
+        "$span": {
+          "start": 99,
+          "end": 121
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": true
+      }
+    },
+    "expectedOutput": "region in await all_regions()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "region in await all_regions()",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "region in await all_regions()",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (await primary_expression: (call function: (identifier) arguments: (argument_list)))))",
+    "wrappedText": "_ = region in await all_regions()",
+    "wrappedOffset": 4
   },
   {
     "kind": "render",
@@ -1758,7 +1858,7 @@
         "$named": false
       },
       "_arguments": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -4570,7 +4670,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -4694,7 +4794,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "5",
         "$span": {
@@ -4868,7 +4968,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "5",
         "$span": {
@@ -5006,7 +5106,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_left": {
-        "$type": 94,
+        "$type": 87,
         "$source": 0,
         "$text": ".1",
         "$span": {
@@ -5030,7 +5130,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 94,
+        "$type": 87,
         "$source": 0,
         "$text": ".0",
         "$span": {
@@ -5068,7 +5168,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_left": {
-        "$type": 94,
+        "$type": 87,
         "$source": 0,
         "$text": ".1",
         "$span": {
@@ -5092,7 +5192,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 94,
+        "$type": 87,
         "$source": 0,
         "$text": ".0",
         "$span": {
@@ -5130,7 +5230,7 @@
       "$nodeHandle": 2,
       "$named": true,
       "_left": {
-        "$type": 94,
+        "$type": 87,
         "$source": 0,
         "$text": ".1",
         "$span": {
@@ -5154,7 +5254,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -5192,7 +5292,7 @@
       "$nodeHandle": 3,
       "$named": true,
       "_left": {
-        "$type": 94,
+        "$type": 87,
         "$source": 0,
         "$text": ".1",
         "$span": {
@@ -5216,7 +5316,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -5254,7 +5354,7 @@
       "$nodeHandle": 4,
       "$named": true,
       "_left": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -5278,7 +5378,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 94,
+        "$type": 87,
         "$source": 0,
         "$text": ".0",
         "$span": {
@@ -5316,7 +5416,7 @@
       "$nodeHandle": 5,
       "$named": true,
       "_left": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -5340,7 +5440,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 94,
+        "$type": 87,
         "$source": 0,
         "$text": ".0",
         "$span": {
@@ -5378,7 +5478,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_left": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -5440,7 +5540,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_left": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -5464,7 +5564,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "3",
         "$span": {
@@ -5502,7 +5602,7 @@
       "$nodeHandle": 2,
       "$named": true,
       "_left": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -5526,7 +5626,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -6859,6 +6959,456 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 0,
+        "end": 24
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "a",
+        "$span": {
+          "start": 0,
+          "end": 1
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_comparators": [
+        {
+          "$type": 251,
+          "$source": 0,
+          "$text": "< b",
+          "$span": {
+            "start": 2,
+            "end": 5
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 251,
+          "$source": 0,
+          "$text": "<= c",
+          "$span": {
+            "start": 6,
+            "end": 10
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        },
+        {
+          "$type": 251,
+          "$source": 0,
+          "$text": "== d",
+          "$span": {
+            "start": 11,
+            "end": 15
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        },
+        {
+          "$type": 251,
+          "$source": 0,
+          "$text": ">= e",
+          "$span": {
+            "start": 16,
+            "end": 20
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 4,
+          "$named": true
+        },
+        {
+          "$type": 251,
+          "$source": 0,
+          "$text": "> f",
+          "$span": {
+            "start": 21,
+            "end": 24
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 5,
+          "$named": true
+        }
+      ]
+    },
+    "expectedOutput": "a < b <= c == d >= e > f"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a < b <= c == d >= e > f",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a < b <= c == d >= e > f",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "a < b <= c == d >= e > f",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 46,
+        "end": 56
+      },
+      "$nodeHandle": 1,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "a",
+        "$span": {
+          "start": 46,
+          "end": 47
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_comparators": {
+        "$type": 251,
+        "$source": 0,
+        "$text": "not in b",
+        "$span": {
+          "start": 48,
+          "end": 56
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 1,
+        "$named": true
+      }
+    },
+    "expectedOutput": "a not in b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a not in b",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a not in b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "a not in b",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 57,
+        "end": 67
+      },
+      "$nodeHandle": 2,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "a",
+        "$span": {
+          "start": 57,
+          "end": 58
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_comparators": {
+        "$type": 251,
+        "$source": 0,
+        "$text": "is not b",
+        "$span": {
+          "start": 59,
+          "end": 67
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 1,
+        "$named": true
+      }
+    },
+    "expectedOutput": "a is not b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a is not b",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a is not b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "a is not b",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 86,
+        "end": 92
+      },
+      "$nodeHandle": 3,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "a",
+        "$span": {
+          "start": 86,
+          "end": 87
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_comparators": {
+        "$type": 251,
+        "$source": 0,
+        "$text": "<> b",
+        "$span": {
+          "start": 88,
+          "end": 92
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 1,
+        "$named": true
+      }
+    },
+    "expectedOutput": "a <> b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a <> b",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a <> b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "a <> b",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 39,
+        "end": 45
+      },
+      "$nodeHandle": 4,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "c",
+        "$span": {
+          "start": 39,
+          "end": 40
+        },
+        "$nodeHandle": 4,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_comparators": {
+        "$type": 251,
+        "$source": 0,
+        "$text": "== d",
+        "$span": {
+          "start": 41,
+          "end": 45
+        },
+        "$nodeHandle": 4,
+        "$childIndex": 1,
+        "$named": true
+      }
+    },
+    "expectedOutput": "c == d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "c == d",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "c == d",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "_ = c == d",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 68,
+        "end": 74
+      },
+      "$nodeHandle": 5,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "a",
+        "$span": {
+          "start": 68,
+          "end": 69
+        },
+        "$nodeHandle": 5,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_comparators": {
+        "$type": 251,
+        "$source": 0,
+        "$text": "is b",
+        "$span": {
+          "start": 70,
+          "end": 74
+        },
+        "$nodeHandle": 5,
+        "$childIndex": 1,
+        "$named": true
+      }
+    },
+    "expectedOutput": "a is b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a is b",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "a is b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "_ = a is b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 79,
+        "end": 85
+      },
+      "$nodeHandle": 6,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "c",
+        "$span": {
+          "start": 79,
+          "end": 80
+        },
+        "$nodeHandle": 6,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_comparators": {
+        "$type": 251,
+        "$source": 0,
+        "$text": "!= d",
+        "$span": {
+          "start": 81,
+          "end": 85
+        },
+        "$nodeHandle": 6,
+        "$childIndex": 1,
+        "$named": true
+      }
+    },
+    "expectedOutput": "c != d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "c != d",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "c != d",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "_ = c != d",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 29,
+        "end": 35
+      },
+      "$nodeHandle": 7,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "a",
+        "$span": {
+          "start": 29,
+          "end": 30
+        },
+        "$nodeHandle": 7,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_comparators": {
+        "$type": 251,
+        "$source": 0,
+        "$text": "== b",
+        "$span": {
+          "start": 31,
+          "end": 35
+        },
+        "$nodeHandle": 7,
+        "$childIndex": 1,
+        "$named": true
+      }
+    },
+    "expectedOutput": "a == b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a == b",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "a == b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "_ = a == b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 190,
       "$source": 0,
       "$span": {
@@ -6913,7 +7463,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "not a == b or c == d",
-    "expectedReparseTree": "(boolean_operator left: (not_operator argument: (comparison_operator left: (identifier) comparators: (identifier))) right: (comparison_operator left: (identifier) comparators: (identifier)))",
+    "expectedReparseTree": "(boolean_operator left: (not_operator argument: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))) right: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))))",
     "wrappedText": "not a == b or c == d",
     "wrappedOffset": 0
   },
@@ -6975,7 +7525,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "a is b and c != d",
-    "expectedReparseTree": "(boolean_operator left: (comparison_operator left: (identifier) comparators: (identifier)) right: (comparison_operator left: (identifier) comparators: (identifier)))",
+    "expectedReparseTree": "(boolean_operator left: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))) right: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))))",
     "wrappedText": "a is b and c != d",
     "wrappedOffset": 0
   },
@@ -7025,7 +7575,7 @@
     "pattern": "not_operator",
     "edits": [],
     "expectedSourceOut": "not a == b",
-    "expectedReparseTree": "(not_operator argument: (comparison_operator left: (identifier) comparators: (identifier)))",
+    "expectedReparseTree": "(not_operator argument: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))))",
     "wrappedText": "_ = not a == b",
     "wrappedOffset": 4
   },
@@ -7240,7 +7790,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 73,
+        "$type": 66,
         "$source": 0,
         "$text": "+=",
         "$span": {
@@ -7252,7 +7802,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -7302,7 +7852,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 81,
+        "$type": 74,
         "$source": 0,
         "$text": ">>=",
         "$span": {
@@ -7314,7 +7864,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -7364,7 +7914,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 78,
+        "$type": 71,
         "$source": 0,
         "$text": "//=",
         "$span": {
@@ -7376,7 +7926,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -7426,7 +7976,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 77,
+        "$type": 70,
         "$source": 0,
         "$text": "@=",
         "$span": {
@@ -7488,7 +8038,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 74,
+        "$type": 67,
         "$source": 0,
         "$text": "-=",
         "$span": {
@@ -7500,7 +8050,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -7550,7 +8100,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 79,
+        "$type": 72,
         "$source": 0,
         "$text": "%=",
         "$span": {
@@ -7562,7 +8112,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -7612,7 +8162,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 76,
+        "$type": 69,
         "$source": 0,
         "$text": "/=",
         "$span": {
@@ -7624,7 +8174,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "5",
         "$span": {
@@ -7674,7 +8224,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 75,
+        "$type": 68,
         "$source": 0,
         "$text": "*=",
         "$span": {
@@ -7686,7 +8236,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 94,
+        "$type": 87,
         "$source": 0,
         "$text": "2.2",
         "$span": {
@@ -7736,7 +8286,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 83,
+        "$type": 76,
         "$source": 0,
         "$text": "&=",
         "$span": {
@@ -7748,7 +8298,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -7798,7 +8348,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 84,
+        "$type": 77,
         "$source": 0,
         "$text": "^=",
         "$span": {
@@ -7810,7 +8360,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -7860,7 +8410,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 82,
+        "$type": 75,
         "$source": 0,
         "$text": "<<=",
         "$span": {
@@ -7872,7 +8422,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -7922,7 +8472,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 85,
+        "$type": 78,
         "$source": 0,
         "$text": "|=",
         "$span": {
@@ -7984,7 +8534,7 @@
         "$named": true
       },
       "_operator": {
-        "$type": 80,
+        "$type": 73,
         "$source": 0,
         "$text": "**=",
         "$span": {
@@ -7996,7 +8546,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "3",
         "$span": {
@@ -8244,7 +8794,7 @@
         "$named": false
       },
       "_value": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "3",
         "$span": {
@@ -8368,7 +8918,7 @@
         "$named": false
       },
       "_value": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "42",
         "$span": {
@@ -8554,7 +9104,7 @@
         "$named": false
       },
       "_value": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "42",
         "$span": {
@@ -8616,7 +9166,7 @@
         "$named": false
       },
       "_value": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -9587,7 +10137,7 @@
       },
       "_arguments": [
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "1",
           "$span": {
@@ -9611,7 +10161,7 @@
           "$named": false
         },
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "10",
           "$span": {
@@ -9760,7 +10310,7 @@
         "$named": false
       },
       "_body": {
-        "$type": 96,
+        "$type": 89,
         "$source": 0,
         "$text": "True",
         "$span": {
@@ -10789,7 +11339,7 @@
       },
       "_arguments": [
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "1",
           "$span": {
@@ -10813,7 +11363,7 @@
           "$named": false
         },
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "1",
           "$span": {
@@ -10837,7 +11387,7 @@
           "$named": false
         },
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "1",
           "$span": {
@@ -10912,7 +11462,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 283,
+        "$type": 284,
         "$source": 0,
         "$text": "b",
         "$span": {
@@ -11063,7 +11613,7 @@
       },
       "_arguments": [
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "1",
           "$span": {
@@ -11087,7 +11637,7 @@
           "$named": false
         },
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "2",
           "$span": {
@@ -11312,7 +11862,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -11362,7 +11912,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1j",
         "$span": {
@@ -11412,7 +11962,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 94,
+        "$type": 87,
         "$source": 0,
         "$text": ".6_6",
         "$span": {
@@ -11462,7 +12012,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 94,
+        "$type": 87,
         "$source": 0,
         "$text": ".1_1",
         "$span": {
@@ -11512,7 +12062,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 94,
+        "$type": 87,
         "$source": 0,
         "$text": "1e10",
         "$span": {
@@ -14298,7 +14848,7 @@
         "$named": false
       },
       "_condition": {
-        "$type": 96,
+        "$type": 89,
         "$source": 0,
         "$text": "True",
         "$span": {
@@ -16286,7 +16836,7 @@
         "$named": false
       },
       "_body": {
-        "$type": 96,
+        "$type": 89,
         "$source": 0,
         "$text": "True",
         "$span": {
@@ -16348,7 +16898,7 @@
         "$named": false
       },
       "_body": {
-        "$type": 97,
+        "$type": 90,
         "$source": 0,
         "$text": "False",
         "$span": {
@@ -17841,7 +18391,7 @@
       },
       "_arguments": [
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "1",
           "$span": {
@@ -17865,7 +18415,7 @@
           "$named": false
         },
         {
-          "$type": 93,
+          "$type": 86,
           "$source": 0,
           "$text": "10",
           "$span": {
@@ -22514,7 +23064,7 @@
         "$named": false
       },
       "_subject": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -22923,7 +23473,7 @@
       },
       "_subject": [
         {
-          "$type": 87,
+          "$type": 80,
           "$source": 0,
           "$text": "...",
           "$span": {
@@ -22935,7 +23485,7 @@
           "$named": true
         },
         {
-          "$type": 87,
+          "$type": 80,
           "$source": 0,
           "$text": "...",
           "$span": {
@@ -29130,7 +29680,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_left": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -29154,7 +29704,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -29192,7 +29742,7 @@
       "$nodeHandle": 1,
       "$named": true,
       "_left": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -29216,7 +29766,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -29254,7 +29804,7 @@
       "$nodeHandle": 2,
       "$named": true,
       "_left": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -29278,7 +29828,7 @@
         "$named": false
       },
       "_right": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -29328,7 +29878,7 @@
         "$named": false
       },
       "_argument": {
-        "$type": 96,
+        "$type": 89,
         "$source": 0,
         "$text": "True",
         "$span": {
@@ -29576,7 +30126,7 @@
         "$named": false
       },
       "_subscript": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -29650,7 +30200,7 @@
         "$named": false
       },
       "_subscript": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -29836,7 +30386,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 283,
+        "$type": 284,
         "$source": 0,
         "$text": "e",
         "$span": {
@@ -29898,7 +30448,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 283,
+        "$type": 284,
         "$source": 0,
         "$text": "e",
         "$span": {
@@ -29960,7 +30510,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 283,
+        "$type": 284,
         "$source": 0,
         "$text": "b",
         "$span": {
@@ -30022,7 +30572,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 283,
+        "$type": 284,
         "$source": 0,
         "$text": "d",
         "$span": {
@@ -30084,7 +30634,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 283,
+        "$type": 284,
         "$source": 0,
         "$text": "e",
         "$span": {
@@ -30146,7 +30696,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 283,
+        "$type": 284,
         "$source": 0,
         "$text": "f",
         "$span": {
@@ -30208,7 +30758,7 @@
         "$named": false
       },
       "_alias": {
-        "$type": 283,
+        "$type": 284,
         "$source": 0,
         "$text": "h",
         "$span": {
@@ -33048,7 +33598,7 @@
         "$named": false
       },
       "_arguments": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "1",
         "$span": {
@@ -33172,7 +33722,7 @@
         "$named": false
       },
       "_subscript": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "0",
         "$span": {
@@ -33246,7 +33796,7 @@
         "$named": false
       },
       "_subscript": {
-        "$type": 93,
+        "$type": 86,
         "$source": 0,
         "$text": "2",
         "$span": {
@@ -34907,7 +35457,7 @@
       "$source": 0,
       "$children": [
         {
-          "$type": 100,
+          "$type": 93,
           "$source": 0,
           "$text": "\\\n",
           "$span": {

@@ -37,7 +37,7 @@
  */
 
 import type { PolymorphRule, Rule, SimplifiedRule } from './rule.ts';
-import { countSlots } from './slot-count.ts';
+import { countSlots, countContentSlots } from './slot-count.ts';
 
 // ---------------------------------------------------------------------------
 // Polymorph skip-set construction
@@ -123,7 +123,11 @@ function buildPolymorphSkipSet(rules: Record<string, SimplifiedRule>): ReadonlyS
 // Public types
 // ---------------------------------------------------------------------------
 
-export type SlotGroupingShape = 'multi-slot-nested-seq' | 'supertype-list' | 'repeat-choice-with-literal';
+export type SlotGroupingShape =
+	| 'multi-slot-nested-seq'
+	| 'supertype-list'
+	| 'repeat-choice-with-literal'
+	| 'content-collision';
 
 export interface SlotGroupingDiagnostic {
 	/** The kind that owns the rule containing the violation. */
@@ -168,7 +172,36 @@ export function diagnoseSlotGrouping(
 
 	const records: SlotGroupingDiagnostic[] = [];
 	for (const [ownerKind, rule] of Object.entries(rules)) {
-		// Skip any kind that belongs to the polymorph system.
+		// §4c content-collision: count the UNNAMED content slots the kind's body
+		// yields (field-named seqs are single named slots, NOT distributed). >1
+		// means they'd share the `_content` storage key — an unemittable ambiguity
+		// — so at least one needs a `field()` name. Counted on the simplified rule,
+		// BEFORE mergeSlotsByName folds the duplicate `content` slots into one
+		// (which masks the collision).
+		//
+		// Applies to EVERY concrete-bodied kind, INCLUDING polymorph arm bodies: a
+		// form like `_class_body_member` can have 2 content slots of its own, and
+		// the parent's variant dispatch resolves only WHICH arm is chosen — not the
+		// arm's internal `_content` ambiguity. So this runs ahead of (and is not
+		// gated by) the polymorph skip below; only a true polymorph PARENT rule
+		// (`type === 'polymorph'` — a dispatch node with no body) is exempt.
+		if (rule.type !== 'polymorph') {
+			const contentCount = countContentSlots(rule);
+			if (contentCount > 1) {
+				records.push({
+					ownerKind,
+					shape: 'content-collision',
+					slotCount: contentCount,
+					proposal:
+						`Kind '${ownerKind}' has ${contentCount} anonymous 'content' slots that would share ` +
+						`the '_content' storage key (an unemittable ambiguity). ` +
+						`field()-name at least one in overrides.ts.`,
+				});
+			}
+		}
+
+		// Skip any kind that belongs to the polymorph system (shape ①/②/③ below
+		// treat the variant/promotePolymorph machinery as already-correct dispatch).
 		if (polymorphSkip.has(ownerKind)) continue;
 
 		// Determine whether the top-level rule body is in slot position.

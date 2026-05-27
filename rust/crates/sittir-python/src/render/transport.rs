@@ -32,6 +32,7 @@ pub enum AnyTransport {
     AsyncMarker(AsyncMarkerTransport),
     AugmentedAssignmentOperator(AugmentedAssignmentOperatorEnum),
     ComparisonOperatorComparator(ComparisonOperatorComparatorTransport),
+    ComplexPatternOperator(ComplexPatternOperatorEnum),
     ComprehensionClauses(ComprehensionClausesTransport),
     ExceptClauseAs(ExceptClauseAsTransport),
     _Identifier(_IdentifierEnum),
@@ -275,6 +276,7 @@ pub enum AnyTransport {
     Literal10_26,
     Literal11_5e,
     Literal12_3c_3c,
+    Literal13_5b_5e_7b_7d_5c_6e_5d_2b,
     Verbatim(VerbatimTransport),
 }
 
@@ -6802,6 +6804,93 @@ impl RenderableTransport for ForStatementBodyTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum FormatSpecifierContentTransportSlot {
+    Interpolation(InterpolationTransport),
+    Literal13_5b_5e_7b_7d_5c_6e_5d_2b,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            return match kind_id {
+                233 => Ok(Self::Interpolation(
+                    InterpolationTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in FormatSpecifierContentTransportSlot",
+                ))),
+            };
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)
+            .map_err(|_| ::napi::Error::from_reason("FormatSpecifierContentTransportSlot: expected u16 kind_id, string, or object with $type"))?;
+        let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+            ::napi::Error::from_reason("$type property missing in FormatSpecifierContentTransportSlot")
+        )?;
+        match kind_id {
+                233 => Ok(Self::Interpolation(
+                    InterpolationTransport::from_napi_value(env, napi_val)?
+                )),
+                other => Err(::napi::Error::from_reason(format!(
+                    "unknown kind id {other} in FormatSpecifierContentTransportSlot",
+                ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FormatSpecifierContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("FormatSpecifierContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FormatSpecifierContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FormatSpecifierContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FormatSpecifierContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FormatSpecifierContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn format_specifier_content_transport_slot_to_any(t: FormatSpecifierContentTransportSlot) -> AnyTransport {
+    match t {
+        FormatSpecifierContentTransportSlot::Interpolation(inner) => AnyTransport::Interpolation(inner),
+        FormatSpecifierContentTransportSlot::Literal13_5b_5e_7b_7d_5c_6e_5d_2b => AnyTransport::Literal13_5b_5e_7b_7d_5c_6e_5d_2b,
+    }
+}
+
+impl RenderableTransport for FormatSpecifierContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            FormatSpecifierContentTransportSlot::Interpolation(inner) => render_interpolation(inner, dest),
+            FormatSpecifierContentTransportSlot::Literal13_5b_5e_7b_7d_5c_6e_5d_2b => dest.write_str("[^{}\\n]+").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum FunctionDefinitionBodyTransportSlot {
     SimpleStatements(SimpleStatementsTransport),
     Block(BlockTransport),
@@ -9666,6 +9755,84 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComparisonOperatorComparatorTr
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ComplexPatternOperatorEnum {
+    Plus,
+    Minus,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternOperatorEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            match kind_id {
+                52 => return Ok(Self::Plus), // "+"
+                53 => return Ok(Self::Minus), // "-"
+                _ => {}
+            }
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            match text.as_str() {
+                "+" => return Ok(Self::Plus),
+                "-" => return Ok(Self::Minus),
+                _ => {}
+            }
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        if let Some(kind_id) = obj.get::<u16>("$type")? {
+            match kind_id {
+                52 => return Ok(Self::Plus), // "+"
+                53 => return Ok(Self::Minus), // "-"
+                _ => {}
+            }
+        }
+        if let Some(text) = obj.get::<String>("$text")? {
+            match text.as_str() {
+                "+" => return Ok(Self::Plus),
+                "-" => return Ok(Self::Minus),
+                _ => {}
+            }
+        }
+        if obj.get::<::napi::bindgen_prelude::Object>("_+")?.is_some() { return Ok(Self::Plus); }
+        if obj.get::<::napi::bindgen_prelude::Object>("_-")?.is_some() { return Ok(Self::Minus); }
+        Err(::napi::Error::from_reason("unknown enum payload for ComplexPatternOperatorEnum"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ComplexPatternOperatorEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ComplexPatternOperatorEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for ComplexPatternOperatorEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::Plus => "+",
+            Self::Minus => "-",
+        })
+    }
+}
+
+impl RenderableTransport for ComplexPatternOperatorEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::Plus => "+",
+            Self::Minus => "-",
+        }).map_err(::askama::Error::from)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ComprehensionClausesTransport {
@@ -12109,6 +12276,8 @@ pub struct ComplexPatternTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_imaginary"))]
     pub imaginary: PrimaryExpressionTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    pub operator: ComplexPatternOperatorEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: PrimaryExpressionTransport,
 }
@@ -13854,7 +14023,7 @@ pub struct FormatSpecifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Vec<InterpolationTransport>>,
+    pub content: Option<Vec<FormatSpecifierContentTransportSlot>>,
 }
 
 impl RenderableTransport for FormatSpecifierTransport {
@@ -27221,6 +27390,10 @@ fn render_comparison_operator_comparator(node: &ComparisonOperatorComparatorTran
     template.render_into(dest)
 }
 
+fn render_complex_pattern_operator(t: &ComplexPatternOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
+}
+
 fn render_comprehension_clauses(node: &ComprehensionClausesTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let content_owned = node.content.as_deref().unwrap_or(&[]);
     let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = content_owned.iter()
@@ -27623,6 +27796,7 @@ fn render_complex_pattern(node: &ComplexPatternTransport, dest: &mut dyn ::std::
     let template = ComplexPatternTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
         imaginary: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.imaginary)),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
         real: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
@@ -29392,6 +29566,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::AsyncMarker(t) => t.render_into(dest),
             AnyTransport::AugmentedAssignmentOperator(t) => t.render_into(dest),
             AnyTransport::ComparisonOperatorComparator(t) => render_comparison_operator_comparator(t, dest),
+            AnyTransport::ComplexPatternOperator(t) => t.render_into(dest),
             AnyTransport::ComprehensionClauses(t) => render_comprehension_clauses(t, dest),
             AnyTransport::ExceptClauseAs(t) => render_except_clause_as(t, dest),
             AnyTransport::_Identifier(t) => t.render_into(dest),
@@ -29635,6 +29810,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Literal10_26 => dest.write_str("&").map_err(::askama::Error::from),
             AnyTransport::Literal11_5e => dest.write_str("^").map_err(::askama::Error::from),
             AnyTransport::Literal12_3c_3c => dest.write_str("<<").map_err(::askama::Error::from),
+            AnyTransport::Literal13_5b_5e_7b_7d_5c_6e_5d_2b => dest.write_str("[^{}\\n]+").map_err(::askama::Error::from),
             AnyTransport::Verbatim(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
         }
     }
@@ -29944,6 +30120,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::AsyncMarker(data) => transport_to_node_async_marker(data),
         AnyTransport::AugmentedAssignmentOperator(data) => transport_to_node_augmented_assignment_operator(data),
         AnyTransport::ComparisonOperatorComparator(data) => transport_to_node_comparison_operator_comparator(data),
+        AnyTransport::ComplexPatternOperator(data) => transport_to_node_complex_pattern_operator(data),
         AnyTransport::ComprehensionClauses(data) => transport_to_node_comprehension_clauses(data),
         AnyTransport::ExceptClauseAs(data) => transport_to_node_except_clause_as(data),
         AnyTransport::_Identifier(data) => transport_to_node__identifier(data),
@@ -30187,6 +30364,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Literal10_26 => Ok(transport_node_data(TransportKindId(60) /* "&" */, None, None, false, Some("&".to_string()), None, None, None, None, None, None)),
         AnyTransport::Literal11_5e => Ok(transport_node_data(TransportKindId(61) /* "^" */, None, None, false, Some("^".to_string()), None, None, None, None, None, None)),
         AnyTransport::Literal12_3c_3c => Ok(transport_node_data(TransportKindId(62) /* "<<" */, None, None, false, Some("<<".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal13_5b_5e_7b_7d_5c_6e_5d_2b => Ok(transport_node_data(TransportKindId(0) /* "[^{}\\n]+" — no parser symbol */, None, None, false, Some("[^{}\\n]+".to_string()), None, None, None, None, None, None)),
         AnyTransport::Verbatim(data) => Ok(transport_node_data(TransportKindId(0) /* Verbatim — synthetic */, None, None, false, Some(data.text), None, None, None, None, None, None)),
     }
 }
@@ -30339,6 +30517,22 @@ fn transport_to_node_comparison_operator_comparator(transport: ComparisonOperato
         fields,
         children,
         trivia_data,
+    ))
+}
+
+fn transport_to_node_complex_pattern_operator(transport: ComplexPatternOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_complex_pattern_operator" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
     ))
 }
 
@@ -31236,6 +31430,7 @@ fn transport_to_node_comparison_operator(transport: ComparisonOperatorTransport)
 fn transport_to_node_complex_pattern(transport: ComplexPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("imaginary".to_string(), transport_field_value(primary_expression_transport_to_any(transport.imaginary))?);
+    fields.insert("operator".to_string(), transport_field_value(AnyTransport::ComplexPatternOperator(transport.operator))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     children_buf.push(primary_expression_transport_to_any(transport.content));
@@ -31926,7 +32121,7 @@ fn transport_to_node_format_specifier(transport: FormatSpecifierTransport) -> Re
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let mut children_buf: Vec<AnyTransport> = Vec::new();
     if let Some(value) = transport.content {
-        children_buf.extend(value.into_iter().map(|v| AnyTransport::Interpolation(v)).collect::<Vec<_>>());
+        children_buf.extend(value.into_iter().map(|v| format_specifier_content_transport_slot_to_any(v)).collect::<Vec<_>>());
     }
     let children = if children_buf.is_empty() {
         None

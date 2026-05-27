@@ -48,7 +48,7 @@ import {
 import { join, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const REPO_ROOT = (() => {
+export const REPO_ROOT = (() => {
 	// File location: packages/codegen/src/scripts/generated-manifest.ts
 	// Repo root is 5 dirname() steps up from the file location.
 	const here = dirname(fileURLToPath(import.meta.url));
@@ -60,17 +60,21 @@ export type Grammar = (typeof GRAMMARS)[number];
 
 const MANIFEST_FILENAME = 'generated.manifest.json';
 
-function pathsFor(grammar: Grammar): string[] {
-	// Cross-platform generated content. Tracked in the `files` section of the
-	// manifest — every entry must match exactly on every platform.
-	//
-	// Intentional exclusions vs cleanup-rules.md §A1:
-	//   - `overrides.ts` (hand-edited adjuster) — never generated.
-	//   - `overrides.suggested.ts` — written by the codegen CLI AFTER its
-	//     internal validation runs (it embeds validator diagnostics). Including
-	//     it would force the manifest to be written twice per codegen invocation,
-	//     for no real safety gain (it is human-review output, not consumed at
-	//     runtime). Hand-edits to it are overwritten on the next codegen run.
+/**
+ * Repo-relative roots holding the cross-platform generated content for a
+ * grammar. Single source of truth: the manifest (`files` section) and the
+ * post-regen emit-diff report (`emit-diff.ts`) both consume this, so they can
+ * never disagree about what counts as "generated."
+ *
+ * Intentional exclusions vs cleanup-rules.md §A1:
+ *   - `overrides.ts` (hand-edited adjuster) — never generated.
+ *   - `overrides.suggested.ts` — written by the codegen CLI AFTER its
+ *     internal validation runs (it embeds validator diagnostics). Including
+ *     it would force the manifest to be written twice per codegen invocation,
+ *     for no real safety gain (it is human-review output, not consumed at
+ *     runtime). Hand-edits to it are overwritten on the next codegen run.
+ */
+export function generatedRootsFor(grammar: Grammar): string[] {
 	return [
 		`packages/${grammar}/src`,
 		`packages/${grammar}/templates`,
@@ -82,6 +86,10 @@ function pathsFor(grammar: Grammar): string[] {
 		`rust/crates/sittir-${grammar}/index.d.ts`,
 		`rust/crates/sittir-${grammar}/index.js`
 	];
+}
+
+function pathsFor(grammar: Grammar): string[] {
+	return generatedRootsFor(grammar);
 }
 
 function hostFilesFor(grammar: Grammar): string[] {

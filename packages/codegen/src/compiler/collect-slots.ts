@@ -34,6 +34,7 @@
 import type { Rule, Multiplicity, RuleSource } from './rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
+import { sharedArmAttrs } from './rule-attrs.ts';
 import {
 	type AssembledNonterminal,
 	type NodeOrTerminal,
@@ -46,6 +47,7 @@ import {
 	pluralize,
 	safeParamName,
 	kindsOf,
+	projectSlotNaming,
 } from './node-map.ts';
 import { findRepeatFlag } from './template-walker.ts';
 
@@ -116,24 +118,11 @@ export function drainUnnamedChoiceSlots(): string[] {
  * simplify strips a wrapping `field()`'s name off the choice node itself but
  * leaves it stamped on each arm (e.g. `field('operator', choice(<,>,...))` →
  * arms each `{ ..., fieldName: 'operator' }`). Recovering the shared name keeps
- * the choice slot correctly named instead of defaulting to `content`.
+ * the choice slot correctly named instead of defaulting to `content`. Thin
+ * adapter over the shared {@link sharedArmAttrs} arm-walk.
  */
 function sharedArmFieldName(rule: Rule): string | undefined {
-	const arms: readonly Rule[] =
-		rule.type === 'choice'
-			? rule.members
-			: rule.type === 'polymorph'
-				? rule.forms.map((f) => f.content)
-				: [];
-	if (arms.length === 0) return undefined;
-	let shared: string | undefined;
-	for (const arm of arms) {
-		const fn = (arm as { fieldName?: string }).fieldName;
-		if (fn === undefined) return undefined;
-		if (shared === undefined) shared = fn;
-		else if (shared !== fn) return undefined;
-	}
-	return shared;
+	return sharedArmAttrs(rule).fieldName;
 }
 
 /**
@@ -141,28 +130,10 @@ function sharedArmFieldName(rule: Rule): string | undefined {
  * or `undefined` if no arm carries one. "Strongest" = most-multi:
  * nonEmptyArray > array > optional. Used to lift an array multiplicity that
  * simplify left on an inner arm (e.g. `choice(choice(X){nonEmptyArray}, X)`)
- * up to the outer choice slot.
+ * up to the outer choice slot. Thin adapter over {@link sharedArmAttrs}.
  */
 function strongestArmMultiplicity(rule: Rule): Multiplicity | undefined {
-	const arms: readonly Rule[] =
-		rule.type === 'choice'
-			? rule.members
-			: rule.type === 'polymorph'
-				? rule.forms.map((f) => f.content)
-				: [];
-	const rank: Record<Multiplicity, number> = {
-		single: 0,
-		optional: 1,
-		array: 2,
-		nonEmptyArray: 3,
-	};
-	let best: Multiplicity | undefined;
-	for (const arm of arms) {
-		const m = (arm as { multiplicity?: Multiplicity }).multiplicity;
-		if (m === undefined || m === 'single') continue;
-		if (best === undefined || rank[m] > rank[best]) best = m;
-	}
-	return best;
+	return sharedArmAttrs(rule).strongestMultiplicity;
 }
 
 /**
@@ -396,12 +367,17 @@ function buildSlot(
 				break;
 			}
 			default:
-				// pattern / enum / aliased leaf with no fieldName and no
-				// nameable kind — should not occur as a bare positional slot
-				// (they only reach collection via a fieldName or a repeat
-				// ancestor that supplies one). Elide rather than synthesize a
-				// phantom name.
-				return null;
+				// Any OTHER nonterminal slot (per `classifyByType`) with no
+				// fieldName and no nameable kind — `pattern` / `enum` / aliased
+				// leaf → `content`, like an unnamed choice. `buildSlot` is only
+				// reached for nonterminal positions, so we must NOT elide based on
+				// rule.type: patterns and enums are structural slots (the catalog
+				// classifies them nonterminal). Eliding here dropped real slots
+				// (e.g. token_repetition's operator enum + separator pattern).
+				baseName = 'content';
+				source = (rule as { source?: RuleSource }).source ?? 'inferred';
+				origin = 'kind';
+				break;
 		}
 	}
 
@@ -474,21 +450,21 @@ function buildSlot(
 		...(origin ? { origin } : {}),
 		sourceRuleId: rule.id,
 	};
-	// --- _new centralized naming (foundation for retiring the scattered
-	// origin/baseName/distribution logic). `fieldName` wins; else the single
-	// referenced kind name (incl. a supertype's own name); else warn → 'content'.
-	// `parseNames` = [fieldName] (parser routes by field) or the ref-kind names.
-	const refKindNames = kindsOf(slot);
+	// `_new`-suffixed naming fields are PROJECTION-backed (`projectSlotNaming`,
+	// §2 getter logic) — kept on the interface as the cutover target; PR-B
+	// promotes them to class getters + drops the legacy fields. They are
+	// RE-DERIVED in `mergeSlotsByName` after the value-union so they always
+	// track the live (merged) CST kinds — never stale (the modeling bug). The
+	// underscore is trimmed only in `storageName`; `parseNames` keep it.
 	const fieldName = rule.fieldName;
-	// parseNames = the kinds the parser can actually emit for this slot: the
-	// ref-kind names PLUS the alias TARGETS. Real tree-sitter aliases
-	// (alias($.source, $.target)) emit the target; validation-only polymorph
-	// variants emit the base. Including both lets the wrap route either without
-	// the base→variant rewrite (which mis-routed the validation-only case).
-	const parseNamesNew =
-		fieldName !== undefined ? [fieldName] : [...new Set([...refKindNames, ...Object.keys(aliasSources)])];
-	const storageNameNew = fieldName ?? (refKindNames.length === 1 ? refKindNames[0]! : 'content');
-	return { ...slot, fieldName, storageNameNew, nameNew: snakeToCamel(storageNameNew), parseNamesNew };
+	const naming = projectSlotNaming({ fieldName, values: slot.values });
+	return {
+		...slot,
+		fieldName,
+		storageNameNew: naming.storageName,
+		nameNew: naming.name,
+		parseNamesNew: naming.parseNames
+	};
 }
 
 /**

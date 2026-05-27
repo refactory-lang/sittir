@@ -466,7 +466,8 @@ export interface ClassBodyMemberTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: ClassBodyMemberContentTransportSlot
+  _terminator?: ClassBodyMemberTerminatorTransportSlot
+  _content: ClassBodyMemberContentTransportSlot
 }
 
 export interface ClassBodyMethodSigTransport {
@@ -636,6 +637,7 @@ export interface ConstraintTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _content: Box<AnyTransport>
   _type: TypeTransport
 }
 
@@ -796,7 +798,8 @@ export interface EnumBodyTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _opening?: Array<EnumBodyOpeningTransportSlot>
+  _name?: Array<PropertyNameTransport>
+  _enum_assignment?: Array<EnumAssignmentTransport>
 }
 
 export interface EnumDeclarationTransport {
@@ -2060,6 +2063,39 @@ export interface ObjectTransport {
   _properties?: Array<ObjectPropertiesTransportSlot>
 }
 
+export interface ObjectTypeContentCommaTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _content?: Array<ObjectTypeContentCommaContentTransportSlot>
+}
+
+export interface ObjectTypeContentSemiTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _content?: Array<ObjectTypeContentSemiContentTransportSlot>
+}
+
+export interface ObjectTypeContentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _content: ObjectTypeContentContentTransportSlot
+}
+
 export interface ObjectTypeTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2069,8 +2105,8 @@ export interface ObjectTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _opening: ObjectTypeOpeningEnum
+  _members?: ObjectTypeContentTransport
   _closing: ObjectTypeClosingEnum
-  _content?: Array<ObjectTypeContentTransportSlot>
 }
 
 export interface OmittingTypeAnnotationTransport {
@@ -2796,6 +2832,7 @@ export interface TypeQueryMemberExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _object: Box<TypeQueryMemberExpressionObjectTransportSlot>
+  _content: Box<AnyTransport>
   _property: Box<PropertyNameTransport>
 }
 

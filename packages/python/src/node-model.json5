@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 258,
+  "nodeCount": 259,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -612,6 +612,18 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "_complex_pattern_operator",
+      "modelType": "enum",
+      "typeName": "ComplexPatternOperator",
+      "factoryName": "complexPatternOperator",
+      "irKey": "complexPatternOperator",
+      "hidden": false,
+      "values": [
+        "+",
+        "-"
+      ]
     },
     {
       "kind": "_compound_statement",
@@ -2976,6 +2988,29 @@
           }
         },
         {
+          "name": "operator",
+          "propertyName": "operator",
+          "paramName": "operator",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_complex_pattern_operator",
+              "unresolved": true
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_complex_pattern_operator"
+            ]
+          }
+        },
+        {
           "name": "content",
           "propertyName": "content",
           "paramName": "content",
@@ -4631,6 +4666,11 @@
           "multiple": true,
           "nonEmpty": false,
           "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "[^{}\\n]+"
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",

@@ -15,6 +15,7 @@ export type LeafScalarMap = {
 export type LeafStringMap = {
   _async_marker: "async";
   _augmented_assignment_operator: "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=";
+  _complex_pattern_operator: "+" | "-";
   _identifier: "*" | "**";
   _kw_async_marker: "async";
   _kw_type: "type";
@@ -189,6 +190,7 @@ export const enum SyntaxKind {
   Yield = "yield",
   AsyncMarker = "_async_marker",
   AugmentedAssignmentOperator = "_augmented_assignment_operator",
+  ComplexPatternOperator = "_complex_pattern_operator",
   _Identifier = "_identifier",
   IsNot = "_is_not",
   KwAsyncMarker = "_kw_async_marker",
@@ -1649,8 +1651,13 @@ export interface ComparisonOperator {
 export interface ComplexPattern {
   readonly $type: TSKindId.ComplexPattern;
   readonly _imaginary: Integer | Float;
+  readonly _operator: number;
   readonly _content: Integer | Float;
+  readonly __inputHints__?: {
+    readonly operator: KindEnum<"+" | "-", TSKindId.Plus | TSKindId.Dash>;
+  };
   imaginary(): Integer | Float;
+  operator(): number;
   content(): Integer | Float;
 }
 
@@ -1860,8 +1867,8 @@ export interface ForStatement {
 
 export interface FormatSpecifier {
   readonly $type: TSKindId.FormatSpecifier;
-  readonly _content?: readonly (Interpolation)[];
-  contents(): readonly (Interpolation)[];
+  readonly _content?: readonly ("[^{}\\n]+" | Interpolation)[];
+  contents(): readonly ("[^{}\\n]+" | Interpolation)[];
 }
 
 export interface FunctionDefinition {
@@ -2355,6 +2362,7 @@ export interface Yield {
 
 // Leaf node types
 export type AugmentedAssignmentOperator = Terminal<TSKindId.PlusEq | TSKindId.DashEq | TSKindId.StarEq | TSKindId.SlashEq | TSKindId.AtEq | TSKindId.SlashSlashEq | TSKindId.PercentEq | TSKindId.StarStarEq | TSKindId.GtGtEq | TSKindId.LtLtEq | TSKindId.AmpEq | TSKindId.CaretEq | TSKindId.PipeEq, "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=">;
+export type ComplexPatternOperator = Terminal<TSKindId.Plus | TSKindId.Dash, "+" | "-">;
 export type _Identifier = Terminal<TSKindId.Star2 | TSKindId.StarStar, "*" | "**">;
 export type IsNot = Terminal<TSKindId.IsNot, string>;
 export type NotIn = Terminal<TSKindId.NotIn, string>;
@@ -2520,6 +2528,7 @@ export interface WithItemTree extends TreeNode<'with_item'> {}
 export interface WithStatementTree extends TreeNode<'with_statement'> {}
 export interface YieldTree extends TreeNode<'yield'> {}
 export interface AugmentedAssignmentOperatorTree extends AnyTreeNode { readonly type: "_augmented_assignment_operator"; }
+export interface ComplexPatternOperatorTree extends AnyTreeNode { readonly type: "_complex_pattern_operator"; }
 export interface _IdentifierTree extends AnyTreeNode { readonly type: "_identifier"; }
 export interface IsNotTree extends AnyTreeNode { readonly type: "_is_not"; }
 export interface NotInTree extends AnyTreeNode { readonly type: "_not_in"; }
@@ -3031,6 +3040,7 @@ export interface KindMap {
   'with_statement': WithStatement;
   'yield': Yield;
   '_augmented_assignment_operator': AugmentedAssignmentOperator;
+  '_complex_pattern_operator': ComplexPatternOperator;
   '_identifier': _Identifier;
   '_is_not': IsNot;
   '_not_in': NotIn;

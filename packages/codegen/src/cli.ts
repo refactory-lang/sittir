@@ -42,6 +42,7 @@ import { writeJinjaTemplates } from './emitters/templates.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { extractParityFixtures, serializeFixtures, fixturesOutputPath } from './emitters/parity-fixtures.ts';
 import { writeManifestForGrammar, type Grammar } from './scripts/generated-manifest.ts';
+import { formatEmitDiff } from './scripts/emit-diff.ts';
 
 // Codegen IS the writer of the per-grammar manifest. Internal validator runs
 // invoked from inside this CLI (e.g. extractParityFixtures uses
@@ -109,6 +110,7 @@ interface CliArgs {
 	tsGenerate?: boolean;
 	skipTsChain?: boolean;
 	buildNative?: boolean;
+	noEmitDiff?: boolean;
 	help?: boolean;
 }
 
@@ -154,6 +156,9 @@ function parseArgs(argv: string[]): CliArgs {
 			case '--no-build-native':
 				args.buildNative = false;
 				break;
+			case '--no-emit-diff':
+				args.noEmitDiff = true;
+				break;
 			case '--help':
 			case '-h':
 				args.help = true;
@@ -191,6 +196,8 @@ Options:
                    cargo rebuild that --all triggers after emitting native
                    artifacts; useful when you only want updated TS/Rust
                    source files without a full native recompile).
+  --no-emit-diff   Suppress the post-regen "Regen diff vs HEAD" report that
+                   --all prints (grouped by emitter). Useful in CI / scripts.
   --help, -h       Show this help
 
 With --all (without --skip-ts-chain), the CLI chains:
@@ -480,6 +487,17 @@ if (renderable.missing.length > 0) {
 // intentionally excluded from the manifest (see pathsFor()).
 writeManifestForGrammar(config.grammar as Grammar);
 console.log(`  → packages/${config.grammar}/.sittir/generated.manifest.json updated`);
+
+// Post-regen emit diff: show what THIS run changed in the generated output,
+// grouped by emitter, working tree vs HEAD. Convenience only — skipped under
+// --no-emit-diff and silently when git is unavailable. Printed here (right
+// after the manifest write, before validation) so it reflects the same on-disk
+// state the manifest just captured; overrides.suggested.ts is excluded from
+// the tracked roots, so the later validation write does not muddy the report.
+if (cliArgs.all && !cliArgs.noEmitDiff) {
+	const emitDiff = formatEmitDiff(config.grammar as Grammar);
+	if (emitDiff) console.log(`\n${emitDiff}`);
+}
 
 // --- Validation probes (optional, requires web-tree-sitter) ---
 if (cliArgs.roundtrip) {

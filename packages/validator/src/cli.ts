@@ -26,7 +26,7 @@ import {
 	type Grammar,
 	type Backend,
 } from './run.ts';
-import { appendHistory, readHistory, type ValidationRun } from './history.ts';
+import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
 import type { ReadRenderParseFailure } from '@sittir/codegen/validate/read-render-parse';
 
@@ -234,16 +234,24 @@ export async function runCountsCli(
 	_options: { recursive?: boolean } = {},
 ): Promise<void> {
 	const grammars = resolveGrammars(args);
+	const recorded: string[] = [];
 	for (const backend of resolveBackends(backendMode)) {
 		for (const grammar of grammars) {
 			try {
 				const counts = await collectGrammarCounts(grammar, backend);
 				appendHistory(toValidationRun(counts));
+				recorded.push(`${grammar}/${formatBackendLabel(backend)}`);
 				console.log(formatGrammarCounts(counts));
 			} catch (e) {
 				console.log(`${grammar}/${formatBackendLabel(backend)}: ERROR ${(e as Error).message}`);
 			}
 		}
+	}
+	// One commit per validation invocation covering every row just appended —
+	// keeps history reliably captured without a commit per grammar. Best-effort
+	// and self-guarding (see commitHistory).
+	if (recorded.length > 0) {
+		commitHistory(`chore(validator): record validation run (${recorded.join(', ')})`);
 	}
 }
 

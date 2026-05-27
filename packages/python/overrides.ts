@@ -217,10 +217,14 @@ export default grammar(
 				1: field('comparators') // primary_expression [struct=1]
 			},
 
-			// complex_pattern: 2 field(s)
+			// complex_pattern: real/imaginary (0,1) + the `+`/`-` operator enum (2)
+			// and a trailing number choice (3). Positions 2 and 3 are both unnamed
+			// → 2 `content` slots; name the operator so the number stays the single
+			// sanctioned `content` (base-rule field, complex_pattern is not a polymorph).
 			complex_pattern: {
 				0: field('real'), // integer | float [struct=0]
-				1: field('imaginary') // integer | float [struct=1]
+				1: field('imaginary'), // integer | float [struct=1]
+				2: field('operator') // '+' | '-'
 			},
 
 			// conditional_expression: 3 field(s)

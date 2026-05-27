@@ -36,7 +36,7 @@ import type { AssembledNode } from './node-map.ts';
 import { compileWordMatcher } from './common.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { fuseHeadRepeatLists } from './list-fusion.ts';
-import { withAttrsFrom, combineMultiplicity, type LeafMultiplicity } from './rule-attrs.ts';
+import { withAttrsFrom, combineMultiplicity, sharedArmAttrs, type LeafMultiplicity } from './rule-attrs.ts';
 import { diagnoseSlotGrouping, type SlotGroupingDiagnostic } from './diagnose-slot-grouping.ts';
 
 // ---------------------------------------------------------------------------
@@ -620,6 +620,45 @@ function extractFieldAcrossBranches(perBranch: Rule[][], name: string): Rule {
  * canonicalized, so nested choice-of-equivalent-branches inside a
  * branch has already been flattened.
  */
+/**
+ * Lift any slot-shape ATTRIBUTE shared by every choice arm onto the choice
+ * node itself.
+ *
+ * After wrapper-deletion the grammar is wrapper-free: a per-arm wrapper (a
+ * distributed `field('op', …)`, `optional(…)`, `repeat(…)`, …) has become a
+ * leaf attribute on each arm. E.g. rust binary_expression's operator position
+ * is `choice(string{fieldName:'operator'}, enum{fieldName:'operator'}, …)` —
+ * the field NODES are gone, `fieldName` survives only as an arm attribute. The
+ * choice IS one slot, so an attribute ALL arms agree on describes the slot and
+ * belongs on the choice NODE (the slot boundary): `fieldName` (the slot's
+ * name), `multiplicity` (every arm `array` ⇒ the slot is `array`), `separator`
+ * and `nonterminal` likewise. This mirrors `deleteWrapper`'s field→choice
+ * case, which stamps the choice node when one wrapper encloses the whole
+ * choice; here the wrapper was distributed across the arms instead.
+ *
+ * Without this, slot derivation reads the bare choice node's (absent)
+ * attribute and falls back (e.g. `fieldName` → `content`). The arms keep their
+ * attributes — harmless, and legacy shared-arm recovery still reads them, so
+ * legacy output is unchanged (this only makes the choice-node view agree).
+ * Only lifts an attribute the choice node doesn't already carry.
+ */
+function liftSharedArmAttrs(rule: ChoiceRule): Rule {
+	// Hoist the UNANIMOUS arm attrs (shared by EVERY arm) onto the choice node,
+	// but only those the choice doesn't already carry. Shares the arm-walk with
+	// collect-slots via `sharedArmAttrs` — the single source for shared-arm facts.
+	const shared = sharedArmAttrs(rule);
+	let result: ChoiceRule = rule;
+	if (result.fieldName === undefined && shared.fieldName !== undefined)
+		result = { ...result, fieldName: shared.fieldName };
+	if (result.multiplicity === undefined && shared.multiplicity !== undefined)
+		result = { ...result, multiplicity: shared.multiplicity };
+	if (result.nonterminal === undefined && shared.nonterminal !== undefined)
+		result = { ...result, nonterminal: shared.nonterminal };
+	if (result.separator === undefined && shared.separator !== undefined)
+		result = { ...result, separator: shared.separator };
+	return result;
+}
+
 function mergeChoiceBranches(rule: ChoiceRule): Rule {
 	if (rule.members.length === 0) return rule;
 	// NEVER unwrap variant() — variants mark intentional polymorph-
@@ -641,14 +680,16 @@ function mergeChoiceBranches(rule: ChoiceRule): Rule {
 			return mergePosition(unwrapped);
 		}
 	}
-	// Every branch must be a seq of the same length.
-	if (!unwrapped.every((b): b is SeqRule => b.type === 'seq')) return rule;
+	// Every branch must be a seq of the same length. When the branches are
+	// NOT mergeable seqs (e.g. a choice of leaf arms — the wrapper-free operator
+	// case), still lift any attribute all arms share onto the choice node.
+	if (!unwrapped.every((b): b is SeqRule => b.type === 'seq')) return liftSharedArmAttrs(rule);
 	const len = unwrapped[0]!.members.length;
-	if (!unwrapped.every((b) => b.members.length === len)) return rule;
+	if (!unwrapped.every((b) => b.members.length === len)) return liftSharedArmAttrs(rule);
 	// Check position-by-position structural equivalence.
 	for (let i = 0; i < len; i++) {
 		const position = unwrapped.map((b) => b.members[i]!);
-		if (!positionsAreMergeable(position)) return rule;
+		if (!positionsAreMergeable(position)) return liftSharedArmAttrs(rule);
 	}
 	// All positions mergeable. Build the merged seq.
 	const mergedMembers: Rule[] = [];

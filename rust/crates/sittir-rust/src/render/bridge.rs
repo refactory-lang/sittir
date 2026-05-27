@@ -893,16 +893,20 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         343 => { // "_range_pattern_left_with_right" | "range_pattern_left_with_right"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("right"), true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("content"), true)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("right"), true)?;
             let template = RangePatternLeftWithRightTemplate {
-                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                content: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
             };
             template.render_into(dest)
         }
         342 => { // "_range_pattern_prefix" | "range_pattern_prefix"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("right"), true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("content"), true)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("right"), true)?;
             let template = RangePatternPrefixTemplate {
-                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                content: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
             };
             template.render_into(dest)
         }
@@ -2641,6 +2645,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         166 => { // "token_repetition_pattern"
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("operator"), true)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("separator"), false)?;
             let children_renderables = children.renderable_items();
             let template = TokenRepetitionPatternTemplate {
                 token_pattern: ListNonterminalView {
@@ -2649,11 +2655,18 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
+                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                separator: match field_1.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                },
             };
             template.render_into(dest)
         }
         169 => { // "token_repetition"
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("operator"), true)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("separator"), false)?;
             let children_renderables = children.renderable_items();
             let template = TokenRepetitionTemplate {
                 tokens: ListNonterminalView {
@@ -2661,6 +2674,11 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     separator: children.separator,
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
+                },
+                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                separator: match field_1.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
                 },
             };
             template.render_into(dest)

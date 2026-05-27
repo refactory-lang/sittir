@@ -807,13 +807,18 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 			return escapeLiteral(rule.value);
 
 		case 'pattern':
-			// Patterns are token shapes — the renderer falls back to
-			// `$TEXT` or other slot machinery; the template proper emits
-			// nothing for a raw pattern.
-			return '';
-
-		case 'enum':
-			return rule.members.length > 0 ? escapeLiteral(rule.members[0]!.value) : '';
+		case 'enum': {
+			// Patterns and enums are NONTERMINAL slots (classifyByType), so they
+			// emit a slot REFERENCE — not inline text. Previously pattern→'' and
+			// enum→first-literal dropped the slot; once collectSlots makes them real
+			// slots that fails slot-preservation. Prefer the registered slot (named
+			// via field() → `{{ operator }}`, else the deterministic unnamed
+			// `content` fallback). emitSlotReference handles multiplicity.
+			const slot = lookupSlot(rule, ctx);
+			if (slot !== undefined) return emitSlotReference(rule, slot);
+			if (rule.fieldName !== undefined) return emitFieldNameSlot(rule.fieldName.toLowerCase(), rule);
+			return emitScalarSlot('content');
+		}
 
 		case 'seq': {
 			// Bug 6 fix (replaces Bug 1): insert spaces between consecutive seq

@@ -535,11 +535,14 @@ function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string, candidateKeys?:
 			// ordering across kinds is not guaranteed, but all elements are kept).
 			//
 			// Each wire field may be a scalar value (text-collapsed leaf, e.g.
-			// "i32" for primitive_type) OR an array of node stubs. Use
-			// _toArr() to normalize each source to an array before concatenating,
-			// so that spreading a string does not split it character-by-character.
-			const spreads = allKeys.map((k) => `..._toArr(${dataAccessExpr(dataExpr, k)})`);
-			return `[${spreads.join(', ')}]`;
+			// "i32" for primitive_type) OR an array of node stubs. The native
+			// reader buckets by kind, so a plain declaration-order concat
+			// interleaves cross-kind members wrongly (e.g. an object_type's
+			// `call_signature` + `property_signature` swap). `_concatInSourceOrder`
+			// normalizes each source (via _toArr) and STABLE-sorts the result by
+			// CST position (`$span.start` / `$childIndex`) to restore source order.
+			const sources = allKeys.map((k) => dataAccessExpr(dataExpr, k));
+			return `_concatInSourceOrder([${sources.join(', ')}])`;
 		}
 
 		// Singular slot: exactly one of these will be populated.
@@ -945,7 +948,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesFilteredChildren = /\b_filterWrapChildrenByKind\b/.test(bodySource);
 		const usesNormalizeSingular = /\bnormalizeSingularWrapSlot\b/.test(bodySource);
 		const usesNormalizeRepeated = /\bnormalizeRepeatedWrapSlot\b/.test(bodySource);
-		const usesToArr = /\b_toArr\b/.test(bodySource);
+		const usesConcatInSourceOrder = /\b_concatInSourceOrder\b/.test(bodySource);
+		// `_concatInSourceOrder` calls `_toArr`, so emit `_toArr` whenever either is used.
+		const usesToArr = /\b_toArr\b/.test(bodySource) || usesConcatInSourceOrder;
 		const variantDescriptors = buildWrapVariantDescriptors(this.#nodeMap);
 		const supertypeMembers = buildSupertypeMembersMap(this.#nodeMap);
 		const utilsImports = [
@@ -1038,6 +1043,29 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'function _toArr<T>(value: T | readonly T[] | undefined): readonly T[] {',
 						'  if (value == null) return [];',
 						'  return Array.isArray(value) ? (value as readonly T[]) : [value as T];',
+						'}'
+					]
+				: []),
+			...(usesConcatInSourceOrder
+				? [
+						'// _concatInSourceOrder — concatenate the per-kind wire arrays of a',
+						'// repeated heterogeneous-union slot, then STABLE-sort by CST position.',
+						'// The native reader buckets repeated unfielded children by kind, so a',
+						'// plain declaration-order concat loses cross-kind source order. Each',
+						'// node stub carries `$span.start` (byte offset) / `$childIndex` (position',
+						'// in parent); sort on those to restore order. Text-collapsed scalar',
+						'// leaves lack both → sorted to the end, stable among themselves (so a',
+						'// homogeneous single-bucket slot is a no-op).',
+						'function _concatInSourceOrder<T>(parts: readonly (T | readonly T[] | undefined)[]): readonly T[] {',
+						'  const flat = parts.flatMap((p) => _toArr(p));',
+						'  const pos = (e: T): number => {',
+						'    const n = e as unknown as { $span?: { start?: number }; $childIndex?: number };',
+						'    return n?.$span?.start ?? n?.$childIndex ?? Number.MAX_SAFE_INTEGER;',
+						'  };',
+						'  return flat',
+						'    .map((e, i) => [e, i] as const)',
+						'    .sort(([a, ai], [b, bi]) => pos(a) - pos(b) || ai - bi)',
+						'    .map(([e]) => e);',
 						'}'
 					]
 				: []),

@@ -644,6 +644,7 @@ export function complexPatternFrom(input: T.ComplexPattern.Loose): ReturnType<ty
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.complexPattern>;
   return F.complexPattern({
     imaginary: _resolveOne<T.Integer | T.Float>(input.imaginary, _K11, _K7),
+    operator: coerceKindEnumStorage(_resolveOneLeaf<T.ComplexPatternOperator>(input.operator, "_complex_pattern_operator"), [["+", kindIdFromName("+")] as const, ["-", kindIdFromName("-")] as const]),
     content: _resolveOne<T.Integer | T.Float>(input.content, _K11, _K7),
   });
 }
@@ -883,7 +884,7 @@ export function forStatementFrom(input: T.ForStatement.Loose): ReturnType<typeof
   });
 }
 
-export function formatSpecifierFrom(...input: readonly (T.Interpolation | T.FormatSpecifier)[]): ReturnType<typeof F.formatSpecifier> {
+export function formatSpecifierFrom(...input: readonly (("[^{}\\n]+" | T.Interpolation) | T.FormatSpecifier)[]): ReturnType<typeof F.formatSpecifier> {
   if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FormatSpecifier) {
     const data = input[0];
     const stored = (data as unknown as { _content?: unknown })._content;

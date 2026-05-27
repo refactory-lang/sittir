@@ -1583,17 +1583,25 @@ describe('token_binding_pattern', () => {
 
 describe('token_repetition', () => {
   it('factory produces correct type', () => {
-    const node = ir.tokenRepetition();
+    const node = ir.tokenRepetition({ operator: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.TokenRepetition);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.tokenRepetition({ operator: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
 describe('token_repetition_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.tokenRepetitionPattern();
+    const node = ir.tokenRepetitionPattern({ operator: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.TokenRepetitionPattern);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.tokenRepetitionPattern({ operator: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 

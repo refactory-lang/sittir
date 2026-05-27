@@ -221,6 +221,26 @@ const config: WireConfig<RustGrammar> = {
 		// abstract_type: 1 field(s)
 		abstract_type: {},
 
+		// token_repetition: `$( _tokens* ) <sep>? <op>` —
+		//   seq('$'[0], '('[1], repeat(_tokens)[2], ')'[3],
+		//       optional(pattern '[^+*?]+')[4], enum('+'|'*'|'?')[5]).
+		// The optional separator pattern (pos 4) and repetition operator enum
+		// (pos 5) are both unnamed nonterminal slots → both fall back to `content`,
+		// colliding on `_content` (the double `{{ content }}` in the template).
+		// Name them so each gets its own slot.
+		token_repetition: {
+			4: field('separator'),
+			5: field('operator')
+		},
+
+		// token_repetition_pattern: same shape as token_repetition — the optional
+		// separator pattern (pos 4) and the repetition operator enum (pos 5) are
+		// both unnamed → 2 `content` slots. Name them.
+		token_repetition_pattern: {
+			4: field('separator'),
+			5: field('operator')
+		},
+
 		// field_initializer_list: name the naked initializers choice (was an
 		// unresolvable `content` slot).
 		field_initializer_list: {

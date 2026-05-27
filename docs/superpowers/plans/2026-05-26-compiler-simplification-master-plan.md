@@ -20,6 +20,7 @@
 - **Branch off `origin/master`, NOT off `029`.** `029` was reset-to-`origin/master` + re-cherry-picked twice already, dropping committed work. Implementation PRs must not ride a churning feature branch. (The spec/plans docs themselves live on `029` per the user; *code* PRs branch off master.)
 - **Gate: `pnpm validate:native`** for all 3 grammars — NOT raw `counts --backend native` (a stale `.node` silently falls back to the TS path and masks regressions; `validate:native` rebuilds first). See `project_native_build_and_staleness`.
 - **Rust-emitting PRs also run an independent `cargo check --workspace --features napi-bindings` + re-count** — the SubagentStop gate no-ops after a regen, so cargo-verify is a manual step (`feedback_verify_cargo_not_gate`). Rust-emitting set: **PR-D, PR-E, PR-I, PR-M, PR-P, PR-Q**.
+- **Symbol renames / non-trivial structural refactors → execute via the copilot CLI** (it has LSP read/WRITE; Claude Code's LSP is effectively read-only). Prep the target skeleton, then let copilot run the LSP rename-symbol / move-file — NOT hand text-edits (which miss re-exports, aliased imports, JSDoc `{@link}`, type-only imports). Rename-heavy PRs: **PR-B** (`AssembledNonterminal` interface→class), **PR-H** (`optimize.ts`→`normalize.ts` + the `#14` method renames), **PR-P** (`node`→`kind`). See `feedback_use_ts_lsp_for_moves`.
 - **Baseline (2026-05-25, re-measure at each PR start):** the headline is `origin/master`-accurate — **rust cov 181/186 · read-render-parse 134/136 · ast 125 · python 107/110 · 96/115 · ast 74 · ts 174/182 · 82/111 · ast 75**. If the implementation base carries 029's applied `type_arguments`/`type_parameters` groups (`fc7c77de`), rust is `182/186 · ast 126`. **PR-A's Task 0 settles this empirically** before any code change.
 
 ---
@@ -32,7 +33,7 @@
 | ~~PR-A0~~ | Normalize losslessness fix | — | — | — | — | ✅ DONE (#36 `c38ffbf1`/`a91927c6`) |
 | **PR-A** | Reconcile `_new` naming → 0-diff WIDE probe | PR-A0 | 0 | no | `pr-a-reconcile-new-naming` | ⬜ next (plan written) |
 | **PR-B** | `AssembledNonterminal`→class; `kind`/`parseKind` refs; `sourceRuleIds` | A | 1 | no | `pr-b-assembled-nonterminal-class` | ⬜ |
-| **PR-C** | Eliminate `origin` + slot `aliasSources` → `value.parseKind`/`isUnnamed` | B | 2 | no | `pr-c-eliminate-origin-aliassources` | ⬜ |
+| **PR-C** | Eliminate `origin` + slot `aliasSources` → `value.parseKind`/`isUnnamed`; + §4d.1 non-injective-`parseKind` pass | B | 2 | no | `pr-c-eliminate-origin-aliassources` | ⬜ |
 | **PR-D** | wrap reads class; delete `SlotModel`; `$children`→`$other` (codegen+rust) | C | 3 | **yes** | `pr-d-wrap-reads-class` | ⬜ |
 | **PR-D2** | Helper-name leak fix (H2 probe → 0) | D | 4 | no | `pr-d2-helper-name-leak` | ⬜ |
 | **PR-E** | transport + render read class; delete 2 visible-kind band-aids; delete deprecated `bridge.rs` | D2, B (A) | 5 | **yes** | `pr-e-transport-render-class` | ⬜ |
@@ -44,7 +45,7 @@
 | **PR-K** | `factory-map.json5`→`node-model.json5` + elevate/relabel surfacing | I/M | 9 | no | `pr-k-node-model-registration` | ⬜ |
 | **PR-N** | enrich-widening — name easy positional symbols | — (enrich-side; ≺ L) | ‖ | no | `pr-n-enrich-widening` | ⬜ |
 | **PR-O** | Structural de-dup (M1/MO2/P1 — non-behavioral) | B, H (files) | ‖ | no | `pr-o-structural-dedup` | ⬜ |
-| **PR-P** | Terminal + flat Enum → predicates | H (rename) | 10 | **yes** | `pr-p-terminal-enum-predicates` | ⬜ |
+| **PR-P** | Terminal + flat Enum → predicates; + `TerminalValue`→`NodeRef` value unification (fixes terminal→`content`) | H (rename) | 10 | **yes** | `pr-p-terminal-enum-predicates` | ⬜ |
 | **PR-Q** | Enum recursive-widening (count-gated) | **P** | 11 | **yes** | `pr-q-enum-recursive-widening` | ⬜ |
 | **PR-L** | Flip heuristics → `propose-*` fail-diagnostics (LAST) | M, I, N, G | 12 | no | `pr-l-heuristics-to-fail` | ⬜ |
 

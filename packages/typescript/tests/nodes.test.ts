@@ -452,12 +452,12 @@ describe('conditional_type', () => {
 
 describe('constraint', () => {
   it('factory produces correct type', () => {
-    const node = ir.constraint({ $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any);
+    const node = ir.constraint({ content: 'test' as any, type: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.Constraint);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.constraint({ $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any);
+    const node = ir.constraint({ content: 'test' as any, type: { $type: TSKindId.PredefinedType, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1406,6 +1406,30 @@ describe('object_type', () => {
   it('render produces non-empty string', () => {
     const node = ir.objectType({ opening: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, closing: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
+  });
+});
+
+describe('object_type_content', () => {
+  it('factory produces correct type', () => {
+    const node = ir.objectTypeContent();
+    expect(node.$type).toBe(TSKindId.ObjectTypeContent);
+    expect(node.$source).toBe(2);
+  });
+});
+
+describe('object_type_content_comma', () => {
+  it('factory produces correct type', () => {
+    const node = ir.objectTypeContentComma();
+    expect(node.$type).toBe(TSKindId.ObjectTypeContentComma);
+    expect(node.$source).toBe(2);
+  });
+});
+
+describe('object_type_content_semi', () => {
+  it('factory produces correct type', () => {
+    const node = ir.objectTypeContentSemi();
+    expect(node.$type).toBe(TSKindId.ObjectTypeContentSemi);
+    expect(node.$source).toBe(2);
   });
 });
 

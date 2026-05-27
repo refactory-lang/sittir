@@ -354,8 +354,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
   "return_expression": TSKindId.ReturnExpression,
   "slice_pattern": TSKindId.SlicePattern,
   "string_literal": TSKindId.StringLiteral,
-  "token_repetition": TSKindId.TokenRepetition,
-  "token_repetition_pattern": TSKindId.TokenRepetitionPattern,
   "token_tree_paren": TSKindId._TokenTreeParen,
   "token_tree_bracket": TSKindId._TokenTreeBracket,
   "token_tree_brace": TSKindId._TokenTreeBrace,
@@ -407,8 +405,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "return_expression": return F.returnExpression(children[0] as Parameters<typeof F.returnExpression>[0]);
     case "slice_pattern": return F.slicePattern(...(children as Parameters<typeof F.slicePattern>));
     case "string_literal": return F.stringLiteral(...(children as Parameters<typeof F.stringLiteral>));
-    case "token_repetition": return F.tokenRepetition(...(children as Parameters<typeof F.tokenRepetition>));
-    case "token_repetition_pattern": return F.tokenRepetitionPattern(...(children as Parameters<typeof F.tokenRepetitionPattern>));
     case "token_tree_paren": return F.tokenTreeParen(...(children as Parameters<typeof F.tokenTreeParen>));
     case "token_tree_bracket": return F.tokenTreeBracket(...(children as Parameters<typeof F.tokenTreeBracket>));
     case "token_tree_brace": return F.tokenTreeBrace(...(children as Parameters<typeof F.tokenTreeBrace>));
@@ -552,12 +548,15 @@ const _K34: readonly string[] = ["identifier","super"];
 const _K35: readonly string[] = ["scoped_identifier","generic_type_with_turbofish","bracketed_type","generic_type"];
 const _K36: readonly string[] = ["scoped_identifier","generic_type_with_turbofish"];
 const _K37: readonly string[] = ["scoped_type_identifier_in_expression_position","generic_type_with_turbofish"];
-const _K38: readonly string[] = ["abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound","lifetime","higher_ranked_trait_bound"];
-const _K39: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","ref_pattern","slice_pattern","captured_pattern","reference_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation","closure_expression"];
-const _K40: readonly string[] = ["lifetime"];
-const _K41: readonly string[] = ["scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"];
-const _K42: readonly string[] = ["identifier","_primitive_type"];
-const _K43: readonly string[] = ["lifetime","scoped_type_identifier","generic_type","reference_type","pointer_type","tuple_type","array_type","higher_ranked_trait_bound"];
+const _K38: readonly string[] = ["metavariable","char_literal","boolean_literal","integer_literal","float_literal","identifier","mutable_specifier","self","super","crate"];
+const _K39: readonly string[] = ["token_tree","token_repetition","string_literal","raw_string_literal"];
+const _K40: readonly string[] = ["token_tree_pattern","token_repetition_pattern","token_binding_pattern","string_literal","raw_string_literal"];
+const _K41: readonly string[] = ["abstract_type","reference_type","pointer_type","generic_type","scoped_type_identifier","tuple_type","array_type","function_type","macro_invocation","dynamic_type","bounded_type","removed_trait_bound","lifetime","higher_ranked_trait_bound"];
+const _K42: readonly string[] = ["string_literal","raw_string_literal","negative_literal","scoped_identifier","generic_pattern","tuple_pattern","tuple_struct_pattern","struct_pattern","ref_pattern","slice_pattern","captured_pattern","reference_pattern","mut_pattern","range_pattern","or_pattern","const_block","macro_invocation","closure_expression"];
+const _K43: readonly string[] = ["lifetime"];
+const _K44: readonly string[] = ["scoped_identifier","use_as_clause","use_list","scoped_use_list","use_wildcard"];
+const _K45: readonly string[] = ["identifier","_primitive_type"];
+const _K46: readonly string[] = ["lifetime","scoped_type_identifier","generic_type","reference_type","pointer_type","tuple_type","array_type","higher_ranked_trait_bound"];
 
 export function abstractTypeFrom(input: T.AbstractType.Loose): ReturnType<typeof F.abstractType> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.abstractType>;
@@ -1881,24 +1880,22 @@ export function tokenBindingPatternFrom(input: T.TokenBindingPattern.Loose): Ret
   });
 }
 
-export function tokenRepetitionFrom(...input: readonly (T.Tokens | T.TokenRepetition)[]): ReturnType<typeof F.tokenRepetition> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TokenRepetition) {
-    const data = input[0];
-    const stored = (data as unknown as { _tokens?: unknown })._tokens;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.tokenRepetition(...(children as unknown as Parameters<typeof F.tokenRepetition>));
-  }
-  return F.tokenRepetition(...(input as unknown as Parameters<typeof F.tokenRepetition>));
+export function tokenRepetitionFrom(input: T.TokenRepetition.Loose): ReturnType<typeof F.tokenRepetition> {
+  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.tokenRepetition>;
+  return F.tokenRepetition({
+    tokens: _resolveMany<T.Tokens>(input.tokens, _K38, _K39),
+    separator: _resolveBooleanKeyword(input.separator),
+    operator: coerceKindEnumStorage(_resolveOneLeaf<T.Operator>(input.operator, "_operator"), [["+", kindIdFromName("+")] as const, ["*", kindIdFromName("*")] as const, ["?", kindIdFromName("?")] as const]),
+  });
 }
 
-export function tokenRepetitionPatternFrom(...input: readonly (T.TokenPattern | T.TokenRepetitionPattern)[]): ReturnType<typeof F.tokenRepetitionPattern> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TokenRepetitionPattern) {
-    const data = input[0];
-    const stored = (data as unknown as { _token_pattern?: unknown })._token_pattern;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.tokenRepetitionPattern(...(children as unknown as Parameters<typeof F.tokenRepetitionPattern>));
-  }
-  return F.tokenRepetitionPattern(...(input as unknown as Parameters<typeof F.tokenRepetitionPattern>));
+export function tokenRepetitionPatternFrom(input: T.TokenRepetitionPattern.Loose): ReturnType<typeof F.tokenRepetitionPattern> {
+  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.tokenRepetitionPattern>;
+  return F.tokenRepetitionPattern({
+    tokenPattern: _resolveMany<T.TokenPattern>(input.tokenPattern, _K38, _K40),
+    separator: _resolveBooleanKeyword(input.separator),
+    operator: coerceKindEnumStorage(_resolveOneLeaf<T.Operator>(input.operator, "_operator"), [["+", kindIdFromName("+")] as const, ["*", kindIdFromName("*")] as const, ["?", kindIdFromName("?")] as const]),
+  });
 }
 
 export function tokenTreeParenFrom(...input: readonly (T.Tokens | T.TokenTreeParen)[]): ReturnType<typeof F.tokenTreeParen> {
@@ -1977,7 +1974,7 @@ export function tokenTreePatternUFormBraceFrom(input: Omit<ConfigOf<T.TokenTreeP
 
 export function traitBoundsFrom(input: T.TraitBounds.Loose): ReturnType<typeof F.traitBounds> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.traitBounds>;
-  const _ne_bounds = _resolveMany<T._Type | T.Lifetime | T.HigherRankedTraitBound>(input.bounds, _K2, _K38);
+  const _ne_bounds = _resolveMany<T._Type | T.Lifetime | T.HigherRankedTraitBound>(input.bounds, _K2, _K41);
   _assertNonEmpty(_ne_bounds, 'trait_bounds.bounds');
   return F.traitBounds({
     bounds: _ne_bounds,
@@ -2018,7 +2015,7 @@ export function tupleExpressionFrom(input?: T.TupleExpression.Loose): ReturnType
 export function tuplePatternFrom(input?: T.TuplePattern.Loose): ReturnType<typeof F.tuplePattern> {
   if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.tuplePattern>;
   return F.tuplePattern({
-    elements: _resolveMany<T.Pattern | T.ClosureExpression>(input?.elements, _K12, _K39),
+    elements: _resolveMany<T.Pattern | T.ClosureExpression>(input?.elements, _K12, _K42),
   });
 }
 
@@ -2142,7 +2139,7 @@ export function useAsClauseFrom(input: T.UseAsClause.Loose): ReturnType<typeof F
 export function useBoundsFrom(input?: T.UseBounds.Loose): ReturnType<typeof F.useBounds> {
   if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.useBounds>;
   return F.useBounds({
-    bounds: _resolveMany<T.Lifetime | T.Identifier>(input?.bounds, _K0, _K40),
+    bounds: _resolveMany<T.Lifetime | T.Identifier>(input?.bounds, _K0, _K43),
   });
 }
 
@@ -2150,7 +2147,7 @@ export function useDeclarationFrom(input: T.UseDeclaration.Loose): ReturnType<ty
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.useDeclaration>;
   return F.useDeclaration({
     visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, "visibility_modifier"),
-    argument: _resolveOne<T.UseClause>(input.argument, _K6, _K41),
+    argument: _resolveOne<T.UseClause>(input.argument, _K6, _K44),
   });
 }
 
@@ -2222,7 +2219,7 @@ export function whereClauseFrom(...input: readonly (T.WherePredicate | T.WhereCl
 export function wherePredicateFrom(input: T.WherePredicate.Loose): ReturnType<typeof F.wherePredicate> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.wherePredicate>;
   return F.wherePredicate({
-    left: _resolveOne<T.Lifetime | T.Identifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType>(input.left, _K42, _K43),
+    left: _resolveOne<T.Lifetime | T.Identifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType>(input.left, _K45, _K46),
     bounds: _resolveOneBranch<T.TraitBounds>(input.bounds, "trait_bounds"),
   });
 }

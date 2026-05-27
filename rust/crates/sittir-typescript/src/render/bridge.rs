@@ -316,7 +316,8 @@ pub(crate) fn separator_for(kind_id: u16) -> &'static str {
         178 => ",", // "named_imports"
         213 => ",", // "object"
         214 => ",", // "object_pattern"
-        337 => ",", // "object_type"
+        355 => ",", // "object_type_content_comma"
+        356 => ";", // "object_type_content_semi"
         246 => ",", // "sequence_expression"
         347 => ",", // "tuple_type"
         336 => ",", // "type_arguments"
@@ -328,34 +329,34 @@ pub(crate) fn separator_for(kind_id: u16) -> &'static str {
 
 pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {
     match (parent_id, child_id) {
-        (355, 372) => Some("clause_from"), // ("_export_statement_default_from_arm", "export_statement_default_from_arm_clause_from")
-        (355, 371) => Some("ns_from"), // ("_export_statement_default_from_arm", "export_statement_default_from_arm_ns_from")
-        (355, 370) => Some("star_from"), // ("_export_statement_default_from_arm", "export_statement_default_from_arm_star_from")
-        (281, 369) => Some("declaration"), // ("ambient_declaration", "ambient_declaration_declaration")
+        (358, 375) => Some("clause_from"), // ("_export_statement_default_from_arm", "export_statement_default_from_arm_clause_from")
+        (358, 374) => Some("ns_from"), // ("_export_statement_default_from_arm", "export_statement_default_from_arm_ns_from")
+        (358, 373) => Some("star_from"), // ("_export_statement_default_from_arm", "export_statement_default_from_arm_star_from")
+        (281, 372) => Some("declaration"), // ("ambient_declaration", "ambient_declaration_declaration")
         (281, 352) => Some("global"), // ("ambient_declaration", "ambient_declaration_global")
         (281, 353) => Some("module"), // ("ambient_declaration", "ambient_declaration_module")
-        (227, 359) => Some("_call_signature"), // ("arrow_function", "arrow_function__call_signature")
-        (227, 358) => Some("parameter"), // ("arrow_function", "arrow_function_parameter")
-        (231, 385) => Some("call"), // ("call_expression", "call_expression_call")
-        (231, 387) => Some("member"), // ("call_expression", "call_expression_member")
-        (231, 386) => Some("template_call"), // ("call_expression", "call_expression_template_call")
-        (222, 360) => Some("extends_clause"), // ("class_heritage", "class_heritage_extends_clause")
-        (222, 361) => Some("implements_clause"), // ("class_heritage", "class_heritage_implements_clause")
-        (167, 354) => Some("default"), // ("export_statement", "export_statement_default")
-        (167, 383) => Some("equals_export"), // ("export_statement", "export_statement_equals_export")
-        (167, 384) => Some("namespace_export"), // ("export_statement", "export_statement_namespace_export")
-        (167, 382) => Some("type_export"), // ("export_statement", "export_statement_type_export")
-        (175, 364) => Some("default_import"), // ("import_clause", "import_clause_default_import")
-        (175, 363) => Some("named_imports"), // ("import_clause", "import_clause_named_imports")
-        (175, 362) => Some("namespace_import"), // ("import_clause", "import_clause_namespace_import")
-        (179, 366) => Some("as"), // ("import_specifier", "import_specifier_as")
-        (179, 365) => Some("name"), // ("import_specifier", "import_specifier_name")
-        (345, 367) => Some("colon"), // ("index_signature", "index_signature_colon")
-        (345, 368) => Some("mapped_type_clause"), // ("index_signature", "index_signature_mapped_type_clause")
-        (209, 381) => Some("sequence"), // ("parenthesized_expression", "parenthesized_expression_sequence")
-        (209, 380) => Some("typed"), // ("parenthesized_expression", "parenthesized_expression_typed")
-        (245, 388) => Some("postfix"), // ("update_expression", "update_expression_postfix")
-        (245, 389) => Some("prefix"), // ("update_expression", "update_expression_prefix")
+        (227, 362) => Some("_call_signature"), // ("arrow_function", "arrow_function__call_signature")
+        (227, 361) => Some("parameter"), // ("arrow_function", "arrow_function_parameter")
+        (231, 388) => Some("call"), // ("call_expression", "call_expression_call")
+        (231, 390) => Some("member"), // ("call_expression", "call_expression_member")
+        (231, 389) => Some("template_call"), // ("call_expression", "call_expression_template_call")
+        (222, 363) => Some("extends_clause"), // ("class_heritage", "class_heritage_extends_clause")
+        (222, 364) => Some("implements_clause"), // ("class_heritage", "class_heritage_implements_clause")
+        (167, 357) => Some("default"), // ("export_statement", "export_statement_default")
+        (167, 386) => Some("equals_export"), // ("export_statement", "export_statement_equals_export")
+        (167, 387) => Some("namespace_export"), // ("export_statement", "export_statement_namespace_export")
+        (167, 385) => Some("type_export"), // ("export_statement", "export_statement_type_export")
+        (175, 367) => Some("default_import"), // ("import_clause", "import_clause_default_import")
+        (175, 366) => Some("named_imports"), // ("import_clause", "import_clause_named_imports")
+        (175, 365) => Some("namespace_import"), // ("import_clause", "import_clause_namespace_import")
+        (179, 369) => Some("as"), // ("import_specifier", "import_specifier_as")
+        (179, 368) => Some("name"), // ("import_specifier", "import_specifier_name")
+        (345, 370) => Some("colon"), // ("index_signature", "index_signature_colon")
+        (345, 371) => Some("mapped_type_clause"), // ("index_signature", "index_signature_mapped_type_clause")
+        (209, 384) => Some("sequence"), // ("parenthesized_expression", "parenthesized_expression_sequence")
+        (209, 383) => Some("typed"), // ("parenthesized_expression", "parenthesized_expression_typed")
+        (245, 391) => Some("postfix"), // ("update_expression", "update_expression_postfix")
+        (245, 392) => Some("prefix"), // ("update_expression", "update_expression_prefix")
         _ => None,
     }
 }
@@ -441,7 +442,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
     }
     match node.type_.0 {
-        369 => { // "_ambient_declaration_declaration" | "ambient_declaration_declaration"
+        372 => { // "_ambient_declaration_declaration" | "ambient_declaration_declaration"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let template = _AmbientDeclarationDeclarationTemplate {
                 declaration: match children.kind {
@@ -472,7 +473,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        359 => { // "_arrow_function__call_signature" | "arrow_function__call_signature"
+        362 => { // "_arrow_function__call_signature" | "arrow_function__call_signature"
             let field_0 = resolve_slot(node, SlotAccessor::Field("parameters"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("return_type"), false)?;
             let field_2 = resolve_slot(node, SlotAccessor::Field("type_parameters"), false)?;
@@ -489,14 +490,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        358 => { // "_arrow_function_parameter" | "arrow_function_parameter"
+        361 => { // "_arrow_function_parameter" | "arrow_function_parameter"
             let field_0 = resolve_slot(node, SlotAccessor::Field("parameter"), true)?;
             let template = _ArrowFunctionParameterTemplate {
                 parameter: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
         }
-        385 => { // "_call_expression_call" | "call_expression_call"
+        388 => { // "_call_expression_call" | "call_expression_call"
             let field_0 = resolve_slot(node, SlotAccessor::Field("arguments"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("function"), true)?;
             let field_2 = resolve_slot(node, SlotAccessor::Field("type_arguments"), false)?;
@@ -510,7 +511,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        387 => { // "_call_expression_member" | "call_expression_member"
+        390 => { // "_call_expression_member" | "call_expression_member"
             let field_0 = resolve_slot(node, SlotAccessor::Field("arguments"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("function"), true)?;
             let field_2 = resolve_slot(node, SlotAccessor::Field("type_arguments"), false)?;
@@ -524,7 +525,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        386 => { // "_call_expression_template_call" | "call_expression_template_call"
+        389 => { // "_call_expression_template_call" | "call_expression_template_call"
             let field_0 = resolve_slot(node, SlotAccessor::Field("arguments"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("function"), true)?;
             let template = CallExpressionTemplateCallTemplate {
@@ -533,17 +534,22 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        376 => { // "_class_body_member" | "class_body_member"
-            let children = resolve_slot(node, SlotAccessor::Children, false)?;
+        379 => { // "_class_body_member" | "class_body_member"
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("terminator"), false)?;
             let template = ClassBodyMemberTemplate {
                 content: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                terminator: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
                 },
             };
             template.render_into(dest)
         }
-        375 => { // "_class_body_method_sig" | "class_body_method_sig"
+        378 => { // "_class_body_method_sig" | "class_body_method_sig"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let template = ClassBodyMethodSigTemplate {
                 method_signature: match children.kind {
@@ -553,7 +559,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        374 => { // "_class_body_method" | "class_body_method"
+        377 => { // "_class_body_method" | "class_body_method"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("decorator"), false)?;
             let children_renderables = children.renderable_items();
@@ -576,7 +582,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        360 => { // "_class_heritage_extends_clause" | "class_heritage_extends_clause"
+        363 => { // "_class_heritage_extends_clause" | "class_heritage_extends_clause"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let children_renderables = children.renderable_items();
             let template = _ClassHeritageExtendsClauseTemplate {
@@ -591,7 +597,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        361 => { // "_class_heritage_implements_clause" | "class_heritage_implements_clause"
+        364 => { // "_class_heritage_implements_clause" | "class_heritage_implements_clause"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let template = _ClassHeritageImplementsClauseTemplate {
                 implements_clause: match children.kind {
@@ -601,7 +607,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        373 => { // "_export_statement_default_decl_arm_default_kw_value" | "export_statement_default_decl_arm_default_kw_value"
+        376 => { // "_export_statement_default_decl_arm_default_kw_value" | "export_statement_default_decl_arm_default_kw_value"
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("value"), true)?;
             let template = ExportStatementDefaultDeclArmDefaultKwValueTemplate {
@@ -613,7 +619,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        357 => { // "_export_statement_default_decl_arm_default_kw" | "export_statement_default_decl_arm_default_kw"
+        360 => { // "_export_statement_default_decl_arm_default_kw" | "export_statement_default_decl_arm_default_kw"
             let field_0 = resolve_slot(node, SlotAccessor::Field("declaration"), false)?;
             let template = ExportStatementDefaultDeclArmDefaultKwTemplate {
                 declaration: match field_0.kind {
@@ -623,7 +629,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        356 => { // "_export_statement_default_decl_arm" | "export_statement_default_decl_arm"
+        359 => { // "_export_statement_default_decl_arm" | "export_statement_default_decl_arm"
             let field_0 = resolve_slot(node, SlotAccessor::Field("declaration"), false)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("decorator"), false)?;
             let field_1_renderables = field_1.renderable_items();
@@ -641,7 +647,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        372 => { // "_export_statement_default_from_arm_clause_from" | "export_statement_default_from_arm_clause_from"
+        375 => { // "_export_statement_default_from_arm_clause_from" | "export_statement_default_from_arm_clause_from"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("source"), true)?;
             let template = _ExportStatementDefaultFromArmClauseFromTemplate {
@@ -653,7 +659,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        371 => { // "_export_statement_default_from_arm_ns_from" | "export_statement_default_from_arm_ns_from"
+        374 => { // "_export_statement_default_from_arm_ns_from" | "export_statement_default_from_arm_ns_from"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("source"), true)?;
             let template = _ExportStatementDefaultFromArmNsFromTemplate {
@@ -665,14 +671,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        370 => { // "_export_statement_default_from_arm_star_from" | "export_statement_default_from_arm_star_from"
+        373 => { // "_export_statement_default_from_arm_star_from" | "export_statement_default_from_arm_star_from"
             let field_0 = resolve_slot(node, SlotAccessor::Field("source"), true)?;
             let template = _ExportStatementDefaultFromArmStarFromTemplate {
                 source: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
         }
-        355 => { // "_export_statement_default_from_arm" | "export_statement_default_from_arm"
+        358 => { // "_export_statement_default_from_arm" | "export_statement_default_from_arm"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let variant = resolve_variant(node);
             let children_renderables = children.renderable_items();
@@ -701,7 +707,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        383 => { // "_export_statement_equals_export" | "export_statement_equals_export"
+        386 => { // "_export_statement_equals_export" | "export_statement_equals_export"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let children_renderables = children.renderable_items();
             let template = _ExportStatementEqualsExportTemplate {
@@ -716,7 +722,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        384 => { // "_export_statement_namespace_export" | "export_statement_namespace_export"
+        387 => { // "_export_statement_namespace_export" | "export_statement_namespace_export"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let children_renderables = children.renderable_items();
             let template = _ExportStatementNamespaceExportTemplate {
@@ -731,7 +737,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        382 => { // "_export_statement_type_export" | "export_statement_type_export"
+        385 => { // "_export_statement_type_export" | "export_statement_type_export"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("source"), false)?;
             let children_renderables = children.renderable_items();
@@ -751,7 +757,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        379 => { // "_for_header_let_const_kind" | "for_header_let_const_kind"
+        382 => { // "_for_header_let_const_kind" | "for_header_let_const_kind"
             let field_0 = resolve_slot(node, SlotAccessor::Field("kind"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("left"), true)?;
             let template = ForHeaderLetConstKindTemplate {
@@ -760,14 +766,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        377 => { // "_for_header_lhs" | "for_header_lhs"
+        380 => { // "_for_header_lhs" | "for_header_lhs"
             let field_0 = resolve_slot(node, SlotAccessor::Field("left"), true)?;
             let template = ForHeaderLhsTemplate {
                 left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
         }
-        378 => { // "_for_header_var_kind" | "for_header_var_kind"
+        381 => { // "_for_header_var_kind" | "for_header_var_kind"
             let field_0 = resolve_slot(node, SlotAccessor::Field("kind"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("left"), true)?;
             let field_2 = resolve_slot(node, SlotAccessor::Field("value"), false)?;
@@ -781,7 +787,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        364 => { // "_import_clause_default_import" | "import_clause_default_import"
+        367 => { // "_import_clause_default_import" | "import_clause_default_import"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let children_renderables = children.renderable_items();
             let template = _ImportClauseDefaultImportTemplate {
@@ -796,7 +802,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        363 => { // "_import_clause_named_imports" | "import_clause_named_imports"
+        366 => { // "_import_clause_named_imports" | "import_clause_named_imports"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let template = _ImportClauseNamedImportsTemplate {
                 named_imports: match children.kind {
@@ -806,7 +812,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        362 => { // "_import_clause_namespace_import" | "import_clause_namespace_import"
+        365 => { // "_import_clause_namespace_import" | "import_clause_namespace_import"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let template = _ImportClauseNamespaceImportTemplate {
                 namespace_import: match children.kind {
@@ -816,7 +822,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        366 => { // "_import_specifier_as" | "import_specifier_as"
+        369 => { // "_import_specifier_as" | "import_specifier_as"
             let field_0 = resolve_slot(node, SlotAccessor::Field("alias"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("name"), true)?;
             let template = ImportSpecifierAsTemplate {
@@ -825,14 +831,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        365 => { // "_import_specifier_name" | "import_specifier_name"
+        368 => { // "_import_specifier_name" | "import_specifier_name"
             let field_0 = resolve_slot(node, SlotAccessor::Field("name"), true)?;
             let template = _ImportSpecifierNameTemplate {
                 name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
         }
-        367 => { // "_index_signature_colon" | "index_signature_colon"
+        370 => { // "_index_signature_colon" | "index_signature_colon"
             let field_0 = resolve_slot(node, SlotAccessor::Field("index_type"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("name"), true)?;
             let template = IndexSignatureColonTemplate {
@@ -841,7 +847,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        368 => { // "_index_signature_mapped_type_clause" | "index_signature_mapped_type_clause"
+        371 => { // "_index_signature_mapped_type_clause" | "index_signature_mapped_type_clause"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let template = _IndexSignatureMappedTypeClauseTemplate {
                 mapped_type_clause: match children.kind {
@@ -860,7 +866,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        381 => { // "_parenthesized_expression_sequence" | "parenthesized_expression_sequence"
+        384 => { // "_parenthesized_expression_sequence" | "parenthesized_expression_sequence"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let template = _ParenthesizedExpressionSequenceTemplate {
                 sequence_expression: match children.kind {
@@ -870,7 +876,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        380 => { // "_parenthesized_expression_typed" | "parenthesized_expression_typed"
+        383 => { // "_parenthesized_expression_typed" | "parenthesized_expression_typed"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("type"), false)?;
             let template = ParenthesizedExpressionTypedTemplate {
@@ -885,7 +891,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        416 => { // "_public_field_definition_abstract_first" | "public_field_definition_abstract_first"
+        420 => { // "_public_field_definition_abstract_first" | "public_field_definition_abstract_first"
             let field_0 = resolve_slot(node, SlotAccessor::Field("abstract_marker"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("readonly_marker"), false)?;
             let template = PublicFieldDefinitionAbstractFirstTemplate {
@@ -897,7 +903,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        417 => { // "_public_field_definition_access_first" | "public_field_definition_access_first"
+        421 => { // "_public_field_definition_access_first" | "public_field_definition_access_first"
             let children = resolve_slot(node, SlotAccessor::Children, true)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("declare_marker"), true)?;
             let template = PublicFieldDefinitionAccessFirstTemplate {
@@ -909,14 +915,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        418 => { // "_public_field_definition_accessor_opt" | "public_field_definition_accessor_opt"
+        422 => { // "_public_field_definition_accessor_opt" | "public_field_definition_accessor_opt"
             let field_0 = resolve_slot(node, SlotAccessor::Field("accessor_marker"), true)?;
             let template = PublicFieldDefinitionAccessorOptTemplate {
                 accessor_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
         }
-        419 => { // "_public_field_definition_declare_first" | "public_field_definition_declare_first"
+        423 => { // "_public_field_definition_declare_first" | "public_field_definition_declare_first"
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let template = PublicFieldDefinitionDeclareFirstTemplate {
                 accessibility_modifier: match children.kind {
@@ -926,7 +932,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        420 => { // "_public_field_definition_readonly_first" | "public_field_definition_readonly_first"
+        424 => { // "_public_field_definition_readonly_first" | "public_field_definition_readonly_first"
             let field_0 = resolve_slot(node, SlotAccessor::Field("abstract_marker"), false)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("readonly_marker"), true)?;
             let template = PublicFieldDefinitionReadonlyFirstTemplate {
@@ -938,7 +944,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        421 => { // "_public_field_definition_static_mods" | "public_field_definition_static_mods"
+        425 => { // "_public_field_definition_static_mods" | "public_field_definition_static_mods"
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
             let field_0 = resolve_slot(node, SlotAccessor::Field("readonly_marker"), false)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("static_marker"), true)?;
@@ -992,11 +998,13 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         322 => { // "_type_query_member_expression"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("object"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("property"), true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("content"), true)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("object"), true)?;
+            let field_2 = resolve_slot(node, SlotAccessor::Field("property"), true)?;
             let template = TypeQueryMemberExpressionTemplate {
-                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                content: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
             };
             template.render_into(dest)
         }
@@ -1009,7 +1017,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        388 => { // "_update_expression_postfix" | "update_expression_postfix"
+        391 => { // "_update_expression_postfix" | "update_expression_postfix"
             let field_0 = resolve_slot(node, SlotAccessor::Field("argument"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("operator"), true)?;
             let template = UpdateExpressionPostfixTemplate {
@@ -1018,7 +1026,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        389 => { // "_update_expression_prefix" | "update_expression_prefix"
+        392 => { // "_update_expression_prefix" | "update_expression_prefix"
             let field_0 = resolve_slot(node, SlotAccessor::Field("argument"), true)?;
             let field_1 = resolve_slot(node, SlotAccessor::Field("operator"), true)?;
             let template = UpdateExpressionPrefixTemplate {
@@ -1452,9 +1460,11 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         343 => { // "constraint"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("type"), true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("content"), true)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("type"), true)?;
             let template = ConstraintTemplate {
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                content: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
             };
             template.render_into(dest)
         }
@@ -1605,10 +1615,10 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         291 => { // "enum_body"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("opening"), false)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("name"), false)?;
             let field_0_renderables = field_0.renderable_items();
             let template = EnumBodyTemplate {
-                opening: ListNonterminalView {
+                name: ListNonterminalView {
                     items: field_0_renderables.as_slice(),
                     separator: field_0.separator,
                     leading: field_0.leading_sep,
@@ -2463,20 +2473,53 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        337 => { // "object_type"
+        355 => { // "object_type_content_comma"
             let children = resolve_slot(node, SlotAccessor::Children, false)?;
-            let field_0 = resolve_slot(node, SlotAccessor::Field("closing"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("opening"), true)?;
             let children_renderables = children.renderable_items();
-            let template = ObjectTypeTemplate {
+            let template = ObjectTypeContentCommaTemplate {
                 content: ListNonterminalView {
                     items: children_renderables.as_slice(),
                     separator: children.separator,
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
+            };
+            template.render_into(dest)
+        }
+        356 => { // "object_type_content_semi"
+            let children = resolve_slot(node, SlotAccessor::Children, false)?;
+            let children_renderables = children.renderable_items();
+            let template = ObjectTypeContentSemiTemplate {
+                content: ListNonterminalView {
+                    items: children_renderables.as_slice(),
+                    separator: children.separator,
+                    leading: children.leading_sep,
+                    trailing: children.trailing_sep,
+                },
+            };
+            template.render_into(dest)
+        }
+        354 => { // "object_type_content"
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let template = ObjectTypeContentTemplate {
+                content: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+            };
+            template.render_into(dest)
+        }
+        337 => { // "object_type"
+            let field_0 = resolve_slot(node, SlotAccessor::Field("closing"), true)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("members"), false)?;
+            let field_2 = resolve_slot(node, SlotAccessor::Field("opening"), true)?;
+            let template = ObjectTypeTemplate {
                 closing: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                opening: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                members: match field_1.kind {
+                    ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                },
+                opening: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
             };
             template.render_into(dest)
         }

@@ -19,7 +19,7 @@
     "_call_expression_call": "config",
     "_call_expression_member": "config",
     "_call_expression_template_call": "config",
-    "_class_body_member": "spread",
+    "_class_body_member": "config",
     "_class_body_method": "config",
     "_class_body_method_sig": "spread",
     "_class_heritage_extends_clause": "config",
@@ -114,7 +114,7 @@
     "comment": "text",
     "computed_property_name": "direct",
     "conditional_type": "config",
-    "constraint": "direct",
+    "constraint": "config",
     "construct_signature": "config",
     "constructor_type": "config",
     "continue_statement": "config",
@@ -208,6 +208,9 @@
     "object_assignment_pattern": "config",
     "object_pattern": "config",
     "object_type": "config",
+    "object_type_content": "direct",
+    "object_type_content_comma": "spread",
+    "object_type_content_semi": "spread",
     "omitting_type_annotation": "direct",
     "opting_type_annotation": "direct",
     "optional_parameter": "config",
@@ -651,7 +654,8 @@
       "arguments"
     ],
     "_class_body_member": [
-      "content"
+      "content",
+      "terminator"
     ],
     "_class_body_method": [
       "decorator",
@@ -789,6 +793,7 @@
     ],
     "_type_query_member_expression": [
       "object",
+      "content",
       "property"
     ],
     "_type_query_member_expression_in_type_annotation": [
@@ -949,6 +954,7 @@
       "alternative"
     ],
     "constraint": [
+      "content",
       "type"
     ],
     "construct_signature": [
@@ -999,7 +1005,8 @@
       "value"
     ],
     "enum_body": [
-      "opening"
+      "name",
+      "enum_assignment"
     ],
     "enum_declaration": [
       "name",
@@ -1307,8 +1314,17 @@
     ],
     "object_type": [
       "opening",
-      "content",
+      "members",
       "closing"
+    ],
+    "object_type_content": [
+      "content"
+    ],
+    "object_type_content_comma": [
+      "content"
+    ],
+    "object_type_content_semi": [
+      "content"
     ],
     "omitting_type_annotation": [
       "type"
@@ -1663,6 +1679,13 @@
     },
     "_class_body_member": {
       "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2254,6 +2277,13 @@
     },
     "_type_query_member_expression": {
       "object": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2945,6 +2975,13 @@
       }
     },
     "constraint": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "type": {
         "unnamed": false,
         "slotCount": 1,
@@ -3153,7 +3190,14 @@
       }
     },
     "enum_body": {
-      "opening": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
+      "enum_assignment": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4595,11 +4639,11 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "members": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": true,
+        "multiple": false,
         "nonEmpty": false
       },
       "closing": {
@@ -4607,6 +4651,33 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "object_type_content": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "object_type_content_comma": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "object_type_content_semi": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
