@@ -43,7 +43,7 @@ import { loadKindNames } from '../validate/common.ts';
 // Schema types — see contracts/baseline-json.md
 // ---------------------------------------------------------------------------
 
-export type Backend = 'typescript' | 'native';
+export type Backend = 'js' | 'native';
 export type Grammar = 'python' | 'rust' | 'typescript';
 
 const GRAMMARS: readonly Grammar[] = ['python', 'rust', 'typescript'];
@@ -302,7 +302,7 @@ async function collectValidatorsForGrammar(grammar: Grammar, backend: Backend): 
 	// Pass backend explicitly so each validator uses the correct engine
 	// without touching process.env — avoids cross-contamination when
 	// collectBaseline() is called concurrently.
-	const backendArg: 'native' | 'typescript' = backend === 'native' ? 'native' : 'typescript';
+	const backendArg: 'native' | 'js' = backend;
 	const [from, cov, rt, fac] = await Promise.all([
 		validateFrom(grammar, backendArg),
 		Promise.resolve(validateTemplateCoverage(grammar, tp)),

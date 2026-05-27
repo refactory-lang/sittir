@@ -131,13 +131,14 @@ export const LEAF_KINDS = [
   '_augmented_assignment_operator',
   '_complex_pattern_operator',
   '_dedent',
-  '_identifier',
   '_indent',
   '_is_not',
   '_kw_async_marker',
+  '_kw_identifier',
   '_kw_type',
   '_newline',
   '_not_in',
+  '_splat_pattern_operator',
   '_string_content',
   '_unary_operator_operator',
   'and',
@@ -205,6 +206,7 @@ export const KEYWORDS = [
   '__future__',
   '_async_marker',
   '_kw_async_marker',
+  '_kw_identifier',
   '_kw_type',
   '_not_escape_sequence',
   'amp',
@@ -1483,6 +1485,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'step', required: false, multiple: false },
   ],
   'splat_pattern': [
+    { name: 'operator', required: true, multiple: false },
     { name: 'identifier', required: true, multiple: false },
   ],
   'splat_type': [
@@ -1597,12 +1600,12 @@ export const _COMPLEX_PATTERN_OPERATORS = [
 ] as const;
 export type ComplexPatternOperatorValue = (typeof _COMPLEX_PATTERN_OPERATORS)[number];
 
-/** Valid values for `_identifier` nodes. */
-export const _IDENTIFIERS = [
+/** Valid values for `_splat_pattern_operator` nodes. */
+export const _SPLAT_PATTERN_OPERATORS = [
   '*',
   '**',
 ] as const;
-export type IdentifierValue = (typeof _IDENTIFIERS)[number];
+export type SplatPatternOperatorValue = (typeof _SPLAT_PATTERN_OPERATORS)[number];
 
 /** Valid values for `_unary_operator_operator` nodes. */
 export const _UNARY_OPERATOR_OPERATORS = [

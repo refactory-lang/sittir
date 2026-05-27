@@ -286,7 +286,7 @@
         "named": true
       },
       {
-        "type": "list_splat",
+        "type": "list_splat_pattern",
         "named": true
       },
       {
@@ -2702,7 +2702,7 @@
     "fields": {
       "expression": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "expression",
@@ -2710,24 +2710,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "attribute",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "subscript",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -3237,6 +3219,16 @@
     "named": true,
     "fields": {
       "identifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_",
+            "named": false
+          }
+        ]
+      },
+      "operator": {
         "multiple": false,
         "required": true,
         "types": [

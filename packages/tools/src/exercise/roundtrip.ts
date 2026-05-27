@@ -51,7 +51,7 @@ interface CommonModule {
 		grammar: string,
 		tree: unknown,
 		source: string,
-		backend?: 'native' | 'typescript',
+		backend?: 'native' | 'js',
 		kindIdFromName?: (kind: string) => number | undefined
 	): ReadHandle;
 	findNativeNodeId(

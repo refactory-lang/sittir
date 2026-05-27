@@ -20,15 +20,15 @@ import { validateReadProjection, formatReadProjectionReport } from './validate/r
 // so these thin wrappers mirror its runRt / runFactory / runFrom API to keep
 // the roundtrip call-sites at the same abstraction level as the validator facade.
 /** @see @sittir/validator's `runRt` */
-function runRt(grammar: string, tp: string, backend: 'native' | 'typescript' = 'native') {
+function runRt(grammar: string, tp: string, backend: 'native' | 'js' = 'native') {
 	return validateReadRenderParse(grammar, tp, { backend });
 }
 /** @see @sittir/validator's `runFactory` */
-function runFactory(grammar: string, tp: string, backend: 'native' | 'typescript' = 'native') {
+function runFactory(grammar: string, tp: string, backend: 'native' | 'js' = 'native') {
 	return validateFactoryRenderParse(grammar, tp, backend);
 }
 /** @see @sittir/validator's `runFrom` */
-function runFrom(grammar: string, backend: 'native' | 'typescript' = 'native') {
+function runFrom(grammar: string, backend: 'native' | 'js' = 'native') {
 	return validateFrom(grammar, backend);
 }
 import { join, dirname, resolve } from 'node:path';

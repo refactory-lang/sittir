@@ -2,7 +2,7 @@ import { validateReadRenderParse } from '../packages/codegen/src/validate/read-r
 import { defaultTemplatesPath } from '../packages/validator/src/run.ts';
 
 const grammar = (process.argv[2] ?? 'rust') as 'rust' | 'typescript' | 'python';
-const backend = (process.argv[3] ?? 'native') as 'native' | 'typescript';
+const backend = (process.argv[3] ?? 'native') as 'native' | 'js';
 
 const result = await validateReadRenderParse(grammar, defaultTemplatesPath(grammar), { backend });
 console.error(`pass=${result.pass}/${result.total} fail=${result.fail} skip=${result.skip}`);

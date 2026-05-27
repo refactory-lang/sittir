@@ -4563,6 +4563,16 @@
     "type": "reference_expression",
     "named": true,
     "fields": {
+      "mutable_specifier": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "ref",
+            "named": false
+          }
+        ]
+      },
       "value": {
         "multiple": false,
         "required": true,

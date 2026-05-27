@@ -14,11 +14,11 @@
     "_complex_pattern_operator": "text",
     "_comprehension_clauses": "config",
     "_except_clause_as": "config",
-    "_identifier": "text",
     "_match_block": "config",
     "_match_block_block": "config",
     "_simple_pattern_negative": "spread",
     "_simple_statements": "spread",
+    "_splat_pattern_operator": "text",
     "_unary_operator_operator": "text",
     "_with_clause_paren": "spread",
     "aliased_import": "config",
@@ -115,7 +115,7 @@
     "set": "direct",
     "set_comprehension": "config",
     "slice": "config",
-    "splat_pattern": "direct",
+    "splat_pattern": "config",
     "splat_type": "direct",
     "string": "config",
     "string_content": "spread",
@@ -637,6 +637,7 @@
       "step"
     ],
     "splat_pattern": [
+      "operator",
       "identifier"
     ],
     "splat_type": [
@@ -2096,6 +2097,13 @@
       }
     },
     "splat_pattern": {
+      "operator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "identifier": {
         "unnamed": false,
         "slotCount": 1,

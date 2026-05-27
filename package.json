@@ -37,7 +37,7 @@
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest --watch",
     "type-check": "pnpm -r run type-check",
-    "type-check:examples": "tsc -p examples/tsconfig.json --noEmit",
+    "type-check:examples": "tsgo -p examples/tsconfig.json --noEmit",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "pnpm run build && changeset publish",

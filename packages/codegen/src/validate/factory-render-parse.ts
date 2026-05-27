@@ -776,7 +776,7 @@ function recordAstStructuralComparison(
 export async function validateFactoryRenderParse(
 	grammar: string,
 	templatesPath: string,
-	backend?: 'native' | 'typescript'
+	backend?: 'native' | 'js'
 ): Promise<FactoryRenderParseResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();

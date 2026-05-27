@@ -42,7 +42,7 @@
  *
  * With `--trace`:
  *   - emits a richer matrix for the selected target:
- *     `typescript.shallow`, `typescript.deep`, `native.shallow`, `native.deep`
+ *     `js.shallow`, `js.deep`, `native.shallow`, `native.deep`
  *   - each lane shows the boundary payload passed to that renderer and the
  *     rendered output / error, so drill-in and transport projection can be
  *     compared side-by-side.
@@ -69,6 +69,7 @@ import { parseArgs } from 'node:util';
 import {
 	loadLanguageForGrammar,
 	loadKindIdFromName,
+	loadKindNameFromId,
 	loadKindNames,
 	loadWebTreeSitter,
 	treeHandle,
@@ -76,7 +77,9 @@ import {
 	nativeTreeHandle,
 	materializeWrappedNodeData,
 	stripStructuralNodeText,
-	loadReadTreeNode
+	loadReadTreeNode,
+	walkNativeForKind,
+    type TSNode
 } from '../validate/common.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyNodeData, AnyTreeNode, NodeId } from '@sittir/types';
@@ -127,11 +130,11 @@ async function main(argv: string[]): Promise<number> {
 				// and current). Default off — assumes the parser is
 				// current and only render-side artifacts differ.
 			},
-			// --engine native|typescript|both: select which render
+			// --engine native|js|both: select which render
 			// engine renders the NodeData. Parse + readNode stay on
 			// the JS / wasm path (the native crate's `find_and_read`
 			// is currently a stub); only the render leg branches.
-			//   - typescript: `@sittir/core` createRenderer + .jinja
+			//   - js: `@sittir/core` createRenderer + .jinja
 			//                 templates (the current default).
 			//   - native:     `@sittir/<lang>-native` napi `.node`
 			//                 → `SittirEngine.render(nodeData)`.
@@ -143,7 +146,8 @@ async function main(argv: string[]): Promise<number> {
 			engine: { type: 'string' }
 			,
 			trace: { type: 'boolean', default: false },
-			// --full: emit the complete multi-lane trace (typescript + native,
+			logParse: { type: 'boolean', default: false },
+			// --full: emit the complete multi-lane trace (js + native,
 			// shallow + deep). Default for `--kind` is the focused native-pipeline
 			// view (cst → raw → wrapped → transport → rendered). Use --full for
 			// cross-engine comparison.
@@ -162,11 +166,11 @@ async function main(argv: string[]): Promise<number> {
 	}
 
 	const parsedRange = values.range ? parseRange(values.range as string) : undefined;
-	// Native is the production path; the TS render engine is @deprecated. Default
+	// Native is the production path; the JS render engine is @deprecated. Default
 	// to native so an un-flagged probe reflects what actually ships.
 	const engineRaw = (values.engine as string | undefined) ?? 'native';
-	if (!['typescript', 'native', 'both'].includes(engineRaw)) {
-		process.stderr.write(`probe-kind: --engine must be 'typescript' | 'native' | 'both' (got '${engineRaw}')\n`);
+	if (!['js', 'native', 'both'].includes(engineRaw)) {
+		process.stderr.write(`probe-kind: --engine must be 'js' | 'native' | 'both' (got '${engineRaw}')\n`);
 		return 2;
 	}
 	const opts = {
@@ -175,7 +179,9 @@ async function main(argv: string[]): Promise<number> {
 		kind: values.kind as string | undefined,
 		range: parsedRange,
 		reparse: values.reparse === true,
-		engine: (engineRaw === 'both' ? 'typescript' : engineRaw) as 'typescript' | 'native'
+		engine: (engineRaw === 'both' ? 'native' : engineRaw) as 'js' | 'native',
+		logParse: values.logParse === true
+
 	};
 	// Focused native-pipeline view: default when `--kind` is given (unless
 	// --trace/--full). Shows the slot at EVERY native stage so the layer that
@@ -185,7 +191,7 @@ async function main(argv: string[]): Promise<number> {
 	// empty in `wrapped` = a wrap-materialization gap.
 	const wantFull = values.trace === true || values.full === true;
 	if (opts.kind && !wantFull) {
-		const trace = (await probeTrace(grammar, source, { ...opts, engine: 'native' })) as Record<string, unknown>;
+		const trace = (await probeTrace(grammar, source, { ...opts, engine: 'native' }));
 		const nativeTrace = (
 			trace.trace as { native?: { deep?: Record<string, unknown>; wrapError?: string } } | undefined
 		)?.native;
@@ -257,14 +263,16 @@ async function main(argv: string[]): Promise<number> {
 export interface ProbeReport {
 	grammar: string;
 	source: string;
-	/** Render engine used for this report. `'typescript'` is the
+	/** Render engine used for this report. `'js'` is the
 	 *  default; `'native'` indicates the `@sittir/<lang>-native`
 	 *  napi engine. Stamped so a `--engine both` consumer can tell
 	 *  which side of the compare each block came from. */
-	engine?: 'typescript' | 'native';
+	engine?: 'js' | 'native';
 	/** Source sub-range probed (absent when probing the full source). */
 	probeRange?: { start: number; end: number; kind?: string; text: string };
 	cst: CstNode;
+
+	sexp: string;
 	nodeData: unknown;
 	rendered?: string;
 	/** Reparse pass when `--reparse` set: rendered output re-parsed and dumped. */
@@ -280,7 +288,7 @@ export interface ProbeReport {
 
 export interface ProbeTraceLane {
 	readMode: 'shallow' | 'deep';
-	engine: 'typescript' | 'native';
+	engine: 'js' | 'native';
 	rawNodeData?: unknown;
 	readTreeNodeRaw?: unknown;
 	/** Native-only legacy recursive readNode walker output. Diagnostic only. */
@@ -298,13 +306,15 @@ export interface ProbeTraceReport {
 	probeRange?: { start: number; end: number; kind?: string; text: string };
 	cst: CstNode;
 	trace: {
-		typescript: {
+		js?: {
 			shallow: ProbeTraceLane;
 			deep: ProbeTraceLane;
+			wrapError?: string;
 		};
-		native: {
+		native?: {
 			shallow: ProbeTraceLane;
 			deep: ProbeTraceLane;
+			wrapError?: string;
 		};
 	};
 }
@@ -338,8 +348,9 @@ export async function probe(
 		 *  instead of the current package's. Default false — most baselines
 		 *  only differ in render-side artifacts. */
 		useBaselineParser?: boolean;
+		logParse?: boolean;
 		/** Which render engine renders the NodeData:
-		 *    - `typescript`: parse via web-tree-sitter wasm, read via
+		 *    - `js`: parse via web-tree-sitter wasm, read via
 		 *                    `<lang>/src/wrap.ts:readTreeNode`, render
 		 *                    via `@sittir/core` createRenderer.
 		 *    - `native`:     parse via `@sittir/<lang>-native`'s
@@ -351,7 +362,7 @@ export async function probe(
 		 *  Tree-sitter wasm is still used for the CST dump
 		 *  (cosmetic — informational `cst` block) regardless of
 		 *  engine, so the JSON output is comparable across both. */
-		engine?: 'typescript' | 'native';
+		engine?: 'js' | 'native';
 	} = {}
 ): Promise<ProbeReport> {
 	const { Parser, lang } =
@@ -360,6 +371,11 @@ export async function probe(
 			: await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
+	if(opts.logParse) {
+		parser.setLogger((message, isLex) => {
+			process.stderr.write(`tree-sitter: ${isLex ? 'lex' : 'parse'} ${message}\n`);
+		});
+	}
 	const tree = parser.parse(source);
 	if (!tree) throw new Error('probe-kind: parse returned null');
 
@@ -389,6 +405,7 @@ export async function probe(
 	}
 
 	const cst = dumpCst(targetNode, null);
+	const sexp = targetNode.toString();
 
 	// Fully-native path: parse + read via the napi engine end-to-end.
 	// The native engine parses internally via the `tree_sitter` Rust
@@ -473,9 +490,10 @@ export async function probe(
 	return {
 		grammar,
 		source,
-		engine: opts.engine ?? 'typescript',
+		engine: opts.engine ?? 'js',
 		probeRange,
 		cst,
+		sexp,
 		nodeData: stripBigInts(nodeData),
 		rendered,
 		reparsedCst,
@@ -498,7 +516,7 @@ export async function probeTrace(
 		noWrap?: boolean;
 		baselineDir?: string;
 		useBaselineParser?: boolean;
-		engine?: 'typescript' | 'native';
+		engine?: 'js' | 'native' | 'both';
 	} = {}
 ): Promise<ProbeTraceReport> {
 	const { Parser, lang } =
@@ -506,11 +524,20 @@ export async function probeTrace(
 			? await loadLanguageFromPath(resolveBaselinePath(opts.baselineDir, '.sittir/parser.wasm'))
 			: await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
+		parser.setLogger((message, isLex) => {
+		process.stderr.write(`tree-sitter: ${isLex ? 'lex' : 'parse'} ${message}\n`);
+	});
 	parser.setLanguage(lang);
 	const tree = parser.parse(source);
+
+	// `tree.rootNode` is a getter that returns a fresh wrapper each
+	// call, so identity comparison with subsequent getter accesses
+	// is unreliable — track "is this root?" with a flag. Don't trust
+	// the caller to not accidentally compare against a different wrapper
+
 	if (!tree) throw new Error('probe-kind: parse returned null');
 
-	let targetNode: any = tree.rootNode;
+	let targetNode: TSNode = tree.rootNode;
 	let isRoot = true;
 	let probeRange: ProbeTraceReport['probeRange'] | undefined;
 	if (opts.range) {
@@ -535,10 +562,10 @@ export async function probeTrace(
 	// slot the parser didn't route into it, like `function_definition.block`.
 	// Catch per-engine so the CST (parser output) and the other engine still
 	// report instead of the whole probe aborting.
-	const buildEngineTrace = async (engine: 'typescript' | 'native') => {
+	const buildEngineTrace = async (engine: 'js' | 'native') => {
 		let read: Awaited<ReturnType<typeof readProbeNodeData>>;
 		try {
-			read = await readProbeNodeData(grammar, source, tree, targetNode, isRoot, engine);
+			read = await readProbeNodeData(grammar, source, tree, targetNode, isRoot, engine, opts.kind);
 		} catch (e) {
 			return { wrapError: String((e as Error)?.message ?? e) };
 		}
@@ -549,15 +576,23 @@ export async function probeTrace(
 				: await buildTraceLane(grammar, read.shallow, read.deepReadTreeNodeRaw ?? read.deep, read.deep, engine, 'deep');
 		return { shallow, deep };
 	};
+	const sexp = targetNode.toString();
+
+	const trace: ProbeTraceReport['trace'] = {};
+	if (opts.engine === 'both') {
+		trace.js = await buildEngineTrace('js');
+		trace.native = await buildEngineTrace('native');
+	} else {
+		const engine = opts.engine ?? 'native';
+		trace[engine] = await buildEngineTrace(engine);
+	}
 	return {
 		grammar,
 		source,
 		probeRange,
 		cst,
-		trace: {
-			typescript: await buildEngineTrace('typescript'),
-			native: await buildEngineTrace('native')
-		}
+		sexp,
+		trace
 	} as unknown as ProbeTraceReport;
 }
 
@@ -565,7 +600,7 @@ export async function probeTrace(
 // Internals
 // ---------------------------------------------------------------------------
 
-function dumpCst(node: any, fieldName: string | null): CstNode {
+function dumpCst(node: TSNode, fieldName: string | null): CstNode {
 	const out: CstNode = {
 		type: node.type,
 		named: node.isNamed,
@@ -642,7 +677,8 @@ async function readProbeNodeData(
 	tree: TS.Tree,
 	targetNode: any,
 	isRoot: boolean,
-	engine: 'typescript' | 'native'
+	engine: 'js' | 'native',
+	targetKind?: string
 ): Promise<{ shallow: unknown; deep: unknown; deepReadTreeNodeRaw?: unknown; legacyDeepNodeData?: unknown }> {
 	if (engine === 'native') {
 		const nativeEngine = await loadNativeEngine(grammar);
@@ -654,6 +690,25 @@ async function readProbeNodeData(
 			const deepReadTreeNodeRaw = readTreeNodeFn ? readTreeNodeFn(handle) : undefined;
 			const deep = resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData);
 			return { shallow, deep, deepReadTreeNodeRaw, legacyDeepNodeData };
+		}
+		if (targetKind) {
+			const kindNameFromId = await loadKindNameFromId(grammar);
+			const targetCandidate =
+				walkNativeForKind(handle, targetKind, kindNameFromId).find(
+					(candidate) =>
+						candidate.span?.start === targetNode.startIndex && candidate.span?.end === targetNode.endIndex
+				) ?? null;
+			if (targetCandidate?.coords.handle !== undefined && targetCandidate.coords.childIndex !== undefined) {
+				const shallow = handle.read?.(targetCandidate.coords.handle, targetCandidate.coords.childIndex);
+				const legacyDeepNodeData = stripStructuralNodeText(
+					await deepReadProbeNode(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex)
+				);
+				const deepReadTreeNodeRaw = readTreeNodeFn
+					? readTreeNodeFn(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex)
+					: undefined;
+				const deep = resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData);
+				return { shallow, deep, deepReadTreeNodeRaw, legacyDeepNodeData };
+			}
 		}
 		const root = readTreeNodeFn
 			? materializeProbeWrappedNodeData(readTreeNodeFn(handle))
@@ -734,7 +789,7 @@ async function buildTraceLane(
 	rawNodeData: unknown,
 	readTreeNodeRaw: unknown,
 	nodeData: unknown,
-	engine: 'typescript' | 'native',
+	engine: 'js' | 'native',
 	readMode: 'shallow' | 'deep',
 	legacyDeepNodeData?: unknown
 ): Promise<ProbeTraceLane> {
@@ -742,7 +797,7 @@ async function buildTraceLane(
 	const cleanedReadTreeNodeRaw = readTreeNodeRaw === undefined ? undefined : stripBigInts(readTreeNodeRaw);
 	const cleanedNodeData = stripBigInts(nodeData);
 	const cleanedLegacyDeepNodeData = legacyDeepNodeData === undefined ? undefined : stripBigInts(legacyDeepNodeData);
-	if (engine === 'typescript') {
+	if (engine === 'js') {
 		try {
 			const rendered = await renderNodeData(grammar, cleanedNodeData);
 			return {
@@ -1083,8 +1138,8 @@ function computeEngineCompare(ts: ProbeReport, native: ProbeReport): ProbeEngine
 		astShapeEqual = ts.astDiff.reparsedShape === native.astDiff.reparsedShape;
 	}
 	const summary = renderedEqual
-		? 'TS and native engines agree on render output'
-		: `engines disagree (TS - native = ${renderedLenDelta >= 0 ? '+' : ''}${renderedLenDelta} chars)`;
+		? 'JS and native engines agree on render output'
+		: `engines disagree (JS - native = ${renderedLenDelta >= 0 ? '+' : ''}${renderedLenDelta} chars)`;
 	return { renderedEqual, renderedLenDelta, astShapeEqual, summary };
 }
 

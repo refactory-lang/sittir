@@ -415,7 +415,7 @@ function discoverAliasSourceKinds(
 	grammar: string,
 	source: string,
 	kindNameFromId: ((id: number) => string | undefined) | undefined,
-	backend?: 'native' | 'typescript',
+	backend?: 'native' | 'js',
 	kindIdFromName?: (kind: string) => number | undefined
 ): Map<string, string> {
 	// ADR-0017: keyed by "${start}:${end}" composite span key. Using BOTH
@@ -696,7 +696,7 @@ export interface ValidateReadRenderParseOptions {
 	onFixture?: (fx: ParityFixture) => void;
 	/** Backend to use for `buildReadHandle`. When provided, takes
 	 *  precedence over `process.env.SITTIR_BACKEND`. */
-	backend?: 'native' | 'typescript';
+	backend?: 'native' | 'js';
 	/** When true, deep-read ALL named kinds (not just variant-adopted).
 	 *  Exercises full recursive materialization before render. */
 	recursive?: boolean;
@@ -711,7 +711,7 @@ export interface ValidateReadRenderParseOptions {
 
 export interface ReadRenderParseFailure {
 	grammar: string;
-	backend: 'native' | 'typescript';
+	backend: 'native' | 'js';
 	recursive: boolean;
 	entryName: string;
 	entrySource: string;
@@ -971,7 +971,7 @@ export async function validateReadRenderParse(
 							kindErrors.push(failure);
 							reportFailure(options, {
 								grammar,
-								backend: backend ?? 'typescript',
+								backend: backend ?? 'js',
 								recursive: recursive === true,
 								entryName: entry.name,
 								entrySource: entry.source,
@@ -1006,7 +1006,7 @@ export async function validateReadRenderParse(
 							kindErrors.push(failure);
 							reportFailure(options, {
 								grammar,
-								backend: backend ?? 'typescript',
+								backend: backend ?? 'js',
 								recursive: recursive === true,
 								entryName: entry.name,
 								entrySource: entry.source,
@@ -1079,7 +1079,7 @@ export async function validateReadRenderParse(
 						kindErrors.push(failure);
 						reportFailure(options, {
 							grammar,
-							backend: backend ?? 'typescript',
+							backend: backend ?? 'js',
 							recursive: recursive === true,
 							entryName: entry.name,
 							entrySource: entry.source,

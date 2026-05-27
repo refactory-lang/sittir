@@ -310,6 +310,7 @@ export const KEYWORDS = [
   '_kw_async_marker',
   '_kw_in',
   '_kw_move_marker',
+  '_kw_mutable_specifier',
   '_kw_negative',
   '_kw_operator',
   '_kw_pub',
@@ -416,6 +417,7 @@ export const OPERATORS = [
   "@",
   "[",
   "]",
+  "_binary_expression_operator__x26",
   "_operator__x2ex2e",
   "r#\"",
   "{",
@@ -2069,6 +2071,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'pattern', required: true, multiple: false },
   ],
   'reference_expression': [
+    { name: 'mutableSpecifier', required: true, multiple: false },
     { name: 'referenceExpressionRawConst', required: true, multiple: false },
     { name: 'value', required: true, multiple: false },
     { name: 'referenceExpressionRawMut', required: true, multiple: false },

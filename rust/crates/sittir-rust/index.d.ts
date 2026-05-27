@@ -1992,6 +1992,7 @@ export interface ReferenceExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _mutable_specifier: BinaryExpressionOperatorUX26Transport
   _value: Box<ExpressionTransport>
   _reference_expression_raw_const: ReferenceExpressionRawConstTransport
   _reference_expression_raw_mut: ReferenceExpressionRawMutTransport

@@ -67,12 +67,12 @@ describe('@sittir/validator history round-trip (scratch file)', () => {
 	});
 
 	it('appendHistory + readHistory round-trips a single entry', () => {
-		const entry = makeEntry({ grammar: 'typescript', backend: 'typescript' });
+		const entry = makeEntry({ grammar: 'typescript', backend: 'js' });
 		appendHistory(entry);
 		const runs = readHistory();
 		expect(runs).toHaveLength(1);
 		expect(runs[0]!.grammar).toBe('typescript');
-		expect(runs[0]!.backend).toBe('typescript');
+		expect(runs[0]!.backend).toBe('js');
 		expect(runs[0]!.fromPass).toBe(10);
 	});
 

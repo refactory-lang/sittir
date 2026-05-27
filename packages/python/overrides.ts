@@ -197,15 +197,6 @@ export default grammar(
 				1: field('arguments')
 			},
 
-			// as_pattern: 1 field(s)
-			as_pattern: {},
-
-			// await: 1 field(s)
-			await: {},
-
-			// chevron: 1 field(s)
-			chevron: {},
-
 			// class_pattern: 2 field(s)
 			class_pattern: {
 				2: field('arguments') // case_pattern [struct=1]
@@ -250,9 +241,6 @@ export default grammar(
 				1: field('entries')
 			},
 
-			// dictionary_splat: 1 field(s)
-			dictionary_splat: {},
-
 			// exec_statement: grammar is seq('exec', code, optional(seq('in', exprs)))
 			// Template walker emits the `in` keyword as a literal at top level,
 			// which surfaces in rendering even when the optional(seq(...))
@@ -285,9 +273,6 @@ export default grammar(
 				0: field('identifier') // identifier [struct=0]
 			},
 
-			// if_clause: 1 field(s)
-			if_clause: {},
-
 			// import_from_statement: 1 field(s)
 			import_from_statement: {
 				3: field('wildcard_import') // wildcard_import [struct=0]
@@ -298,16 +283,10 @@ export default grammar(
 				2: field('simple_pattern') // _simple_pattern | class_pattern | complex_pattern | concatenated_string | dict_pattern | dotted_name | false | float | integer | list_pattern | none | splat_pattern | string | true | tuple_pattern | union_pattern [struct=1]
 			},
 
-			// list_splat: 1 field(s)
-			list_splat: {},
-
 			// member_type: 2 field(s)
 			member_type: {
 				0: field('base_type') // type [struct=0]
 			},
-
-			// relative_import: 2 field(s)
-			relative_import: {},
 
 			// slice: 3 field(s)
 			slice: {
@@ -318,7 +297,8 @@ export default grammar(
 
 			// splat_pattern: 1 field(s)
 			splat_pattern: {
-				0: field('identifier') // identifier [struct=0]
+				'0': field('operator'), // '*' | '**'
+				'1/1': field('identifier') // identifier [struct=0]
 			},
 
 			// splat_type: 1 field(s)
@@ -353,6 +333,16 @@ export default grammar(
 				2: field('right') // type [struct=1]
 			}
 		},
-		rules: {}
+		rules: {
+			primary_expression: ($: any, original: ChoiceRule) =>
+			{
+				let base = original.members;
+
+				return choice(
+					...base.slice(0, -1),
+					$.list_splat_pattern
+				)
+			}
+		}
 	})
 );

@@ -1,11 +1,6 @@
 {
 	"extends": "../../tsconfig.json",
 	"compilerOptions": {
-		"outDir": "./dist",
-		"rootDir": ".",
-		"composite": true,
-		"declaration": true,
-		"declarationMap": true,
 		"types": ["node"]
 	},
 	"include": ["src", "tests"],

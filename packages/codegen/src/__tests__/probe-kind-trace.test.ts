@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { stripStructuralNodeText, type WrappedNodeData } from '../validate/common.ts';
-import { materializeProbeWrappedNodeData, resolveNativeTraceNodeData } from '../scripts/probe-kind.ts';
+import { materializeProbeWrappedNodeData, probeTrace, resolveNativeTraceNodeData } from '../scripts/probe-kind.ts';
 
 function leaf(handle: number, text: string): WrappedNodeData {
 	return {
@@ -100,5 +100,17 @@ describe('probe-kind native trace helpers', () => {
 		};
 
 		expect(resolveNativeTraceNodeData(undefined, legacy)).toBe(legacy);
+	});
+
+	it('limits trace output to the requested engine and reproduces native wrap errors for validator-like probes', async () => {
+		const trace = await probeTrace('python', 'print(d, *e)', {
+			kind: 'list_splat',
+			engine: 'native'
+		});
+
+		expect(trace.trace.js).toBeUndefined();
+		expect(trace.trace.native).toMatchObject({
+			wrapError: expect.stringContaining('singular slot "expression" on "list_splat" requires one value')
+		});
 	});
 });

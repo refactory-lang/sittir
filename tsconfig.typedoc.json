@@ -2,8 +2,8 @@
 	"extends": "./tsconfig.json",
 	"include": [],
 	"references": [
-		{ "path": "packages/types/tsconfig.json" },
-		{ "path": "packages/codegen/tsconfig.json" },
-		{ "path": "packages/rust/tsconfig.json" }
+		{ "path": "packages/types/tsconfig.build.json" },
+		{ "path": "packages/codegen/tsconfig.build.json" },
+		{ "path": "packages/rust/tsconfig.build.json" }
 	]
 }

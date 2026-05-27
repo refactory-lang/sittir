@@ -2229,7 +2229,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "print (d, *e)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (identifier) arguments: (list_splat (identifier))))",
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (identifier) arguments: (list_splat_pattern (identifier))))",
     "wrappedText": "print (d, *e)",
     "wrappedOffset": 0
   },
@@ -2628,94 +2628,6 @@
       "$type": 157,
       "$source": 0,
       "$span": {
-        "start": 48,
-        "end": 55
-      },
-      "$nodeHandle": 4,
-      "$named": true,
-      "_(": {
-        "$type": 7,
-        "$source": 0,
-        "$text": "(",
-        "$span": {
-          "start": 48,
-          "end": 49
-        },
-        "$nodeHandle": 4,
-        "$childIndex": 0,
-        "$named": false
-      },
-      "_arguments": [
-        {
-          "$type": 1,
-          "$source": 0,
-          "$text": "d",
-          "$span": {
-            "start": 49,
-            "end": 50
-          },
-          "$nodeHandle": 4,
-          "$childIndex": 1,
-          "$named": true
-        },
-        {
-          "$type": 9,
-          "$source": 0,
-          "$text": ",",
-          "$span": {
-            "start": 50,
-            "end": 51
-          },
-          "$nodeHandle": 4,
-          "$childIndex": 2,
-          "$named": false
-        },
-        {
-          "$type": 148,
-          "$source": 0,
-          "$text": "*e",
-          "$span": {
-            "start": 52,
-            "end": 54
-          },
-          "$nodeHandle": 4,
-          "$childIndex": 3,
-          "$named": true
-        }
-      ],
-      "_)": {
-        "$type": 8,
-        "$source": 0,
-        "$text": ")",
-        "$span": {
-          "start": 54,
-          "end": 55
-        },
-        "$nodeHandle": 4,
-        "$childIndex": 4,
-        "$named": false
-      }
-    },
-    "expectedOutput": "(d,*e)"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "(d, *e)",
-    "pattern": "argument_list",
-    "edits": [],
-    "expectedSourceOut": "(d,*e)",
-    "expectedReparseTree": "(argument_list arguments: (identifier) arguments: (list_splat expression: (identifier)))",
-    "wrappedText": "_f(d,*e)",
-    "wrappedOffset": 2
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 157,
-      "$source": 0,
-      "$span": {
         "start": 73,
         "end": 80
       },
@@ -2781,7 +2693,7 @@
         "start": 62,
         "end": 64
       },
-      "$nodeHandle": 1,
+      "$nodeHandle": 0,
       "$named": true,
       "_*": {
         "$type": 11,
@@ -2791,7 +2703,7 @@
           "start": 62,
           "end": 63
         },
-        "$nodeHandle": 1,
+        "$nodeHandle": 0,
         "$childIndex": 0,
         "$named": false
       },
@@ -2803,7 +2715,7 @@
           "start": 63,
           "end": 64
         },
-        "$nodeHandle": 1,
+        "$nodeHandle": 0,
         "$childIndex": 1,
         "$named": true
       }
@@ -16452,7 +16364,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_object": {
-        "$type": 148,
+        "$type": 183,
         "$source": 0,
         "$text": "*a",
         "$span": {
@@ -16497,7 +16409,7 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "*a.b",
-    "expectedReparseTree": "(attribute object: (list_splat (identifier)) attribute: (identifier))",
+    "expectedReparseTree": "(attribute object: (list_splat_pattern (identifier)) attribute: (identifier))",
     "wrappedText": "[*a.b]",
     "wrappedOffset": 1
   },
@@ -16559,7 +16471,7 @@
     "pattern": "attribute",
     "edits": [],
     "expectedSourceOut": "*a[b].c",
-    "expectedReparseTree": "(attribute object: (subscript value: (list_splat (identifier)) subscript: (identifier)) attribute: (identifier))",
+    "expectedReparseTree": "(attribute object: (subscript value: (list_splat_pattern (identifier)) subscript: (identifier)) attribute: (identifier))",
     "wrappedText": "[*a[b].c]",
     "wrappedOffset": 1
   },
@@ -16576,7 +16488,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_value": {
-        "$type": 148,
+        "$type": 183,
         "$source": 0,
         "$text": "*a",
         "$span": {
@@ -16633,7 +16545,7 @@
     "pattern": "subscript",
     "edits": [],
     "expectedSourceOut": "*a[b]",
-    "expectedReparseTree": "(subscript value: (list_splat (identifier)) subscript: (identifier))",
+    "expectedReparseTree": "(subscript value: (list_splat_pattern (identifier)) subscript: (identifier))",
     "wrappedText": "[*a[b]]",
     "wrappedOffset": 1
   },
@@ -16650,7 +16562,7 @@
       "$nodeHandle": 0,
       "$named": true,
       "_function": {
-        "$type": 148,
+        "$type": 183,
         "$source": 0,
         "$text": "*a",
         "$span": {
@@ -16683,7 +16595,7 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "*a ()",
-    "expectedReparseTree": "(call function: (list_splat (identifier)) arguments: (argument_list))",
+    "expectedReparseTree": "(call function: (list_splat_pattern (identifier)) arguments: (argument_list))",
     "wrappedText": "_ = *a ()",
     "wrappedOffset": 4
   },
@@ -31925,106 +31837,6 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 206,
-      "$source": 0,
-      "$span": {
-        "start": 183,
-        "end": 190
-      },
-      "$nodeHandle": 0,
-      "$named": true,
-      "_function": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "i",
-        "$span": {
-          "start": 183,
-          "end": 184
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 0,
-        "$named": true
-      },
-      "_arguments": {
-        "$type": 157,
-        "$source": 0,
-        "$text": "((*a))",
-        "$span": {
-          "start": 184,
-          "end": 190
-        },
-        "$nodeHandle": 0,
-        "$childIndex": 1,
-        "$named": true
-      }
-    },
-    "expectedOutput": "i ((*a))"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "i((*a))",
-    "pattern": "call",
-    "edits": [],
-    "expectedSourceOut": "i ((*a))",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (parenthesized_expression (list_splat expression: (identifier)))))",
-    "wrappedText": "_ = i ((*a))",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 206,
-      "$source": 0,
-      "$span": {
-        "start": 193,
-        "end": 202
-      },
-      "$nodeHandle": 1,
-      "$named": true,
-      "_function": {
-        "$type": 1,
-        "$source": 0,
-        "$text": "j",
-        "$span": {
-          "start": 193,
-          "end": 194
-        },
-        "$nodeHandle": 1,
-        "$childIndex": 0,
-        "$named": true
-      },
-      "_arguments": {
-        "$type": 157,
-        "$source": 0,
-        "$text": "(((*a)))",
-        "$span": {
-          "start": 194,
-          "end": 202
-        },
-        "$nodeHandle": 1,
-        "$childIndex": 1,
-        "$named": true
-      }
-    },
-    "expectedOutput": "j (((*a)))"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "j(((*a)))",
-    "pattern": "call",
-    "edits": [],
-    "expectedSourceOut": "j (((*a)))",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (parenthesized_expression (parenthesized_expression (list_splat expression: (identifier))))))",
-    "wrappedText": "_ = j (((*a)))",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
       "$type": 157,
       "$source": 0,
       "$span": {
@@ -32079,7 +31891,7 @@
     "pattern": "argument_list",
     "edits": [],
     "expectedSourceOut": "((*a))",
-    "expectedReparseTree": "(argument_list arguments: (parenthesized_expression (list_splat (identifier))))",
+    "expectedReparseTree": "(argument_list arguments: (parenthesized_expression (list_splat_pattern (identifier))))",
     "wrappedText": "_f((*a))",
     "wrappedOffset": 2
   },
@@ -32141,7 +31953,7 @@
     "pattern": "argument_list",
     "edits": [],
     "expectedSourceOut": "(((*a)))",
-    "expectedReparseTree": "(argument_list arguments: (parenthesized_expression (parenthesized_expression (list_splat (identifier)))))",
+    "expectedReparseTree": "(argument_list arguments: (parenthesized_expression (parenthesized_expression (list_splat_pattern (identifier)))))",
     "wrappedText": "_f(((*a)))",
     "wrappedOffset": 2
   },

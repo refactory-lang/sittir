@@ -4031,6 +4031,13 @@
       }
     },
     "reference_expression": {
+      "mutable_specifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "reference_expression_raw_const": {
         "unnamed": false,
         "slotCount": 1,
