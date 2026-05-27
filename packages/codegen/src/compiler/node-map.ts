@@ -820,6 +820,7 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 			values: mergedValues,
 			hasTrailing: existing.hasTrailing || f.hasTrailing,
 			hasLeading: existing.hasLeading || f.hasLeading,
+			sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds),
 			aliasSources: mergedAliases && Object.keys(mergedAliases).length > 0 ? mergedAliases : undefined,
 		}));
 	}
@@ -1510,10 +1511,26 @@ export interface AssembledNonterminalInit {
 	readonly source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
 	readonly origin?: SlotOrigin;
 	/**
-	 * Rule-id of the rule that produced this slot — see `AssembledNonterminal.sourceRuleId`.
+	 * Rule-ids of every simplified/render-rule position that produced this slot —
+	 * see `AssembledNonterminal.sourceRuleIds`.
 	 */
-	readonly sourceRuleId?: RuleId;
+	readonly sourceRuleIds: readonly RuleId[];
 	storageInfo?: FieldStorageInfo;
+}
+
+export function mergeSourceRuleIds(
+	...groups: readonly (readonly RuleId[] | undefined)[]
+): readonly RuleId[] {
+	const seen = new Set<RuleId>();
+	const out: RuleId[] = [];
+	for (const group of groups) {
+		for (const id of group ?? []) {
+			if (seen.has(id)) continue;
+			seen.add(id);
+			out.push(id);
+		}
+	}
+	return out;
 }
 
 /**
@@ -1533,15 +1550,13 @@ export class AssembledNonterminal {
 	readonly source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
 	readonly origin?: SlotOrigin;
 	/**
-	 * Rule-id of the rule that produced this slot — the `field()` /
-	 * `symbol` / `supertype` / `choice` rule whose walk in
-	 * `deriveSlotsRaw` constructed this AssembledNonterminal. Used by
-	 * `NodeMap.slotByRuleId` to back-pointer from a rule-tree position
-	 * to the owning slot without owner traversal. Optional because the
-	 * source rule may not carry an `id` (hand-constructed test fixtures
-	 * that bypass `buildRuleCatalog`). See feedback_ruleid_backpointer.
+	 * Rule-ids of every simplified/render-rule position that produced this slot.
+	 * Used by `NodeMap.slotByRuleId` to back-pointer from whichever rule-tree
+	 * view a consumer walks to the owning slot without owner traversal. Empty
+	 * when the source rules carry no ids (hand-constructed test fixtures that
+	 * bypass `buildRuleCatalog`). See feedback_ruleid_backpointer / FOLD-1.
 	 */
-	readonly sourceRuleId?: RuleId;
+	readonly sourceRuleIds: readonly RuleId[];
 	storageInfo?: FieldStorageInfo;
 
 	get storageName(): string { return projectSlotNaming(this).storageName; }
@@ -1560,7 +1575,7 @@ export class AssembledNonterminal {
 		this.aliasSources = init.aliasSources;
 		this.source = init.source;
 		this.origin = init.origin;
-		this.sourceRuleId = init.sourceRuleId;
+		this.sourceRuleIds = init.sourceRuleIds;
 		this.storageInfo = init.storageInfo;
 	}
 
@@ -1574,7 +1589,7 @@ export class AssembledNonterminal {
 			aliasSources: this.aliasSources,
 			source: this.source,
 			origin: this.origin,
-			sourceRuleId: this.sourceRuleId,
+			sourceRuleIds: this.sourceRuleIds,
 			storageInfo: this.storageInfo,
 			...overrides,
 		});
@@ -2177,6 +2192,7 @@ function escapeJinjaBraceCollisions(s: string): string {
 function buildSlotsRecord(
 	kind: string,
 	rule: Rule,
+	renderRule?: RenderRule,
 	kindEntries?: readonly GeneratedKindEntry[]
 ): Readonly<Record<string, AssembledNonterminal>> {
 	const out: Record<string, AssembledNonterminal> = {};
@@ -2190,6 +2206,15 @@ function buildSlotsRecord(
 		// migration). Until then: keep the kind-derived name as the Record
 		// key, no collision throw, no >1-unnamed throw.
 		out[slot.name] = slot;
+	}
+	if (renderRule) {
+		for (const renderSlot of deriveSlots(renderRule, kindEntries, kind)) {
+			const existing = out[renderSlot.name];
+			if (!existing) continue;
+			out[renderSlot.name] = existing.with({
+				sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, renderSlot.sourceRuleIds),
+			});
+		}
 	}
 
 	// storageName collision check. Multiple slots sharing the same NodeData
@@ -2286,6 +2311,7 @@ function structuralSlotRecordFromForms(
 				values: dedupeValues([...existing.values, ...slot.values]),
 				hasTrailing: existing.hasTrailing || slot.hasTrailing,
 				hasLeading: existing.hasLeading || slot.hasLeading,
+				sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, slot.sourceRuleIds),
 				aliasSources:
 					existing.aliasSources || slot.aliasSources
 						? {
@@ -2394,7 +2420,7 @@ export class AssembledBranch<
 		this.simplifiedRule = simplifiedRule;
 		this.renderRule = renderRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
-		this._slots = opts?.slotRecord ?? buildSlotsRecord(kind, simplifiedRule, opts?.kindEntries);
+		this._slots = opts?.slotRecord ?? buildSlotsRecord(kind, simplifiedRule, renderRule, opts?.kindEntries);
 	}
 
 	get slots(): Readonly<Record<string, AssembledNonterminal>> {
@@ -3276,7 +3302,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		this.name = opts?.name ?? kind;
 		this.parentKind = opts?.parentKind;
 		this.overridePassthrough = opts?.overridePassthrough;
-		this.slots = buildSlotsRecord(kind, simplifiedRule, opts?.kindEntries);
+		this.slots = buildSlotsRecord(kind, simplifiedRule, renderRule, opts?.kindEntries);
 	}
 
 	/**

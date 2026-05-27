@@ -468,8 +468,8 @@ export interface NodeMap {
 	readonly nodeByRuleId: ReadonlyMap<RuleId, AssembledNode>;
 	/**
 	 * Rule-id → AssembledNonterminal back-pointer. Populated at assembly when
-	 * each slot's source rule is registered. Lets consumers walking a rule
-	 * tree look up the slot's propertyName / storageName / paramName directly.
+	 * each slot's source-rule positions are registered. Lets consumers walking a
+	 * rule tree look up the slot's propertyName / storageName / paramName directly.
 	 * See feedback_ruleid_backpointer.
 	 */
 	readonly slotByRuleId: ReadonlyMap<RuleId, AssembledNonterminal>;

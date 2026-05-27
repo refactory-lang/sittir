@@ -70,7 +70,7 @@ export interface EmitCtx {
 	 * Owner-level slots for the current node being emitted, keyed by
 	 * `storageName` (snake_case, matches `rule.fieldName.toLowerCase()`).
 	 * Used as a fallback when `slotByRuleId` lookup fails because the
-	 * symbol's rule `id` doesn't match the slot's `sourceRuleId` — a gap
+	 * symbol's rule `id` doesn't match any of the slot's `sourceRuleIds` — a gap
 	 * that occurs when `simplifyRule` creates new rule objects without
 	 * preserving the original ID. Set by `emitBranchTemplate` and
 	 * `emitGroupTemplate` before recursing into the node's `renderRule`.
@@ -993,7 +993,7 @@ export function emitRule(rule: Rule, ctx: EmitCtx): string {
 /**
  * Look up an `AssembledNonterminal` for a rule from two sources:
  *
- * 1. `slotByRuleId` — registered during assembly via `slot.sourceRuleId`.
+ * 1. `slotByRuleId` — registered during assembly via `slot.sourceRuleIds`.
  *    Fast O(1) lookup. Fails when `simplifyRule` creates new rule objects
  *    without preserving the original ID, or when the FieldRule ID doesn't
  *    match the renderRule's symbol ID.

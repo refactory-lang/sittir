@@ -32,9 +32,9 @@ export function withAttrsFrom(original: Rule, result: Rule): Rule {
 	if (separator !== undefined && !Object.prototype.hasOwnProperty.call(result, 'separator'))
 		patch['separator'] = separator;
 	// Preserve the rule's identity through collapse: renderRule.id === collapsedRule.id
-	// so the emitter (walks renderRule) and collectSlots (reads simplifiedRule) agree
-	// on the slot's `sourceRuleId`, making `slotByRuleId` (the canonical, primary slot
-	// lookup) resolve instead of degrading to the fragile fieldName/symbol-name fallbacks.
+	// so the emitter (walks renderRule) and collectSlots (reads simplifiedRule) still
+	// share one of the slot's `sourceRuleIds`, making `slotByRuleId` (the canonical,
+	// primary slot lookup) resolve instead of degrading to fragile fallbacks.
 	if (id !== undefined && !Object.prototype.hasOwnProperty.call(result, 'id')) patch['id'] = id;
 	if (Object.keys(patch).length === 0) return result;
 	return { ...result, ...patch };

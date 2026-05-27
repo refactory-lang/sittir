@@ -42,6 +42,7 @@ import {
 	deriveAliasSources,
 	dedupeValues,
 	extractSeparatorString,
+	mergeSourceRuleIds,
 	stampSeparatorOnValues,
 } from './node-map.ts';
 import { findRepeatFlag } from './template-walker.ts';
@@ -186,6 +187,7 @@ function mergeByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 			values: dedupeValues([...prev.values, ...s.values]),
 			hasTrailing: prev.hasTrailing || s.hasTrailing,
 			hasLeading: prev.hasLeading || s.hasLeading,
+			sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, s.sourceRuleIds),
 		}));
 	}
 	return [...byName.values()];
@@ -212,6 +214,7 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 				values: dedupeValues([...prev.values, ...slot.values]),
 				hasTrailing: prev.hasTrailing || slot.hasTrailing,
 				hasLeading: prev.hasLeading || slot.hasLeading,
+				sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, slot.sourceRuleIds),
 				aliasSources:
 					prev.aliasSources || slot.aliasSources
 						? { ...prev.aliasSources, ...slot.aliasSources }
@@ -433,7 +436,7 @@ function buildSlot(
 		aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
 		source,
 		...(origin ? { origin } : {}),
-		sourceRuleId: rule.id,
+		sourceRuleIds: rule.id ? [rule.id] : [],
 	});
 }
 
