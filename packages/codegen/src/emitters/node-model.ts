@@ -57,7 +57,7 @@ interface SerializedSlot {
 
 interface SerializedField extends SerializedSlot {
 	paramName: string;
-	source: 'grammar' | 'override' | 'promoted' | 'inlined' | 'enriched' | 'inferred';
+	source: 'grammar' | 'override' | 'promoted' | 'enriched' | 'inferred';
 	projection: { typeName: string; kinds: string[] };
 }
 

@@ -1648,7 +1648,7 @@ export interface AssembledNonterminalInit {
 	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
-	readonly source: 'grammar' | 'override' | 'promoted' | 'inlined' | 'enriched' | 'inferred';
+	readonly source: 'grammar' | 'override' | 'promoted' | 'enriched' | 'inferred';
 	/**
 	 * Rule-ids of every simplified/render-rule position that produced this slot —
 	 * see `AssembledNonterminal.sourceRuleIds`.
@@ -1688,7 +1688,7 @@ export class AssembledNonterminal {
 	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
-	readonly source: 'grammar' | 'override' | 'promoted' | 'inlined' | 'enriched' | 'inferred';
+	readonly source: 'grammar' | 'override' | 'promoted' | 'enriched' | 'inferred';
 	/**
 	 * Rule-ids of every simplified/render-rule position that produced this slot.
 	 * Used by `NodeMap.slotByRuleId` to back-pointer from whichever rule-tree

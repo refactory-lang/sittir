@@ -17,7 +17,7 @@
  *                         `enrich(base)` + `wire(transforms/polymorphs)` fold
  *                         into `grammar()`. Every FIELD carries a `source`
  *                         tag (`'grammar' | 'enriched' | 'override' |
- *                         'inferred' | 'inlined'`) so override-vs-enrich
+ *                         'inferred'`) so override-vs-enrich
  *                         redundancies surface as nested same-name FIELDs.
  *   - `link`            — after `link()` (symbol-reference inference,
  *                         promoted rules).
