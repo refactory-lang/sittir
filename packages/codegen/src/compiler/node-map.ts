@@ -829,7 +829,6 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 
 interface ParseKindCollisionContext {
 	readonly ruleSignatures: Readonly<Record<string, string>>;
-	readonly failOnDiagnostic: boolean;
 }
 
 export function buildParseKindRuleSignatures<T extends Rule>(
@@ -876,26 +875,11 @@ function resolveParseKindCollisionsInSlot(
 		slotName: slot.name,
 		values: describedValues
 	});
-	if (resolution.diagnostics.length > 0 && context?.failOnDiagnostic) {
-		throw new Error(formatParseKindCollisionDiagnostics(resolution.diagnostics));
-	}
 	const nextValues = [...resolution.values];
 	const unchanged =
 		nextValues.length === slot.values.length &&
 		nextValues.every((value, index) => value === slot.values[index]);
 	return unchanged ? slot : slot.with({ values: dedupeValues(nextValues) });
-}
-
-function formatParseKindCollisionDiagnostics(
-	diagnostics: ReturnType<typeof diagnoseParseKindCollisions<NodeOrTerminal>>['diagnostics']
-): string {
-	const details = diagnostics
-		.map(
-			(diagnostic) =>
-				`${diagnostic.ownerKind}.${diagnostic.slotName} (${diagnostic.shape}): ${diagnostic.proposal}`
-		)
-		.join('\n');
-	return `Non-injective parseKind collision(s) detected:\n${details}`;
 }
 
 function structuralSignatureOfValue(

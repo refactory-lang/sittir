@@ -1,4 +1,5 @@
 export interface ParseKindCollisionDiagnostic {
+	readonly code: 'parsekind-noninjective';
 	readonly ownerKind: string;
 	readonly slotName: string;
 	readonly shape: 'propose-distinct-alias';
@@ -49,6 +50,7 @@ export function diagnoseParseKindCollisions<T>(
 			continue;
 		}
 		diagnostics.push({
+			code: 'parsekind-noninjective',
 			ownerKind: input.ownerKind,
 			slotName: input.slotName,
 			shape: 'propose-distinct-alias',

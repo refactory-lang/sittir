@@ -89,8 +89,7 @@ export function assemble(
 	const optionalBodyKinds = collectOptionalBodyKinds(optimized.rules);
 	setOptionalBodyKinds(optionalBodyKinds);
 	const parseKindCollisionContext = {
-		ruleSignatures: buildParseKindRuleSignatures(optimized.renderRules!),
-		failOnDiagnostic: true
+		ruleSignatures: buildParseKindRuleSignatures(optimized.renderRules!)
 	} as const;
 
 	try {
