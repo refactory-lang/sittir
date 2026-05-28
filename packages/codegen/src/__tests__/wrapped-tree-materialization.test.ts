@@ -90,7 +90,6 @@ async function loadAliasRoutingWrapWitnessModule(): Promise<{
 					hasTrailing: false,
 					hasLeading: false,
 					source: 'grammar',
-					origin: 'kind',
 					sourceRuleIds: []
 				})
 			})

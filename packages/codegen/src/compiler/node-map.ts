@@ -53,7 +53,6 @@ import { tokenToName } from './optimize.ts';
 import { collectSlots } from './collect-slots.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { fieldContentIsMultiSibling } from './field-shape.ts';
-import type { SlotOrigin } from './slot-model.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import {
 	diagnoseParseKindCollisions,
@@ -1649,7 +1648,6 @@ export interface AssembledNonterminalInit {
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
 	readonly source: 'grammar' | 'override' | 'promoted' | 'inlined' | 'enriched' | 'inferred';
-	readonly origin?: SlotOrigin;
 	/**
 	 * Rule-ids of every simplified/render-rule position that produced this slot —
 	 * see `AssembledNonterminal.sourceRuleIds`.
@@ -1687,7 +1685,6 @@ export class AssembledNonterminal {
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
 	readonly source: 'grammar' | 'override' | 'promoted' | 'inlined' | 'enriched' | 'inferred';
-	readonly origin?: SlotOrigin;
 	/**
 	 * Rule-ids of every simplified/render-rule position that produced this slot.
 	 * Used by `NodeMap.slotByRuleId` to back-pointer from whichever rule-tree
@@ -1713,7 +1710,6 @@ export class AssembledNonterminal {
 		this.hasTrailing = init.hasTrailing;
 		this.hasLeading = init.hasLeading;
 		this.source = init.source;
-		this.origin = init.origin;
 		this.sourceRuleIds = init.sourceRuleIds;
 		this.storageInfo = init.storageInfo;
 	}
@@ -1726,7 +1722,6 @@ export class AssembledNonterminal {
 			hasTrailing: this.hasTrailing,
 			hasLeading: this.hasLeading,
 			source: this.source,
-			origin: this.origin,
 			sourceRuleIds: this.sourceRuleIds,
 			storageInfo: this.storageInfo,
 			...overrides,

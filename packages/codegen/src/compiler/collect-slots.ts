@@ -299,7 +299,6 @@ function buildSlot(
 	// --- Determine the slot name ---
 	let baseName: string | undefined = rule.fieldName;
 	let source: AssembledNonterminal['source'] = (rule as { source?: RuleSource }).source ?? 'grammar';
-	let origin: AssembledNonterminal['origin'];
 
 	if (baseName === undefined) {
 		switch (rule.type) {
@@ -315,13 +314,11 @@ function buildSlot(
 				// inner fields like `let_declaration.alternative` from parent
 				// coverage + render).
 				source = 'inferred';
-				origin = 'kind';
 				break;
 			}
 			case 'supertype': {
 				baseName = rule.name.replace(/^_+/, '') || rule.name;
 				source = 'inferred';
-				origin = 'kind';
 				break;
 			}
 			case 'choice':
@@ -353,7 +350,6 @@ function buildSlot(
 				}
 				baseName = 'content';
 				source = (rule as { source?: RuleSource }).source ?? 'inferred';
-				origin = 'kind';
 				break;
 			}
 			default:
@@ -366,7 +362,6 @@ function buildSlot(
 				// (e.g. token_repetition's operator enum + separator pattern).
 				baseName = 'content';
 				source = (rule as { source?: RuleSource }).source ?? 'inferred';
-				origin = 'kind';
 				break;
 		}
 	}
@@ -427,7 +422,6 @@ function buildSlot(
 		hasTrailing,
 		hasLeading,
 		source,
-		...(origin ? { origin } : {}),
 		sourceRuleIds: rule.id ? [rule.id] : [],
 	});
 }

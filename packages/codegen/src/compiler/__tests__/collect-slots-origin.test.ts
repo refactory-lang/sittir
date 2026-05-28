@@ -1,10 +1,12 @@
 /**
- * Regression test for B1 layer-2 fix: merged-choice `content` slots must carry
- * `origin: 'kind'` all the way through collect-slots → assemble → node-map.
+ * Regression test for B1 layer-2 fix: merged-choice `content` slots must be
+ * identified as unnamed all the way through collect-slots → assemble → node-map.
  *
  * Confirms the exact shape that argument_list produces: a wrapper-free choice
  * with nonterminal:true and array multiplicity → buildSlot's unnamed-choice
- * path → origin should be 'kind'.
+ * path → an unnamed `content` slot (`slot.isUnnamed === true`). (Pre-PR-C this
+ * was asserted via the now-deleted `origin === 'kind'` shim; `isUnnamed` is the
+ * structural signal that replaced it.)
  */
 import { describe, it, expect } from 'vitest';
 import { collectSlots, setUnnamedChoiceWarner } from '../collect-slots.ts';
@@ -41,10 +43,10 @@ describe('collectSlots: origin on unnamed content slot', () => {
 		expect(slots).toHaveLength(1);
 		const slot = slots[0]!;
 		expect(slot.name).toBe('content');
-		expect((slot as any).origin).toBe('kind');
+		expect(slot.isUnnamed).toBe(true);
 	});
 
-	it('should set origin=kind on unnamed choice inside seq (distributes into choice)', () => {
+	it('marks unnamed choice inside seq as unnamed (distributes into choice)', () => {
 		// Simulates a seq that distributes and contains an unnamed-choice member
 		const choice = makeContentChoice('array');
 
@@ -57,10 +59,10 @@ describe('collectSlots: origin on unnamed content slot', () => {
 		expect(slots).toHaveLength(1);
 		const slot = slots[0]!;
 		expect(slot.name).toBe('content');
-		expect((slot as any).origin).toBe('kind');
+		expect(slot.isUnnamed).toBe(true);
 	});
 
-	it('should preserve origin=kind through mergeChoiceArms for structural choice arms', () => {
+	it('keeps the merged content slot unnamed through mergeChoiceArms for structural choice arms', () => {
 		// Simulates a structural choice where each arm contributes a content slot.
 		// mergeChoiceArms should preserve origin from the first occurrence.
 		const innerChoice1 = makeContentChoice('array');
@@ -76,10 +78,10 @@ describe('collectSlots: origin on unnamed content slot', () => {
 		const slots = collectSlots(structuralChoice, 'test_kind');
 		const contentSlot = slots.find((s) => s.name === 'content');
 		expect(contentSlot).toBeDefined();
-		expect((contentSlot as any)?.origin).toBe('kind');
+		expect(contentSlot?.isUnnamed).toBe(true);
 	});
 
-	it('AssembledBranch.slots carries origin=kind for unnamed content slot', () => {
+	it('AssembledBranch.slots exposes the unnamed content slot as unnamed', () => {
 		// Simulates argument_list's assembled node shape.
 		// The simplifiedRule is a wrapper-free choice{array, nonterminal:true}
 		// as produced by the list-fusion + deleteWrapper pipeline.
@@ -102,40 +104,6 @@ describe('collectSlots: origin on unnamed content slot', () => {
 
 		const contentSlot = branch.slots['content'];
 		expect(contentSlot).toBeDefined();
-		expect((contentSlot as any)?.origin).toBe('kind');
-	});
-
-	it('mergeChoiceArms preserves origin=kind from first arm (not dropped on merge)', () => {
-		// Each arm-slot from a structural choice has origin='kind' (from symbol path).
-		// mergeChoiceArms must preserve it via ...prev spread.
-		const arm1Slot = {
-			name: 'content',
-			propertyName: 'contents',
-			configKey: 'content',
-			storageName: 'content',
-			paramName: 'contents',
-			values: [{ kind: 'node-ref' as const, multiplicity: 'array' as const, node: { name: '_expression' } as any }],
-			hasTrailing: false,
-			hasLeading: false,
-			source: 'inferred' as const,
-			origin: 'kind' as const,
-		};
-		const arm2Slot = {
-			...arm1Slot,
-			values: [{ kind: 'node-ref' as const, multiplicity: 'array' as const, node: { name: 'list_splat' } as any }],
-		};
-
-		// Simulate what mergeChoiceArms does: spread ...prev, override specific fields.
-		// This mirrors the exact merge code at lines 195-201 of collect-slots.ts.
-		const merged = {
-			...arm1Slot,
-			values: [...arm1Slot.values, ...arm2Slot.values],
-			hasTrailing: arm1Slot.hasTrailing || arm2Slot.hasTrailing,
-			hasLeading: arm1Slot.hasLeading || arm2Slot.hasLeading,
-			aliasSources: undefined,
-		};
-
-		// origin must be preserved via the spread
-		expect(merged.origin).toBe('kind');
+		expect(contentSlot?.isUnnamed).toBe(true);
 	});
 });
