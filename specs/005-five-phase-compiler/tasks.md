@@ -467,17 +467,6 @@ rather than recomputing via free functions.
       part of **T052**. All three generated packages type-clean via
       `tsgo --noEmit`. Commit `a77f94b`.
 
-- [ ] **C20** Match-block final-arm wrap routing follow-up. The generated
-      JS wrap path for rust `match_block` currently normalizes
-      `_last_match_arm` from `(data._match_arm ?? data._last_match_arm)`,
-      so the repeated `match_arm` slot can mask the dedicated
-      `last_match_arm` slot and either select the wrong arm or throw
-      under singular-slot normalization. Fix belongs in
-      `packages/codegen/src/emitters/wrap.ts` (or upstream slot modeling),
-      not by patching generated `packages/rust/src/wrap.ts`. Keep this out
-      of PR-B; land as a follow-up on master with a focused regression test
-      for blocks like `match x { 0 => a, _ => b }`.
-
 ### Apples-to-apples v1-vs-v2 comparison (recorded 2026-04-12)
 
 Ran both pipelines on every grammar via

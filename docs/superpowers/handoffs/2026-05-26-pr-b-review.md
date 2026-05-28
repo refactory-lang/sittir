@@ -51,6 +51,14 @@ PR-B** (don't let PR-E silently inherit the un-done dependency).
   `transport.rs`/`bridge.rs`) — but **not** the forbidden `test-fixtures.json` / `validation-history.jsonl`
   (those are auto-committed by a separate mechanism). Result is fine; flag the process deviation only.
 
+## Mergeable follow-up items
+- **Rust `match_block` final-arm wrap routing (out of scope for PR-B).** The generated JS wrap path currently
+  normalizes `_last_match_arm` from `(data._match_arm ?? data._last_match_arm)`, so a repeated `match_arm`
+  slot can mask the dedicated `last_match_arm` slot and select the wrong arm (or throw under singular-slot
+  normalization). Fix belongs in `packages/codegen/src/emitters/wrap.ts` or upstream slot modeling, not in
+  generated `packages/rust/src/wrap.ts`. Carry this into the post-PR-B follow-up queue with a focused
+  regression test for `match x { 0 => a, _ => b }`.
+
 ## Next
 1. **Close FOLD-1** (`sourceRuleIds` + `slotByRuleId` maps each) — the one real PR-B gap.
 2. Optional: a fuller `sittir-review` design-conformance pass (the DRY consolidation + the principles) once
