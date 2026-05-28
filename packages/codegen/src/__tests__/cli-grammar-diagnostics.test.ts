@@ -12,7 +12,7 @@
  * - Interactive + user confirms "y"                           → resolves 0
  * - Interactive + user declines "n"                          → throws GrammarDiagnosticError
  */
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { runCodegenCli } from '../cli.ts';
 import type { GrammarDiagnostic } from '../compiler/grammar-diagnostics.ts';
 
@@ -34,6 +34,14 @@ function makeDiagnostic(
 const BASE_ARGV = ['--grammar', 'rust', '--all', '--output', 'packages/rust/src'] as const;
 
 describe('codegen CLI grammar-diagnostics preflight', () => {
+	beforeEach(() => {
+		vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+	});
+
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
 	// -------------------------------------------------------------------------
 	// Non-interactive cases
 	// -------------------------------------------------------------------------
@@ -163,4 +171,3 @@ describe('codegen CLI grammar-diagnostics preflight', () => {
 		expect(receivedBlocked[0]?.code).toBe('another-code');
 	});
 });
-

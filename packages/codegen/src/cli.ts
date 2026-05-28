@@ -211,7 +211,7 @@ async function runGrammarDiagnosticsPreflight(input: {
 	);
 	if (blocked.length === 0) return;
 
-	process.stderr.write(formatGrammarDiagnostics(diagnostics) + '\n');
+	process.stderr.write(formatGrammarDiagnostics(blocked) + '\n');
 
 	if (!input.isTTY) {
 		throw new GrammarDiagnosticError(blocked);
@@ -308,6 +308,11 @@ Options:
                    for supported grammars (rust, typescript, python)
   --output, -o     Output directory for generated files
   --tests-dir      Output directory for test files (default: ../tests)
+  --allow-diagnostic <code>
+                   Allow a blocking grammar-diagnostic code to proceed;
+                   repeat for multiple codes (e.g. parsekind-noninjective).
+                   In non-interactive mode a blocking code that is not
+                   allowed causes the CLI to exit non-zero.
   --transpile      Transpile overrides.ts to .sittir/grammar.js
   --compile-parser Compile override grammar to .sittir/parser.wasm
   --ts-generate    Run 'tree-sitter generate' in .sittir/ to produce
@@ -411,18 +416,7 @@ const config: CodegenConfig = {
 	outputDir: cliArgs.outputDir!
 };
 
-// Grammar-diagnostics preflight — run BEFORE generation so that blocking
-// diagnostics (e.g. parsekind-noninjective collisions) are surfaced early.
-// Codes in the --allow-diagnostic list are silently passed through; all
-// other blocking codes cause a non-interactive failure or an interactive prompt.
-{
-	const allowDiagnostics = new Set(cliArgs.allowDiagnostics ?? []);
-	await runGrammarDiagnosticsPreflight({
-		grammar: config.grammar,
-		allowDiagnostics,
-		isTTY: Boolean((process.stdin as NodeJS.ReadStream).isTTY)
-	});
-}
+await runCodegenCli(process.argv.slice(2));
 
 console.log(`Generating ${config.grammar} IR...`);
 const result = await generate({
