@@ -1118,7 +1118,7 @@ export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMa
 	if (shape === 'spread') return 'spread';
 	if (shape !== 'direct') return null;
 	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
-	return slotClass.tag === 'singleSlot' && slotClass.slot.source === 'inferred' ? 'direct' : null;
+	return slotClass.tag === 'singleSlot' && slotClass.slot.isUnnamed ? 'direct' : null;
 }
 
 /**
@@ -1153,7 +1153,7 @@ export function classifyFactoryShape(
 					!hasOptionalUserContentChildren(node.children, nodeMap)
 				)
 					return 'direct';
-				if (slotClass.slot.source === 'inferred') return 'spread';
+				if (slotClass.slot.isUnnamed) return 'spread';
 				return 'config';
 			}
 			const fields = configurableFactoryFields(node.fields, nodeMap);

@@ -31576,8 +31576,6 @@ pub struct RangePatternTransport {
     pub range_pattern_left_with_right: Box<RangePatternLeftWithRightTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_range_pattern_left_bare"))]
     pub range_pattern_left_bare: RangePatternLeftBareTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: Option<Box<RangePatternPrefixRightTransportSlot>>,
 }

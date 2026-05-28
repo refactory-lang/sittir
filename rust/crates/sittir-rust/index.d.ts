@@ -1947,7 +1947,6 @@ export interface RangePatternTransport {
   _range_pattern_prefix: Box<RangePatternPrefixTransport>
   _range_pattern_left_with_right: Box<RangePatternLeftWithRightTransport>
   _range_pattern_left_bare: RangePatternLeftBareTransport
-  _content?: Box<AnyTransport>
   _right?: Box<RangePatternPrefixRightTransportSlot>
 }
 

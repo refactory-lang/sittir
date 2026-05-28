@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "326d76526c1faab3a43bde0cee7123fdf6f73c453e83e30646dd378291c43cc1",
+  "source_hash": "71c579910c61955f242db7e74d4d213e051f607316db09df74a4921527571498",
   "files": {
     "packages/rust/.sittir/grammar.js": "a6d411308482a0b63a7d7f1968969046c767e941a559a318b77467c638c0a804",
     "packages/rust/.sittir/package.json": "bdab057c3301bd235e9a388063623685881661f0809682fc361a510fd47f531a",
@@ -255,7 +255,7 @@
     "packages/rust/templates/where_predicate.jinja": "a1105f68bba12c2557895e898a65e1b0a5c27ca6866305266cdf67e672c91d41",
     "packages/rust/templates/while_expression.jinja": "30167b1b36c40054b70a378f110b014f39ba70561d9e8901d13e1b829781f08e",
     "packages/rust/templates/yield_expression.jinja": "937585a8a8e14be405f44e7d83f7fedffc4c660ee4e6f6f0379bd4fe42e108a6",
-    "rust/crates/sittir-rust/index.d.ts": "813871abdc56b109185e800d03ee82762e94c90411d0a13272939597f85ece06",
+    "rust/crates/sittir-rust/index.d.ts": "a7aef70b55204ea81be97dc6ba433cf6208e63eb49cb05b7ff955e53344b4a89",
     "rust/crates/sittir-rust/index.js": "65870d2849ecee2c83c421e32039918e09f25dfe01828f8cea710a7e31e5a48d",
     "rust/crates/sittir-rust/src/lib.rs": "eb740948e3f734b9fd46c3250e6e0f2f8c65e65abe0799172ed5b34a2094e035",
     "rust/crates/sittir-rust/src/render/bridge.rs": "57ac6ea8d3a474a3c7e06b283aa02eebcc41671afcf189403ab0d8250272a374",
@@ -264,7 +264,7 @@
     "rust/crates/sittir-rust/src/render/kind_ids.rs": "d9c1010b9a260772e967d1016098e06637316b192519c18a368677af2add9db5",
     "rust/crates/sittir-rust/src/render/mod.rs": "ceb822af68305db3abb0c107dc2d9991b289bf6aaa413a4558e1be6de5845f02",
     "rust/crates/sittir-rust/src/render/templates.rs": "fc232defaaa4e99e06b6b73b893e6267feaefdf0c2005b63d8b5766b9c10dc1f",
-    "rust/crates/sittir-rust/src/render/transport.rs": "40362967f14a7861c09588c5d1198c7aeae1ec988421b94e28172a97384156f7",
+    "rust/crates/sittir-rust/src/render/transport.rs": "eff32bfa5498d33b4f9dcf480493d540f4a68d0ca91369c95952b55f00b9934c",
     "rust/crates/sittir-rust/templates/_array_expression_list.jinja": "cb79ca044a363d6da422cded4329a04e3a518075a248890644bfc0024b61012d",
     "rust/crates/sittir-rust/templates/_array_expression_semi.jinja": "fd256325a165b9ec9c6b24c1251cb8bb40e4481ab6f9a7327b0a2de7cc9b23a5",
     "rust/crates/sittir-rust/templates/_attributed_argument.jinja": "7b764bdffff0c29d74ca49d183c8393ad354f67093d9a9ae620ad7c7298feb2c",
@@ -491,7 +491,7 @@
     "rust/crates/sittir-rust/test-fixtures.json": "02988784d7f1073ee112a37d4844d78bcabd4dd9d38ab289ffb07cc58652bc19"
   },
   "host_files": {
-    "rust/crates/sittir-rust/sittir-rust.darwin-arm64.node": "24078143e2941274e9b662f7aa3021f8ac11a2f8d4f1ac321bc107518bfc046d",
+    "rust/crates/sittir-rust/sittir-rust.darwin-arm64.node": "22a5a09e70a03ae9d7bb46a38319e0934579a1bfd787bd7e0a29bbd947b306e1",
     "rust/crates/sittir-rust/sittir-rust.node": "bf5a8f7f173c7386e01da5d74a3c4575efccc7405a4dee16f8c1ee9d20ef4fd4"
   }
 }

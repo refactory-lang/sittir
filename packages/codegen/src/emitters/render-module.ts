@@ -671,12 +671,12 @@ function emitStruct(kind: string, node: AssembledNode | undefined, surface: Rend
 			// alias that points back to the slot's single storage so the template
 			// variables all bind to the same transport field. Skip aliases that
 			// collide with another slot's own name — declared fields take
-			// precedence. Only register aliases for inferred MULTIPLE slots:
+			// precedence. Only register aliases for unnamed MULTIPLE slots:
 			// single-value slots store one transport-shaped value that cannot
 			// be re-routed through a kind-named template variable, and the
 			// template-walker's "kind as variable" pattern only applies to the
 			// list-style `{{ kind | join(...) }}` emission.
-			if (f.source === 'inferred' && mul) {
+			if (f.isUnnamed && mul) {
 				for (const k of kindsOf(f)) {
 					const alias = k.replace(/^_+/, '');
 					if (alias === f.name) continue;
@@ -689,12 +689,12 @@ function emitStruct(kind: string, node: AssembledNode | undefined, surface: Rend
 		}
 		for (const f of slotModel.unnamed) {
 			unnamedNames.add(f.name);
-			if (f.source === 'inferred' && isMultiple(f)) {
+			if (f.isUnnamed && isMultiple(f)) {
 				for (const k of kindsOf(f)) {
 					const alias = k.replace(/^_+/, '');
 					if (alias === f.name) continue;
 					// Only mark as unnamed-alias when the alias resolves to this
-					// inferred slot — see storageByName guard above.
+					// unnamed slot — see storageByName guard above.
 					if (storageByName.get(alias) === f.storageName) {
 						unnamedNames.add(alias);
 					}
@@ -4474,7 +4474,7 @@ function renderTransportDataStruct(
 					if (helperNode === undefined) continue;
 					const helperSlots = allSlotsOf(helperNode);
 					for (const innerSlot of helperSlots) {
-						if (innerSlot.source === 'inferred') continue; // skip unnamed inner slots
+						if (innerSlot.isUnnamed) continue; // skip unnamed inner slots
 						if (emittedStorageNames.has(innerSlot.storageName)) continue; // already present
 						// Emit the inner field directly on the parent struct.
 						// Use the HELPER node's kind/typeName so per-slot enum references

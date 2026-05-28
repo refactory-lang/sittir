@@ -6,7 +6,7 @@ import { optimize } from '../optimize.ts';
 import { assemble } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
 import type { AssembledBranch, AssembledNonterminal } from '../node-map.ts';
-import { resolveSingleFieldFactorySlot } from '../../emitters/shared.ts';
+import { classifyChildFactorySurface, classifyFactoryShape, resolveSingleFieldFactorySlot } from '../../emitters/shared.ts';
 import { hasSingularNativeChildrenTransport } from '../../emitters/render-module.ts';
 import { runTemplateEmitter } from '../../emitters/templates.ts';
 
@@ -84,6 +84,43 @@ describe('slot structural signals', () => {
 		expect(slot?.isUnnamed).toBe(true);
 		expect(resolveSingleFieldFactorySlot(box, nodeMap)).toBeUndefined();
 		expect(hasSingularNativeChildrenTransport(box)).toBe(true);
+	});
+
+	it('shared factory classifiers key unnamed-child direct surfaces off isUnnamed', () => {
+		const nodeMap = buildNodeMap({
+			box: seq({ type: 'symbol', name: 'identifier' }),
+			identifier: { type: 'pattern', value: '[a-z_]\\w*' },
+		});
+		const box = getBranch(nodeMap, 'box');
+		const slot = box.fields[0];
+		expect(slot?.isUnnamed).toBe(true);
+		expect(classifyFactoryShape(box, nodeMap)).toBe('direct');
+		expect(classifyChildFactorySurface(box, nodeMap)).toBe('direct');
+
+		setSlotSource(slot!, 'grammar');
+
+		expect(classifyFactoryShape(box, nodeMap)).toBe('direct');
+		expect(classifyChildFactorySurface(box, nodeMap)).toBe('direct');
+	});
+
+	it('shared factory classifiers key unnamed-child spread surfaces off isUnnamed', () => {
+		const nodeMap = buildNodeMap({
+			box: seq({
+				type: 'repeat1',
+				content: { type: 'symbol', name: 'identifier' },
+			}),
+			identifier: { type: 'pattern', value: '[a-z_]\\w*' },
+		});
+		const box = getBranch(nodeMap, 'box');
+		const slot = box.fields[0];
+		expect(slot?.isUnnamed).toBe(true);
+		expect(classifyFactoryShape(box, nodeMap)).toBe('spread');
+		expect(classifyChildFactorySurface(box, nodeMap)).toBe('spread');
+
+		setSlotSource(slot!, 'grammar');
+
+		expect(classifyFactoryShape(box, nodeMap)).toBe('spread');
+		expect(classifyChildFactorySurface(box, nodeMap)).toBe('spread');
 	});
 
 	it('template preservation treats unnamed alias-carried helper slots structurally', () => {
