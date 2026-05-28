@@ -1,24 +1,38 @@
-/**
- * probe/parity — thin wrapper delegating to @sittir/codegen's probe-parity script.
- * Actual probe logic lives in packages/codegen/src/scripts/probe-parity.ts.
- */
-type ToolRunner = (argv: string[]) => Promise<number>;
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const CODEGEN_PROBE_PARITY = '../../../codegen/src/scripts/probe-parity.ts';
-
-async function loadRun(): Promise<ToolRunner> {
-	const mod: { run: ToolRunner } = await import(CODEGEN_PROBE_PARITY);
-	return mod.run;
+export interface ProbeParityOptions {
+grammar: string;
+target: string;
 }
 
-export async function run(argv: string[]): Promise<number> {
-	return (await loadRun())(argv);
-}
+export async function run(opts: ProbeParityOptions): Promise<number> {
+const { validateReadRenderParse } = await import('../../../codegen/src/validate/read-render-parse.ts');
+const packagesDir = fileURLToPath(new URL('../../../', import.meta.url));
+const templatesPath = resolve(packagesDir, opts.grammar, 'templates');
 
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
-if (_isMain) {
-	run(process.argv.slice(2)).then(process.exit).catch((e) => {
-		process.stderr.write(`probe-parity: ${(e as Error).stack ?? e}\n`);
-		process.exit(1);
-	});
+const covered = new Set<string>();
+const r = await validateReadRenderParse(opts.grammar, templatesPath, {
+backend: 'native',
+onFixture: (fx) => {
+if (fx.kind === 'roundtrip') covered.add(fx.pattern);
+}
+});
+
+console.log(`[${opts.grammar}] read-render-parse kinds covered: ${covered.size}`);
+console.log(`  target '${opts.target}' covered: ${covered.has(opts.target)}`);
+const variantChildren = [...covered].filter((k) => k.startsWith(`_${opts.target}_`));
+console.log(`  variant children covered:`, variantChildren);
+console.log(
+`  all errors involving '${opts.target}':`,
+r.errors.filter((e) => e.name.includes(opts.target)).slice(0, 5).map((e) => e.name)
+);
+console.log(
+`  all astMismatches involving '${opts.target}':`,
+r.astMismatches.filter((e) => e.name.includes(opts.target)).slice(0, 5).map((e) => e.name)
+);
+console.log(`  pass=${r.pass}/${r.total} astMatchPass=${r.astMatchPass} skip=${r.skip}`);
+console.log();
+console.log(`Sample of covered kinds:`, [...covered].slice(0, 20).sort());
+return 0;
 }

@@ -1,24 +1,43 @@
-/**
- * validate/diff — thin wrapper delegating to @sittir/codegen's diff-failures script.
- * Actual logic lives in packages/codegen/src/scripts/diff-failures.ts.
- */
-type ToolRunner = (argv: string[]) => Promise<number>;
+import { resolve } from 'node:path';
 
-const CODEGEN_DIFF_FAILURES = '../../../codegen/src/scripts/diff-failures.ts';
+const VALID_WHICH = ['all', 'from', 'rt', 'cov', 'factory'] as const;
+type Which = (typeof VALID_WHICH)[number];
 
-async function loadRun(): Promise<ToolRunner> {
-	const mod: { run: ToolRunner } = await import(CODEGEN_DIFF_FAILURES);
-	return mod.run;
+export interface DiffFailuresOptions {
+grammar: string;
+which: string;
 }
 
-export async function run(argv: string[]): Promise<number> {
-	return (await loadRun())(argv);
-}
+export async function run(opts: DiffFailuresOptions): Promise<number> {
+const { validateFactoryRenderParse } = await import('../../../codegen/src/validate/factory-render-parse.ts');
+const { validateFrom } = await import('../../../codegen/src/validate/from.ts');
+const { validateReadRenderParse } = await import('../../../codegen/src/validate/read-render-parse.ts');
+const { validateTemplateCoverage } = await import('../../../codegen/src/validate/template-coverage.ts');
 
-const _isMain = import.meta.url === `file://${process.argv[1]}`;
-if (_isMain) {
-	run(process.argv.slice(2)).then(process.exit).catch((e) => {
-		process.stderr.write(`diff-failures: ${(e as Error).stack ?? e}\n`);
-		process.exit(1);
-	});
+const which = (VALID_WHICH.includes(opts.which as Which) ? opts.which : 'all') as Which;
+const tp = resolve(new URL('../../../..', import.meta.url).pathname, `packages/${opts.grammar}/templates`);
+
+if (which === 'all' || which === 'from') {
+const r = await validateFrom(opts.grammar);
+console.log(`\n=== FROM (${r.pass}/${r.total}) ===`);
+for (const e of r.errors) console.log(`  ${e.severity === 'error' ? 'E' : 'W'} ${e.kind}: ${e.message}`);
+}
+if (which === 'all' || which === 'rt') {
+const r = await validateReadRenderParse(opts.grammar, tp);
+console.log(`\n=== READ_RENDER_PARSE (${r.pass}/${r.total}, ast=${r.astMatchPass}) ===`);
+for (const e of r.errors) console.log(`  E ${e.name}: ${e.message}`);
+console.log(`-- AST mismatches --`);
+for (const e of r.astMismatches) console.log(`  M ${e.name}: ${e.message}`);
+}
+if (which === 'all' || which === 'cov') {
+const r = validateTemplateCoverage(opts.grammar, tp);
+console.log(`\n=== COV (${r.pass}/${r.total}) ===`);
+for (const i of r.issues) console.log(`  ${i.type === 'literal-leak' ? 'W' : 'E'} ${i.kind}: ${i.message}`);
+}
+if (which === 'all' || which === 'factory') {
+const r = await validateFactoryRenderParse(opts.grammar, tp);
+console.log(`\n=== FACTORY_RENDER_PARSE (${r.pass}/${r.total}, ast=${r.astMatchPass}) ===`);
+for (const e of r.errors) console.log(`  E ${e.kind}: ${e.message}`);
+}
+return 0;
 }

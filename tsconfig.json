@@ -16,7 +16,6 @@
 			"@sittir/codegen/validate/factory-render-parse": ["./packages/codegen/src/validate/factory-render-parse.ts"],
 			"@sittir/codegen/validate/read-render-parse": ["./packages/codegen/src/validate/read-render-parse.ts"],
 			"@sittir/codegen/validate/template-coverage": ["./packages/codegen/src/validate/template-coverage.ts"],
-			"@sittir/codegen/scripts/probe-kind": ["./packages/codegen/src/scripts/probe-kind.ts"],
 			"@sittir/python": ["./packages/python/src/index.ts"],
 			"@sittir/python/utils": ["./packages/python/src/utils.ts"],
 			"@sittir/typescript": ["./packages/typescript/src/index.ts"],

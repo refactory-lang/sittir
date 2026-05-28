@@ -52,12 +52,6 @@
 			"import": "./dist/validate/read-render-parse.js",
 			"default": "./dist/validate/read-render-parse.js"
 		},
-		"./scripts/probe-kind": {
-			"types": "./src/scripts/probe-kind.ts",
-			"source": "./src/scripts/probe-kind.ts",
-			"import": "./dist/scripts/probe-kind.js",
-			"default": "./dist/scripts/probe-kind.js"
-		},
 		"./validate/template-coverage": {
 			"types": "./src/validate/template-coverage.ts",
 			"source": "./src/validate/template-coverage.ts",

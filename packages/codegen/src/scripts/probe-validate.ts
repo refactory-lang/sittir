@@ -40,9 +40,28 @@ import { parseArgs } from 'node:util';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadCorpusEntries, type CorpusEntry } from '../validate/common.ts';
-import { run as runProbeKind } from './probe-kind.ts';
 
 type Engine = 'native' | 'js' | 'both';
+
+interface ProbeKindOptions {
+	grammar: string;
+	source?: string;
+	stdin: boolean;
+	kind?: string;
+	range?: string;
+	noRender: boolean;
+	noWrap: boolean;
+	reparse: boolean;
+	pretty: boolean;
+	baseline?: string;
+	baselineParser: boolean;
+	engine?: string;
+	trace: boolean;
+	logParse: boolean;
+	full: boolean;
+}
+
+type ProbeKindRunner = (opts: ProbeKindOptions) => Promise<number>;
 
 async function main(argv: string[]): Promise<number> {
 	const { values } = parseArgs({
@@ -149,19 +168,25 @@ async function main(argv: string[]): Promise<number> {
 		process.stderr.write(`# probe-validate: ${grammar} / ${JSON.stringify(entryName)}\n`);
 	}
 
-	const probeArgv: string[] = ['--grammar', grammar, '--engine', engine];
-	if (source !== undefined) {
-		probeArgv.push('--source', source);
-	} else if (values.stdin) {
-		probeArgv.push('--stdin');
-	}
-	if (values.trace) probeArgv.push('--trace');
-	if (values.pretty) probeArgv.push('--pretty');
-	if (values.json) probeArgv.push('--json');
-	if (values['no-render']) probeArgv.push('--no-render');
-	if (values['no-wrap']) probeArgv.push('--no-wrap');
-
-	return await runProbeKind(probeArgv);
+	const specifier = new URL('../../../tools/src/probe/kind.ts', import.meta.url).href;
+	const { run: runProbeKind } = (await import(specifier)) as { run: ProbeKindRunner };
+	return await runProbeKind({
+		grammar,
+		source,
+		stdin: values.stdin === true,
+		kind: undefined,
+		range: undefined,
+		noRender: values['no-render'] === true,
+		noWrap: values['no-wrap'] === true,
+		reparse: false,
+		pretty: values.pretty === true,
+		baseline: undefined,
+		baselineParser: false,
+		engine,
+		trace: values.trace === true,
+		logParse: false,
+		full: false
+	});
 }
 
 function defaultTemplatesPath(grammar: string): string {

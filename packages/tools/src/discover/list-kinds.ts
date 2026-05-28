@@ -5,8 +5,7 @@
  *   - list-groups.ts         (groups from the assembled nodeMap)
  *   - find-unaliased-groups.ts (groups without a visible non-group twin)
  *
- * And integrates the phantom detection already available in the codegen
- * diagnose-phantom-kinds script, called in-process (no subprocess).
+ * And integrates the shared phantom-kinds tool in-process (no subprocess).
  *
  * Usage:
  *   list-kinds [--grammar <g>] [--groups] [--unaliased] [--phantom]
@@ -154,17 +153,12 @@ function listUnaliased(nm: NodeMap): void {
 
 /**
  * List phantom kinds for the requested grammar in-process by delegating to
- * the shared diagnose-phantom-kinds script. No subprocess is spawned -- the
- * script's `run()` export is imported dynamically and called directly.
+ * the shared phantom-kinds tool. No subprocess is spawned -- the tool's
+ * `run()` export is imported dynamically and called directly.
  */
 async function listPhantom(grammar: string): Promise<void> {
-	// Relative path to the codegen script; resolved from this file's location.
-	const PHANTOM_SCRIPT = '../../../codegen/src/scripts/diagnose-phantom-kinds.ts';
-	type PhantomRunner = (argv: string[]) => Promise<number>;
-	const mod: { run: PhantomRunner } = await import(PHANTOM_SCRIPT);
-	// Pass the grammar as the sole positional arg so the script limits its
-	// output to the requested grammar rather than all three.
-	await mod.run([grammar]);
+	const { run: runPhantomKinds } = await import('./phantom.ts');
+	await runPhantomKinds({ grammars: [grammar] });
 }
 
 // ---------------------------------------------------------------------------

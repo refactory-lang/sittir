@@ -296,7 +296,7 @@ export async function runTraceRtCli(
 }
 
 export function loadProbeTrace(): ProbeTraceFn {
-	const specifier = new URL('../../codegen/src/scripts/probe-kind.ts', import.meta.url).href;
+	const specifier = new URL('../../tools/src/probe/kind.ts', import.meta.url).href;
 	let cached: ProbeTraceFn | undefined;
 	return ((grammar, source, opts) => {
 		if (cached) return cached(grammar, source, opts);
