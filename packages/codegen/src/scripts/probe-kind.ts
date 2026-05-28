@@ -166,9 +166,10 @@ async function main(argv: string[]): Promise<number> {
 	}
 
 	const parsedRange = values.range ? parseRange(values.range as string) : undefined;
+	const explicitEngine = values.engine as string | undefined;
 	// Native is the production path; the JS render engine is @deprecated. Default
 	// to native so an un-flagged probe reflects what actually ships.
-	const engineRaw = (values.engine as string | undefined) ?? 'native';
+	const engineRaw = explicitEngine ?? 'native';
 	if (!['js', 'native', 'both'].includes(engineRaw)) {
 		process.stderr.write(`probe-kind: --engine must be 'js' | 'native' | 'both' (got '${engineRaw}')\n`);
 		return 2;
@@ -176,7 +177,7 @@ async function main(argv: string[]): Promise<number> {
 	if (engineRaw === 'js') {
 		process.stderr.write('probe-kind: warning: --engine js is deprecated; native remains the default production path\n');
 	}
-	const opts = {
+	const probeOpts = {
 		noRender: values['no-render'] === true,
 		noWrap: values['no-wrap'] === true,
 		kind: values.kind as string | undefined,
@@ -186,6 +187,11 @@ async function main(argv: string[]): Promise<number> {
 		logParse: values.logParse === true
 
 	};
+	const traceEngine = (explicitEngine === undefined ? 'both' : engineRaw) as 'js' | 'native' | 'both';
+	const traceOpts = {
+		...probeOpts,
+		engine: traceEngine
+	};
 	// Focused native-pipeline view: default when `--kind` is given (unless
 	// --trace/--full). Shows the slot at EVERY native stage so the layer that
 	// drops it is obvious — cst (parse) → raw (raw read) → wrapped (materialized
@@ -193,8 +199,8 @@ async function main(argv: string[]): Promise<number> {
 	// `legacyWrapped` is the old recursive readNode walker — populated in it but
 	// empty in `wrapped` = a wrap-materialization gap.
 	const wantFull = values.trace === true || values.full === true;
-	if (opts.kind && !wantFull) {
-		const trace = (await probeTrace(grammar, source, { ...opts, engine: 'native' }));
+	if (probeOpts.kind && !wantFull) {
+		const trace = (await probeTrace(grammar, source, { ...probeOpts, engine: 'native' }));
 		const nativeTrace = (
 			trace.trace as { native?: { deep?: Record<string, unknown>; wrapError?: string } } | undefined
 		)?.native;
@@ -202,7 +208,7 @@ async function main(argv: string[]): Promise<number> {
 		const focused = {
 			grammar,
 			source,
-			kind: opts.kind,
+			kind: probeOpts.kind,
 			cst: trace.cst,
 			// wrap throws (e.g. a required slot the parser didn't route) surface
 			// here so the CST is still readable to diagnose what the parser emitted.
@@ -218,17 +224,17 @@ async function main(argv: string[]): Promise<number> {
 		return 0;
 	}
 	if (wantFull) {
-		const trace = await probeTrace(grammar, source, opts);
+		const trace = await probeTrace(grammar, source, traceOpts);
 		process.stdout.write(JSON.stringify(trace, null, values.pretty ? 2 : undefined) + '\n');
 		return 0;
 	}
-	const report = await probe(grammar, source, opts);
+	const report = await probe(grammar, source, probeOpts);
 	let baselineReport: ProbeReport | undefined;
 	let compare: ProbeCompare | undefined;
 	if (values.baseline) {
 		const baselineDir = values.baseline as string;
 		baselineReport = await probe(grammar, source, {
-			...opts,
+			...probeOpts,
 			baselineDir,
 			useBaselineParser: values['baseline-parser'] === true
 		});
@@ -238,7 +244,7 @@ async function main(argv: string[]): Promise<number> {
 	let compareEngines: ProbeEngineCompare | undefined;
 	if (engineRaw === 'both' || engineRaw === 'native') {
 		engineNativeReport = await probe(grammar, source, {
-			...opts,
+			...probeOpts,
 			engine: 'native'
 		});
 		if (engineRaw === 'both') {
@@ -584,12 +590,12 @@ export async function probeTrace(
 	const sexp = targetNode.toString();
 
 	const trace: ProbeTraceReport['trace'] = {};
-	if (opts.engine === 'both') {
+	const traceEngine = opts.engine ?? 'both';
+	if (traceEngine === 'both') {
 		trace.js = await buildEngineTrace('js');
 		trace.native = await buildEngineTrace('native');
 	} else {
-		const engine = opts.engine ?? 'native';
-		trace[engine] = await buildEngineTrace(engine);
+		trace[traceEngine] = await buildEngineTrace(traceEngine);
 	}
 	return {
 		grammar,

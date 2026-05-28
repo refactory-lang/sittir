@@ -102,6 +102,13 @@ describe('probe-kind native trace helpers', () => {
 		expect(resolveNativeTraceNodeData(undefined, legacy)).toBe(legacy);
 	});
 
+	it('defaults omitted trace engine selection to the full js/native matrix', async () => {
+		const trace = await probeTrace('python', 'x');
+
+		expect(trace.trace.js).toBeDefined();
+		expect(trace.trace.native).toBeDefined();
+	});
+
 	it('limits trace output to the requested engine and reproduces native wrap errors for validator-like probes', async () => {
 		const trace = await probeTrace('python', '(x for x in y)', {
 			kind: 'generator_expression',
