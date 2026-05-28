@@ -35,11 +35,11 @@ pub enum AnyTransport {
     ComplexPatternOperator(ComplexPatternOperatorEnum),
     ComprehensionClauses(ComprehensionClausesTransport),
     ExceptClauseAs(ExceptClauseAsTransport),
-    _Identifier(_IdentifierEnum),
     ImportList(ImportListTransport),
     IsNot(IsNotTransport),
     KeyValuePattern(KeyValuePatternTransport),
     KwAsyncMarker(KwAsyncMarkerTransport),
+    KwIdentifier(KwIdentifierTransport),
     KwType(KwTypeTransport),
     _ListPattern(_ListPatternTransport),
     MatchBlock(MatchBlockTransport),
@@ -48,6 +48,7 @@ pub enum AnyTransport {
     NotIn(NotInTransport),
     SimplePatternNegative(SimplePatternNegativeTransport),
     SimpleStatements(SimpleStatementsTransport),
+    SplatPatternOperator(SplatPatternOperatorEnum),
     Suite(SuiteTransport),
     _TuplePattern(_TuplePatternTransport),
     UnaryOperatorOperator(UnaryOperatorOperatorEnum),
@@ -201,6 +202,7 @@ pub enum AnyTransport {
     TokNOTSpIN(TokNOTSpINTransport),
     Is(IsTransport),
     TokISSpNOT(TokISSpNOTTransport),
+    Anonymous(AnonymousTransport),
     Bracket(BracketTransport),
     TokBs(TokBsTransport),
     Minus(MinusTransport),
@@ -257,7 +259,6 @@ pub enum AnyTransport {
     Print(PrintTransport),
     Raise(RaiseTransport),
     Return(ReturnTransport),
-    Anonymous(AnonymousTransport),
     True2(True2Transport),
     Try(TryTransport),
     Pipe(PipeTransport),
@@ -951,6 +952,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 64 => Ok(AnyTransport::Is(
                     IsTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _ (_ANONYMOUS)
+                48 => Ok(AnyTransport::Anonymous(
+                    AnonymousTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: [ (BRACKET)
                 45 => Ok(AnyTransport::Bracket(
                     BracketTransport::from_napi_value(env, napi_val)?
@@ -1138,10 +1143,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: return (RETURN)
                 16 => Ok(AnyTransport::Return(
                     ReturnTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: _ (_ANONYMOUS)
-                48 => Ok(AnyTransport::Anonymous(
-                    AnonymousTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: try (TRY)
                 32 => Ok(AnyTransport::Try(
@@ -7459,7 +7460,6 @@ impl RenderableTransport for ParenthesizedListSplatContentTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum SplatPatternIdentifierTransportSlot {
-    _Identifier(_IdentifierEnum),
     Identifier(IdentifierTransport),
     Verbatim(VerbatimTransport),
 }
@@ -7472,12 +7472,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternIdentifierTransportS
     ) -> ::napi::Result<Self> {
         if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
             return match kind_id {
-                11 => Ok(Self::_Identifier(
-                    _IdentifierEnum::from_napi_value(env, napi_val)?
-                )),
-                39 => Ok(Self::_Identifier(
-                    _IdentifierEnum::from_napi_value(env, napi_val)?
-                )),
                 1 => Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
@@ -7495,12 +7489,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternIdentifierTransportS
             ::napi::Error::from_reason("$type property missing in SplatPatternIdentifierTransportSlot")
         )?;
         match kind_id {
-                11 => Ok(Self::_Identifier(
-                    _IdentifierEnum::from_napi_value(env, napi_val)?
-                )),
-                39 => Ok(Self::_Identifier(
-                    _IdentifierEnum::from_napi_value(env, napi_val)?
-                )),
                 1 => Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
@@ -7543,7 +7531,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatPatternIdentifierTranspor
 
 fn splat_pattern_identifier_transport_slot_to_any(t: SplatPatternIdentifierTransportSlot) -> AnyTransport {
     match t {
-        SplatPatternIdentifierTransportSlot::_Identifier(inner) => AnyTransport::_Identifier(inner),
         SplatPatternIdentifierTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
         SplatPatternIdentifierTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
@@ -7555,7 +7542,6 @@ impl RenderableTransport for SplatPatternIdentifierTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            SplatPatternIdentifierTransportSlot::_Identifier(inner) => render__identifier(inner, dest),
             SplatPatternIdentifierTransportSlot::Identifier(inner) => render_identifier(inner, dest),
             SplatPatternIdentifierTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
@@ -7564,7 +7550,7 @@ impl RenderableTransport for SplatPatternIdentifierTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum SplatTypeIdentifierTransportSlot {
-    _Identifier(_IdentifierEnum),
+    SplatPatternOperator(SplatPatternOperatorEnum),
     Identifier(IdentifierTransport),
     Verbatim(VerbatimTransport),
 }
@@ -7577,11 +7563,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatTypeIdentifierTransportSlot
     ) -> ::napi::Result<Self> {
         if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
             return match kind_id {
-                11 => Ok(Self::_Identifier(
-                    _IdentifierEnum::from_napi_value(env, napi_val)?
+                11 => Ok(Self::SplatPatternOperator(
+                    SplatPatternOperatorEnum::from_napi_value(env, napi_val)?
                 )),
-                39 => Ok(Self::_Identifier(
-                    _IdentifierEnum::from_napi_value(env, napi_val)?
+                39 => Ok(Self::SplatPatternOperator(
+                    SplatPatternOperatorEnum::from_napi_value(env, napi_val)?
                 )),
                 1 => Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
@@ -7600,11 +7586,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatTypeIdentifierTransportSlot
             ::napi::Error::from_reason("$type property missing in SplatTypeIdentifierTransportSlot")
         )?;
         match kind_id {
-                11 => Ok(Self::_Identifier(
-                    _IdentifierEnum::from_napi_value(env, napi_val)?
+                11 => Ok(Self::SplatPatternOperator(
+                    SplatPatternOperatorEnum::from_napi_value(env, napi_val)?
                 )),
-                39 => Ok(Self::_Identifier(
-                    _IdentifierEnum::from_napi_value(env, napi_val)?
+                39 => Ok(Self::SplatPatternOperator(
+                    SplatPatternOperatorEnum::from_napi_value(env, napi_val)?
                 )),
                 1 => Ok(Self::Identifier(
                     IdentifierTransport::from_napi_value(env, napi_val)?
@@ -7648,7 +7634,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatTypeIdentifierTransportSl
 
 fn splat_type_identifier_transport_slot_to_any(t: SplatTypeIdentifierTransportSlot) -> AnyTransport {
     match t {
-        SplatTypeIdentifierTransportSlot::_Identifier(inner) => AnyTransport::_Identifier(inner),
+        SplatTypeIdentifierTransportSlot::SplatPatternOperator(inner) => AnyTransport::SplatPatternOperator(inner),
         SplatTypeIdentifierTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
         SplatTypeIdentifierTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
@@ -7660,7 +7646,7 @@ impl RenderableTransport for SplatTypeIdentifierTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            SplatTypeIdentifierTransportSlot::_Identifier(inner) => render__identifier(inner, dest),
+            SplatTypeIdentifierTransportSlot::SplatPatternOperator(inner) => render_splat_pattern_operator(inner, dest),
             SplatTypeIdentifierTransportSlot::Identifier(inner) => render_identifier(inner, dest),
             SplatTypeIdentifierTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
@@ -9736,84 +9722,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseAsTransport> {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum _IdentifierEnum {
-    Star,
-    V2a_2a,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for _IdentifierEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-            match kind_id {
-                11 => return Ok(Self::Star), // "*"
-                39 => return Ok(Self::V2a_2a), // "**"
-                _ => {}
-            }
-        }
-        if let Ok(text) = String::from_napi_value(env, napi_val) {
-            match text.as_str() {
-                "*" => return Ok(Self::Star),
-                "**" => return Ok(Self::V2a_2a),
-                _ => {}
-            }
-        }
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        if let Some(kind_id) = obj.get::<u16>("$type")? {
-            match kind_id {
-                11 => return Ok(Self::Star), // "*"
-                39 => return Ok(Self::V2a_2a), // "**"
-                _ => {}
-            }
-        }
-        if let Some(text) = obj.get::<String>("$text")? {
-            match text.as_str() {
-                "*" => return Ok(Self::Star),
-                "**" => return Ok(Self::V2a_2a),
-                _ => {}
-            }
-        }
-        if obj.get::<::napi::bindgen_prelude::Object>("_*")?.is_some() { return Ok(Self::Star); }
-        if obj.get::<::napi::bindgen_prelude::Object>("_**")?.is_some() { return Ok(Self::V2a_2a); }
-        Err(::napi::Error::from_reason("unknown enum payload for _IdentifierEnum"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for _IdentifierEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("_IdentifierEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for _IdentifierEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Star => "*",
-            Self::V2a_2a => "**",
-        })
-    }
-}
-
-impl RenderableTransport for _IdentifierEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Star => "*",
-            Self::V2a_2a => "**",
-        }).map_err(::askama::Error::from)
-    }
-}
-
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct ImportListTransport {
@@ -10115,6 +10023,108 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<KwAsyncMarkerTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         KwAsyncMarkerTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct KwIdentifierTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for KwIdentifierTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwIdentifierTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "_".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| "_".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwIdentifierTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "_".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KwIdentifierTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<KwIdentifierTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        KwIdentifierTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<KwIdentifierTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        KwIdentifierTransport::to_napi_value(env, *val)
     }
 }
 
@@ -10671,6 +10681,84 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SimpleStatementsTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         SimpleStatementsTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SplatPatternOperatorEnum {
+    Star,
+    V2a_2a,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternOperatorEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+            match kind_id {
+                11 => return Ok(Self::Star), // "*"
+                39 => return Ok(Self::V2a_2a), // "**"
+                _ => {}
+            }
+        }
+        if let Ok(text) = String::from_napi_value(env, napi_val) {
+            match text.as_str() {
+                "*" => return Ok(Self::Star),
+                "**" => return Ok(Self::V2a_2a),
+                _ => {}
+            }
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        if let Some(kind_id) = obj.get::<u16>("$type")? {
+            match kind_id {
+                11 => return Ok(Self::Star), // "*"
+                39 => return Ok(Self::V2a_2a), // "**"
+                _ => {}
+            }
+        }
+        if let Some(text) = obj.get::<String>("$text")? {
+            match text.as_str() {
+                "*" => return Ok(Self::Star),
+                "**" => return Ok(Self::V2a_2a),
+                _ => {}
+            }
+        }
+        if obj.get::<::napi::bindgen_prelude::Object>("_*")?.is_some() { return Ok(Self::Star); }
+        if obj.get::<::napi::bindgen_prelude::Object>("_**")?.is_some() { return Ok(Self::V2a_2a); }
+        Err(::napi::Error::from_reason("unknown enum payload for SplatPatternOperatorEnum"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SplatPatternOperatorEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SplatPatternOperatorEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for SplatPatternOperatorEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::Star => "*",
+            Self::V2a_2a => "**",
+        })
+    }
+}
+
+impl RenderableTransport for SplatPatternOperatorEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::Star => "*",
+            Self::V2a_2a => "**",
+        }).map_err(::askama::Error::from)
     }
 }
 
@@ -16691,6 +16779,8 @@ pub struct SplatPatternTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
+    pub operator: SplatPatternOperatorEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
     pub identifier: SplatPatternIdentifierTransportSlot,
 }
@@ -20793,6 +20883,108 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TokISSpNOTTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         TokISSpNOTTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct AnonymousTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for AnonymousTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
+            text
+        } else if u16::from_napi_value(env, napi_val).is_ok() {
+            "_".to_string()
+        } else {
+            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+            obj.get("$text")?.unwrap_or_else(|| "_".to_string())
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "_".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AnonymousTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonymousTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AnonymousTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonymousTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AnonymousTransport::to_napi_value(env, *val)
     }
 }
 
@@ -26509,108 +26701,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct AnonymousTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for AnonymousTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {
-            text
-        } else if u16::from_napi_value(env, napi_val).is_ok() {
-            "_".to_string()
-        } else {
-            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-            obj.get("$text")?.unwrap_or_else(|| "_".to_string())
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "_".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnonymousTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonymousTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AnonymousTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonymousTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnonymousTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct True2Transport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -27227,10 +27317,6 @@ fn render_except_clause_as(node: &ExceptClauseAsTransport, dest: &mut dyn ::std:
     template.render_into(dest)
 }
 
-fn render__identifier(t: &_IdentifierEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
-}
-
 fn render_import_list(node: &ImportListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     for child in node.name.iter() {
         child.render_into(dest)?;
@@ -27249,6 +27335,10 @@ fn render_key_value_pattern(node: &KeyValuePatternTransport, dest: &mut dyn ::st
 }
 
 fn render_kw_async_marker(t: &KwAsyncMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_kw_identifier(t: &KwIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -27327,6 +27417,10 @@ fn render_simple_statements(node: &SimpleStatementsTransport, dest: &mut dyn ::s
         },
     };
     template.render_into(dest)
+}
+
+fn render_splat_pattern_operator(t: &SplatPatternOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
 
 fn render_suite(node: &SuiteTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -28496,6 +28590,7 @@ fn render_slice(node: &SliceTransport, dest: &mut dyn ::std::fmt::Write) -> Resu
 fn render_splat_pattern(node: &SplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = SplatPatternTemplate {
         identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
     };
     template.render_into(dest)
 }
@@ -28917,6 +29012,10 @@ fn render_tok_issp_not(t: &TokISSpNOTTransport, dest: &mut dyn ::std::fmt::Write
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render_anonymous(t: &AnonymousTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_bracket(t: &BracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -29138,10 +29237,6 @@ fn render_raise(t: &RaiseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<
 }
 
 fn render_return(t: &ReturnTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_anonymous(t: &AnonymousTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -29386,11 +29481,11 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::ComplexPatternOperator(t) => t.render_into(dest),
             AnyTransport::ComprehensionClauses(t) => render_comprehension_clauses(t, dest),
             AnyTransport::ExceptClauseAs(t) => render_except_clause_as(t, dest),
-            AnyTransport::_Identifier(t) => t.render_into(dest),
             AnyTransport::ImportList(t) => render_import_list(t, dest),
             AnyTransport::IsNot(t) => t.render_into(dest),
             AnyTransport::KeyValuePattern(t) => render_key_value_pattern(t, dest),
             AnyTransport::KwAsyncMarker(t) => t.render_into(dest),
+            AnyTransport::KwIdentifier(t) => t.render_into(dest),
             AnyTransport::KwType(t) => t.render_into(dest),
             AnyTransport::_ListPattern(t) => render__list_pattern(t, dest),
             AnyTransport::MatchBlock(t) => render_match_block(t, dest),
@@ -29399,6 +29494,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::NotIn(t) => t.render_into(dest),
             AnyTransport::SimplePatternNegative(t) => render_simple_pattern_negative(t, dest),
             AnyTransport::SimpleStatements(t) => render_simple_statements(t, dest),
+            AnyTransport::SplatPatternOperator(t) => t.render_into(dest),
             AnyTransport::Suite(t) => render_suite(t, dest),
             AnyTransport::_TuplePattern(t) => render__tuple_pattern(t, dest),
             AnyTransport::UnaryOperatorOperator(t) => t.render_into(dest),
@@ -29552,6 +29648,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::TokNOTSpIN(t) => t.render_into(dest),
             AnyTransport::Is(t) => t.render_into(dest),
             AnyTransport::TokISSpNOT(t) => t.render_into(dest),
+            AnyTransport::Anonymous(t) => t.render_into(dest),
             AnyTransport::Bracket(t) => t.render_into(dest),
             AnyTransport::TokBs(t) => t.render_into(dest),
             AnyTransport::Minus(t) => t.render_into(dest),
@@ -29608,7 +29705,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Print(t) => t.render_into(dest),
             AnyTransport::Raise(t) => t.render_into(dest),
             AnyTransport::Return(t) => t.render_into(dest),
-            AnyTransport::Anonymous(t) => t.render_into(dest),
             AnyTransport::True2(t) => t.render_into(dest),
             AnyTransport::Try(t) => t.render_into(dest),
             AnyTransport::Pipe(t) => t.render_into(dest),
@@ -29649,6 +29745,7 @@ impl AnyTransport {
             Self::IsNot(t) => t.transport_named,
             Self::KeyValuePattern(t) => t.transport_named,
             Self::KwAsyncMarker(t) => t.transport_named,
+            Self::KwIdentifier(t) => t.transport_named,
             Self::KwType(t) => t.transport_named,
             Self::_ListPattern(t) => t.transport_named,
             Self::MatchBlockBlock(t) => t.transport_named,
@@ -29805,6 +29902,7 @@ impl AnyTransport {
             Self::TokNOTSpIN(t) => t.transport_named,
             Self::Is(t) => t.transport_named,
             Self::TokISSpNOT(t) => t.transport_named,
+            Self::Anonymous(t) => t.transport_named,
             Self::Bracket(t) => t.transport_named,
             Self::TokBs(t) => t.transport_named,
             Self::Minus(t) => t.transport_named,
@@ -29861,7 +29959,6 @@ impl AnyTransport {
             Self::Print(t) => t.transport_named,
             Self::Raise(t) => t.transport_named,
             Self::Return(t) => t.transport_named,
-            Self::Anonymous(t) => t.transport_named,
             Self::True2(t) => t.transport_named,
             Self::Try(t) => t.transport_named,
             Self::Pipe(t) => t.transport_named,
@@ -29940,11 +30037,11 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::ComplexPatternOperator(data) => transport_to_node_complex_pattern_operator(data),
         AnyTransport::ComprehensionClauses(data) => transport_to_node_comprehension_clauses(data),
         AnyTransport::ExceptClauseAs(data) => transport_to_node_except_clause_as(data),
-        AnyTransport::_Identifier(data) => transport_to_node__identifier(data),
         AnyTransport::ImportList(data) => transport_to_node_import_list(data),
         AnyTransport::IsNot(data) => transport_to_node_is_not(data),
         AnyTransport::KeyValuePattern(data) => transport_to_node_key_value_pattern(data),
         AnyTransport::KwAsyncMarker(data) => transport_to_node_kw_async_marker(data),
+        AnyTransport::KwIdentifier(data) => transport_to_node_kw_identifier(data),
         AnyTransport::KwType(data) => transport_to_node_kw_type(data),
         AnyTransport::_ListPattern(data) => transport_to_node__list_pattern(data),
         AnyTransport::MatchBlock(data) => transport_to_node_match_block(data),
@@ -29953,6 +30050,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::NotIn(data) => transport_to_node_not_in(data),
         AnyTransport::SimplePatternNegative(data) => transport_to_node_simple_pattern_negative(data),
         AnyTransport::SimpleStatements(data) => transport_to_node_simple_statements(data),
+        AnyTransport::SplatPatternOperator(data) => transport_to_node_splat_pattern_operator(data),
         AnyTransport::Suite(data) => transport_to_node_suite(data),
         AnyTransport::_TuplePattern(data) => transport_to_node__tuple_pattern(data),
         AnyTransport::UnaryOperatorOperator(data) => transport_to_node_unary_operator_operator(data),
@@ -30106,6 +30204,7 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::TokNOTSpIN(data) => transport_to_node_tok_notsp_in(data),
         AnyTransport::Is(data) => transport_to_node_is(data),
         AnyTransport::TokISSpNOT(data) => transport_to_node_tok_issp_not(data),
+        AnyTransport::Anonymous(data) => transport_to_node_anonymous(data),
         AnyTransport::Bracket(data) => transport_to_node_bracket(data),
         AnyTransport::TokBs(data) => transport_to_node_tok_bs(data),
         AnyTransport::Minus(data) => transport_to_node_minus(data),
@@ -30162,7 +30261,6 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Print(data) => transport_to_node_print(data),
         AnyTransport::Raise(data) => transport_to_node_raise(data),
         AnyTransport::Return(data) => transport_to_node_return(data),
-        AnyTransport::Anonymous(data) => transport_to_node_anonymous(data),
         AnyTransport::True2(data) => transport_to_node_true2(data),
         AnyTransport::Try(data) => transport_to_node_try(data),
         AnyTransport::Pipe(data) => transport_to_node_pipe(data),
@@ -30406,22 +30504,6 @@ fn transport_to_node_except_clause_as(transport: ExceptClauseAsTransport) -> Res
     ))
 }
 
-fn transport_to_node__identifier(transport: _IdentifierEnum) -> Result<TransportNodeData, ::askama::Error> {
-    Ok(transport_node_data(
-        TransportKindId(0) /* "_identifier" — no parser symbol */,
-        None,
-        None,
-        true,
-        Some(transport.to_string()),
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-    ))
-}
-
 fn transport_to_node_import_list(transport: ImportListTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("name".to_string(), transport_field_values(transport.name.into_iter().map(|v| import_list_name_transport_slot_to_any(v)).collect::<Vec<_>>())?);
@@ -30486,6 +30568,23 @@ fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Resul
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(0) /* "_kw_async_marker" — no parser symbol */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_kw_identifier(transport: KwIdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_kw_identifier" — no parser symbol */,
         transport.transport_source,
         transport.transport_named,
         true,
@@ -30676,6 +30775,22 @@ fn transport_to_node_simple_statements(transport: SimpleStatementsTransport) -> 
         fields,
         children,
         trivia_data,
+    ))
+}
+
+fn transport_to_node_splat_pattern_operator(transport: SplatPatternOperatorEnum) -> Result<TransportNodeData, ::askama::Error> {
+    Ok(transport_node_data(
+        TransportKindId(0) /* "_splat_pattern_operator" — no parser symbol */,
+        None,
+        None,
+        true,
+        Some(transport.to_string()),
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
     ))
 }
 
@@ -33098,9 +33213,15 @@ fn transport_to_node_slice(transport: SliceTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_splat_pattern(transport: SplatPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("identifier".to_string(), transport_field_value(splat_pattern_identifier_transport_slot_to_any(transport.identifier))?);
+    fields.insert("operator".to_string(), transport_field_value(AnyTransport::SplatPatternOperator(transport.operator))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(splat_pattern_identifier_transport_slot_to_any(transport.identifier));
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(172) /* "splat_pattern" */,
@@ -34168,6 +34289,23 @@ fn transport_to_node_tok_issp_not(transport: TokISSpNOTTransport) -> Result<Tran
     ))
 }
 
+fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(48) /* "_" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        Some(transport.text),
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        None,
+        None,
+        trivia_data,
+    ))
+}
+
 fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNodeData, ::askama::Error> {
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
@@ -35107,23 +35245,6 @@ fn transport_to_node_return(transport: ReturnTransport) -> Result<TransportNodeD
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(16) /* "return" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        Some(transport.text),
-        transport.transport_span,
-        transport.transport_node_handle.map(|v| v as u32),
-        transport.transport_child_index.map(|v| v as u16),
-        None,
-        None,
-        trivia_data,
-    ))
-}
-
-fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
-    Ok(transport_node_data(
-        TransportKindId(48) /* "_" */,
         transport.transport_source,
         transport.transport_named,
         true,

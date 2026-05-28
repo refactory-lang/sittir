@@ -2835,7 +2835,7 @@
         "members": [
           {
             "type": "FIELD",
-            "name": "identifier",
+            "name": "operator",
             "content": {
               "type": "CHOICE",
               "members": [
@@ -2859,8 +2859,13 @@
                 "name": "identifier"
               },
               {
-                "type": "STRING",
-                "value": "_"
+                "type": "FIELD",
+                "name": "identifier",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_identifier"
+                },
+                "source": "override"
               }
             ]
           }
@@ -3584,13 +3589,8 @@
           "name": "ellipsis"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "list_splat_pattern"
-          },
-          "named": true,
-          "value": "list_splat"
+          "type": "SYMBOL",
+          "name": "list_splat_pattern"
         }
       ]
     },
@@ -7074,7 +7074,12 @@
       "type": "BLANK"
     },
     "_kw_identifier": {
-      "type": "BLANK"
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "STRING",
+        "value": "_"
+      }
     },
     "_kw_wildcard_import": {
       "type": "BLANK"
@@ -7302,6 +7307,7 @@
     "keyword_identifier",
     "_kw_real",
     "_kw_async_marker",
+    "_kw_identifier",
     "_kw_type"
   ],
   "supertypes": [

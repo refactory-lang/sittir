@@ -3416,6 +3416,7 @@ export function referenceExpression(config: ConfigOf<T.ReferenceExpressionUFormR
   throw new Error(`referenceExpression: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'raw_const' | 'raw_mut'.`);
 }
 export function referenceExpressionUFormRawConst(config: Omit<ConfigOf<T.ReferenceExpressionUFormRawConst>, '$variant'>) {
+  const _reference = coerceKindEnumStorage("&" as const, []);
   const _reference_expression_raw_const = coerceKindEnumStorage("const" as const, []);
   const _value = config.value;
   return withMethods({
@@ -3423,8 +3424,10 @@ export function referenceExpressionUFormRawConst(config: Omit<ConfigOf<T.Referen
     $source: 2 as const,
     $named: true as const,
     $variant: 'raw_const' as const,
+    _reference,
     _reference_expression_raw_const,
     _value,
+    reference() { return _reference; },
     referenceExpressionRawConst() { return _reference_expression_raw_const; },
     value() { return _value; },
     $with: {
@@ -3433,6 +3436,7 @@ export function referenceExpressionUFormRawConst(config: Omit<ConfigOf<T.Referen
   }, methodsEngine);
 }
 export function referenceExpressionUFormRawMut(config: Omit<ConfigOf<T.ReferenceExpressionUFormRawMut>, '$variant'>) {
+  const _reference = coerceKindEnumStorage("&" as const, []);
   const _reference_expression_raw_mut = _referenceExpressionRawMut();
   const _value = config.value;
   return withMethods({
@@ -3440,8 +3444,10 @@ export function referenceExpressionUFormRawMut(config: Omit<ConfigOf<T.Reference
     $source: 2 as const,
     $named: true as const,
     $variant: 'raw_mut' as const,
+    _reference,
     _reference_expression_raw_mut,
     _value,
+    reference() { return _reference; },
     referenceExpressionRawMut() { return _reference_expression_raw_mut; },
     value() { return _value; },
     $with: {

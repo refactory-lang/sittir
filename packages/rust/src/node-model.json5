@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 397,
+  "nodeCount": 398,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -1019,6 +1019,16 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "_binary_expression_operator__x26",
+      "modelType": "token",
+      "typeName": "BinaryExpressionOperatorUX26",
+      "irKey": "binaryExpressionOperatorUX26",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"&\" as const",
+      "text": "&"
     },
     {
       "kind": "_closure_expression_async_marker",
@@ -13918,6 +13928,29 @@
           "parentKind": "reference_expression",
           "fields": [
             {
+              "name": "reference",
+              "propertyName": "reference",
+              "paramName": "reference",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_binary_expression_operator__x26",
+                  "unresolved": true
+                }
+              ],
+              "source": "grammar",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_binary_expression_operator__x26"
+                ]
+              }
+            },
+            {
               "name": "reference_expression_raw_const",
               "propertyName": "referenceExpressionRawConst",
               "paramName": "referenceExpressionRawConst",
@@ -13977,6 +14010,29 @@
           "irKey": "referenceExpressionUFormRawMut",
           "parentKind": "reference_expression",
           "fields": [
+            {
+              "name": "reference",
+              "propertyName": "reference",
+              "paramName": "reference",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_binary_expression_operator__x26",
+                  "unresolved": true
+                }
+              ],
+              "source": "grammar",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "_binary_expression_operator__x26"
+                ]
+              }
+            },
             {
               "name": "reference_expression_raw_mut",
               "propertyName": "referenceExpressionRawMut",

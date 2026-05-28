@@ -58,11 +58,6 @@ export const suggestedTransforms = {
       "1/1": variant("form1"),
   },
 
-  // [held] polymorph — 1 choice position(s), 2 arm(s) total
-  splat_pattern: {
-      "1/0": variant("form0"),
-      "1/1": variant("form1"),
-  },
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   yield: {

@@ -3824,11 +3824,14 @@ export interface ReferenceExpressionRawMut {
 export interface ReferenceExpressionUFormRawConst {
   readonly $type: TSKindId.ReferenceExpression;
   readonly $variant: 'raw_const';
+  readonly _reference: number;
   readonly _reference_expression_raw_const: number;
   readonly _value: Expression;
   readonly __inputHints__?: {
+    readonly reference: KindEnum<"&", TSKindId.Amp2>;
     readonly reference_expression_raw_const: KindEnum<"const", TSKindId.Const>;
   };
+  reference(): number;
   referenceExpressionRawConst(): number;
   value(): Expression;
 }
@@ -3836,8 +3839,13 @@ export interface ReferenceExpressionUFormRawConst {
 export interface ReferenceExpressionUFormRawMut {
   readonly $type: TSKindId.ReferenceExpression;
   readonly $variant: 'raw_mut';
+  readonly _reference: number;
   readonly _reference_expression_raw_mut: _ReferenceExpressionRawMut;
   readonly _value: Expression;
+  readonly __inputHints__?: {
+    readonly reference: KindEnum<"&", TSKindId.Amp2>;
+  };
+  reference(): number;
   referenceExpressionRawMut(): _ReferenceExpressionRawMut;
   value(): Expression;
 }

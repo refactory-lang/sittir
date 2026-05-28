@@ -1,6 +1,19 @@
+import { fileURLToPath } from 'node:url';
+import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 import type { TreeHandle } from '@sittir/common';
-import { buildReadHandle, loadLanguageForGrammar, materializeWrappedNodeData, walkWrappedTree, type WrappedNodeData } from '../validate/common.ts';
+import { AssembledBranch, AssembledPattern, type AssembledNode } from '../compiler/node-map.ts';
+import type { SeqRule } from '../compiler/rule.ts';
+import { emitWrap } from '../emitters/wrap.ts';
+import { verifyManifestForGrammar } from '../scripts/generated-manifest.ts';
+import {
+	buildReadHandle,
+	loadWebTreeSitter,
+	materializeWrappedNodeData,
+	walkWrappedTree,
+	type WrappedNodeData
+} from '../validate/common.ts';
+import { makeNodeMapWith } from './helpers/node-map-fixtures.ts';
 
 function leaf(handle: number, text: string): WrappedNodeData {
 	return {
@@ -13,11 +26,42 @@ function leaf(handle: number, text: string): WrappedNodeData {
 	};
 }
 
+const typescriptGeneratedClean = verifyManifestForGrammar('typescript').ok;
+
 function asRecord(value: unknown): Record<string, unknown> {
 	if (typeof value !== 'object' || value === null) {
 		throw new TypeError('expected object');
 	}
 	return value as Record<string, unknown>;
+}
+
+async function loadFreshWrapWitnessModule(): Promise<{
+	wrapListSplat: (node: unknown, tree: TreeHandle) => unknown;
+}> {
+	const rule: SeqRule = {
+		type: 'seq',
+		members: [{ type: 'field', name: 'value', content: { type: 'symbol', name: 'identifier' } }]
+	};
+	const nodes = new Map<string, AssembledNode>();
+	nodes.set('list_splat', new AssembledBranch('list_splat', rule, rule));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' }));
+	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
+	const stubbedSource = [
+		'const readNodeJs = () => { throw new Error("unused"); };',
+		'const withMethods = (node) => node;',
+		'const methodsEngine = {};',
+		'const _factories = new Proxy({}, { get: () => () => { throw new Error("unused"); } });',
+		source.replace(/^import .*;\n/gm, '')
+	].join('\n');
+	const transpiled = ts.transpileModule(stubbedSource, {
+		compilerOptions: {
+			module: ts.ModuleKind.ESNext,
+			target: ts.ScriptTarget.ES2020
+		}
+	}).outputText;
+	return (await import(`data:text/javascript,${encodeURIComponent(transpiled)}`)) as {
+		wrapListSplat: (node: unknown, tree: TreeHandle) => unknown;
+	};
 }
 
 describe('wrapped tree materialization', () => {
@@ -174,9 +218,12 @@ describe('wrapped tree materialization', () => {
 		});
 	});
 
-	it('materializes typescript function signatures without requiring a surfaced semicolon', async () => {
+	it.skipIf(!typescriptGeneratedClean)('materializes typescript function signatures without requiring a surfaced semicolon', async () => {
 		const source = 'export async function readFile(filename: string): Promise<Buffer>';
-		const { Parser, lang } = await loadLanguageForGrammar('typescript');
+		const { Parser, Language } = await loadWebTreeSitter();
+		const lang = await Language.load(
+			fileURLToPath(new URL('../../../typescript/.sittir/parser.wasm', import.meta.url))
+		);
 		const parser = new Parser();
 		parser.setLanguage(lang);
 		const tree = parser.parse(source)!;
@@ -200,5 +247,68 @@ describe('wrapped tree materialization', () => {
 		const declaration = asRecord(materializeWrappedNodeData(declarationArm.declaration()));
 		expect(declaration._name).toBe('readFile');
 		expect(declaration).not.toHaveProperty('_semicolon');
+	});
+
+	it('includes source coordinates and snippet in fresh emitted wrap diagnostics', async () => {
+		const { wrapListSplat } = await loadFreshWrapWitnessModule();
+		const tree = {
+			source: 'value=*f',
+			get rootNode(): never {
+				throw new Error('unused');
+			},
+		} satisfies TreeHandle;
+
+		let thrown: unknown;
+		try {
+			wrapListSplat(
+				{
+					$type: 'list_splat',
+					_value: [
+						{ $type: 'identifier', $text: '*' },
+						{ $type: 'identifier', $text: 'f' }
+					],
+					$span: { start: 6, end: 8 }
+				},
+				tree
+			);
+		} catch (error) {
+			thrown = error;
+		}
+
+		expect(thrown).toBeInstanceOf(TypeError);
+		expect((thrown as Error).message).toContain('list_splat');
+		expect((thrown as Error).message).toContain('1:7');
+		expect((thrown as Error).message).toContain('"*f"');
+	});
+
+	it('falls back to the legacy wrap diagnostic when source is unavailable', async () => {
+		const { wrapListSplat } = await loadFreshWrapWitnessModule();
+		const tree = {
+			get rootNode(): never {
+				throw new Error('unused');
+			},
+		} satisfies TreeHandle;
+
+		let thrown: unknown;
+		try {
+			wrapListSplat(
+				{
+					$type: 'list_splat',
+					_value: [
+						{ $type: 'identifier', $text: '*' },
+						{ $type: 'identifier', $text: 'f' }
+					],
+					$span: { start: 6, end: 8 }
+				},
+				tree
+			);
+		} catch (error) {
+			thrown = error;
+		}
+
+		expect(thrown).toBeInstanceOf(TypeError);
+		expect((thrown as Error).message).toBe(
+			'singular slot "value" on "list_splat" received 2 values; got array(len=2, items=[node($type="identifier", $text="*"), node($type="identifier", $text="f")])'
+		);
 	});
 });

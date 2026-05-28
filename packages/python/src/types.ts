@@ -16,9 +16,10 @@ export type LeafStringMap = {
   _async_marker: "async";
   _augmented_assignment_operator: "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=";
   _complex_pattern_operator: "+" | "-";
-  _identifier: "*" | "**";
   _kw_async_marker: "async";
+  _kw_identifier: "_";
   _kw_type: "type";
+  _splat_pattern_operator: "*" | "**";
   _unary_operator_operator: "+" | "-" | "~";
   break_statement: "break";
   continue_statement: "continue";
@@ -30,6 +31,7 @@ export type LeafStringMap = {
   async: "async";
   in: "in";
   is: "is";
+  _: "_";
   assert: "assert";
   and: "and";
   or: "or";
@@ -58,7 +60,6 @@ export type LeafStringMap = {
   print: "print";
   raise: "raise";
   return: "return";
-  _: "_";
   True: "True";
   try: "try";
   while: "while";
@@ -191,11 +192,12 @@ export const enum SyntaxKind {
   AsyncMarker = "_async_marker",
   AugmentedAssignmentOperator = "_augmented_assignment_operator",
   ComplexPatternOperator = "_complex_pattern_operator",
-  _Identifier = "_identifier",
   IsNot = "_is_not",
   KwAsyncMarker = "_kw_async_marker",
+  KwIdentifier = "_kw_identifier",
   KwType = "_kw_type",
   NotIn = "_not_in",
+  SplatPatternOperator = "_splat_pattern_operator",
   UnaryOperatorOperator = "_unary_operator_operator",
   BreakStatement = "break_statement",
   Comment = "comment",
@@ -226,6 +228,7 @@ export const enum SyntaxKind {
   Async = "async",
   In = "in",
   Is = "is",
+  Anonymous = "_",
   Assert = "assert",
   And = "and",
   Or = "or",
@@ -254,7 +257,6 @@ export const enum SyntaxKind {
   Print = "print",
   Raise = "raise",
   Return = "return",
-  Anonymous = "_",
   True2 = "True",
   Try = "try",
   While = "while",
@@ -2172,14 +2174,19 @@ export interface Slice {
 
 export interface SplatPattern {
   readonly $type: TSKindId.SplatPattern;
-  readonly _identifier: _Identifier | Identifier | "_";
-  identifier(): _Identifier | Identifier | "_";
+  readonly _operator: number;
+  readonly _identifier: Identifier | "_";
+  readonly __inputHints__?: {
+    readonly operator: KindEnum<"*" | "**", TSKindId.Star2 | TSKindId.StarStar>;
+  };
+  operator(): number;
+  identifier(): Identifier | "_";
 }
 
 export interface SplatType {
   readonly $type: TSKindId.SplatType;
-  readonly _identifier: _Identifier | Identifier;
-  identifier(): _Identifier | Identifier;
+  readonly _identifier: SplatPatternOperator | Identifier;
+  identifier(): SplatPatternOperator | Identifier;
 }
 
 export interface String {
@@ -2366,9 +2373,9 @@ export interface Yield {
 // Leaf node types
 export type AugmentedAssignmentOperator = Terminal<TSKindId.PlusEq | TSKindId.DashEq | TSKindId.StarEq | TSKindId.SlashEq | TSKindId.AtEq | TSKindId.SlashSlashEq | TSKindId.PercentEq | TSKindId.StarStarEq | TSKindId.GtGtEq | TSKindId.LtLtEq | TSKindId.AmpEq | TSKindId.CaretEq | TSKindId.PipeEq, "+=" | "-=" | "*=" | "/=" | "@=" | "//=" | "%=" | "**=" | ">>=" | "<<=" | "&=" | "^=" | "|=">;
 export type ComplexPatternOperator = Terminal<TSKindId.Plus | TSKindId.Dash, "+" | "-">;
-export type _Identifier = Terminal<TSKindId.Star2 | TSKindId.StarStar, "*" | "**">;
 export type IsNot = Terminal<TSKindId.IsNot, string>;
 export type NotIn = Terminal<TSKindId.NotIn, string>;
+export type SplatPatternOperator = Terminal<TSKindId.Star2 | TSKindId.StarStar, "*" | "**">;
 export type UnaryOperatorOperator = Terminal<TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde, "+" | "-" | "~">;
 export type BreakStatement = Terminal<TSKindId.BreakStatement, "break">;
 export type Comment = Terminal<TSKindId.Comment, string>;
@@ -2532,9 +2539,9 @@ export interface WithStatementTree extends TreeNode<'with_statement'> {}
 export interface YieldTree extends TreeNode<'yield'> {}
 export interface AugmentedAssignmentOperatorTree extends AnyTreeNode { readonly type: "_augmented_assignment_operator"; }
 export interface ComplexPatternOperatorTree extends AnyTreeNode { readonly type: "_complex_pattern_operator"; }
-export interface _IdentifierTree extends AnyTreeNode { readonly type: "_identifier"; }
 export interface IsNotTree extends AnyTreeNode { readonly type: "_is_not"; }
 export interface NotInTree extends AnyTreeNode { readonly type: "_not_in"; }
+export interface SplatPatternOperatorTree extends AnyTreeNode { readonly type: "_splat_pattern_operator"; }
 export interface UnaryOperatorOperatorTree extends AnyTreeNode { readonly type: "_unary_operator_operator"; }
 export interface BreakStatementTree extends AnyTreeNode { readonly type: "break_statement"; }
 export interface CommentTree extends TreeNode<'comment'> {}
@@ -3044,9 +3051,9 @@ export interface KindMap {
   'yield': Yield;
   '_augmented_assignment_operator': AugmentedAssignmentOperator;
   '_complex_pattern_operator': ComplexPatternOperator;
-  '_identifier': _Identifier;
   '_is_not': IsNot;
   '_not_in': NotIn;
+  '_splat_pattern_operator': SplatPatternOperator;
   '_unary_operator_operator': UnaryOperatorOperator;
   'break_statement': BreakStatement;
   'comment': Comment;

@@ -3,7 +3,6 @@
 		"target": "esnext",
 		"module": "nodenext",
 		"moduleResolution": "nodenext",
-		"baseUrl": ".",
 		"paths": {
 			"@sittir/types": ["./packages/types/src/index.ts"],
 			"@sittir/common": ["./packages/common/src/index.ts"],
@@ -44,7 +43,6 @@
 		"isolatedModules": true,
 		"declaration": true,
 		"declarationMap": true,
-		"composite": true,
 		"incremental": true
 	},
 	"include": ["src"],

@@ -25,7 +25,7 @@ import type { ValidateReadRenderParseOptions } from '../../codegen/src/validate/
 import { validateTemplateCoverage } from '../../codegen/src/validate/template-coverage.ts';
 
 export type Grammar = 'rust' | 'typescript' | 'python';
-export type Backend = 'native' | 'typescript';
+export type Backend = 'native' | 'js';
 
 // Re-export result types so callers only need @sittir/validator.
 export type { FromValidationResult, FromValidationError } from '../../codegen/src/validate/from.ts';

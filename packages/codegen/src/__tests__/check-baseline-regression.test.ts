@@ -83,7 +83,7 @@ function entry(): GrammarEntry {
 	};
 }
 
-function baseline(backend: 'typescript' | 'native' = 'typescript'): BackendBaseline {
+function baseline(backend: 'js' | 'native' = 'js'): BackendBaseline {
 	return {
 		backend,
 		commit: '0000000',
@@ -261,14 +261,14 @@ describe('checkRegression', () => {
 	});
 
 	it('backend mismatch — fail (schema)', () => {
-		const base = baseline('typescript');
+		const base = baseline('js');
 		const head = clone(base);
 		head.backend = 'native';
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('schema-violation');
 		expect(verdict.details.path).toBe('backend');
-		expect(verdict.details.before).toBe('typescript');
+		expect(verdict.details.before).toBe('js');
 		expect(verdict.details.after).toBe('native');
 	});
 });

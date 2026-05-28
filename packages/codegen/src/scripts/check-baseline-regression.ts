@@ -234,11 +234,11 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 		};
 	}
 	const obj = b as Record<string, unknown>;
-	if (obj['backend'] !== 'typescript' && obj['backend'] !== 'native') {
+	if (obj['backend'] !== 'js' && obj['backend'] !== 'native') {
 		return {
 			ok: false,
 			reason: 'schema-violation',
-			summary: `${label}.backend is not 'typescript' | 'native'`,
+			summary: `${label}.backend is not 'js' | 'native'`,
 			details: { path: `${label}.backend`, after: obj['backend'] }
 		};
 	}

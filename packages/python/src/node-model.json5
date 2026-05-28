@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 259,
+  "nodeCount": 260,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -845,18 +845,6 @@
       ]
     },
     {
-      "kind": "_identifier",
-      "modelType": "enum",
-      "typeName": "_Identifier",
-      "factoryName": "_identifier",
-      "irKey": "_identifier",
-      "hidden": false,
-      "values": [
-        "*",
-        "**"
-      ]
-    },
-    {
       "kind": "_import_list",
       "modelType": "group",
       "typeName": "ImportList",
@@ -982,6 +970,17 @@
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
       "text": "async"
+    },
+    {
+      "kind": "_kw_identifier",
+      "modelType": "keyword",
+      "typeName": "KwIdentifier",
+      "factoryName": "kwIdentifier",
+      "irKey": "kwIdentifier",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"_\" as const",
+      "text": "_"
     },
     {
       "kind": "_kw_type",
@@ -1326,6 +1325,18 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "_splat_pattern_operator",
+      "modelType": "enum",
+      "typeName": "SplatPatternOperator",
+      "factoryName": "splatPatternOperator",
+      "irKey": "splatPatternOperator",
+      "hidden": false,
+      "values": [
+        "*",
+        "**"
+      ]
     },
     {
       "kind": "_statement",
@@ -7258,9 +7269,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
+          "name": "operator",
+          "propertyName": "operator",
+          "paramName": "operator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -7268,9 +7279,26 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_identifier",
+              "name": "_splat_pattern_operator",
               "unresolved": true
-            },
+            }
+          ],
+          "source": "grammar",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_splat_pattern_operator"
+            ]
+          }
+        },
+        {
+          "name": "identifier",
+          "propertyName": "identifier",
+          "paramName": "identifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -7283,11 +7311,10 @@
               "value": "_"
             }
           ],
-          "source": "grammar",
+          "source": "inferred",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_identifier",
               "identifier"
             ]
           }
@@ -7314,7 +7341,7 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_identifier",
+              "name": "_splat_pattern_operator",
               "unresolved": true
             },
             {
@@ -7328,7 +7355,7 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_identifier",
+              "_splat_pattern_operator",
               "identifier"
             ]
           }

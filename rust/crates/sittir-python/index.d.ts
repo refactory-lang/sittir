@@ -1188,6 +1188,7 @@ export interface SplatPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _operator: SplatPatternOperatorEnum
   _identifier: SplatPatternIdentifierTransportSlot
 }
 

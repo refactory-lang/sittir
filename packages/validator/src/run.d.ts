@@ -9,7 +9,7 @@ import { formatFromReport } from '@sittir/codegen/validate/from';
 import { formatFactoryRenderParseReport } from '@sittir/codegen/validate/factory-render-parse';
 import { formatReadRenderParseReport } from '@sittir/codegen/validate/read-render-parse';
 export type Grammar = 'rust' | 'typescript' | 'python';
-export type Backend = 'native' | 'typescript';
+export type Backend = 'native' | 'js';
 export type { FromValidationResult, FromValidationError } from '@sittir/codegen/validate/from';
 export type { FactoryRenderParseResult } from '@sittir/codegen/validate/factory-render-parse';
 export type { ReadRenderParseResult, ValidateReadRenderParseOptions, } from '@sittir/codegen/validate/read-render-parse';

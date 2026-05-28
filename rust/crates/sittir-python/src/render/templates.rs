@@ -736,6 +736,7 @@ pub struct SliceTemplate<'a> {
 #[template(path = "splat_pattern.jinja", escape = "none")]
 pub struct SplatPatternTemplate<'a> {
     pub identifier: SingleNonterminalView<'a>,
+    pub operator: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

@@ -88,8 +88,8 @@ describe('@sittir/validator run surface — forwarding behavior', () => {
 	});
 
 	it('runFrom passes an explicit backend override', async () => {
-		await runFrom('python', 'typescript');
-		expect(vi.mocked(validateFrom)).toHaveBeenCalledWith('python', 'typescript');
+		await runFrom('python', 'js');
+		expect(vi.mocked(validateFrom)).toHaveBeenCalledWith('python', 'js');
 	});
 
 	it('runRt wraps validateReadRenderParse with { backend } option object', async () => {
@@ -98,8 +98,8 @@ describe('@sittir/validator run surface — forwarding behavior', () => {
 	});
 
 	it('runRt passes an explicit backend in the option object', async () => {
-		await runRt('typescript', '/some/templates', 'typescript');
-		expect(vi.mocked(validateReadRenderParse)).toHaveBeenCalledWith('typescript', '/some/templates', { backend: 'typescript' });
+		await runRt('typescript', '/some/templates', 'js');
+		expect(vi.mocked(validateReadRenderParse)).toHaveBeenCalledWith('typescript', '/some/templates', { backend: 'js' });
 	});
 
 	it('runFactory forwards (grammar, templatesPath, backend) to validateFactoryRenderParse', async () => {
@@ -108,8 +108,8 @@ describe('@sittir/validator run surface — forwarding behavior', () => {
 	});
 
 	it('runFactory passes an explicit backend', async () => {
-		await runFactory('rust', '/tmpl', 'typescript');
-		expect(vi.mocked(validateFactoryRenderParse)).toHaveBeenCalledWith('rust', '/tmpl', 'typescript');
+		await runFactory('rust', '/tmpl', 'js');
+		expect(vi.mocked(validateFactoryRenderParse)).toHaveBeenCalledWith('rust', '/tmpl', 'js');
 	});
 
 	it('runCoverage forwards to validateTemplateCoverage', () => {

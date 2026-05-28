@@ -1872,16 +1872,20 @@ export function slice(config: Partial<T.Slice.Config> = {}) {
   }, methodsEngine);
 }
 
-export function splatPattern(identifier: T.SplatPattern.Config['identifier']) {
-  const _identifier = identifier;
+export function splatPattern(config: T.SplatPattern.Config) {
+  const _operator = coerceKindEnumStorage(config.operator, [["*", TSKindId.Star2] as const, ["**", TSKindId.StarStar] as const]);
+  const _identifier = config.identifier;
   return withMethods({
     $type: TSKindId.SplatPattern as const,
     $source: 2 as const,
     $named: true as const,
+    _operator,
     _identifier,
+    operator() { return _operator; },
     identifier() { return _identifier; },
     $with: {
-      identifier: (value: T.SplatPattern.Config['identifier']) => splatPattern(value),
+      operator: (value: NonNullable<Parameters<typeof splatPattern>[0]>['operator']) => splatPattern({ ...config, operator: value }),
+      identifier: (value: T.Identifier | "_") => splatPattern({ ...config, identifier: value }),
     },
   }, methodsEngine);
 }
