@@ -57,7 +57,7 @@ describe('slot structural signals', () => {
 		});
 		const slot = getBranch(nodeMap, 'box').fields[0];
 		expect(slot?.isUnnamed).toBe(true);
-		expect(slot?.aliasSources).toEqual({ object_type: 'interface_body' });
+		expect(slot?.values.map((value) => value.parseKind?.name)).toEqual(['object_type']);
 		expect(slot?.parseNames).toEqual(['object_type']);
 	});
 });
