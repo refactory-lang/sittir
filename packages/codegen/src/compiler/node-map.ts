@@ -53,7 +53,6 @@ import { tokenToName } from './optimize.ts';
 import { collectSlots } from './collect-slots.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { fieldContentIsMultiSibling } from './field-shape.ts';
-import type { SlotOrigin } from './slot-model.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 
 // ---------------------------------------------------------------------------
@@ -800,7 +799,7 @@ function _deriveSlotsInternal(rule: Rule, kindEntries?: readonly GeneratedKindEn
  * @remarks
  * We keep the first occurrence's `propertyName` / `paramName` / `source`
  * (none of them vary per-occurrence for the same name in practice — the
- * name determines them). Values and `aliasSources` are merged. The
+ * name determines them). Values are merged. The
  * referenced kind set is no longer cached on the slot — consumers
  * derive it via `kindsOf(slot)` from the merged `values`.
  */
@@ -814,14 +813,11 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 			continue;
 		}
 		const mergedValues = dedupeValues([...existing.values, ...f.values]);
-		const mergedAliases =
-			existing.aliasSources || f.aliasSources ? { ...existing.aliasSources, ...f.aliasSources } : undefined;
 		byName.set(f.name, existing.with({
 			values: mergedValues,
 			hasTrailing: existing.hasTrailing || f.hasTrailing,
 			hasLeading: existing.hasLeading || f.hasLeading,
 			sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds),
-			aliasSources: mergedAliases && Object.keys(mergedAliases).length > 0 ? mergedAliases : undefined,
 		}));
 	}
 	return Array.from(byName.values());
@@ -1507,9 +1503,7 @@ export interface AssembledNonterminalInit {
 	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
-	readonly aliasSources?: Readonly<Record<string, string>>;
 	readonly source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
-	readonly origin?: SlotOrigin;
 	/**
 	 * Rule-ids of every simplified/render-rule position that produced this slot —
 	 * see `AssembledNonterminal.sourceRuleIds`.
@@ -1546,9 +1540,7 @@ export class AssembledNonterminal {
 	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
-	readonly aliasSources?: Readonly<Record<string, string>>;
 	readonly source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
-	readonly origin?: SlotOrigin;
 	/**
 	 * Rule-ids of every simplified/render-rule position that produced this slot.
 	 * Used by `NodeMap.slotByRuleId` to back-pointer from whichever rule-tree
@@ -1566,15 +1558,14 @@ export class AssembledNonterminal {
 	get propertyName(): string { return projectSlotNaming(this).propertyName; }
 	get paramName(): string { return projectSlotNaming(this).paramName; }
 	get parseNames(): readonly string[] { return projectSlotNaming(this).parseNames; }
+	get isUnnamed(): boolean { return this.fieldName === undefined; }
 
 	constructor(init: AssembledNonterminalInit) {
 		this.values = init.values;
 		this.fieldName = init.fieldName;
 		this.hasTrailing = init.hasTrailing;
 		this.hasLeading = init.hasLeading;
-		this.aliasSources = init.aliasSources;
 		this.source = init.source;
-		this.origin = init.origin;
 		this.sourceRuleIds = init.sourceRuleIds;
 		this.storageInfo = init.storageInfo;
 	}
@@ -1586,9 +1577,7 @@ export class AssembledNonterminal {
 			fieldName: this.fieldName,
 			hasTrailing: this.hasTrailing,
 			hasLeading: this.hasLeading,
-			aliasSources: this.aliasSources,
 			source: this.source,
-			origin: this.origin,
 			sourceRuleIds: this.sourceRuleIds,
 			storageInfo: this.storageInfo,
 			...overrides,
@@ -2312,13 +2301,6 @@ function structuralSlotRecordFromForms(
 				hasTrailing: existing.hasTrailing || slot.hasTrailing,
 				hasLeading: existing.hasLeading || slot.hasLeading,
 				sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, slot.sourceRuleIds),
-				aliasSources:
-					existing.aliasSources || slot.aliasSources
-						? {
-								...existing.aliasSources,
-								...slot.aliasSources
-							}
-						: undefined
 			}));
 		}
 	}
