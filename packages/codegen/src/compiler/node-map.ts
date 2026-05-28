@@ -57,12 +57,44 @@ import type { SlotOrigin } from './slot-model.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import {
 	diagnoseParseKindCollisions,
+	type ParseKindCollisionDiagnostic,
 	type ParseKindCollisionValue
 } from './diagnose-parsekind-collisions.ts';
 
 // ---------------------------------------------------------------------------
 // NodeOrTerminal — unified slot-content type
 // ---------------------------------------------------------------------------
+
+const _parseKindCollisionDiagnostics: ParseKindCollisionDiagnostic[] = [];
+const _parseKindCollisionSeen = new Set<string>();
+
+function parseKindCollisionKey(diagnostic: ParseKindCollisionDiagnostic): string {
+	return [
+		diagnostic.code,
+		diagnostic.ownerKind,
+		diagnostic.slotName,
+		diagnostic.parseKind,
+		diagnostic.storageKinds.join(',')
+	].join(' ');
+}
+
+function recordParseKindCollisionDiagnostic(diagnostic: ParseKindCollisionDiagnostic): void {
+	const key = parseKindCollisionKey(diagnostic);
+	if (_parseKindCollisionSeen.has(key)) return;
+	_parseKindCollisionSeen.add(key);
+	_parseKindCollisionDiagnostics.push(diagnostic);
+}
+
+export function resetParseKindCollisionDiagnostics(): void {
+	_parseKindCollisionDiagnostics.length = 0;
+	_parseKindCollisionSeen.clear();
+}
+
+export function drainParseKindCollisionDiagnostics(): ParseKindCollisionDiagnostic[] {
+	const out = [..._parseKindCollisionDiagnostics];
+	resetParseKindCollisionDiagnostics();
+	return out;
+}
 
 /**
  * Per-value multiplicity tag. Each entry in a slot's `values` array carries
@@ -875,6 +907,9 @@ function resolveParseKindCollisionsInSlot(
 		slotName: slot.name,
 		values: describedValues
 	});
+	for (const diagnostic of resolution.diagnostics) {
+		recordParseKindCollisionDiagnostic(diagnostic);
+	}
 	const nextValues = [...resolution.values];
 	const unchanged =
 		nextValues.length === slot.values.length &&

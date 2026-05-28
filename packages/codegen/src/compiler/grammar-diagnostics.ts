@@ -1,4 +1,8 @@
+import { assemble, type AssembledNodeMap } from './assemble.ts';
+import { link } from './link.ts';
+import { optimize } from './optimize.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnose-parsekind-collisions.ts';
+import type { RawGrammar } from './types.ts';
 
 export interface GrammarDiagnostic {
 	readonly code: string;
@@ -56,5 +60,18 @@ export function collectGrammarDiagnostics(input: {
 		diagnostics: input.parseKindCollisions.map((diagnostic) =>
 			fromParseKindCollision(input.grammar, diagnostic)
 		)
+	};
+}
+
+export function collectGrammarDiagnosticsForGrammar(input: {
+	rawGrammar: RawGrammar;
+}): { nodeMap: AssembledNodeMap; diagnostics: readonly GrammarDiagnostic[] } {
+	const nodeMap = assemble(optimize(link(input.rawGrammar)));
+	return {
+		nodeMap,
+		diagnostics: collectGrammarDiagnostics({
+			grammar: input.rawGrammar.name,
+			parseKindCollisions: nodeMap.parseKindCollisions
+		}).diagnostics
 	};
 }
