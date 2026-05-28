@@ -15,8 +15,10 @@ import type { Rule } from '../rule.ts';
 // Suppress unnamed-choice warnings in tests
 setUnnamedChoiceWarner(() => {});
 
+type ChoiceRule = Extract<Rule, { type: 'choice' }>;
+
 // Helper to build a choice of symbols with multiplicity + nonterminal:true
-function makeContentChoice(mult: 'array' | 'nonEmptyArray' | 'optional' | 'single' = 'array'): Rule {
+function makeContentChoice(mult: 'array' | 'nonEmptyArray' | 'optional' | 'single' = 'array'): ChoiceRule {
 	return {
 		type: 'choice',
 		members: [
@@ -26,7 +28,7 @@ function makeContentChoice(mult: 'array' | 'nonEmptyArray' | 'optional' | 'singl
 		],
 		multiplicity: mult,
 		nonterminal: true,
-	} as unknown as Rule;
+	} as ChoiceRule;
 }
 
 describe('collectSlots: origin on unnamed content slot', () => {
