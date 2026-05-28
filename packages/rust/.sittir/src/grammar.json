@@ -5647,8 +5647,13 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "STRING",
-            "value": "&"
+            "type": "FIELD",
+            "name": "reference",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_kw_reference"
+            },
+            "source": "override"
           },
           {
             "type": "CHOICE",
@@ -10470,6 +10475,10 @@
     "_kw_end": {
       "type": "BLANK"
     },
+    "_kw_reference": {
+      "type": "STRING",
+      "value": "&"
+    },
     "_reference_expression_raw_const": {
       "type": "PREC",
       "value": 12,
@@ -10488,10 +10497,6 @@
     },
     "_kw_pattern": {
       "type": "BLANK"
-    },
-    "_kw_reference": {
-      "type": "STRING",
-      "value": "&"
     },
     "_kw_statements": {
       "type": "BLANK"

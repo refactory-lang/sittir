@@ -944,20 +944,28 @@ export function escapeSequence(text: string) {
   }, methodsEngine);
 }
 
-export function exceptClause(config: T.ExceptClause.Config) {
+export function exceptClause(config: Partial<T.ExceptClause.Config> = {}) {
   const _content = config.content;
+  const _simple_statements = config.simpleStatements;
   const _block = config.block;
+  const _newline = config.newline;
   return withMethods({
     $type: TSKindId.ExceptClause as const,
     $source: 2 as const,
     $named: true as const,
     _content,
+    _simple_statements,
     _block,
+    _newline,
     content() { return _content; },
+    simpleStatements() { return _simple_statements; },
     block() { return _block; },
+    newline() { return _newline; },
     $with: {
       content: (value?: T.ExceptClauseAs | T.ExceptClauseList) => exceptClause({ ...config, content: value }),
-      block: (value: T.SimpleStatements | T.Newline) => exceptClause({ ...config, block: value }),
+      simpleStatements: (value?: T.SimpleStatements) => exceptClause({ ...config, simpleStatements: value }),
+      block: (value?: T.Block) => exceptClause({ ...config, block: value }),
+      newline: (value?: T.Newline) => exceptClause({ ...config, newline: value }),
     },
   }, methodsEngine);
 }
@@ -1865,19 +1873,19 @@ export function slice(config: Partial<T.Slice.Config> = {}) {
 }
 
 export function splatPattern(config: T.SplatPattern.Config) {
-  const _identifier = coerceKindEnumStorage(config.identifier, [["*", TSKindId.Star2] as const, ["**", TSKindId.StarStar] as const]);
-  const _content = config.content;
+  const _operator = coerceKindEnumStorage(config.operator, [["*", TSKindId.Star2] as const, ["**", TSKindId.StarStar] as const]);
+  const _identifier = config.identifier;
   return withMethods({
     $type: TSKindId.SplatPattern as const,
     $source: 2 as const,
     $named: true as const,
+    _operator,
     _identifier,
-    _content,
+    operator() { return _operator; },
     identifier() { return _identifier; },
-    content() { return _content; },
     $with: {
-      identifier: (value: NonNullable<Parameters<typeof splatPattern>[0]>['identifier']) => splatPattern({ ...config, identifier: value }),
-      content: (value: T.Identifier | "_") => splatPattern({ ...config, content: value }),
+      operator: (value: NonNullable<Parameters<typeof splatPattern>[0]>['operator']) => splatPattern({ ...config, operator: value }),
+      identifier: (value: T.Identifier | "_") => splatPattern({ ...config, identifier: value }),
     },
   }, methodsEngine);
 }

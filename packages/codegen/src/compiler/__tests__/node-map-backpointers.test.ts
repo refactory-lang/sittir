@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { field, seq } from '../evaluate.ts';
+import { choice, field, seq } from '../evaluate.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
 import { link } from '../link.ts';
 import { optimize } from '../optimize.ts';
 import { assemble } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
-import type { FieldRule } from '../rule.ts';
+import type { ChoiceRule, FieldRule, RenderRule, Rule } from '../rule.ts';
 
 /**
  * PR0 Task 1.3 — NodeMap back-pointer maps.
@@ -52,6 +52,27 @@ describe('NodeMap back-pointer maps', () => {
 		return { rules: optimized.rules, nodeMap };
 	}
 
+	function buildNodeMap(
+		rules: Record<string, Rule>
+	): ReturnType<typeof optimize> & { nodeMap: ReturnType<typeof assemble> } {
+		const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules);
+		const raw: RawGrammar = {
+			name: 'synth',
+			rules: catalogRules,
+			ruleCatalog,
+			extras: [],
+			externals: [],
+			supertypes: [],
+			inline: [],
+			conflicts: [],
+			word: null,
+			references: []
+		};
+		const linked = link(raw);
+		const optimized = optimize(linked);
+		return { ...optimized, nodeMap: assemble(optimized) };
+	}
+
 	it('nodeMap.nodeByRuleId is populated with kind roots when ids survive the pipeline', () => {
 		const { rules, nodeMap } = buildFixture();
 		expect(nodeMap.nodeByRuleId).toBeInstanceOf(Map);
@@ -88,5 +109,58 @@ describe('NodeMap back-pointer maps', () => {
 		const slot = nodeMap.slotByRuleId.get(fieldRule!.id!);
 		expect(slot).toBeDefined();
 		expect(slot!.name).toBe(fieldRule!.name);
+	});
+
+	it('slot.sourceRuleIds accumulates merged simplified-rule contributors and maps each id back to the slot', () => {
+		const { simplifiedRules, nodeMap } = buildNodeMap({
+			test: seq(
+				field('parameter', { type: 'symbol', name: 'identifier' }),
+				field('parameter', { type: 'symbol', name: 'number' })
+			),
+			identifier: { type: 'pattern', value: '[a-z_]\\w*' },
+			number: { type: 'pattern', value: '[0-9]+' }
+		});
+
+		const slot = nodeMap.nodes.get('test')?.slots.parameter;
+		expect(slot).toBeDefined();
+
+		const simplifiedIds = ((simplifiedRules.test as { members: readonly { id?: string }[] }).members)
+			.map((member) => member.id)
+			.filter((id): id is string => Boolean(id));
+
+		expect(slot!.sourceRuleIds).toEqual(expect.arrayContaining(simplifiedIds));
+		for (const id of slot!.sourceRuleIds) {
+			expect(nodeMap.slotByRuleId.get(id)).toBe(slot);
+		}
+	});
+
+	it('slot.sourceRuleIds includes both simplified and render-view ids when the views diverge', () => {
+		const { simplifiedRules, renderRules, nodeMap } = buildNodeMap({
+			test: seq(
+				field('lhs', { type: 'symbol', name: 'identifier' }),
+				choice(
+					seq({ type: 'string', value: '+' }, field('rhs', { type: 'symbol', name: 'identifier' })),
+					seq({ type: 'string', value: '-' }, field('rhs', { type: 'symbol', name: 'number' }))
+				)
+			),
+			identifier: { type: 'pattern', value: '[a-z_]\\w*' },
+			number: { type: 'pattern', value: '[0-9]+' }
+		});
+
+		const slot = nodeMap.nodes.get('test')?.slots.rhs;
+		expect(slot).toBeDefined();
+
+		const simplifiedChoiceId = (simplifiedRules.test as { members: readonly { id?: string }[] }).members[1]?.id;
+		const renderChoice = ((renderRules.test as RenderRule & { members: readonly Rule[] }).members[1] as ChoiceRule);
+		const renderIds = renderChoice.members
+			.map((member) => (member as { members?: readonly { id?: string }[] }).members?.[1]?.id)
+			.filter((id): id is string => Boolean(id));
+		const expectedIds = [simplifiedChoiceId, ...renderIds].filter((id): id is string => Boolean(id));
+
+		expect(expectedIds.length).toBeGreaterThanOrEqual(3);
+		expect(slot!.sourceRuleIds).toEqual(expect.arrayContaining(expectedIds));
+		for (const id of expectedIds) {
+			expect(nodeMap.slotByRuleId.get(id)).toBe(slot);
+		}
 	});
 });

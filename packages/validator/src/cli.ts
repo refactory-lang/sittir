@@ -42,7 +42,7 @@ type ValidateReadRenderParseFn = (
 	grammar: string,
 	templatesPath: string,
 	options: {
-		backend?: 'native' | 'typescript';
+		backend?: 'native' | 'js';
 		recursive?: boolean;
 		stopOnFirstFailure?: boolean;
 		onFailure?: (failure: ReadRenderParseFailure) => void;
@@ -60,14 +60,14 @@ function resolveBackends(mode: CliBackend): Backend[] {
 		case 'native':
 			return ['native'];
 		case 'js':
-			return ['typescript'];
+			return ['js'];
 		case 'all':
-			return ['native', 'typescript'];
+			return ['native', 'js'];
 	}
 }
 
 function formatBackendLabel(backend: Backend): 'native' | 'js' {
-	return backend === 'typescript' ? 'js' : 'native';
+	return backend;
 }
 
 function makeBackendOption(): Option {
@@ -97,7 +97,7 @@ async function collectGrammarCounts(
 ): Promise<GrammarCounts> {
 	const tp = defaultTemplatesPath(grammar);
 	// Guard: a `.node` older than its templates means the binary wasn't rebuilt
-	// after the last regen — native render will silently fall back to TS (FR-020),
+	// after the last regen — native render will silently fall back to JS (FR-020),
 	// so these counts would not be true native. Warn loudly rather than mislead.
 	if (backend === 'native') warnIfNativeBinaryStale(grammar, tp);
 	const [from, coverage, factoryRenderParse] = await Promise.all([

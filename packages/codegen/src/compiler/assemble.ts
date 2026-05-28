@@ -232,22 +232,16 @@ export function assemble(
 		if (!node) continue;
 		if (rule.id) nodeByRuleId.set(rule.id, node);
 	}
-	// KNOWN LIMITATION: `mergeSlotsByName` (node-map.ts) folds multi-contributor
-	// slots by spreading the first contributor's data. After merging, the slot's
-	// `sourceRuleId` reflects only one source rule. Other contributors' rule ids
-	// will not resolve via `slotByRuleId` — downstream lookups must fall back to
-	// owner traversal for those edge cases. Tracked for follow-up; storing
-	// `sourceRuleIds: RuleId[]` on the slot is the structural fix.
 	for (const node of nodes.values()) {
 		for (const slot of allSlotsOf(node)) {
-			if (slot.sourceRuleId) slotByRuleId.set(slot.sourceRuleId, slot);
+			for (const id of slot.sourceRuleIds) slotByRuleId.set(id, slot);
 		}
 	}
 
 	// Back-compat: also index raw FieldRule ids from `optimized.rules` so that
 	// consumers holding a reference to the original field-wrapper rule (before
 	// applyWrapperDeletion stripped it) can still resolve the slot. The leaf's
-	// sourceRuleId may differ from the FieldRule's id after wrapper-deletion
+	// sourceRuleIds may differ from the FieldRule's id after wrapper-deletion
 	// pushes modifier attrs down; walking the raw rules and name-matching
 	// against the assembled slots bridges the gap without requiring the
 	// pipeline to thread the FieldRule id through to the RenderRule leaf.

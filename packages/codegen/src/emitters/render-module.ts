@@ -559,8 +559,7 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 	const [first, ...rest] = slots;
 	if (!first) return undefined;
 	return rest.reduce<AssembledNonterminal>(
-		(merged, slot) => ({
-			...merged,
+		(merged, slot) => merged.with({
 			values: [...merged.values, ...slot.values],
 			hasTrailing: merged.hasTrailing || slot.hasTrailing,
 			hasLeading: merged.hasLeading || slot.hasLeading,
@@ -572,7 +571,7 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 						}
 					: undefined
 		}),
-		{ ...first, values: [...first.values] }
+		first.with({ values: [...first.values] })
 	);
 }
 

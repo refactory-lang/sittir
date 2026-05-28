@@ -1060,9 +1060,13 @@ describe('match_arm', () => {
 
 describe('match_block', () => {
   it('factory produces correct type', () => {
-    const node = ir.matchBlock();
+    const node = ir.matchBlock({});
     expect(node.$type).toBe(TSKindId.MatchBlock);
     expect(node.$source).toBe(2);
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.matchBlock({});
+    expect(() => node.$render!()).not.toThrow();
   });
 });
 

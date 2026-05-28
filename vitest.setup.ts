@@ -33,12 +33,10 @@ export async function setup() {
 		});
 		console.log(`[vitest-setup] pnpm -r run build (${Date.now() - t0}ms)`);
 	} catch (e) {
-		// PR2 workaround: tsgo v7 rejects 'baseUrl' in tsconfig.json (TS5102).
 		// The dist artifacts are already present from the last successful build.
 		// Warn but continue — tests resolve via tsconfig paths (tsx runtime),
-		// not from dist. Remove this catch once root tsconfig.json is migrated
-		// off baseUrl.
-		console.warn('[vitest-setup] pnpm -r run build failed (pre-existing tsgo v7 compat issue) — continuing with cached dist');
+		// not from dist.
+		console.warn('[vitest-setup] pnpm -r run build failed — continuing with cached dist');
 	}
 
 	for (const grammar of GRAMMARS) {

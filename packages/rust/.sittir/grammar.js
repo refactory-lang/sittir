@@ -2647,7 +2647,8 @@ var config = {
     // the named slot at readNode time, so the template can emit the
     // actual qualifier text instead of hardcoding "const".
     pointer_type: {
-      1: field("mutable_specifier")
+      "1/0": variant("const"),
+      "1/1": variant("mut")
     },
     // raw_string_literal: 3 field(s)
     raw_string_literal: {
@@ -2672,7 +2673,9 @@ var config = {
     },
     // reference_expression: 1 field(s)
     reference_expression: {
-      1: field("mutable_specifier")
+      0: field("reference"),
+      "1/0/1/0": variant("raw_const"),
+      "1/0/1/1": variant("raw_mut")
       // mutable_specifier [struct=0]
     },
     // reference_pattern: 2 field(s)
@@ -2712,7 +2715,6 @@ var config = {
     // variant so the trailing `;` on tuple/unit forms gets rendered
     // (the flat template dropped it because `;` is an anonymous
     // token not routed to any field).
-    struct_item: [],
     // trait_item: seq(
     //   optional($.visibility_modifier),  // pos 0
     //   optional('unsafe'),                // pos 1  →  '1/0' = bare 'unsafe'
@@ -2794,19 +2796,6 @@ var config = {
     foreign_mod_item: {
       "2/0": variant("semi"),
       "2/1": variant("body")
-    },
-    // pointer_type: choice('const', mutable_specifier) at pos 1.
-    // Literal 'const' vs symbol → split arms.
-    pointer_type: {
-      "1/0": variant("const"),
-      "1/1": variant("mut")
-    },
-    // reference_expression: inner choice at path 1/0/1 selects
-    // `const` vs `mutable_specifier` inside the `&raw (…) …`
-    // form. Same const-vs-mut shape as pointer_type.
-    reference_expression: {
-      "1/0/1/0": variant("raw_const"),
-      "1/0/1/1": variant("raw_mut")
     },
     // match_arm: seq(repeat(choice(attribute_item, inner_attribute_item)),
     //   field('pattern', match_pattern), '=>', choice(...)).

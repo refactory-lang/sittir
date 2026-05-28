@@ -126,16 +126,16 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 		logSpy.mockRestore();
 	});
 
-	it('maps js backend to the internal typescript backend', async () => {
+	it('passes js backend through directly', async () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		vi.mocked(runRt)
 			.mockResolvedValueOnce({ grammar: 'python', total: 8, pass: 8, fail: 0, skip: 0, astMatchPass: 8, errors: [], astMismatches: [] })
 			.mockResolvedValueOnce({ grammar: 'python', total: 8, pass: 6, fail: 2, skip: 0, astMatchPass: 5, errors: [], astMismatches: [] });
 		await runCountsCli(['python'], 'js');
-		expect(vi.mocked(runFrom)).toHaveBeenCalledWith('python', 'typescript');
-		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(1, 'python', '/fake/templates', 'typescript', { recursive: true });
-		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(2, 'python', '/fake/templates', 'typescript', { recursive: false });
-		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('python', '/fake/templates', 'typescript');
+		expect(vi.mocked(runFrom)).toHaveBeenCalledWith('python', 'js');
+		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(1, 'python', '/fake/templates', 'js', { recursive: true });
+		expect(vi.mocked(runRt)).toHaveBeenNthCalledWith(2, 'python', '/fake/templates', 'js', { recursive: false });
+		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('python', '/fake/templates', 'js');
 		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
 		expect(allOutput).toMatch(/python\/js:/);
 		logSpy.mockRestore();
@@ -146,7 +146,7 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 		vi.mocked(runRt).mockResolvedValue({ grammar: 'rust', total: 8, pass: 8, fail: 0, skip: 0, astMatchPass: 8, errors: [], astMismatches: [] });
 		await runCountsCli(['rust'], 'all');
 		expect(vi.mocked(runFrom)).toHaveBeenNthCalledWith(1, 'rust', 'native');
-		expect(vi.mocked(runFrom)).toHaveBeenNthCalledWith(2, 'rust', 'typescript');
+		expect(vi.mocked(runFrom)).toHaveBeenNthCalledWith(2, 'rust', 'js');
 		expect(vi.mocked(runRt)).toHaveBeenCalledTimes(4);
 		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
 		expect(allOutput).toMatch(/rust\/native:/);
@@ -182,10 +182,10 @@ describe('@sittir/validator cli surface — runProbeFactoryCli behavior', () => 
 		logSpy.mockRestore();
 	});
 
-	it('maps js backend to the internal typescript backend', async () => {
+	it('passes js backend through directly', async () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		await runProbeFactoryCli(['rust'], 'js');
-		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('rust', '/fake/templates', 'typescript');
+		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('rust', '/fake/templates', 'js');
 		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
 		expect(allOutput).toMatch(/=== rust\/js ===/);
 		logSpy.mockRestore();
@@ -195,7 +195,7 @@ describe('@sittir/validator cli surface — runProbeFactoryCli behavior', () => 
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		await runProbeFactoryCli(['rust'], 'all');
 		expect(vi.mocked(runFactory)).toHaveBeenNthCalledWith(1, 'rust', '/fake/templates', 'native');
-		expect(vi.mocked(runFactory)).toHaveBeenNthCalledWith(2, 'rust', '/fake/templates', 'typescript');
+		expect(vi.mocked(runFactory)).toHaveBeenNthCalledWith(2, 'rust', '/fake/templates', 'js');
 		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
 		expect(allOutput).toMatch(/=== rust\/native ===/);
 		expect(allOutput).toMatch(/=== rust\/js ===/);

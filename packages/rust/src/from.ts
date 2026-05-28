@@ -349,7 +349,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
   "macro_definition_paren": TSKindId._MacroDefinitionParen,
   "macro_definition_bracket": TSKindId._MacroDefinitionBracket,
   "macro_definition_brace": TSKindId._MacroDefinitionBrace,
-  "match_block": TSKindId.MatchBlock,
   "parameters": TSKindId.Parameters,
   "return_expression": TSKindId.ReturnExpression,
   "slice_pattern": TSKindId.SlicePattern,
@@ -400,7 +399,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "macro_definition_paren": return F.macroDefinitionParen(...(children as Parameters<typeof F.macroDefinitionParen>));
     case "macro_definition_bracket": return F.macroDefinitionBracket(...(children as Parameters<typeof F.macroDefinitionBracket>));
     case "macro_definition_brace": return F.macroDefinitionBrace(...(children as Parameters<typeof F.macroDefinitionBrace>));
-    case "match_block": return F.matchBlock(...(children as Parameters<typeof F.matchBlock>));
     case "parameters": return F.parameters(...(children as Parameters<typeof F.parameters>));
     case "return_expression": return F.returnExpression(children[0] as Parameters<typeof F.returnExpression>[0]);
     case "slice_pattern": return F.slicePattern(...(children as Parameters<typeof F.slicePattern>));
@@ -1425,14 +1423,12 @@ export function matchArmUFormBlockEndingFrom(input: Omit<ConfigOf<T.MatchArmUFor
   });
 }
 
-export function matchBlockFrom(...input: readonly ((T.MatchArm | T.LastMatchArm) | T.MatchBlock)[]): ReturnType<typeof F.matchBlock> {
-  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.MatchBlock) {
-    const data = input[0];
-    const stored = (data as unknown as { _match_arm?: unknown })._match_arm;
-    const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-    return F.matchBlock(...(children as unknown as Parameters<typeof F.matchBlock>));
-  }
-  return F.matchBlock(...(input as unknown as Parameters<typeof F.matchBlock>));
+export function matchBlockFrom(input?: T.MatchBlock.Loose): ReturnType<typeof F.matchBlock> {
+  if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.matchBlock>;
+  return F.matchBlock({
+    matchArm: _resolveManyBranch<T.MatchArm>(input?.matchArm, "match_arm"),
+    lastMatchArm: _resolveOneBranch<T.LastMatchArm>(input?.lastMatchArm, "last_match_arm"),
+  });
 }
 
 export function matchExpressionFrom(input: T.MatchExpression.Loose): ReturnType<typeof F.matchExpression> {
@@ -1676,6 +1672,7 @@ export function referenceExpressionFrom(input?: T.ReferenceExpression.Loose): Re
 
 export function referenceExpressionUFormRawConstFrom(input: Omit<ConfigOf<T.ReferenceExpressionUFormRawConst>, '$variant'>): ReturnType<typeof F.referenceExpressionUFormRawConst> {
   return F.referenceExpressionUFormRawConst({
+    reference: coerceKindEnumStorage(_resolveOne<"&">("&", _K8, _K8), []),
     referenceExpressionRawConst: coerceKindEnumStorage(_resolveOneLeaf<"const">("const", "_reference_expression_raw_const"), []),
     value: _resolveOne<T.Expression>(input.value, _K4, _K5),
   });
@@ -1683,6 +1680,7 @@ export function referenceExpressionUFormRawConstFrom(input: Omit<ConfigOf<T.Refe
 
 export function referenceExpressionUFormRawMutFrom(input: Omit<ConfigOf<T.ReferenceExpressionUFormRawMut>, '$variant'>): ReturnType<typeof F.referenceExpressionUFormRawMut> {
   return F.referenceExpressionUFormRawMut({
+    reference: coerceKindEnumStorage(_resolveOne<"&">("&", _K8, _K8), []),
     referenceExpressionRawMut: _resolveOneBranch<T._ReferenceExpressionRawMut>(input.referenceExpressionRawMut, "_reference_expression_raw_mut"),
     value: _resolveOne<T.Expression>(input.value, _K4, _K5),
   });

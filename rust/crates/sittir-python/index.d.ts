@@ -541,7 +541,9 @@ export interface ExceptClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content?: ExceptClauseContentTransportSlot
-  _block: ExceptClauseBlockTransportSlot
+  _simple_statements?: SimpleStatementsTransport
+  _block?: BlockTransport
+  _newline?: NewlineTransport
 }
 
 export interface ExecStatementTransport {
@@ -1186,8 +1188,8 @@ export interface SplatPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _identifier: _IdentifierEnum
-  _content: SplatPatternContentTransportSlot
+  _operator: SplatPatternOperatorEnum
+  _identifier: SplatPatternIdentifierTransportSlot
 }
 
 export interface SplatTypeTransport {
@@ -1245,7 +1247,9 @@ export interface SuiteTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _block: SuiteBlockTransportSlot
+  _simple_statements?: SimpleStatementsTransport
+  _block?: BlockTransport
+  _newline?: NewlineTransport
 }
 
 export interface TryStatementTransport {

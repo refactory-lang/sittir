@@ -3586,8 +3586,10 @@ export interface MatchArmUFormBlockEnding {
 export type MatchArm = MatchArmUFormWithComma | MatchArmUFormBlockEnding;
 export interface MatchBlock {
   readonly $type: TSKindId.MatchBlock;
-  readonly _match_arm?: readonly (LastMatchArm)[];
-  matchArms(): readonly (LastMatchArm)[];
+  readonly _match_arm?: readonly (MatchArm)[];
+  readonly _last_match_arm?: LastMatchArm;
+  matchArms(): readonly (MatchArm)[];
+  lastMatchArm(): LastMatchArm | undefined;
 }
 
 export interface MatchExpression {
@@ -3822,11 +3824,14 @@ export interface ReferenceExpressionRawMut {
 export interface ReferenceExpressionUFormRawConst {
   readonly $type: TSKindId.ReferenceExpression;
   readonly $variant: 'raw_const';
+  readonly _reference: number;
   readonly _reference_expression_raw_const: number;
   readonly _value: Expression;
   readonly __inputHints__?: {
+    readonly reference: KindEnum<"&", TSKindId.Amp2>;
     readonly reference_expression_raw_const: KindEnum<"const", TSKindId.Const>;
   };
+  reference(): number;
   referenceExpressionRawConst(): number;
   value(): Expression;
 }
@@ -3834,8 +3839,13 @@ export interface ReferenceExpressionUFormRawConst {
 export interface ReferenceExpressionUFormRawMut {
   readonly $type: TSKindId.ReferenceExpression;
   readonly $variant: 'raw_mut';
+  readonly _reference: number;
   readonly _reference_expression_raw_mut: _ReferenceExpressionRawMut;
   readonly _value: Expression;
+  readonly __inputHints__?: {
+    readonly reference: KindEnum<"&", TSKindId.Amp2>;
+  };
+  reference(): number;
   referenceExpressionRawMut(): _ReferenceExpressionRawMut;
   value(): Expression;
 }

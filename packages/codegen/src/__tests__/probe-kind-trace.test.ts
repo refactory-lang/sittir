@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { stripStructuralNodeText, type WrappedNodeData } from '../validate/common.ts';
-import { materializeProbeWrappedNodeData, resolveNativeTraceNodeData } from '../scripts/probe-kind.ts';
+import { materializeProbeWrappedNodeData, probeTrace, resolveNativeTraceNodeData } from '../scripts/probe-kind.ts';
 
 function leaf(handle: number, text: string): WrappedNodeData {
 	return {
@@ -100,5 +100,24 @@ describe('probe-kind native trace helpers', () => {
 		};
 
 		expect(resolveNativeTraceNodeData(undefined, legacy)).toBe(legacy);
+	});
+
+	it('defaults omitted trace engine selection to the full js/native matrix', async () => {
+		const trace = await probeTrace('python', 'x');
+
+		expect(trace.trace.js).toBeDefined();
+		expect(trace.trace.native).toBeDefined();
+	});
+
+	it('limits trace output to the requested engine and reproduces native wrap errors for validator-like probes', async () => {
+		const trace = await probeTrace('python', '(x for x in y)', {
+			kind: 'generator_expression',
+			engine: 'native'
+		});
+
+		expect(trace.trace.js).toBeUndefined();
+		expect(trace.trace.native).toMatchObject({
+			wrapError: expect.stringContaining('singular slot "comprehension_clauses" on "generator_expression" requires one value')
+		});
 	});
 });

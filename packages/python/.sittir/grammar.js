@@ -2405,12 +2405,6 @@ var overrides_default = grammar(
       argument_list: {
         1: field("arguments")
       },
-      // as_pattern: 1 field(s)
-      as_pattern: {},
-      // await: 1 field(s)
-      await: {},
-      // chevron: 1 field(s)
-      chevron: {},
       // class_pattern: 2 field(s)
       class_pattern: {
         2: field("arguments")
@@ -2460,8 +2454,6 @@ var overrides_default = grammar(
       dictionary: {
         1: field("entries")
       },
-      // dictionary_splat: 1 field(s)
-      dictionary_splat: {},
       // exec_statement: grammar is seq('exec', code, optional(seq('in', exprs)))
       // Template walker emits the `in` keyword as a literal at top level,
       // which surfaces in rendering even when the optional(seq(...))
@@ -2491,8 +2483,6 @@ var overrides_default = grammar(
         0: field("identifier")
         // identifier [struct=0]
       },
-      // if_clause: 1 field(s)
-      if_clause: {},
       // import_from_statement: 1 field(s)
       import_from_statement: {
         3: field("wildcard_import")
@@ -2503,15 +2493,11 @@ var overrides_default = grammar(
         2: field("simple_pattern")
         // _simple_pattern | class_pattern | complex_pattern | concatenated_string | dict_pattern | dotted_name | false | float | integer | list_pattern | none | splat_pattern | string | true | tuple_pattern | union_pattern [struct=1]
       },
-      // list_splat: 1 field(s)
-      list_splat: {},
       // member_type: 2 field(s)
       member_type: {
         0: field("base_type")
         // type [struct=0]
       },
-      // relative_import: 2 field(s)
-      relative_import: {},
       // slice: 3 field(s)
       slice: {
         0: field("start"),
@@ -2523,7 +2509,9 @@ var overrides_default = grammar(
       },
       // splat_pattern: 1 field(s)
       splat_pattern: {
-        0: field("identifier")
+        "0": field("operator"),
+        // '*' | '**'
+        "1/1": field("identifier")
         // identifier [struct=0]
       },
       // splat_type: 1 field(s)
@@ -2559,7 +2547,15 @@ var overrides_default = grammar(
         // type [struct=1]
       }
     },
-    rules: {}
+    rules: {
+      primary_expression: ($, original) => {
+        let base2 = original.members;
+        return choice(
+          ...base2.slice(0, -1),
+          $.list_splat_pattern
+        );
+      }
+    }
   })
 );
 if (module.exports && module.exports.default) module.exports = module.exports.default;

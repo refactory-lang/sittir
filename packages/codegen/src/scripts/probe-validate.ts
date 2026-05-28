@@ -42,7 +42,7 @@ import { fileURLToPath } from 'node:url';
 import { loadCorpusEntries, type CorpusEntry } from '../validate/common.ts';
 import { run as runProbeKind } from './probe-kind.ts';
 
-type Engine = 'native' | 'typescript' | 'both';
+type Engine = 'native' | 'js' | 'both';
 
 async function main(argv: string[]): Promise<number> {
 	const { values } = parseArgs({
@@ -111,7 +111,7 @@ async function main(argv: string[]): Promise<number> {
 			const { validateReadRenderParse } = await import('../validate/read-render-parse.ts');
 			const templatesPath = defaultTemplatesPath(grammar);
 			const result = await validateReadRenderParse(grammar, templatesPath, {
-				backend: engine === 'native' ? 'native' : 'typescript',
+				backend: engine === 'native' ? 'native' : 'js',
 				recursive: true
 			});
 			const firstFail = result.errors[0] ?? result.astMismatches[0];

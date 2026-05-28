@@ -172,7 +172,7 @@
     "macro_rule": "config",
     "match_arm_block_ending": "direct",
     "match_arm": "config",
-    "match_block": "spread",
+    "match_block": "config",
     "match_expression": "config",
     "match_pattern": "config",
     "metavariable": "text",
@@ -464,7 +464,7 @@
     "match_arm.match_arm_block_ending": {
       "match_arm_block_ending": "_match_arm_block_ending"
     },
-    "match_block.match_arm": {
+    "match_block.last_match_arm": {
       "match_arm": "last_match_arm"
     },
     "mod_item.mod_item_external": {
@@ -1151,7 +1151,8 @@
       "match_arm_block_ending"
     ],
     "match_block": [
-      "match_arm"
+      "match_arm",
+      "last_match_arm"
     ],
     "match_expression": [
       "value",
@@ -3714,6 +3715,13 @@
         "required": false,
         "multiple": true,
         "nonEmpty": false
+      },
+      "last_match_arm": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "match_expression": {
@@ -4023,6 +4031,13 @@
       }
     },
     "reference_expression": {
+      "reference": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "reference_expression_raw_const": {
         "unnamed": false,
         "slotCount": 1,

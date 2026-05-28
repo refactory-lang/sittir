@@ -4563,6 +4563,16 @@
     "type": "reference_expression",
     "named": true,
     "fields": {
+      "reference": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "&",
+            "named": false
+          }
+        ]
+      },
       "value": {
         "multiple": false,
         "required": true,

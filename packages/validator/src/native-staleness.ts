@@ -7,7 +7,7 @@
  * `--no-build-native`) rewrites `packages/<g>/templates/` WITHOUT rebuilding the
  * binding, leaving the `.node` with the PREVIOUS templates baked in. At runtime
  * the backend shim detects the resulting template-bundle-hash mismatch and
- * SILENTLY falls back to the TS engine (FR-020) — so `--backend native` counts
+ * SILENTLY falls back to the JS engine (FR-020) — so `--backend native` counts
  * are not actually native and won't reflect the regen.
  *
  * This guard turns that silent fallback into a loud, actionable warning. It
@@ -70,7 +70,7 @@ export function warnIfNativeBinaryStale(grammar: string, templatesPath: string):
 			`⚠ [${grammar}] STALE NATIVE BINARY — templates were regenerated after the last napi build ` +
 				`(newest .jinja ${new Date(tplMtime).toISOString()} > newest .node ${new Date(nodeMtime).toISOString()}). ` +
 				`Askama bakes templates into the .node at build time, so \`--backend native\` may silently fall back ` +
-				`to TS render (FR-020) — these counts will NOT reflect your template changes. ` +
+				`to JS render (FR-020) — these counts will NOT reflect your template changes. ` +
 				`Rebuild: \`pnpm validate:native\` (regens + rebuilds + counts) or \`pnpm -C rust/crates/sittir-${grammar} run build\`. ` +
 				`[mtime heuristic — a no-op regen that only bumped timestamps can false-positive.]`,
 		);

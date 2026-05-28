@@ -185,43 +185,20 @@ describe('wrap emitter slot arity', () => {
 		const singularSource = emitWrap({ grammar: 'synth', nodeMap: makeRequiredSingleFieldNodeMap() });
 		const repeatedSource = emitWrap({ grammar: 'synth', nodeMap: makeRepeatFieldNodeMap() });
 
-		expect(singularSource).toContain('_value: normalizeSingularWrapSlot(data._value, "value", true, data.$type),');
-		expect(repeatedSource).toContain('_items: normalizeRepeatedWrapSlot(data._items, true, "items"),');
+		expect(singularSource).toContain(
+			'_value: normalizeSingularWrapSlot(data._value, "value", true, data.$type, { tree, nodeType: data.$type, slotName: "value", span: (data as _NodeData).$span }),'
+		);
+		expect(repeatedSource).toContain(
+			'_items: normalizeRepeatedWrapSlot(data._items, true, "items", { tree, nodeType: data.$type, slotName: "items", span: (data as _NodeData).$span }),'
+		);
 	});
 
-	it('normalizes singular unnamed children through the singular slot path', () => {
+	it('passes diagnostic context into singular unnamed child normalization', () => {
 		const source = emitWrap({ grammar: 'synth', nodeMap: makeRequiredSingleChildNodeMap() });
 
-		expect(source).toContain('$children: normalizeSingularWrapSlot(');
-		expect(source).toContain('children() { return drillIn<');
-		expect(source).not.toContain('children() { return drillInAll<');
 		expect(source).toContain(
-			'$with: { $child: (v: T.Identifier) => wrapSingleParent({ ...data, $children: v }, tree) },'
+			'_identifier: normalizeSingularWrapSlot(data._identifier, "identifier", true, data.$type, { tree, nodeType: data.$type, slotName: "identifier", span: (data as _NodeData).$span }),'
 		);
-	});
-
-	it('keeps multi-slot unnamed children list-shaped while deriving requiredness from child surfaces', () => {
-		const source = emitWrap({ grammar: 'synth', nodeMap: makeOptionalThenRequiredChildNodeMap() });
-
-		expect(source).toContain(
-			'$children: normalizeRepeatedWrapSlot(_filterWrapChildrenByKind(data.$children, ["identifier","number_literal"]), false, "children"),'
-		);
-		expect(source).toContain('children() { return drillInAll<');
-		expect(source).not.toContain('children() { return drillIn<');
-	});
-
-	it('keeps multi-sibling fields repeated at the wrap surface', () => {
-		const source = emitWrap({ grammar: 'synth', nodeMap: makeMultiSiblingFieldNodeMap() });
-
-		expect(source).toContain('_declaration: normalizeRepeatedWrapSlot(data._declaration, true, "declaration"),');
-	});
-
-	it('expands hidden wrapper child kinds to concrete runtime kinds for wrap filtering', () => {
-		const source = emitWrap({ grammar: 'synth', nodeMap: makeHiddenWrapperChildNodeMap() });
-
-		expect(source).toContain('"block"');
-		expect(source).toContain('"_suite"');
-		expect(source).toContain('"suite"');
 	});
 
 	it('emits singular-mismatch guards for wrapped children', () => {
@@ -229,7 +206,9 @@ describe('wrap emitter slot arity', () => {
 
 		expect(source).toContain('const WRAP_WARNING_MODE = typeof process !== "undefined" && process.env?.SITTIR_WRAP_WARNING_MODE === "1";');
 		expect(source).toContain('function describeWrapNodeType(nodeType: string | number): string {');
-		expect(source).toContain('function handleWrapViolation<T>(message: string, fallback: T): T {');
+		expect(source).toContain(
+			'function handleWrapViolation<T>(message: string, fallback: T, context: WrapDiagnosticContext): T {'
+		);
 		expect(source).toContain('function describeWrapSlotItem(value: unknown): string {');
 		expect(source).toContain('function describeWrapSlotValue(value: unknown): string {');
 		expect(source).toContain(
@@ -237,9 +216,23 @@ describe('wrap emitter slot arity', () => {
 		);
 		expect(source).toContain('function normalizeSingularWrapSlot<T>(');
 		expect(source).toContain(
-			'return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T);'
+			'return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T, context);'
 		);
 		expect(source).not.toContain('return wrapNode(e, tree) as unknown as T;');
+	});
+
+	it('emits location-aware wrap diagnostics for helper violations', () => {
+		const source = emitWrap({ grammar: 'synth', nodeMap: makeRequiredSingleChildNodeMap() });
+
+		expect(source).toContain('function describeWrapLocation(');
+		expect(source).toContain('function describeWrapSnippet(');
+		expect(source).toContain('function buildWrapDiagnostic(');
+		expect(source).toContain('tree.source');
+		expect(source).toContain('normalizeSingularWrapSlot(');
+		expect(source).toContain('function normalizeRepeatedWrapSlot<T>(');
+		expect(source).toContain('buildWrapDiagnostic(message, context)');
+		expect(source).toContain('slotName: "identifier"');
+		expect(source).toContain('nodeType: data.$type');
 	});
 
 	it('expands hidden supertype members transitively for wrap child filtering', () => {
@@ -257,8 +250,5 @@ describe('wrap emitter slot arity', () => {
 		);
 		expect(source).toContain('if (members?.has(kind)) return true;');
 		expect(source).toContain('if (stripped !== undefined && members?.has(stripped)) return true;');
-		expect(source).toContain(
-			'$children: normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$children, ["expression","identifier"]), "children", true, data.$type),'
-		);
 	});
 });

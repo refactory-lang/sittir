@@ -453,7 +453,7 @@ const _K21: readonly string[] = ["comparison_operator","not_operator","boolean_o
 const _K22: readonly string[] = ["true","false","none"];
 const _K23: readonly string[] = ["class_pattern","splat_pattern","union_pattern","_list_pattern","_tuple_pattern","dict_pattern","string","concatenated_string","_simple_pattern_negative","complex_pattern","dotted_name"];
 const _K24: readonly string[] = ["keyword_identifier"];
-const _K25: readonly string[] = ["_identifier","identifier"];
+const _K25: readonly string[] = ["_splat_pattern_operator","identifier"];
 const _K26: readonly string[] = ["interpolation","string_content"];
 const _K27: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","await","binary_operator","keyword_identifier","string","concatenated_string","unary_operator","attribute","subscript","call","list","list_comprehension","dictionary","dictionary_comprehension","set","set_comprehension","tuple","parenthesized_expression","generator_expression","list_splat_pattern","conditional_expression","named_expression","as_pattern","slice"];
 const _K28: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"];
@@ -780,11 +780,13 @@ export function escapeSequenceFrom(input: string | T.EscapeSequence): ReturnType
   return F.escapeSequence(input as Parameters<typeof F.escapeSequence>[0]);
 }
 
-export function exceptClauseFrom(input: T.ExceptClause.Loose): ReturnType<typeof F.exceptClause> {
-  if (isNodeData(input)) return input as unknown as ReturnType<typeof F.exceptClause>;
+export function exceptClauseFrom(input?: T.ExceptClause.Loose): ReturnType<typeof F.exceptClause> {
+  if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.exceptClause>;
   return F.exceptClause({
-    content: _resolveOneBranch<T.ExceptClauseAs | T.ExceptClauseList>(input.content, "_except_clause_as"),
-    block: _resolveOne<T.SimpleStatements | T.Newline>(input.block, _K9, _K10),
+    content: _resolveOneBranch<T.ExceptClauseAs | T.ExceptClauseList>(input?.content, "_except_clause_as"),
+    simpleStatements: _resolveOneBranch<T.SimpleStatements>(input?.simpleStatements, "_simple_statements"),
+    block: _resolveOneBranch<T.Block>(input?.block, "block"),
+    newline: _resolveOneLeaf<T.Newline>(input?.newline, "_newline"),
   });
 }
 
@@ -1252,14 +1254,14 @@ export function sliceFrom(input?: T.Slice.Loose): ReturnType<typeof F.slice> {
 export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof F.splatPattern> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.splatPattern>;
   return F.splatPattern({
-    identifier: coerceKindEnumStorage(_resolveOneLeaf<T._Identifier>(input.identifier, "_identifier"), [["*", kindIdFromName("*")] as const, ["**", kindIdFromName("**")] as const]),
-    content: _resolveOneLeaf<T.Identifier | "_">(input.content, "identifier"),
+    operator: coerceKindEnumStorage(_resolveOneLeaf<T.SplatPatternOperator>(input.operator, "_splat_pattern_operator"), [["*", kindIdFromName("*")] as const, ["**", kindIdFromName("**")] as const]),
+    identifier: _resolveOneLeaf<T.Identifier | "_">(input.identifier, "identifier"),
   });
 }
 
 export function splatTypeFrom(input: T.SplatType.Loose): ReturnType<typeof F.splatType> {
   if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("splat_type")) return input as unknown as ReturnType<typeof F.splatType>;
-  return F.splatType(_resolveOne<T._Identifier | T.Identifier>((input !== null && typeof input === 'object' && !isNodeData(input) && "identifier" in input ? input.identifier : input), _K25, _K7));
+  return F.splatType(_resolveOne<T.SplatPatternOperator | T.Identifier>((input !== null && typeof input === 'object' && !isNodeData(input) && "identifier" in input ? input.identifier : input), _K25, _K7));
 }
 
 export function stringFrom(input: T.String.Loose): ReturnType<typeof F.string> {

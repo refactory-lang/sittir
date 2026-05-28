@@ -297,7 +297,7 @@ export function buildReadHandle(
 	grammar: string,
 	tree: TS.Tree,
 	source: string,
-	backend?: 'native' | 'typescript',
+	backend?: 'native' | 'js',
 	kindIdFromName?: (kind: string) => number | undefined
 ): TreeHandle {
 	const effectiveBackend = backend ?? process.env.SITTIR_BACKEND;

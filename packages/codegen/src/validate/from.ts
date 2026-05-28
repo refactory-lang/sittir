@@ -182,7 +182,7 @@ export interface FromValidationResult {
 	errors: FromValidationError[];
 }
 
-export async function validateFrom(grammar: string, backend?: 'native' | 'typescript'): Promise<FromValidationResult> {
+export async function validateFrom(grammar: string, backend?: 'native' | 'js'): Promise<FromValidationResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
