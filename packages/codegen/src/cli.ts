@@ -7,7 +7,7 @@
  *   sittir --grammar rust --nodes struct_item,function_item --output src/
  */
 
-import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { validateReadRenderParse, formatReadRenderParseReport } from './validate/read-render-parse.ts';
 import { validateFactoryRenderParse, formatFactoryRenderParseReport } from './validate/factory-render-parse.ts';
@@ -33,6 +33,14 @@ function runFrom(grammar: string, backend: 'native' | 'js' = 'native') {
 }
 import { join, dirname, resolve } from 'node:path';
 import { generate } from './compiler/generate.ts';
+import { evaluate } from './compiler/evaluate.ts';
+import { resolveGrammarJsPath, resolveOverridesPath } from './compiler/resolve-grammar.ts';
+import {
+	collectGrammarDiagnosticsForGrammar,
+	GrammarDiagnosticError,
+	formatGrammarDiagnostics,
+	type GrammarDiagnostic
+} from './compiler/grammar-diagnostics.ts';
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { emitSuggested } from './emitters/suggested.ts';
 import type { RoundTripDiagnostic } from './emitters/suggested.ts';
@@ -44,15 +52,10 @@ import { extractParityFixtures, serializeFixtures, fixturesOutputPath } from './
 import { writeManifestForGrammar, type Grammar } from './scripts/generated-manifest.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
 
-// Codegen IS the writer of the per-grammar manifest. Internal validator runs
-// invoked from inside this CLI (e.g. extractParityFixtures uses
-// validateReadRenderParse to extract parity fixtures BEFORE the manifest is
-// rewritten) would otherwise verify the manifest mid-write — checking the
-// codegen process against its own incomplete output, which is meaningless.
-// Set the env so `loadLanguageForGrammar` skips verification for these
-// internal calls. External callers (validator CLI, probe-validate, etc.) do
-// not run this CLI and therefore do not inherit this env.
-process.env.SITTIR_INTERNAL_CODEGEN_RUN = '1';
+// Detect whether this module is being executed as the entry point or imported for testing.
+// All CLI side effects are guarded behind this flag so that test files can safely import
+// the exported helpers without triggering argument parsing, generation, or process.exit.
+const _isMain = import.meta.url === `file://${process.argv[1]}`;
 
 type ToolsDispatch = (argv: string[]) => Promise<number>;
 
@@ -85,12 +88,6 @@ const TOOL_NAMES = new Set([
 	'exercise'
 ]);
 
-const firstArg = process.argv[2];
-if (firstArg !== undefined && TOOL_NAMES.has(firstArg)) {
-	const toolsCliPath = new URL('../../tools/src/cli.ts', import.meta.url).pathname;
-	const { dispatch }: { dispatch: ToolsDispatch } = await import(toolsCliPath);
-	process.exit(await dispatch(process.argv.slice(2)));
-}
 
 interface CodegenConfig {
 	grammar: string;
@@ -102,6 +99,7 @@ interface CliArgs {
 	grammar?: string;
 	nodes?: string[];
 	outputDir?: string;
+	allowDiagnostics?: string[];
 	all?: boolean;
 	testsDir?: string;
 	roundtrip?: boolean;
@@ -159,6 +157,9 @@ function parseArgs(argv: string[]): CliArgs {
 			case '--no-emit-diff':
 				args.noEmitDiff = true;
 				break;
+			case '--allow-diagnostic':
+				args.allowDiagnostics = [...(args.allowDiagnostics ?? []), argv[++i]!];
+				break;
 			case '--help':
 			case '-h':
 				args.help = true;
@@ -173,7 +174,122 @@ function writeFile(path: string, content: string): void {
 	writeFileSync(path, content, 'utf8');
 }
 
-const cliArgs = parseArgs(process.argv);
+// ---------------------------------------------------------------------------
+// Grammar-diagnostics preflight gate
+// ---------------------------------------------------------------------------
+
+/**
+ * Runs the grammar-diagnostics preflight check for the given grammar.
+ *
+ * - If `injectedDiagnostics` is provided, those are used directly (test seam).
+ * - Otherwise, the grammar is loaded and evaluated to derive diagnostics.
+ * - Blocked diagnostics (canProceed === false) that are NOT in the allow-list
+ *   cause an error to be thrown in non-interactive mode, or a prompt in
+ *   interactive mode.
+ */
+async function runGrammarDiagnosticsPreflight(input: {
+	grammar: string;
+	allowDiagnostics: ReadonlySet<string>;
+	isTTY: boolean;
+	injectedDiagnostics?: readonly { readonly code: string; readonly canProceed: boolean }[];
+}): Promise<void> {
+	let diagnostics: readonly { readonly code: string; readonly canProceed: boolean }[];
+	if (input.injectedDiagnostics !== undefined) {
+		diagnostics = input.injectedDiagnostics;
+	} else {
+		const overridesPath = resolveOverridesPath(input.grammar);
+		const grammarJsPath = resolveGrammarJsPath(input.grammar);
+		const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
+		const rawGrammar = await evaluate(entryPath);
+		diagnostics = collectGrammarDiagnosticsForGrammar({ rawGrammar }).diagnostics;
+	}
+
+	const blocked = diagnostics.filter(
+		(d) => !input.allowDiagnostics.has(d.code) && d.canProceed === false
+	);
+	if (blocked.length === 0) return;
+
+	process.stderr.write(formatGrammarDiagnostics(diagnostics as readonly GrammarDiagnostic[]) + '\n');
+
+	if (!input.isTTY) {
+		throw new GrammarDiagnosticError(blocked as unknown as GrammarDiagnostic[]);
+	}
+	if (!(await confirmProceed(blocked))) {
+		throw new GrammarDiagnosticError(blocked as unknown as GrammarDiagnostic[]);
+	}
+}
+
+async function confirmProceed(
+	diagnostics: readonly { readonly code: string }[]
+): Promise<boolean> {
+	process.stderr.write(
+		`Diagnostics present (${diagnostics.map((d) => d.code).join(', ')}). Proceed? [y/N] `
+	);
+	const chunks: Buffer[] = [];
+	for await (const chunk of process.stdin) {
+		chunks.push(chunk as Buffer);
+		break;
+	}
+	const answer = Buffer.concat(chunks).toString('utf8').trim().toLowerCase();
+	return answer === 'y' || answer === 'yes';
+}
+
+/**
+ * Testable codegen CLI preflight gate.
+ *
+ * Parses the given argv, runs the grammar-diagnostics preflight, and returns
+ * 0 when all blocking diagnostics are covered by `--allow-diagnostic` flags
+ * (or absent). Throws `GrammarDiagnosticError` when blocking diagnostics are
+ * present and neither allowed nor confirmed interactively.
+ *
+ * The `env.diagnostics` injection seam bypasses real grammar loading so that
+ * unit tests can exercise the gate logic without file system access.
+ *
+ * Note: this function only covers the preflight phase. The full code-generation
+ * pipeline (transpile, generate, write, roundtrip) runs only in `mainCli()`,
+ * which executes when the module is the CLI entry point.
+ */
+export async function runCodegenCli(
+	argv: string[],
+	env: {
+		isTTY?: boolean;
+		diagnostics?: readonly { readonly code: string; readonly canProceed: boolean }[];
+	} = {}
+): Promise<number> {
+	const cliArgs = parseArgs(['node', 'cli.ts', ...argv]);
+	const allowDiagnostics = new Set(cliArgs.allowDiagnostics ?? []);
+	await runGrammarDiagnosticsPreflight({
+		grammar: cliArgs.grammar ?? '',
+		allowDiagnostics,
+		isTTY: env.isTTY ?? Boolean((process.stdin as NodeJS.ReadStream).isTTY),
+		injectedDiagnostics: env.diagnostics
+	});
+	return 0;
+}
+
+// ---------------------------------------------------------------------------
+// Main CLI execution — only runs when this module is the entry point.
+// ---------------------------------------------------------------------------
+
+async function mainCli(): Promise<void> {
+	// Codegen IS the writer of the per-grammar manifest. Internal validator runs
+	// invoked from inside this CLI (e.g. extractParityFixtures uses
+	// validateReadRenderParse to extract parity fixtures BEFORE the manifest is
+	// rewritten) would otherwise verify the manifest mid-write — checking the
+	// codegen process against its own incomplete output, which is meaningless.
+	// Set the env so `loadLanguageForGrammar` skips verification for these
+	// internal calls. External callers (validator CLI, probe-validate, etc.) do
+	// not run this CLI and therefore do not inherit this env.
+	process.env.SITTIR_INTERNAL_CODEGEN_RUN = '1';
+
+	const firstArg = process.argv[2];
+	if (firstArg !== undefined && TOOL_NAMES.has(firstArg)) {
+		const toolsCliPath = new URL('../../tools/src/cli.ts', import.meta.url).pathname;
+		const { dispatch }: { dispatch: ToolsDispatch } = await import(toolsCliPath);
+		process.exit(await dispatch(process.argv.slice(2)));
+	}
+
+	const cliArgs = parseArgs(process.argv);
 
 if (cliArgs.help) {
 	console.log(`
@@ -288,6 +404,19 @@ const config: CodegenConfig = {
 	nodes: cliArgs.all ? undefined : cliArgs.nodes,
 	outputDir: cliArgs.outputDir!
 };
+
+// Grammar-diagnostics preflight — run BEFORE generation so that blocking
+// diagnostics (e.g. parsekind-noninjective collisions) are surfaced early.
+// Codes in the --allow-diagnostic list are silently passed through; all
+// other blocking codes cause a non-interactive failure or an interactive prompt.
+{
+	const allowDiagnostics = new Set(cliArgs.allowDiagnostics ?? []);
+	await runGrammarDiagnosticsPreflight({
+		grammar: config.grammar,
+		allowDiagnostics,
+		isTTY: Boolean((process.stdin as NodeJS.ReadStream).isTTY)
+	});
+}
 
 console.log(`Generating ${config.grammar} IR...`);
 const result = await generate({
@@ -615,3 +744,8 @@ Done! Generated:
 // No-op otherwise. Used to validate simplify's canonicalization before
 // shrinking `deriveFields` / `deriveChildren` to trivial walks.
 (await import('./compiler/node-map.ts')).dumpDerivationAudit(`${config.grammar}-derive`);
+} // end mainCli
+
+if (_isMain) {
+	await mainCli();
+}
