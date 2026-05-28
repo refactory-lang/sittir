@@ -27,6 +27,7 @@ interface GrammarDiagnostic {
 	readonly message: string;
 	readonly proposal?: string;
 	readonly canProceed: boolean;
+	readonly details?: Record<string, unknown>;
 }
 
 interface RawGrammar {
@@ -53,7 +54,7 @@ const CODEGEN_PATHS: Record<string, string> = {
 async function loadCodegenModules(): Promise<{
 	collectGrammarDiagnosticsForGrammar: (input: {
 		rawGrammar: RawGrammar;
-	}) => { diagnostics: readonly GrammarDiagnostic[] };
+	}) => { nodeMap: unknown; diagnostics: readonly GrammarDiagnostic[] };
 	formatGrammarDiagnostics: (diagnostics: readonly GrammarDiagnostic[]) => string;
 	evaluate: (entryPath: string) => Promise<RawGrammar>;
 	resolveGrammarJsPath: (grammar: string) => string;
@@ -61,7 +62,7 @@ async function loadCodegenModules(): Promise<{
 	const diagMod: {
 		collectGrammarDiagnosticsForGrammar: (input: {
 			rawGrammar: RawGrammar;
-		}) => { diagnostics: readonly GrammarDiagnostic[] };
+		}) => { nodeMap: unknown; diagnostics: readonly GrammarDiagnostic[] };
 		formatGrammarDiagnostics: (diagnostics: readonly GrammarDiagnostic[]) => string;
 	} = await import(CODEGEN_PATHS['grammarDiagnostics']!);
 
@@ -138,4 +139,18 @@ export async function run(argv: string[]): Promise<number> {
 
 	process.stdout.write(formatGrammarDiagnostics(diagnostics) + '\n');
 	return diagnostics.length > 0 ? 1 : 0;
+}
+
+// ---------------------------------------------------------------------------
+// _isMain guard
+// ---------------------------------------------------------------------------
+
+const _isMain = import.meta.url === `file://${process.argv[1]}`;
+if (_isMain) {
+	run(process.argv.slice(2))
+		.then(process.exit)
+		.catch((e: unknown) => {
+			process.stderr.write(`grammar-diagnostics: ${(e as Error).stack ?? e}\n`);
+			process.exit(1);
+		});
 }
