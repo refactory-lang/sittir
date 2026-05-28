@@ -9,7 +9,7 @@
  *                         `enrich(base)` + `wire(transforms/polymorphs)` fold
  *                         into `grammar()`. Every FIELD carries a `source`
  *                         tag (`'grammar' | 'enriched' | 'override' |
- *                         'inferred' | 'inlined'`) so override-vs-enrich
+ *                         'inferred'`) so override-vs-enrich
  *                         redundancies surface as nested same-name FIELDs.
  *   - `link`            — after `link()` (symbol-reference inference,
  *                         promoted rules).
@@ -44,9 +44,7 @@
 
 import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
-import { createRequire } from 'node:module';
-
-const requireFromHere = createRequire(import.meta.url);
+import { resolveGrammarJsPath } from '../../../codegen/src/compiler/resolve-grammar.ts';
 import { evaluate } from '../../../codegen/src/compiler/evaluate.ts';
 import { link } from '../../../codegen/src/compiler/link.ts';
 import { optimize } from '../../../codegen/src/compiler/optimize.ts';
@@ -130,17 +128,6 @@ process.stdout.write(JSON.stringify(decycle(payload), null, indent) + '\n');
 return 0;
 }
 
-function resolveGrammarJsPath(grammar: string): string {
-const candidates = [`tree-sitter-${grammar}/grammar.js`, `tree-sitter-${grammar}/common/define-grammar.js`];
-for (const c of candidates) {
-try {
-return requireFromHere.resolve(c);
-} catch {
-/* try next */
-}
-}
-throw new Error(`probe-stages: could not resolve base grammar.js for '${grammar}'`);
-}
 
 function relFromRoot(p: string, root: string): string {
 return p.startsWith(root) ? p.slice(root.length + 1) : p;
