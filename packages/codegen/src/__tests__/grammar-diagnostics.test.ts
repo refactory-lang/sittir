@@ -57,6 +57,7 @@ describe('grammar diagnostics preflight', () => {
 		]);
 		expect(result.diagnostics).toEqual([
 			expect.objectContaining({
+				scope: 'grammar',
 				code: 'parsekind-noninjective',
 				grammar: 'synth',
 				ownerKind: 'host',
@@ -93,6 +94,9 @@ describe('grammar diagnostics preflight', () => {
 			parseKindCollisions: [
 				{
 					code: 'parsekind-noninjective',
+					severity: 'error',
+					message: "Slot 'content' of kind '_suite' collapses [_simple_statements, block] onto parse kind 'block'.",
+					canProceed: false,
 					ownerKind: '_suite',
 					slotName: 'content',
 					shape: 'propose-distinct-alias',

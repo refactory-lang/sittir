@@ -3,18 +3,9 @@ import { link } from './link.ts';
 import { optimize } from './optimize.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnose-parsekind-collisions.ts';
 import type { RawGrammar } from './types.ts';
+import type { GrammarDiagnostic } from './diagnostics.ts';
 
-export interface GrammarDiagnostic {
-	readonly code: string;
-	readonly severity: 'warning' | 'error';
-	readonly grammar: string;
-	readonly ownerKind: string;
-	readonly slotName?: string;
-	readonly message: string;
-	readonly proposal?: string;
-	readonly canProceed: boolean;
-	readonly details?: Record<string, unknown>;
-}
+export type { GrammarDiagnostic };
 
 export class GrammarDiagnosticError extends Error {
 	readonly codes: readonly string[];
@@ -35,6 +26,7 @@ export function fromParseKindCollision(
 	diagnostic: ParseKindCollisionDiagnostic
 ): GrammarDiagnostic {
 	return {
+		scope: 'grammar',
 		code: diagnostic.code,
 		severity: 'error',
 		grammar,
@@ -81,6 +73,6 @@ export function formatGrammarDiagnostics(
 ): string {
 	if (diagnostics.length === 0) return 'No grammar diagnostics.';
 	return diagnostics
-		.map((d) => `[${d.severity}] ${d.code}  ${d.ownerKind}.${d.slotName ?? '-'}\n  ${d.message}${d.proposal !== undefined ? `\n  Proposal: ${d.proposal}` : ''}`)
+		.map((d) => `[${d.severity}] ${d.code}  ${d.ownerKind ?? '-'}.${d.slotName ?? '-'}\n  ${d.message}${d.proposal !== undefined ? `\n  Proposal: ${d.proposal}` : ''}`)
 		.join('\n');
 }

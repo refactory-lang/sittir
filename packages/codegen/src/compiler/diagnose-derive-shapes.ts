@@ -1,3 +1,5 @@
+import type { Diagnostic } from './diagnostics.ts';
+
 export type DeriveShapeCode =
 	| 'alias-collision'
 	| 'seq-with-nested-seq'
@@ -6,12 +8,13 @@ export type DeriveShapeCode =
 	| 'rule-unexpected'
 	| 'polymorph-classification-gap';
 
-export interface DeriveShapeDiagnostic {
+export interface DeriveShapeDiagnostic extends Diagnostic {
 	readonly code: DeriveShapeCode;
-	readonly ownerKind?: string;
+	readonly severity: 'error';
 	readonly message: string;
-	readonly proposal?: string;
 	readonly canProceed: false;
+	readonly ownerKind?: string;
+	readonly proposal?: string;
 	readonly details: {
 		readonly rawShape: string;
 		readonly ruleType: string;
@@ -30,6 +33,7 @@ export function describeDeriveShape(input: {
 	if (input.rawShape === 'seq-with-nested-seq') {
 		return {
 			code: 'seq-with-nested-seq',
+			severity: 'error',
 			ownerKind: input.ownerKind,
 			message:
 				`Kind '${input.ownerKind ?? '(no-kind-context)'}' still contains a nested seq ` +
@@ -47,6 +51,7 @@ export function describeDeriveShape(input: {
 	if (input.rawShape.startsWith('seq-member-')) {
 		return {
 			code: 'seq-member-collision',
+			severity: 'error',
 			ownerKind: input.ownerKind,
 			message:
 				`Kind '${input.ownerKind ?? '(no-kind-context)'}' has a seq member with a ` +
@@ -64,6 +69,7 @@ export function describeDeriveShape(input: {
 	if (input.rawShape.includes('choice-needs-variant-or-merge')) {
 		return {
 			code: 'choice-with-multiple-arm-shapes',
+			severity: 'error',
 			ownerKind: input.ownerKind,
 			message:
 				`Kind '${input.ownerKind ?? '(no-kind-context)'}' has a choice whose arms ` +
@@ -81,6 +87,7 @@ export function describeDeriveShape(input: {
 	if (input.rawShape.includes('polymorph')) {
 		return {
 			code: 'polymorph-classification-gap',
+			severity: 'error',
 			ownerKind: input.ownerKind,
 			message:
 				`Kind '${input.ownerKind ?? '(no-kind-context)'}' reached derive in a shape ` +
@@ -97,6 +104,7 @@ export function describeDeriveShape(input: {
 	}
 	return {
 		code: 'rule-unexpected',
+		severity: 'error',
 		ownerKind: input.ownerKind,
 		message:
 			`Kind '${input.ownerKind ?? '(no-kind-context)'}': we did not expect rule type ` +

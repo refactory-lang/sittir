@@ -22,6 +22,7 @@ function makeDiagnostic(
 	opts: { canProceed?: boolean; ownerKind?: string } = {}
 ): GrammarDiagnostic {
 	return {
+		scope: 'grammar',
 		code,
 		severity: 'error',
 		grammar: 'test-grammar',

@@ -38,6 +38,7 @@
 
 import type { PolymorphRule, Rule, SimplifiedRule } from './rule.ts';
 import { countSlots, countContentSlots } from './slot-count.ts';
+import type { Diagnostic } from './diagnostics.ts';
 
 // ---------------------------------------------------------------------------
 // Polymorph skip-set construction
@@ -129,7 +130,11 @@ export type SlotGroupingShape =
 	| 'repeat-choice-with-literal'
 	| 'content-collision';
 
-export interface SlotGroupingDiagnostic {
+export interface SlotGroupingDiagnostic extends Diagnostic {
+	readonly code: SlotGroupingShape;
+	readonly severity: 'warning';
+	readonly message: string;
+	readonly canProceed: true;
 	/** The kind that owns the rule containing the violation. */
 	readonly ownerKind: string;
 	/** Which violation shape was detected. */
@@ -189,6 +194,10 @@ export function diagnoseSlotGrouping(
 			const contentCount = countContentSlots(rule);
 			if (contentCount > 1) {
 				records.push({
+					code: 'content-collision',
+					severity: 'warning',
+					message: `Kind '${ownerKind}' has ${contentCount} anonymous 'content' slots that would share the '_content' storage key.`,
+					canProceed: true,
 					ownerKind,
 					shape: 'content-collision',
 					slotCount: contentCount,
@@ -284,6 +293,10 @@ function checkSeq(rule: Extract<Rule, { type: 'seq' }>, ownerKind: string, recor
 	if (slotCount < 2) return;
 
 	records.push({
+		code: 'multi-slot-nested-seq',
+		severity: 'warning',
+		message: `Kind '${ownerKind}' has a multi-slot seq with ${slotCount} slots in a slot-creating position.`,
+		canProceed: true,
 		ownerKind,
 		shape: 'multi-slot-nested-seq',
 		slotCount,
@@ -310,6 +323,10 @@ function checkRepeat(
 		const hasLiteral = content.members.some((m) => m.type === 'string');
 		if (hasLiteral) {
 			records.push({
+				code: 'repeat-choice-with-literal',
+				severity: 'warning',
+				message: `Kind '${ownerKind}' has a repeat(choice(..., literal, ...)) — heterogeneous repeating content with interleaved literals.`,
+				canProceed: true,
 				ownerKind,
 				shape: 'repeat-choice-with-literal',
 				slotCount: 1,
@@ -354,6 +371,10 @@ function checkRepeatOfSymbol(
 			: content.members.map((m) => (m as { name: string }).name).join('|');
 
 	records.push({
+		code: 'supertype-list',
+		severity: 'warning',
+		message: `Kind '${ownerKind}' has a repeat(${symName}) without a field name.`,
+		canProceed: true,
 		ownerKind,
 		shape: 'supertype-list',
 		slotCount: 1,
