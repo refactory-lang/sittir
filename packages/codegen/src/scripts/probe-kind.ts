@@ -187,7 +187,13 @@ async function main(argv: string[]): Promise<number> {
 		logParse: values.logParse === true
 
 	};
-	const traceEngine = (explicitEngine === undefined ? 'both' : engineRaw) as 'js' | 'native' | 'both';
+	const traceEngine = (
+		explicitEngine === undefined
+			? values.full === true
+				? 'both'
+				: 'native'
+			: engineRaw
+	) as 'js' | 'native' | 'both';
 	const traceOpts = {
 		...probeOpts,
 		engine: traceEngine
