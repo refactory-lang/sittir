@@ -32,7 +32,7 @@ vi.mock('../src/history.ts', () => ({
 	historyPath: vi.fn().mockReturnValue('/fake/validation-history.jsonl'),
 }));
 
-import { runCountsCli, runProbeFactoryCli, runHistoryCli } from '../src/cli.ts';
+import { runCountsCli, runProbeFactoryCli, runHistoryCli } from '../src/commands.ts';
 import { runFrom, runRt, runFactory, runCoverage } from '../src/run.ts';
 import { appendHistory, readHistory } from '../src/history.ts';
 
