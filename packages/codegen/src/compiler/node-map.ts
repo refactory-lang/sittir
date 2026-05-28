@@ -60,6 +60,10 @@ import {
 	type ParseKindCollisionDiagnostic,
 	type ParseKindCollisionValue
 } from './diagnose-parsekind-collisions.ts';
+import {
+	describeDeriveShape,
+	type DeriveShapeDiagnostic
+} from './diagnose-derive-shapes.ts';
 
 // ---------------------------------------------------------------------------
 // NodeOrTerminal — unified slot-content type
@@ -93,6 +97,31 @@ export function resetParseKindCollisionDiagnostics(): void {
 export function drainParseKindCollisionDiagnostics(): ParseKindCollisionDiagnostic[] {
 	const out = [..._parseKindCollisionDiagnostics];
 	resetParseKindCollisionDiagnostics();
+	return out;
+}
+
+// ---------------------------------------------------------------------------
+// Derive-shape diagnostic accumulator (mirrors parseKindCollisions pattern)
+// ---------------------------------------------------------------------------
+
+const _deriveShapeDiagnostics: DeriveShapeDiagnostic[] = [];
+const _deriveShapeSeen = new Set<string>();
+
+function recordDeriveShapeDiagnostic(d: DeriveShapeDiagnostic): void {
+	const key = `${d.code}|${d.ownerKind ?? ''}|${d.details.rawShape}|${d.details.context}`;
+	if (_deriveShapeSeen.has(key)) return;
+	_deriveShapeSeen.add(key);
+	_deriveShapeDiagnostics.push(d);
+}
+
+export function resetDeriveShapeDiagnostics(): void {
+	_deriveShapeDiagnostics.length = 0;
+	_deriveShapeSeen.clear();
+}
+
+export function drainDeriveShapeDiagnostics(): DeriveShapeDiagnostic[] {
+	const out = [..._deriveShapeDiagnostics];
+	resetDeriveShapeDiagnostics();
 	return out;
 }
 
@@ -553,15 +582,18 @@ function auditDerivationShape(rule: Rule, context: 'fields' | 'children'): void 
 	if (mode === 'off') return;
 	const shape = classifyTopLevelShape(rule);
 	if (shape === 'canonical') return;
-	if (mode === 'strict') {
-		const kindLabel = currentAuditKind ?? '(no-kind-context)';
-		throw new Error(
-			`derive: non-canonical shape '${shape}' reached ${context} derivation for '${kindLabel}'. ` +
-				`The Phase-2 walker assumes canonical input; fix the shape upstream (simplify pass, ` +
-				`variant() adoption in overrides.ts, or audit classifier) before regenerating. ` +
-				`Set SITTIR_AUDIT_DERIVE=1 to downgrade this to the accumulator/report mode.`
-		);
-	}
+	// Record a structured diagnostic and continue — the old strict-mode throw
+	// is replaced by accumulation so codegen completes and the preflight can
+	// surface all derive-shape issues in a single pass. drainDeriveShapeDiagnostics()
+	// is called by assemble() to attach them to AssembledNodeMap.
+	recordDeriveShapeDiagnostic(
+		describeDeriveShape({
+			rawShape: shape,
+			ruleType: rule.type,
+			context,
+			ownerKind: currentAuditKind,
+		})
+	);
 	const key = `${context}:${shape}`;
 	auditCounts.set(key, (auditCounts.get(key) ?? 0) + 1);
 	if (currentAuditKind !== undefined) {

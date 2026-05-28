@@ -6,6 +6,7 @@ import {
 	collectGrammarDiagnosticsForGrammar,
 	GrammarDiagnosticError
 } from '../compiler/grammar-diagnostics.ts';
+import type { DeriveShapeDiagnostic } from '../compiler/diagnose-derive-shapes.ts';
 import type { RawGrammar } from '../compiler/types.ts';
 
 function buildRawGrammar(rules: Record<string, unknown>): RawGrammar {
@@ -86,6 +87,31 @@ describe('grammar diagnostics preflight', () => {
 		expect(result.nodeMap.parseKindCollisions).toEqual([]);
 		expect(result.diagnostics).toEqual([]);
 		expect(slot?.values).toHaveLength(1);
+	});
+
+	it('includes derive-shape diagnostics in the shared batch', () => {
+		const deriveD: DeriveShapeDiagnostic = {
+			code: 'seq-with-nested-seq',
+			severity: 'error',
+			ownerKind: 'host',
+			message: "Kind 'host' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+			canProceed: false,
+			details: { rawShape: 'seq-with-nested-seq', ruleType: 'seq', context: 'fields' },
+		};
+		const result = collectGrammarDiagnostics({
+			grammar: 'synth',
+			parseKindCollisions: [],
+			deriveShapeDiagnostics: [deriveD],
+		});
+		expect(result.diagnostics).toEqual([
+			expect.objectContaining({
+				scope: 'grammar',
+				code: 'seq-with-nested-seq',
+				grammar: 'synth',
+				ownerKind: 'host',
+				canProceed: true,
+			}),
+		]);
 	});
 
 	it('captures diagnostic codes in GrammarDiagnosticError', () => {

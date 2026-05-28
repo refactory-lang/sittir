@@ -43,6 +43,7 @@ import {
 	AssembledGroup,
 	AssembledMulti,
 	drainParseKindCollisionDiagnostics,
+	drainDeriveShapeDiagnostics,
 	hasAnyField,
 	hasAnyChild,
 	nameNode,
@@ -54,15 +55,18 @@ import {
 	allSlotsOf,
 	type ParseKindCollisionContext,
 	resetParseKindCollisionDiagnostics,
+	resetDeriveShapeDiagnostics,
 	setOptionalBodyKinds,
 	buildParseKindRuleSignatures
 } from './node-map.ts';
 import { simplifyRule, inlineRefs, extractRepeatShape, hoistInnerFieldsForTemplate } from './simplify.ts';
 import { compileWordMatcher } from './common.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnose-parsekind-collisions.ts';
+import type { DeriveShapeDiagnostic } from './diagnose-derive-shapes.ts';
 
 export interface AssembledNodeMap extends NodeMap {
 	readonly parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
+	readonly deriveShapeDiagnostics: readonly DeriveShapeDiagnostic[];
 }
 
 // ---------------------------------------------------------------------------
@@ -77,6 +81,7 @@ export function assemble(
 	const wordMatcher = compileWordMatcher(optimized.word, optimized.rules);
 	const kindEntries = collectGeneratedKindEntries(generatedIdTables);
 	resetParseKindCollisionDiagnostics();
+	resetDeriveShapeDiagnostics();
 	// Parents that went through Link's variant() push-down keep their
 	// original rule shape but should NOT auto-promote to polymorph —
 	// each variant child renders via its own kind-template.
@@ -309,10 +314,12 @@ export function assemble(
 			externals: optimized.externals ? new Set(optimized.externals) : undefined,
 			polymorphFormKinds: computePolymorphFormKinds(nodes),
 			refineForms: optimized.refineForms,
-			parseKindCollisions: drainParseKindCollisionDiagnostics()
+			parseKindCollisions: drainParseKindCollisionDiagnostics(),
+			deriveShapeDiagnostics: drainDeriveShapeDiagnostics()
 		};
 	} finally {
 		resetParseKindCollisionDiagnostics();
+		resetDeriveShapeDiagnostics();
 		setOptionalBodyKinds(null);
 	}
 }

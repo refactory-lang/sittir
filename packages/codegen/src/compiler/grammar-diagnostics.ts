@@ -2,6 +2,7 @@ import { assemble, type AssembledNodeMap } from './assemble.ts';
 import { link } from './link.ts';
 import { optimize } from './optimize.ts';
 import type { ParseKindCollisionDiagnostic } from './diagnose-parsekind-collisions.ts';
+import type { DeriveShapeDiagnostic } from './diagnose-derive-shapes.ts';
 import type { RawGrammar } from './types.ts';
 import type { GrammarDiagnostic } from './diagnostics.ts';
 
@@ -44,15 +45,37 @@ export function fromParseKindCollision(
 	};
 }
 
+export function fromDeriveShape(
+	grammar: string,
+	diagnostic: DeriveShapeDiagnostic
+): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: diagnostic.code,
+		severity: diagnostic.severity,
+		grammar,
+		ownerKind: diagnostic.ownerKind ?? '(no-kind-context)',
+		message: diagnostic.message,
+		proposal: diagnostic.proposal,
+		// canProceed: true — derive-shape issues are surfaced as informational
+		// warnings; codegen continues so all issues are visible in one pass.
+		canProceed: true,
+		details: diagnostic.details
+	};
+}
+
 export function collectGrammarDiagnostics(input: {
 	grammar: string;
 	parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
+	deriveShapeDiagnostics?: readonly DeriveShapeDiagnostic[];
 }): { diagnostics: readonly GrammarDiagnostic[] } {
-	return {
-		diagnostics: input.parseKindCollisions.map((diagnostic) =>
-			fromParseKindCollision(input.grammar, diagnostic)
-		)
-	};
+	const parseKindMapped = input.parseKindCollisions.map((diagnostic) =>
+		fromParseKindCollision(input.grammar, diagnostic)
+	);
+	const deriveShapeMapped = (input.deriveShapeDiagnostics ?? []).map((diagnostic) =>
+		fromDeriveShape(input.grammar, diagnostic)
+	);
+	return { diagnostics: [...parseKindMapped, ...deriveShapeMapped] };
 }
 
 export function collectGrammarDiagnosticsForGrammar(input: {
@@ -63,7 +86,8 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		nodeMap,
 		diagnostics: collectGrammarDiagnostics({
 			grammar: input.rawGrammar.name,
-			parseKindCollisions: nodeMap.parseKindCollisions
+			parseKindCollisions: nodeMap.parseKindCollisions,
+			deriveShapeDiagnostics: nodeMap.deriveShapeDiagnostics
 		}).diagnostics
 	};
 }
