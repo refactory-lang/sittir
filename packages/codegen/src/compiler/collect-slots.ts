@@ -39,7 +39,6 @@ import {
 	AssembledNonterminal,
 	type NodeOrTerminal,
 	deriveValuesForRule,
-	deriveAliasSources,
 	dedupeValues,
 	extractSeparatorString,
 	mergeSourceRuleIds,
@@ -215,10 +214,6 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 				hasTrailing: prev.hasTrailing || slot.hasTrailing,
 				hasLeading: prev.hasLeading || slot.hasLeading,
 				sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, slot.sourceRuleIds),
-				aliasSources:
-					prev.aliasSources || slot.aliasSources
-						? { ...prev.aliasSources, ...slot.aliasSources }
-						: undefined,
 			}));
 		}
 	}
@@ -426,14 +421,11 @@ function buildSlot(
 	const separatorStr = isMultiSlot ? extractSeparatorString(sep) : undefined;
 	const values: readonly NodeOrTerminal[] = stampSeparatorOnValues([...dedupedValues], separatorStr);
 
-	const aliasSources = deriveAliasSources(rule);
-
 	return new AssembledNonterminal({
 		values,
 		fieldName: rule.fieldName,
 		hasTrailing,
 		hasLeading,
-		aliasSources: Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
 		source,
 		...(origin ? { origin } : {}),
 		sourceRuleIds: rule.id ? [rule.id] : [],

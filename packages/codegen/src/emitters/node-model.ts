@@ -38,6 +38,8 @@ interface SerializedValue {
 	multiplicity: string;
 	/** for node-ref: target kind name */
 	name?: string;
+	/** CST kind / alias target when it differs from the storage kind */
+	parseKind?: string;
 	/** for node-ref: true when the ref was not resolved to an AssembledNode */
 	unresolved?: boolean;
 	/** for terminal: string value */
@@ -57,7 +59,6 @@ interface SerializedField extends SerializedSlot {
 	paramName: string;
 	source: 'grammar' | 'override' | 'promoted' | 'inlined' | 'enriched' | 'inferred';
 	projection: { typeName: string; kinds: string[] };
-	aliasSources?: Record<string, string>;
 }
 
 interface SerializedForm {
@@ -333,9 +334,6 @@ function serializeField(field: AssembledNonterminal): SerializedField {
 			kinds: [...kindsOf(field)]
 		}
 	};
-	if (field.aliasSources && Object.keys(field.aliasSources).length > 0) {
-		out.aliasSources = { ...field.aliasSources };
-	}
 	return out;
 }
 
@@ -358,14 +356,17 @@ function serializeValue(v: NodeOrTerminal): SerializedValue {
 			multiplicity: v.multiplicity,
 			name
 		};
+		if (v.parseKind?.name !== undefined) out.parseKind = v.parseKind.name;
 		if (isUnresolvedRef(v.node)) out.unresolved = true;
 		return out;
 	}
-	return {
+	const out: SerializedValue = {
 		kind: 'terminal',
 		multiplicity: v.multiplicity,
 		value: v.value
 	};
+	if (v.parseKind?.name !== undefined) out.parseKind = v.parseKind.name;
+	return out;
 }
 
 /**

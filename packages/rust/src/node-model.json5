@@ -451,6 +451,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "parseKind": "attribute_item",
               "unresolved": true
             }
           ],
@@ -474,6 +475,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_attributed_argument",
+              "parseKind": "attributed_argument",
               "unresolved": true
             }
           ],
@@ -483,9 +485,6 @@
             "kinds": [
               "_attributed_argument"
             ]
-          },
-          "aliasSources": {
-            "attributed_argument": "_attributed_argument"
           }
         }
       ],
@@ -512,6 +511,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "parseKind": "attribute_item",
               "unresolved": true
             }
           ],
@@ -535,6 +535,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -558,6 +559,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -593,6 +595,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -627,6 +630,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "parseKind": "attribute_item",
               "unresolved": true
             }
           ],
@@ -650,6 +654,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -684,6 +689,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "parseKind": "attribute_item",
               "unresolved": true
             }
           ],
@@ -707,6 +713,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "enum_variant",
+              "parseKind": "enum_variant",
               "unresolved": true
             }
           ],
@@ -741,6 +748,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "parseKind": "attribute_item",
               "unresolved": true
             }
           ],
@@ -764,6 +772,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "field_declaration",
+              "parseKind": "field_declaration",
               "unresolved": true
             }
           ],
@@ -799,6 +808,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "parseKind": "attribute_item",
               "unresolved": true
             }
           ],
@@ -822,6 +832,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
               "unresolved": true
             }
           ],
@@ -845,6 +856,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -879,6 +891,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "attribute_item",
+              "parseKind": "attribute_item",
               "unresolved": true
             }
           ],
@@ -902,29 +915,34 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "parameter",
+              "parseKind": "parameter",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "self_parameter",
+              "parseKind": "self_parameter",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "variadic_parameter",
+              "parseKind": "variadic_parameter",
               "unresolved": true
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "_"
+              "value": "_",
+              "parseKind": "_"
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -962,6 +980,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "parseKind": "attribute_item",
               "unresolved": true
             }
           ],
@@ -985,24 +1004,28 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "metavariable",
+              "parseKind": "metavariable",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "type_parameter",
+              "parseKind": "type_parameter",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "lifetime_parameter",
+              "parseKind": "lifetime_parameter",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "const_parameter",
+              "parseKind": "const_parameter",
               "unresolved": true
             }
           ],
@@ -1062,6 +1085,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -1085,6 +1109,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
@@ -1119,12 +1144,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "_"
+              "value": "_",
+              "parseKind": "_"
             }
           ],
           "source": "grammar",
@@ -1247,6 +1274,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -1282,24 +1310,28 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_literal",
+              "parseKind": "_literal",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "negative_literal",
+              "parseKind": "negative_literal",
               "unresolved": true
             }
           ],
@@ -1367,6 +1399,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_delim_tokens",
+              "parseKind": "_delim_tokens",
               "unresolved": true
             }
           ],
@@ -1401,6 +1434,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_delim_tokens",
+              "parseKind": "_delim_tokens",
               "unresolved": true
             }
           ],
@@ -1435,6 +1469,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_delim_tokens",
+              "parseKind": "_delim_tokens",
               "unresolved": true
             }
           ],
@@ -1494,6 +1529,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -1667,6 +1703,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression_ending_with_block",
+              "parseKind": "_expression_ending_with_block",
               "unresolved": true
             }
           ],
@@ -1701,6 +1738,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -1736,6 +1774,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ],
@@ -1780,6 +1819,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "field_identifier",
               "unresolved": true
             }
           ],
@@ -1789,9 +1829,6 @@
             "kinds": [
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "field_identifier": "identifier"
           }
         },
         {
@@ -1806,6 +1843,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -1851,6 +1889,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "shorthand_field_identifier",
               "unresolved": true
             }
           ],
@@ -1860,9 +1899,6 @@
             "kinds": [
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "shorthand_field_identifier": "identifier"
           }
         }
       ],
@@ -1889,6 +1925,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "label",
+              "parseKind": "label",
               "unresolved": true
             }
           ],
@@ -1923,6 +1960,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "declaration_list",
+              "parseKind": "declaration_list",
               "unresolved": true
             }
           ],
@@ -1968,6 +2006,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -2003,6 +2042,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -2037,6 +2077,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "function_modifiers",
+              "parseKind": "function_modifiers",
               "unresolved": true
             }
           ],
@@ -2071,12 +2112,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "scoped_type_identifier",
+              "parseKind": "scoped_type_identifier",
               "unresolved": true
             }
           ],
@@ -2087,9 +2130,6 @@
               "identifier",
               "scoped_type_identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         }
       ],
@@ -2115,6 +2155,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "declaration_list",
+              "parseKind": "declaration_list",
               "unresolved": true
             }
           ],
@@ -2285,6 +2326,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_let_chain",
+              "parseKind": "_let_chain",
               "unresolved": true
             }
           ],
@@ -2308,6 +2350,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "let_condition",
+              "parseKind": "let_condition",
               "unresolved": true
             }
           ],
@@ -2331,6 +2374,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -2366,6 +2410,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -2401,6 +2446,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -2436,6 +2482,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
@@ -2480,6 +2527,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_outer_line_doc_comment_marker",
+              "parseKind": "outer_doc_comment_marker",
               "unresolved": true
             }
           ],
@@ -2489,9 +2537,6 @@
             "kinds": [
               "_outer_line_doc_comment_marker"
             ]
-          },
-          "aliasSources": {
-            "outer_doc_comment_marker": "_outer_line_doc_comment_marker"
           }
         },
         {
@@ -2506,6 +2551,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_inner_line_doc_comment_marker",
+              "parseKind": "inner_doc_comment_marker",
               "unresolved": true
             }
           ],
@@ -2515,9 +2561,6 @@
             "kinds": [
               "_inner_line_doc_comment_marker"
             ]
-          },
-          "aliasSources": {
-            "inner_doc_comment_marker": "_inner_line_doc_comment_marker"
           }
         },
         {
@@ -2532,6 +2575,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_line_doc_content",
+              "parseKind": "doc_comment",
               "unresolved": true
             }
           ],
@@ -2541,9 +2585,6 @@
             "kinds": [
               "_line_doc_content"
             ]
-          },
-          "aliasSources": {
-            "doc_comment": "_line_doc_content"
           }
         }
       ],
@@ -2617,6 +2658,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "label",
+              "parseKind": "label",
               "unresolved": true
             }
           ],
@@ -2651,12 +2693,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "macro_rule",
+              "parseKind": "macro_rule",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "macro_rule",
+              "parseKind": "macro_rule",
               "unresolved": true
             }
           ],
@@ -2691,12 +2735,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "macro_rule",
+              "parseKind": "macro_rule",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "macro_rule",
+              "parseKind": "macro_rule",
               "unresolved": true
             }
           ],
@@ -2731,12 +2777,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "macro_rule",
+              "parseKind": "macro_rule",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "macro_rule",
+              "parseKind": "macro_rule",
               "unresolved": true
             }
           ],
@@ -2771,6 +2819,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression_ending_with_block",
+              "parseKind": "_expression_ending_with_block",
               "unresolved": true
             }
           ],
@@ -2806,6 +2855,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -2841,6 +2891,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_condition",
+              "parseKind": "_condition",
               "unresolved": true
             }
           ],
@@ -2885,6 +2936,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "declaration_list",
+              "parseKind": "declaration_list",
               "unresolved": true
             }
           ],
@@ -2963,408 +3015,488 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_literal",
+              "parseKind": "_literal",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "self",
+              "parseKind": "self",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "super",
+              "parseKind": "super",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "crate",
+              "parseKind": "crate",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_primitive_type",
+              "parseKind": "primitive_type",
               "unresolved": true
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "+"
+              "value": "+",
+              "parseKind": "plus"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "-"
+              "value": "-",
+              "parseKind": "dash"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "*"
+              "value": "*",
+              "parseKind": "star"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "/"
+              "value": "/",
+              "parseKind": "slash"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "%"
+              "value": "%",
+              "parseKind": "percent"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "^"
+              "value": "^",
+              "parseKind": "caret"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "!"
+              "value": "!",
+              "parseKind": "bang"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "&"
+              "value": "&",
+              "parseKind": "amp"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "|"
+              "value": "|",
+              "parseKind": "pipe"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "&&"
+              "value": "&&",
+              "parseKind": "amp_amp"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "||"
+              "value": "||",
+              "parseKind": "pipe_pipe"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "<<"
+              "value": "<<",
+              "parseKind": "lt_lt"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": ">>"
+              "value": ">>",
+              "parseKind": "gt_gt"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "+="
+              "value": "+=",
+              "parseKind": "plus_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "-="
+              "value": "-=",
+              "parseKind": "dash_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "*="
+              "value": "*=",
+              "parseKind": "star_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "/="
+              "value": "/=",
+              "parseKind": "slash_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "%="
+              "value": "%=",
+              "parseKind": "percent_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "^="
+              "value": "^=",
+              "parseKind": "caret_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "&="
+              "value": "&=",
+              "parseKind": "amp_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "|="
+              "value": "|=",
+              "parseKind": "pipe_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "<<="
+              "value": "<<=",
+              "parseKind": "lt_lt_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": ">>="
+              "value": ">>=",
+              "parseKind": "gt_gt_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "="
+              "value": "=",
+              "parseKind": "eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "=="
+              "value": "==",
+              "parseKind": "eq_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "!="
+              "value": "!=",
+              "parseKind": "bang_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": ">"
+              "value": ">",
+              "parseKind": "gt"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "<"
+              "value": "<",
+              "parseKind": "lt"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": ">="
+              "value": ">=",
+              "parseKind": "gt_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "<="
+              "value": "<=",
+              "parseKind": "lt_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "@"
+              "value": "@",
+              "parseKind": "at"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "_"
+              "value": "_",
+              "parseKind": "_"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "."
+              "value": ".",
+              "parseKind": "dot"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": ".."
+              "value": "..",
+              "parseKind": "dot_dot"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "..."
+              "value": "...",
+              "parseKind": "dot_dot_dot"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "..="
+              "value": "..=",
+              "parseKind": "dot_dot_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": ","
+              "value": ",",
+              "parseKind": "comma"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": ";"
+              "value": ";",
+              "parseKind": "semi"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": ":"
+              "value": ":",
+              "parseKind": "colon"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "::"
+              "value": "::",
+              "parseKind": "colon_colon"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "->"
+              "value": "->",
+              "parseKind": "dash_gt"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "=>"
+              "value": "=>",
+              "parseKind": "eq_gt"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "#"
+              "value": "#",
+              "parseKind": "pound"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "?"
+              "value": "?",
+              "parseKind": "qmark"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "'"
+              "value": "'",
+              "parseKind": "squote"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "as"
+              "value": "as",
+              "parseKind": "as"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "async"
+              "value": "async",
+              "parseKind": "async"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "await"
+              "value": "await",
+              "parseKind": "await"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "break"
+              "value": "break",
+              "parseKind": "break"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "const"
+              "value": "const",
+              "parseKind": "const"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "continue"
+              "value": "continue",
+              "parseKind": "continue"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "default"
+              "value": "default",
+              "parseKind": "default"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "enum"
+              "value": "enum",
+              "parseKind": "enum"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "fn"
+              "value": "fn",
+              "parseKind": "fn"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "for"
+              "value": "for",
+              "parseKind": "for"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "gen"
+              "value": "gen",
+              "parseKind": "gen"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "if"
+              "value": "if",
+              "parseKind": "if"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "impl"
+              "value": "impl",
+              "parseKind": "impl"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "let"
+              "value": "let",
+              "parseKind": "let"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "loop"
+              "value": "loop",
+              "parseKind": "loop"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "match"
+              "value": "match",
+              "parseKind": "match"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "mod"
+              "value": "mod",
+              "parseKind": "mod"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "pub"
+              "value": "pub",
+              "parseKind": "pub"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "return"
+              "value": "return",
+              "parseKind": "return"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "static"
+              "value": "static",
+              "parseKind": "static"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "struct"
+              "value": "struct",
+              "parseKind": "struct"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "trait"
+              "value": "trait",
+              "parseKind": "trait"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "type"
+              "value": "type",
+              "parseKind": "type"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "union"
+              "value": "union",
+              "parseKind": "union"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "unsafe"
+              "value": "unsafe",
+              "parseKind": "unsafe"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "use"
+              "value": "use",
+              "parseKind": "use"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "where"
+              "value": "where",
+              "parseKind": "where"
             },
             {
               "kind": "terminal",
               "multiplicity": "array",
-              "value": "while"
+              "value": "while",
+              "parseKind": "while"
             }
           ],
           "source": "inferred",
@@ -3379,9 +3511,6 @@
               "crate",
               "_primitive_type"
             ]
-          },
-          "aliasSources": {
-            "primitive_type": "_primitive_type"
           }
         }
       ],
@@ -3431,6 +3560,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -3454,6 +3584,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -3489,6 +3620,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -3607,6 +3739,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
@@ -3670,6 +3803,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_operator__x2ex2e",
+              "parseKind": "_operator__x2ex2e",
               "unresolved": true
             }
           ],
@@ -3705,6 +3839,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -3728,6 +3863,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "__range_expression_binary_operator",
+              "parseKind": "__range_expression_binary_operator",
               "unresolved": true
             }
           ],
@@ -3751,6 +3887,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -3786,6 +3923,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -3809,6 +3947,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_operator__x2ex2e",
+              "parseKind": "_operator__x2ex2e",
               "unresolved": true
             }
           ],
@@ -3844,6 +3983,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_operator__x2ex2e",
+              "parseKind": "_operator__x2ex2e",
               "unresolved": true
             }
           ],
@@ -3867,6 +4007,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -3911,17 +4052,20 @@
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "..."
+              "value": "...",
+              "parseKind": "dot_dot_dot"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "..="
+              "value": "..=",
+              "parseKind": "dot_dot_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": ".."
+              "value": "..",
+              "parseKind": "dot_dot"
             }
           ],
           "source": "grammar",
@@ -3942,12 +4086,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_literal_pattern",
+              "parseKind": "_literal_pattern",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_path",
+              "parseKind": "_path",
               "unresolved": true
             }
           ],
@@ -3983,12 +4129,14 @@
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "..="
+              "value": "..=",
+              "parseKind": "dot_dot_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": ".."
+              "value": "..",
+              "parseKind": "dot_dot"
             }
           ],
           "source": "grammar",
@@ -4009,12 +4157,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_literal_pattern",
+              "parseKind": "_literal_pattern",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_path",
+              "parseKind": "_path",
               "unresolved": true
             }
           ],
@@ -4103,6 +4253,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
@@ -4183,6 +4334,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "where_clause",
+              "parseKind": "where_clause",
               "unresolved": true
             }
           ],
@@ -4206,6 +4358,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "field_declaration_list",
+              "parseKind": "field_declaration_list",
               "unresolved": true
             }
           ],
@@ -4241,6 +4394,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "ordered_field_declaration_list",
+              "parseKind": "ordered_field_declaration_list",
               "unresolved": true
             }
           ],
@@ -4264,6 +4418,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "where_clause",
+              "parseKind": "where_clause",
               "unresolved": true
             }
           ],
@@ -4358,6 +4513,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_tokens",
+              "parseKind": "_tokens",
               "unresolved": true
             }
           ],
@@ -4392,6 +4548,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_tokens",
+              "parseKind": "_tokens",
               "unresolved": true
             }
           ],
@@ -4426,6 +4583,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_tokens",
+              "parseKind": "_tokens",
               "unresolved": true
             }
           ],
@@ -4460,6 +4618,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_token_pattern",
+              "parseKind": "_token_pattern",
               "unresolved": true
             }
           ],
@@ -4494,6 +4653,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_token_pattern",
+              "parseKind": "_token_pattern",
               "unresolved": true
             }
           ],
@@ -4528,6 +4688,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_token_pattern",
+              "parseKind": "_token_pattern",
               "unresolved": true
             }
           ],
@@ -4612,30 +4773,35 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "type_binding",
+              "parseKind": "type_binding",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "lifetime",
+              "parseKind": "lifetime",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_literal",
+              "parseKind": "_literal",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
@@ -4663,6 +4829,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "trait_bounds",
+              "parseKind": "trait_bounds",
               "unresolved": true
             }
           ],
@@ -4697,6 +4864,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_argument",
+              "parseKind": "type_argument",
               "unresolved": true
             }
           ],
@@ -4706,9 +4874,6 @@
             "kinds": [
               "_type_argument"
             ]
-          },
-          "aliasSources": {
-            "type_argument": "_type_argument"
           }
         }
       ],
@@ -4744,6 +4909,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -4778,6 +4944,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_attributed_type_parameter",
+              "parseKind": "attributed_type_parameter",
               "unresolved": true
             }
           ],
@@ -4787,9 +4954,6 @@
             "kinds": [
               "_attributed_type_parameter"
             ]
-          },
-          "aliasSources": {
-            "attributed_type_parameter": "_attributed_type_parameter"
           }
         }
       ],
@@ -4861,6 +5025,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "crate",
+              "parseKind": "crate",
               "unresolved": true
             }
           ],
@@ -4895,7 +5060,8 @@
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "in"
+              "value": "in",
+              "parseKind": "in"
             }
           ],
           "source": "grammar",
@@ -4916,6 +5082,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_path",
+              "parseKind": "_path",
               "unresolved": true
             }
           ],
@@ -4952,7 +5119,8 @@
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "pub"
+              "value": "pub",
+              "parseKind": "pub"
             }
           ],
           "source": "grammar",
@@ -4973,6 +5141,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_visibility_modifier_pub_parens",
+              "parseKind": "_visibility_modifier_pub_parens",
               "unresolved": true
             }
           ],
@@ -5008,24 +5177,28 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "self",
+              "parseKind": "self",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "super",
+              "parseKind": "super",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "crate",
+              "parseKind": "crate",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_visibility_modifier_in_path",
+              "parseKind": "visibility_modifier_in_path",
               "unresolved": true
             }
           ],
@@ -5038,9 +5211,6 @@
               "crate",
               "_visibility_modifier_in_path"
             ]
-          },
-          "aliasSources": {
-            "visibility_modifier_in_path": "_visibility_modifier_in_path"
           }
         }
       ],
@@ -5067,6 +5237,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "label",
+              "parseKind": "label",
               "unresolved": true
             }
           ],
@@ -5112,6 +5283,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "type_parameters",
+              "parseKind": "type_parameters",
               "unresolved": true
             }
           ],
@@ -5135,42 +5307,49 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "scoped_type_identifier",
+              "parseKind": "scoped_type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "removed_trait_bound",
+              "parseKind": "removed_trait_bound",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "generic_type",
+              "parseKind": "generic_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "function_type",
+              "parseKind": "function_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "tuple_type",
+              "parseKind": "tuple_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "bounded_type",
+              "parseKind": "bounded_type",
               "unresolved": true
             }
           ],
@@ -5186,9 +5365,6 @@
               "tuple_type",
               "bounded_type"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         }
       ],
@@ -5234,6 +5410,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_attributed_argument",
+              "parseKind": "attributed_argument",
               "unresolved": true
             }
           ],
@@ -5243,9 +5420,6 @@
             "kinds": [
               "_attributed_argument"
             ]
-          },
-          "aliasSources": {
-            "attributed_argument": "_attributed_argument"
           }
         }
       ],
@@ -5285,6 +5459,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_array_expression_semi",
+                  "parseKind": "array_expression_semi",
                   "unresolved": true
                 }
               ],
@@ -5294,9 +5469,6 @@
                 "kinds": [
                   "_array_expression_semi"
                 ]
-              },
-              "aliasSources": {
-                "array_expression_semi": "_array_expression_semi"
               }
             }
           ],
@@ -5322,6 +5494,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_array_expression_list",
+                  "parseKind": "array_expression_list",
                   "unresolved": true
                 }
               ],
@@ -5331,9 +5504,6 @@
                 "kinds": [
                   "_array_expression_list"
                 ]
-              },
-              "aliasSources": {
-                "array_expression_list": "_array_expression_list"
               }
             }
           ],
@@ -5361,6 +5531,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -5384,6 +5555,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -5428,6 +5600,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -5451,6 +5624,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -5485,6 +5659,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             }
           ],
@@ -5494,9 +5669,6 @@
             "kinds": [
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         },
         {
@@ -5511,6 +5683,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "type_parameters",
+              "parseKind": "type_parameters",
               "unresolved": true
             }
           ],
@@ -5534,6 +5707,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "trait_bounds",
+              "parseKind": "trait_bounds",
               "unresolved": true
             }
           ],
@@ -5557,6 +5731,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "where_clause",
+              "parseKind": "where_clause",
               "unresolved": true
             }
           ],
@@ -5601,6 +5776,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_move_marker",
+              "parseKind": "_move_marker",
               "unresolved": true
             }
           ],
@@ -5624,6 +5800,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
@@ -5658,6 +5835,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_path",
+              "parseKind": "_path",
               "unresolved": true
             }
           ],
@@ -5681,6 +5859,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -5704,6 +5883,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "delim_token_tree",
+              "parseKind": "token_tree",
               "unresolved": true
             }
           ],
@@ -5713,9 +5893,6 @@
             "kinds": [
               "delim_token_tree"
             ]
-          },
-          "aliasSources": {
-            "token_tree": "delim_token_tree"
           }
         }
       ],
@@ -5741,6 +5918,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "attribute",
+              "parseKind": "attribute",
               "unresolved": true
             }
           ],
@@ -5785,6 +5963,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -5819,6 +5998,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -5853,6 +6033,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -5875,92 +6056,110 @@
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "&&"
+              "value": "&&",
+              "parseKind": "amp_amp"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "||"
+              "value": "||",
+              "parseKind": "pipe_pipe"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "&"
+              "value": "&",
+              "parseKind": "amp"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "|"
+              "value": "|",
+              "parseKind": "pipe"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "^"
+              "value": "^",
+              "parseKind": "caret"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "=="
+              "value": "==",
+              "parseKind": "eq_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "!="
+              "value": "!=",
+              "parseKind": "bang_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "<"
+              "value": "<",
+              "parseKind": "lt"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "<="
+              "value": "<=",
+              "parseKind": "lt_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": ">"
+              "value": ">",
+              "parseKind": "gt"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": ">="
+              "value": ">=",
+              "parseKind": "gt_eq"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "<<"
+              "value": "<<",
+              "parseKind": "lt_lt"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": ">>"
+              "value": ">>",
+              "parseKind": "gt_gt"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "+"
+              "value": "+",
+              "parseKind": "plus"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "-"
+              "value": "-",
+              "parseKind": "dash"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "*"
+              "value": "*",
+              "parseKind": "star"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "/"
+              "value": "/",
+              "parseKind": "slash"
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "%"
+              "value": "%",
+              "parseKind": "percent"
             }
           ],
           "source": "grammar",
@@ -5981,6 +6180,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -6015,6 +6215,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "label",
+              "parseKind": "label",
               "unresolved": true
             }
           ],
@@ -6038,6 +6239,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_statement",
+              "parseKind": "_statement",
               "unresolved": true
             }
           ],
@@ -6061,6 +6263,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -6095,6 +6298,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_outer_block_doc_comment_marker",
+              "parseKind": "outer_doc_comment_marker",
               "unresolved": true
             }
           ],
@@ -6104,9 +6308,6 @@
             "kinds": [
               "_outer_block_doc_comment_marker"
             ]
-          },
-          "aliasSources": {
-            "outer_doc_comment_marker": "_outer_block_doc_comment_marker"
           }
         },
         {
@@ -6121,6 +6322,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_inner_block_doc_comment_marker",
+              "parseKind": "inner_doc_comment_marker",
               "unresolved": true
             }
           ],
@@ -6130,9 +6332,6 @@
             "kinds": [
               "_inner_block_doc_comment_marker"
             ]
-          },
-          "aliasSources": {
-            "inner_doc_comment_marker": "_inner_block_doc_comment_marker"
           }
         },
         {
@@ -6147,6 +6346,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_block_comment_content",
+              "parseKind": "doc_comment",
               "unresolved": true
             }
           ],
@@ -6156,9 +6356,6 @@
             "kinds": [
               "_block_comment_content"
             ]
-          },
-          "aliasSources": {
-            "doc_comment": "_block_comment_content"
           }
         }
       ],
@@ -6196,18 +6393,21 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "lifetime",
+              "parseKind": "lifetime",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "use_bounds",
+              "parseKind": "use_bounds",
               "unresolved": true
             }
           ],
@@ -6233,18 +6433,21 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "lifetime",
+              "parseKind": "lifetime",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "use_bounds",
+              "parseKind": "use_bounds",
               "unresolved": true
             }
           ],
@@ -6281,12 +6484,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "qualified_type",
+              "parseKind": "qualified_type",
               "unresolved": true
             }
           ],
@@ -6332,6 +6537,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "label",
+              "parseKind": "label",
               "unresolved": true
             }
           ],
@@ -6355,6 +6561,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -6389,6 +6596,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression_except_range",
+              "parseKind": "_expression_except_range",
               "unresolved": true
             }
           ],
@@ -6412,6 +6620,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "arguments",
+              "parseKind": "arguments",
               "unresolved": true
             }
           ],
@@ -6446,6 +6655,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ],
@@ -6469,6 +6679,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -6535,6 +6746,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_closure_expression_static_marker",
+                  "parseKind": "_closure_expression_static_marker",
                   "unresolved": true
                 }
               ],
@@ -6558,6 +6770,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_closure_expression_async_marker",
+                  "parseKind": "_closure_expression_async_marker",
                   "unresolved": true
                 }
               ],
@@ -6581,6 +6794,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_move_marker",
+                  "parseKind": "_move_marker",
                   "unresolved": true
                 }
               ],
@@ -6604,6 +6818,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "closure_parameters",
+                  "parseKind": "closure_parameters",
                   "unresolved": true
                 }
               ],
@@ -6627,6 +6842,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_closure_expression_block",
+                  "parseKind": "closure_expression_block",
                   "unresolved": true
                 }
               ],
@@ -6636,9 +6852,6 @@
                 "kinds": [
                   "_closure_expression_block"
                 ]
-              },
-              "aliasSources": {
-                "closure_expression_block": "_closure_expression_block"
               }
             }
           ],
@@ -6664,6 +6877,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_closure_expression_static_marker",
+                  "parseKind": "_closure_expression_static_marker",
                   "unresolved": true
                 }
               ],
@@ -6687,6 +6901,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_closure_expression_async_marker",
+                  "parseKind": "_closure_expression_async_marker",
                   "unresolved": true
                 }
               ],
@@ -6710,6 +6925,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_move_marker",
+                  "parseKind": "_move_marker",
                   "unresolved": true
                 }
               ],
@@ -6733,6 +6949,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "closure_parameters",
+                  "parseKind": "closure_parameters",
                   "unresolved": true
                 }
               ],
@@ -6756,6 +6973,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_closure_expression_expr",
+                  "parseKind": "closure_expression_expr",
                   "unresolved": true
                 }
               ],
@@ -6765,9 +6983,6 @@
                 "kinds": [
                   "_closure_expression_expr"
                 ]
-              },
-              "aliasSources": {
-                "closure_expression_expr": "_closure_expression_expr"
               }
             }
           ],
@@ -6795,12 +7010,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             },
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "_"
+              "value": "_",
+              "parseKind": "_"
             }
           ],
           "source": "grammar",
@@ -6834,12 +7051,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "parameter",
+              "parseKind": "parameter",
               "unresolved": true
             }
           ],
@@ -6875,12 +7094,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "line_comment",
+              "parseKind": "line_comment",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block_comment",
+              "parseKind": "block_comment",
               "unresolved": true
             }
           ],
@@ -6916,6 +7137,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -6939,6 +7161,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_compound_assignment_expr_operator",
+              "parseKind": "_compound_assignment_expr_operator",
               "unresolved": true
             }
           ],
@@ -6962,6 +7185,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -7006,6 +7230,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
@@ -7040,6 +7265,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
               "unresolved": true
             }
           ],
@@ -7063,6 +7289,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ],
@@ -7086,6 +7313,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -7109,6 +7337,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_const_item_optional1",
+              "parseKind": "_const_item_optional1",
               "unresolved": true
             }
           ],
@@ -7143,6 +7372,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ],
@@ -7166,6 +7396,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -7189,24 +7420,28 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_literal",
+              "parseKind": "_literal",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "negative_literal",
+              "parseKind": "negative_literal",
               "unresolved": true
             }
           ],
@@ -7254,6 +7489,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "label",
+              "parseKind": "label",
               "unresolved": true
             }
           ],
@@ -7299,6 +7535,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_declaration_statement",
+              "parseKind": "_declaration_statement",
               "unresolved": true
             }
           ],
@@ -7358,6 +7595,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_delim_token_tree_paren",
+                  "parseKind": "delim_token_tree_paren",
                   "unresolved": true
                 }
               ],
@@ -7367,9 +7605,6 @@
                 "kinds": [
                   "_delim_token_tree_paren"
                 ]
-              },
-              "aliasSources": {
-                "delim_token_tree_paren": "_delim_token_tree_paren"
               }
             }
           ],
@@ -7395,6 +7630,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_delim_token_tree_bracket",
+                  "parseKind": "delim_token_tree_bracket",
                   "unresolved": true
                 }
               ],
@@ -7404,9 +7640,6 @@
                 "kinds": [
                   "_delim_token_tree_bracket"
                 ]
-              },
-              "aliasSources": {
-                "delim_token_tree_bracket": "_delim_token_tree_bracket"
               }
             }
           ],
@@ -7432,6 +7665,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_delim_token_tree_brace",
+                  "parseKind": "delim_token_tree_brace",
                   "unresolved": true
                 }
               ],
@@ -7441,9 +7675,6 @@
                 "kinds": [
                   "_delim_token_tree_brace"
                 ]
-              },
-              "aliasSources": {
-                "delim_token_tree_brace": "_delim_token_tree_brace"
               }
             }
           ],
@@ -7471,6 +7702,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_delim_tokens",
+              "parseKind": "_delim_tokens",
               "unresolved": true
             }
           ],
@@ -7505,6 +7737,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_delim_tokens",
+              "parseKind": "_delim_tokens",
               "unresolved": true
             }
           ],
@@ -7539,6 +7772,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_delim_tokens",
+              "parseKind": "_delim_tokens",
               "unresolved": true
             }
           ],
@@ -7583,36 +7817,42 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "higher_ranked_trait_bound",
+              "parseKind": "higher_ranked_trait_bound",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "scoped_type_identifier",
+              "parseKind": "scoped_type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "generic_type",
+              "parseKind": "generic_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "function_type",
+              "parseKind": "function_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "tuple_type",
+              "parseKind": "tuple_type",
               "unresolved": true
             }
           ],
@@ -7627,9 +7867,6 @@
               "function_type",
               "tuple_type"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         }
       ],
@@ -7665,12 +7902,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "if_expression",
+              "parseKind": "if_expression",
               "unresolved": true
             }
           ],
@@ -7726,6 +7965,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
               "unresolved": true
             }
           ],
@@ -7749,6 +7989,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             }
           ],
@@ -7758,9 +7999,6 @@
             "kinds": [
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         },
         {
@@ -7775,6 +8013,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "type_parameters",
+              "parseKind": "type_parameters",
               "unresolved": true
             }
           ],
@@ -7798,6 +8037,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "where_clause",
+              "parseKind": "where_clause",
               "unresolved": true
             }
           ],
@@ -7821,6 +8061,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "enum_variant_list",
+              "parseKind": "enum_variant_list",
               "unresolved": true
             }
           ],
@@ -7855,6 +8096,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
               "unresolved": true
             }
           ],
@@ -7878,6 +8120,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ],
@@ -7901,12 +8144,14 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "field_declaration_list",
+              "parseKind": "field_declaration_list",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "ordered_field_declaration_list",
+              "parseKind": "ordered_field_declaration_list",
               "unresolved": true
             }
           ],
@@ -7931,6 +8176,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -7965,6 +8211,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_attributed_enum_variant",
+              "parseKind": "attributed_enum_variant",
               "unresolved": true
             }
           ],
@@ -7974,9 +8221,6 @@
             "kinds": [
               "_attributed_enum_variant"
             ]
-          },
-          "aliasSources": {
-            "attributed_enum_variant": "_attributed_enum_variant"
           }
         }
       ],
@@ -8024,6 +8268,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_expression_statement_with_semi",
+                  "parseKind": "expression_statement_with_semi",
                   "unresolved": true
                 }
               ],
@@ -8033,9 +8278,6 @@
                 "kinds": [
                   "_expression_statement_with_semi"
                 ]
-              },
-              "aliasSources": {
-                "expression_statement_with_semi": "_expression_statement_with_semi"
               }
             }
           ],
@@ -8061,6 +8303,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_expression_statement_block_ending",
+                  "parseKind": "expression_statement_block_ending",
                   "unresolved": true
                 }
               ],
@@ -8070,9 +8313,6 @@
                 "kinds": [
                   "_expression_statement_block_ending"
                 ]
-              },
-              "aliasSources": {
-                "expression_statement_block_ending": "_expression_statement_block_ending"
               }
             }
           ],
@@ -8100,6 +8340,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression_ending_with_block",
+              "parseKind": "_expression_ending_with_block",
               "unresolved": true
             }
           ],
@@ -8134,6 +8375,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -8178,6 +8420,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
               "unresolved": true
             }
           ],
@@ -8200,7 +8443,8 @@
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "crate"
+              "value": "crate",
+              "parseKind": "crate"
             }
           ],
           "source": "grammar",
@@ -8221,6 +8465,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ],
@@ -8244,6 +8489,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ],
@@ -8278,6 +8524,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "string_literal",
+              "parseKind": "string_literal",
               "unresolved": true
             }
           ],
@@ -8312,6 +8559,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
               "unresolved": true
             }
           ],
@@ -8335,6 +8583,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "field_identifier",
               "unresolved": true
             }
           ],
@@ -8344,9 +8593,6 @@
             "kinds": [
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "field_identifier": "identifier"
           }
         },
         {
@@ -8361,6 +8607,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -8395,6 +8642,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_attributed_field_declaration",
+              "parseKind": "attributed_field_declaration",
               "unresolved": true
             }
           ],
@@ -8404,9 +8652,6 @@
             "kinds": [
               "_attributed_field_declaration"
             ]
-          },
-          "aliasSources": {
-            "attributed_field_declaration": "_attributed_field_declaration"
           }
         }
       ],
@@ -8432,6 +8677,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -8455,12 +8701,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "field_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "integer_literal",
+              "parseKind": "integer_literal",
               "unresolved": true
             }
           ],
@@ -8471,9 +8719,6 @@
               "identifier",
               "integer_literal"
             ]
-          },
-          "aliasSources": {
-            "field_identifier": "identifier"
           }
         }
       ],
@@ -8499,6 +8744,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "parseKind": "attribute_item",
               "unresolved": true
             }
           ],
@@ -8522,12 +8768,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "field_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "integer_literal",
+              "parseKind": "integer_literal",
               "unresolved": true
             }
           ],
@@ -8538,9 +8786,6 @@
               "identifier",
               "integer_literal"
             ]
-          },
-          "aliasSources": {
-            "field_identifier": "identifier"
           }
         },
         {
@@ -8555,6 +8800,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -8589,18 +8835,21 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "shorthand_field_initializer",
+              "parseKind": "shorthand_field_initializer",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "field_initializer",
+              "parseKind": "field_initializer",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "base_field_initializer",
+              "parseKind": "base_field_initializer",
               "unresolved": true
             }
           ],
@@ -8651,6 +8900,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_field_pattern_ref_marker",
+                  "parseKind": "_field_pattern_ref_marker",
                   "unresolved": true
                 }
               ],
@@ -8674,6 +8924,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_mutable_specifier",
+                  "parseKind": "_mutable_specifier",
                   "unresolved": true
                 }
               ],
@@ -8697,6 +8948,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_field_pattern_shorthand",
+                  "parseKind": "field_pattern_shorthand",
                   "unresolved": true
                 }
               ],
@@ -8706,9 +8958,6 @@
                 "kinds": [
                   "_field_pattern_shorthand"
                 ]
-              },
-              "aliasSources": {
-                "field_pattern_shorthand": "_field_pattern_shorthand"
               }
             }
           ],
@@ -8734,6 +8983,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_field_pattern_ref_marker",
+                  "parseKind": "_field_pattern_ref_marker",
                   "unresolved": true
                 }
               ],
@@ -8757,6 +9007,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_mutable_specifier",
+                  "parseKind": "_mutable_specifier",
                   "unresolved": true
                 }
               ],
@@ -8780,6 +9031,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_field_pattern_named",
+                  "parseKind": "field_pattern_named",
                   "unresolved": true
                 }
               ],
@@ -8789,9 +9041,6 @@
                 "kinds": [
                   "_field_pattern_named"
                 ]
-              },
-              "aliasSources": {
-                "field_pattern_named": "_field_pattern_named"
               }
             }
           ],
@@ -8819,6 +9068,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "shorthand_field_identifier",
               "unresolved": true
             }
           ],
@@ -8828,9 +9078,6 @@
             "kinds": [
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "shorthand_field_identifier": "identifier"
           }
         }
       ],
@@ -8884,6 +9131,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_for_expression_optional1",
+              "parseKind": "_for_expression_optional1",
               "unresolved": true
             }
           ],
@@ -8907,6 +9155,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -8930,6 +9179,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -8953,6 +9203,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
@@ -8987,6 +9238,7 @@
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "lifetime",
+              "parseKind": "lifetime",
               "unresolved": true
             }
           ],
@@ -9035,6 +9287,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "visibility_modifier",
+                  "parseKind": "visibility_modifier",
                   "unresolved": true
                 }
               ],
@@ -9058,6 +9311,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "extern_modifier",
+                  "parseKind": "extern_modifier",
                   "unresolved": true
                 }
               ],
@@ -9081,6 +9335,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_foreign_mod_item_semi",
+                  "parseKind": "foreign_mod_item_semi",
                   "unresolved": true
                 }
               ],
@@ -9090,9 +9345,6 @@
                 "kinds": [
                   "_foreign_mod_item_semi"
                 ]
-              },
-              "aliasSources": {
-                "foreign_mod_item_semi": "_foreign_mod_item_semi"
               }
             }
           ],
@@ -9118,6 +9370,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "visibility_modifier",
+                  "parseKind": "visibility_modifier",
                   "unresolved": true
                 }
               ],
@@ -9141,6 +9394,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "extern_modifier",
+                  "parseKind": "extern_modifier",
                   "unresolved": true
                 }
               ],
@@ -9164,6 +9418,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_foreign_mod_item_body",
+                  "parseKind": "foreign_mod_item_body",
                   "unresolved": true
                 }
               ],
@@ -9173,9 +9428,6 @@
                 "kinds": [
                   "_foreign_mod_item_body"
                 ]
-              },
-              "aliasSources": {
-                "foreign_mod_item_body": "_foreign_mod_item_body"
               }
             }
           ],
@@ -9203,6 +9455,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "declaration_list",
+              "parseKind": "declaration_list",
               "unresolved": true
             }
           ],
@@ -9262,6 +9515,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
               "unresolved": true
             }
           ],
@@ -9285,6 +9539,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "function_modifiers",
+              "parseKind": "function_modifiers",
               "unresolved": true
             }
           ],
@@ -9308,12 +9563,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "metavariable",
+              "parseKind": "metavariable",
               "unresolved": true
             }
           ],
@@ -9338,6 +9595,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "type_parameters",
+              "parseKind": "type_parameters",
               "unresolved": true
             }
           ],
@@ -9361,6 +9619,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "parameters",
+              "parseKind": "parameters",
               "unresolved": true
             }
           ],
@@ -9384,6 +9643,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -9407,6 +9667,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "where_clause",
+              "parseKind": "where_clause",
               "unresolved": true
             }
           ],
@@ -9430,6 +9691,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
@@ -9463,27 +9725,32 @@
             {
               "kind": "terminal",
               "multiplicity": "nonEmptyArray",
-              "value": "async"
+              "value": "async",
+              "parseKind": "async"
             },
             {
               "kind": "terminal",
               "multiplicity": "nonEmptyArray",
-              "value": "default"
+              "value": "default",
+              "parseKind": "default"
             },
             {
               "kind": "terminal",
               "multiplicity": "nonEmptyArray",
-              "value": "const"
+              "value": "const",
+              "parseKind": "const"
             },
             {
               "kind": "terminal",
               "multiplicity": "nonEmptyArray",
-              "value": "unsafe"
+              "value": "unsafe",
+              "parseKind": "unsafe"
             },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "extern_modifier",
+              "parseKind": "extern_modifier",
               "unresolved": true
             }
           ],
@@ -9518,6 +9785,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
               "unresolved": true
             }
           ],
@@ -9541,6 +9809,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "function_modifiers",
+              "parseKind": "function_modifiers",
               "unresolved": true
             }
           ],
@@ -9564,12 +9833,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "metavariable",
+              "parseKind": "metavariable",
               "unresolved": true
             }
           ],
@@ -9594,6 +9865,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "type_parameters",
+              "parseKind": "type_parameters",
               "unresolved": true
             }
           ],
@@ -9617,6 +9889,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "parameters",
+              "parseKind": "parameters",
               "unresolved": true
             }
           ],
@@ -9640,6 +9913,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_function_signature_item_optional1",
+              "parseKind": "_function_signature_item_optional1",
               "unresolved": true
             }
           ],
@@ -9663,6 +9937,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "where_clause",
+              "parseKind": "where_clause",
               "unresolved": true
             }
           ],
@@ -9711,6 +9986,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "for_lifetimes",
+                  "parseKind": "for_lifetimes",
                   "unresolved": true
                 }
               ],
@@ -9734,6 +10010,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_function_type_trait_form",
+                  "parseKind": "function_type_trait_form",
                   "unresolved": true
                 }
               ],
@@ -9743,9 +10020,6 @@
                 "kinds": [
                   "_function_type_trait_form"
                 ]
-              },
-              "aliasSources": {
-                "function_type_trait_form": "_function_type_trait_form"
               }
             },
             {
@@ -9760,6 +10034,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "parameters",
+                  "parseKind": "parameters",
                   "unresolved": true
                 }
               ],
@@ -9783,6 +10058,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_type",
+                  "parseKind": "_type",
                   "unresolved": true
                 }
               ],
@@ -9817,6 +10093,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "for_lifetimes",
+                  "parseKind": "for_lifetimes",
                   "unresolved": true
                 }
               ],
@@ -9840,6 +10117,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_function_type_fn_form",
+                  "parseKind": "function_type_fn_form",
                   "unresolved": true
                 }
               ],
@@ -9849,9 +10127,6 @@
                 "kinds": [
                   "_function_type_fn_form"
                 ]
-              },
-              "aliasSources": {
-                "function_type_fn_form": "_function_type_fn_form"
               }
             },
             {
@@ -9866,6 +10141,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "parameters",
+                  "parseKind": "parameters",
                   "unresolved": true
                 }
               ],
@@ -9889,6 +10165,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_type",
+                  "parseKind": "_type",
                   "unresolved": true
                 }
               ],
@@ -9925,6 +10202,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "function_modifiers",
+              "parseKind": "function_modifiers",
               "unresolved": true
             }
           ],
@@ -9959,12 +10237,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "scoped_type_identifier",
+              "parseKind": "scoped_type_identifier",
               "unresolved": true
             }
           ],
@@ -9975,9 +10255,6 @@
               "identifier",
               "scoped_type_identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         }
       ],
@@ -10013,6 +10290,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_move_marker",
+              "parseKind": "_move_marker",
               "unresolved": true
             }
           ],
@@ -10036,6 +10314,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
@@ -10070,18 +10349,21 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "field_expression",
+              "parseKind": "field_expression",
               "unresolved": true
             }
           ],
@@ -10107,6 +10389,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "type_arguments",
+              "parseKind": "type_arguments",
               "unresolved": true
             }
           ],
@@ -10141,12 +10424,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             }
           ],
@@ -10171,6 +10456,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "type_arguments",
+              "parseKind": "type_arguments",
               "unresolved": true
             }
           ],
@@ -10205,12 +10491,21 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "scoped_type_identifier",
+              "parseKind": "scoped_type_identifier",
               "unresolved": true
             }
           ],
@@ -10221,9 +10516,6 @@
               "identifier",
               "scoped_type_identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         },
         {
@@ -10238,6 +10530,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "type_arguments",
+              "parseKind": "type_arguments",
               "unresolved": true
             }
           ],
@@ -10272,12 +10565,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             }
           ],
@@ -10288,9 +10583,6 @@
               "identifier",
               "scoped_identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         },
         {
@@ -10305,6 +10597,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "type_arguments",
+              "parseKind": "type_arguments",
               "unresolved": true
             }
           ],
@@ -10339,6 +10632,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "type_parameters",
+              "parseKind": "type_parameters",
               "unresolved": true
             }
           ],
@@ -10362,6 +10656,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -10415,6 +10710,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_condition",
+              "parseKind": "_condition",
               "unresolved": true
             }
           ],
@@ -10438,6 +10734,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
@@ -10461,6 +10758,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "else_clause",
+              "parseKind": "else_clause",
               "unresolved": true
             }
           ],
@@ -10519,6 +10817,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_unsafe_marker",
+                  "parseKind": "_unsafe_marker",
                   "unresolved": true
                 }
               ],
@@ -10542,6 +10841,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "type_parameters",
+                  "parseKind": "type_parameters",
                   "unresolved": true
                 }
               ],
@@ -10565,6 +10865,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_impl_item_negative",
+                  "parseKind": "_impl_item_negative",
                   "unresolved": true
                 }
               ],
@@ -10588,18 +10889,21 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_type_identifier",
+                  "parseKind": "_type_identifier",
                   "unresolved": true
                 },
                 {
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "scoped_type_identifier",
+                  "parseKind": "scoped_type_identifier",
                   "unresolved": true
                 },
                 {
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "generic_type",
+                  "parseKind": "generic_type",
                   "unresolved": true
                 }
               ],
@@ -10625,6 +10929,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_type",
+                  "parseKind": "_type",
                   "unresolved": true
                 }
               ],
@@ -10648,6 +10953,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "where_clause",
+                  "parseKind": "where_clause",
                   "unresolved": true
                 }
               ],
@@ -10671,6 +10977,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_impl_item_body",
+                  "parseKind": "impl_item_body",
                   "unresolved": true
                 }
               ],
@@ -10680,9 +10987,6 @@
                 "kinds": [
                   "_impl_item_body"
                 ]
-              },
-              "aliasSources": {
-                "impl_item_body": "_impl_item_body"
               }
             }
           ],
@@ -10708,6 +11012,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_unsafe_marker",
+                  "parseKind": "_unsafe_marker",
                   "unresolved": true
                 }
               ],
@@ -10731,6 +11036,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "type_parameters",
+                  "parseKind": "type_parameters",
                   "unresolved": true
                 }
               ],
@@ -10754,6 +11060,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_impl_item_negative",
+                  "parseKind": "_impl_item_negative",
                   "unresolved": true
                 }
               ],
@@ -10777,18 +11084,21 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "_type_identifier",
+                  "parseKind": "_type_identifier",
                   "unresolved": true
                 },
                 {
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "scoped_type_identifier",
+                  "parseKind": "scoped_type_identifier",
                   "unresolved": true
                 },
                 {
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "generic_type",
+                  "parseKind": "generic_type",
                   "unresolved": true
                 }
               ],
@@ -10814,6 +11124,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_type",
+                  "parseKind": "_type",
                   "unresolved": true
                 }
               ],
@@ -10837,6 +11148,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "where_clause",
+                  "parseKind": "where_clause",
                   "unresolved": true
                 }
               ],
@@ -10860,6 +11172,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_impl_item_semi",
+                  "parseKind": "impl_item_semi",
                   "unresolved": true
                 }
               ],
@@ -10869,9 +11182,6 @@
                 "kinds": [
                   "_impl_item_semi"
                 ]
-              },
-              "aliasSources": {
-                "impl_item_semi": "_impl_item_semi"
               }
             }
           ],
@@ -10899,6 +11209,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "declaration_list",
+              "parseKind": "declaration_list",
               "unresolved": true
             }
           ],
@@ -10943,6 +11254,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -10966,6 +11278,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -11000,6 +11313,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "attribute",
+              "parseKind": "attribute",
               "unresolved": true
             }
           ],
@@ -11042,6 +11356,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ],
@@ -11076,12 +11391,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "parseKind": "attribute_item",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "inner_attribute_item",
+              "parseKind": "inner_attribute_item",
               "unresolved": true
             }
           ],
@@ -11106,6 +11423,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "match_pattern",
+              "parseKind": "match_pattern",
               "unresolved": true
             }
           ],
@@ -11129,6 +11447,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -11173,6 +11492,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -11196,6 +11516,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -11230,6 +11551,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_mutable_specifier",
+              "parseKind": "_mutable_specifier",
               "unresolved": true
             }
           ],
@@ -11253,6 +11575,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -11276,6 +11599,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -11299,6 +11623,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -11322,6 +11647,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_let_declaration_optional3",
+              "parseKind": "_let_declaration_optional3",
               "unresolved": true
             }
           ],
@@ -11356,6 +11682,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ],
@@ -11390,6 +11717,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "lifetime",
+              "parseKind": "lifetime",
               "unresolved": true
             }
           ],
@@ -11413,6 +11741,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "trait_bounds",
+              "parseKind": "trait_bounds",
               "unresolved": true
             }
           ],
@@ -11462,6 +11791,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_line_comment_regular_dslash",
+                  "parseKind": "line_comment_regular_dslash",
                   "unresolved": true
                 }
               ],
@@ -11471,9 +11801,6 @@
                 "kinds": [
                   "_line_comment_regular_dslash"
                 ]
-              },
-              "aliasSources": {
-                "line_comment_regular_dslash": "_line_comment_regular_dslash"
               }
             }
           ],
@@ -11499,6 +11826,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_line_comment_doc",
+                  "parseKind": "line_comment_doc",
                   "unresolved": true
                 }
               ],
@@ -11508,9 +11836,6 @@
                 "kinds": [
                   "_line_comment_doc"
                 ]
-              },
-              "aliasSources": {
-                "line_comment_doc": "_line_comment_doc"
               }
             }
           ],
@@ -11536,6 +11861,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_line_comment_content",
+                  "parseKind": "line_comment_content",
                   "unresolved": true
                 }
               ],
@@ -11545,9 +11871,6 @@
                 "kinds": [
                   "_line_comment_content"
                 ]
-              },
-              "aliasSources": {
-                "line_comment_content": "_line_comment_content"
               }
             }
           ],
@@ -11585,6 +11908,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_loop_expression_optional1",
+              "parseKind": "_loop_expression_optional1",
               "unresolved": true
             }
           ],
@@ -11608,6 +11932,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
@@ -11657,12 +11982,14 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "identifier",
+                  "parseKind": "identifier",
                   "unresolved": true
                 },
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_reserved_identifier",
+                  "parseKind": "_reserved_identifier",
                   "unresolved": true
                 }
               ],
@@ -11687,6 +12014,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_macro_definition_paren",
+                  "parseKind": "macro_definition_paren",
                   "unresolved": true
                 }
               ],
@@ -11696,9 +12024,6 @@
                 "kinds": [
                   "_macro_definition_paren"
                 ]
-              },
-              "aliasSources": {
-                "macro_definition_paren": "_macro_definition_paren"
               }
             }
           ],
@@ -11724,12 +12049,14 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "identifier",
+                  "parseKind": "identifier",
                   "unresolved": true
                 },
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_reserved_identifier",
+                  "parseKind": "_reserved_identifier",
                   "unresolved": true
                 }
               ],
@@ -11754,6 +12081,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_macro_definition_bracket",
+                  "parseKind": "macro_definition_bracket",
                   "unresolved": true
                 }
               ],
@@ -11763,9 +12091,6 @@
                 "kinds": [
                   "_macro_definition_bracket"
                 ]
-              },
-              "aliasSources": {
-                "macro_definition_bracket": "_macro_definition_bracket"
               }
             }
           ],
@@ -11791,12 +12116,14 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "identifier",
+                  "parseKind": "identifier",
                   "unresolved": true
                 },
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_reserved_identifier",
+                  "parseKind": "_reserved_identifier",
                   "unresolved": true
                 }
               ],
@@ -11821,6 +12148,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_macro_definition_brace",
+                  "parseKind": "macro_definition_brace",
                   "unresolved": true
                 }
               ],
@@ -11830,9 +12158,6 @@
                 "kinds": [
                   "_macro_definition_brace"
                 ]
-              },
-              "aliasSources": {
-                "macro_definition_brace": "_macro_definition_brace"
               }
             }
           ],
@@ -11860,12 +12185,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "macro_rule",
+              "parseKind": "macro_rule",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "macro_rule",
+              "parseKind": "macro_rule",
               "unresolved": true
             }
           ],
@@ -11900,12 +12227,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "macro_rule",
+              "parseKind": "macro_rule",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "macro_rule",
+              "parseKind": "macro_rule",
               "unresolved": true
             }
           ],
@@ -11940,12 +12269,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "macro_rule",
+              "parseKind": "macro_rule",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "macro_rule",
+              "parseKind": "macro_rule",
               "unresolved": true
             }
           ],
@@ -11980,12 +12311,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ],
@@ -12010,6 +12343,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "delim_token_tree",
+              "parseKind": "token_tree",
               "unresolved": true
             }
           ],
@@ -12019,9 +12353,6 @@
             "kinds": [
               "delim_token_tree"
             ]
-          },
-          "aliasSources": {
-            "token_tree": "delim_token_tree"
           }
         }
       ],
@@ -12047,6 +12378,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "token_tree_pattern",
+              "parseKind": "token_tree_pattern",
               "unresolved": true
             }
           ],
@@ -12070,6 +12402,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "token_tree",
+              "parseKind": "token_tree",
               "unresolved": true
             }
           ],
@@ -12128,12 +12461,14 @@
                   "kind": "node-ref",
                   "multiplicity": "array",
                   "name": "attribute_item",
+                  "parseKind": "attribute_item",
                   "unresolved": true
                 },
                 {
                   "kind": "node-ref",
                   "multiplicity": "array",
                   "name": "inner_attribute_item",
+                  "parseKind": "inner_attribute_item",
                   "unresolved": true
                 }
               ],
@@ -12158,6 +12493,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "match_pattern",
+                  "parseKind": "match_pattern",
                   "unresolved": true
                 }
               ],
@@ -12181,6 +12517,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_match_arm_with_comma",
+                  "parseKind": "match_arm_with_comma",
                   "unresolved": true
                 }
               ],
@@ -12190,9 +12527,6 @@
                 "kinds": [
                   "_match_arm_with_comma"
                 ]
-              },
-              "aliasSources": {
-                "match_arm_with_comma": "_match_arm_with_comma"
               }
             }
           ],
@@ -12218,12 +12552,14 @@
                   "kind": "node-ref",
                   "multiplicity": "array",
                   "name": "attribute_item",
+                  "parseKind": "attribute_item",
                   "unresolved": true
                 },
                 {
                   "kind": "node-ref",
                   "multiplicity": "array",
                   "name": "inner_attribute_item",
+                  "parseKind": "inner_attribute_item",
                   "unresolved": true
                 }
               ],
@@ -12248,6 +12584,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "match_pattern",
+                  "parseKind": "match_pattern",
                   "unresolved": true
                 }
               ],
@@ -12271,6 +12608,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_match_arm_block_ending",
+                  "parseKind": "match_arm_block_ending",
                   "unresolved": true
                 }
               ],
@@ -12280,9 +12618,6 @@
                 "kinds": [
                   "_match_arm_block_ending"
                 ]
-              },
-              "aliasSources": {
-                "match_arm_block_ending": "_match_arm_block_ending"
               }
             }
           ],
@@ -12310,6 +12645,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression_ending_with_block",
+              "parseKind": "_expression_ending_with_block",
               "unresolved": true
             }
           ],
@@ -12344,6 +12680,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "match_arm",
+              "parseKind": "match_arm",
               "unresolved": true
             }
           ],
@@ -12367,6 +12704,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "last_match_arm",
+              "parseKind": "match_arm",
               "unresolved": true
             }
           ],
@@ -12376,9 +12714,6 @@
             "kinds": [
               "last_match_arm"
             ]
-          },
-          "aliasSources": {
-            "match_arm": "last_match_arm"
           }
         }
       ],
@@ -12404,6 +12739,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -12427,6 +12763,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "match_block",
+              "parseKind": "match_block",
               "unresolved": true
             }
           ],
@@ -12461,6 +12798,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -12484,6 +12822,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_condition",
+              "parseKind": "_condition",
               "unresolved": true
             }
           ],
@@ -12551,6 +12890,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "visibility_modifier",
+                  "parseKind": "visibility_modifier",
                   "unresolved": true
                 }
               ],
@@ -12574,6 +12914,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "identifier",
+                  "parseKind": "identifier",
                   "unresolved": true
                 }
               ],
@@ -12597,6 +12938,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_mod_item_external",
+                  "parseKind": "mod_item_external",
                   "unresolved": true
                 }
               ],
@@ -12606,9 +12948,6 @@
                 "kinds": [
                   "_mod_item_external"
                 ]
-              },
-              "aliasSources": {
-                "mod_item_external": "_mod_item_external"
               }
             }
           ],
@@ -12634,6 +12973,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "visibility_modifier",
+                  "parseKind": "visibility_modifier",
                   "unresolved": true
                 }
               ],
@@ -12657,6 +12997,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "identifier",
+                  "parseKind": "identifier",
                   "unresolved": true
                 }
               ],
@@ -12680,6 +13021,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_mod_item_inline",
+                  "parseKind": "mod_item_inline",
                   "unresolved": true
                 }
               ],
@@ -12689,9 +13031,6 @@
                 "kinds": [
                   "_mod_item_inline"
                 ]
-              },
-              "aliasSources": {
-                "mod_item_inline": "_mod_item_inline"
               }
             }
           ],
@@ -12719,6 +13058,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "declaration_list",
+              "parseKind": "declaration_list",
               "unresolved": true
             }
           ],
@@ -12773,6 +13113,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_mutable_specifier",
+              "parseKind": "_mutable_specifier",
               "unresolved": true
             }
           ],
@@ -12796,6 +13137,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -12841,12 +13183,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "integer_literal",
+              "parseKind": "integer_literal",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "float_literal",
+              "parseKind": "float_literal",
               "unresolved": true
             }
           ],
@@ -12906,6 +13250,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_or_pattern_binary",
+                  "parseKind": "or_pattern_binary",
                   "unresolved": true
                 }
               ],
@@ -12915,9 +13260,6 @@
                 "kinds": [
                   "_or_pattern_binary"
                 ]
-              },
-              "aliasSources": {
-                "or_pattern_binary": "_or_pattern_binary"
               }
             }
           ],
@@ -12943,6 +13285,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_or_pattern_prefix",
+                  "parseKind": "or_pattern_prefix",
                   "unresolved": true
                 }
               ],
@@ -12952,9 +13295,6 @@
                 "kinds": [
                   "_or_pattern_prefix"
                 ]
-              },
-              "aliasSources": {
-                "or_pattern_prefix": "_or_pattern_prefix"
               }
             }
           ],
@@ -12982,6 +13322,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_attributed_ordered_field",
+              "parseKind": "attributed_ordered_field",
               "unresolved": true
             }
           ],
@@ -12991,9 +13332,6 @@
             "kinds": [
               "_attributed_ordered_field"
             ]
-          },
-          "aliasSources": {
-            "attributed_ordered_field": "_attributed_ordered_field"
           }
         }
       ],
@@ -13019,6 +13357,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_mutable_specifier",
+              "parseKind": "_mutable_specifier",
               "unresolved": true
             }
           ],
@@ -13042,12 +13381,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "self",
+              "parseKind": "self",
               "unresolved": true
             }
           ],
@@ -13072,6 +13413,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -13106,6 +13448,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_attributed_parameter",
+              "parseKind": "attributed_parameter",
               "unresolved": true
             }
           ],
@@ -13115,9 +13458,6 @@
             "kinds": [
               "_attributed_parameter"
             ]
-          },
-          "aliasSources": {
-            "attributed_parameter": "_attributed_parameter"
           }
         }
       ],
@@ -13143,6 +13483,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -13211,6 +13552,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_pointer_type_const",
+                  "parseKind": "pointer_type_const",
                   "unresolved": true
                 }
               ],
@@ -13220,9 +13562,6 @@
                 "kinds": [
                   "_pointer_type_const"
                 ]
-              },
-              "aliasSources": {
-                "pointer_type_const": "_pointer_type_const"
               }
             },
             {
@@ -13237,6 +13576,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_type",
+                  "parseKind": "_type",
                   "unresolved": true
                 }
               ],
@@ -13271,6 +13611,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_pointer_type_mut",
+                  "parseKind": "pointer_type_mut",
                   "unresolved": true
                 }
               ],
@@ -13280,9 +13621,6 @@
                 "kinds": [
                   "_pointer_type_mut"
                 ]
-              },
-              "aliasSources": {
-                "pointer_type_mut": "_pointer_type_mut"
               }
             },
             {
@@ -13297,6 +13635,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_type",
+                  "parseKind": "_type",
                   "unresolved": true
                 }
               ],
@@ -13335,6 +13674,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
@@ -13379,6 +13719,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -13402,6 +13743,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -13462,6 +13804,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_range_expression_binary",
+                  "parseKind": "range_expression_binary",
                   "unresolved": true
                 }
               ],
@@ -13471,9 +13814,6 @@
                 "kinds": [
                   "_range_expression_binary"
                 ]
-              },
-              "aliasSources": {
-                "range_expression_binary": "_range_expression_binary"
               }
             }
           ],
@@ -13499,6 +13839,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_range_expression_postfix",
+                  "parseKind": "range_expression_postfix",
                   "unresolved": true
                 }
               ],
@@ -13508,9 +13849,6 @@
                 "kinds": [
                   "_range_expression_postfix"
                 ]
-              },
-              "aliasSources": {
-                "range_expression_postfix": "_range_expression_postfix"
               }
             }
           ],
@@ -13536,6 +13874,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_range_expression_prefix",
+                  "parseKind": "range_expression_prefix",
                   "unresolved": true
                 }
               ],
@@ -13545,9 +13884,6 @@
                 "kinds": [
                   "_range_expression_prefix"
                 ]
-              },
-              "aliasSources": {
-                "range_expression_prefix": "_range_expression_prefix"
               }
             }
           ],
@@ -13573,6 +13909,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_range_expression_bare",
+                  "parseKind": "range_expression_bare",
                   "unresolved": true
                 }
               ],
@@ -13582,9 +13919,6 @@
                 "kinds": [
                   "_range_expression_bare"
                 ]
-              },
-              "aliasSources": {
-                "range_expression_bare": "_range_expression_bare"
               }
             }
           ],
@@ -13614,6 +13948,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_operator__x2ex2e",
+              "parseKind": "_operator__x2ex2e",
               "unresolved": true
             }
           ],
@@ -13663,6 +13998,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_range_pattern_prefix",
+                  "parseKind": "range_pattern_prefix",
                   "unresolved": true
                 }
               ],
@@ -13672,9 +14008,6 @@
                 "kinds": [
                   "_range_pattern_prefix"
                 ]
-              },
-              "aliasSources": {
-                "range_pattern_prefix": "_range_pattern_prefix"
               }
             }
           ],
@@ -13700,12 +14033,14 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_literal_pattern",
+                  "parseKind": "_literal_pattern",
                   "unresolved": true
                 },
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_path",
+                  "parseKind": "_path",
                   "unresolved": true
                 }
               ],
@@ -13730,6 +14065,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_range_pattern_left_with_right",
+                  "parseKind": "range_pattern_left_with_right",
                   "unresolved": true
                 }
               ],
@@ -13739,9 +14075,6 @@
                 "kinds": [
                   "_range_pattern_left_with_right"
                 ]
-              },
-              "aliasSources": {
-                "range_pattern_left_with_right": "_range_pattern_left_with_right"
               }
             }
           ],
@@ -13767,12 +14100,14 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_literal_pattern",
+                  "parseKind": "_literal_pattern",
                   "unresolved": true
                 },
                 {
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_path",
+                  "parseKind": "_path",
                   "unresolved": true
                 }
               ],
@@ -13797,6 +14132,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_range_pattern_left_bare",
+                  "parseKind": "range_pattern_left_bare",
                   "unresolved": true
                 }
               ],
@@ -13806,9 +14142,6 @@
                 "kinds": [
                   "_range_pattern_left_bare"
                 ]
-              },
-              "aliasSources": {
-                "range_pattern_left_bare": "_range_pattern_left_bare"
               }
             }
           ],
@@ -13836,6 +14169,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "raw_string_literal_content",
+              "parseKind": "string_content",
               "unresolved": true
             }
           ],
@@ -13845,9 +14179,6 @@
             "kinds": [
               "raw_string_literal_content"
             ]
-          },
-          "aliasSources": {
-            "string_content": "raw_string_literal_content"
           }
         }
       ],
@@ -13891,6 +14222,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -13939,6 +14271,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_binary_expression_operator__x26",
+                  "parseKind": "_binary_expression_operator__x26",
                   "unresolved": true
                 }
               ],
@@ -13962,6 +14295,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_reference_expression_raw_const",
+                  "parseKind": "reference_expression_raw_const",
                   "unresolved": true
                 }
               ],
@@ -13971,9 +14305,6 @@
                 "kinds": [
                   "_reference_expression_raw_const"
                 ]
-              },
-              "aliasSources": {
-                "reference_expression_raw_const": "_reference_expression_raw_const"
               }
             },
             {
@@ -13988,6 +14319,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_expression",
+                  "parseKind": "_expression",
                   "unresolved": true
                 }
               ],
@@ -14022,6 +14354,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_binary_expression_operator__x26",
+                  "parseKind": "_binary_expression_operator__x26",
                   "unresolved": true
                 }
               ],
@@ -14045,6 +14378,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_reference_expression_raw_mut",
+                  "parseKind": "reference_expression_raw_mut",
                   "unresolved": true
                 }
               ],
@@ -14054,9 +14388,6 @@
                 "kinds": [
                   "_reference_expression_raw_mut"
                 ]
-              },
-              "aliasSources": {
-                "reference_expression_raw_mut": "_reference_expression_raw_mut"
               }
             },
             {
@@ -14071,6 +14402,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_expression",
+                  "parseKind": "_expression",
                   "unresolved": true
                 }
               ],
@@ -14109,6 +14441,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
@@ -14143,6 +14476,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_mutable_specifier",
+              "parseKind": "_mutable_specifier",
               "unresolved": true
             }
           ],
@@ -14166,6 +14500,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -14200,6 +14535,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "lifetime",
+              "parseKind": "lifetime",
               "unresolved": true
             }
           ],
@@ -14223,6 +14559,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_mutable_specifier",
+              "parseKind": "_mutable_specifier",
               "unresolved": true
             }
           ],
@@ -14246,6 +14583,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -14290,6 +14628,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -14334,6 +14673,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -14368,18 +14708,21 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_path",
+              "parseKind": "_path",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "bracketed_type",
+              "parseKind": "bracketed_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "generic_type_with_turbofish",
+              "parseKind": "generic_type",
               "unresolved": true
             }
           ],
@@ -14391,9 +14734,6 @@
               "bracketed_type",
               "generic_type_with_turbofish"
             ]
-          },
-          "aliasSources": {
-            "generic_type": "generic_type_with_turbofish"
           }
         },
         {
@@ -14408,12 +14748,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "super",
+              "parseKind": "super",
               "unresolved": true
             }
           ],
@@ -14449,24 +14791,28 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_path",
+              "parseKind": "_path",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "generic_type_with_turbofish",
+              "parseKind": "generic_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "bracketed_type",
+              "parseKind": "bracketed_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "generic_type",
+              "parseKind": "generic_type",
               "unresolved": true
             }
           ],
@@ -14479,9 +14825,6 @@
               "bracketed_type",
               "generic_type"
             ]
-          },
-          "aliasSources": {
-            "generic_type": "generic_type_with_turbofish"
           }
         },
         {
@@ -14496,6 +14839,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             }
           ],
@@ -14505,9 +14849,6 @@
             "kinds": [
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         }
       ],
@@ -14533,12 +14874,14 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_path",
+              "parseKind": "_path",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "generic_type_with_turbofish",
+              "parseKind": "generic_type",
               "unresolved": true
             }
           ],
@@ -14549,9 +14892,6 @@
               "_path",
               "generic_type_with_turbofish"
             ]
-          },
-          "aliasSources": {
-            "generic_type": "generic_type_with_turbofish"
           }
         },
         {
@@ -14566,6 +14906,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             }
           ],
@@ -14575,9 +14916,6 @@
             "kinds": [
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         }
       ],
@@ -14603,6 +14941,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_path",
+              "parseKind": "_path",
               "unresolved": true
             }
           ],
@@ -14626,6 +14965,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "use_list",
+              "parseKind": "use_list",
               "unresolved": true
             }
           ],
@@ -14673,6 +15013,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "lifetime",
+              "parseKind": "lifetime",
               "unresolved": true
             }
           ],
@@ -14696,6 +15037,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_mutable_specifier",
+              "parseKind": "_mutable_specifier",
               "unresolved": true
             }
           ],
@@ -14718,7 +15060,8 @@
             {
               "kind": "terminal",
               "multiplicity": "single",
-              "value": "self"
+              "value": "self",
+              "parseKind": "self"
             }
           ],
           "source": "grammar",
@@ -14759,6 +15102,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "parseKind": "attribute_item",
               "unresolved": true
             }
           ],
@@ -14782,6 +15126,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ],
@@ -14816,6 +15161,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -14850,6 +15196,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "shebang",
+              "parseKind": "shebang",
               "unresolved": true
             }
           ],
@@ -14873,6 +15220,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_statement",
+              "parseKind": "_statement",
               "unresolved": true
             }
           ],
@@ -14917,6 +15265,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
               "unresolved": true
             }
           ],
@@ -14939,12 +15288,14 @@
             {
               "kind": "terminal",
               "multiplicity": "optional",
-              "value": "ref"
+              "value": "ref",
+              "parseKind": "ref"
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
@@ -14968,6 +15319,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ],
@@ -14991,6 +15343,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -15014,6 +15367,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -15056,12 +15410,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "escape_sequence",
+              "parseKind": "escape_sequence",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "string_content",
+              "parseKind": "string_content",
               "unresolved": true
             }
           ],
@@ -15107,18 +15463,21 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "scoped_type_identifier_in_expression_position",
+              "parseKind": "scoped_type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "generic_type_with_turbofish",
+              "parseKind": "generic_type_with_turbofish",
               "unresolved": true
             }
           ],
@@ -15130,10 +15489,6 @@
               "scoped_type_identifier_in_expression_position",
               "generic_type_with_turbofish"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier",
-            "scoped_type_identifier": "scoped_type_identifier_in_expression_position"
           }
         },
         {
@@ -15148,6 +15503,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "field_initializer_list",
+              "parseKind": "field_initializer_list",
               "unresolved": true
             }
           ],
@@ -15197,6 +15553,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "visibility_modifier",
+                  "parseKind": "visibility_modifier",
                   "unresolved": true
                 }
               ],
@@ -15220,6 +15577,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_type_identifier",
+                  "parseKind": "_type_identifier",
                   "unresolved": true
                 }
               ],
@@ -15243,6 +15601,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "type_parameters",
+                  "parseKind": "type_parameters",
                   "unresolved": true
                 }
               ],
@@ -15266,6 +15625,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_struct_item_brace",
+                  "parseKind": "struct_item_brace",
                   "unresolved": true
                 }
               ],
@@ -15275,9 +15635,6 @@
                 "kinds": [
                   "_struct_item_brace"
                 ]
-              },
-              "aliasSources": {
-                "struct_item_brace": "_struct_item_brace"
               }
             }
           ],
@@ -15303,6 +15660,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "visibility_modifier",
+                  "parseKind": "visibility_modifier",
                   "unresolved": true
                 }
               ],
@@ -15326,6 +15684,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_type_identifier",
+                  "parseKind": "_type_identifier",
                   "unresolved": true
                 }
               ],
@@ -15349,6 +15708,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "type_parameters",
+                  "parseKind": "type_parameters",
                   "unresolved": true
                 }
               ],
@@ -15372,6 +15732,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_struct_item_tuple",
+                  "parseKind": "struct_item_tuple",
                   "unresolved": true
                 }
               ],
@@ -15381,9 +15742,6 @@
                 "kinds": [
                   "_struct_item_tuple"
                 ]
-              },
-              "aliasSources": {
-                "struct_item_tuple": "_struct_item_tuple"
               }
             }
           ],
@@ -15409,6 +15767,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "visibility_modifier",
+                  "parseKind": "visibility_modifier",
                   "unresolved": true
                 }
               ],
@@ -15432,6 +15791,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_type_identifier",
+                  "parseKind": "_type_identifier",
                   "unresolved": true
                 }
               ],
@@ -15455,6 +15815,7 @@
                   "kind": "node-ref",
                   "multiplicity": "optional",
                   "name": "type_parameters",
+                  "parseKind": "type_parameters",
                   "unresolved": true
                 }
               ],
@@ -15478,6 +15839,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_struct_item_unit",
+                  "parseKind": "struct_item_unit",
                   "unresolved": true
                 }
               ],
@@ -15487,9 +15849,6 @@
                 "kinds": [
                   "_struct_item_unit"
                 ]
-              },
-              "aliasSources": {
-                "struct_item_unit": "_struct_item_unit"
               }
             }
           ],
@@ -15517,12 +15876,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "scoped_type_identifier",
+              "parseKind": "scoped_type_identifier",
               "unresolved": true
             }
           ],
@@ -15533,9 +15894,6 @@
               "identifier",
               "scoped_type_identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         },
         {
@@ -15550,12 +15908,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "field_pattern",
+              "parseKind": "field_pattern",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "remaining_field_pattern",
+              "parseKind": "remaining_field_pattern",
               "unresolved": true
             }
           ],
@@ -15602,6 +15962,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "metavariable",
+              "parseKind": "metavariable",
               "unresolved": true
             }
           ],
@@ -15625,6 +15986,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_token_binding_pattern_type",
+              "parseKind": "_token_binding_pattern_type",
               "unresolved": true
             }
           ],
@@ -15659,6 +16021,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_tokens",
+              "parseKind": "_tokens",
               "unresolved": true
             }
           ],
@@ -15702,6 +16065,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_operator",
+              "parseKind": "_operator",
               "unresolved": true
             }
           ],
@@ -15736,6 +16100,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_token_pattern",
+              "parseKind": "_token_pattern",
               "unresolved": true
             }
           ],
@@ -15779,6 +16144,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_operator",
+              "parseKind": "_operator",
               "unresolved": true
             }
           ],
@@ -15828,6 +16194,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_token_tree_paren",
+                  "parseKind": "token_tree_paren",
                   "unresolved": true
                 }
               ],
@@ -15837,9 +16204,6 @@
                 "kinds": [
                   "_token_tree_paren"
                 ]
-              },
-              "aliasSources": {
-                "token_tree_paren": "_token_tree_paren"
               }
             }
           ],
@@ -15865,6 +16229,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_token_tree_bracket",
+                  "parseKind": "token_tree_bracket",
                   "unresolved": true
                 }
               ],
@@ -15874,9 +16239,6 @@
                 "kinds": [
                   "_token_tree_bracket"
                 ]
-              },
-              "aliasSources": {
-                "token_tree_bracket": "_token_tree_bracket"
               }
             }
           ],
@@ -15902,6 +16264,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_token_tree_brace",
+                  "parseKind": "token_tree_brace",
                   "unresolved": true
                 }
               ],
@@ -15911,9 +16274,6 @@
                 "kinds": [
                   "_token_tree_brace"
                 ]
-              },
-              "aliasSources": {
-                "token_tree_brace": "_token_tree_brace"
               }
             }
           ],
@@ -15941,6 +16301,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_tokens",
+              "parseKind": "_tokens",
               "unresolved": true
             }
           ],
@@ -15975,6 +16336,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_tokens",
+              "parseKind": "_tokens",
               "unresolved": true
             }
           ],
@@ -16009,6 +16371,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_tokens",
+              "parseKind": "_tokens",
               "unresolved": true
             }
           ],
@@ -16058,6 +16421,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_token_tree_pattern_paren",
+                  "parseKind": "token_tree_pattern_paren",
                   "unresolved": true
                 }
               ],
@@ -16067,9 +16431,6 @@
                 "kinds": [
                   "_token_tree_pattern_paren"
                 ]
-              },
-              "aliasSources": {
-                "token_tree_pattern_paren": "_token_tree_pattern_paren"
               }
             }
           ],
@@ -16095,6 +16456,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_token_tree_pattern_bracket",
+                  "parseKind": "token_tree_pattern_bracket",
                   "unresolved": true
                 }
               ],
@@ -16104,9 +16466,6 @@
                 "kinds": [
                   "_token_tree_pattern_bracket"
                 ]
-              },
-              "aliasSources": {
-                "token_tree_pattern_bracket": "_token_tree_pattern_bracket"
               }
             }
           ],
@@ -16132,6 +16491,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_token_tree_pattern_brace",
+                  "parseKind": "token_tree_pattern_brace",
                   "unresolved": true
                 }
               ],
@@ -16141,9 +16501,6 @@
                 "kinds": [
                   "_token_tree_pattern_brace"
                 ]
-              },
-              "aliasSources": {
-                "token_tree_pattern_brace": "_token_tree_pattern_brace"
               }
             }
           ],
@@ -16171,6 +16528,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_token_pattern",
+              "parseKind": "_token_pattern",
               "unresolved": true
             }
           ],
@@ -16205,6 +16563,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_token_pattern",
+              "parseKind": "_token_pattern",
               "unresolved": true
             }
           ],
@@ -16239,6 +16598,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_token_pattern",
+              "parseKind": "_token_pattern",
               "unresolved": true
             }
           ],
@@ -16283,18 +16643,21 @@
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "lifetime",
+              "parseKind": "lifetime",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "higher_ranked_trait_bound",
+              "parseKind": "higher_ranked_trait_bound",
               "unresolved": true
             }
           ],
@@ -16331,6 +16694,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
               "unresolved": true
             }
           ],
@@ -16354,6 +16718,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_unsafe_marker",
+              "parseKind": "_unsafe_marker",
               "unresolved": true
             }
           ],
@@ -16377,6 +16742,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             }
           ],
@@ -16386,9 +16752,6 @@
             "kinds": [
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         },
         {
@@ -16403,6 +16766,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "type_parameters",
+              "parseKind": "type_parameters",
               "unresolved": true
             }
           ],
@@ -16426,6 +16790,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "trait_bounds",
+              "parseKind": "trait_bounds",
               "unresolved": true
             }
           ],
@@ -16449,6 +16814,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "where_clause",
+              "parseKind": "where_clause",
               "unresolved": true
             }
           ],
@@ -16472,6 +16838,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "declaration_list",
+              "parseKind": "declaration_list",
               "unresolved": true
             }
           ],
@@ -16516,6 +16883,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
@@ -16550,6 +16918,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -16584,6 +16953,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "parseKind": "attribute_item",
               "unresolved": true
             }
           ],
@@ -16607,12 +16977,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -16647,12 +17019,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "closure_expression",
+              "parseKind": "closure_expression",
               "unresolved": true
             }
           ],
@@ -16688,18 +17062,21 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "scoped_identifier",
+              "parseKind": "scoped_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "generic_type_with_turbofish",
+              "parseKind": "generic_type",
               "unresolved": true
             }
           ],
@@ -16711,9 +17088,6 @@
               "scoped_identifier",
               "generic_type_with_turbofish"
             ]
-          },
-          "aliasSources": {
-            "generic_type": "generic_type_with_turbofish"
           }
         },
         {
@@ -16728,6 +17102,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -16762,6 +17137,7 @@
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -16806,6 +17182,7 @@
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "_type_argument",
+              "parseKind": "type_argument",
               "unresolved": true
             }
           ],
@@ -16815,9 +17192,6 @@
             "kinds": [
               "_type_argument"
             ]
-          },
-          "aliasSources": {
-            "type_argument": "_type_argument"
           }
         }
       ],
@@ -16843,6 +17217,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             }
           ],
@@ -16852,9 +17227,6 @@
             "kinds": [
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         },
         {
@@ -16869,6 +17241,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "type_arguments",
+              "parseKind": "type_arguments",
               "unresolved": true
             }
           ],
@@ -16892,6 +17265,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -16926,6 +17300,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -16949,6 +17324,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -16983,6 +17359,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
               "unresolved": true
             }
           ],
@@ -17006,6 +17383,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             }
           ],
@@ -17015,9 +17393,6 @@
             "kinds": [
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         },
         {
@@ -17032,6 +17407,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "type_parameters",
+              "parseKind": "type_parameters",
               "unresolved": true
             }
           ],
@@ -17055,6 +17431,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "where_clause",
+              "parseKind": "where_clause",
               "unresolved": true
             }
           ],
@@ -17078,6 +17455,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -17101,6 +17479,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "where_clause",
+              "parseKind": "where_clause",
               "unresolved": true
             }
           ],
@@ -17135,6 +17514,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             }
           ],
@@ -17144,9 +17524,6 @@
             "kinds": [
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         },
         {
@@ -17161,6 +17538,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "trait_bounds",
+              "parseKind": "trait_bounds",
               "unresolved": true
             }
           ],
@@ -17184,6 +17562,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_type",
+              "parseKind": "_type",
               "unresolved": true
             }
           ],
@@ -17218,6 +17597,7 @@
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "_attributed_type_parameter",
+              "parseKind": "attributed_type_parameter",
               "unresolved": true
             }
           ],
@@ -17227,9 +17607,6 @@
             "kinds": [
               "_attributed_type_parameter"
             ]
-          },
-          "aliasSources": {
-            "attributed_type_parameter": "_attributed_type_parameter"
           }
         }
       ],
@@ -17255,6 +17632,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_unary_expression_operator",
+              "parseKind": "_unary_expression_operator",
               "unresolved": true
             }
           ],
@@ -17278,6 +17656,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],
@@ -17322,6 +17701,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
               "unresolved": true
             }
           ],
@@ -17345,6 +17725,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             }
           ],
@@ -17354,9 +17735,6 @@
             "kinds": [
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         },
         {
@@ -17371,6 +17749,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "type_parameters",
+              "parseKind": "type_parameters",
               "unresolved": true
             }
           ],
@@ -17394,6 +17773,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "where_clause",
+              "parseKind": "where_clause",
               "unresolved": true
             }
           ],
@@ -17417,6 +17797,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "field_declaration_list",
+              "parseKind": "field_declaration_list",
               "unresolved": true
             }
           ],
@@ -17477,6 +17858,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
@@ -17521,6 +17903,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_path",
+              "parseKind": "_path",
               "unresolved": true
             }
           ],
@@ -17544,6 +17927,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "identifier",
               "unresolved": true
             }
           ],
@@ -17578,12 +17962,14 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "lifetime",
+              "parseKind": "lifetime",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             }
           ],
@@ -17594,9 +17980,6 @@
               "lifetime",
               "identifier"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier"
           }
         }
       ],
@@ -17622,6 +18005,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "visibility_modifier",
+              "parseKind": "visibility_modifier",
               "unresolved": true
             }
           ],
@@ -17645,6 +18029,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_use_clause",
+              "parseKind": "_use_clause",
               "unresolved": true
             }
           ],
@@ -17679,6 +18064,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_use_clause",
+              "parseKind": "_use_clause",
               "unresolved": true
             }
           ],
@@ -17713,6 +18099,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_path",
+              "parseKind": "_path",
               "unresolved": true
             }
           ],
@@ -17747,6 +18134,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_mutable_specifier",
+              "parseKind": "_mutable_specifier",
               "unresolved": true
             }
           ],
@@ -17770,6 +18158,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_pattern",
+              "parseKind": "_pattern",
               "unresolved": true
             }
           ],
@@ -17819,6 +18208,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_visibility_modifier_crate",
+                  "parseKind": "visibility_modifier_crate",
                   "unresolved": true
                 }
               ],
@@ -17828,9 +18218,6 @@
                 "kinds": [
                   "_visibility_modifier_crate"
                 ]
-              },
-              "aliasSources": {
-                "visibility_modifier_crate": "_visibility_modifier_crate"
               }
             }
           ],
@@ -17856,6 +18243,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_visibility_modifier_pub",
+                  "parseKind": "visibility_modifier_pub",
                   "unresolved": true
                 }
               ],
@@ -17865,9 +18253,6 @@
                 "kinds": [
                   "_visibility_modifier_pub"
                 ]
-              },
-              "aliasSources": {
-                "visibility_modifier_pub": "_visibility_modifier_pub"
               }
             }
           ],
@@ -17893,6 +18278,7 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_visibility_modifier_in_path",
+                  "parseKind": "visibility_modifier_in_path",
                   "unresolved": true
                 }
               ],
@@ -17902,9 +18288,6 @@
                 "kinds": [
                   "_visibility_modifier_in_path"
                 ]
-              },
-              "aliasSources": {
-                "visibility_modifier_in_path": "_visibility_modifier_in_path"
               }
             }
           ],
@@ -17934,6 +18317,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "crate",
+              "parseKind": "crate",
               "unresolved": true
             }
           ],
@@ -17978,6 +18362,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "where_predicate",
+              "parseKind": "where_predicate",
               "unresolved": true
             }
           ],
@@ -18012,60 +18397,70 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "lifetime",
+              "parseKind": "lifetime",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
+              "parseKind": "type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "scoped_type_identifier",
+              "parseKind": "scoped_type_identifier",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "generic_type",
+              "parseKind": "generic_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "reference_type",
+              "parseKind": "reference_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "pointer_type",
+              "parseKind": "pointer_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "tuple_type",
+              "parseKind": "tuple_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "array_type",
+              "parseKind": "array_type",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "higher_ranked_trait_bound",
+              "parseKind": "higher_ranked_trait_bound",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_primitive_type",
+              "parseKind": "primitive_type",
               "unresolved": true
             }
           ],
@@ -18084,10 +18479,6 @@
               "higher_ranked_trait_bound",
               "_primitive_type"
             ]
-          },
-          "aliasSources": {
-            "type_identifier": "identifier",
-            "primitive_type": "_primitive_type"
           }
         },
         {
@@ -18102,6 +18493,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "trait_bounds",
+              "parseKind": "trait_bounds",
               "unresolved": true
             }
           ],
@@ -18146,6 +18538,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "label",
+              "parseKind": "label",
               "unresolved": true
             }
           ],
@@ -18169,6 +18562,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_condition",
+              "parseKind": "_condition",
               "unresolved": true
             }
           ],
@@ -18192,6 +18586,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "block",
+              "parseKind": "block",
               "unresolved": true
             }
           ],
@@ -18236,6 +18631,7 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_expression",
+              "parseKind": "_expression",
               "unresolved": true
             }
           ],

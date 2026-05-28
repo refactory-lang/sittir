@@ -800,9 +800,9 @@ function _deriveSlotsInternal(rule: Rule, kindEntries?: readonly GeneratedKindEn
  * @remarks
  * We keep the first occurrence's `propertyName` / `paramName` / `source`
  * (none of them vary per-occurrence for the same name in practice — the
- * name determines them). Values and `aliasSources` are merged. The
- * referenced kind set is no longer cached on the slot — consumers
- * derive it via `kindsOf(slot)` from the merged `values`.
+ * name determines them). The referenced kind set is no longer cached on
+ * the slot — consumers derive it via `kindsOf(slot)` from the merged
+ * `values`.
  */
 function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[] {
 	if (fields.length <= 1) return fields;
@@ -813,15 +813,11 @@ function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[
 			byName.set(f.name, f);
 			continue;
 		}
-		const mergedValues = dedupeValues([...existing.values, ...f.values]);
-		const mergedAliases =
-			existing.aliasSources || f.aliasSources ? { ...existing.aliasSources, ...f.aliasSources } : undefined;
 		byName.set(f.name, existing.with({
-			values: mergedValues,
+			values: dedupeValues([...existing.values, ...f.values]),
 			hasTrailing: existing.hasTrailing || f.hasTrailing,
 			hasLeading: existing.hasLeading || f.hasLeading,
 			sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds),
-			aliasSources: mergedAliases && Object.keys(mergedAliases).length > 0 ? mergedAliases : undefined,
 		}));
 	}
 	return Array.from(byName.values());
@@ -905,43 +901,6 @@ export function deriveSlots(rule: Rule, kindEntries?: readonly GeneratedKindEntr
 	// The field walker handles positional symbol/supertype/choice content
 	// too, so it produces every slot — no separate children walker needed.
 	return _deriveSlotsInternal(rule, kindEntries, kindName);
-}
-
-/**
- * Walk a field's content and collect alias-source provenance: for each
- * symbol reference that was resolved from `alias($.source, $.target)`
- * (i.e. its `aliasedFrom` is set), record `{ [target]: source }`. The
- * wrap emitter consumes this to emit `drillAs(entry, tree, target, source)`
- * rewriting `$type` at drill-in for alias-target rewrites.
- */
-export function deriveAliasSources(rule: Rule): Record<string, string> {
-	const out: Record<string, string> = {};
-	const walk = (r: Rule): void => {
-		switch (r.type) {
-			case 'symbol':
-				if ((r as { aliasedFrom?: string }).aliasedFrom) {
-					out[r.name] = (r as { aliasedFrom: string }).aliasedFrom;
-				}
-				return;
-			case 'choice':
-			case 'seq':
-				r.members.forEach(walk);
-				return;
-			case 'field':
-			case 'variant':
-			case 'optional':
-			case 'repeat':
-			case 'repeat1':
-			case 'clause':
-			case 'group':
-				walk(r.content);
-				return;
-			default:
-				return;
-		}
-	};
-	walk(rule);
-	return out;
 }
 
 /**
@@ -1155,10 +1114,12 @@ export function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
 	const seen = new Set<string>();
 	const result: NodeOrTerminal[] = [];
 	for (const v of values) {
+		const parseKind = v.parseKind?.name ?? '';
+		const nodeName = v.kind === 'node-ref' ? (isUnresolvedRef(v.node) ? v.node.name : v.node.kind) : undefined;
 		const key =
 			v.kind === 'node-ref'
-				? `node-ref:${(v.node as UnresolvedRef).name ?? '?'}:${v.multiplicity}`
-				: `terminal:${v.value}:${v.multiplicity}`;
+				? `node-ref:${nodeName ?? '?'}:${parseKind}:${v.multiplicity}`
+				: `terminal:${v.value}:${parseKind}:${v.multiplicity}`;
 		if (!seen.has(key)) {
 			seen.add(key);
 			result.push(v);
@@ -1507,7 +1468,6 @@ export interface AssembledNonterminalInit {
 	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
-	readonly aliasSources?: Readonly<Record<string, string>>;
 	readonly source: 'grammar' | 'override' | 'promoted' | 'inlined' | 'enriched' | 'inferred';
 	readonly origin?: SlotOrigin;
 	/**
@@ -1546,7 +1506,6 @@ export class AssembledNonterminal {
 	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
-	readonly aliasSources?: Readonly<Record<string, string>>;
 	readonly source: 'grammar' | 'override' | 'promoted' | 'inlined' | 'enriched' | 'inferred';
 	readonly origin?: SlotOrigin;
 	/**
@@ -1573,7 +1532,6 @@ export class AssembledNonterminal {
 		this.fieldName = init.fieldName;
 		this.hasTrailing = init.hasTrailing;
 		this.hasLeading = init.hasLeading;
-		this.aliasSources = init.aliasSources;
 		this.source = init.source;
 		this.origin = init.origin;
 		this.sourceRuleIds = init.sourceRuleIds;
@@ -1587,7 +1545,6 @@ export class AssembledNonterminal {
 			fieldName: this.fieldName,
 			hasTrailing: this.hasTrailing,
 			hasLeading: this.hasLeading,
-			aliasSources: this.aliasSources,
 			source: this.source,
 			origin: this.origin,
 			sourceRuleIds: this.sourceRuleIds,
@@ -2313,13 +2270,6 @@ function structuralSlotRecordFromForms(
 				hasTrailing: existing.hasTrailing || slot.hasTrailing,
 				hasLeading: existing.hasLeading || slot.hasLeading,
 				sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, slot.sourceRuleIds),
-				aliasSources:
-					existing.aliasSources || slot.aliasSources
-						? {
-								...existing.aliasSources,
-								...slot.aliasSources
-							}
-						: undefined
 			}));
 		}
 	}

@@ -589,7 +589,7 @@ export function caseClauseFrom(input: T.CaseClause.Loose): ReturnType<typeof F.c
   return F.caseClause({
     casePattern: _ne_casePatterns,
     guard: _resolveOneBranch<T.IfClause>(input.guard, "if_clause"),
-    consequence: _resolveOne<T.SimpleStatements | T.Newline>(input.consequence, _K9, _K10),
+    consequence: _resolveOne<T.SimpleStatements | T.Block | T.Newline>(input.consequence, _K9, _K10),
   });
 }
 
@@ -613,7 +613,7 @@ export function classDefinitionFrom(input: T.ClassDefinition.Loose): ReturnType<
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameter>(input.typeParameters, "type_parameter"),
     superclasses: _resolveOneBranch<T.ArgumentList>(input.superclasses, "argument_list"),
-    body: _resolveOne<T.SimpleStatements | T.Newline>(input.body, _K9, _K10),
+    body: _resolveOne<T.SimpleStatements | T.Block | T.Newline>(input.body, _K9, _K10),
   });
 }
 
@@ -766,13 +766,13 @@ export function elifClauseFrom(input: T.ElifClause.Loose): ReturnType<typeof F.e
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.elifClause>;
   return F.elifClause({
     condition: _resolveOne<T.Expression>(input.condition, _K0, _K2),
-    consequence: _resolveOne<T.SimpleStatements | T.Newline>(input.consequence, _K9, _K10),
+    consequence: _resolveOne<T.SimpleStatements | T.Block | T.Newline>(input.consequence, _K9, _K10),
   });
 }
 
 export function elseClauseFrom(input: T.ElseClause.Loose): ReturnType<typeof F.elseClause> {
   if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("else_clause")) return input as unknown as ReturnType<typeof F.elseClause>;
-  return F.elseClause(_resolveOne<T.SimpleStatements | T.Newline>((input !== null && typeof input === 'object' && !isNodeData(input) && "body" in input ? input.body : input), _K9, _K10));
+  return F.elseClause(_resolveOne<T.SimpleStatements | T.Block | T.Newline>((input !== null && typeof input === 'object' && !isNodeData(input) && "body" in input ? input.body : input), _K9, _K10));
 }
 
 export function escapeSequenceFrom(input: string | T.EscapeSequence): ReturnType<typeof F.escapeSequence> {
@@ -856,7 +856,7 @@ export function false_From(input?: T.False): ReturnType<typeof F.false_> {
 
 export function finallyClauseFrom(input: T.FinallyClause.Loose): ReturnType<typeof F.finallyClause> {
   if (isNodeData(input) && (input.$type as string | number) === kindIdFromName("finally_clause")) return input as unknown as ReturnType<typeof F.finallyClause>;
-  return F.finallyClause(_resolveOne<T.SimpleStatements | T.Newline>((input !== null && typeof input === 'object' && !isNodeData(input) && "block" in input ? input.block : input), _K9, _K10));
+  return F.finallyClause(_resolveOne<T.SimpleStatements | T.Block | T.Newline>((input !== null && typeof input === 'object' && !isNodeData(input) && "block" in input ? input.block : input), _K9, _K10));
 }
 
 export function floatFrom(input: string | T.Float): ReturnType<typeof F.float> {
@@ -881,7 +881,7 @@ export function forStatementFrom(input: T.ForStatement.Loose): ReturnType<typeof
     asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     left: _resolveOne<T.LeftHandSide>(input.left, _K3, _K4),
     right: _resolveOne<T.Expressions>(input.right, _K0, _K17),
-    body: _resolveOne<T.SimpleStatements | T.Newline>(input.body, _K9, _K10),
+    body: _resolveOne<T.SimpleStatements | T.Block | T.Newline>(input.body, _K9, _K10),
     alternative: _resolveOneBranch<T.ElseClause>(input.alternative, "else_clause"),
   });
 }
@@ -904,7 +904,7 @@ export function functionDefinitionFrom(input: T.FunctionDefinition.Loose): Retur
     typeParameters: _resolveOneBranch<T.TypeParameter>(input.typeParameters, "type_parameter"),
     parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters") ?? F.parameters(),
     returnType: _resolveOneBranch<T.Type>(input.returnType, "type"),
-    body: _resolveOne<T.SimpleStatements | T.Newline>(input.body, _K9, _K10),
+    body: _resolveOne<T.SimpleStatements | T.Block | T.Newline>(input.body, _K9, _K10),
   });
 }
 
@@ -957,7 +957,7 @@ export function ifStatementFrom(input: T.IfStatement.Loose): ReturnType<typeof F
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.ifStatement>;
   return F.ifStatement({
     condition: _resolveOne<T.Expression>(input.condition, _K0, _K2),
-    consequence: _resolveOne<T.SimpleStatements | T.Newline>(input.consequence, _K9, _K10),
+    consequence: _resolveOne<T.SimpleStatements | T.Block | T.Newline>(input.consequence, _K9, _K10),
     alternative: _resolveMany<T.ElifClause | T.ElseClause>(input.alternative, _K7, _K19),
   });
 }
@@ -1301,7 +1301,7 @@ export function true_From(input?: T.True): ReturnType<typeof F.true_> {
 export function tryStatementFrom(input: T.TryStatement.Loose): ReturnType<typeof F.tryStatement> {
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.tryStatement>;
   return F.tryStatement({
-    body: _resolveOne<T.SimpleStatements | T.Newline>(input.body, _K9, _K10),
+    body: _resolveOne<T.SimpleStatements | T.Block | T.Newline>(input.body, _K9, _K10),
     exceptClauses: _resolveManyBranch<T.ExceptClause>(input.exceptClauses, "except_clause"),
     elseClause: _resolveOneBranch<T.ElseClause>(input.elseClause, "else_clause"),
     finallyClause: _resolveOneBranch<T.FinallyClause>(input.finallyClause, "finally_clause"),
@@ -1406,7 +1406,7 @@ export function whileStatementFrom(input: T.WhileStatement.Loose): ReturnType<ty
   if (isNodeData(input)) return input as unknown as ReturnType<typeof F.whileStatement>;
   return F.whileStatement({
     condition: _resolveOne<T.Expression>(input.condition, _K0, _K2),
-    body: _resolveOne<T.SimpleStatements | T.Newline>(input.body, _K9, _K10),
+    body: _resolveOne<T.SimpleStatements | T.Block | T.Newline>(input.body, _K9, _K10),
     alternative: _resolveOneBranch<T.ElseClause>(input.alternative, "else_clause"),
   });
 }
@@ -1448,7 +1448,7 @@ export function withStatementFrom(input: T.WithStatement.Loose): ReturnType<type
   return F.withStatement({
     asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     withClause: _resolveOneBranch<T.WithClause>(input.withClause, "with_clause"),
-    body: _resolveOne<T.SimpleStatements | T.Newline>(input.body, _K9, _K10),
+    body: _resolveOne<T.SimpleStatements | T.Block | T.Newline>(input.body, _K9, _K10),
   });
 }
 

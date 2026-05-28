@@ -463,7 +463,7 @@ export function wrap_ArrowFunctionParameter(data: T._ArrowFunctionParameter, tre
     $type: TSKindId._ArrowFunctionParameter as const,
     _parameter: normalizeSingularWrapSlot(data._parameter, "parameter", true, data.$type, { tree, nodeType: data.$type, slotName: "parameter", span: (data as _NodeData).$span }),
 
-    parameter() { return drillAs<T.ReservedIdentifier>(this._parameter, tree, "identifier", "_reserved_identifier"); },
+    parameter() { return drillAs<T.ReservedIdentifier | T.Identifier>(this._parameter, tree, "identifier", "_reserved_identifier"); },
     $with: {
       parameter: (v: NonNullable<T._ArrowFunctionParameter['_parameter']>) => wrap_ArrowFunctionParameter({ ...data, _parameter: v }, tree),
     },
@@ -886,7 +886,7 @@ export function wrapForHeader(data: T.ForHeader, tree: TreeHandle) {
     _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
     _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type, { tree, nodeType: data.$type, slotName: "right", span: (data as _NodeData).$span }),
 
-    content() { return drillAs<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(this._content, tree, "for_header_lhs", "_for_header_lhs"); },
+    content() { return drillIn<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(this._content, tree); },
     operator() { return this._operator; },
     right() { return drillIn<T.Expressions>(this._right, tree); },
     $with: {
@@ -1047,7 +1047,7 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type, { tree, nodeType: data.$type, slotName: "name", span: (data as _NodeData).$span }),
     _index_type: normalizeSingularWrapSlot(data._index_type, "index_type", true, data.$type, { tree, nodeType: data.$type, slotName: "index_type", span: (data as _NodeData).$span }),
 
-    name() { return drillAs<T.ReservedIdentifier>(this._name, tree, "identifier", "_reserved_identifier"); },
+    name() { return drillAs<T.Identifier | T.ReservedIdentifier>(this._name, tree, "identifier", "_reserved_identifier"); },
     indexType() { return drillIn<T.Type>(this._index_type, tree); },
     $with: {
       name: (v: NonNullable<T.IndexSignatureColon['_name']>) => wrapIndexSignatureColon({ ...data, _name: v }, tree),
@@ -1301,7 +1301,7 @@ export function wrapTypeQueryCallExpression(data: T.TypeQueryCallExpression, tre
     _function: normalizeSingularWrapSlot(data._function, "function", true, data.$type, { tree, nodeType: data.$type, slotName: "function", span: (data as _NodeData).$span }),
     _arguments: normalizeSingularWrapSlot(data._arguments, "arguments", true, data.$type, { tree, nodeType: data.$type, slotName: "arguments", span: (data as _NodeData).$span }),
 
-    function() { return drillAs<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(this._function, tree, "member_expression", "_type_query_member_expression"); },
+    function() { return drillIn<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(this._function, tree); },
     arguments() { return drillIn<T.Arguments>(this._arguments, tree); },
     $with: {
       function: (v: NonNullable<T.TypeQueryCallExpression['_function']>) => wrapTypeQueryCallExpression({ ...data, _function: v }, tree),
@@ -1335,7 +1335,7 @@ export function wrapTypeQueryInstantiationExpression(data: T.TypeQueryInstantiat
     _function: normalizeSingularWrapSlot(data._function, "function", true, data.$type, { tree, nodeType: data.$type, slotName: "function", span: (data as _NodeData).$span }),
     _type_arguments: normalizeSingularWrapSlot(data._type_arguments, "type_arguments", true, data.$type, { tree, nodeType: data.$type, slotName: "type_arguments", span: (data as _NodeData).$span }),
 
-    function() { return drillAs<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(this._function, tree, "member_expression", "_type_query_member_expression"); },
+    function() { return drillIn<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(this._function, tree); },
     typeArguments() { return drillIn<T.TypeArguments>(this._type_arguments, tree); },
     $with: {
       function: (v: NonNullable<T.TypeQueryInstantiationExpression['_function']>) => wrapTypeQueryInstantiationExpression({ ...data, _function: v }, tree),
@@ -1353,7 +1353,7 @@ export function wrapTypeQueryMemberExpression(data: T.TypeQueryMemberExpression,
     _content: projectKindEnumStorage(normalizeSingularWrapSlot((data._dot ?? data._qmark_dot ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span })),
     _property: normalizeSingularWrapSlot(data._property, "property", true, data.$type, { tree, nodeType: data.$type, slotName: "property", span: (data as _NodeData).$span }),
 
-    object() { return drillAs<T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression>(this._object, tree, "subscript_expression", "_type_query_subscript_expression"); },
+    object() { return drillIn<T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression>(this._object, tree); },
     content() { return this._content; },
     property() { return drillAs<T.PrivatePropertyIdentifier | T.Identifier>(this._property, tree, "property_identifier", "identifier"); },
     $with: {
@@ -1372,7 +1372,7 @@ export function wrapTypeQueryMemberExpressionInTypeAnnotation(data: T.TypeQueryM
     _object: normalizeSingularWrapSlot(data._object, "object", true, data.$type, { tree, nodeType: data.$type, slotName: "object", span: (data as _NodeData).$span }),
     _property: normalizeSingularWrapSlot(data._property, "property", true, data.$type, { tree, nodeType: data.$type, slotName: "property", span: (data as _NodeData).$span }),
 
-    object() { return drillAs<T.Import | T.TypeQueryMemberExpressionInTypeAnnotation | T.TypeQueryCallExpressionInTypeAnnotation>(this._object, tree, "member_expression", "_type_query_member_expression_in_type_annotation"); },
+    object() { return drillIn<T.Import | T.TypeQueryMemberExpressionInTypeAnnotation | T.TypeQueryCallExpressionInTypeAnnotation>(this._object, tree); },
     property() { return drillAs<T.PrivatePropertyIdentifier | T.Identifier>(this._property, tree, "property_identifier", "identifier"); },
     $with: {
       object: (v: NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation['_object']>) => wrapTypeQueryMemberExpressionInTypeAnnotation({ ...data, _object: v }, tree),
@@ -1389,7 +1389,7 @@ export function wrapTypeQuerySubscriptExpression(data: T.TypeQuerySubscriptExpre
     _object: normalizeSingularWrapSlot(data._object, "object", true, data.$type, { tree, nodeType: data.$type, slotName: "object", span: (data as _NodeData).$span }),
     _index: normalizeSingularWrapSlot(data._index, "index", true, data.$type, { tree, nodeType: data.$type, slotName: "index", span: (data as _NodeData).$span }),
 
-    object() { return drillAs<T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression>(this._object, tree, "subscript_expression", "_type_query_subscript_expression"); },
+    object() { return drillIn<T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression>(this._object, tree); },
     index() { return drillIn<T.PredefinedType | T.String | T.Number>(this._index, tree); },
     $with: {
       object: (v: NonNullable<T.TypeQuerySubscriptExpression['_object']>) => wrapTypeQuerySubscriptExpression({ ...data, _object: v }, tree),
@@ -1600,7 +1600,7 @@ export function wrapArrowFunctionParameter(data: T.ArrowFunctionParameter, tree:
     ...data,
     _parameter: normalizeSingularWrapSlot(data._parameter, "parameter", true, data.$type, { tree, nodeType: data.$type, slotName: "parameter", span: (data as _NodeData).$span }),
 
-    parameter() { return drillAs<T.ReservedIdentifier>(this._parameter, tree, "identifier", "_reserved_identifier"); },
+    parameter() { return drillAs<T.ReservedIdentifier | T.Identifier>(this._parameter, tree, "identifier", "_reserved_identifier"); },
     $with: {
       parameter: (v: NonNullable<T.ArrowFunctionParameter['_parameter']>) => wrapArrowFunctionParameter({ ...data, _parameter: v }, tree),
     },
@@ -1735,7 +1735,7 @@ export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExp
     _operator: projectKindEnumStorage(normalizeSingularWrapSlot(data._operator, "operator", true, data.$type, { tree, nodeType: data.$type, slotName: "operator", span: (data as _NodeData).$span })),
     _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type, { tree, nodeType: data.$type, slotName: "right", span: (data as _NodeData).$span }),
 
-    left() { return drillAs<T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression>(this._left, tree, "identifier", "_reserved_identifier"); },
+    left() { return drillAs<T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.Identifier | T.ParenthesizedExpression | T.NonNullExpression>(this._left, tree, "identifier", "_reserved_identifier"); },
     operator() { return this._operator; },
     right() { return drillIn<T.Expression>(this._right, tree); },
     $with: {
@@ -1890,7 +1890,7 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle) {
     $type: TSKindId.ClassBody as const,
     _content: normalizeRepeatedWrapSlot(_concatInSourceOrder([data._class_body_method, data._class_body_method_sig, data._class_static_block, data._class_body_member, data._semi, data._content]), false, "content", { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
-    contents() { return drillAsAll<T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ";">(this._content, tree, "class_body_method", "_class_body_method"); },
+    contents() { return drillInAll<T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ";">(this._content as readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ";")[] | undefined, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapClassBody({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -2121,7 +2121,7 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
     $type: TSKindId.Decorator as const,
     _content: normalizeSingularWrapSlot((data._identifier ?? data._member_expression ?? data._call_expression ?? data._parenthesized_expression ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
-    content() { return drillAs<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression>(this._content, tree, "member_expression", "decorator_member_expression"); },
+    content() { return drillIn<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression>(this._content, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapDecorator({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -2170,7 +2170,7 @@ export function wrapDecoratorParenthesizedExpression(data: T.DecoratorParenthesi
     $type: TSKindId.DecoratorParenthesizedExpression as const,
     _content: normalizeSingularWrapSlot((data._identifier ?? data._member_expression ?? data._call_expression ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
-    content() { return drillAs<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(this._content, tree, "member_expression", "decorator_member_expression"); },
+    content() { return drillIn<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(this._content, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapDecoratorParenthesizedExpression({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;
@@ -2473,7 +2473,7 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle) {
     _right: normalizeSingularWrapSlot(data._right, "right", true, data.$type, { tree, nodeType: data.$type, slotName: "right", span: (data as _NodeData).$span }),
     _body: normalizeSingularWrapSlot(data._body, "body", true, data.$type, { tree, nodeType: data.$type, slotName: "body", span: (data as _NodeData).$span }),
 
-    content() { return drillAs<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(this._content, tree, "for_header_lhs", "_for_header_lhs"); },
+    content() { return drillIn<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(this._content, tree); },
     operator() { return this._operator; },
     right() { return drillIn<T.Expressions>(this._right, tree); },
     body() { return drillIn<T.Statement>(this._body, tree); },
@@ -3701,7 +3701,7 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
     _value: normalizeSingularWrapSlot(data._value, "value", false, data.$type, { tree, nodeType: data.$type, slotName: "value", span: (data as _NodeData).$span }),
 
     decorators() { return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree); },
-    content() { return drillAs<T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt | undefined>(this._content, tree, "public_field_definition_declare_first", "_public_field_definition_declare_first"); },
+    content() { return drillIn<T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt | undefined>(this._content, tree); },
     name() { return drillIn<T.PropertyName>(this._name, tree); },
     optionalityMarker() { return this._optionality_marker; },
     type() { return drillIn<T.TypeAnnotation | undefined>(this._type, tree); },
@@ -4233,7 +4233,7 @@ export function wrapTypePredicate(data: T.TypePredicate, tree: TreeHandle) {
     _name: normalizeSingularWrapSlot(data._name, "name", true, data.$type, { tree, nodeType: data.$type, slotName: "name", span: (data as _NodeData).$span }),
     _type: normalizeSingularWrapSlot(data._type, "type", true, data.$type, { tree, nodeType: data.$type, slotName: "type", span: (data as _NodeData).$span }),
 
-    name() { return drillAs<T.PredefinedType | T.This>(this._name, tree, "identifier", "predefined_type"); },
+    name() { return drillAs<T.Identifier | T.This | T.PredefinedType>(this._name, tree, "identifier", "predefined_type"); },
     type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
       name: (v: NonNullable<T.TypePredicate['_name']>) => wrapTypePredicate({ ...data, _name: v }, tree),
@@ -4263,7 +4263,7 @@ export function wrapTypeQuery(data: T.TypeQuery, tree: TreeHandle) {
     $type: TSKindId.TypeQuery as const,
     _content: normalizeSingularWrapSlot((data._subscript_expression ?? data._member_expression ?? data._call_expression ?? data._instantiation_expression ?? data._identifier ?? data._this ?? data._content), "content", true, data.$type, { tree, nodeType: data.$type, slotName: "content", span: (data as _NodeData).$span }),
 
-    content() { return drillAs<T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This>(this._content, tree, "subscript_expression", "_type_query_subscript_expression"); },
+    content() { return drillIn<T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This>(this._content, tree); },
     $with: { $children: (...vs: readonly [never]) => wrapTypeQuery({ ...data, $children: vs }, tree) },
   }, methodsEngine);
   return _node;

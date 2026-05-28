@@ -3552,7 +3552,7 @@ export function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config) {
     path() { return _path; },
     name() { return _name; },
     $with: {
-      path: (value?: T.Path | T.GenericTypeWithTurbofish | T.BracketedType) => scopedTypeIdentifier({ ...config, path: value }),
+      path: (value?: T.Path | T.GenericTypeWithTurbofish | T.BracketedType | T.GenericType) => scopedTypeIdentifier({ ...config, path: value }),
       name: (value: T.Identifier) => scopedTypeIdentifier({ ...config, name: value }),
     },
   }, methodsEngine);

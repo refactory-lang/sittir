@@ -108,7 +108,7 @@ export function _arrowFunctionParameter(config: T._ArrowFunctionParameter.Config
     _parameter,
     parameter() { return _parameter; },
     $with: {
-      parameter: (value: T.ReservedIdentifier) => _arrowFunctionParameter({ ...config, parameter: value }),
+      parameter: (value: T.ReservedIdentifier | T.Identifier) => _arrowFunctionParameter({ ...config, parameter: value }),
     },
   }, methodsEngine);
 }
@@ -771,7 +771,7 @@ export function _indexSignatureColon(config: T.IndexSignatureColon.Config) {
     name() { return _name; },
     indexType() { return _index_type; },
     $with: {
-      name: (value: T.ReservedIdentifier) => _indexSignatureColon({ ...config, name: value }),
+      name: (value: T.Identifier | T.ReservedIdentifier) => _indexSignatureColon({ ...config, name: value }),
       indexType: (value: T.Type) => _indexSignatureColon({ ...config, indexType: value }),
     },
   }, methodsEngine);
@@ -1553,7 +1553,7 @@ export function augmentedAssignmentExpression(config: T.AugmentedAssignmentExpre
     operator() { return _operator; },
     right() { return _right; },
     $with: {
-      left: (value: T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression) => augmentedAssignmentExpression({ ...config, left: value }),
+      left: (value: T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.Identifier | T.ParenthesizedExpression | T.NonNullExpression) => augmentedAssignmentExpression({ ...config, left: value }),
       operator: (value: NonNullable<Parameters<typeof augmentedAssignmentExpression>[0]>['operator']) => augmentedAssignmentExpression({ ...config, operator: value }),
       right: (value: T.Expression) => augmentedAssignmentExpression({ ...config, right: value }),
     },
@@ -4675,7 +4675,7 @@ export function typePredicate(config: T.TypePredicate.Config) {
     name() { return _name; },
     type() { return _type; },
     $with: {
-      name: (value: T.PredefinedType | T.This) => typePredicate({ ...config, name: value }),
+      name: (value: T.Identifier | T.This | T.PredefinedType) => typePredicate({ ...config, name: value }),
       type: (value: T.Type) => typePredicate({ ...config, type: value }),
     },
   }, methodsEngine);
