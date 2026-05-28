@@ -19,7 +19,7 @@ Generate typed factories, render templates, and native bindings from tree-sitter
 
 ## Detailed instructions
 
-- [Compiler phase glossary](docs/compiler-phase-glossary.md) — per-function reference for every phase. 
+- [Compiler phase glossary](docs/compiler-phase-glossary.md) — per-function reference for every phase.
 - [Architecture and data model](.claude/architecture.md)
 - [TypeScript and codegen conventions](.claude/codegen-conventions.md)
 - [Grammar, templates, and overrides workflow](.claude/grammar-workflow.md)

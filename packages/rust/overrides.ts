@@ -6,7 +6,7 @@
  *
  * @generated from overrides.json — review before committing
  */
-
+/// <reference types="tree-sitter-cli/dsl" />
 // grammar.js + tree-sitter's injected global DSL (`grammar`, `$._rule`
 // proxy, `seq` / `choice` / `prec` / ...) are intentionally untyped.
 // We narrow the @ts-nocheck blast radius by lifting the wire payload
@@ -40,7 +40,7 @@ declare const token: {
 };
 declare const string: (value: string) => unknown;
 
-const config: WireConfig<RustGrammar> = {
+const config: WireConfig<typeof base> = {
 	name: 'rust',
 	// `previous` is the base grammar's conflicts list — concat so we
 	// don't drop the base entries (`$._type`, `$._pattern`, etc.).
@@ -159,20 +159,14 @@ const config: WireConfig<RustGrammar> = {
 		// Members: parameter | self_parameter | variadic_parameter |
 		// '_' wildcard | _type (anonymous type).
 		attributed_parameter: ($) =>
-			seq(
-				optional($.attribute_item),
-				choice($.parameter, $.self_parameter, $.variadic_parameter, '_', $._type)
-			),
+			seq(optional($.attribute_item), choice($.parameter, $.self_parameter, $.variadic_parameter, '_', $._type)),
 
 		// Pattern: attribute_item(s) attached to a type parameter.
 		// type_parameters uses SEQ(REPEAT(attribute_item), CHOICE(metavariable,
 		// type_parameter, lifetime_parameter, const_parameter)) inline at every
 		// comma-separated position.
 		attributed_type_parameter: ($) =>
-			seq(
-				repeat($.attribute_item),
-				choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)
-			),
+			seq(repeat($.attribute_item), choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)),
 
 		// arguments: each call arg is seq(repeat(attribute_item), _expression).
 		// Synthesize a visible `attributed_argument` kind (mirrors
@@ -212,10 +206,7 @@ const config: WireConfig<RustGrammar> = {
 		// `_attributed_type_parameter`); declare the conflict to allow tree-sitter
 		// to use lookahead.
 		type_argument: ($) =>
-			seq(
-				choice($._type, $.type_binding, $.lifetime, $._literal, $.block),
-				optional($.trait_bounds)
-			)
+			seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds))
 	},
 	transforms: {
 		// abstract_type: 1 field(s)
@@ -550,7 +541,7 @@ const config: WireConfig<RustGrammar> = {
 		reference_expression: {
 			0: field('reference'),
 			'1/0/1/0': variant('raw_const'),
-			'1/0/1/1': variant('raw_mut')// mutable_specifier [struct=0]
+			'1/0/1/1': variant('raw_mut') // mutable_specifier [struct=0]
 		},
 
 		// reference_pattern: 2 field(s)
@@ -799,10 +790,10 @@ const config: WireConfig<RustGrammar> = {
 	// delimiter-count parameter needed.
 	renderAs: (_$) => ({
 		// Doc comment markers
-		_outer_line_doc_comment_marker: string('/'),   // /// outer line doc
-		_inner_line_doc_comment_marker: string('!'),   // //! inner line doc
-		_outer_block_doc_comment_marker: string('*'),  // /** outer block doc */ (was '!' in MVP — typo)
-		_inner_block_doc_comment_marker: string('!'),  // /*! inner block doc */
+		_outer_line_doc_comment_marker: string('/'), // /// outer line doc
+		_inner_line_doc_comment_marker: string('!'), // //! inner line doc
+		_outer_block_doc_comment_marker: string('*'), // /** outer block doc */ (was '!' in MVP — typo)
+		_inner_block_doc_comment_marker: string('!'), // /*! inner block doc */
 		// Raw string literal delimiters — static (1-hash form only).
 		// Round-trip will fail for `r##"..."##` etc. Factory-side
 		// benefit: no delimiter-count parameter needed.

@@ -2311,18 +2311,12 @@ var config = {
     // The sittir IR normalizes CHOICE(x, BLANK) to optional(x).
     // Members: parameter | self_parameter | variadic_parameter |
     // '_' wildcard | _type (anonymous type).
-    attributed_parameter: ($) => seq(
-      optional($.attribute_item),
-      choice($.parameter, $.self_parameter, $.variadic_parameter, "_", $._type)
-    ),
+    attributed_parameter: ($) => seq(optional($.attribute_item), choice($.parameter, $.self_parameter, $.variadic_parameter, "_", $._type)),
     // Pattern: attribute_item(s) attached to a type parameter.
     // type_parameters uses SEQ(REPEAT(attribute_item), CHOICE(metavariable,
     // type_parameter, lifetime_parameter, const_parameter)) inline at every
     // comma-separated position.
-    attributed_type_parameter: ($) => seq(
-      repeat($.attribute_item),
-      choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)
-    ),
+    attributed_type_parameter: ($) => seq(repeat($.attribute_item), choice($.metavariable, $.type_parameter, $.lifetime_parameter, $.const_parameter)),
     // arguments: each call arg is seq(repeat(attribute_item), _expression).
     // Synthesize a visible `attributed_argument` kind (mirrors
     // attributed_parameter / attributed_type_parameter) so the arg list
@@ -2357,10 +2351,7 @@ var config = {
     // Conflict: choice($._type, ...) can begin with `metavariable` (same as
     // `_attributed_type_parameter`); declare the conflict to allow tree-sitter
     // to use lookahead.
-    type_argument: ($) => seq(
-      choice($._type, $.type_binding, $.lifetime, $._literal, $.block),
-      optional($.trait_bounds)
-    )
+    type_argument: ($) => seq(choice($._type, $.type_binding, $.lifetime, $._literal, $.block), optional($.trait_bounds))
   },
   transforms: {
     // abstract_type: 1 field(s)

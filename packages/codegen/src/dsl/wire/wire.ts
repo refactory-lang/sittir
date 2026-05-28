@@ -42,6 +42,8 @@ import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
 import { applyAutoGroups } from './auto-groups.ts';
+import type { Rule } from '../../compiler/rule.ts';
+
 
 // ---------------------------------------------------------------------------
 // RenderAsConfig — sittir-side rule bodies for external scanner symbols
@@ -292,12 +294,12 @@ export function withWireContext<T>(
  * keys, preserving the pre-generics behaviour of every call site that
  * doesn't supply a base type.
  */
-export type GrammarBase = Record<string, unknown> | { readonly rules: Record<string, unknown> };
+
 
 /** @internal — extract the rule-kind string union from a base grammar.
  *  Handles both shapes: `{ rules: { … } }` (tree-sitter native) and
  *  flat top-level keys (sittir-emitted `<Lang>Grammar`). */
-type BaseKind<Base extends GrammarBase> = Base extends {
+type BaseKind<Base extends GrammarSchema<any> = GrammarSchema<any>> = Base extends {
 	readonly rules: infer R;
 }
 	? keyof R & string
@@ -314,7 +316,7 @@ type BaseKind<Base extends GrammarBase> = Base extends {
  * names stay untyped — paths describe runtime descents into the rule
  * tree (`seq`/`choice` indices), suffixes are author-introduced.
  */
-export type PolymorphsConfig<Base extends GrammarBase = GrammarBase> = Partial<
+export type PolymorphsConfig<Base extends GrammarSchema<any> = GrammarSchema<any>> = Partial<
 	Record<BaseKind<Base>, Record<string, string>>
 >;
 
@@ -373,7 +375,7 @@ export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
  * resolution deposits captured content into wire's context; the
  * deferred fns read deposits.
  */
-export type TransformsConfig<Base extends GrammarBase = GrammarBase> = Partial<
+export type TransformsConfig<Base extends GrammarSchema<any> = GrammarSchema<any>> = Partial<
 	Record<BaseKind<Base>, PatchMap | PatchMap[]>
 >;
 
@@ -392,20 +394,10 @@ export type PatchMap = Record<string, unknown>;
  * to keep the hidden-name escape hatch for synthesized rules
  * (`_kw_<field>`, `_<parent>_<variant>`, `_<alias>`).
  */
-export interface WireConfig<Base extends GrammarBase = GrammarBase> {
-	readonly name?: string;
-	readonly rules: Partial<Record<BaseKind<Base>, RuleFn>> & Record<string, RuleFn>;
-	readonly polymorphs?: PolymorphsConfig<Base>;
+export type WireConfig< B extends GrammarSchema<any>, NewRules extends string = string> = Grammar<NewRules, keyof B['rules'] & string> & {
+	readonly polymorphs?: PolymorphsConfig<B>;
 	readonly groups?: GroupsConfig;
-	readonly transforms?: TransformsConfig<Base>;
-	readonly conflicts?: ConflictsFn;
-	readonly externals?: DollarFn<unknown[]>;
-	readonly extras?: DollarFn<unknown[]>;
-	readonly supertypes?: DollarFn<unknown[]>;
-	readonly inline?: DollarFn<unknown[]>;
-	readonly word?: DollarFn<unknown>;
-	readonly precedences?: DollarFn<unknown[][]>;
-	readonly reserved?: Record<string, DollarFn<unknown[]>>;
+	readonly transforms?: TransformsConfig<B>;
 	/** Side-channel from `enrich()` — preserved unchanged. */
 	readonly __enrichOverrides__?: Record<string, RuleFn>;
 	/**
@@ -472,9 +464,9 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
  *   `Object.keys()` snapshot; content resolves via deferred-content fns
  *   as tree-sitter iterates.
  */
-export function wire<Base extends GrammarBase = GrammarBase>(
-	config: WireConfig<Base>,
-	base?: { grammar?: { rules?: Record<string, RuleFn> }; rules?: Record<string, RuleFn> }
+export function wire<C extends WireConfig<any>> (
+	config: C,
+	base?: GrammarSchema<keyof C['rules'] & string>
 ): WiredOpts {
 	const context: WireContext = {
 		deposits: new Map(),
@@ -491,7 +483,7 @@ export function wire<Base extends GrammarBase = GrammarBase>(
 
 	const polymorphs = config.polymorphs ?? {};
 	const transforms = config.transforms ?? {};
-	const outRules: Record<string, RuleFn> = { ...config.rules };
+	const outRules: Record<string, Rule> = { ...config.rules };
 
 	// Transforms first, polymorphs second — transforms wrap the user
 	// fn innermost and see the base-shape rule tree; polymorphs wrap
