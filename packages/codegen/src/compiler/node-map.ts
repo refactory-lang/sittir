@@ -53,6 +53,7 @@ import { tokenToName } from './optimize.ts';
 import { collectSlots } from './collect-slots.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { fieldContentIsMultiSibling } from './field-shape.ts';
+import { opaqueFacts, type OpaqueFacts } from './opaque-facts.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import {
 	diagnoseParseKindCollisions,
@@ -1653,6 +1654,9 @@ export interface AssembledNonterminalInit {
 	 * see `AssembledNonterminal.sourceRuleIds`.
 	 */
 	readonly sourceRuleIds: readonly RuleId[];
+	/** Validator-only facts. OPAQUE to the compiler (see {@link OpaqueFacts}) —
+	 *  never read here to drive logic or emission; defaults to empty. */
+	readonly metadata?: OpaqueFacts;
 	storageInfo?: FieldStorageInfo;
 }
 
@@ -1693,6 +1697,9 @@ export class AssembledNonterminal {
 	 * bypass `buildRuleCatalog`). See feedback_ruleid_backpointer / FOLD-1.
 	 */
 	readonly sourceRuleIds: readonly RuleId[];
+	/** Validator-only facts. OPAQUE to the compiler (see {@link OpaqueFacts}) —
+	 *  never read here to drive logic or emission. */
+	readonly metadata: OpaqueFacts;
 	storageInfo?: FieldStorageInfo;
 
 	get storageName(): string { return projectSlotNaming(this).storageName; }
@@ -1711,6 +1718,7 @@ export class AssembledNonterminal {
 		this.hasLeading = init.hasLeading;
 		this.source = init.source;
 		this.sourceRuleIds = init.sourceRuleIds;
+		this.metadata = init.metadata ?? opaqueFacts({});
 		this.storageInfo = init.storageInfo;
 	}
 
@@ -1723,6 +1731,7 @@ export class AssembledNonterminal {
 			hasLeading: this.hasLeading,
 			source: this.source,
 			sourceRuleIds: this.sourceRuleIds,
+			metadata: this.metadata,
 			storageInfo: this.storageInfo,
 			...overrides,
 		});

@@ -1,3 +1,5 @@
+import { opaqueFacts, type OpaqueFacts } from './opaque-facts.ts';
+
 export type SlotArity = 'one' | 'many';
 export type SlotOrigin = 'field' | 'kind';
 
@@ -5,11 +7,13 @@ export interface SlotModel {
 	readonly name: string;
 	readonly storageKey: string;     // always `_<name>`
 	readonly arity: SlotArity;
-	readonly origin: SlotOrigin;     // name source — metadata only; consumers should not branch on this
+	/** Validator-only facts (e.g. `{ origin }`). OPAQUE to the compiler — read
+	 *  only via `readFacts` in the validator; never branch on it here. */
+	readonly metadata: OpaqueFacts;
 }
 
 export function createSlotModel(name: string, arity: SlotArity, origin: SlotOrigin): SlotModel {
-	return { name, storageKey: `_${name}`, arity, origin };
+	return { name, storageKey: `_${name}`, arity, metadata: opaqueFacts({ origin }) };
 }
 
 // Compatibility shims for migration. Callers updated to createSlotModel in later tasks.
@@ -27,7 +31,7 @@ export function createUnnamedKindSlotModel(kindName: string, arity: SlotArity): 
  * to per-slot `createUnnamedKindSlotModel(actualKindName, ...)`, this disappears.
  */
 export function createUnnamedChildrenSlotModel(arity: SlotArity): SlotModel {
-	return { name: 'children', storageKey: '$children', arity, origin: 'kind' };
+	return { name: 'children', storageKey: '$children', arity, metadata: opaqueFacts({ origin: 'kind' }) };
 }
 
 export function slotStorageKey(slot: SlotModel): string {
