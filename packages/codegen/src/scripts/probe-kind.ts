@@ -173,13 +173,16 @@ async function main(argv: string[]): Promise<number> {
 		process.stderr.write(`probe-kind: --engine must be 'js' | 'native' | 'both' (got '${engineRaw}')\n`);
 		return 2;
 	}
+	if (engineRaw === 'js') {
+		process.stderr.write('probe-kind: warning: --engine js is deprecated; native remains the default production path\n');
+	}
 	const opts = {
 		noRender: values['no-render'] === true,
 		noWrap: values['no-wrap'] === true,
 		kind: values.kind as string | undefined,
 		range: parsedRange,
 		reparse: values.reparse === true,
-		engine: (engineRaw === 'both' ? 'native' : engineRaw) as 'js' | 'native',
+		engine: (engineRaw === 'both' ? 'js' : engineRaw) as 'js' | 'native',
 		logParse: values.logParse === true
 
 	};

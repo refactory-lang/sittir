@@ -186,10 +186,10 @@ describe('wrap emitter slot arity', () => {
 		const repeatedSource = emitWrap({ grammar: 'synth', nodeMap: makeRepeatFieldNodeMap() });
 
 		expect(singularSource).toContain(
-			'_value: normalizeSingularWrapSlot(data._value, "value", true, data.$type, { tree, nodeType: data.$type, slotName: "value", span: data.$span }),'
+			'_value: normalizeSingularWrapSlot(data._value, "value", true, data.$type, { tree, nodeType: data.$type, slotName: "value", span: (data as _NodeData).$span }),'
 		);
 		expect(repeatedSource).toContain(
-			'_items: normalizeRepeatedWrapSlot(data._items, true, "items", { tree, nodeType: data.$type, slotName: "items", span: data.$span }),'
+			'_items: normalizeRepeatedWrapSlot(data._items, true, "items", { tree, nodeType: data.$type, slotName: "items", span: (data as _NodeData).$span }),'
 		);
 	});
 
@@ -197,7 +197,7 @@ describe('wrap emitter slot arity', () => {
 		const source = emitWrap({ grammar: 'synth', nodeMap: makeRequiredSingleChildNodeMap() });
 
 		expect(source).toContain(
-			'_identifier: normalizeSingularWrapSlot(data._identifier, "identifier", true, data.$type, { tree, nodeType: data.$type, slotName: "identifier", span: data.$span }),'
+			'_identifier: normalizeSingularWrapSlot(data._identifier, "identifier", true, data.$type, { tree, nodeType: data.$type, slotName: "identifier", span: (data as _NodeData).$span }),'
 		);
 	});
 
