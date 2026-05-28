@@ -22574,10 +22574,10 @@ pub struct RangePatternLeftWithRightTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: Box<RangePatternLeftWithRightRightTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Box<AnyTransport>,
 }
 
 impl RenderableTransport for RangePatternLeftWithRightTransport {
@@ -22626,10 +22626,10 @@ pub struct RangePatternPrefixTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
     pub right: Box<RangePatternPrefixRightTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Box<AnyTransport>,
 }
 
 impl RenderableTransport for RangePatternPrefixTransport {
@@ -51125,10 +51125,15 @@ fn transport_to_node_range_pattern_left_bare(transport: RangePatternLeftBareTran
 
 fn transport_to_node_range_pattern_left_with_right(transport: RangePatternLeftWithRightTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("content".to_string(), transport_field_value(*transport.content)?);
     fields.insert("right".to_string(), transport_field_value(range_pattern_left_with_right_right_transport_slot_to_any(*transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(*transport.content);
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(343) /* "_range_pattern_left_with_right" */,
@@ -51147,10 +51152,15 @@ fn transport_to_node_range_pattern_left_with_right(transport: RangePatternLeftWi
 
 fn transport_to_node_range_pattern_prefix(transport: RangePatternPrefixTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("content".to_string(), transport_field_value(*transport.content)?);
     fields.insert("right".to_string(), transport_field_value(range_pattern_prefix_right_transport_slot_to_any(*transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(*transport.content);
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(342) /* "_range_pattern_prefix" */,

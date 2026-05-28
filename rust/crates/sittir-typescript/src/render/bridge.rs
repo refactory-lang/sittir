@@ -998,13 +998,16 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         322 => { // "_type_query_member_expression"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("content"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("object"), true)?;
-            let field_2 = resolve_slot(node, SlotAccessor::Field("property"), true)?;
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("object"), true)?;
+            let field_1 = resolve_slot(node, SlotAccessor::Field("property"), true)?;
             let template = TypeQueryMemberExpressionTemplate {
-                content: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                content: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
             };
             template.render_into(dest)
         }
@@ -1460,11 +1463,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         343 => { // "constraint"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("content"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("type"), true)?;
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("type"), true)?;
             let template = ConstraintTemplate {
-                content: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                content: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
         }

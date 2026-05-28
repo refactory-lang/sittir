@@ -1036,7 +1036,7 @@ export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: Node
 	const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 	if (slotClass.tag !== 'singleSlot' || slotClass.arity !== 'singular') return undefined;
 	const slot = slotClass.slot;
-	if (slot.source === 'inferred') return undefined;
+	if (slot.isUnnamed) return undefined;
 	return slot;
 }
 

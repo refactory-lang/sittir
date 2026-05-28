@@ -1919,8 +1919,8 @@ export interface RangePatternLeftWithRightTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: Box<AnyTransport>
   _right: Box<RangePatternLeftWithRightRightTransportSlot>
+  _content: Box<AnyTransport>
 }
 
 export interface RangePatternPrefixTransport {
@@ -1931,8 +1931,8 @@ export interface RangePatternPrefixTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content: Box<AnyTransport>
   _right: Box<RangePatternPrefixRightTransportSlot>
+  _content: Box<AnyTransport>
 }
 
 export interface RangePatternTransport {

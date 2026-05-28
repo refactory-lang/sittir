@@ -25602,10 +25602,10 @@ pub struct TypeQueryMemberExpressionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: Box<TypeQueryMemberExpressionObjectTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_property"))]
     pub property: Box<PropertyNameTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Box<AnyTransport>,
 }
 
 impl RenderableTransport for TypeQueryMemberExpressionTransport {
@@ -27928,10 +27928,10 @@ pub struct ConstraintTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: TypeTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: Box<AnyTransport>,
 }
 
 impl RenderableTransport for ConstraintTransport {
@@ -56701,10 +56701,15 @@ fn transport_to_node_type_query_instantiation_expression(transport: TypeQueryIns
 fn transport_to_node_type_query_member_expression(transport: TypeQueryMemberExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     fields.insert("object".to_string(), transport_field_value(type_query_member_expression_object_transport_slot_to_any(*transport.object))?);
-    fields.insert("content".to_string(), transport_field_value(*transport.content)?);
     fields.insert("property".to_string(), transport_field_value(property_name_transport_to_any(*transport.property))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(*transport.content);
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(322) /* "_type_query_member_expression" */,
@@ -57703,10 +57708,15 @@ fn transport_to_node_conditional_type(transport: ConditionalTypeTransport) -> Re
 
 fn transport_to_node_constraint(transport: ConstraintTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("content".to_string(), transport_field_value(*transport.content)?);
     fields.insert("type".to_string(), transport_field_value(type_transport_to_any(transport.type_))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let mut children_buf: Vec<AnyTransport> = Vec::new();
+    children_buf.push(*transport.content);
+    let children = if children_buf.is_empty() {
+        None
+    } else {
+        Some(transport_children(children_buf)?)
+    };
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(343) /* "constraint" */,

@@ -893,20 +893,26 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             template.render_into(dest)
         }
         343 => { // "_range_pattern_left_with_right" | "range_pattern_left_with_right"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("content"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("right"), true)?;
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("right"), true)?;
             let template = RangePatternLeftWithRightTemplate {
-                content: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                content: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
         }
         342 => { // "_range_pattern_prefix" | "range_pattern_prefix"
-            let field_0 = resolve_slot(node, SlotAccessor::Field("content"), true)?;
-            let field_1 = resolve_slot(node, SlotAccessor::Field("right"), true)?;
+            let children = resolve_slot(node, SlotAccessor::Children, true)?;
+            let field_0 = resolve_slot(node, SlotAccessor::Field("right"), true)?;
             let template = RangePatternPrefixTemplate {
-                content: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                content: match children.kind {
+                ResolvedFieldKind::Missing => return Err(missing_required_field(node, "children")),
+                ResolvedFieldKind::Scalar | ResolvedFieldKind::List => SingleNonterminalView(::sittir_core::filters::Renderable::Text(children.as_scalar())),
+            },
+                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
         }

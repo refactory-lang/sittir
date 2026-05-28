@@ -604,8 +604,8 @@ function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
 		slotsByKey.set(key, existing ? (mergeRenderSlots([existing, slot]) ?? existing) : slot);
 	}
 	const slots = [...slotsByKey.values()];
-	const named = slots.filter((slot) => slot.source !== 'inferred');
-	const unnamed = slots.filter((slot) => slot.source === 'inferred');
+	const named = slots.filter((slot) => !slot.isUnnamed);
+	const unnamed = slots.filter((slot) => slot.isUnnamed);
 	if (unnamed.length === 0) {
 		return {
 			named,
@@ -617,7 +617,7 @@ function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
 	}
 	const unnamedKinds = [...new Set(unnamed.flatMap((slot) => kindsOf(slot)))];
 	const variantCardinalities = variants.map((variant) => {
-		const children = variant.filter((slot) => slot.source === 'inferred');
+		const children = variant.filter((slot) => slot.isUnnamed);
 		if (children.length === 0) return undefined;
 		const cardinality = deriveUnnamedChildrenCardinality(children);
 		return {
